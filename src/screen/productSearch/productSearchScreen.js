@@ -1,9 +1,10 @@
 import React, { useEffect, useState, createRef } from 'react'
-import { SafeAreaView, View, Text, Image, TouchableOpacity, TextInput, FlatList, ToastAndroid, Dimensions, ScrollView } from 'react-native'
+import { SafeAreaView, View, Text, Image, TouchableOpacity, TextInput, FlatList, ToastAndroid, StyleSheet, ScrollView } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import ActionSheet from "react-native-actions-sheet";
 import { useNavigation, colors, styles, Wp, CheckSignal, Loading, Hp, Ps, ServiceProduct, FastImage } from '../../export'
 import { useDispatch, useSelector } from 'react-redux'
+import * as Progress from 'react-native-progress';
 
 export default function ProductSearchScreen() {
     const navigation = useNavigation();
@@ -23,6 +24,7 @@ export default function ProductSearchScreen() {
     const [terbaru, setTerbaru] = useState(false);
     const [selectedFilter, setselectedFilter] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [loadmore, setLoadmore] = useState(false);
 
     const [location, setLocation] = useState('');
     const [condition, setCondition] = useState('');
@@ -191,6 +193,14 @@ export default function ProductSearchScreen() {
             }
         }
     }
+    const handleLoadMore = () => {
+        if (loadmore === false) {
+            setLoadmore(true)
+            setTimeout(() => {
+                setLoadmore(false)
+            }, 4000);
+        }
+    }
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.appBar}>
@@ -200,7 +210,7 @@ export default function ProductSearchScreen() {
                 <View style={[styles.searchBar, { backgroundColor: colors.BlueJaja, paddingHorizontal: '0%' }]}>
                     <TouchableOpacity style={[styles.row, { width: '85%', marginRight: '1%', backgroundColor: colors.White, height: '100%', alignItems: 'center', borderRadius: 10, paddingHorizontal: '3%' }]} onPress={() => navigation.goBack()}>
                         <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
-                        <Text adjustsFontSizeToFit style={styles.font_14}>{keyword ? keyword : ""}</Text>
+                        <Text numberOfLines={1} style={[styles.font_14, { width: '93%' }]}>{keyword ? keyword : ""}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => setFilter(true) & actionSheetRef.current?.setModalVisible()} style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: '1%', backgroundColor: colors.BlueJaja, height: '100%', width: '15%', borderTopRightRadius: 10, borderBottomRightRadius: 10 }}>
                         <Image source={require('../../assets/icons/filter.png')} style={[styles.icon_25, { tintColor: colors.White }]} />
@@ -233,61 +243,77 @@ export default function ProductSearchScreen() {
                 {/* </View> */}
                 {loading ? <Loading /> : null}
                 {data && data.length ?
-                    <View style={styles.row}>
-                        {/* <ScrollView nestedScrollEnabled={true} contentContainerStyle={{ height: 500 }}> */}
+                    <View style={[styles.column, { flex: 1 }]}>
                         <FlatList
                             data={data}
                             keyExtractor={(item, index) => String(index)}
                             contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}
                             renderItem={({ item, index }) => {
                                 return (
-                                    <TouchableOpacity
-                                        onPress={() => handleShowDetail(item)}
-                                        style={Ps.cardProduct}
-                                        key={index}>
-                                        {item.isDiscount ?
-                                            <Text adjustsFontSizeToFit style={Ps.textDiscount}>{item.discount}%</Text> : null}
-                                        {/* <Image style={Ps.imageProduct}
+                                    <View style={styles.column}>
+                                        <TouchableOpacity
+                                            onPress={() => handleShowDetail(item)}
+                                            style={[Ps.cardProduct, { width: Wp('43%') }]}
+                                            key={index}>
+                                            {item.isDiscount ?
+                                                <Text adjustsFontSizeToFit style={Ps.textDiscount}>{item.discount}%</Text> : null}
+                                            {/* <Image style={Ps.imageProduct}
                                             resizeMethod={"scale"}
                                             resizeMode={item.image ? "cover" : "center"}
                                             source={{ uri: item.image }}
                                         /> */}
-                                        <FastImage
-                                            style={Ps.imageProduct}
-                                            source={{
-                                                uri: item.image,
-                                                headers: { Authorization: 'someAuthToken' },
-                                                priority: FastImage.priority.normal,
-                                            }}
-                                            resizeMode={FastImage.resizeMode.cover}
-                                        />
-                                        <View style={Ps.bottomCard}>
-                                            <Text adjustsFontSizeToFit
-                                                numberOfLines={2}
-                                                style={Ps.nameProduct}>
-                                                {item.name}
-                                            </Text>
-                                            {item.isDiscount ?
-                                                <>
-                                                    <Text adjustsFontSizeToFit style={Ps.priceBefore}>{item.price}</Text>
-                                                    <Text adjustsFontSizeToFit style={Ps.priceAfter}>{item.priceDiscount}</Text>
-                                                </>
-                                                :
-                                                <Text adjustsFontSizeToFit style={Ps.price}>{item.price}</Text>
-                                            }
-                                            <View style={Ps.location}>
-                                                <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
-                                                <Text adjustsFontSizeToFit style={Ps.locarionName}>{item.location}</Text>
+                                            <FastImage
+                                                style={Ps.imageProduct}
+                                                source={{
+                                                    uri: item.image,
+                                                    headers: { Authorization: 'someAuthToken' },
+                                                    priority: FastImage.priority.normal,
+                                                }}
+                                                resizeMode={FastImage.resizeMode.cover}
+                                            />
+                                            <View style={Ps.bottomCard}>
+                                                <Text adjustsFontSizeToFit
+                                                    numberOfLines={2}
+                                                    style={Ps.nameProduct}>
+                                                    {item.name}
+                                                </Text>
+                                                {item.isDiscount ?
+                                                    <>
+                                                        <Text adjustsFontSizeToFit style={Ps.priceBefore}>{item.price}</Text>
+                                                        <Text adjustsFontSizeToFit style={Ps.priceAfter}>{item.priceDiscount}</Text>
+                                                    </>
+                                                    :
+                                                    <Text adjustsFontSizeToFit style={Ps.price}>{item.price}</Text>
+                                                }
+                                                <View style={Ps.location}>
+                                                    <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
+                                                    <Text adjustsFontSizeToFit style={Ps.locarionName}>{item.location}</Text>
+                                                </View>
                                             </View>
-                                        </View>
-                                    </TouchableOpacity>
+                                        </TouchableOpacity>
+                                        {loadmore && index === data.length - 1 ?
+                                            <View>
+                                                <View style={style.content}>
+                                                    <View style={style.loading}>
+                                                        <Progress.CircleSnail duration={550} size={30} color={[colors.BlueJaja, colors.YellowJaja]} />
+                                                    </View>
+                                                </View>
+                                                <Text></Text>
+                                            </View>
+                                            : null}
+                                    </View>
                                 )
                             }}
+                            onEndReached={handleLoadMore}
+                            onEndReachedThreshold={0}
                         />
+
                     </View>
                     : <Text style={[styles.font_14, styles.mt_5, { alignSelf: 'center' }]}>Produk tidak ditemukan!</Text>
                 }
+
             </View>
+
             <ActionSheet ref={actionSheetRef} delayActionSheetDraw={false} containerStyle={{ height: Hp('60%'), padding: '4%' }}>
                 <View style={styles.row_between_center}>
                     <Text adjustsFontSizeToFit style={[styles.font_16, styles.my_3, { fontWeight: 'bold', color: colors.BlueJaja, }]}>Filter</Text>
@@ -357,3 +383,19 @@ export default function ProductSearchScreen() {
         </SafeAreaView >
     )
 }
+
+const style = StyleSheet.create({
+    content: {
+        width: Wp('100%'),
+        backgroundColor: colors.White,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: '5%',
+    },
+    loading: {
+        padding: 8,
+        backgroundColor: 'white',
+        borderRadius: 100,
+
+    }
+})

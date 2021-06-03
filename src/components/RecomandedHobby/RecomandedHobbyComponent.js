@@ -12,6 +12,7 @@ export default function RecomandedHobbyComponent() {
     const [auth, setAuth] = useState("")
     const [loadmore, setLoadmore] = useState(false)
     const [page, setPage] = useState(1);
+    const [maxPage, setmaxPage] = useState(1);
 
     const dispatch = useDispatch()
     const reduxDashboard = useSelector(state => state.dashboard.recommanded)
@@ -23,6 +24,9 @@ export default function RecomandedHobbyComponent() {
                 setAuth(JSON.stringify(res))
             }
         })
+        if (reduxLoadmore) {
+            handleLoadMore()
+        }
     }, [reduxLoadmore])
 
     const handleShowDetail = item => {
@@ -37,25 +41,27 @@ export default function RecomandedHobbyComponent() {
             redirect: 'follow'
         };
 
-        fetch(`https://jaja.id/backend/product/recommendation?page=${page}&limit=2`, requestOptions)
+        fetch(`https://jaja.id/backend/product/recommendation?page=${page + 1}&limit=6`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                setLoadmore(false)
-                if (result.status.code == 200 || result.status.code == 204) {
-                    dispatch({ type: 'SET_DASHRECOMMANDED', payload: reduxDashboard.concat(result.data.items) })
-                    EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))
-                }
+                console.log("🚀 ~ file: RecomandedHobbyComponent.js ~ line 44 ~ getData ~ page + 1", page + 1)
+                console.log("🚀 ~ file: RecomandedHobbyComponent.js ~ line 101 ~ setTimeout ~ result.data.items", result.data)
+
+                setTimeout(() => {
+                    if (result.status.code == 200 || result.status.code == 204) {
+                        dispatch({ type: 'SET_DASHRECOMMANDED', payload: reduxDashboard.concat(result.data.items) })
+                        EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))
+                    }
+                    dispatch({ 'type': 'SET_LOADMORE', payload: false })
+                }, 2000);
+
             })
             .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER) & setLoadmore(false));
     }
 
     const handleLoadMore = () => {
-        console.log("🚀 ~ file: RecomandedHobbyComponent.js ~ line 60 ~ handleLoadMore ~ handleLoadMore", loadmore)
-        setLoadmore(true)
-        setTimeout(() => {
-            getData()
-        }, 2000);
-
+        getData()
+        setPage(page + 1)
     }
     return (
         <View style={styles.p_3}>
@@ -129,7 +135,7 @@ export default function RecomandedHobbyComponent() {
                 </View>
                 : null
             }
-            {loadmore ?
+            {reduxLoadmore ?
                 <View style={style.content}>
                     <View style={style.loading}>
                         <Progress.CircleSnail duration={550} size={30} color={[colors.BlueJaja, colors.YellowJaja]} />

@@ -1,42 +1,51 @@
-import React, { useState, createRef } from 'react'
-import { SafeAreaView, View, Text, Image, FlatList, ScrollView, TouchableOpacity, TextInput } from 'react-native'
+import React, { useEffect, useState, createRef } from 'react'
+import { SafeAreaView, View, Text, Image, FlatList, ScrollView, TouchableOpacity, TextInput, ToastAndroid } from 'react-native'
 import { Button } from "react-native-paper";
-import { styles, Appbar, Wp, colors } from '../../export'
+import { styles, Appbar, Wp, colors, Hp, useNavigation, Loading } from '../../export'
 import { useSelector, useDispatch } from 'react-redux'
 import StarRating from 'react-native-star-rating';
 import FAIcon from 'react-native-vector-icons/FontAwesome5';
 import ImagePicker from 'react-native-image-crop-picker';
 import ActionSheet from 'react-native-actions-sheet';
 import VideoPlayer from 'react-native-video-player';
+import RNFS from 'react-native-fs';
 
-export default function AddReview() {
-    const dataTest = useSelector(state => state.order.unPaid)
+export default function AddReview(props) {
+    const navigation = useNavigation();
+    const reduxAuth = useSelector(state => state.auth.auth)
     const galeryRef = createRef()
+
+    const [loading, setLoading] = useState(false)
 
     const [starCount, setstarCount] = useState(5)
     const [textReview, settextReview] = useState("")
     const [idx, setIdx] = useState(null)
     const [img, setImg] = useState(null)
+    const [data, setData] = useState([])
 
-    const [items, setItems] = useState([
-        {
-            "id": "1545",
-            "name": "Jika Tuhan Maha Kuasa, Kenapa Manusia Menderita?",
-            "image": "https://seller.jaja.id/asset/images/products/2021051760a21dba1e5fc.jpeg",
-            "rate": "4",
-            "images": [],
-            "video": ''
-        },
-        {
-            "id": "364",
-            "name": "Kura-Kura Berjanggut",
-            "image": "https://seller.jaja.id/asset/images/products/202008255f4493b86c8da.jpeg",
-            "rate": "4",
-            "images": [],
-            "video": ''
+    useEffect(() => {
 
+        if (props.route.params.data) {
+            let arr = props.route.params.data
+            let newArr = []
+            arr.map(item => {
+                newArr.push({
+                    "name": item.name,
+                    "variant": item.variant,
+                    "image": item.image,
+                    "productId": item.productId,
+                    "rate": 5,
+                    "comment": "",
+                    "imagesShow": [],
+                    "images": [],
+                    "videoShow": "",
+                    "video": "",
+
+                })
+            })
+            setData(newArr)
         }
-    ])
+    }, [props])
 
     const inputText = [
         { id: "121", text: "Barang sesuai pesanan", },
@@ -49,12 +58,17 @@ export default function AddReview() {
         ImagePicker.openPicker({
             width: 400,
             height: 400,
-            cropping: true
+            cropping: true,
+            compressImageQuality: 0.8,
+            includeBase64: true
         }).then(image => {
-            let newData = JSON.parse(JSON.stringify(items))
-            newData[idx].images.push(image.path)
-            setItems(newData)
-            setIdx(null)
+            let newData = JSON.parse(JSON.stringify(data))
+            if (newData[idx].images.length < 4) {
+                newData[idx].images.push(image.data)
+                newData[idx].imagesShow.push(image.path)
+                setData(newData)
+                setIdx(null)
+            }
         });
     }
 
@@ -63,12 +77,18 @@ export default function AddReview() {
         ImagePicker.openCamera({
             width: 400,
             height: 400,
-            cropping: true
+            cropping: true,
+            compressImageQuality: 0.8,
+            includeBase64: true
         }).then(image => {
-            let newData = JSON.parse(JSON.stringify(items))
-            newData[idx].images.push(image.path)
-            setItems(newData)
-            setIdx(null)
+            let newData = JSON.parse(JSON.stringify(data))
+            if (newData[idx].images.length < 4) {
+                console.log("🚀 ~ file: AddReview.js ~ line 78 ~ handleOpenCamera ~ image", image)
+                newData[idx].images.push(image.data)
+                newData[idx].imagesShow.push(image.path)
+                setData(newData)
+                setIdx(null)
+            }
         });
     }
 
@@ -76,33 +96,93 @@ export default function AddReview() {
         galeryRef.current?.setModalVisible(false)
         ImagePicker.openCamera({
             mediaType: "video",
-            sortOrder: 'asc',
-            compressVideoPreset: '960x540'
-        }).then(video => {
-            let newData = JSON.parse(JSON.stringify(items))
-            newData[indx].video = video.path;
-            setItems(newData)
-            setIdx(null)
+            compressVideoPreset: '640x480',
+            compressImageQuality: 0.8,
+            maxFiles: 1,
+            includeBase64: true,
+        }).then(async video => {
+            try {
+                console.log("🚀 ~ file: AddReview.js ~ line 105 ~ handlePickVideo ~ video", video)
+                let base64data = await RNFS.readFile(video.path, 'base64').then();
+                let newData = JSON.parse(JSON.stringify(data))
+                newData[indx].videoShow = video.path;
+                newData[indx].video = base64data;
+                setData(newData)
+                setIdx(null)
+            } catch (error) {
+                console.log("🚀 ~ file: AddReview.js ~ line ss100 ~ handlePickVideo ~ error", error)
+            }
         });
     }
+
+    const handleBase64 = (file) => {
+
+    }
+
     const handleRemoveImage = (indexParent, indexChild) => {
-        let newData = JSON.parse(JSON.stringify(items))
+        let newData = JSON.parse(JSON.stringify(data))
         if (indexChild !== null) {
             newData[indexParent].images.splice(indexChild, 1)
-
+            newData[indexParent].imagesShow.splice(indexChild, 1)
         } else {
             newData[indexParent].video = null
         }
-        setItems(newData)
+        setData(newData)
         setIdx(null)
+    }
+
+    const handleChange = (value, index, name) => {
+        if (name === "rate") {
+            let newData = JSON.parse(JSON.stringify(data))
+            newData[index].rate = value;
+            setData(newData)
+            setIdx(null)
+        } else if (name === "comment") {
+            let newData = JSON.parse(JSON.stringify(data))
+            newData[index].comment += value + ". ";
+            setData(newData)
+            setIdx(null)
+        }
+    }
+
+    const handleReview = () => {
+        setLoading(true)
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", reduxAuth);
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+            "rates": data
+        });
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+        fetch("https://jaja.id/backend/order/rate", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                console.log("🚀 ~ file: AddReview.js ~ line 167 ~ handleReview ~ result", result)
+                setLoading(false)
+                if (result.status.code === 200) {
+                    ToastAndroid.show("Pesanan berhasil di review", ToastAndroid.LONG, ToastAndroid.TOP)
+                    navigation.goBack()
+                } else {
+                    ToastAndroid.show(String(result.status.message) + " : " + String(result.status.code), ToastAndroid.LONG, ToastAndroid.TOP)
+                }
+            })
+            .catch(error => ToastAndroid.show(JSON.stringify(error), ToastAndroid.LONG, ToastAndroid.TOP) & setLoading(false));
     }
 
     return (
         <SafeAreaView style={styles.container}>
             <Appbar back={true} title="Beri Penilaian" />
+            {loading ? <Loading /> : null}
             <FlatList
-                data={items}
-                keyExtractor={item => item.id}
+                data={data}
+                keyExtractor={item => item.productId}
                 renderItem={({ item, index }) => {
                     return (
                         <View style={[styles.column, styles.p_2, styles.mb_3]}>
@@ -110,7 +190,7 @@ export default function AddReview() {
                                 <Image style={{ width: Wp('15%'), height: Wp('15%'), marginRight: '2%' }} source={{ uri: item.image ? item.image : null }} />
                                 <View style={[styles.column_between_center, { width: Wp('81%'), alignItems: 'flex-start' }]}>
                                     <Text numberOfLines={2} style={styles.font_14}>{item.name}</Text>
-                                    <Text numberOfLines={2} style={styles.font_12}>Variant : Merah Toska</Text>
+                                    {item.variant ? <Text numberOfLines={2} style={styles.font_12}>Variant : {item.variant}</Text> : null}
                                 </View>
                             </View>
                             <View style={[styles.my_3, { width: Wp('80%') }]}>
@@ -121,24 +201,24 @@ export default function AddReview() {
                                     starSize={30}
                                     fullStarColor={colors.YellowJaja}
                                     emptyStarColor={colors.YellowJaja}
-                                    rating={starCount}
-                                    selectedStar={(rating) => setstarCount(rating)}
+                                    rating={item.rate}
+                                    selectedStar={(rating) => handleChange(rating, index, "rate")}
                                 />
                             </View>
                             <View style={[styles.row, { flexWrap: 'wrap' }]}>
-                                {inputText.map((item, index) => {
+                                {inputText.map((input, indx) => {
                                     return (
-                                        <TouchableOpacity key={index} onPress={() => settextReview(textReview + item.text + ". ")} style={[styles.py, styles.px_2, styles.mr, styles.mb_2, { borderWidth: 0.5, borderColor: colors.Silver, borderRadius: 3 }]}><Text multiline={true} style={[styles.font_12, { color: item.pressed ? colors.White : colors.BlackGrayScale }]}>{item.text}</Text></TouchableOpacity>
+                                        <TouchableOpacity key={indx + "C"} onPress={() => handleChange(input.text, index, "comment")} style={[styles.py, styles.px_2, styles.mr, styles.mb_2, { borderWidth: 0.5, borderColor: colors.Silver, borderRadius: 3 }]}><Text multiline={true} style={[styles.font_12, { color: input.pressed ? colors.White : colors.BlackGrayScale }]}>{input.text}</Text></TouchableOpacity>
                                     )
                                 })}
                             </View>
                             <View style={{ borderWidth: 0.5, borderColor: colors.Silver, borderRadius: 5 }}>
-                                <TextInput multiline={true} numberOfLines={3} textAlignVertical="top" maxLength={200}>
-                                    {textReview}
+                                <TextInput placeholder="Barang sesuai pesanan." multiline={true} numberOfLines={3} textAlignVertical="top" maxLength={200}>
+                                    {item.comment}
                                 </TextInput>
                             </View>
                             <View style={styles.row}>
-                                <TouchableOpacity onPress={() => galeryRef.current?.setModalVisible() & setIdx(index)} style={[styles.row, styles.py, styles.px_2, styles.m_2, { borderWidth: 0.5, borderColor: colors.Silver, borderRadius: 3, marginLeft: '0%' }]}>
+                                <TouchableOpacity disabled={data[index].images.length < 4 ? false : true} onPress={() => galeryRef.current?.setModalVisible() & setIdx(index)} style={[styles.row, styles.py, styles.px_2, styles.m_2, { borderWidth: 0.5, borderColor: colors.Silver, borderRadius: 3, marginLeft: '0%' }]}>
                                     <FAIcon name="camera" size={16} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
                                     <Text style={[styles.font_12, styles.ml_5]}>Unggah Foto</Text>
                                 </TouchableOpacity>
@@ -149,19 +229,18 @@ export default function AddReview() {
                             </View>
                             <View style={styles.column}>
                                 <View style={[styles.row, { flexWrap: 'wrap' }]}>
-                                    {item.images.map((val, indx) => {
-                                        console.log("🚀 ~ file: AddReview.js ~ line 12 ~ {item.images.map ~ val", indx)
+                                    {item.imagesShow.map((val, indx) => {
                                         return (
-                                            <View style={styles.my_2}>
+                                            <View key={indx + "N"} style={styles.my_2}>
                                                 <Image style={{ width: Wp('20%'), height: Wp('20%'), marginRight: 15, backgroundColor: 'pink' }} source={{ uri: val }} />
                                                 <TouchableOpacity style={{ position: 'absolute', top: 0, right: 15, width: Wp('4.3%'), height: Wp('4.3%'), justifyContent: 'center', alignItems: 'center' }} onPress={() => handleRemoveImage(index, indx)}>
-                                                    <Image style={{ width: Wp('3.7%'), height: Wp('3.7%'), tintColor: colors.Red }} source={require('../../assets/icons/close.png')} />
+                                                    <Image style={{ width: Wp('3%'), height: Wp('3%'), tintColor: colors.Silver }} source={require('../../assets/icons/close.png')} />
                                                 </TouchableOpacity>
                                             </View>
                                         )
                                     })}
                                 </View>
-                                {item.video ?
+                                {item.videoShow ?
                                     <View style={{ width: Wp('44%'), height: Wp('44%'), marginVertical: '2%' }}>
                                         <VideoPlayer
                                             video={{ uri: item.video }}
@@ -171,9 +250,10 @@ export default function AddReview() {
                                             videoHeight={Wp('44%')}
                                             disableFullscreen={false}
                                             fullScreenOnLongPress={true}
+
                                         />
                                         <TouchableOpacity style={{ position: 'absolute', top: 0, right: 0, width: Wp('5%'), height: Wp('5%'), justifyContent: 'center', alignItems: 'center' }} onPress={() => handleRemoveImage(index, null)}>
-                                            <Image style={{ width: Wp('4%'), height: Wp('4%'), tintColor: colors.Red }} source={require('../../assets/icons/close.png')} />
+                                            <Image style={{ width: Wp('3.5%'), height: Wp('3.5%'), tintColor: colors.Silver }} source={require('../../assets/icons/close.png')} />
                                         </TouchableOpacity>
                                     </View>
                                     : null}
@@ -183,6 +263,11 @@ export default function AddReview() {
                     )
                 }}
             />
+            <View style={{ flex: 0, width: Wp('100%'), height: Hp('6%'), backgroundColor: colors.White, position: 'absolute', bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                <Button icon="star" mode="contained" color={colors.BlueJaja} labelStyle={{ color: colors.White }} style={{ width: Wp('95%') }} contentStyle={{ width: Wp('95%') }} onPress={handleReview}>
+                    Simpan
+                </Button>
+            </View>
             <ActionSheet containerStyle={{ flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.White }} ref={galeryRef}>
                 {/* <View style={styles.row_between_center}>
                     <Text style={styles.actionSheetTitle}>Pilih gambar</Text>

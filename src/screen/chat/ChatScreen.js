@@ -72,8 +72,8 @@ export default function ChatScreen({ route }) {
                     var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
                     console.log("🚀 ~ file: ChatScreen.js ~ line 135 ~ handleSendProduct ~ msgId", msgId)
                     firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
-                    firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: isiChat, time: new Date().toString() });
-                    firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: isiChat, amount: 1, time: new Date().toString() });
+                    firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: isiChat, time: new Date().toString() } });
+                    firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: { text: isiChat, time: new Date().toString() }, amount: 1, time: new Date().toString() });
                     let fire = firebaseDatabase().ref("/people/" + data.id).limitToLast(20).on("value", async function (snapshot) {
                         let item = await snapshot.val();
                         if (item.token) {

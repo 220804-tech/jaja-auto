@@ -50,44 +50,6 @@ export default function OrderDetailsScreen(props) {
     }
 
     const handleCheckout = () => {
-        setLoading(true)
-        let newArr = notes;
-        for (let index = 0; index < 2; index++) {
-            if (!newArr[index]) {
-                newArr[index] = { "note": "" }
-            }
-        }
-        setTimeout(() => {
-            var myHeaders = new Headers();
-            myHeaders.append("Authorization", auth);
-            myHeaders.append("Content-Type", "application/json");
-
-            var raw = JSON.stringify(notes);
-
-            var requestOptions = {
-                method: 'POST',
-                headers: myHeaders,
-                body: raw,
-                redirect: 'follow'
-            };
-
-            fetch("https://jaja.id/backend/checkout", requestOptions)
-                .then(response => response.json())
-                .then(result => {
-                    if (result.status.code === 200) {
-                        dispatch({ type: 'SET_ORDERID', payload: result.data })
-                        navigation.navigate("Midtrans", { data: result.data })
-                    } else {
-                        ToastAndroid.show(result.status.message + " " + result.status.code, ToastAndroid.LONG, ToastAndroid.CENTER)
-                    }
-                    setTimeout(() => {
-                        setLoading(false)
-                    }, 2000);
-                })
-                .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER) & setLoading(false))
-        }, 250);
-
-
 
     }
 
@@ -256,9 +218,9 @@ export default function OrderDetailsScreen(props) {
                         <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}>Total pembayaran :</Text>
                         <Text numberOfLines={1} style={[styles.font_20, { fontWeight: 'bold', color: colors.BlueJaja }]}>{reduxCheckout.totalCurrencyFormat}</Text>
                     </View> */}
-                        <Button icon="star" onPress={() => navigation.navigate('AddReview')} style={{ alignSelf: 'center', width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
+                        <Button icon="star" onPress={() => navigation.navigate('AddReview', { data: details.items[0].products })} style={{ alignSelf: 'center', width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
                             Beri Penilaian
-                    </Button>
+                        </Button>
                     </View>
                     : null}
         </SafeAreaView >
