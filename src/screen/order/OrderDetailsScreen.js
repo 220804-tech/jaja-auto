@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button } from 'react-native-paper'
 export default function OrderDetailsScreen(props) {
     const navigation = useNavigation();
+    const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
     const [details, setDetails] = useState(null)
 
@@ -49,21 +50,33 @@ export default function OrderDetailsScreen(props) {
             .catch(error => console.log('error', error));
     }
 
-    const handleCheckout = () => {
-
+    const handlePayment = () => {
+        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 57 ~ handlePayment ~ details.orderId", details.orderId)
+        dispatch({ type: 'SET_ORDERID', payload: details.orderId })
+        navigation.navigate("Midtrans")
     }
 
     return (
         <SafeAreaView style={styles.container}>
             <Appbar title="Detail Pesanan" back={true} />
             <ScrollView contentContainerStyle={{ flex: 0, flexDirection: 'column', paddingBottom: Hp('7%') }}>
-                <View style={[styles.row_between_center, styles.p_3, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                    <View style={[styles.row]}>
-                        <Image style={[styles.icon_23, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/process.png')} />
-                        <Text style={[styles.font_16, { fontWeight: 'bold', color: colors.BlueJaja }]}> Status Pesanan</Text>
+                <View style={[styles.column, styles.p_3, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                    <View style={[styles.row_between_center, styles.mb_4]}>
+                        <View style={[styles.row]}>
+                            <Image style={[styles.icon_23, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/process.png')} />
+                            <Text style={[styles.font_16, { fontWeight: 'bold', color: colors.BlueJaja }]}> Status Pesanan</Text>
+                        </View>
+                        <View style={[styles.p, { backgroundColor: colors.YellowJaja, borderRadius: 3 }]}>
+                            <Text numberOfLines={1} style={[styles.font_12, { color: colors.White }]}>{status}</Text>
+                        </View>
                     </View>
-                    <View style={[styles.p, { backgroundColor: colors.YellowJaja, borderRadius: 3 }]}>
-                        <Text numberOfLines={1} style={[styles.font_12, { color: colors.White }]}>{status}</Text>
+                    <View style={styles.row_between_center}>
+                        <View style={[styles.row]}>
+                            <Text style={[styles.font_14]}>No. Invoice : {details.items[0].invoice}</Text>
+                        </View>
+                        <View style={[styles.p, { backgroundColor: colors.YellowJaja, borderRadius: 3 }]}>
+                            <Text numberOfLines={1} style={[styles.font_12, { color: colors.White }]}>{status}</Text>
+                        </View>
                     </View>
                 </View>
                 {details ?
@@ -208,7 +221,7 @@ export default function OrderDetailsScreen(props) {
                         <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}>Total pembayaran :</Text>
                         <Text numberOfLines={1} style={[styles.font_20, { fontWeight: 'bold', color: colors.BlueJaja }]}>{details ? details.totalCurrencyFormat : "Rp.0"}</Text>
                     </View>
-                    <Button onPress={handleCheckout} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained" >
+                    <Button onPress={handlePayment} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained" >
                         Pilih pembayaran
                     </Button>
                 </View>

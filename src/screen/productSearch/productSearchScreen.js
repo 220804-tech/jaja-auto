@@ -1,5 +1,5 @@
-import React, { useEffect, useState, createRef } from 'react'
-import { SafeAreaView, View, Text, Image, TouchableOpacity, TextInput, FlatList, ToastAndroid, StyleSheet, ScrollView } from 'react-native'
+import React, { useEffect, useState, createRef, useCallback } from 'react'
+import { SafeAreaView, View, Text, Image, TouchableOpacity, TextInput, FlatList, ToastAndroid, StyleSheet, ScrollView, Animated, RefreshControl } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import ActionSheet from "react-native-actions-sheet";
 import { useNavigation, colors, styles, Wp, CheckSignal, Loading, Hp, Ps, ServiceProduct, FastImage } from '../../export'
@@ -14,6 +14,7 @@ export default function ProductSearchScreen() {
     const reduxFilters = useSelector(state => state.search.filters)
     const reduxSorts = useSelector(state => state.search.sorts)
     const dispatch = useDispatch()
+    const [scrollY, setscrollY] = useState(new Animated.Value(0))
 
     const [auth, setAuth] = useState("")
 
@@ -25,11 +26,14 @@ export default function ProductSearchScreen() {
     const [selectedFilter, setselectedFilter] = useState([]);
     const [loading, setLoading] = useState(false);
     const [loadmore, setLoadmore] = useState(false);
+    const [page, setPage] = useState(1);
 
     const [location, setLocation] = useState('');
     const [condition, setCondition] = useState('');
     const [stock, setStock] = useState('');
     const [sort, setSort] = useState('');
+    const [refreshing, setRefreshing] = useState(false);
+
 
     useEffect(() => {
         EncryptedStorage.getItem("token").then(res => {
@@ -37,6 +41,7 @@ export default function ProductSearchScreen() {
                 setAuth(JSON.parse(auth))
             }
         }).catch(err => console.log("Token null : ", err))
+        setLoadmore(false)
     }, [])
 
 
@@ -55,13 +60,10 @@ export default function ProductSearchScreen() {
             headers: myHeaders,
             redirect: 'follow'
         };
-        console.log("🚀 ~ file: productSearchScreen.js ~ line 53 ~ handleFetch ~ keyword", keyword)
-        console.log("🚀 ~ file: productSearchScreen.js ~ line 54 ~ handleFetch ~ location", location)
-        console.log("🚀 ~ file: productSearchScreen.js ~ line 55 ~ handleFetch ~ condition", condition)
-        console.log("🚀 ~ file: productSearchScreen.js ~ line 56 ~ handleFetch ~ stock", stock)
-        console.log("🚀 ~ file: productSearchScreen.js ~ line 57 ~ handleFetch ~ sort", sort)
+        setPage(1)
 
-        fetch(`https://jaja.id/backend/product/search/result?page=1&limit=20&keyword=${keyword}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
+
+        fetch(`https://jaja.id/backend/product/search/result?page=1&limit=10&keyword=${keyword}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 console.log("🚀 ~ file: productSearchScreen.js ~ line 12112 ~ handleFetch ~ result", result.data.items)
@@ -104,12 +106,12 @@ export default function ProductSearchScreen() {
         setCondition("")
         setStock("")
         setSort('')
+        setPage(1)
 
-
-        fetch(`https://jaja.id/backend/product/search/result?page=1&limit=20&keyword=${keyword}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
+        fetch(`https://jaja.id/backend/product/search/result?page=1&limit=10&keyword=${keyword}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: productSearchScreen.js ~ line 12112 ~ handleFetch ~ result", result.data.items)
+                console.log("🚀 ~ file: productSearchScreen.js ~ line 12112 ~ handleFetch ~ result", result)
                 if (result.status.code === 200 || result.status.code === 204) {
                     dispatch({ type: 'SET_SEARCH', payload: result.data.items })
                 }
@@ -196,11 +198,45 @@ export default function ProductSearchScreen() {
     const handleLoadMore = () => {
         if (loadmore === false) {
             setLoadmore(true)
+            setPage(page + 1)
+            fetchLoadmore()
             setTimeout(() => {
                 setLoadmore(false)
             }, 4000);
         }
     }
+    const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+        const paddingToBottom = 20
+        return layoutMeasurement.height + contentOffset.y >=
+            contentSize.height - paddingToBottom
+    }
+
+    const fetchLoadmore = () => {
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        fetch(`https://jaja.id/backend/product/search/result?page=${page + 1}&limit=6&keyword=${keyword}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                if (result.status.code === 200 || result.status.code === 204) {
+                    dispatch({ type: 'SET_SEARCH', payload: data.concat(result.data.items) })
+                }
+            })
+            .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER) & setLoadmore(false));
+    }
+    const onRefresh = useCallback(() => {
+        if (data && data.length) {
+            setRefreshing(true);
+            setTimeout(() => {
+                setRefreshing(false)
+            }, 2000);
+        } else {
+            handleReset()
+        }
+    }, []);
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.appBar}>
@@ -243,17 +279,47 @@ export default function ProductSearchScreen() {
                 {/* </View> */}
                 {loading ? <Loading /> : null}
                 {data && data.length ?
-                    <View style={[styles.column, { flex: 1 }]}>
-                        <FlatList
-                            data={data}
-                            keyExtractor={(item, index) => String(index)}
-                            contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}
-                            renderItem={({ item, index }) => {
-                                return (
-                                    <View style={styles.column}>
+                    <View style={[styles.column, { flex: 1, justifyContent: "center", alignItems: 'flex-start' }]}>
+                        <ScrollView
+                            refreshControl={
+                                <RefreshControl
+                                    refreshing={refreshing}
+                                    onRefresh={onRefresh}
+                                />
+                            }
+                            onScroll={Animated.event(
+                                [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                                {
+                                    listener: event => {
+                                        if (isCloseToBottom(event.nativeEvent)) {
+                                            handleLoadMore()
+                                        }
+                                    }
+                                }
+                            )}
+                            onMomentumScrollEnd={({ nativeEvent }) => {
+                                if (isCloseToBottom(nativeEvent)) {
+                                    handleLoadMore()
+                                }
+                            }}
+                        >
+                            <FlatList
+                                data={data}
+                                scrollEnabled={false}
+                                removeClippedSubviews={true} // Unmount components when outside of window 
+                                initialNumToRender={2} // Reduce initial render amount
+                                maxToRenderPerBatch={1} // Reduce number in each render batch
+                                updateCellsBatchingPeriod={100} // Increase time between renders
+                                windowSize={7}
+                                horizontal={false}
+                                numColumns={2}
+                                keyExtractor={(item, index) => String(index) + "G9"}
+                                renderItem={({ item, index }) => {
+                                    console.log("🚀 ~ file: productSearchScreen.js ~ line 340 ~ ProductSearchScreen ~ item", item)
+                                    return (
                                         <TouchableOpacity
                                             onPress={() => handleShowDetail(item)}
-                                            style={[Ps.cardProduct, { width: Wp('43%') }]}
+                                            style={[Ps.cardProduct, { width: Wp('45%'), marginRight: Wp('4%') }]}
                                             key={index}>
                                             {item.isDiscount ?
                                                 <Text adjustsFontSizeToFit style={Ps.textDiscount}>{item.discount}%</Text> : null}
@@ -291,22 +357,18 @@ export default function ProductSearchScreen() {
                                                 </View>
                                             </View>
                                         </TouchableOpacity>
-                                        {loadmore && index === data.length - 1 ?
-                                            <View>
-                                                <View style={style.content}>
-                                                    <View style={style.loading}>
-                                                        <Progress.CircleSnail duration={550} size={30} color={[colors.BlueJaja, colors.YellowJaja]} />
-                                                    </View>
-                                                </View>
-                                                <Text></Text>
-                                            </View>
-                                            : null}
+
+                                    )
+                                }}
+                            />
+                            {loadmore ?
+                                <View style={style.content}>
+                                    <View style={style.loading}>
+                                        <Progress.CircleSnail duration={550} size={30} color={[colors.BlueJaja, colors.YellowJaja]} />
                                     </View>
-                                )
-                            }}
-                            onEndReached={handleLoadMore}
-                            onEndReachedThreshold={0}
-                        />
+                                </View>
+                                : null}
+                        </ScrollView>
 
                     </View>
                     : <Text style={[styles.font_14, styles.mt_5, { alignSelf: 'center' }]}>Produk tidak ditemukan!</Text>
@@ -331,7 +393,7 @@ export default function ProductSearchScreen() {
                     <View style={[styles.row, { flexWrap: 'wrap', marginBottom: '4%' }]}>
                         {selectedFilter.map((item, i) => {
                             return (
-                                <TouchableOpacity onPress={() => console.log("nais")} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: colors.BlueJaja, backgroundColor: colors.BlueJaja, borderRadius: 11, paddingHorizontal: '3%', paddingVertical: '1.5%', marginRight: '3%', marginTop: '3%' }}>
+                                <TouchableOpacity key={String(i) + "m"} onPress={() => console.log("nais")} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: colors.BlueJaja, backgroundColor: colors.BlueJaja, borderRadius: 11, paddingHorizontal: '3%', paddingVertical: '1.5%', marginRight: '3%', marginTop: '3%' }}>
                                     <Text adjustsFontSizeToFit style={[styles.font_14, { color: colors.White }]}>{item.name}</Text>
                                 </TouchableOpacity>
                             )
@@ -339,10 +401,9 @@ export default function ProductSearchScreen() {
                     </View>
                     : null}
 
-                <ScrollView>
+                <ScrollView style={styles.mb_5}>
                     {reduxFilters && reduxFilters.length ?
                         reduxFilters.map((item, index) => {
-                            console.log("🚀 ~ file: productSearchScreen.js ~ line 138 ~ data.filters.map ~ item", item)
                             return (
                                 <View key={String(index) + "s"} style={[styles.mb_4]}>
                                     <Text adjustsFontSizeToFit style={[styles.font_16, { fontWeight: 'bold', color: colors.BlackGrayScale }]}>{item.name}</Text>
@@ -366,9 +427,8 @@ export default function ProductSearchScreen() {
                             <Text adjustsFontSizeToFit style={[styles.font_16, { fontWeight: 'bold', color: colors.BlackGrayScale }]}>Urutkan</Text>
                             <View style={{ flex: 0, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                                 {reduxSorts.map((child, idx) => {
-                                    console.log("🚀 ~ file: productSearchScreen.js ~ line 295 ~ {reduxSorts.map ~ child", child)
                                     return (
-                                        <TouchableOpacity onPress={() => handleSelected('sort', null, idx)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: child.value === sort ? colors.BlueJaja : colors.BlackGrey, backgroundColor: child.value === sort ? colors.BlueJaja : colors.White, borderRadius: 11, paddingHorizontal: '3%', paddingVertical: '2%', marginRight: '3%', marginTop: '3%' }}>
+                                        <TouchableOpacity key={String(idx) + "C"} onPress={() => handleSelected('sort', null, idx)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: child.value === sort ? colors.BlueJaja : colors.BlackGrey, backgroundColor: child.value === sort ? colors.BlueJaja : colors.White, borderRadius: 11, paddingHorizontal: '3%', paddingVertical: '2%', marginRight: '3%', marginTop: '3%' }}>
                                             <Text adjustsFontSizeToFit style={[styles.font_14, { color: child.value === sort ? colors.White : colors.BlackGrayScale }]}>{child.name}</Text>
                                         </TouchableOpacity>
                                     )
@@ -386,8 +446,7 @@ export default function ProductSearchScreen() {
 
 const style = StyleSheet.create({
     content: {
-        width: Wp('100%'),
-        backgroundColor: colors.White,
+        width: Wp('96%'),
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: '5%',

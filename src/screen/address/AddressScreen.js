@@ -179,9 +179,12 @@ export default function index(props) {
                     </View>
                     <Text adjustsFontSizeToFit style={styles.textNum}>{item.no_telepon ? item.no_telepon : ""}</Text>
                     <Paragraph numberOfLines={3} style={styles.textAlamat}>{item.provinsi + ", " + item.kota_kabupaten + ", " + item.kecamatan + ", " + item.kelurahan + ", " + item.kode_pos + ", " + item.alamat_lengkap}</Paragraph>
-                    <View style={{ flex: 0, justifyContent: 'flex-end', flexDirection: 'row' }}>
-                        <Text adjustsFontSizeToFit style={[styles.textAlamat, { fontSize: 12, textAlignVertical: "bottom", marginRight: '1%', fontFamily: 'serif', color: item.latitude ? colors.BlueJaja : colors.RedDanger }]}> {item.alamat_google ? "Lokasi sudah dipin" : "Lokasi belum dipin"}</Text>
-                        <Image style={styles.map} source={require('../../assets/icons/google-maps.png')} />
+                    <View style={[style.row_between_center, style.mt_3]}>
+                        <Text style={[style.font_12, { color: colors.BlueJaja, fontFamily: 'serif' }]}>{item.label}</Text>
+                        <View style={{ flex: 0, justifyContent: 'flex-end', flexDirection: 'row' }}>
+                            <Text adjustsFontSizeToFit style={[styles.textAlamat, { fontSize: 12, textAlignVertical: "bottom", marginRight: '1%', fontFamily: 'serif', color: item.latitude ? colors.BlueJaja : colors.RedDanger }]}> {item.alamat_google ? "Lokasi sudah dipin" : "Lokasi belum dipin"}</Text>
+                            <Image style={styles.map} source={require('../../assets/icons/google-maps.png')} />
+                        </View>
                     </View>
                 </View>
             </TouchableOpacity>

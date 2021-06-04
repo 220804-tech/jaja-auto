@@ -147,8 +147,6 @@ export default function MainPage() {
                 </View>
                 <View style={[styles.column, styles.mt_5]}>
                     <FlatList
-
-                        scrollEnabled={false}
                         removeClippedSubviews={true} // Unmount components when outside of window 
                         initialNumToRender={2} // Reduce initial render amount
                         maxToRenderPerBatch={1} // Reduce number in each render batch

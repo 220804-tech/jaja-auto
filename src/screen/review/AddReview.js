@@ -160,10 +160,12 @@ export default function AddReview(props) {
             body: raw,
             redirect: 'follow'
         };
+        let res = ""
 
         fetch("https://jaja.id/backend/order/rate", requestOptions)
             .then(response => response.json())
             .then(result => {
+                res = 'succes'
                 console.log("🚀 ~ file: AddReview.js ~ line 167 ~ handleReview ~ result", result)
                 setLoading(false)
                 if (result.status.code === 200) {
@@ -173,7 +175,22 @@ export default function AddReview(props) {
                     ToastAndroid.show(String(result.status.message) + " : " + String(result.status.code), ToastAndroid.LONG, ToastAndroid.TOP)
                 }
             })
-            .catch(error => ToastAndroid.show(JSON.stringify(error), ToastAndroid.LONG, ToastAndroid.TOP) & setLoading(false));
+            .catch(error => {
+                ToastAndroid.show(JSON.stringify(error), ToastAndroid.LONG, ToastAndroid.TOP)
+                setLoading(false)
+                res = 'failed'
+            });
+        setTimeout(() => {
+            if (!res) {
+                ToastAndroid.show(String("Koneksi tidak stabil.."), ToastAndroid.LONG, ToastAndroid.TOP)
+            }
+        }, 7000);
+
+        setTimeout(() => {
+            if (!res) {
+                ToastAndroid.show(String("Periksa kembai koneksi anda!"), ToastAndroid.LONG, ToastAndroid.TOP)
+            }
+        }, 12000);
     }
 
     return (

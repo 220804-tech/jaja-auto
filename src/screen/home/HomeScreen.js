@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, ScrollView, StyleSheet, StatusBar, Platform, Dimensions, LogBox, Animated } from 'react-native'
+import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, ScrollView, StyleSheet, RefreshControl, Platform, Dimensions, LogBox, Animated } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { BasedOnSearch, Trending, Category, Flashsale, Language, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect } from '../../export'
@@ -20,7 +20,8 @@ export default function HomeScreen() {
     const navigation = useNavigation()
     const [auth, setAuth] = useState("")
     const [scrollY, setscrollY] = useState(new Animated.Value(0))
-
+    const [refreshing, setRefreshing] = useState(false);
+    const reduxDashboard = useSelector(state => state.dashboard.recommanded)
 
     const images = [
         {
@@ -160,19 +161,6 @@ export default function HomeScreen() {
         );
     };
 
-
-
-    const handleOnScroll = (event) => {
-        const point = event.nativeEvent.contentOffset.y;
-        // this.setState({ page: event.nativeEvent.contentOffset.y });
-        console.log(point, "test");
-        if (point < 0) {
-            //  this.setState({isLoading:true})
-            //  this.getAPI();
-            console.log(point, "test");
-        }
-    }
-
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
         const paddingToBottom = 20
         return layoutMeasurement.height + contentOffset.y >=
@@ -183,50 +171,64 @@ export default function HomeScreen() {
         dispatch({ 'type': 'SET_LOADMORE', payload: true })
     }
 
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false)
+        }, 2000);
+
+    }, []);
+
+    // Refresh
+
     return (
         <SafeAreaView style={styles.container}>
-            {/* <StatusBar translucent backgroundColor='transparent' /> */}
-            <ReactNativeParallaxHeader
-                headerMaxHeight={Hp('33%')}
-                extraScrollHeight={20}
-                navbarColor={colors.BlueJaja}
-                titleStyle={style.titleStyle}
-                title={title()}
-                renderNavBar={() => renderNavBar('Cari hobimu sekarang')}
-                renderContent={renderContent}
-                containerStyle={style.container}
-                contentContainerStyle={style.contentContainer}
-                innerContainerStyle={style.container}
-                headerFixedBackgroundColor={colors.BlueJajaa}
-                alwaysShowTitle={false}
-                scrollViewProps={{
-                    scrollEventThrottle: 16,
-                    nestedScrollEnabled: true,
-                    onScroll: Animated.event(
-                        [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                        Platform.OS === "android" ?
-                            {
-                                listener: event => {
-                                    if (isCloseToBottom(event.nativeEvent)) {
-                                        loadMoreData()
-                                    }
-                                }
+            <ScrollView
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
+                scrollEventThrottle={16}
+                onScroll={Animated.event(
+                    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                    {
+                        listener: event => {
+                            if (isCloseToBottom(event.nativeEvent)) {
+                                loadMoreData()
                             }
-                            : null
-                    )
-
-                    // onEndReached: info => {
-                    //     console.log("🚀 ~ file: HomeScreen.js ~ line 185 ~ HomeScreen ~ info", info)
-                    //     loadMoreResults(info);
-                    // }
-                }
-                }
+                        }
+                    }
+                )}
+                onMomentumScrollEnd={({ nativeEvent }) => {
+                    if (isCloseToBottom(nativeEvent)) {
+                        loadMoreData()
+                    }
+                }}
             >
+                <ReactNativeParallaxHeader
+                    headerMaxHeight={Hp('33%')}
+                    extraScrollHeight={20}
+                    navbarColor={colors.BlueJaja}
+                    titleStyle={style.titleStyle}
+                    title={title()}
+                    renderNavBar={() => renderNavBar('Cari hobimu sekarang')}
+                    renderContent={renderContent}
+                    containerStyle={style.container}
+                    contentContainerStyle={style.contentContainer}
+                    innerContainerStyle={style.container}
+                    headerFixedBackgroundColor={colors.BlueJajaa}
+                    alwaysShowTitle={false}
+                    scrollViewProps={{
+                        nestedScrollEnabled: true,
+                    }
+                    }
+                >
+                </ReactNativeParallaxHeader>
+            </ScrollView>
 
-                <Text>asasa</Text>
-
-            </ReactNativeParallaxHeader>
-        </SafeAreaView>
+        </SafeAreaView >
     )
 }
 const style = StyleSheet.create({

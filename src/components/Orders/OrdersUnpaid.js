@@ -8,20 +8,13 @@ import { useSelector, useDispatch } from 'react-redux'
 export default function OrdersUnpaid() {
     const navigation = useNavigation()
     const dispatch = useDispatch()
+    const reduxAuth = useSelector(state => state.auth.auth)
+
     const reduxUnpaid = useSelector(state => state.order.unPaid)
     const [refreshing, setRefreshing] = useState(false);
-    const [auth, setAuth] = useState("")
 
     useEffect(() => {
-        EncryptedStorage.getItem('token').then(res => {
-            if (res) {
-                setAuth(JSON.parse(res))
-            } else {
-                navigation.navigate('Login')
-            }
-        }).catch(err => {
-            ToastAndroid.show(String(err) + 20, ToastAndroid.LONG, ToastAndroid.CENTER)
-        })
+
     }, [])
 
     const onRefresh = useCallback(() => {
@@ -34,7 +27,8 @@ export default function OrdersUnpaid() {
 
 
     const getItem = () => {
-        ServiceOrder.getUnpaid(auth).then(resUnpaid => {
+        console.log("🚀 ~ file: OrdersUnpaid.js ~ line 38 ~ ServiceOrder.getUnpaid ~ auth", reduxAuth)
+        ServiceOrder.getUnpaid(reduxAuth).then(resUnpaid => {
             console.log("🚀 ~ file: OrdersUnpaid.js ~ line 38 ~ ServiceOrder.getUnpaid ~ resUnpaid", resUnpaid)
             if (resUnpaid) {
                 dispatch({ type: 'SET_UNPAID', payload: resUnpaid.items })
@@ -147,7 +141,10 @@ export default function OrdersUnpaid() {
                                     <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}>Subtotal :</Text>
                                     <Text numberOfLines={1} style={[styles.font_16, { fontWeight: 'bold', color: colors.BlueJaja }]}>{item.totalPriceCurrencyFormat}</Text>
                                 </View>
-                                <Button color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('40%') }} style={{ width: Wp('40%'), alignSelf: 'flex-end' }} labelStyle={{ color: colors.White, fontSize: 14 }} uppercase={false} >
+                                <Button onPress={() => {
+                                    dispatch({ type: 'SET_ORDERID', payload: item.orderId })
+                                    navigation.navigate('Midtrans')
+                                }} color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('40%') }} style={{ width: Wp('40%'), alignSelf: 'flex-end' }} labelStyle={{ color: colors.White, fontSize: 14 }} uppercase={false}>
                                     Bayar Sekarang
                                 </Button>
                             </View>

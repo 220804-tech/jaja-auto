@@ -83,8 +83,6 @@ export default function ProductScreen(props) {
                 dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res })
                 let dataSeller = res.store
                 dataSeller.chat = reduxUser.user.uid + dataSeller.uid
-                console.log("🚀 ~ file: ProductScreen.js ~ line 1000 ~ ServiceProduct.productDetail ~ dataSeller", dataSeller)
-                console.log("🚀 ~ file: ProductScreen.js ~ line 87 ~ ServiceProduct.productDetail ~ reduxUser.user.uid", reduxUser.user.uid)
                 dataSeller.id = dataSeller.uid
                 setSeller(dataSeller)
                 setTimeout(() => {

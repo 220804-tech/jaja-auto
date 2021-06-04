@@ -12,20 +12,29 @@ const layout = Dimensions.get('screen').height
 export default function StoreScreen() {
     const navigation = useNavigation();
     const reduxStore = useSelector(state => state.store.store)
+    const reduxUser = useSelector(state => state.user)
+    console.log("🚀 ~ file: StoreScreen.js ~ line 12121 ~ StoreScreen ~ reduxStore", reduxStore.uid)
     const reduxStoreProduct = useSelector(state => state.store.storeProduct)
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
 
     const [status, setStatus] = useState("first")
+    const [seller, setSeller] = useState("")
+
     const [index, setIndex] = useState(0)
 
 
 
     useEffect(() => {
         if (reduxStore) {
-            console.log("🚀 ~ file: StoreScreen.js ~ line 7 ~ StoreScreen ~ reduxCheckout", reduxStore.slug)
+            let dataSeller = {
+                name: reduxStore.name,
+                chat: reduxUser.user.uid + reduxStore.uid,
+                id: reduxStore.id
+            }
+            setSeller(dataSeller)
         }
-    }, [reduxStoreProduct])
+    }, [reduxStoreProduct, reduxStore])
 
     const [routes] = useState([
         { key: 'first', title: 'Halaman Utama' },
@@ -60,8 +69,8 @@ export default function StoreScreen() {
         <SafeAreaView style={styles.container}>
             <StatusBar
                 animated={true}
-                backgroundColor={colors.White}
-                barStyle='dark-content'
+                backgroundColor={colors.BlueJaja}
+                barStyle='light-content'
                 showHideTransition="fade"
             />
             <View style={[styles.appBar, { flex: 0, height: Hp('6.5%'), backgroundColor: colors.White }]}>
@@ -99,7 +108,7 @@ export default function StoreScreen() {
                             </View>
                             : null
                         }
-                        <Button onPress={() => console.log("TEST")} mode="contained" icon="chat" labelStyle={{ fontSize: 12, color: colors.White }} color={colors.BlueJaja} >
+                        <Button onPress={() => navigation.navigate("IsiChat", { data: seller, product: null })} mode="contained" icon="chat" labelStyle={{ fontSize: 12, color: colors.White }} color={colors.BlueJaja} >
                             Chat
                         </Button>
                         {/* <Button mode="contained" icon="plus" labelStyle={{ fontSize: 12 }} >

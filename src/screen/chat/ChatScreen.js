@@ -45,7 +45,6 @@ export default function ChatScreen({ route }) {
                 setMessageList(arr.sort((a, b) => (a.time > b.time ? 1 : -1)).reverse())
 
                 firebaseDatabase().ref("/people/" + data.id).once("value", function (snap) {
-                    console.log("🚀 ~ file: ChatScreen.js ~ line 50 ~ snap", snap)
                     var item = snap.val();
                     if (item != null && item.photo != null) {
                         setesellerImage(item.photo)
@@ -107,8 +106,8 @@ export default function ChatScreen({ route }) {
                     var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
                     console.log("🚀 ~ file: ChatScreen.js ~ line 135 ~ handleSendProduct ~ msgId", msgId)
                     firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
-                    firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: product.name });
-                    firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: product.name, amount: 1 });
+                    firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: product.name, time: new Date().toString() } });
+                    firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: { text: product.name, time: new Date().toString() }, amount: 1 });
                     let fire = firebaseDatabase().ref("/people/" + data.id).limitToLast(20).on("value", async function (snapshot) {
                         let item = await snapshot.val();
                         if (item.token) {
@@ -140,13 +139,12 @@ export default function ChatScreen({ route }) {
     }
 
     const renderRow = ({ item, index }) => {
-        console.log("🚀 ~ file: ChatScreen.js ~ line 145 ~ renderRow ~ index", item)
         return (
             <View style={{ width: Wp("100%"), paddingTop: "2%" }}>
-                {item.date && index > 0 ?
-                    String(messageList[index].date).slice(6, 10) !== messageList[index - 1].date.slice(6, 10) ?
+                {item.date && index && String(messageList[index].date) !== "undefined" > 0 ?
+                    String(messageList[index].date).slice(6, 10) !== String(messageList[index - 1].date).slice(6, 10) ?
                         <View style={{ alignSelf: 'center', marginVertical: '3%' }}>
-                            <Text style={{ fontSize: 18, color: colors.White, fontWeight: '900' }}>{item.date.slice(0, 16)}</Text>
+                            <Text style={{ fontSize: 18, color: colors.White, fontWeight: '900' }}>{String(messageList[index].date).slice(0, 10)}</Text>
                         </View> : null
                     : null
                 }
@@ -467,14 +465,16 @@ export default function ChatScreen({ route }) {
                 </View> : null}
             <ImageBackground source={require('../../assets/images/bgChat.jpg')} style={{ width: '100%', height: '100%' }}>
                 <View style={{ height: product ? Hp("75%") : Hp("87%"), paddingTop: '0.1%' }}>
-                    <FlatList
-                        inverted={-1}
-                        ref={flatlist}
-                        style={{ paddingHorizontal: 10, paddingTop: '0.2%' }}
-                        data={messageList}
-                        renderItem={renderRow}
-                        keyExtractor={(item, index) => String(index)}
-                    />
+                    {messageList && messageList.length ?
+                        <FlatList
+                            inverted={-1}
+                            ref={flatlist}
+                            style={{ paddingHorizontal: 10, paddingTop: '0.2%' }}
+                            data={messageList}
+                            renderItem={renderRow}
+                            keyExtractor={(item, index) => String(index)}
+                        /> : null
+                    }
                 </View>
                 <View
                     style={{

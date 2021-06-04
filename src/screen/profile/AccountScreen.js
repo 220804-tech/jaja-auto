@@ -11,6 +11,7 @@ import { colors, styles as style, Wp, useNavigation, Loading, Hp, Appbar } from 
 
 export default function Lainnya() {
     const reduxAuth = useSelector(state => state.auth.auth)
+    const dispatch = useDispatch()
     const navigation = useNavigation();
     const actionSheetRef = createRef();
     const passwordRef = createRef();
@@ -62,8 +63,10 @@ export default function Lainnya() {
             fetch("https://jaja.id/backend/user/profile", requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    console.log("🚀 ~ file: index.js ~ line 61 ~ getItem ~ result.data", result.data.gender)
                     if (result.status.code === 200) {
+                        EncryptedStorage.setItem('user', JSON.stringify(result.data))
+                        dispatch({ type: 'SET_USER', payload: result.data })
+                        dispatch({ type: 'SET_VERIFIKASI', payload: result.data.isVerified })
                         let image = { "path": result.data.image }
                         setProfile(result.data)
                         settelephone(result.data.phoneNumber)
@@ -181,7 +184,13 @@ export default function Lainnya() {
         });
     }
     const handleUpdate = (date, image) => {
-        if (name !== profile.name || telephone !== profile.phoneNumber || image.path !== profile.image || gender !== profile.gender) {
+        console.log("🚀 ~ file: AccountScreen.js ~ line 195 ~ handleUpdate ~ date", date.split("-").reverse().join("-"))
+        console.log("🚀 ~ file: AccountScreen.js ~ line 195 ~ handleUpdate ~ date", date.split("-").reverse().join("-") === profile.birthDate)
+
+
+        console.log("🚀 ~ file: AccountScreen.js ~ line 195 ~ handleUpdate ~ date", profile.birthDate)
+
+        if (name !== profile.name || telephone !== profile.phoneNumber || image.path !== profile.image || gender !== profile.gender || date.split("-").reverse().join("-") !== profile.birthDate) {
             setshowButton(true)
             console.log(true, "handleUpdate");
         } else {
@@ -202,7 +211,7 @@ export default function Lainnya() {
             "phoneNumber": telephone,
             "email": profile.email,
             "gender": checked === "first" ? "pria" : "wanita",
-            "birthDate": profile.birthDate,
+            "birthDate": date ? date : profile.birthDate,
             "photo": photo.data ? "data:image/jpeg;base64," + photo.data : profile.imageFile
         })
         // console.log("🚀 ~ file: AccountScreen.js ~ line 208 ~ handleSimpan ~ photo && photo.data ? photo.data : profile.imageFile", photo && photo.data ? photo.data : profile.imageFile)
@@ -217,11 +226,11 @@ export default function Lainnya() {
             .then(response => response.text())
             .then(result => {
                 console.log("🚀 ~ file: AccountScreen.js ~ line 219 ~ handleSimpan ~ result", result)
+                setshowButton(false)
                 if (result.status.code === 200) {
                     getItem()
                     setTimeout(() => {
                         setloading(false)
-                        setshowButton(false)
                     }, 500);
                     setTimeout(() => {
                         Alert.alert(
@@ -493,8 +502,8 @@ export default function Lainnya() {
                     <View style={styles.form}>
                         <Text adjustsFontSizeToFit style={styles.formTitle}>Nama Lengkap</Text>
                         <View style={styles.formItem}>
-                            <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{name === "" ? "" : name}</Text>
-                            <Text adjustsFontSizeToFit style={styles.ubah}>{name === "" ? "Tambah" : "Ubah"}</Text>
+                            <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{name ? name : ""}</Text>
+                            <Text adjustsFontSizeToFit style={styles.ubah}>{name ? "Ubah" : "Tambah"}</Text>
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
@@ -506,22 +515,22 @@ export default function Lainnya() {
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
-                {/* <TouchableWithoutFeedback onPress={() => showDatePicker('start')}>
+                <TouchableWithoutFeedback onPress={() => profile.birthDate ? showDatePicker('start') : null}>
                     <View style={styles.form}>
                         <Text adjustsFontSizeToFit style={styles.formTitle}>Tanggal Lahir</Text>
                         <View style={styles.formItem}>
-                            <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{date === null ? "Pilih Tanggal Lahir" : date}</Text>
+                            <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{date ? date : "Pilih Tanggal Lahir"}</Text>
                             {!date ?
                                 <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text>
                                 : null}
                         </View>
                     </View>
-                </TouchableWithoutFeedback> */}
-                <TouchableWithoutFeedback onPress={() => handleEdit("Jenis Kelamin")}>
+                </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => profile.gender ? handleEdit("Jenis Kelamin") : null}>
                     <View style={styles.form}>
                         <Text adjustsFontSizeToFit style={styles.formTitle}>Jenis Kelamin</Text>
                         <View style={styles.formItem}>
-                            <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{gender === null ? "Pilih Jenis Kelamin" : gender == "pria" ? "Laki - Laki" : "Perempuan"}</Text>
+                            <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{gender ? gender == "pria" ? "Laki - Laki" : "Perempuan" : "Pilih Jenis Kelamin"}</Text>
                             {!gender ? <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text> : null}
                         </View>
                     </View>

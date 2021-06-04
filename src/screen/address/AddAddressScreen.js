@@ -84,10 +84,14 @@ export default function AddAddressScreen(props) {
             setalamat(value.alamat_lengkap)
             setalamatGoogle(value.alamat_google)
             let reg = region;
-            console.log("🚀 ~ file: AddAddressScreen.js ~ line 83 ~ useEffect ~ reg", value)
             reg.latitude = Number(value.latitude)
             reg.longitude = Number(value.longitude)
             setRegion(reg)
+            Service.getKelurahan(value.kecamatan_kd).then(res => {
+                console.log("handleSelected -> res", res)
+                setkelurahan(res.kelurahan)
+                setkelurahanApi(res.kelurahan)
+            })
             setView("edit")
         } else {
             setView("add")
@@ -442,7 +446,7 @@ export default function AddAddressScreen(props) {
                                 <View style={styles.form}>
                                     <Text style={[styles.formTitle, { color: kcValue ? colors.BlackGrayScale : colors.Silver }]}>Kelurahan <Text style={{ color: colors.RedDanger }}>*</Text></Text>
                                     <View style={[styles.formItem, { borderBottomColor: colors.Silver }]}>
-                                        <Text style={[styles.formPlaceholder, { color: klColor }]}>{klValue === "" ? "Pilih kelurahan" : klValue}</Text>
+                                        <Text style={[styles.formPlaceholder]}>{klValue === "" ? "Pilih kelurahan" : klValue}</Text>
                                         <Text style={styles.ubah}>Ubah</Text>
                                     </View>
                                 </View>
@@ -624,11 +628,13 @@ export default function AddAddressScreen(props) {
                 </TouchableOpacity>
                 <View style={{ height: Hp('50%'), paddingHorizontal: Wp('2%') }}>
                     <ScrollView style={{ flex: 1 }}>
-                        <FlatList
-                            data={kelurahan.slice(0, 100)}
-                            renderItem={renderKelurahan}
-                            keyExtractor={item => item.kelurahan_id}
-                        />
+                        {kelurahan && kelurahan.length ?
+                            <FlatList
+                                data={kelurahan.slice(0, 100)}
+                                renderItem={renderKelurahan}
+                                keyExtractor={item => item.kelurahan_id}
+                            /> : null
+                        }
                     </ScrollView>
                 </View>
             </ActionSheet>

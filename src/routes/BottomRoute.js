@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, Image } from 'react-native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Home, Feed, Orders, ListChat, Profile } from './Screen'
@@ -6,9 +6,25 @@ import { styles as style } from '../assets/styles/styles'
 import colors from '../assets/colors';
 import Language from '../utils/language/Language';
 import FAIcon from 'react-native-vector-icons/FontAwesome5';
+import database from '@react-native-firebase/database';
+
+import { useDispatch, useSelector } from 'react-redux';
 // import { Language } from '../utils/language/Language' 
 const Tab = createBottomTabNavigator();
 export default function BottomRoute() {
+    const [notif, setNotif] = useState({})
+    const uid = useSelector(state => state.user.user.uid)
+
+    useEffect(() => {
+        const onValueChange = database()
+            .ref('/people/' + uid)
+            .on('value', snapshot => {
+                let result = snapshot.val()
+                console.log('User data: ', result.notif);
+            });
+        return () => database().ref(`/people/${uid}`).off('value', onValueChange);
+
+    }, [])
 
     return (
         <Tab.Navigator initialRouteName="Home" backBehavior='Home' screenOptions={{ headerShown: false }}>
@@ -46,7 +62,8 @@ export default function BottomRoute() {
                     tabBarIcon: ({ size, focused }) => (
                         <View>
                             <FAIcon name="comment-dots" size={20} color={focused ? colors.BlueJaja : "#a1a1a1"} style={{ alignSelf: 'center' }} />
-                            <View style={style.countNotif}><Text style={style.textNotif}>99+</Text></View>
+                            {notif.chat ?
+                                <View style={style.countNotif}><Text style={style.textNotif}>99+</Text></View> : null}
                         </View>
                     )
                 }}

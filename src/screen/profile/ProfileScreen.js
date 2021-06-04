@@ -120,7 +120,7 @@ export default function ProfileScreen(props) {
         :
         <SafeAreaView style={(styles.container, { backgroundColor: colors.BlueJaja })}>
           <View style={styles.column}>
-            <View style={[styles.column, { height: Hp('30%'), }]}>
+            <View style={[styles.column, { height: Hp('33%'), }]}>
               <View style={[styles.appBar, { alignItems: 'flex-start', paddingTop: Hp('2%') }]}>
                 <Text style={[styles.font_16, { fontWeight: 'bold', color: colors.White }]}>Akun Saya</Text>
                 <TouchableOpacity style={style.touchIcon} onPress={handleCart}>
@@ -132,7 +132,7 @@ export default function ProfileScreen(props) {
                 </TouchableOpacity>
               </View>
               <View style={[styles.column, styles.px_2]}>
-                <View style={[styles.row, styles.p_2]}>
+                <View style={[styles.row, styles.p_2, styles.mb_4]}>
                   <View style={{ height: Wp('17%'), width: Wp('17%'), backgroundColor: colors.Silver, borderRadius: 100, marginRight: '2%' }}>
                     <Image source={{ uri: reduxProfile.image }} style={{ width: '100%', height: '100%', borderRadius: 100 }} />
                   </View>
@@ -160,7 +160,7 @@ export default function ProfileScreen(props) {
                 </View>
               </View>
             </View>
-            <View style={{ flex: 0, flexDirection: 'column', zIndex: 9999, backgroundColor: colors.White, height: Hp('87%'), marginTop: Hp('-1%'), borderTopRightRadius: 21, borderTopLeftRadius: 21, paddingHorizontal: '4%', paddingTop: '2%' }}>
+            <View style={{ flex: 0, flexDirection: 'column', zIndex: 9999, backgroundColor: colors.White, height: Hp('67%'), marginTop: Hp('-1%'), borderTopRightRadius: 21, borderTopLeftRadius: 21, paddingHorizontal: '4%', paddingTop: '2%' }}>
               <TouchableOpacity style={[styles.row, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate('Account')}>
                 <FAIcon name="user" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
                 <Text style={style.title}> Profile </Text>
@@ -172,19 +172,19 @@ export default function ProfileScreen(props) {
                   <Text style={style.title}>  Alamat </Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={handleCart}>
+              {/* <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={handleCart}>
                 <View style={{ flexDirection: 'row' }}>
                   <FAIcon name="user" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
                   <Text style={style.title}> Favorit </Text>
                 </View>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               {/* <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={() => nva}>
               <View style={{ flexDirection: 'row' }}>
                 <FAIcon name="bars" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
                 <Text style={style.title}> Pesanan Saya </Text>
               </View>
             </TouchableOpacity> */}
-              <TouchableOpacity style={{ borderBottomWidth: 0.3, flexDirection: 'row', justifyContent: 'flex-start' }} onPress={handleCart}>
+              <TouchableOpacity style={{ borderBottomWidth: 0.3, flexDirection: 'row', justifyContent: 'flex-start' }} onPress={() => navigation.navigate('CustomerService')}>
                 <FAIcon name="cog" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
                 <Text style={style.title}> Pusat Bantuan </Text>
               </TouchableOpacity>

@@ -85,9 +85,9 @@ export default function SearchScreen() {
         newArr.push(keyword)
         EncryptedStorage.getItem('historySearching').then(res => {
             if (res) {
-                let data = JSON.parse(res);
-                data.push(keyword)
-                EncryptedStorage.setItem("historySearching", JSON.stringify(data))
+                const HashSet = new Set(JSON.parse(res))
+                HashSet.add(keyword)
+                EncryptedStorage.setItem("historySearching", JSON.stringify(Array.from(HashSet)))
             }
         })
         sethistorySearch(newArr)
@@ -109,7 +109,7 @@ export default function SearchScreen() {
             redirect: 'follow'
         };
 
-        fetch(`https://jaja.id/backend/product/search/result?page=1&limit=20&keyword=${text}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
+        fetch(`https://jaja.id/backend/product/search/result?page=1&limit=10&keyword=${text}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 dispatch({ type: 'SET_SEARCH', payload: result.data.items })

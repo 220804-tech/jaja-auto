@@ -9,6 +9,7 @@ import database from '@react-native-firebase/database';
 
 export default function SplashScreen() {
     const reduxDashboard = useSelector(state => state.dashboard)
+    
     const dispatch = useDispatch()
 
     let navigation = useNavigation()

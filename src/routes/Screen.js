@@ -27,8 +27,10 @@ import AddReview from '../screen/review/AddReview'
 import OrderDelivery from '../screen/order/OrderDeliveryScreen'
 import Account from '../screen/profile/AccountScreen';
 import ForgotPassword from '../screen/password/ForgotPasswordScreen'
+import CustomerService from '../screen/customerService/CustomerServiceScreen'
 
 export {
     Home, Product, ListChat, Chat, Orders, Profile, Login, Register, Splash, Search, Trolley, ProductSearch, Checkout, VerifikasiEmail, Account,
-    Address, EditAddress, Category, AddAddress, Store, Midtrans, ForgotPassword, Feed, Review, ZoomReview, OrderDetails, AddReview, OrderDelivery
+    Address, EditAddress, Category, AddAddress, Store, Midtrans, ForgotPassword, Feed, Review, ZoomReview, OrderDetails, AddReview, OrderDelivery,
+    CustomerService
 };

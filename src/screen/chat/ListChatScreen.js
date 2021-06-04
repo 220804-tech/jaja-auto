@@ -28,34 +28,37 @@ export default function ListChat() {
     const renderItem = ({ item }) => {
         console.log("🚀 ~ file: ListChatScreen.js ~ line 29 ~ renderItem ~ item", item)
         return (
-            <TouchableOpacity
-                onPress={() => navigation.navigate("IsiChat", { data: item, newData: null })}
-                style={{
-                    paddingHorizontal: '1%',
-                    paddingVertical: '4%',
-                    marginVertical: 3,
-                    borderBottomColor: colors.Silver,
-                    borderBottomWidth: 0.5,
-                    width: '95%',
-                    justifyContent: 'center',
-                    alignSelf: 'center',
-                    alignItems: 'flex-start'
+            <>
+                {item.message && item.message.text ?
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate("IsiChat", { data: item, newData: null })}
+                        style={{
+                            paddingHorizontal: '1%',
+                            paddingVertical: '4%',
+                            marginVertical: 3,
+                            borderBottomColor: colors.Silver,
+                            borderBottomWidth: 0.5,
+                            width: '95%',
+                            justifyContent: 'center',
+                            alignSelf: 'center',
+                            alignItems: 'flex-start'
 
-                }}
-            >
-                <View style={[style.row_between_center, { width: '100%' }]}>
-                    <View style={style.column}>
-                        <Text style={{ fontSize: 14, color: colors.BlackGrayScale, marginBottom: '1%' }}>{item.name}</Text>
-                        <Text style={{ fontSize: 12, color: item.amount && item.amount > 0 ? colors.BlackGrayScale : colors.Silver }}>{item.message}</Text>
-                    </View>
-                    {item && item.amount ?
-                        <View style={{ padding: '1%', backgroundColor: colors.YellowJaja, borderRadius: 100, height: 25, width: 25, justifyContent: 'center', alignItems: 'center' }}>
-                            <Text style={{ fontSize: 12, backgroundColor: colors.YellowJaja, color: colors.BlackGrayScale }}>{item.amount}</Text>
+                        }}
+                    >
+                        <View style={[style.row_between_center, { width: '100%' }]}>
+                            <View style={style.column}>
+                                <Text style={{ fontSize: 14, color: colors.BlackGrayScale, marginBottom: '1%' }}>{item.name}</Text>
+                                <Text style={{ fontSize: 12, color: item.amount && item.amount > 0 ? colors.BlackGrayScale : colors.Silver }}>{item.message.text}</Text>
+                            </View>
+                            {item && item.amount ?
+                                <View style={{ padding: '1%', backgroundColor: colors.YellowJaja, borderRadius: 100, height: 25, width: 25, justifyContent: 'center', alignItems: 'center' }}>
+                                    <Text style={{ fontSize: 12, backgroundColor: colors.YellowJaja, color: colors.BlackGrayScale }}>{item.amount}</Text>
+                                </View>
+                                : null
+                            }
                         </View>
-                        : null
-                    }
-                </View>
-            </TouchableOpacity>
+                    </TouchableOpacity> : null}
+            </>
         );
     };
 
