@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Image, TouchableOpacity, BackHandler, Alert, StatusBar } from 'react-native';
+import { SafeAreaView, Text, View, StyleSheet, Image, TouchableOpacity, BackHandler, Alert, StatusBar } from 'react-native';
 import { TextInput, Button, Paragraph } from 'react-native-paper';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
-import { SafeAreaView } from 'react-native';
 import { colors, Loading, Wp, Hp, styles, Appbar } from '../../export';
 export default class VerifikasiEmail extends Component {
     constructor(props) {
@@ -11,7 +10,7 @@ export default class VerifikasiEmail extends Component {
             step1: false,
             step2: true,
             code: '',
-            timeOut: 2,
+            timeOut: 15,
             button: false,
             password: '',
             confirmPassword: '',
@@ -72,7 +71,7 @@ export default class VerifikasiEmail extends Component {
                         this.setState({
                             step1: false,
                             step2: true,
-                            timeOut: 10,
+                            timeOut: 60,
                             button: false,
                         });
                         setTimeout(() =>
@@ -94,12 +93,36 @@ export default class VerifikasiEmail extends Component {
                     }, 50);
                 } else {
                     this.setState({ loading: false })
-                    setTimeout(() => alert("Error with status code : " + result.status.code), 100);
+                    setTimeout(() => {
+                        Alert.alert(
+                            "Jaja.id",
+                            result.status.message + " => " + result.status.code, [
+                            {
+                                text: "TUTUP",
+                                onPress: () => console.log("Pressed"),
+                                style: "cancel"
+                            }
+                        ],
+                            { cancelable: false }
+                        )
+                    }, 100);
                 }
             })
             .catch(error => {
                 this.setState({ loading: false })
-                setTimeout(() => alert("Code 4 : " + JSON.stringify(error)), 100);
+                setTimeout(() => {
+                    Alert.alert(
+                        "Jaja.id",
+                        JSON.stringify(error), [
+                        {
+                            text: "TUTUP",
+                            onPress: () => console.log("Pressed"),
+                            style: "cancel"
+                        }
+                    ],
+                        { cancelable: false }
+                    )
+                }, 100);
             });
     };
 

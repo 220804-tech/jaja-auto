@@ -13,17 +13,15 @@ export default function StoreScreen() {
     const navigation = useNavigation();
     const reduxStore = useSelector(state => state.store.store)
     const reduxUser = useSelector(state => state.user)
-    console.log("🚀 ~ file: StoreScreen.js ~ line 12121 ~ StoreScreen ~ reduxStore", reduxStore.uid)
+    const reduxAuth = useSelector(state => state.auth.auth)
+
+    console.log("🚀 ~ file: StoreScreen.js ~ line 12121 ~ StoreScreen ~ reduxStore", reduxAuth)
     const reduxStoreProduct = useSelector(state => state.store.storeProduct)
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
-
     const [status, setStatus] = useState("first")
     const [seller, setSeller] = useState("")
-
     const [index, setIndex] = useState(0)
-
-
 
     useEffect(() => {
         if (reduxStore) {
@@ -60,6 +58,13 @@ export default function StoreScreen() {
                     dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
                 }
             })
+        }
+    }
+    const handleChat = () => {
+        if (reduxAuth) {
+            navigation.navigate("IsiChat", { data: seller, product: null })
+        } else {
+            navigation.navigate('Login', { navigate: "Store" })
         }
     }
 
@@ -108,7 +113,7 @@ export default function StoreScreen() {
                             </View>
                             : null
                         }
-                        <Button onPress={() => navigation.navigate("IsiChat", { data: seller, product: null })} mode="contained" icon="chat" labelStyle={{ fontSize: 12, color: colors.White }} color={colors.BlueJaja} >
+                        <Button onPress={handleChat} mode="contained" icon="chat" labelStyle={{ fontSize: 12, color: colors.White }} color={colors.BlueJaja} >
                             Chat
                         </Button>
                         {/* <Button mode="contained" icon="plus" labelStyle={{ fontSize: 12 }} >

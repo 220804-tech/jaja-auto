@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { SafeAreaView, Text, View, TouchableOpacity, ScrollView, StyleSheet, ToastAndroid, FlatList, Image, RefreshControl } from "react-native";
 import { Paragraph, Switch } from "react-native-paper";
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
-import { colors, styles as style, Wp, Hp, ServiceUser, ServiceCheckout } from '../../export'
+import { colors, styles as style, Wp, Hp, ServiceUser, ServiceCheckout, Loading } from '../../export'
 import { Appbar, Button } from 'react-native-paper';
 import * as Service from '../../services/Address';
 import { useDispatch, useSelector } from 'react-redux'
@@ -17,7 +17,7 @@ export default function index(props) {
     const [count, setcount] = useState(0)
     const [auth, setAuth] = useState(0)
     const [status, setStatus] = useState("Profile")
-
+    const [loading, setLoading] = useState(false)
     useEffect(() => {
         setRefreshControl(false)
         getLocation()
@@ -110,11 +110,11 @@ export default function index(props) {
     }
 
     const handleChangePrimary = (addressId) => {
+        setRefreshControl(true)
         var myHeaders = new Headers();
         myHeaders.append("Authorization", auth);
         myHeaders.append("Content-Type", "application/json");
         console.log("🚀 ~ file: AddressScreen.js ~ line 90 ~ handleChangePrimary ~ addressId", addressId)
-
         console.log("🚀 ~ file: AddressScreen.js ~ line 96 ~ handleChangePrimary ~ auth", auth)
         var raw = JSON.stringify({
             "addressId": addressId
@@ -130,7 +130,11 @@ export default function index(props) {
         fetch("https://jaja.id/backend/user/changePrimaryAddress", requestOptions)
             .then(response => response.json())
             .then(result => {
+                setRefreshControl(false)
                 if (result.status.code === 200) {
+                    setTimeout(() => {
+                        navigation.goBack()
+                    }, 2000);
                     ServiceUser.getProfile(auth).then(res => {
                         if (res) {
                             EncryptedStorage.setItem('user', JSON.stringify(res))
@@ -140,17 +144,48 @@ export default function index(props) {
                                 ServiceCheckout.getCheckout(auth).then(reps => {
                                     if (reps) {
                                         dispatch({ type: 'SET_CHECKOUT', payload: reps })
-                                        navigation.goBack()
+                                        setTimeout(() => {
+                                            navigation.goBack()
+                                        }, 1000);
+                                    }
+                                })
+                                ServiceCheckout.getShipping(auth).then(res => {
+                                    console.log("🚀 ~ file: TrolleyScreen.js ~ line 161 ~ ServiceCheckout.getShipping ~ res", res)
+                                    if (res) {
+                                        dispatch({ type: 'SET_SHIPPING', payload: res })
                                     }
                                 })
                             }
                         }
                     })
+                } else {
+                    Alert.alert(
+                        "Jaja.id",
+                        String(result.status.message) + " => " + String(result.status.code),
+                        [
+                            {
+                                text: "TUTUP",
+                                onPress: () => console.log("Cancel Pressed"),
+                                style: "cancel"
+                            },
+                        ]
+                    );
                 }
-                console.log("🚀 ~ file: AddressScreen.js ~ line 97 ~ handleChangePrimary ~ result", result)
-
             })
-            .catch(error => console.log('error', error));
+            .catch(error => {
+                setLoading(false)
+                Alert.alert(
+                    "Jaja.id",
+                    JSON.stringify(error),
+                    [
+                        {
+                            text: "TUTUP",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                        },
+                    ]
+                );
+            })
     }
 
     const renderItem = ({ item, index }) => {
@@ -192,6 +227,7 @@ export default function index(props) {
     }
     return (
         <SafeAreaView style={styles.container}>
+            {loading ? <Loading /> : null}
             <Appbar.Header style={style.appBar}>
                 <View style={style.row_start_center}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>

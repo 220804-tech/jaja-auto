@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import CheckBox from '@react-native-community/checkbox';
-import { View, Text, SafeAreaView, Image, TouchableOpacity, ToastAndroid, FlatList, StatusBar } from 'react-native'
+import { View, Text, SafeAreaView, Image, TouchableOpacity, ToastAndroid, FlatList, StatusBar, Alert } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { styles, Hp, Wp, Language, colors, useNavigation, Appbar, Ps, ServiceCart, Loading, ServiceCheckout, useFocusEffect } from '../../export'
 import { Button } from 'react-native-paper'
@@ -189,7 +189,7 @@ export default function TrolleyScreen() {
             {reduxCart.cart.items ?
                 <FlatList
                     data={reduxCart.cart.items}
-                    contentContainerStyle={{ flex: 0, flexDirection: 'column', justifyContent: 'center', width: '100%' }}
+                    contentContainerStyle={{ flex: 0, flexDirection: 'column', justifyContent: 'center', width: '100%', paddingBottom: Hp('7%') }}
                     keyExtractor={(item, index) => String(index)}
                     renderItem={({ item, index }) => {
                         let idParent = item.store.id;
@@ -288,7 +288,7 @@ export default function TrolleyScreen() {
                 </View>
             }
             <View style={{ position: 'absolute', bottom: 0, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
-                <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '3%' }}>
+                <View style={{ width: '50%', justifyContent: 'flex-end', paddingHorizontal: '3%', paddingLeft: '5%', paddingVertical: '1%' }}>
                     <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}>Subtotal :</Text>
                     <Text numberOfLines={1} style={[styles.font_20, { fontWeight: 'bold', color: colors.BlueJaja }]}>{reduxCart.cart.totalCartCurrencyFormat}</Text>
                 </View>

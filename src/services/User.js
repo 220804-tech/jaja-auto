@@ -45,9 +45,31 @@ export async function getProfile(auth) {
             if (result.status.code === 200) {
                 return result.data;
             } else {
-                ToastAndroid.show(result.status.code + " " + result.status.message, ToastAndroid.LONG, ToastAndroid.CENTER)
+                Alert.alert(
+                    "Jaja.id",
+                    String(result.status.message) + " => " + String(result.status.code),
+                    [
+                        {
+                            text: "TUTUP",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                        },
+                    ]
+                );
                 return null
             }
         })
-        .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+        .catch(error => {
+            Alert.alert(
+                "Jaja.id",
+                JSON.stringify(error),
+                [
+                    {
+                        text: "TUTUP",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                    },
+                ]
+            );
+        });
 }

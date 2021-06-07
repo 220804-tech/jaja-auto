@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, SafeAreaView, Image, StyleSheet } from 'react-native'
+import { View, Text, SafeAreaView, Image, StyleSheet, Alert, Animated, Easing, TouchableOpacity } from 'react-native'
 import MidtransComponent from '../../components/Midtrans/MidtransComponent'
 import { Loading, styles, Wp, Hp, colors, useNavigation, ServiceCheckout, Appbar } from '../../export'
 import { WebView } from 'react-native-webview';
@@ -15,6 +15,7 @@ export default function MidtransScreen() {
     const reduxOrderId = useSelector(state => state.checkout.orderId)
     const [view, setView] = useState("")
     const [text, setText] = useState("Sedang Menghubungkan..")
+    const [spinValue, setspinValue] = useState(new Animated.Value(0))
 
     useEffect(() => {
         setText("Sedang Menghubungkan..")
@@ -50,9 +51,17 @@ export default function MidtransScreen() {
         }
     }
 
+    const spin = spinValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '360deg']
+    })
+
+    const handleCheck = () => {
+
+    }
     return (
         <SafeAreaView style={styles.container}>
-            <Appbar back={true} title="Pilih Pembayaran" />
+            <Appbar back={true} title="Pilih Pembayaran" route="Pesanan" />
             {loading ?
                 <View style={{
                     justifyContent: "center",
@@ -72,26 +81,69 @@ export default function MidtransScreen() {
                 view === "404 Not Found" || !view ?
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.White }}>
                         <Paragraph style={style.textJajakan}>{view === "404 Not Found" ? "404" : view ? view.slice(0, 4) : view}</Paragraph>
-
                         <Image
                             style={style.iconMarket}
                             source={require('../../assets/ilustrations/empty.png')}
                         />
-
                         <Paragraph style={style.textJajakan}>Aduh..<Text style={style.textCenter}> sepertinya ada masalah</Text></Paragraph>
                         <Button onPress={() => navigation.goBack()} mode="contained" labelStyle={{ color: colors.White }} color={colors.BlueJaja}>Kembali</Button>
                     </View>
                     :
-                    <WebView
-                        style={{ alignSelf: 'stretch' }}
-                        javaScriptEnabled={true}
-                        allowsFullscreenVideo={true}
-                        scalesPageToFit={true}
-                        originWhitelist={['*']}
-                        source={{ html: view }}
-                    />
+                    <>
+                        <WebView
+                            style={{ alignSelf: 'stretch' }}
+                            javaScriptEnabled={true}
+                            allowsFullscreenVideo={true}
+                            scalesPageToFit={true}
+                            originWhitelist={['*']}
+                            source={{ html: view }}
+                        />
+                        {/* <View style={{ position: 'absolute', width: Wp('100%'), height: Hp('100%'), justifyContent: 'flex-end', alignItems: 'center', paddingBottom: Hp('10%') }}>
+
+                            <TouchableOpacity
+                                style={{
+                                    backgroundColor: colors.White, borderRadius: 100, width: Wp('13%'), height: Wp('13%'), justifyContent: 'center', alignItems: 'center', elevation: 10
+                                }}
+                                onPress={() => {
+                                    Animated.timing(
+                                        spinValue,
+                                        {
+                                            toValue: 5,
+                                            duration: 5000,
+                                            easing: Easing.linear,
+                                            useNativeDriver: true
+                                        }
+                                    ).start()
+                                    setTimeout(() => {
+                                        Animated.timing(
+                                            spinValue,
+                                            {
+                                                toValue: 0,
+                                                duration: 0,
+                                                easing: Easing.linear,
+                                                useNativeDriver: true
+                                            }
+                                        ).start()
+                                    }, 5000);
+                                }}>
+
+                                <Animated.Image
+                                    style={{ transform: [{ rotate: spin }], width: '70%', height: '70%', tintColor: colors.BlueJaja, backgroundColor: colors.White }}
+                                    source={require('../../assets/icons/refresh.png')} />
+                            </TouchableOpacity>
+                        </View> */}
+                        <View style={{ position: 'absolute', bottom: 0, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
+                            <View style={{ width: '50%', justifyContent: 'flex-end', paddingHorizontal: '3%', paddingLeft: '5%', paddingVertical: '1%' }}>
+                                <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}>Subtotal :</Text>
+                                <Text numberOfLines={1} style={[styles.font_20, { fontWeight: 'bold', color: colors.BlueJaja }]}>ASA</Text>
+                            </View>
+                            <Button onPress={handleCheck} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained">
+                                Checkout
+                            </Button>
+                        </View>
+                    </>
             }
-        </SafeAreaView>
+        </SafeAreaView >
     )
 }
 const style = StyleSheet.create({

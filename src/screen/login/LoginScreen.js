@@ -18,8 +18,6 @@ export default function LoginScreen(props) {
     let passwordRef = createRef();
     const [secure, setSecure] = useState(true)
     const [focus, setfocus] = useState("")
-    // const [user, setUser] = useState("")
-
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [alertPassword, setalertPassword] = useState("")
@@ -29,24 +27,20 @@ export default function LoginScreen(props) {
 
 
     useEffect(() => {
-        if (props) {
-            console.log("🚀 ~ file: LoginScreen.js ~ line 23 ~ useEffect ~ props", props.navigate)
-            if (props.navigate) {
-                setNavigate(props.navigate)
-                console.log("fcucck")
-            }
+        if (props.route.params && props.route.params.navigate) {
+            setNavigate(props.route.params.navigate)
+
         }
         GoogleSignin.configure({
             webClientId: "284366139562-tnj3641sdb4ia9om7bcp25vh3qn5vvo8.apps.googleusercontent.com",
             offlineAccess: true
         });
-
-        console.log("🚀 ~ file: LoginScreen.js ~ line 42 ~ useEffect ~ GoogleSignin.isSignedIn()", GoogleSignin.isSignedIn())
         if (GoogleSignin.isSignedIn()) {
             console.log("keluar");
             signOut()
         }
-    }, [props])
+    }, [props.route.params])
+
     const signOut = async () => {
         try {
             await GoogleSignin.revokeAccess();
@@ -121,28 +115,42 @@ export default function LoginScreen(props) {
                 .then(response => response.json())
                 .then(result => {
                     console.log("🚀 ~ file: LoginScreen.js ~ line 58 ~ handleSubmit ~ result", result)
-                    if (result.status.code == 200) {
+                    if (result.status.code === 200) {
                         EncryptedStorage.setItem("token", JSON.stringify(result.data))
-
                         handleUser(result.data)
+                        dispatch({ type: 'SET_AUTH', payload: result.data })
 
-                        setTimeout(() => {
-                            dispatch({ type: 'SET_AUTH', payload: result.data })
-                        }, 2000);
                         console.log("🚀 ~ file: LoginScreen.js ~ line 82 ~ handleSubmit ~  props", props)
-                    }
-                    else if (result.status.code === 400 || result.status.code === 404) {
-                        setLoading(false)
-                        setAlertText('Email atau password anda salah!')
+                    } else if (result.status.code === 400 || result.status.code === 404) {
+                        if (result.status.message === "account has not been activated") {
+                            ToastAndroid.show("Akun anda belum diverifikasi", ToastAndroid.LONG, ToastAndroid.CENTER)
+                            navigation.navigate('VerifikasiEmail', { email: email })
+                        } else {
+                            Alert.alert(
+                                "Jaja.id",
+                                String(result.status.message) + " => " + result.status.code,
+                                [
+                                    { text: "TUTUP", onPress: () => console.log("OK Pressed") }
+                                ]
+                            )
+                            setLoading(false)
+                            setAlertText('Email atau password anda salah!')
+                        }
                     }
                 })
                 .catch(error => {
                     console.log("🚀 ~ file: LoginScreen.js ~ line 77 ~ handleSubmit ~ error", error.name)
                     CheckSignal().then(res => {
-                        if (res.connect == false) {
+                        if (res.connect === false) {
                             ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda", ToastAndroid.LONG, ToastAndroid.CENTER)
                         } else {
-                            ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)
+                            Alert.alert(
+                                "Jaja.id",
+                                String(error),
+                                [
+                                    { text: "OK", onPress: () => console.log("OK Pressed") }
+                                ]
+                            )
                         }
 
                     })
@@ -193,10 +201,13 @@ export default function LoginScreen(props) {
                         }
                     })
                     getOrders(data)
+                    console.log("🚀 ~ file: LoginScreen.js ~ line 206 ~ handleUser ~ navigate", navigate)
                     if (navigate) {
-                        navigation.navigate(navigate);
-                    } else {
+                        // navigation.navigate(navigate);
+                        navigation.setParams({ 'navigate': null });
                         navigation.goBack();
+                        setNavigate("")
+                    } else {
                     }
                 } catch (error) {
                     ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)

@@ -3,7 +3,7 @@
 
 
 import React, { useEffect, useState, createRef, useRef, useCallback } from 'react'
-import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, Alert, StatusBar, FlatList, ToastAndroid, TextInput } from 'react-native'
+import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, Alert, StatusBar, FlatList, ToastAndroid, TextInput, RefreshControl } from 'react-native'
 import { Appbar, colors, styles, Wp, Hp, useNavigation, ServiceCheckout, Loading, ServiceVoucher, useFocusEffect } from '../../export'
 import { Button } from 'react-native-paper'
 import ActionSheet from "react-native-actions-sheet";
@@ -17,25 +17,17 @@ export default function checkoutScreen() {
     const flatlistRef = useRef(null);
     const dispatch = useDispatch();
     const reduxCheckout = useSelector(state => state.checkout.checkout)
-    const reduxShipping = useSelector(state => state.checkout.shipping)
-    const redux = useSelector(state => state.user.user)
-    console.log("🚀 ~ file: CheckoutScreen.js ~ line 23 ~ checkoutScreen ~ redux", redux.di)
+    console.log("🚀 ~ file: CheckoutScreen.js ~ line 20 ~ checkoutScreen ~ reduxCheckout", reduxCheckout.dispacth)
 
-    const reduxCount = useSelector(state => state.checkout.count)
+
+    const reduxAuth = useSelector(state => state.auth.auth)
+    const reduxShipping = useSelector(state => state.checkout.shipping)
+    const [refreshControl, setRefreshControl] = useState(false)
 
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const actionSheetVoucher = createRef();
 
     const actionSheetDelivery = createRef();
-
-    const [data, setData] = useState([]);
-
-
-    const [modalVisible, setModalVisible] = useState(false);
-    const [voucherPressed, setvoucherPressed] = useState({})
-    const [listvoucherPressed, setlistvoucherPressed] = useState([])
-
-    const [shippingPressed, setshippingPressed] = useState({})
     const [storePressed, setstorePressed] = useState({})
 
     const [loading, setLoading] = useState(false)
@@ -62,9 +54,9 @@ export default function checkoutScreen() {
     const [rangeDate, setrangeDate] = useState([])
     const [listMonth, setlistMonth] = useState(["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "September", "Desember"])
     useEffect(() => {
+        setRefreshControl(false)
         setLoad(false)
         setLoading(false)
-        setModalVisible(false)
         EncryptedStorage.getItem('token').then(res => {
             if (res) {
                 let x = JSON.parse(res);
@@ -256,13 +248,13 @@ export default function checkoutScreen() {
                 .then(result => {
                     console.log("🚀 ~ file: CheckoutScreen.js ~ line 207 ~ handleClaimVoucher ~ result", result.status)
                     if (result.status.code === 200) {
-                        ServiceCheckout.getCheckout(auth).then(res => {
+                        ServiceCheckout.getCheckout(reduxAuth).then(res => {
+                            setTimeout(() => setloadAs(false), 500);
                             if (res) {
                                 // setCount(count + 1)
                                 setvoucherOpen('store')
                                 setVouchers(res.cart[indexStore].voucherStore)
                                 dispatch({ type: 'SET_CHECKOUT', payload: res })
-                                setTimeout(() => setloadAs(false), 500);
                             } else {
 
                             }
@@ -312,18 +304,17 @@ export default function checkoutScreen() {
             fetch("https://jaja.id/backend/voucher/claimVoucherJaja", requestOptions)
                 .then(response => response.json())
                 .then(result => {
+                    setTimeout(() => setloadAs(false), 500);
                     if (result.status.code === 200) {
                         ServiceCheckout.getCheckout(auth).then(res => {
                             if (res) {
                                 // setCount(count + 1)
-                                setvoucherOpen('store')
+                                setvoucherOpen('jaja')
                                 setVouchers(res.voucherJaja)
                                 dispatch({ type: 'SET_CHECKOUT', payload: res })
-                                setTimeout(() => setloadAs(false), 500);
                             }
                         })
                     } else {
-                        setloadAs(false)
                         setTimeout(() => {
                             Alert.alert(
                                 "Jaja.id",
@@ -392,11 +383,16 @@ export default function checkoutScreen() {
             .catch(error => setLoad(false) & ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER))
     }
 
-    useFocusEffect(
-        useCallback(() => {
-
-        }, [reduxShipping, reduxCheckout]),
-    );
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         ServiceCheckout.getShipping(auth).then(res => {
+    //             console.log("🚀 ~ file: TrolleyScreen.js ~ line 161 ~ ServiceCheckout.getShipping ~ res", res)
+    //             if (res) {
+    //                 dispatch({ type: 'SET_SHIPPING', payload: res })
+    //             }
+    //         })
+    //     }, [reduxShipping, reduxCheckout]),
+    // );
 
 
     const handleConfirmDate = (date) => {
@@ -442,6 +438,7 @@ export default function checkoutScreen() {
     }
     const checkedValue = (index) => {
         console.log("🚀 ~ file: CheckoutScreen.js ~ line 183 ~ checkedValue ~ checkedValue", index)
+        console.log("🚀 ~ file: CheckoutScreen.js ~ line 446 ~ checkedValue ~ reduxShipping.length", reduxShipping.length)
         if (reduxShipping.length) {
             handleListDate(index)
         } else {
@@ -510,13 +507,25 @@ export default function checkoutScreen() {
                                         dispatch({ type: 'SET_ORDERID', payload: result.data })
                                         navigation.navigate("Midtrans", { data: result.data })
                                     } else {
-                                        ToastAndroid.show(result.status.message + " " + result.status.code, ToastAndroid.LONG, ToastAndroid.CENTER)
+                                        Alert.alert(
+                                            "Jaja.id",
+                                            result.status.message + " " + result.status.code,
+                                            [
+                                                {
+                                                    text: "TUTUP",
+                                                    onPress: () => console.log("Cancel Pressed"),
+                                                    style: "cancel"
+                                                }
+                                            ]
+                                        )
                                     }
                                     setTimeout(() => {
                                         setLoad(false)
                                     }, 2000);
                                 })
-                                .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER) & setLoad(false))
+                                .catch(error => {
+                                    ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER) & setLoad(false)
+                                })
                         }, 250);
 
                     }
@@ -526,6 +535,27 @@ export default function checkoutScreen() {
         );
 
     }
+    const onRefresh = useCallback(() => {
+        setRefreshControl(true)
+        ServiceCheckout.getCheckout(reduxAuth).then(res => {
+            if (res) {
+                dispatch({ type: 'SET_CHECKOUT', payload: res })
+                ToastAndroid.show("Updated", ToastAndroid.LONG, ToastAndroid.CENTER)
+                setTimeout(() => {
+                    setRefreshControl(false)
+                }, 2000);
+            }
+        })
+        ServiceCheckout.getShipping(reduxAuth).then(res => {
+            if (res) {
+                dispatch({ type: 'SET_SHIPPING', payload: res })
+            }
+        })
+        setTimeout(() => {
+            setRefreshControl(false)
+        }, 5000);
+    }, []);
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -539,7 +569,10 @@ export default function checkoutScreen() {
             {load ? <Loading /> : null}
             {Object.keys(reduxCheckout).length == 0 ? <Loading /> : null}
             {/* {loading ? <Loading /> : */}
-            <ScrollView contentContainerStyle={{ flex: 0, flexDirection: 'column', paddingBottom: Hp('7%') }}>
+            <ScrollView contentContainerStyle={{ flex: 0, flexDirection: 'column', paddingBottom: Hp('7%') }}
+                refreshControl={
+                    <RefreshControl refreshing={refreshControl} onRefresh={onRefresh} />
+                }>
                 <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                     <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
                         <Image style={[styles.icon_25, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/google-maps.png')} />
@@ -561,7 +594,7 @@ export default function checkoutScreen() {
                         <View style={[styles.column, styles.p_3]}>
                             <View style={styles.row_between_center}>
                                 <Text numberOfLines={1} style={[styles.font_14]}>Masukkan Alamat Baru</Text>
-                                <TouchableOpacity onPress={() => navigation.navigate('Address')}>
+                                <TouchableOpacity onPress={() => navigation.navigate('Address', { data: "checkout" })}>
                                     <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Tambah</Text>
                                 </TouchableOpacity>
                             </View>
@@ -652,58 +685,63 @@ export default function checkoutScreen() {
                                 }
 
 
-                                <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                                    <Image style={[styles.icon_25, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/vehicle-yellow.png')} />
-                                    <Text style={[styles.font_16, { fontWeight: 'bold', color: colors.BlueJaja }]}>Metode Pengiriman</Text>
-                                </View>
-                                {item.shippingSelected.name ?
-                                    <TouchableOpacity onPress={() => {
-                                        checkedValue(idxStore)
-                                        setstorePressed(item.store)
-                                        setindexStore(idxStore)
-                                    }}
-                                        style={[styles.column, styles.p_3, { width: '100%' }]}>
-                                        <View style={styles.row_between_center}>
-                                            <View style={[styles.column_between_center, { alignItems: 'flex-start' }]}>
-                                                <Text numberOfLines={1} style={[styles.font_14]}>{item.shippingSelected.name}</Text>
-                                                <Text numberOfLines={1} style={[styles.font_12]}>Regular</Text>
-                                                <Text numberOfLines={1} style={[styles.font_12, { fontStyle: 'italic' }]}>Estimasi {item.shippingSelected.etdText}</Text>
+                                {reduxCheckout.address && Object.keys(reduxCheckout.address).length ?
+                                    <>
+                                        <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
+                                            <Image style={[styles.icon_25, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/vehicle-yellow.png')} />
+                                            <Text style={[styles.font_16, { fontWeight: 'bold', color: colors.BlueJaja }]}>Metode Pengiriman</Text>
+                                        </View>
+                                        {item.shippingSelected.name ?
+                                            <TouchableOpacity onPress={() => {
+                                                console.log("cok")
+                                                checkedValue(idxStore)
+                                                setstorePressed(item.store)
+                                                setindexStore(idxStore)
+                                            }}
+                                                style={[styles.column, styles.p_3, { width: '100%' }]}>
+                                                <View style={styles.row_between_center}>
+                                                    <View style={[styles.column_between_center, { alignItems: 'flex-start' }]}>
+                                                        <Text numberOfLines={1} style={[styles.font_14]}>{item.shippingSelected.name}</Text>
+                                                        <Text numberOfLines={1} style={[styles.font_12]}>Regular</Text>
+                                                        <Text numberOfLines={1} style={[styles.font_12, { fontStyle: 'italic' }]}>Estimasi {item.shippingSelected.etdText}</Text>
 
-                                            </View>
-                                            <View style={[styles.column_between_center, { alignItems: 'flex-end' }]}>
-                                                <Text numberOfLines={1} style={[styles.font_14, styles.mb_2, { color: colors.BlueJaja }]}>Ubah</Text>
-                                                <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}>{item.shippingSelected.priceCurrencyFormat}</Text>
-                                            </View>
-                                        </View>
-                                        <View style={[styles.column, styles.mb_3]}>
-                                            <TextInput onChangeText={(text) => handleNotes(text, idxStore)} placeholder="Masukkan catatan untuk kurir" style={{ paddingHorizontal: 0, paddingVertical: '2%', borderBottomWidth: 0.7, borderBottomColor: colors.Silver, width: '100%' }} />
-                                            <Text style={[styles.font_12, { color: colors.BlackGrey }]}>Catatan untuk kurir (Opsional)</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                    :
-                                    <View style={[styles.column, styles.p_3]}>
-                                        <View style={styles.row_between_center}>
-                                            <Text numberOfLines={1} style={[styles.font_14]}>Pilih Ekspedisi</Text>
-                                            <TouchableOpacity onPress={() => actionSheetDelivery.current?.setModalVisible()}>
-                                                <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Pilih</Text>
+                                                    </View>
+                                                    <View style={[styles.column_between_center, { alignItems: 'flex-end' }]}>
+                                                        <Text numberOfLines={1} style={[styles.font_14, styles.mb_2, { color: colors.BlueJaja }]}>Ubah</Text>
+                                                        <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}>{item.shippingSelected.priceCurrencyFormat}</Text>
+                                                    </View>
+                                                </View>
+                                                <View style={[styles.column, styles.mb_3]}>
+                                                    <TextInput onChangeText={(text) => handleNotes(text, idxStore)} placeholder="Masukkan catatan untuk kurir" style={{ paddingHorizontal: 0, paddingVertical: '2%', borderBottomWidth: 0.7, borderBottomColor: colors.Silver, width: '100%' }} />
+                                                    <Text style={[styles.font_12, { color: colors.BlackGrey }]}>Catatan untuk kurir (Opsional)</Text>
+                                                </View>
                                             </TouchableOpacity>
-                                        </View>
+                                            :
+                                            <View style={[styles.column, styles.p_3]}>
+                                                <View style={styles.row_between_center}>
+                                                    <Text numberOfLines={1} style={[styles.font_14]}>Pilih Ekspedisi</Text>
+                                                    <TouchableOpacity onPress={() => actionSheetDelivery.current?.setModalVisible()}>
+                                                        <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Pilih</Text>
+                                                    </TouchableOpacity>
+                                                </View>
 
-                                    </View>
+                                            </View>
+                                        }
+                                    </>
+                                    : null
                                 }
-
-
                             </View>
                         )
                     })
                     :
                     null}
                 {reduxCheckout.voucherJajaSelected && Object.keys(reduxCheckout.voucherJajaSelected).length ?
-                    <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                    < View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                         <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
                             <Image style={[styles.icon_25, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/offer.png')} />
                             <Text style={[styles.font_16, { fontWeight: 'bold', color: colors.BlueJaja }]}>Voucher Diskon</Text>
                         </View>
+                        {console.log("🚀 ~ file: CheckoutScreen.js ~ line 737 ~ checkoutScreen ~ reduxCheckout", reduxCheckout)}
                         <View style={[styles.column, styles.p_3]}>
                             <View style={[styles.row_between_center, styles.mb]}>
                                 <Text numberOfLines={1} style={[styles.font_14]}>{reduxCheckout.voucherJajaSelected.name}</Text>
@@ -726,7 +764,7 @@ export default function checkoutScreen() {
                             setvoucherOpen('jaja')
                         }} icon="arrow-right" color={colors.RedFlashsale} uppercase={false} labelStyle={{ fontFamily: 'Roboto', color: colors.RedFlashsale }} style={{ borderColor: colors.RedFlashsale, borderWidth: 1, borderRadius: 10 }} contentStyle={{ borderColor: colors.BlueJaja }} mode="outlined">
                             Makin hemat pakai promo
-                                            </Button>
+                        </Button>
                     </View>
                 }
                 <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
@@ -757,15 +795,15 @@ export default function checkoutScreen() {
             </ScrollView>
             {/* } */}
             <View style={{ position: 'absolute', bottom: 0, zIndex: 100, elevation: 1, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
-                <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '3%' }}>
-                    <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}>Total pembayaran :</Text>
+                <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '3%', paddingLeft: '5%', paddingVertical: '1%' }}>
+                    <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja, }]}>Total pembayaran :</Text>
                     <Text numberOfLines={1} style={[styles.font_20, { fontWeight: 'bold', color: colors.BlueJaja }]}>{reduxCheckout.totalCurrencyFormat}</Text>
                 </View>
                 <Button onPress={handleCheckout} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained" >
                     Pilih pembayaran
                 </Button>
             </View>
-            <ActionSheet ref={actionSheetVoucher} onOpen={() => setloadAs(false)} onClose={() => setvoucherOpen("")} delayActionSheetDraw={false} containerStyle={{ minHeight: Hp('20%'), maxHeight: Hp('60%'), padding: '4%' }}>
+            <ActionSheet ref={actionSheetVoucher} onOpen={() => setloadAs(false)} onClose={() => setvoucherOpen("")} delayActionSheetDraw={false} containerStyle={{ minHeight: Hp('20%'), maxHeight: Hp('60%'), padding: '4%', }}>
                 <View style={[styles.row_between_center, styles.py_2, styles.mb_3]}>
                     <Text style={[styles.font_16, { color: colors.BlueJaja, fontWeight: 'bold' }]}>Pilih Voucher</Text>
                     <TouchableOpacity onPressIn={() => actionSheetVoucher.current?.setModalVisible()}>
@@ -773,10 +811,9 @@ export default function checkoutScreen() {
                     </TouchableOpacity>
                 </View>
                 {loadAs ? <Loading /> : null}
-                <ScrollView showsVerticalScrollIndicator={false}>
+                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 80 }}>
                     <View style={styles.column}>
-                        {/* <Text style={[styles.font_16, styles.mb_3, { color: colors.BlueJaja, fontWeight: 'bold', borderBottomWidth: 0.5, borderBottomColor: colors.BlueJaja }]}>{item.title}</Text> */}
-                        {reduxCheckout.voucherJaja || vouchers ?
+                        {reduxCheckout.voucherJaja && reduxCheckout.voucherJaja.length || vouchers && vouchers.length ?
                             <FlatList
                                 data={voucherOpen === "store" ? vouchers : reduxCheckout.voucherJaja}
                                 keyExtractor={(item) => item.id}
@@ -817,7 +854,7 @@ export default function checkoutScreen() {
                                                 Press me
                                             </Button> */}
                                             <TouchableOpacity onPress={() => handleVoucher(item, index)} style={{ marginLeft: '2%', width: '25%', backgroundColor: item.isClaimed ? colors.White : colors.RedFlashsale, padding: '2%', height: Wp('20%'), justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.RedFlashsale, borderRadius: 5 }}>
-                                                <Text style={[styles.font_14, { color: item.isClaimed ? colors.RedFlashsale : colors.White }]}>{item.isClaimed ? "Gunakan" : "Klaim"}</Text>
+                                                <Text style={[styles.font_14, { color: item.isClaimed ? colors.RedFlashsale : colors.White }]}>{item.isClaimed ? item.isSelected ? "Terpakai" : "Pakai" : "Klaim"}</Text>
                                             </TouchableOpacity>
                                         </View>
                                     )
@@ -835,9 +872,9 @@ export default function checkoutScreen() {
                         <Image style={[styles.icon_16, { tintColor: colors.BlueJaja }]} source={require('../../assets/icons/close.png')} />
                     </TouchableOpacity>
                 </View>
-                <View style={{ flexDirection: 'column', minHeight: Hp('20%'), maxHeight: Hp('60%'), width: '100%' }}>
+                <View style={{ flexDirection: 'column', minHeight: Hp('20%'), maxHeight: Hp('60%'), width: '100%', paddingBottom: '5%' }}>
 
-                    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ width: '100%', }}>
+                    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ width: '100%' }}>
                         <View style={[styles.column, { width: '100%' }]}>
                             {/* <Text style={[styles.font_16, styles.mb_3, { color: colors.BlueJaja, fontWeight: 'bold', borderBottomWidth: 0.5, borderBottomColor: colors.BlueJaja }]}>{item.title}</Text> */}
                             {reduxShipping && reduxShipping.length ?

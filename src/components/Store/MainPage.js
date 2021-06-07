@@ -78,7 +78,7 @@ export default function MainPage() {
                                 contentContainerStyle={{ alignSelf: 'flex-start' }}
                                 horizontal
                                 keyExtractor={(item) => item.id}
-                                data={vouchers.concat(vouchers)}
+                                data={vouchers}
                                 renderItem={({ item }) => {
                                     console.log("🚀 ~ file: MainPage.js ~ line 138 ~ MainPage ~ item", item)
 
@@ -102,7 +102,7 @@ export default function MainPage() {
                                                     </View>
                                                 </View>
                                                 <TouchableOpacity onPress={() => handleVoucher(item.id)} style={{ width: '30%', backgroundColor: item.isClaimed ? colors.White : colors.RedFlashsale, padding: '1%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.RedFlashsale, borderRadius: 3 }}>
-                                                    <Text style={[styles.font_12, { color: item.isClaimed ? colors.RedFlashsale : colors.White }]}>{item.isClaimed ? "Gunakan" : "Klaim"}</Text>
+                                                    <Text style={[styles.font_12, { color: item.isClaimed ? colors.RedFlashsale : colors.White }]}>{"Klaim"}</Text>
                                                 </TouchableOpacity>
                                             </View>
                                         </View>

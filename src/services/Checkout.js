@@ -18,6 +18,17 @@ export async function getCheckout(auth) {
                 console.log("🚀 ~ file: Checkout.js ~ line 18 ~ getCheckout ~ result.status.code", result.status.code)
                 return result.data;
             } else {
+                Alert.alert(
+                    "Jaja.id",
+                    String(result.status.message) + " => " + result.status.code,
+                    [
+                        {
+                            text: "TUTUP",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                        },
+                    ]
+                );
                 return null
             }
         })
@@ -43,6 +54,17 @@ export async function getShipping(auth) {
             if (result.status.code === 200) {
                 return result.data;
             } else {
+                Alert.alert(
+                    "Jaja.id",
+                    String(result.status.message) + " => " + result.status.code,
+                    [
+                        {
+                            text: "TUTUP",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                        },
+                    ]
+                );
                 return null
             }
         })

@@ -3,7 +3,9 @@ import { Button, Paragraph, TextInput } from 'react-native-paper'
 import { Hp, Wp, colors, Loading } from '../../export'
 import { Text, View, SafeAreaView, Image, StyleSheet, BackHandler, StatusBar, ScrollView, ToastAndroid } from 'react-native';
 import EncryptedStorage from 'react-native-encrypted-storage';
-export default class index extends Component {
+import { connect } from 'react-redux'
+
+class RegisterScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -32,6 +34,8 @@ export default class index extends Component {
     };
 
     componentDidMount() {
+        console.log("🚀 ~ file: RegisterScreen.js ~ line 10 ~ RegisterScreen ~ constructor ~ props", this.props.dispatch)
+
         // this.props.navigation.navigate('VertifikasiEmail')
         this.backHandler = BackHandler.addEventListener(
             'hardwareBackPress',
@@ -170,7 +174,7 @@ export default class index extends Component {
                         json = res;
                         if (res.status.code == 200) {
                             EncryptedStorage.setItem('user', JSON.stringify(res.data.customer))
-                            dispatch({ type: 'SET_USER', payload: result.data.customer })
+                            this.props.dispatch({ type: 'SET_USER', payload: res.data.customer })
                             EncryptedStorage.setItem('token', JSON.stringify(res.data.token))
                             setTimeout(() => this.setState({ loading: false }), 3000);
                             console.log("index -> onRegistrasi -> 201", res.status)
@@ -334,6 +338,10 @@ export default class index extends Component {
         );
     }
 }
+const mapDispatchToProps = (state) => ({
+    dispatch: state,
+})
+export default connect(null, mapDispatchToProps)(RegisterScreen)
 
 const styles = StyleSheet.create({
     container: {

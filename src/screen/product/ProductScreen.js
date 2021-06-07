@@ -1,5 +1,5 @@
 import React, { useEffect, useState, createRef, useCallback } from 'react'
-import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, ScrollView, StyleSheet, StatusBar, Platform, Dimensions, LogBox, ToastAndroid, RefreshControl } from 'react-native'
+import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, ScrollView, StyleSheet, StatusBar, Platform, Dimensions, LogBox, ToastAndroid, RefreshControl, Alert } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { Button } from 'react-native-paper'
@@ -23,6 +23,7 @@ export default function ProductScreen(props) {
     const reduxSearch = useSelector(state => state.search)
     const reduxUser = useSelector(state => state.user)
     const reduxAuth = useSelector(state => state.auth.auth)
+    console.log("🚀 ~ file: ProductScreen.js ~ line 26 ~ ProductScreen ~ reduxAuth", reduxAuth)
     const dispatch = useDispatch()
 
     const [refreshing, setRefreshing] = useState(false)
@@ -110,7 +111,6 @@ export default function ProductScreen(props) {
         useCallback(() => {
             try {
                 if (reduxAuth) {
-                    setauth(reduxAuth)
                     handleGetCart(reduxAuth)
                     getBadges(reduxAuth)
                 }
@@ -131,7 +131,7 @@ export default function ProductScreen(props) {
 
     const handleAddCart = (name) => {
         console.log("🚀 ~ file: ProductScreen.js ~ line 72 ~ handleAddCart ~ auth", auth)
-        if (auth) {
+        if (reduxAuth) {
             if (reduxSearch.productDetail.variant && reduxSearch.productDetail.variant.length) {
                 if (Object.keys(variasiSelected).length) {
                     handleApiCart(name)
@@ -141,13 +141,12 @@ export default function ProductScreen(props) {
                     setalert('Pilih salah satu variasi!')
                     ToastAndroid.show('Anda belum memilih variasi produk ini!', ToastAndroid.LONG, ToastAndroid.CENTER)
                 }
-                console.log("masuk sini")
             } else {
                 console.log("keluar")
                 handleApiCart(name)
             }
         } else {
-            navigation.navigate('Login')
+            navigation.navigate('Login', { navigate: "Product" })
         }
     }
 
@@ -155,7 +154,7 @@ export default function ProductScreen(props) {
     const handleApiCart = (name) => {
         console.log("🚀 ~ file: ProductScreen.js ~ line 141 ~ handleApiCart ~ name", name)
         var myHeaders = new Headers();
-        myHeaders.append("Authorization", auth);
+        myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Content-Type", "application/json");
 
         var raw = JSON.stringify({
@@ -547,6 +546,14 @@ export default function ProductScreen(props) {
         );
     };
 
+    const handleChat = () => {
+        if (reduxAuth) {
+            navigation.navigate("IsiChat", { data: seller, product: reduxSearch.productDetail })
+        } else {
+            navigation.navigate('Login', { navigate: "Product" })
+        }
+    }
+
 
 
 
@@ -588,7 +595,7 @@ export default function ProductScreen(props) {
             </ScrollView>
 
             <View style={{ position: 'absolute', bottom: 0, height: Hp('6%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
-                <TouchableOpacity onPress={() => navigation.navigate("IsiChat", { data: seller, product: reduxSearch.productDetail })} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
+                <TouchableOpacity onPress={handleChat} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
                     <Image source={require('../../assets/icons/chats.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: colors.BlueJaja }} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => handleAddCart("trolley")} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>

@@ -7,9 +7,16 @@ export default function AppbarComponent(props) {
 
         <View style={[styles.appBar, { justifyContent: 'flex-start', backgroundColor: props.Bg ? props.Bg : colors.BlueJaja }]}>
             {props.back ?
-                <TouchableOpacity style={[styles.row_start_center, { marginRight: '2%' }]} onPress={() => navigation.goBack()}>
-                    <Image style={styles.appBarButton} source={require('../../assets/icons/arrow.png')} />
-                </TouchableOpacity>
+                props.route ?
+                    <TouchableOpacity style={[styles.row_start_center, { marginRight: '2%' }]} onPress={() => {
+                        navigation.navigate(props.route)
+                    }}>
+                        <Image style={styles.appBarButton} source={require('../../assets/icons/arrow.png')} />
+                    </TouchableOpacity>
+                    :
+                    <TouchableOpacity style={[styles.row_start_center, { marginRight: '2%' }]} onPress={() => navigation.goBack()}>
+                        <Image style={styles.appBarButton} source={require('../../assets/icons/arrow.png')} />
+                    </TouchableOpacity>
                 : null}
             {props.title ?
                 <Text style={[styles.font_16, { fontWeight: 'bold', color: colors.White }]}>{Language(props.title)}</Text>
@@ -18,3 +25,4 @@ export default function AppbarComponent(props) {
         </View>
     )
 }
+
