@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView } from 'react-native'
+import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Linking, ToastAndroid } from 'react-native'
 import { Appbar, colors, styles, Wp, Hp, useNavigation, useFocusEffect } from '../../export'
+import Clipboard from '@react-native-community/clipboard';
+
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from 'react-native-paper'
 export default function OrderDetailsScreen(props) {
@@ -37,8 +39,6 @@ export default function OrderDetailsScreen(props) {
             body: raw,
             redirect: 'follow'
         };
-        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 43 ~ getItem ~ props.route.params.data", props.route.params.data)
-
         fetch(`https://jaja.id/backend/order/${props.route.params.data}`, requestOptions)
             .then(response => response.json())
             .then(result => {
@@ -61,7 +61,7 @@ export default function OrderDetailsScreen(props) {
             <Appbar title="Detail Pesanan" back={true} />
             <ScrollView contentContainerStyle={{ flex: 0, flexDirection: 'column', paddingBottom: Hp('7%') }}>
                 <View style={[styles.column, styles.p_3, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                    <View style={[styles.row_between_center, styles.mb_4]}>
+                    <View style={[styles.row_between_center, { marginBottom: props.route.params.status !== "Menunggu Pembayaran" ? '4%' : "0%" }]}>
                         <View style={[styles.row]}>
                             <Image style={[styles.icon_23, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/process.png')} />
                             <Text style={[styles.font_16, { fontWeight: 'bold', color: colors.BlueJaja }]}> Status Pesanan</Text>
@@ -70,14 +70,34 @@ export default function OrderDetailsScreen(props) {
                             <Text numberOfLines={1} style={[styles.font_12, { color: colors.White }]}>{status}</Text>
                         </View>
                     </View>
-                    <View style={styles.row_between_center}>
-                        <View style={[styles.row]}>
-                            <Text style={[styles.font_14]}>No. Invoice : {details.items[0].invoice}</Text>
-                        </View>
-                        <View style={[styles.p, { backgroundColor: colors.YellowJaja, borderRadius: 3 }]}>
-                            <Text numberOfLines={1} style={[styles.font_12, { color: colors.White }]}>{status}</Text>
-                        </View>
-                    </View>
+                    {props.route.params.status !== "Menunggu Pembayaran" ?
+                        details ?
+                            <View style={styles.row_between_center}>
+                                <View style={[styles.row]}>
+                                    <Text style={[styles.font_14]}>#{details.items[0].invoice}</Text>
+                                </View>
+                                <TouchableOpacity onPress={() => {
+                                    Linking.canOpenURL(details.downloadOrderPdf).then(supported => {
+                                        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 82 ~ Linking.canOpenURL ~ supported", supported)
+                                        if (supported) {
+                                            Linking.openURL(details.downloadOrderPdf)
+                                        } else {
+                                            ToastAndroid.show("Sepertinya ada masalah, coba lagi nanti.", ToastAndroid.LONG, ToastAndroid.TOP)
+
+                                        }
+                                    })
+                                }}
+                                    onLongPress={() => {
+                                        Clipboard.setString(details.downloadOrderPdf)
+                                        ToastAndroid.show("salin to clipboard", ToastAndroid.LONG, ToastAndroid.TOP)
+                                    }}
+                                    style={[styles.p, { backgroundColor: colors.White, borderRadius: 3 }]}>
+                                    <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlueJaja }]}>DOWNLOAD INVOICE</Text>
+                                </TouchableOpacity>
+                            </View>
+                            : null
+                        : null
+                    }
                 </View>
                 {details ?
                     <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
