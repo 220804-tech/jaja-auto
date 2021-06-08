@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, SafeAreaView, Image, StyleSheet, Alert, Animated, Easing, TouchableOpacity } from 'react-native'
+import { View, Text, SafeAreaView, Image, StyleSheet, Alert, Animated, Easing, TouchableOpacity, BackHandler } from 'react-native'
 import MidtransComponent from '../../components/Midtrans/MidtransComponent'
 import { Loading, styles, Wp, Hp, colors, useNavigation, ServiceCheckout, Appbar } from '../../export'
 import { WebView } from 'react-native-webview';
@@ -27,15 +27,27 @@ export default function MidtransScreen() {
                 navigation.navigate('Login')
             }
         })
-        if (view) {
-            getItem()
+
+        const backAction = () => {
+            Alert.alert("Jaja.id", "Pesanan ini dapat kamu lihat di halaman pesanan", [
+                { text: "OK", onPress: () => navigation.navigate("Pesanan") }
+            ]);
+            return true;
         }
-    }, [view])
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            backAction
+        );
+
+        return () => backHandler.remove();
+    }, [])
 
     const getItem = () => {
         if (reduxOrderId) {
             console.log("🚀 ~ file: MidtransComponent.js ~ line 22 ~ getItem ~ reduxOrderId", reduxOrderId)
             ServiceCheckout.getPayment(reduxAuth, reduxOrderId).then(res => {
+                setView("")
+                console.log("🚀 ~ file: MidtransScreen.js ~ line 39 ~ ServiceCheckout.getPayment ~ res", res)
                 setTimeout(() => setText('Terhubung Payment Gateway'), 1000);
                 setView(res)
                 setTimeout(() => setloading(false), 3000);
@@ -57,7 +69,7 @@ export default function MidtransScreen() {
     })
 
     const handleCheck = () => {
-
+        getItem()
     }
     return (
         <SafeAreaView style={styles.container}>
@@ -132,13 +144,13 @@ export default function MidtransScreen() {
                                     source={require('../../assets/icons/refresh.png')} />
                             </TouchableOpacity>
                         </View> */}
-                        <View style={{ position: 'absolute', bottom: 0, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
-                            <View style={{ width: '50%', justifyContent: 'flex-end', paddingHorizontal: '3%', paddingLeft: '5%', paddingVertical: '1%' }}>
+                        <View style={{ position: 'relative', bottom: 0, height: Hp('7.5%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
+                            {/* <View style={{ width: '50%', justifyContent: 'flex-end', paddingHorizontal: '3%', paddingLeft: '5%', paddingVertical: '1%' }}>
                                 <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}>Subtotal :</Text>
                                 <Text numberOfLines={1} style={[styles.font_20, { fontWeight: 'bold', color: colors.BlueJaja }]}>ASA</Text>
-                            </View>
-                            <Button onPress={handleCheck} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained">
-                                Checkout
+                            </View> */}
+                            <Button onPress={handleCheck} style={{ width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained">
+                                Cek Pembayaran
                             </Button>
                         </View>
                     </>

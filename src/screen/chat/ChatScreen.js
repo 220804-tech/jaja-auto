@@ -33,7 +33,6 @@ export default function ChatScreen({ route }) {
 
 
     useEffect(() => {
-        console.log("🚀 ~ file: ChatScreen.js ~ line 38 ~ useEffect ~ data", data)
         setnameChat(data.name);
         const onValueChange = firebaseDatabase().ref('/messages/' + data.chat).on('value', function (snapshoot) {
             if (snapshoot.val() !== null) {
@@ -413,58 +412,57 @@ export default function ChatScreen({ route }) {
     }
     return (
 
-        <SafeAreaView style={{ flex: 1 }}>
-            <Appbar back={true} title={nameChat} />
-
-            {product && Object.keys(product).length ?
-
-                <View style={{
-                    flex: 0,
-                    position: 'relative',
-                    width: Wp("100%"),
-                    height: Hp('11%'),
-                    paddingHorizontal: '3%',
-                    justifyContent: "center",
-                    alignItems: 'center',
-                    alignSelf: "center",
-                    flexDirection: "row",
-                    backgroundColor: colors.White,
-                    // top: 0
-                }}>
-                    <View style={{ flex: 0 }}>
-                        <Image
-                            style={{
-                                alignSelf: "center",
-                                width: Wp("15%"),
-                                height: Hp("7.5%"),
-                                marginRight: 10,
-                                borderRadius: 2
-                            }}
-                            resizeMethod={"scale"}
-                            resizeMode={"cover"}
-                            source={{ uri: product.image[0] ? product.image[0] : null }}
-                        />
-                    </View>
-
-                    <View style={{ flex: 1, flexDirection: 'column', height: Hp('7.5%') }}>
-                        <Text numberOfLines={1} style={{ fontSize: 14, fontWeight: 'bold', color: 'black' }}>{product.name}</Text>
-                        {product.isDiscount ?
-                            <View style={{ flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                                <Text adjustsFontSizeToFit style={{ textDecorationLine: 'line-through', marginRight: '3%', fontSize: 12 }}>{product.price}</Text>
-                                <Text adjustsFontSizeToFit style={{ color: colors.RedFlashsale, fontWeight: 'bold', fontSize: 14 }}>{product.priceDiscount}</Text>
-                            </View>
-                            :
-                            <Text adjustsFontSizeToFit style={{ color: colors.RedFlashsale, fontWeight: 'bold', fontSize: 14 }}>{product.price}</Text>
-                        }
-                    </View>
-
-                    <TouchableOpacity onPress={handleSendProduct} style={{ paddingVertical: '1%', paddingHorizontal: '2%', borderColor: colors.RedFlashsale, borderWidth: 1, borderRadius: 4 }}>
-                        <Text style={{ color: colors.RedFlashsale, fontSize: 12 }}>Kirim</Text>
-                    </TouchableOpacity>
-
-                </View> : null}
+        <SafeAreaView style={{ flex: 1, height: Hp('100%') }}>
+            <Appbar back={true} title={data && data.name ? data.name : ''} />
             <ImageBackground source={require('../../assets/images/bgChat.jpg')} style={{ width: '100%', height: '100%' }}>
-                <View style={{ height: product ? Hp("75%") : Hp("87%"), paddingTop: '0.1%' }}>
+                {product && Object.keys(product).length ?
+                    <View style={{
+                        flex: 0,
+                        position: 'relative',
+                        width: Wp("100%"),
+                        height: Hp('11%'),
+                        paddingHorizontal: '3%',
+                        justifyContent: "center",
+                        alignItems: 'center',
+                        alignSelf: "center",
+                        flexDirection: "row",
+                        backgroundColor: colors.White,
+                        // top: 0
+                    }}>
+                        <View style={{ flex: 0 }}>
+                            <Image
+                                style={{
+                                    alignSelf: "center",
+                                    width: Wp("15%"),
+                                    height: Hp("7.5%"),
+                                    marginRight: 10,
+                                    borderRadius: 2
+                                }}
+                                resizeMethod={"scale"}
+                                resizeMode={"cover"}
+                                source={{ uri: product.image[0] ? product.image[0] : null }}
+                            />
+                        </View>
+
+                        <View style={{ flex: 1, flexDirection: 'column', height: Hp('7.5%') }}>
+                            <Text numberOfLines={1} style={{ fontSize: 14, fontWeight: 'bold', color: 'black' }}>{product.name}</Text>
+                            {product.isDiscount ?
+                                <View style={{ flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
+                                    <Text adjustsFontSizeToFit style={{ textDecorationLine: 'line-through', marginRight: '3%', fontSize: 12 }}>{product.price}</Text>
+                                    <Text adjustsFontSizeToFit style={{ color: colors.RedFlashsale, fontWeight: 'bold', fontSize: 14 }}>{product.priceDiscount}</Text>
+                                </View>
+                                :
+                                <Text adjustsFontSizeToFit style={{ color: colors.RedFlashsale, fontWeight: 'bold', fontSize: 14 }}>{product.price}</Text>
+                            }
+                        </View>
+
+                        <TouchableOpacity onPress={handleSendProduct} style={{ paddingVertical: '1%', paddingHorizontal: '2%', borderColor: colors.RedFlashsale, borderWidth: 1, borderRadius: 4 }}>
+                            <Text style={{ color: colors.RedFlashsale, fontSize: 12 }}>Kirim</Text>
+                        </TouchableOpacity>
+
+                    </View> : null
+                }
+                <View style={{ height: product ? '77%' : '87%', backgroundColor: 'transparent' }}>
                     {messageList && messageList.length ?
                         <FlatList
                             inverted={-1}
@@ -478,14 +476,13 @@ export default function ChatScreen({ route }) {
                 </View>
                 <View
                     style={{
-                        position: 'relative',
+                        position: 'absolute',
                         bottom: 0,
                         flex: 0,
                         width: Wp("100%"),
-                        height: Hp('13%'),
+                        height: Hp('6%'),
+                        marginBottom: Hp('7.7%'),
                         paddingHorizontal: '2%',
-                        // paddingVertical: '1%',
-
                         flexDirection: "row",
                         alignItems: "flex-start",
                         justifyContent: 'space-around',
@@ -493,7 +490,7 @@ export default function ChatScreen({ route }) {
                     }}>
                     <TextInput
                         style={{
-                            width: Wp("80%"),
+                            width: "80%",
                             fontSize: Wp("4%"),
                             height: Hp('5.5%'),
                             borderColor: "gray",

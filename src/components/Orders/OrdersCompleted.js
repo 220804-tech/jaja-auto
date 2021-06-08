@@ -11,6 +11,7 @@ export default function OrdersUnpaid() {
     const reduxCompleted = useSelector(state => state.order.completed)
     const [refreshing, setRefreshing] = useState(false);
     const [auth, setAuth] = useState("")
+    const reduxAuth = useSelector(state => state.auth.auth)
 
     useEffect(() => {
         EncryptedStorage.getItem('token').then(res => {
@@ -34,7 +35,7 @@ export default function OrdersUnpaid() {
 
 
     const getItem = () => {
-        ServiceOrder.getCompleted(auth).then(resUnpaid => {
+        ServiceOrder.getCompleted(reduxAuth).then(resUnpaid => {
             if (resUnpaid) {
                 dispatch({ type: 'SET_COMPLETED', payload: resUnpaid.items })
                 dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })

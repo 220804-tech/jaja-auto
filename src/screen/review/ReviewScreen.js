@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, ScrollView, StyleSheet, StatusBar, Platform, Dimensions, LogBox, ToastAndroid, RefreshControl } from 'react-native'
+import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, StatusBar } from 'react-native'
 import { styles, colors, useNavigation, Hp, Wp, Appbar } from '../../export'
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import StarRating from 'react-native-star-rating';
 import VideoPlayer from 'react-native-video-player';
-import Swiper from 'react-native-swiper'
 
 export default function ReviewScreen(props) {
     const navigation = useNavigation()
 
     const reduxReview = useSelector(state => state.search.productDetail.review)
-    const [reviewPressed, setreviewPressed] = useState(null)
-    useEffect(() => {
 
+    useEffect(() => {
         getItem();
         if (props.route.params) {
             console.log("🚀 ~ file: ReviewScreen.js ~ line 14 ~ useEffect ~ props.route.params", props.route.params.data)
@@ -51,7 +49,7 @@ export default function ReviewScreen(props) {
             <View style={[styles.column, { paddingBottom: Hp('7%') }]}>
                 <Appbar title="Penilaian Produk" back={true} />
                 <ScrollView>
-                    {reduxReview ?
+                    {reduxReview && reduxReview.length ?
                         reduxReview.map((item, index) => {
                             return (
                                 <View key={String(index)} style={[styles.column, styles.mb_3, styles.p_4, { backgroundColor: colors.White, }]}>
@@ -66,8 +64,6 @@ export default function ReviewScreen(props) {
                                                 starSize={14}
                                                 fullStarColor={colors.YellowJaja}
                                                 emptyStarColor={colors.YellowJaja}
-
-                                            // selectedStar={(rating) => this.onStarRatingPress(rating)}
                                             />
                                         </View>
                                     </View>
@@ -85,10 +81,6 @@ export default function ReviewScreen(props) {
                                             )
                                         })}
                                         {item.video ?
-                                            // <TouchableOpacity onPress={() => navigation.navigate('Review', { data: reduxReview.productDetail.slug })} style={{ width: Wp('17%'), height: Wp('17%'), justifyContent: 'center', alignItems: 'center', backgroundColor: colors.BlackGrayScale }}>
-                                            //     <Image source={require('../../assets/icons/play.png')} style={{ width: Wp('5%'), height: Wp('5%'), marginRight: '2%', tintColor: colors.White }} />
-                                            // </TouchableOpacity>
-
                                             <TouchableOpacity onPress={() => navigation.navigate('ZoomReview', { data: index })} style={[styles.mt_5, { width: Wp('92%'), height: Wp('50%') }]}>
                                                 <VideoPlayer
                                                     video={{ uri: item.video }}
@@ -98,8 +90,8 @@ export default function ReviewScreen(props) {
                                                     fullScreenOnLongPress={true}
                                                 />
                                             </TouchableOpacity>
-                                            // <Image source={{ uri: item.video }} style={{ width: Wp('18%'), height: Wp('18%'), marginRight: '2%' }} />
-                                            : null}
+                                            : null
+                                        }
                                     </View>
                                 </View>
                             )

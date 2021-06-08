@@ -10,24 +10,25 @@ Hasil UAT JAJA BUYER APK 05 JUNI 2021
 - Setelah pilih pembayaran, pencet back harusnya balik ke list pesanan #selesai
 - Pilih voucher jaja masih ada error #selesai
 - Di halaman pilih pembayaran, sediakan tombol refresh untuk cek pembayaran berhasil/tidaknya #selesai
-- (Web) Total pembayaran di list pesanan tidak sesuai dengan detail pesanan
-- Pilih voucher jaja di mene checkout actionsheet nya tidak responsive
-- belum ada feature terima pesanan
--setelah login forceclose , masuk apk sudah login
+- (Web) Total pembayaran di list pesanan tidak sesuai dengan detail pesanan #selesai
+- Pilih voucher jaja di mene checkout actionsheet nya tidak responsive #selesai
+- setelah login forceclose , masuk apk sudah login #selesai
+- layout chat belum responsive #selesai
 
+- belum ada feature terima pesanan
 
 Hasil testing dari Mas Ndaru
 Home 
-- card produk di semua halaman diseragamkan
-- icon navigasi pakai icon yang sudah dibuat kharis
-- Konsistensi font-size bisa lebih diperhatikan
-- koordinasikan ke hafifah utk konsistensi bahasa
-- saat "tombol kembali" ditekan, buat alert confirm "keluar aplikasi?" Tambahkan tombol "Batal warna abu2" di alert itu. Saat tombol back ditekan lagi, keluar aplikasi. 
+- card produk di semua halaman diseragamkan #selesai
+- icon navigasi pakai icon yang sudah dibuat kharis #selesai
+- Konsistensi font-size bisa lebih diperhatikan #siap
+- koordinasikan ke hafifah utk konsistensi bahasa #siap
+- saat "tombol kembali" ditekan, buat alert confirm "keluar aplikasi?" Tambahkan tombol "Batal warna abu2" di alert itu. Saat tombol back ditekan lagi, keluar aplikasi. #selesai
 
 Detail produk
-- Baris produk lainnya, memuat 2,5 card produk supaya orang tau itu bisa digeser
+- Baris produk lainnya, memuat 2,5 card produk supaya orang tau itu bisa digeser #selesai
 - Jika tombol beli sekarang ditekan, menuju checkout dan produk yang baru dipilih checked
-- avatar toko bisa diklik utk ke halaman detail toko
+- avatar toko bisa diklik utk ke halaman detail toko #selesai
 - tambah fitur share ke fb, twitter, wa
 
 Detail toko

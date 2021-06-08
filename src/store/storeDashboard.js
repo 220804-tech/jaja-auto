@@ -5,7 +5,8 @@ const initialState = {
     hobyAverage: [],
     basedOnSearch: [],
     recommanded: [],
-    loadmore: false
+    loadmore: false,
+    out: false
 }
 export default function storeDashboard(state = initialState, action) {
     const { type, payload } = action;
@@ -24,6 +25,8 @@ export default function storeDashboard(state = initialState, action) {
             return { ...state, recommanded: payload }
         case 'SET_LOADMORE':
             return { ...state, loadmore: payload }
+        case 'SET_OUT':
+            return { ...state, out: payload }
         default:
             return state;
     }

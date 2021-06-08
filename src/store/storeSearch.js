@@ -4,6 +4,7 @@ const initialState = {
     sorts: [],
     keywordSearch: "",
     productDetail: {},
+    slug: ""
 }
 export default function storeSearch(state = initialState, action) {
     const { type, payload } = action;
@@ -18,6 +19,8 @@ export default function storeSearch(state = initialState, action) {
             return { ...state, keywordSearch: payload }
         case 'SET_DETAIL_PRODUCT':
             return { ...state, productDetail: payload }
+        case 'SET_SLUG':
+            return { ...state, slug: payload }
         default:
             return state;
     }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { View, Text, SafeAreaView, FlatList, TouchableOpacity, Image } from 'react-native'
+import { View, Text, SafeAreaView, FlatList, TouchableOpacity } from 'react-native'
 import { styles, Wp, Hp, colors, Appbar, useFocusEffect, FastImage, CheckSignal, useNavigation } from '../../export'
 import { useDispatch, useSelector } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage'

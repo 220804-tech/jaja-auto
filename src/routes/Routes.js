@@ -23,7 +23,6 @@ export default function Routes() {
                 <Stack.Screen name="ProductSearch" component={ProductSearch} />
                 <Stack.Screen name="Trolley" component={Trolley} />
                 <Stack.Screen name="Address" component={Address} />
-                <Stack.Screen name="EditAddress" component={EditAddress} />
                 <Stack.Screen name="AddAddress" component={AddAddress} />
                 <Stack.Screen name="Midtrans" component={Midtrans} />
                 <Stack.Screen name="Store" component={Store} />

@@ -5,7 +5,10 @@ const initialState = {
     sent: [],
     completed: [],
     failed: [],
-    filter: []
+    filter: [],
+    tracking: [],
+    receipt: "",
+    invoice: ""
 }
 export default function storeOrder(state = initialState, action) {
     const { type, payload } = action;
@@ -24,6 +27,12 @@ export default function storeOrder(state = initialState, action) {
             return { ...state, failed: payload }
         case 'SET_ORDER_FILTER':
             return { ...state, filter: payload }
+        case 'SET_TRACKING':
+            return { ...state, tracking: payload }
+        case 'SET_RECEIPT':
+            return { ...state, receipt: payload }
+        case 'SET_INVOICE':
+            return { ...state, invoice: payload }
         default:
             return state;
     }

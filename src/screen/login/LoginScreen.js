@@ -27,9 +27,8 @@ export default function LoginScreen(props) {
 
 
     useEffect(() => {
-        if (props.route.params && props.route.params.navigate) {
+        if (props.route && props.route.params && props.route.params.navigate) {
             setNavigate(props.route.params.navigate)
-
         }
         GoogleSignin.configure({
             webClientId: "284366139562-tnj3641sdb4ia9om7bcp25vh3qn5vvo8.apps.googleusercontent.com",
@@ -39,7 +38,7 @@ export default function LoginScreen(props) {
             console.log("keluar");
             signOut()
         }
-    }, [props.route.params])
+    }, [props])
 
     const signOut = async () => {
         try {
@@ -203,11 +202,14 @@ export default function LoginScreen(props) {
                     getOrders(data)
                     console.log("🚀 ~ file: LoginScreen.js ~ line 206 ~ handleUser ~ navigate", navigate)
                     if (navigate) {
-                        // navigation.navigate(navigate);
                         navigation.setParams({ 'navigate': null });
                         navigation.goBack();
                         setNavigate("")
                     } else {
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'Splash' }],
+                        })
                     }
                 } catch (error) {
                     ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)

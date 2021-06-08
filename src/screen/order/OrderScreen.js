@@ -69,26 +69,30 @@ export default function OrderScreen() {
                                 bounces={true}
                                 scrollEnabled={true}
                                 style={{ backgroundColor: colors.White, paddingLeft: '2%' }}
-                                tabStyle={{ minHeight: 50, flex: 0, width: 100, borderBottomColor: colors.BlueJaja, borderRightColor: 'grey' }} // here
+                                tabStyle={{ minHeight: 50, flex: 0, width: 120, borderBottomColor: colors.BlueJaja, borderRightColor: 'grey' }} // here
                                 renderLabel={({ route, focused, color }) => {
                                     return (
                                         <>
                                             {reduxAuth.auth && reduxOrder.lenght !== 0 ?
-                                                <Text style={{ color: colors.BlackGrayScale, fontSize: 12, width: 100, textAlign: 'center' }}> {route.title}
+                                                <View style={[styles.row_center, { width: '100%' }]}>
+                                                    <Text style={{ color: colors.BlackGrayScale, fontSize: 12, textAlign: 'center', alignSelf: 'center' }}>{route.title} </Text>
+
                                                     {route.title === "Belum dibayar" && reduxOrder[0].total ?
-                                                        <Text style={{ color: colors.BlackGrayScale, fontSize: 10, width: 80, textAlign: 'center' }}> ({reduxOrder[0].total})</Text>
+                                                        <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}>({reduxOrder[0].total > 9 ? "9+" : reduxOrder[0].total})</Text>
                                                         : route.title === "Diproses" && reduxOrder[1].total || reduxOrder[2].total ?
-                                                            <Text style={{ color: colors.BlackGrayScale, fontSize: 10, width: 80, textAlign: 'center' }}> ({reduxOrder[1].total + reduxOrder[2].total})</Text>
+                                                            <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({reduxOrder[1].total + reduxOrder[2].total > 9 ? "9+" : reduxOrder[1].total + reduxOrder[2].total})</Text>
                                                             : route.title === "Dikirim" && reduxOrder[3].total ?
-                                                                <Text style={{ color: colors.BlackGrayScale, fontSize: 10, width: 80, textAlign: 'center' }}> ({reduxOrder[3].total})</Text>
+                                                                <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({reduxOrder[3].total > 9 ? "9+" : reduxOrder[3].total})</Text>
                                                                 : route.title == "Selesai" && reduxOrder[4].total ?
-                                                                    <Text style={{ color: colors.BlackGrayScale, fontSize: 10, width: 80, textAlign: 'center' }}> ({reduxOrder[4].total})</Text>
-                                                                    : route.title === "Dibatalkan" && reduxOrder[5].total ? <Text style={{ color: colors.BlackGrayScale, fontSize: 10, width: 80, textAlign: 'center' }}> ({reduxOrder[5].total})</Text>
+                                                                    <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({reduxOrder[4].total > 9 ? "9+" : reduxOrder[4].total})</Text>
+                                                                    : route.title === "Dibatalkan" && reduxOrder[5].total ?
+                                                                        <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({reduxOrder[5].total > 9 ? "9+" : reduxOrder[5].total})</Text>
                                                                         : null
                                                     }
-                                                </Text>
+                                                </View>
+
                                                 :
-                                                <Text style={{ color: colors.BlackGrayScale, fontSize: 10, width: 80, textAlign: 'center' }}>{route.title}</Text>}
+                                                <Text style={{ color: colors.BlackGrayScale, fontSize: 10, width: '80%', textAlign: 'center' }}>{route.title}</Text>}
                                         </>
                                     )
                                 }}

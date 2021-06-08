@@ -19,7 +19,7 @@ export default function FlashsaleComponent() {
         <View style={styles.p_3}>
             <View style={styles.row}>
                 <Text style={styles.flashsale}>
-                    FLASHSALE
+                    Flashsale
                 </Text>
             </View>
             {reduxDashboard && reduxDashboard.length ?

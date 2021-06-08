@@ -2,7 +2,7 @@ import React, { useEffect, useState, createRef, useCallback } from 'react'
 import { SafeAreaView, View, Text, Image, TouchableOpacity, TextInput, FlatList, ToastAndroid, StyleSheet, ScrollView, Animated, RefreshControl } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import ActionSheet from "react-native-actions-sheet";
-import { useNavigation, colors, styles, Wp, CheckSignal, Loading, Hp, Ps, ServiceProduct, FastImage } from '../../export'
+import { useNavigation, colors, styles, Wp, CheckSignal, Loading, Hp, Ps, ServiceProduct, FastImage, Card } from '../../export'
 import { useDispatch, useSelector } from 'react-redux'
 import * as Progress from 'react-native-progress';
 
@@ -303,7 +303,8 @@ export default function ProductSearchScreen() {
                                 }
                             }}
                         >
-                            <FlatList
+                            <Card data={data} />
+                            {/* <FlatList
                                 data={data}
                                 scrollEnabled={false}
                                 removeClippedSubviews={true} // Unmount components when outside of window 
@@ -315,19 +316,12 @@ export default function ProductSearchScreen() {
                                 numColumns={2}
                                 keyExtractor={(item, index) => String(index) + "G9"}
                                 renderItem={({ item, index }) => {
-                                    console.log("🚀 ~ file: productSearchScreen.js ~ line 340 ~ ProductSearchScreen ~ item", item)
                                     return (
                                         <TouchableOpacity
                                             onPress={() => handleShowDetail(item)}
                                             style={[Ps.cardProduct, { width: Wp('45%'), marginRight: Wp('4%') }]}
                                             key={index}>
-                                            {item.isDiscount ?
-                                                <Text adjustsFontSizeToFit style={Ps.textDiscount}>{item.discount}%</Text> : null}
-                                            {/* <Image style={Ps.imageProduct}
-                                            resizeMethod={"scale"}
-                                            resizeMode={item.image ? "cover" : "center"}
-                                            source={{ uri: item.image }}
-                                        /> */}
+                                            {item.isDiscount ? <Text adjustsFontSizeToFit style={Ps.textDiscount}>{item.discount}%</Text> : null}
                                             <FastImage
                                                 style={Ps.imageProduct}
                                                 source={{
@@ -360,7 +354,7 @@ export default function ProductSearchScreen() {
 
                                     )
                                 }}
-                            />
+                            /> */}
                             {loadmore ?
                                 <View style={style.content}>
                                     <View style={style.loading}>

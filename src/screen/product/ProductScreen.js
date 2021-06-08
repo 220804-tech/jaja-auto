@@ -23,7 +23,6 @@ export default function ProductScreen(props) {
     const reduxSearch = useSelector(state => state.search)
     const reduxUser = useSelector(state => state.user)
     const reduxAuth = useSelector(state => state.auth.auth)
-    console.log("🚀 ~ file: ProductScreen.js ~ line 26 ~ ProductScreen ~ reduxAuth", reduxAuth)
     const dispatch = useDispatch()
 
     const [refreshing, setRefreshing] = useState(false)
@@ -41,11 +40,9 @@ export default function ProductScreen(props) {
     const [productId, setproductId] = useState("")
     const [flashSaleId, setflashSaleId] = useState("")
     const [flashsale, setFlashsale] = useState(false)
-
     const [variantId, setvariantId] = useState("")
     const [lelangId, setlelangId] = useState("")
     const [qty, setqty] = useState(1)
-    const [count, setcount] = useState(0)
     const [seller, setSeller] = useState("")
 
     const onRefresh = React.useCallback(() => {
@@ -210,7 +207,6 @@ export default function ProductScreen(props) {
 
     const handleStore = () => {
         let slug = reduxSearch.productDetail.store.slug
-        console.log("🚀 ~ file: ProductScreen.js ~ line 139 ~ handleStore ~ slug", slug)
         ServiceStore.getStore(slug).then(res => {
             if (res) {
                 dispatch({ "type": 'SET_STORE', payload: res })
@@ -221,13 +217,10 @@ export default function ProductScreen(props) {
                 dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
             }
         })
-        setTimeout(() => {
-            navigation.navigate('Store')
-        }, 500);
+        navigation.navigate('Store')
     }
     const renderNavBar = (text) => (
         <View style={style.navContainer}>
-            {/* <View style={style.statusBar} /> */}
             <View style={style.navBar}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, padding: '3%', backgroundColor: colors.BlueJaja, justifyContent: 'center', alignItems: 'center', borderRadius: 100 }}>
                     <Image source={require('../../assets/icons/arrow.png')} style={{ width: 25, height: 25, marginRight: '3%', tintColor: colors.White }} />
@@ -357,13 +350,11 @@ export default function ProductScreen(props) {
                         {reduxSearch.productDetail.store ?
                             <View style={[styles.row_between_center, styles.p_3, styles.mb_3, { backgroundColor: colors.White }]}>
                                 <View style={styles.row}>
-                                    <View style={{ height: Wp('15%'), width: Wp('15%'), borderRadius: 5, marginRight: '3%', backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.Silver }}>
+                                    <TouchableOpacity onPress={handleStore} style={{ height: Wp('15%'), width: Wp('15%'), borderRadius: 5, marginRight: '3%', backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.Silver }}>
                                         <Image style={{ height: '100%', width: '100%', resizeMode: 'contain', borderRadius: 5 }} source={Object.keys(reduxSearch.productDetail).length && reduxSearch.productDetail.store.image ? { uri: reduxSearch.productDetail.store.image } : require('../../assets/images/JajaId.png')} />
-                                    </View>
-                                    {/* <Text style={{ fontSize: 16, color: colors.White, fontWeight: 'bold', backgroundColor: colors.BlueJaja, padding: '3%', borderRadius: 5, marginRight: '5%', textAlign: 'center', textAlignVertical: 'center' }}>{reduxSearch.productDetail.name.slice(0, 1).toUpperCase()}</Text> */}
-
+                                    </TouchableOpacity>
                                     <View style={styles.column}>
-                                        <Text style={[styles.font_14]}>{reduxSearch.productDetail.store.name}</Text>
+                                        <Text onPress={handleStore} style={[styles.font_14]}>{reduxSearch.productDetail.store.name}</Text>
                                         {reduxSearch.productDetail.store.location ?
                                             <View style={Ps.location}>
                                                 <Image style={[Ps.locationIcon, { marginRight: '2%' }]} source={require('../../assets/icons/google-maps.png')} />
@@ -417,7 +408,7 @@ export default function ProductScreen(props) {
                             <View style={[styles.column, styles.p_4, { backgroundColor: colors.White, paddingBottom: Hp('7%') }]}>
                                 <Text style={{ textDecorationLine: 'underline', fontSize: 16, fontWeight: 'bold', color: colors.BlackGrayScale, marginBottom: '3%' }}>Penilaian Produk</Text>
                                 {reduxSearch.productDetail.review ?
-                                    reduxSearch.productDetail.review.concat(reduxSearch.productDetail.review).map((item, index) => {
+                                    reduxSearch.productDetail.review.map((item, index) => {
                                         return (
                                             <View key={String(index)} style={[styles.column, styles.mb_5, styles.mt_2]}>
                                                 {index === 0 ? null :
@@ -433,8 +424,6 @@ export default function ProductScreen(props) {
                                                                     starSize={14}
                                                                     fullStarColor={colors.YellowJaja}
                                                                     emptyStarColor={colors.YellowJaja}
-
-                                                                // selectedStar={(rating) => this.onStarRatingPress(rating)}
                                                                 />
                                                             </View>
                                                         </View>
@@ -445,7 +434,7 @@ export default function ProductScreen(props) {
                                                         }
                                                     </>}
                                                 <View style={[styles.row, { flexWrap: 'wrap' }]}>
-                                                    {item.image.concat(item.image).map((itm, idx) => {
+                                                    {item.image.map((itm, idx) => {
                                                         return (
                                                             <TouchableOpacity onPress={() => navigation.navigate('Review', { data: reduxSearch.productDetail.slug })} style={{ width: Wp('17%'), height: Wp('17%'), justifyContent: 'center', alignItems: 'center', backgroundColor: colors.BlackGrayScale, marginRight: '1%' }}>
                                                                 <Image key={String(idx) + "i"} source={{ uri: itm }} style={{ width: '100%', height: '100%' }} />
@@ -456,21 +445,14 @@ export default function ProductScreen(props) {
                                                         <TouchableOpacity onPress={() => navigation.navigate('Review', { data: reduxSearch.productDetail.slug })} style={{ width: Wp('17%'), height: Wp('17%'), justifyContent: 'center', alignItems: 'center', backgroundColor: colors.BlackGrayScale }}>
                                                             <Image source={require('../../assets/icons/play.png')} style={{ width: Wp('5%'), height: Wp('5%'), marginRight: '2%', tintColor: colors.White }} />
                                                         </TouchableOpacity>
-
-                                                        // <VideoPlayer
-                                                        //     fullScreenOnLongPress={true}
-                                                        //     video={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }}
-                                                        //     videoWidth={Wp('18%')}
-                                                        //     videoHeight={Wp('18%')}
-                                                        // />
-                                                        // <Image source={{ uri: item.video }} style={{ width: Wp('18%'), height: Wp('18%'), marginRight: '2%' }} />
-                                                        : null}
+                                                        : null
+                                                    }
                                                 </View>
                                             </View>
                                         )
                                     })
                                     : null}
-                                <TouchableOpacity style={{ width: Wp('90%'), justifyContent: 'center', alignItems: 'center', padding: '3%', backgroundColor: colors.White, elevation: 0.5 }}>
+                                <TouchableOpacity onPress={() => navigation.navigate('Review', { data: reduxSearch.productDetail.slug })} style={{ width: Wp('90%'), justifyContent: 'center', alignItems: 'center', padding: '3%', backgroundColor: colors.White, elevation: 0.5 }}>
                                     <Text style={[styles.font_14, { color: colors.BlueJaja, }]}>Tampilkan semua</Text>
                                 </TouchableOpacity>
                             </View>
@@ -480,40 +462,32 @@ export default function ProductScreen(props) {
 
                             <View style={[styles.column, styles.p_4, styles.mb_2, { backgroundColor: colors.White, paddingBottom: '5%' }]}>
                                 <Text style={{ fontSize: 16, fontWeight: 'bold', color: colors.BlackGrayScale, marginBottom: '3%' }}>Produk Lainnya Di {reduxSearch.productDetail.store.name}</Text>
-                                {/* <ScrollView nestedScrollEnabled={true} contentContainerStyle={{ height: 500 }}> */}
                                 <FlatList
                                     horizontal={true}
                                     removeClippedSubviews={true} // Unmount components when outside of window 
-                                    // Reduce initial render amount
                                     maxToRenderPerBatch={1} // Reduce number in each render batch
                                     updateCellsBatchingPeriod={100} // Increase time between renders
                                     windowSize={7}
-                                    // getItemLayout={(data, index) => getItemLayout(data, index)}
                                     data={reduxSearch.productDetail.otherProduct}
                                     scrollEnabled={true}
                                     keyExtractor={(item, index) => String(index)}
-                                    // style={{ flexDirection: 'row' }}
                                     showsHorizontalScrollIndicator={false}
-                                    onScroll={(e) => console.log("event ", e)}
-                                    // contentContainerStyle={{ marginRight: '2%' }}
-                                    // contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}
                                     renderItem={({ item, index }) => {
                                         return (
                                             <TouchableOpacity
                                                 onPress={() => handleShowDetail(item)}
-                                                style={[Ps.cardProduct, { marginRight: 15 }]}
+                                                style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('55%') }]}
                                                 key={index}>
                                                 {item.isDiscount ? <Text style={Ps.textDiscount}>{item.discount}%</Text> : null}
                                                 <FastImage
-                                                    style={Ps.imageProduct}
+                                                    style={[Ps.imageProduct, { height: Wp('33%'), width: '100%' }]}
                                                     source={{
                                                         uri: item.image,
                                                         headers: { Authorization: 'someAuthToken' },
                                                         priority: FastImage.priority.normal,
                                                     }}
-                                                    resizeMode={FastImage.resizeMode.contain}
+                                                    resizeMode={FastImage.resizeMode.cover}
                                                 />
-
                                                 <View style={Ps.bottomCard}>
                                                     <Text
                                                         numberOfLines={2}
@@ -528,10 +502,6 @@ export default function ProductScreen(props) {
                                                         :
                                                         <Text style={Ps.price}>{item.price}</Text>
                                                     }
-                                                    <View style={Ps.location}>
-                                                        <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
-                                                        <Text style={Ps.locarionName}>{item.location}</Text>
-                                                    </View>
                                                 </View>
                                             </TouchableOpacity>
                                         )

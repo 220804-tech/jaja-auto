@@ -9,6 +9,7 @@ import FAIcon from 'react-native-vector-icons/FontAwesome5';
 import database from '@react-native-firebase/database';
 
 import { useDispatch, useSelector } from 'react-redux';
+import { Hp } from '../export';
 // import { Language } from '../utils/language/Language' 
 const Tab = createBottomTabNavigator();
 export default function BottomRoute() {
@@ -30,15 +31,24 @@ export default function BottomRoute() {
     }, [])
 
     return (
-        <Tab.Navigator initialRouteName="Home" backBehavior='firstRoute' screenOptions={{ headerShown: false }}>
+        <Tab.Navigator  backBehavior='firstRoute' screenOptions={{
+            headerShown: false, tabBarStyle: {
+                height: Hp('7.5%')
+            },
+
+
+
+        }}>
             <Tab.Screen name="Home" component={Home}
+
                 options={{
                     tabBarLabel: ({ size, focused }) => (
-                        <Text style={{ fontSize: 12, color: focused ? colors.BlueJaja : colors.BlackGrayScale }}>{Language("Beranda")}</Text>
+                        <Text style={{ fontSize: 12, color: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '3%' }}>{Language("Beranda")}</Text>
                     ),
+
                     tabBarIcon: ({ size, focused }) => (
-                        <View>
-                            <FAIcon name="rocket" size={20} color={focused ? colors.BlueJaja : "#a1a1a1"} style={{ alignSelf: 'center' }} />
+                        <View style={style.column}>
+                            <FAIcon name="rocket" size={size} color={focused ? colors.YellowJaja : colors.BlueJaja} style={{ marginBottom: '-2%' }} />
                             {/* <View style={style.countNotif}><Text style={style.textNotif}>99+</Text></View> */}
                         </View>
                     )
@@ -47,11 +57,11 @@ export default function BottomRoute() {
             {/* <Tab.Screen name="Feed" component={Feed}
                 options={{
                     tabBarLabel: ({ size, focused }) => (
-                        <Text style={{ fontSize: 12, color: focused ? colors.BlueJaja : colors.BlackGrayScale }}>{Language("Feed")}</Text>
+                        <Text style={{ fontSize: size, color: focused ? colors.BlueJaja : colors.BlackGrayScale }}>{Language("Feed")}</Text>
                     ),
                     tabBarIcon: ({ size, focused }) => (
                         <View>
-                            <FAIcon name="stack-exchange" size={20} color={focused ? colors.BlueJaja : "#a1a1a1"} style={{ alignSelf: 'center' }} />
+                            <FAIcon name="stack-exchange" size={size} color={focused ? colors.BlueJaja : "#a1a1a1"} style={{ alignSelf: 'center' }} />
                             <View style={style.countNotif}><Text style={style.textNotif}>99+</Text></View>
                         </View>
                     )
@@ -60,26 +70,31 @@ export default function BottomRoute() {
             <Tab.Screen name="Chat" component={ListChat}
                 options={{
                     tabBarLabel: ({ size, focused }) => (
-                        <Text style={{ fontSize: 12, color: focused ? colors.BlueJaja : colors.BlackGrayScale }}>{Language("Chat")}</Text>
+                        <Text style={{ fontSize: 12, color: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '3%' }}>{Language("Chat")}</Text>
                     ),
-                    tabBarIcon: ({ size, focused }) => (
-                        <View>
-                            <FAIcon name="comment-dots" size={20} color={focused ? colors.BlueJaja : "#a1a1a1"} style={{ alignSelf: 'center' }} />
-                            {notif && notif.chat ?
-                                <View style={style.countNotif}><Text style={style.textNotif}>99+</Text></View> : null}
-                        </View>
-                    )
+                    tabBarIcon: ({ size, focused }) => {
+                        return (
+                            <View style={style.column}>
+                                <Image style={{ width: size, height: size, tintColor: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '-2%' }} source={require(`../assets/icons/chat.png`)} />
+                                {notif && notif.chat ?
+                                    <View style={style.countNotif}><Text style={style.textNotif}>{parseInt(notif.chat) > 99 ? "99+" : notif.chat}</Text></View> : null
+                                }
+                            </View>
+                        )
+                    }
                 }}
             />
             <Tab.Screen name="Pesanan" component={Orders}
                 options={{
                     tabBarLabel: ({ size, focused }) => (
-                        <Text style={{ fontSize: 12, color: focused ? colors.BlueJaja : colors.BlackGrayScale }}>{Language("Transaksi")}</Text>
+                        <Text style={{ fontSize: 12, color: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '3%' }}>{Language("Transaksi")}</Text>
                     ),
                     tabBarIcon: ({ size, focused }) => (
-                        <View>
-                            <FAIcon name="exchange-alt" size={20} color={focused ? colors.BlueJaja : "#a1a1a1"} style={{ alignSelf: 'center' }} />
-                            {/* <View style={style.countNotif}><Text style={style.textNotif}>99+</Text></View> */}
+                        <View style={style.column}>
+                            <Image style={{ width: size, height: size, tintColor: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '-2%' }} source={require(`../assets/icons/traffic-blue.png`)} />
+                            {notif && notif.chat ?
+                                <View style={style.countNotif}><Text style={style.textNotif}>{parseInt(notif.chat) > 99 ? "99+" : notif.chat}</Text></View> : null
+                            }
                         </View>
                     )
                 }}
@@ -87,18 +102,20 @@ export default function BottomRoute() {
             <Tab.Screen name="Akun" component={Profile}
                 options={{
                     tabBarLabel: ({ size, focused }) => (
-                        <Text style={{ fontSize: 12, color: focused ? colors.BlueJaja : colors.BlackGrayScale }}>{Language("Akun")}</Text>
+                        <Text style={{ fontSize: 12, color: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '3%' }}>{Language("Akun")}</Text>
                     ),
                     tabBarIcon: ({ size, focused }) => {
                         return (
-                            <View>
-                                <FAIcon name="user" size={20} color={focused ? colors.BlueJaja : "#a1a1a1"} style={{ alignSelf: 'center' }} />
-                                {/* <View style={style.countNotif}><Text style={style.textNotif}>99+</Text></View> */}
+                            <View style={style.column}>
+                                <Image style={{ width: size, height: size, tintColor: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '-2%' }} source={require(`../assets/icons/user-active.png`)} />
+                                {notif && notif.chat ?
+                                    <View style={style.countNotif}><Text style={style.textNotif}>{parseInt(notif.chat) > 99 ? "99+" : notif.chat}</Text></View> : null
+                                }
                             </View>
                         )
                     }
                 }}
             />
-        </Tab.Navigator>
+        </Tab.Navigator >
     );
 }

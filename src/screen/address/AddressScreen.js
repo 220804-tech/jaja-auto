@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { SafeAreaView, Text, View, TouchableOpacity, ScrollView, StyleSheet, ToastAndroid, FlatList, Image, RefreshControl } from "react-native";
+import { SafeAreaView, Text, View, TouchableOpacity, ScrollView, StyleSheet, FlatList, Image, RefreshControl } from "react-native";
 import { Paragraph, Switch } from "react-native-paper";
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { colors, styles as style, Wp, Hp, ServiceUser, ServiceCheckout, Loading } from '../../export'

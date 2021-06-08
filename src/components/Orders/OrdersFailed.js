@@ -10,6 +10,7 @@ export default function OrdersFailed() {
     const reduxFailed = useSelector(state => state.order.failed)
     const [refreshing, setRefreshing] = useState(false);
     const [auth, setAuth] = useState("")
+    const reduxAuth = useSelector(state => state.auth.auth)
 
     useEffect(() => {
         EncryptedStorage.getItem('token').then(res => {
@@ -33,7 +34,7 @@ export default function OrdersFailed() {
 
 
     const getItem = () => {
-        ServiceOrder.getUnpaid(auth).then(resUnpaid => {
+        ServiceOrder.getUnpaid(reduxAuth).then(resUnpaid => {
             if (resUnpaid) {
                 dispatch({ type: 'SET_FAILED', payload: resUnpaid.items })
                 dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })

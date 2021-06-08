@@ -9,6 +9,8 @@ export default function OrdersProcess() {
     const dispatch = useDispatch()
     const reduxWaitConfirm = useSelector(state => state.order.waitConfirm)
     const reduxProcess = useSelector(state => state.order.process)
+    const reduxAuth = useSelector(state => state.auth.auth)
+
     const [refreshing, setRefreshing] = useState(false);
     const [auth, setAuth] = useState("")
     const [status, setstatus] = useState("Sedang disiapkan")
@@ -36,7 +38,7 @@ export default function OrdersProcess() {
 
 
     const getItem = () => {
-        ServiceOrder.getWaitConfirm(auth).then(reswaitConfirm => {
+        ServiceOrder.getWaitConfirm(reduxAuth).then(reswaitConfirm => {
             if (reswaitConfirm) {
                 dispatch({ type: 'SET_WAITCONFIRM', payload: reswaitConfirm.items })
                 setTimeout(() => ToastAndroid.show("Data berhasil diperbahrui", ToastAndroid.SHORT, ToastAndroid.CENTER), 500);
@@ -48,7 +50,7 @@ export default function OrdersProcess() {
             handleWaitConfirm()
         })
 
-        ServiceOrder.getProcess(auth).then(resProcess => {
+        ServiceOrder.getProcess(reduxAuth).then(resProcess => {
             if (resProcess) {
                 dispatch({ type: 'SET_PROCESS', payload: resProcess.items })
             } else {

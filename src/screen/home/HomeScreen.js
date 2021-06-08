@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, ScrollView, StyleSheet, RefreshControl, Platform, Dimensions, LogBox, Animated } from 'react-native'
+import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, ScrollView, StyleSheet, RefreshControl, Platform, Dimensions, LogBox, Animated, Alert } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { BasedOnSearch, Trending, Category, Flashsale, Language, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect } from '../../export'
@@ -11,17 +11,33 @@ const IS_IPHONE_X = SCREEN_HEIGHT === 812 || SCREEN_HEIGHT === 896;
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
 const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
+import { useAndroidBackHandler } from "react-navigation-backhandler";
 LogBox.ignoreAllLogs()
-// YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader', 'RNDeviceInfo', 'Warning: An update']);
 
 export default function HomeScreen() {
+    useAndroidBackHandler(() => {
+        if (out) {
+            return false;
+        } else {
+            ToastAndroid.show("Tekan sekali lagi untuk keluar aplikasi", ToastAndroid.LONG, ToastAndroid.TOP)
+            setTimeout(() => {
+                setOut(false)
+            }, 4500);
+            setOut(true)
+            return true
+        }
+    });
+
     const dispatch = useDispatch()
     const reduxUser = useSelector(state => state.user)
     const navigation = useNavigation()
     const [auth, setAuth] = useState("")
     const [scrollY, setscrollY] = useState(new Animated.Value(0))
+    const [out, setOut] = useState(false)
+    const [home, setHome] = useState(true)
+
     const [refreshing, setRefreshing] = useState(false);
-    const reduxDashboard = useSelector(state => state.dashboard.recommanded)
+    const reduxOut = useSelector(state => state.dashboard.out)
 
     const images = [
         {
@@ -49,9 +65,12 @@ export default function HomeScreen() {
 
     useFocusEffect(
         useCallback(() => {
+            setOut(false)
             getBadges()
             getToken()
             try {
+                // dispatch({ type: 'SET_OUT', payload: false })
+
                 EncryptedStorage.getItem('historySearching').then(res => {
                     if (!res) {
                         let data = []
@@ -63,6 +82,11 @@ export default function HomeScreen() {
             }
         }, []),
     );
+
+    useEffect(() => {
+
+    }, [])
+
 
     const getToken = () => {
         EncryptedStorage.getItem('token').then(res => {
@@ -105,15 +129,15 @@ export default function HomeScreen() {
                     <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
                     <Text style={styles.font_14}>{text}..</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={style.touchIcon} onPress={() => handleGetCart()}>
-                    <Image source={require('../../assets/icons/cart.png')} style={{ width: 24, height: 24, marginRight: '3%', tintColor: colors.White }} />
+                <TouchableOpacity style={[styles.column, styles.mx_3]} onPress={() => handleGetCart()}>
+                    <Image source={require('../../assets/icons/cart.png')} style={{ width: 25, height: 25, tintColor: colors.White }} />
                     {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
                         <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalProductInCart >= 100 ? "99+" : reduxUser.badges.totalProductInCart}</Text></View>
                         : null
                     }
                 </TouchableOpacity>
-                <TouchableOpacity style={style.touchIcon}>
-                    <Image source={require('../../assets/icons/notif.png')} style={{ width: 24, height: 24, marginRight: '3%', tintColor: colors.White }} />
+                <TouchableOpacity style={[styles.column, styles.mx_2]}>
+                    <Image source={require('../../assets/icons/notif.png')} style={{ width: 24, height: 24, tintColor: colors.White }} />
                     {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
                         <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalProductInCart >= 100 ? "99+" : reduxUser.badges.totalNotifUnread}</Text></View>
                         : null
@@ -227,8 +251,8 @@ export default function HomeScreen() {
                 >
                 </ReactNativeParallaxHeader>
             </ScrollView>
+        </SafeAreaView>
 
-        </SafeAreaView >
     )
 }
 const style = StyleSheet.create({

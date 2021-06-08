@@ -56,9 +56,14 @@ export default function OrdersSent() {
         })
     }
     const handleOrderDetails = (item) => {
-        navigation.navigate('OrderDetails', { data: item.invoice, status: "Dalam Perjalanan" })
+        navigation.navigate('OrderDetails', { data: item.invoice, status: "Pengiriman" })
     }
 
+    const handleTracking = (item) => {
+        dispatch({ type: 'SET_INVOICE', payload: item.invoice })
+        dispatch({ type: 'SET_RECEIPT', payload: item.trackingId })
+        navigation.navigate('OrderDelivery')
+    }
     return (
         <View style={[styles.container, styles.pt_2]}>
             <FlatList
@@ -104,7 +109,7 @@ export default function OrdersSent() {
                             </View>
                             {/* <TouchableOpacity style={[styles.row_between_center, styles.p_2, { width: '100%' }]} onPress={() => navigation.navigate('OrderDelivery')}> */}
 
-                            <TouchableOpacity style={[styles.row_between_center, styles.mt_5, styles.px_2]} onPress={() => navigation.navigate('OrderDelivery')}>
+                            <TouchableOpacity style={[styles.row_between_center, styles.mt_5, styles.px_2]} onPress={() => handleTracking(item)}>
                                 <View style={[styles.row, { width: Wp('60%') }]}>
                                     <Image style={{ width: 19, height: 19, tintColor: colors.YellowJaja, marginRight: '2%' }} source={require('../../assets/icons/google-maps.png')} />
                                     <Text numberOfLines={1} style={[styles.font_14, { color: colors.YellowJaja, fontFamily: 'serif' }]}>Paket anda telah dikirim ke jasa kurir</Text>

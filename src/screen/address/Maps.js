@@ -26,8 +26,6 @@ export default function map(props) {
     })
 
     useEffect(() => {
-        let result = props.data;
-        console.log("🚀 ~ file: map.js ~ line 28 ~ useEffect ~ result", result)
 
     }, [props])
 

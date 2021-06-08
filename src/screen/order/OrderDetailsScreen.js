@@ -56,6 +56,13 @@ export default function OrderDetailsScreen(props) {
         navigation.navigate("Midtrans")
     }
 
+
+    const handleTracking = () => {
+        dispatch({ type: 'SET_INVOICE', payload: details.items[0].invoice })
+        dispatch({ type: 'SET_RECEIPT', payload: details.items[0].trackingId })
+        navigation.navigate('OrderDelivery')
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <Appbar title="Detail Pesanan" back={true} />
@@ -234,6 +241,21 @@ export default function OrderDetailsScreen(props) {
 
                     </View>
                 </View>
+                {props.route.params.status === "Pengiriman" ?
+                    <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
+
+                        <Button onPress={handleTracking} style={{ alignSelf: 'center', width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
+                            Lacak Pengiriman
+                        </Button>
+                    </View>
+                    : props.route.params.status === "Pesanan Selesai" ?
+                        <View style={{ position: 'absolute', bottom: 0, zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center', marginBottom: '3%' }}>
+                            <Button icon="star" onPress={() => navigation.navigate('AddReview', { data: details.items[0].products })} style={{ alignSelf: 'center', width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
+                                Beri Penilaian
+                            </Button>
+                        </View>
+                        : null
+                }
             </ScrollView>
             {props.route.params && props.route.params.status === "Menunggu Pembayaran" ?
                 <View style={{ position: 'absolute', bottom: 0, zIndex: 100, elevation: 1, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
@@ -245,17 +267,8 @@ export default function OrderDetailsScreen(props) {
                         Pilih pembayaran
                     </Button>
                 </View>
-                : props.route.params.status === "Pesanan Selesai" ?
-                    <View style={{ position: 'absolute', bottom: 0, zIndex: 100, height: Hp('6%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
-                        {/* <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '3%' }}>
-                        <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}>Total pembayaran :</Text>
-                        <Text numberOfLines={1} style={[styles.font_20, { fontWeight: 'bold', color: colors.BlueJaja }]}>{reduxCheckout.totalCurrencyFormat}</Text>
-                    </View> */}
-                        <Button icon="star" onPress={() => navigation.navigate('AddReview', { data: details.items[0].products })} style={{ alignSelf: 'center', width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
-                            Beri Penilaian
-                        </Button>
-                    </View>
-                    : null}
+                : null
+            }
         </SafeAreaView >
     )
 }

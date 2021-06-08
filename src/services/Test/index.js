@@ -1,67 +1,67 @@
-import React, {useEffect,useState} from 'react'
-import {View, StyleSheet, Text, Button,Alert,BackHandler } from 'react-native'
-import {fcmService} from './src/FCMService';
+import React, { useEffect, useState } from 'react'
+import { View, StyleSheet, Text, Button, Alert } from 'react-native'
+import { fcmService } from './src/FCMService';
 //import {localNotificationService} from './src/LocalNotificationService';
 import App from "./navigation";
 import { store, persistor } from "app/store";
-import { StatusBar,AsyncStorage,Linking  } from "react-native";
+import { StatusBar, AsyncStorage, Linking } from "react-native";
 import { BaseColor } from "@config";
-import { Provider} from "react-redux";
+import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import I18n from "react-native-i18n";
-import {DataMasterDiskon} from "@data";
+import { DataMasterDiskon } from "@data";
 import NetInfo from '@react-native-community/netinfo';
 import RNExitApp from 'react-native-exit-app';
 import Modal from "react-native-modal";
 
 
 export default function index(props) {
-  const [config, setConfig]= useState({});
-  const [dataMasterDiskon, setDataMasterDiskon]=useState(DataMasterDiskon[0]);
-  const [bodyNotif,setBodyNotif]=useState({});
-  const [modalVisible, setModalVisible]=useState(false);
-  const [modalTitle,setModalTitle]=useState('Pembayaran Berhasil');
-  const [modalTitleSub,setModalTitleSub]=useState('Hore Pembayaranmu Berhasil sudah selesai');
-  const {navigation} = props;
+  const [config, setConfig] = useState({});
+  const [dataMasterDiskon, setDataMasterDiskon] = useState(DataMasterDiskon[0]);
+  const [bodyNotif, setBodyNotif] = useState({});
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState('Pembayaran Berhasil');
+  const [modalTitleSub, setModalTitleSub] = useState('Hore Pembayaranmu Berhasil sudah selesai');
+  const { navigation } = props;
   const priceSplitter = (number) => (number && number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'));
 
-  
+
   useEffect(() => {
     console.disableYellowBox = true;
     I18n.fallbacks = true;
     I18n.translations = {
-            en: require("./lang/en.json"),
-            ko: require("./lang/ko.json"),
-            vi: require("./lang/vi.json")
+      en: require("./lang/en.json"),
+      ko: require("./lang/ko.json"),
+      vi: require("./lang/vi.json")
     };
     StatusBar.setBackgroundColor(BaseColor.primaryColor, true);
     // StatusBar.setBackgroundColor("rgba(0,0,0,0)");
-    
+
     // StatusBar.setBackgroundColor("rgba(0,0,0,0)");
     // StatusBar.setTranslucent(false);
-    
-    
+
+
     //notification START------------------------------------------------------//
     fcmService.registerAppWithFCM()
     fcmService.register(onRegister, onNotification, onOpenNotification)
-    
+
     //didasable untuk ios belum dpt module
     //localNotificationService.configure(onOpenNotification)
 
     function onRegister(token) {
-        console.log('tokenFirebases',JSON.stringify(token));
+      console.log('tokenFirebases', JSON.stringify(token));
       AsyncStorage.setItem('tokenFirebase', JSON.stringify(token));
     }
 
     function onNotification(notify) {
-          console.log("[App] onNotificationx: ", JSON.stringify(notify));
-      
-      var body_msg=notify.body;
-      var body_array = body_msg.split("#");
-      var type=body_array[0];
+      console.log("[App] onNotificationx: ", JSON.stringify(notify));
 
-      if(type=='Payment'){
-        var bodyNotif={
+      var body_msg = notify.body;
+      var body_array = body_msg.split("#");
+      var type = body_array[0];
+
+      if (type == 'Payment') {
+        var bodyNotif = {
           transaction: body_array[1],
           type: body_array[2],
           id_order: body_array[3],
@@ -81,9 +81,9 @@ export default function index(props) {
         // }
       }
 
-  
-      console.log('bodyNotifonNotification',JSON.stringify(bodyNotif));
-      
+
+      console.log('bodyNotifonNotification', JSON.stringify(bodyNotif));
+
 
       const options = {
         soundName: 'default',
@@ -104,8 +104,8 @@ export default function index(props) {
 
     function onOpenNotification(notify) {
     }
-    
-     //-------------------------------update version-------------------------------//
+
+    //-------------------------------update version-------------------------------//
 
     //  VersionCheck.getCountry()
     //     .then(country => console.log(country));          // KR
@@ -137,26 +137,26 @@ export default function index(props) {
     //       console.log(latestVersion);    // 0.1.2
     //     });
 
-        
 
 
-      
-
-      // VersionCheck.needUpdate()
-      //   .then(async res => {
-      //     if (res.isNeeded) {
-      //       Alert.alert(
-      //         'Versi baru telah tersedia',
-      //         'Silakan memperbarui aplikasi masterdiskon untuk menikmati fitur baru dan pengalaman aplikasi yang lebih baik',
-      //         [
-      //           {text: 'Tidak sekarang', onPress: () => RNExitApp.exitApp()},
-      //           {text: 'Perbarui sekarang', onPress: () => Linking.openURL(res.storeUrl)},
-      //         ]
-      //       );
-      //     }
 
 
-      //   });
+
+    // VersionCheck.needUpdate()
+    //   .then(async res => {
+    //     if (res.isNeeded) {
+    //       Alert.alert(
+    //         'Versi baru telah tersedia',
+    //         'Silakan memperbarui aplikasi masterdiskon untuk menikmati fitur baru dan pengalaman aplikasi yang lebih baik',
+    //         [
+    //           {text: 'Tidak sekarang', onPress: () => RNExitApp.exitApp()},
+    //           {text: 'Perbarui sekarang', onPress: () => Linking.openURL(res.storeUrl)},
+    //         ]
+    //       );
+    //     }
+
+
+    //   });
 
     //-------------------------------update version-------------------------------//
 
@@ -171,12 +171,12 @@ export default function index(props) {
   }, [])
 
   return (
-  
-                  <Provider store={store}>
-                      <PersistGate loading={null} persistor={persistor}>
-                          <App />
-                     </PersistGate>
-                  </Provider>
+
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <App />
+      </PersistGate>
+    </Provider>
   )
 
 }

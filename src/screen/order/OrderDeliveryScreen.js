@@ -1,23 +1,22 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { View, Text, SafeAreaView, TouchableOpacity, Image, RefreshControl, FlatList, StyleSheet, ToastAndroid, ScrollView } from 'react-native'
+import { View, Text, SafeAreaView, TouchableOpacity, Image, RefreshControl, FlatList, StyleSheet, ToastAndroid, ScrollView, Alert } from 'react-native'
 import { DataTable, Divider } from 'react-native-paper';
+import { useSelector, useDispatch } from 'react-redux';
 import { styles as style, colors, useNavigation, useFocusEffect, Loading, CheckSignal, Appbar } from '../../export'
+
 export default function OrderDeliveryScreen(props) {
     const navigation = useNavigation();
     const [data, setdata] = useState([])
     const [loading, setLoading] = useState(false)
     const [refreshing, setRefreshing] = useState(false);
-
-    const [invoice, setinvoice] = useState("IDS004971017968")
-
-    const [delivery, setdelivery] = useState([
-        { date: '10 Mei', time: "10.30", status: "Paket anda telah diterima oleh jasa kurir" },
-        { date: '11 Mei', time: "17.44", status: "Paket dikirim ke Bekasi Center" },
-        { date: '12 Mei', time: "11.01", status: "Paket telah sampai di Gudang Tarumajaya" },
-        { date: '13 Mei', time: "13.00", status: "Paket anda akan dikirim hari ini" },
+    const dispatch = useDispatch()
+    const reduxTracking = useSelector(state => state.order.tracking)
+    const reduxReceipt = useSelector(state => state.order.receipt)
+    const reduxInvoice = useSelector(state => state.order.invoice)
+    const reduxAuth = useSelector(state => state.auth.auth)
 
 
-    ])
+
     useEffect(() => {
         setLoading(true)
         getItem()
@@ -35,20 +34,42 @@ export default function OrderDeliveryScreen(props) {
     }, []);
 
     const getItem = () => {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", reduxAuth);
+        myHeaders.append("Cookie", "ci_session=croc9bj799b291gjd0oqd06b3vr2ehm8");
+
+        var raw = "";
+
         var requestOptions = {
             method: 'GET',
+            headers: myHeaders,
+            body: raw,
             redirect: 'follow'
         };
-        fetch(`https://jaja.id/core/seller/penjualan/track/${invoice}`, requestOptions)
+        fetch(`https://jaja.id/backend/order/${reduxInvoice}`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: Lacak.js ~ line 42 ~ getItem ~ result", result)
-                setdata(result.data.manifest)
+                if (result.status.code === 200 || result.status.code === 204) {
+                    dispatch({ type: 'SET_TRACKING', payload: result.data.tracking })
+                    console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 45 ~ getItem ~ result.status.code", result.data.tracking)
+                } else {
+                    setTimeout(() => {
+                        Alert.alert(
+                            "Jaja.id",
+                            result.status.message + " " + result.status.code,
+                            [
+                                {
+                                    text: "TUTUP",
+                                    onPress: () => console.log("Cancel Pressed"),
+                                    style: "cancel"
+                                }
+                            ]
+                        )
+                    }, 500);
+                }
                 setLoading(false)
             })
-            .catch(error => {
-                setLoading(false)
-            });
+            .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
     }
 
     useFocusEffect(
@@ -103,26 +124,27 @@ export default function OrderDeliveryScreen(props) {
                 <DataTable>
                     <DataTable.Header>
                         <DataTable.Title>No. Resi</DataTable.Title>
-                        <DataTable.Title numeric>{invoice}</DataTable.Title>
+                        <DataTable.Title numeric>{reduxReceipt ? reduxReceipt : ""}</DataTable.Title>
                     </DataTable.Header>
 
-                    <FlatList
-                        data={delivery}
-                        renderItem={({ item, index }) => (
-                            <>
-                                <View style={{ felx: 1, flexDirection: 'row', width: '100%' }}>
-                                    <View style={[style.column, { paddingVertical: '3%', paddingHorizontal: '2%', width: '25%' }]}>
-                                        <Text style={styles.textDate}>{item.time}</Text>
-                                        <Text style={styles.textDate}>{item.date}</Text>
+                    {reduxTracking && reduxTracking.length ?
+                        <FlatList
+                            data={reduxTracking}
+                            renderItem={({ item, index }) => (
+                                <>
+                                    <View style={{ felx: 1, flexDirection: 'row', width: '100%' }}>
+                                        <View style={[style.column, { paddingVertical: '3%', paddingHorizontal: '2%', width: '25%' }]}>
+                                            <Text style={styles.textDate}>{item.time}</Text>
+                                            <Text style={styles.textDate}>{item.date}</Text>
+                                        </View>
+                                        <View style={{ felx: 1, flexDirection: 'row', paddingVertical: '3%', width: '75%', height: '100%', paddingHorizontal: '2%', }}>
+                                            <Text numberOfLines={2} style={[styles.textInfo, { color: index === 0 ? colors.BlueJaja : colors.BlackGrayScale }]}>{item.description}</Text>
+                                        </View>
                                     </View>
-                                    <View style={{ felx: 1, flexDirection: 'row', paddingVertical: '3%', width: '75%', height: '100%', paddingHorizontal: '2%', }}>
-                                        <Text numberOfLines={2} style={[styles.textInfo, { color: index === 0 ? colors.BlueJaja : colors.BlackGrayScale }]}>{item.status}</Text>
-                                    </View>
-                                </View>
-                                <Divider />
-                            </>
-                        )}
-                    />
+                                    <Divider />
+                                </>
+                            )}
+                        /> : null}
                 </DataTable>
             </ScrollView>
         </SafeAreaView>

@@ -7,6 +7,7 @@ import RecomandedHobby from '../components/RecomandedHobby/RecomandedHobbyCompon
 import Trending from '../components/Trending/TrendingComponent'
 import BasedOnSearch from '../components/BasedOnSearch/BasedOnSearchComponent'
 import FastImage from 'react-native-fast-image'
+import Card from '../components/CardProduct/CardProductComponent'
 
 import Language from '../utils/language/Language'
 import Loading from '../components/Loading/LoadingComponent'
@@ -26,7 +27,6 @@ import * as ServiceFirebase from '../services/Firebase'
 import { style as Ps } from '../assets/styles/productStyles'
 import { style as Os } from '../assets/styles/orderStyle'
 
-
 import { styles } from '../assets/styles/styles'
 import { widthPercentageToDP as Wp, heightPercentageToDP as Hp } from 'react-native-responsive-screen';
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
@@ -34,5 +34,5 @@ import colors from '../assets/colors'
 export {
     Appbar, CardProduct, Category, Flashsale, Maps, HobyAverage, RecomandedHobby, Trending, Language, Loading, CheckSignal, BasedOnSearch, styles,
     Ps, Wp, Hp, useNavigation, colors, useFocusEffect, FastImage, Form, ServiceCart, ServiceCheckout, ServiceUser, ServiceVoucher, ServiceOrder, Os,
-    ServiceCategory, ServiceProduct, ServiceStore, ServiceFirebase
+    ServiceCategory, ServiceProduct, ServiceStore, ServiceFirebase, Card
 };

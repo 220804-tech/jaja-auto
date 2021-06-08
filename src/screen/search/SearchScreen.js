@@ -2,12 +2,13 @@ import React, { useEffect, useState, createRef } from 'react'
 import { SafeAreaView, View, Text, Image, TouchableOpacity, TextInput, FlatList, ToastAndroid } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { useNavigation, colors, styles, Wp, CheckSignal, ServiceStore } from '../../export'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 export default function SearchScreen() {
-
+    const navigation = useNavigation();
 
     const dispatch = useDispatch();
-    const navigation = useNavigation();
+    const reduxSlug = useSelector(state => state.search.slug)
+    console.log("🚀 ~ file: SearchScreen.js ~ line 11 ~ SearchScreen ~ reduxSlug", reduxSlug)
     const [count, setCount] = useState(0)
     const [historySearch, sethistorySearch] = useState([])
     const [storeSearch, setstoreSearch] = useState([])
@@ -93,9 +94,11 @@ export default function SearchScreen() {
         sethistorySearch(newArr)
     }
     const handleSearchInput = (text) => {
-        console.log("🚀 ~ file: SearchScreen.js ~ line 85 ~ handleSearchInput ~ text", text)
-        handleFetch(text)
-        handleSaveKeyword(text)
+        if (text) {
+            handleFetch(text)
+            handleSaveKeyword(text)
+        }
+
     }
 
     const handleFetch = (text) => {
@@ -126,13 +129,17 @@ export default function SearchScreen() {
                     }
                 })
             });
+        dispatch({ type: 'SET_SLUG', payload: text })
 
-        setTimeout(() => {
-            navigation.navigate('ProductSearch')
-        }, 500);
+        navigation.navigate('ProductSearch')
         // } 
     }
     const handleSelectedToko = (item) => {
+        if (item.slug !== reduxSlug) {
+            dispatch({ "type": 'SET_STORE', payload: {} })
+            dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
+        }
+        dispatch({ type: 'SET_SLUG', payload: item.slug })
         ServiceStore.getStore(item.slug).then(res => {
             if (res) {
                 dispatch({ "type": 'SET_STORE', payload: res })
@@ -143,9 +150,8 @@ export default function SearchScreen() {
                 dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
             }
         })
-        setTimeout(() => {
-            navigation.navigate('Store')
-        }, 500);
+
+        navigation.navigate('Store')
 
     }
 
@@ -155,10 +161,10 @@ export default function SearchScreen() {
                 <TouchableOpacity style={styles.row_start_center} onPress={() => navigation.goBack()}>
                     <Image style={styles.appBarButton} source={require('../../assets/icons/arrow.png')} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.searchBar}>
+                <View style={styles.searchBar}>
                     <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
                     <TextInput keyboardType="name-phone-pad" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={styles.font_14} placeholder='Cari hobimu sekarang..' onChangeText={(text) => handleSearch(text)} onSubmitEditing={(value) => handleSearchInput(value.nativeEvent.text)}></TextInput>
-                </TouchableOpacity>
+                </View>
                 {/* <TouchableOpacity style={style.searchBar} onPress={() => navigation.navigate("Search")}>
                     <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
                     <Text style={styles.font_14}>{text}..</Text>
@@ -175,10 +181,15 @@ export default function SearchScreen() {
                                 keyExtractor={(item) => item.id}
                                 extraData={productSearch}
                                 renderItem={({ item }) => {
+                                    console.log("🚀 ~ file: SearchScreen.js ~ line 178 ~ SearchScreen ~ item", item)
                                     return (
-                                        <TouchableOpacity onPress={() => handleSelected(item)} style={{ paddingVertical: '2.5%', marginBottom: '2%', backgroundColor: colors.White, borderBottomWidth: 0.5, borderColor: colors.Silver }}>
-                                            <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlackGrey }]}>{item.name}</Text>
-                                        </TouchableOpacity>
+                                        <>
+                                            {Object.keys(item).length ?
+                                                <TouchableOpacity onPress={() => handleSelected(item)} style={{ paddingVertical: '2.5%', marginBottom: '2%', backgroundColor: colors.White, borderBottomWidth: 0.5, borderColor: colors.Silver }}>
+                                                    <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlackGrey }]}>{item.name}</Text>
+                                                </TouchableOpacity>
+                                                : null}
+                                        </>
                                     )
                                 }} />
                             <View style={[styles.column, styles.py_3]}>

@@ -13,7 +13,6 @@ Messaging().setBackgroundMessageHandler(async remoteMessage => {
 Messaging().onMessage(remoteMessage => {
     // alert(JSON.stringify(remoteMessage.notification.title));
     ToastAndroid.show(JSON.stringify(remoteMessage.notification.body), ToastAndroid.LONG, ToastAndroid.TOP)
-    // BackHandler.exitApp();
     // navigation.navigate(remoteMessage.data.type);
 });
 AppRegistry.registerComponent(appName, () => App);

@@ -132,14 +132,14 @@ export const styles = StyleSheet.create({
 
     actionSheetTitle: { flex: 1, fontWeight: 'bold', fontSize: 17, color: colors.BlueJaja },
 
-    countNotif: { position: 'absolute', height: 19, width: 19, backgroundColor: colors.RedNotif, right: 9, top: -5, borderRadius: 100, alignItems: 'center', justifyContent: 'center' },
-    textNotif: { fontSize: 10, color: colors.White, fontWeight: '900' },
+    countNotif: { position: 'absolute', height: 15, width: 15, backgroundColor: colors.RedNotif, right: -3, top: 0, borderRadius: 100, alignItems: 'center', justifyContent: 'center' },
+    textNotif: { fontSize: 9, color: colors.White, fontWeight: '900' },
     cardProduct: { flex: 0, flexDirection: 'column', marginRight: 11, width: Wp('33%'), height: Wp('53%'), borderRadius: 4, backgroundColor: colors.White, alignItems: 'center' },
     flashsale: {
         fontSize: Wp("5%"),
         fontWeight: "bold",
         letterSpacing: 0,
-        textAlign: "left", fontFamily: 'Lato-Bold',
+        textAlign: "left",
         color: colors.RedFlashsale,
         marginBottom: '3%'
     },

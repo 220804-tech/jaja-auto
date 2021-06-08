@@ -16,6 +16,8 @@ export default function ListChat() {
         // Storage.getUID().then(res => {
         //     loadList(res)
         // }).catch(err => alert(err))
+        console.log("🚀 ~ file: HomeScreen.js ~ line 1000 ~ useEffect ~ navigation.state.routeName", navigation.getState().routeNames[0])
+
         loadList()
     }, []);
 
