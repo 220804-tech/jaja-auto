@@ -84,7 +84,7 @@ export default function ListChat() {
 
     return (
         <SafeAreaView style={style.container}>
-            <Appbar title="Chat" />
+            <Appbar title="Chats" trolley={true} notif={true} />
             {
                 users.length != 0 ?
                     <View style={{ flex: 1, backgroundColor: colors.White }}>

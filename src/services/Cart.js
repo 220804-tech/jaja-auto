@@ -1,4 +1,4 @@
-import { ToastAndroid } from 'react-native'
+import { ToastAndroid, Alert } from 'react-native'
 export async function getCart(auth) {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);
@@ -6,6 +6,7 @@ export async function getCart(auth) {
 
     var raw = "";
 
+    console.log("🚀 ~ file: Cart.js ~ line 10 ~ getCart ~ auth", auth)
     var requestOptions = {
         method: 'GET',
         headers: myHeaders,
@@ -19,10 +20,33 @@ export async function getCart(auth) {
             if (result.status.code === 200) {
                 return result.data;
             } else {
+                Alert.alert(
+                    "Error get cart",
+                    String(result.status.message) + " => " + String(result.status.code),
+                    [
+                        {
+                            text: "TUTUP",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                        },
+                    ]
+                );
                 return null
             }
         })
-        .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+        .catch(error => {
+            Alert.alert(
+                "Error",
+                String(error) + JSON.stringify(error),
+                [
+                    {
+                        text: "TUTUP",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                    },
+                ]
+            );
+        });
 }
 
 

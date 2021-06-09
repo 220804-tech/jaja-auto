@@ -117,7 +117,6 @@ export default function LoginScreen(props) {
                     if (result.status.code === 200) {
                         EncryptedStorage.setItem("token", JSON.stringify(result.data))
                         handleUser(result.data)
-                        dispatch({ type: 'SET_AUTH', payload: result.data })
 
                         console.log("🚀 ~ file: LoginScreen.js ~ line 82 ~ handleSubmit ~  props", props)
                     } else if (result.status.code === 400 || result.status.code === 404) {
@@ -211,6 +210,10 @@ export default function LoginScreen(props) {
                             routes: [{ name: 'Splash' }],
                         })
                     }
+                    setTimeout(() => {
+                        dispatch({ type: 'SET_AUTH', payload: data })
+                    }, 500);
+
                 } catch (error) {
                     ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)
                 }

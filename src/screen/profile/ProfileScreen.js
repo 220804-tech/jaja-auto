@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux'
 export default function ProfileScreen(props) {
   const navigation = useNavigation();
   const dispatch = useDispatch()
-  const reduxAuth = useSelector(state => state.auth)
+  const reduxAuth = useSelector(state => state.auth.auth)
 
   const [auth, setAuth] = useState(true)
   const [loading, setLoading] = useState(false)
@@ -56,8 +56,8 @@ export default function ProfileScreen(props) {
 
     // navigation.navigate("VerifikasiEmail", { email: user.email })
 
-    console.log("🚀 ~ file: ProfileScreen.js ~ line 69 ~ getItem ~ reduxAuth", reduxAuth.auth)
-    setAuth(reduxAuth.auth)
+    console.log("🚀 ~ file: ProfileScreen.js ~ line 69 ~ getItem ~ reduxAuth", reduxAuth)
+    setAuth(reduxAuth)
   }
 
   const handleLogout = async () => {
@@ -115,7 +115,7 @@ export default function ProfileScreen(props) {
   return (
     <>
       {loading ? <Loading /> : null}
-      {!reduxAuth.auth ?
+      {!reduxAuth ?
         <AuthLogin navigate={null} auth={handleAuth} />
         :
         <SafeAreaView style={(styles.container, { backgroundColor: colors.BlueJaja })}>

@@ -5,11 +5,12 @@ import { useSelector, useDispatch } from 'react-redux'
 import { styles, colors, Hp, FastImage, useNavigation, ServiceCategory, useFocusEffect } from '../../export'
 export default function CategoryComponent() {
     let navigation = useNavigation();
-    const reduxDashboard = useSelector(state => state.dashboard.category)
     const dispatch = useDispatch()
-    const [state, setstate] = useState([])
+    const reduxDashboard = useSelector(state => state.dashboard.category)
+    const [storageDashboard, setstorageDashboard] = useState([])
     useEffect(() => {
         getData()
+        getStorage()
     }, [])
 
     useFocusEffect(
@@ -28,6 +29,13 @@ export default function CategoryComponent() {
         }, []),
     );
 
+    const getStorage = () => {
+        EncryptedStorage.getItem('dashcategory').then(res => {
+            if (res) {
+                setstorageDashboard(JSON.parse(res))
+            }
+        })
+    }
     const getData = () => {
         ServiceCategory.getAllCategory().then(res => {
             if (res) {
@@ -105,58 +113,54 @@ export default function CategoryComponent() {
                 </Text>
                 </TouchableOpacity>
             </View>
-            {reduxDashboard && reduxDashboard.length ?
-                <FlatList
-                    showsHorizontalScrollIndicator={false}
-                    data={reduxDashboard}
-                    horizontal={true}
-                    keyExtractor={(item, index) => String(index)}
-                    renderItem={({ item, index }) => {
-                        return (
-                            <TouchableOpacity
-                                style={{
-                                    borderRadius: 10,
-                                    width: Hp("9%"),
-                                    height: Hp("9%"),
-                                    marginLeft: 1,
-                                    marginRight: 11,
-                                    marginTop: 5,
-                                    marginBottom: 10,
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    elevation: 2,
-                                    backgroundColor: colors.White
+            <FlatList
+                showsHorizontalScrollIndicator={false}
+                data={reduxDashboard && reduxDashboard.length ? reduxDashboard : storageDashboard && storageDashboard.length ? storageDashboard : []}
+                horizontal={true}
+                keyExtractor={(item, index) => String(index)}
+                renderItem={({ item, index }) => {
+                    return (
+                        <TouchableOpacity
+                            style={{
+                                borderRadius: 10,
+                                width: Hp("9%"),
+                                height: Hp("9%"),
+                                marginLeft: 1,
+                                marginRight: 11,
+                                marginTop: 5,
+                                marginBottom: 10,
+                                justifyContent: "center",
+                                alignItems: "center",
+                                elevation: 2,
+                                backgroundColor: colors.White
+                            }}
+                            onPress={() => handleSelected(item.name)}
+                            key={index}
+                        >
+                            <FastImage
+                                style={{ width: Hp("5%"), height: Hp("5%"), }}
+                                source={{
+                                    uri: item.icon,
+                                    headers: { Authorization: 'someAuthToken' },
+                                    priority: FastImage.priority.normal,
                                 }}
-                                onPress={() => handleSelected(item.name)}
-                                key={index}
+                                resizeMode={FastImage.resizeMode.contain}
+                            />
+                            <Text
+                                style={{
+                                    fontSize: Hp("1.6%"),
+                                    fontStyle: "normal",
+                                    letterSpacing: 0,
+                                    textAlign: "center",
+                                    color: colors.BlueJaja,
+                                }}
                             >
-                                <FastImage
-                                    style={{ width: Hp("5%"), height: Hp("5%"), }}
-                                    source={{
-                                        uri: item.icon,
-                                        headers: { Authorization: 'someAuthToken' },
-                                        priority: FastImage.priority.normal,
-                                    }}
-                                    resizeMode={FastImage.resizeMode.contain}
-                                />
-                                <Text
-                                    style={{
-                                        fontSize: Hp("1.6%"),
-                                        fontStyle: "normal",
-                                        letterSpacing: 0,
-                                        textAlign: "center",
-                                        color: colors.BlueJaja,
-                                    }}
-                                >
-                                    {item.name}
-                                </Text>
-                            </TouchableOpacity>
-                        )
-                    }}
-                />
-
-                : null
-            }
+                                {item.name}
+                            </Text>
+                        </TouchableOpacity>
+                    )
+                }}
+            />
         </View>
     )
 }

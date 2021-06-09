@@ -15,13 +15,33 @@ export async function productDetail(auth, slug) {
         .then(result => {
             if (result.status.code == 200) {
                 return result.data;
-            }
-            else {
-                ToastAndroid.show(String(result.status.message) + " " + String(result.status.code), ToastAndroid.LONG, ToastAndroid.CENTER)
+            } else {
+                Alert.alert(
+                    "Error get product",
+                    String(result.status.message) + " => " + String(result.status.code),
+                    [
+                        {
+                            text: "TUTUP",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                        },
+                    ]
+                );
+                return null
             }
         })
         .catch(error => {
-            return error
+            Alert.alert(
+                "Error",
+                String(error) + JSON.stringify(error),
+                [
+                    {
+                        text: "TUTUP",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                    },
+                ]
+            );
         });
 
 }

@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react'
-import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, FlatList, Image, ToastAndroid, StyleSheet } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { styles, colors, Card } from '../../export'
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -8,15 +8,16 @@ import * as Progress from 'react-native-progress';
 export default function RecomandedHobbyComponent() {
 
     const [auth, setAuth] = useState("")
-    const [loadmore, setLoadmore] = useState(false)
     const [page, setPage] = useState(1);
-    const [maxPage, setmaxPage] = useState(1);
+    const [storagedashRecommanded, setstoragedashRecommanded] = useState([])
 
     const dispatch = useDispatch()
     const reduxDashboard = useSelector(state => state.dashboard.recommanded)
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
+    const reduxdashRecommanded = useSelector(state => state.dashboard.recommanded)
 
     useEffect(() => {
+        getStorage()
         EncryptedStorage.getItem('token').then(res => {
             if (res) {
                 setAuth(JSON.stringify(res))
@@ -27,12 +28,19 @@ export default function RecomandedHobbyComponent() {
         }
     }, [reduxLoadmore])
 
+    const getStorage = () => {
+        EncryptedStorage.getItem('dashrecommanded').then(res => {
+            if (res) {
+                setstoragedashRecommanded(JSON.parse(res))
+            }
+        })
+    }
     const getData = () => {
         var requestOptions = {
             method: 'GET',
             redirect: 'follow'
         };
-
+        let res = ""
         fetch(`https://jaja.id/backend/product/recommendation?page=${page + 1}&limit=6`, requestOptions)
             .then(response => response.json())
             .then(result => {
@@ -41,20 +49,37 @@ export default function RecomandedHobbyComponent() {
 
                 setTimeout(() => {
                     if (result.status.code == 200 || result.status.code == 204) {
-                        dispatch({ type: 'SET_DASHRECOMMANDED', payload: reduxDashboard.concat(result.data.items) })
+                        dispatch({ type: 'SET_DASHRECOMMANDED', payload: reduxdashRecommanded.concat(result.data.items) })
                         EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))
                     }
                     dispatch({ 'type': 'SET_LOADMORE', payload: false })
-                }, 2000);
+                }, 1000);
 
             })
-            .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER) & setLoadmore(false));
+            .catch(error => {
+                console.log("🚀 ~ file: RecomandedHobbyComponent.js ~ line 60 ~ getData ~ error", error)
+                ToastAndroid.show(String(error).slice(11, 45), ToastAndroid.SHORT, ToastAndroid.TOP)
+            });
+        setTimeout(() => {
+            if (!res) {
+                ToastAndroid.show("Sedang memuat..", ToastAndroid.SHORT, ToastAndroid.TOP)
+            }
+        }, 5000);
+        setTimeout(() => {
+            if (!res) {
+                ToastAndroid.show("Koneksi terputus, periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.TOP)
+            }
+            dispatch({ 'type': 'SET_LOADMORE', payload: false })
+        }, 10000);
     }
 
     const handleLoadMore = () => {
-        getData()
+        setTimeout(() => {
+            getData()
+        }, 500);
         setPage(page + 1)
     }
+
     return (
         <View style={styles.p_3}>
             <View style={styles.row}>
@@ -65,7 +90,7 @@ export default function RecomandedHobbyComponent() {
             {reduxDashboard && reduxDashboard.length ?
                 <View style={styles.column}>
                     {/* <ScrollView nestedScrollEnabled={true} contentContainerStyle={{ height: 500 }}> */}
-                    <Card data={reduxDashboard} />
+                    <Card data={reduxdashRecommanded && reduxdashRecommanded.length ? reduxdashRecommanded : storagedashRecommanded && storagedashRecommanded.length ? storagedashRecommanded : []} />
                 </View>
                 : null
             }

@@ -9,7 +9,7 @@ import database from '@react-native-firebase/database';
 
 export default function SplashScreen() {
     const reduxDashboard = useSelector(state => state.dashboard)
-    
+
     const dispatch = useDispatch()
 
     let navigation = useNavigation()
@@ -95,7 +95,7 @@ export default function SplashScreen() {
                 .then(response => response.json())
                 .then(resp => {
                     hasil = true;
-                    if (resp.status.code == 200) {
+                    if (resp.status.code == 200 || resp.status.code == 204) {
                         if (resp.data.categoryChoice) {
                             dispatch({ type: 'SET_DASHCATEGORY', payload: resp.data.categoryChoice })
                             EncryptedStorage.setItem('dashcategory', JSON.stringify(resp.data.categoryChoice))
@@ -112,6 +112,8 @@ export default function SplashScreen() {
                             dispatch({ type: 'SET_DASHPOPULAR', payload: resp.data.basedOnSearch })
                             EncryptedStorage.setItem('dashpopular', JSON.stringify(resp.data.basedOnSearch))
                         }
+                    } else {
+                        handleError(resp.status.message + " => " + resp.status.code)
                     }
                 })
                 .catch(error => {

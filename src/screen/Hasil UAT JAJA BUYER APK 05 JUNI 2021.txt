@@ -15,7 +15,9 @@ Hasil UAT JAJA BUYER APK 05 JUNI 2021
 - setelah login forceclose , masuk apk sudah login #selesai
 - layout chat belum responsive #selesai
 
+Dari febri
 - belum ada feature terima pesanan
+- login google masih proses
 
 Hasil testing dari Mas Ndaru
 Home 
@@ -27,16 +29,16 @@ Home
 
 Detail produk
 - Baris produk lainnya, memuat 2,5 card produk supaya orang tau itu bisa digeser #selesai
-- Jika tombol beli sekarang ditekan, menuju checkout dan produk yang baru dipilih checked
+- Jika tombol beli sekarang ditekan, menuju checkout dan produk yang baru dipilih checked 
 - avatar toko bisa diklik utk ke halaman detail toko #selesai
 - tambah fitur share ke fb, twitter, wa
 
 Detail toko
-- navigasi seragamkan dengan home, tapi dengan tombol kembali
+- navigasi seragamkan dengan home, tapi dengan tombol kembali #selesai
 - tambahkan fitur filter dan sort
-- pencarian ganti "cari di toko"
+- pencarian ganti "cari di toko" #selesai
 - tambah menu kategori toko
-- deskripsi toko tidak perlu masuk fixed header 
+- deskripsi toko tidak perlu masuk fixed header #selesai
 - jarak card produk kiri dan kanan disempitkan lagi
 
 Pencarian
@@ -64,6 +66,6 @@ Transaksi
 Profil
 - menu bantuan isi dengan alamat, nomor telpon cs
 - tambah menu voucher, menampilkan voucher yg dimiliki
-- icon menu ganti sama icon yg dibuat kharis
+- icon menu ganti sama icon yg dibuat kharis #selesai
 
 

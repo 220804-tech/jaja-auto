@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import CheckBox from '@react-native-community/checkbox';
-import { View, Text, SafeAreaView, Image, TouchableOpacity, ToastAndroid, FlatList, StatusBar, Alert } from 'react-native'
+import { View, Text, SafeAreaView, Image, TouchableOpacity, ToastAndroid, FlatList, StatusBar, Alert, RefreshControl } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { styles, Hp, Wp, Language, colors, useNavigation, Appbar, Ps, ServiceCart, Loading, ServiceCheckout, useFocusEffect } from '../../export'
 import { Button } from 'react-native-paper'
@@ -11,11 +11,13 @@ export default function TrolleyScreen() {
     const dispatch = useDispatch()
 
     const reduxCart = useSelector(state => state.cart)
+    const reduxAuth = useSelector(state => state.auth.auth)
     const [toggleCheckBox, setToggleCheckBox] = useState(false)
     const [auth, setAuth] = useState("")
     const [storePressed, setstorePressed] = useState({ id: "", isSelected: false })
     const [disableQty, setdisableQty] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [refreshing, setRefreshing] = useState(false);
 
     useEffect(() => {
         setLoading(false)
@@ -45,7 +47,6 @@ export default function TrolleyScreen() {
         console.log("🚀 ~ file: TrolleyScreen.js ~ line 40 ~ handleCheckbox ~ name", name)
         setLoading(true)
         let arr = reduxCart.cart;
-        let newArr = [];
         if (name === "store") {
             arr.items[indexParent].isSelected = !arr.items[indexParent].isSelected
             if (arr.items[indexParent].isSelected) {
@@ -63,7 +64,7 @@ export default function TrolleyScreen() {
         dispatch({ type: 'SET_CART', payload: arr })
         setLoading(false)
         var myHeaders = new Headers();
-        myHeaders.append("Authorization", auth);
+        myHeaders.append("Authorization", reduxAuth ? reduxAuth : auth);
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("Cookie", "ci_session=sdvfphg27d6fhhbhh4ruftor53ppbcko");
 
@@ -107,7 +108,7 @@ export default function TrolleyScreen() {
             setdisableQty(false)
         }, 100);
         var myHeaders = new Headers();
-        myHeaders.append("Authorization", auth);
+        myHeaders.append("Authorization", reduxAuth ? reduxAuth : auth);
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("Cookie", "ci_session=gqp7d9ml31ktad3bjvst8jvbbn190ai7");
 
@@ -139,7 +140,7 @@ export default function TrolleyScreen() {
     }
 
     const handleApiCart = () => {
-        ServiceCart.getCart(auth).then(res => {
+        ServiceCart.getCart(reduxAuth ? reduxAuth : auth).then(res => {
             if (res) {
                 setTimeout(() => {
                     setLoading(false)
@@ -153,12 +154,12 @@ export default function TrolleyScreen() {
         if (reduxCart.cart.totalCartCurrencyFormat !== "Rp0") {
             navigation.navigate('Checkout')
             dispatch({ type: 'SET_CHECKOUT', payload: {} })
-            ServiceCheckout.getCheckout(auth).then(res => {
+            ServiceCheckout.getCheckout(reduxAuth ? reduxAuth : auth).then(res => {
                 if (res) {
                     dispatch({ type: 'SET_CHECKOUT', payload: res })
                 }
             })
-            ServiceCheckout.getShipping(auth).then(res => {
+            ServiceCheckout.getShipping(reduxAuth ? reduxAuth : auth).then(res => {
                 console.log("🚀 ~ file: TrolleyScreen.js ~ line 161 ~ ServiceCheckout.getShipping ~ res", res)
                 if (res) {
                     dispatch({ type: 'SET_SHIPPING', payload: res })
@@ -170,12 +171,21 @@ export default function TrolleyScreen() {
 
     const handleDeleteCart = (id) => {
         setLoading(true)
-        ServiceCart.deleteCart(auth, id).then(res => {
+        ServiceCart.deleteCart(reduxAuth ? reduxAuth : auth, id).then(res => {
             if (res == 200) {
                 handleApiCart()
             }
         })
     }
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        handleApiCart()
+        setTimeout(() => {
+            setRefreshing(false)
+        }, 3000);
+    }, []);
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar
@@ -189,6 +199,12 @@ export default function TrolleyScreen() {
             {reduxCart.cart.items ?
                 <FlatList
                     data={reduxCart.cart.items}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    }
                     contentContainerStyle={{ flex: 0, flexDirection: 'column', justifyContent: 'center', width: '100%', paddingBottom: Hp('7%') }}
                     keyExtractor={(item, index) => String(index)}
                     renderItem={({ item, index }) => {

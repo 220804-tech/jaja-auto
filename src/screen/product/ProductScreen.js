@@ -5,7 +5,6 @@ import Swiper from 'react-native-swiper'
 import { Button } from 'react-native-paper'
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 import { styles, colors, useNavigation, Hp, Wp, Ps, Loading, ServiceCart, ServiceUser, useFocusEffect, ServiceStore, ServiceProduct, FastImage } from '../../export'
-import EncryptedStorage from 'react-native-encrypted-storage';
 const IS_IPHONE_X = SCREEN_HEIGHT === 812 || SCREEN_HEIGHT === 896;
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
@@ -13,7 +12,6 @@ const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 import { useDispatch, useSelector } from "react-redux";
 import ActionSheet from "react-native-actions-sheet";
 import StarRating from 'react-native-star-rating';
-import VideoPlayer from 'react-native-video-player';
 LogBox.ignoreAllLogs()
 
 export default function ProductScreen(props) {
@@ -44,6 +42,7 @@ export default function ProductScreen(props) {
     const [lelangId, setlelangId] = useState("")
     const [qty, setqty] = useState(1)
     const [seller, setSeller] = useState("")
+    const [disableCart, setdisableCart] = useState(false)
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
@@ -71,7 +70,7 @@ export default function ProductScreen(props) {
     const getItem = (slug) => {
         let response;
         ServiceProduct.productDetail(reduxAuth, slug).then(res => {
-            if (String(res) === "TypeError: Network request failed") {
+            if (String(res) == "TypeError: Network request failed") {
                 ToastAndroid.show("Tidak dapat terhubung, periksa koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.CENTER)
                 setLoading(false)
                 setRefreshing(false)
@@ -108,8 +107,7 @@ export default function ProductScreen(props) {
         useCallback(() => {
             try {
                 if (reduxAuth) {
-                    handleGetCart(reduxAuth)
-                    getBadges(reduxAuth)
+                    handleGetCart()
                 }
             } catch (error) {
 
@@ -118,8 +116,8 @@ export default function ProductScreen(props) {
         }, []),
     );
 
-    const getBadges = (token) => {
-        ServiceUser.getBadges(token).then(res => {
+    const getBadges = () => {
+        ServiceUser.getBadges(reduxAuth).then(res => {
             if (res) {
                 dispatch({ type: "SET_BADGES", payload: res })
             }
@@ -127,6 +125,7 @@ export default function ProductScreen(props) {
     }
 
     const handleAddCart = (name) => {
+        setdisableCart(true)
         console.log("🚀 ~ file: ProductScreen.js ~ line 72 ~ handleAddCart ~ auth", auth)
         if (reduxAuth) {
             if (reduxSearch.productDetail.variant && reduxSearch.productDetail.variant.length) {
@@ -145,11 +144,13 @@ export default function ProductScreen(props) {
         } else {
             navigation.navigate('Login', { navigate: "Product" })
         }
+        setTimeout(() => {
+            setdisableCart(false)
+        }, 2000);
     }
 
 
     const handleApiCart = (name) => {
-        console.log("🚀 ~ file: ProductScreen.js ~ line 141 ~ handleApiCart ~ name", name)
         var myHeaders = new Headers();
         myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Content-Type", "application/json");
@@ -161,8 +162,6 @@ export default function ProductScreen(props) {
             "variantId": variasiPressed,
             "qty": qty
         });
-        console.log("🚀 ~ file: ProductScreen.js ~ line 169 ~ handleApiCart ~ variasiPressed", variasiPressed)
-        console.log("🚀 ~ file: ProductScreen.js ~ line 153 ~ handleApiCart ~  reduxSearch.productDetail.id", idProduct)
         console.log("🚀 ~ file: ProductScreen.js ~ line 106 ~ handleApiCart ~ raw", raw)
 
         var requestOptions = {
@@ -175,29 +174,47 @@ export default function ProductScreen(props) {
         fetch("https://jaja.id/backend/cart", requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: ProductScreen.js ~ line 165 ~ handleApiCart ~ result", result)
+                console.log("🚀 ~ file: ProductScreen.js ~ line 177 ~ handleApiCart ~ result", result)
                 if (result.status.code === 200) {
                     ToastAndroid.show('Produk berhasil ditambahkan', ToastAndroid.LONG, ToastAndroid.TOP)
-                    getBadges(auth)
                     if (name === "buyNow") {
-                        handleGetCart(auth)
-                        navigation.navigate("Trolley")
+                        handleTrolley()
                     } else {
-                        ToastAndroid.show("Produk berhasil ditambahkan", ToastAndroid.LONG, ToastAndroid.CENTER)
+                        handleGetCart()
                     }
+                } else if (result.status.code === 400 && result.status.message == 'quantity cannot more than stock') {
+                    ToastAndroid.show("Stok produk tidak tersedia", ToastAndroid.LONG, ToastAndroid.CENTER)
+
                 } else {
-                    ToastAndroid.show(String(result.status.message) + " => " + String(result.status.code), ToastAndroid.LONG, ToastAndroid.CENTER)
+                    Alert.alert(
+                        "Sepertinya ada masalah.",
+                        "Error add cart, " + result.status.message + " => " + result.status.code + "\n" + raw,
+                        [
+                            { text: "OK", onPress: () => console.log("OK Pressed") }
+                        ],
+                        { cancelable: false }
+                    );
                 }
             })
             .catch(error => {
-                if (String(error) === "TypeError: Network request failed") {
+                if (String(error) == "TypeError: Network request failed") {
                     ToastAndroid.show("Tidak dapat terhubung, periksa koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.CENTER)
+                } else {
+                    Alert.alert(
+                        "Error",
+                        JSON.stringify(error)
+                        [
+                        { text: "OK", onPress: () => console.log("OK Pressed") }
+                        ],
+                        { cancelable: false }
+                    );
                 }
             });
     }
 
-    const handleGetCart = (token) => {
-        ServiceCart.getCart(token).then(res => {
+    const handleGetCart = () => {
+        getBadges()
+        ServiceCart.getCart(reduxAuth).then(res => {
             if (res) {
                 dispatch({ type: 'SET_CART', payload: res })
             }
@@ -219,6 +236,11 @@ export default function ProductScreen(props) {
         })
         navigation.navigate('Store')
     }
+
+    const handleTrolley = () => {
+        handleGetCart()
+        navigation.navigate("Trolley")
+    }
     const renderNavBar = (text) => (
         <View style={style.navContainer}>
             <View style={style.navBar}>
@@ -226,7 +248,7 @@ export default function ProductScreen(props) {
                     <Image source={require('../../assets/icons/arrow.png')} style={{ width: 25, height: 25, marginRight: '3%', tintColor: colors.White }} />
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => navigation.navigate("Trolley") & handleGetCart(auth)} style={{ width: 40, height: 40, padding: '3%', backgroundColor: colors.BlueJaja, justifyContent: 'center', alignItems: 'center', borderRadius: 100 }}>
+                <TouchableOpacity onPress={handleTrolley} style={{ width: 40, height: 40, padding: '3%', backgroundColor: colors.BlueJaja, justifyContent: 'center', alignItems: 'center', borderRadius: 100 }}>
                     <Image source={require('../../assets/icons/cart.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: colors.White }} />
                     {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
                         <View style={[styles.countNotif, { right: 3, top: 3 }]}><Text style={styles.textNotif}>{reduxUser.badges.totalProductInCart >= 100 ? "99+" : reduxUser.badges.totalProductInCart}</Text></View>
@@ -568,10 +590,10 @@ export default function ProductScreen(props) {
                 <TouchableOpacity onPress={handleChat} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
                     <Image source={require('../../assets/icons/chats.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: colors.BlueJaja }} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleAddCart("trolley")} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
+                <TouchableOpacity disabled={false} onPress={() => handleAddCart("trolley")} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
                     <Image source={require('../../assets/icons/cart.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: colors.BlueJaja }} />
                 </TouchableOpacity>
-                <Button onPress={() => handleAddCart("buyNow")} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained">
+                <Button disabled={disableCart} onPress={() => handleAddCart("buyNow")} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained">
                     Beli Sekarang
                 </Button>
             </View>

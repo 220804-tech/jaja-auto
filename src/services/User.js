@@ -17,10 +17,33 @@ export async function getBadges(auth) {
             if (result.status.code === 200) {
                 return result.data;
             } else {
+                Alert.alert(
+                    "Jaja.id",
+                    String(result.status.message) + " => " + String(result.status.code),
+                    [
+                        {
+                            text: "TUTUP",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                        },
+                    ]
+                );
                 return null
             }
         })
-        .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+        .catch(error => {
+            Alert.alert(
+                "Error get badges",
+                JSON.stringify(error),
+                [
+                    {
+                        text: "TUTUP",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                    },
+                ]
+            );
+        });
 }
 
 
@@ -61,7 +84,7 @@ export async function getProfile(auth) {
         })
         .catch(error => {
             Alert.alert(
-                "Jaja.id",
+                "Error get user",
                 JSON.stringify(error),
                 [
                     {

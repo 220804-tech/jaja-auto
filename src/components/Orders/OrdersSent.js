@@ -9,6 +9,7 @@ export default function OrdersSent() {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const reduxSent = useSelector(state => state.order.sent)
+    const reduxAuth = useSelector(state => state.auth.auth)
     const [refreshing, setRefreshing] = useState(false);
     const [auth, setAuth] = useState("")
 
@@ -34,7 +35,7 @@ export default function OrdersSent() {
 
 
     const getItem = () => {
-        ServiceOrder.getSent(auth).then(resUnpaid => {
+        ServiceOrder.getSent(reduxAuth).then(resUnpaid => {
             if (resUnpaid) {
                 dispatch({ type: 'SET_SENT', payload: resUnpaid.items })
                 dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })

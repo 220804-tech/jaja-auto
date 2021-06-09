@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, SafeAreaView, TouchableOpacity, Image, TextInput, StatusBar, Dimensions, ScrollView } from 'react-native'
-import { styles, colors, Wp, Hp, useNavigation, ServiceStore, Loading } from '../../export'
+import { styles, colors, Wp, Hp, useNavigation, ServiceStore, Loading, ServiceCart } from '../../export'
 import { useSelector, useDispatch } from 'react-redux'
 import { Button, Paragraph } from 'react-native-paper'
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
@@ -117,7 +117,7 @@ export default function StoreScreen() {
                 <ScrollView contentContainerStyle={{ alignItems: 'flex-start' }}>
                     {loading ? <Loading /> : null}
                     {/* <ScrollView contentContainerStyle={{ height: Hp('100%') }}> */}
-                    <View style={[styles.column, styles.p_3, { backgroundColor: colors.White, elevation: 3 }]}>
+                    <View style={[styles.column, styles.p_4, { backgroundColor: colors.White, elevation: 3, width: Wp('100%') }]}>
                         <View style={styles.row_between_center}>
                             {Object.keys(reduxStore).length !== 0 ?
                                 <View style={styles.row_start_center}>
@@ -141,7 +141,7 @@ export default function StoreScreen() {
                             }
                             <Button onPress={handleChat} mode="contained" icon="chat" labelStyle={{ fontSize: 12, color: colors.White }} color={colors.BlueJaja} >
                                 Chat
-                        </Button>
+                            </Button>
                             {/* <Button mode="contained" icon="plus" labelStyle={{ fontSize: 12 }} >
                                 Ikuti
                             </Button> */}

@@ -30,6 +30,7 @@ export default function HomeScreen() {
 
     const dispatch = useDispatch()
     const reduxUser = useSelector(state => state.user)
+    const reduxAuth = useSelector(state => state.auth.auth)
     const navigation = useNavigation()
     const [auth, setAuth] = useState("")
     const [scrollY, setscrollY] = useState(new Animated.Value(0))
@@ -67,10 +68,8 @@ export default function HomeScreen() {
         useCallback(() => {
             setOut(false)
             getBadges()
-            getToken()
+            // handleGetCart()
             try {
-                // dispatch({ type: 'SET_OUT', payload: false })
-
                 EncryptedStorage.getItem('historySearching').then(res => {
                     if (!res) {
                         let data = []
@@ -80,37 +79,27 @@ export default function HomeScreen() {
             } catch (error) {
 
             }
-        }, []),
+        }, [auth]),
     );
 
     useEffect(() => {
-
-    }, [])
-
-
-    const getToken = () => {
         EncryptedStorage.getItem('token').then(res => {
             if (res) {
                 setAuth(JSON.parse(res))
             }
         })
-    }
-    const getBadges = () => {
-        EncryptedStorage.getItem('token').then(res => {
-            if (res) {
-                ServiceUser.getBadges(JSON.parse(res)).then(result => {
-                    if (result) {
-                        dispatch({ type: "SET_BADGES", payload: result })
-                    }
-                })
-            } else {
+    }, [])
 
+    const getBadges = () => {
+        ServiceUser.getBadges(reduxAuth ? reduxAuth : auth).then(result => {
+            if (result) {
+                dispatch({ type: "SET_BADGES", payload: result })
             }
         })
     }
     const handleGetCart = () => {
-        if (auth) {
-            ServiceCart.getCart(auth).then(res => {
+        if (reduxAuth ? reduxAuth : auth) {
+            ServiceCart.getCart(reduxAuth ? reduxAuth : auth).then(res => {
                 if (res) {
                     dispatch({ type: 'SET_CART', payload: res })
                 }
@@ -129,7 +118,7 @@ export default function HomeScreen() {
                     <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
                     <Text style={styles.font_14}>{text}..</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.column, styles.mx_3]} onPress={() => handleGetCart()}>
+                <TouchableOpacity style={[styles.column, styles.mx_3]} onPress={handleGetCart}>
                     <Image source={require('../../assets/icons/cart.png')} style={{ width: 25, height: 25, tintColor: colors.White }} />
                     {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
                         <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalProductInCart >= 100 ? "99+" : reduxUser.badges.totalProductInCart}</Text></View>
