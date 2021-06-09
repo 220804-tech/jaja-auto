@@ -26,6 +26,7 @@ import * as ServiceFirebase from '../services/Firebase'
 
 import { style as Ps } from '../assets/styles/productStyles'
 import { style as Os } from '../assets/styles/orderStyle'
+import { style as Ts } from '../assets/styles/trendingStyles'
 
 import { styles } from '../assets/styles/styles'
 import { widthPercentageToDP as Wp, heightPercentageToDP as Hp } from 'react-native-responsive-screen';
@@ -34,5 +35,5 @@ import colors from '../assets/colors'
 export {
     Appbar, CardProduct, Category, Flashsale, Maps, HobyAverage, RecomandedHobby, Trending, Language, Loading, CheckSignal, BasedOnSearch, styles,
     Ps, Wp, Hp, useNavigation, colors, useFocusEffect, FastImage, Form, ServiceCart, ServiceCheckout, ServiceUser, ServiceVoucher, ServiceOrder, Os,
-    ServiceCategory, ServiceProduct, ServiceStore, ServiceFirebase, Card
-};
+    ServiceCategory, ServiceProduct, ServiceStore, ServiceFirebase, Card, Ts
+}

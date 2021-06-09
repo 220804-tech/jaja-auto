@@ -1,23 +1,39 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, TouchableOpacity, Image } from 'react-native'
-import { useSelector } from 'react-redux'
-import { useNavigation, styles, colors, Language } from '../../export'
+import EncryptedStorage from 'react-native-encrypted-storage'
+import { useSelector, useDispatch } from 'react-redux'
+import { useNavigation, styles, colors, Language, ServiceUser, ServiceCart } from '../../export'
 
 export default function AppbarComponent(props) {
     let navigation = useNavigation()
     const reduxUser = useSelector(state => state.user.badges)
+    const reduxAuth = useSelector(state => state.auth.auth)
+    const dispatch = useDispatch()
+    const [auth, setAuth] = useState("")
 
-    const handleGetCart = () => {
-        getBadges()
-        ServiceCart.getCart(reduxAuth).then(res => {
+    useEffect(() => {
+        EncryptedStorage.getItem('token').then(res => {
             if (res) {
-                dispatch({ type: 'SET_CART', payload: res })
+                setAuth(JSON.parse(res))
             }
         })
+    }, [])
+
+    const handleGetCart = () => {
+        if (reduxAuth || auth) {
+            ServiceCart.getCart(reduxAuth ? reduxAuth : auth).then(res => {
+                if (res) {
+                    dispatch({ type: 'SET_CART', payload: res })
+                }
+            })
+            getBadges()
+            navigation.navigate("Trolley")
+        }
+
 
     }
     const getBadges = () => {
-        ServiceUser.getBadges(reduxAuth).then(res => {
+        ServiceUser.getBadges(reduxAuth ? reduxAuth : auth).then(res => {
             if (res) {
                 dispatch({ type: "SET_BADGES", payload: res })
             }

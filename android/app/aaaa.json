@@ -83,11 +83,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "284366139562-141o9p7jpgpcnomjiu5ph34rilpt8vko.apps.googleusercontent.com",
+          "client_id": "284366139562-36g66rngguj7ifqb3km1qn5svu7tvc0j.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.jajaidbuyer",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+            "certificate_hash": "b38c4f93b3f2613b005276554958c785bfa17794"
           }
         },
         {

@@ -1,13 +1,18 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { View, Text, FlatList, Image, TouchableOpacity } from 'react-native'
+import { View, Text, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { useSelector, useDispatch } from 'react-redux'
+import LinearGradient from 'react-native-linear-gradient';
+import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 import { styles, colors, Hp, FastImage, useNavigation, ServiceCategory, useFocusEffect } from '../../export'
+
 export default function CategoryComponent() {
     let navigation = useNavigation();
     const dispatch = useDispatch()
     const reduxDashboard = useSelector(state => state.dashboard.category)
+    const [shimmerData] = useState(['1X', '2X', '3X', '4X', '5X'])
     const [storageDashboard, setstorageDashboard] = useState([])
+
     useEffect(() => {
         getData()
         getStorage()
@@ -113,54 +118,73 @@ export default function CategoryComponent() {
                 </Text>
                 </TouchableOpacity>
             </View>
-            <FlatList
-                showsHorizontalScrollIndicator={false}
-                data={reduxDashboard && reduxDashboard.length ? reduxDashboard : storageDashboard && storageDashboard.length ? storageDashboard : []}
-                horizontal={true}
-                keyExtractor={(item, index) => String(index)}
-                renderItem={({ item, index }) => {
-                    return (
-                        <TouchableOpacity
-                            style={{
-                                borderRadius: 10,
-                                width: Hp("9%"),
-                                height: Hp("9%"),
-                                marginLeft: 1,
-                                marginRight: 11,
-                                marginTop: 5,
-                                marginBottom: 10,
-                                justifyContent: "center",
-                                alignItems: "center",
-                                elevation: 2,
-                                backgroundColor: colors.White
-                            }}
-                            onPress={() => handleSelected(item.name)}
-                            key={index}
-                        >
-                            <FastImage
-                                style={{ width: Hp("5%"), height: Hp("5%"), }}
-                                source={{
-                                    uri: item.icon,
-                                    headers: { Authorization: 'someAuthToken' },
-                                    priority: FastImage.priority.normal,
-                                }}
-                                resizeMode={FastImage.resizeMode.contain}
-                            />
-                            <Text
+            {reduxDashboard && reduxDashboard.length || storageDashboard && storageDashboard.length ?
+                <FlatList
+                    showsHorizontalScrollIndicator={false}
+                    data={reduxDashboard && reduxDashboard.length ? reduxDashboard : storageDashboard && storageDashboard.length ? storageDashboard : []}
+                    horizontal={true}
+                    keyExtractor={(item, index) => String(index)}
+                    renderItem={({ item, index }) => {
+                        return (
+                            <TouchableOpacity
                                 style={{
-                                    fontSize: Hp("1.6%"),
-                                    fontStyle: "normal",
-                                    letterSpacing: 0,
-                                    textAlign: "center",
-                                    color: colors.BlueJaja,
+                                    borderRadius: 10,
+                                    width: Hp("9%"),
+                                    height: Hp("9%"),
+                                    marginLeft: 1,
+                                    marginRight: 11,
+                                    marginTop: 5,
+                                    marginBottom: 10,
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    elevation: 2,
+                                    backgroundColor: colors.White
                                 }}
+                                onPress={() => handleSelected(item.name)}
+                                key={index}
                             >
-                                {item.name}
-                            </Text>
-                        </TouchableOpacity>
-                    )
-                }}
-            />
+                                <FastImage
+                                    style={{ width: Hp("5%"), height: Hp("5%"), }}
+                                    source={{
+                                        uri: item.icon,
+                                        headers: { Authorization: 'someAuthToken' },
+                                        priority: FastImage.priority.normal,
+                                    }}
+                                    resizeMode={FastImage.resizeMode.contain}
+                                />
+
+                                <Text
+                                    style={{
+                                        fontSize: Hp("1.6%"),
+                                        fontStyle: "normal",
+                                        letterSpacing: 0,
+                                        textAlign: "center",
+                                        color: colors.BlueJaja,
+                                    }}
+                                >
+                                    {item.name}
+                                </Text>
+                            </TouchableOpacity>
+                        )
+                    }}
+                />
+                :
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                    {shimmerData.map(item => {
+                        return (
+                            <ShimmerPlaceHolder
+                                key={item}
+                                LinearGradient={LinearGradient}
+                                width={Hp('9%')}
+                                height={Hp("9%")}
+                                style={{ borderRadius: 8, marginLeft: 1, marginRight: 11, marginTop: 5, marginBottom: 10 }}
+                                shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                            />
+                        )
+                    })}
+
+                </ScrollView>
+            }
         </View>
     )
 }

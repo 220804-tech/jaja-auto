@@ -15,6 +15,8 @@ import { useAndroidBackHandler } from "react-navigation-backhandler";
 LogBox.ignoreAllLogs()
 
 export default function HomeScreen() {
+    const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
+
     useAndroidBackHandler(() => {
         if (out) {
             return false;
@@ -181,7 +183,9 @@ export default function HomeScreen() {
     }
 
     const loadMoreData = () => {
-        dispatch({ 'type': 'SET_LOADMORE', payload: true })
+        if (!reduxLoadmore) {
+            dispatch({ 'type': 'SET_LOADMORE', payload: true })
+        }
     }
 
     const onRefresh = useCallback(() => {
@@ -191,8 +195,6 @@ export default function HomeScreen() {
         }, 2000);
 
     }, []);
-
-    // Refresh
 
     return (
         <SafeAreaView style={styles.container}>

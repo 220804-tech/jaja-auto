@@ -35,17 +35,22 @@ export async function getCart(auth) {
             }
         })
         .catch(error => {
-            Alert.alert(
-                "Error",
-                String(error) + JSON.stringify(error),
-                [
-                    {
-                        text: "TUTUP",
-                        onPress: () => console.log("Cancel Pressed"),
-                        style: "cancel"
-                    },
-                ]
-            );
+            if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
+                ToastAndroid("Tidak dapat hahaha, periksa kembali koneksi anda!")
+            } else {
+                Alert.alert(
+                    "Error",
+                    String(error),
+                    [
+                        {
+                            text: "TUTUP",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                        },
+                    ]
+                );
+            }
+
         });
 }
 

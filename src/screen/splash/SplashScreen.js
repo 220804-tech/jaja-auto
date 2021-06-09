@@ -137,11 +137,11 @@ export default function SplashScreen() {
                 dispatch({ type: 'SET_DASHCATEGORY', payload: JSON.parse(result) })
             }
         })
-        EncryptedStorage.getItem('dashflashsale').then(result => {
-            if (result) {
-                dispatch({ type: 'SET_DASHFLASHSALE', payload: JSON.parse(result) })
-            }
-        })
+        // EncryptedStorage.getItem('dashflashsale').then(result => {
+        //     if (result) {
+        //         dispatch({ type: 'SET_DASHFLASHSALE', payload: JSON.parse(result) })
+        //     }
+        // })
         EncryptedStorage.getItem('dashtrending').then(result => {
             if (result) {
                 dispatch({ type: 'SET_DASHTRENDING', payload: JSON.parse(result) })

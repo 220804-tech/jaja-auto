@@ -17,7 +17,7 @@ export async function productDetail(auth, slug) {
                 return result.data;
             } else {
                 Alert.alert(
-                    "Error get product",
+                    "Error get product ",
                     String(result.status.message) + " => " + String(result.status.code),
                     [
                         {
@@ -31,17 +31,11 @@ export async function productDetail(auth, slug) {
             }
         })
         .catch(error => {
-            Alert.alert(
-                "Error",
-                String(error) + JSON.stringify(error),
-                [
-                    {
-                        text: "TUTUP",
-                        onPress: () => console.log("Cancel Pressed"),
-                        style: "cancel"
-                    },
-                ]
-            );
+            if (String(error).slice(11, String(error).length).replace(" ", "") === "Network request failed") {
+                ToastAndroid.show("Tidak dapat asasas, periksa koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.CENTER)
+
+            }
+
         });
 
 }

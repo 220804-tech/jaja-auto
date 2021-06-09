@@ -7,7 +7,7 @@ import { Button, TextInput } from 'react-native-paper'
 import { Language, Loading, CheckSignal, Wp, ServiceOrder } from '../../export'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch } from 'react-redux'
-import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-community/google-signin';
+import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
 import database from '@react-native-firebase/database';
 
 export default function LoginScreen(props) {
@@ -27,6 +27,7 @@ export default function LoginScreen(props) {
 
 
     useEffect(() => {
+        setLoading(false)
         if (props.route && props.route.params && props.route.params.navigate) {
             setNavigate(props.route.params.navigate)
         }
@@ -38,6 +39,7 @@ export default function LoginScreen(props) {
             console.log("keluar");
             signOut()
         }
+
     }, [props])
 
     const signOut = async () => {
@@ -49,36 +51,6 @@ export default function LoginScreen(props) {
             console.error(error);
         }
     };
-    const onGoogleButtonPress = async () => {
-        try {
-            await GoogleSignin.hasPlayServices()
-            const userInfo = await GoogleSignin.signIn();
-            setLoading(true)
-            // handleCheckUser(userInfo)
-        } catch (error) {
-            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-                console.log("Sign In Cancelled : " + error.code);
-            } else if (error.code === statusCodes.SIGN_IN_REQUIRED) {
-                console.log("Sign In Required : " + error.code);
-            } else if (error.code === statusCodes.IN_PROGRESS) {
-                console.log("Sign In Progress : " + error.code);
-            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-                console.log("Play Servie Not Available : " + error.code);
-            } else {
-                Alert.alert(
-                    "Jaja.id",
-                    String(error) + String(error.code), [
-                    {
-                        text: "Ok",
-                        onPress: () => console.log("Pressed"),
-                        style: "cancel"
-                    },
-                ],
-                    { cancelable: false }
-                );
-            }
-        }
-    }
 
     const handleChange = (name, text) => {
         if (name == 'email') {
@@ -268,6 +240,99 @@ export default function LoginScreen(props) {
             })
         }
     }
+    const onGoogleButtonPress = async () => {
+        try {
+            await GoogleSignin.hasPlayServices()
+            const userInfo = await GoogleSignin.signIn();
+            setLoading(true)
+            handleCheckUser(userInfo)
+        } catch (error) {
+            setLoading(false)
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                console.log("Sign In Cancelled : " + error.code);
+            } else if (error.code === statusCodes.SIGN_IN_REQUIRED) {
+                console.log("Sign In Required : " + error.code);
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+                console.log("Sign In Progress : " + error.code);
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                console.log("Play Servie Not Available : " + error.code);
+            } else {
+                Alert.alert(
+                    "Jaja.id",
+                    String(error) + String(error.code), [
+                    {
+                        text: "Ok",
+                        onPress: () => console.log("Pressed"),
+                        style: "cancel"
+                    },
+                ],
+                    { cancelable: false }
+                );
+            }
+        }
+    }
+
+    const handleCheckUser = (data) => {
+        setLoading(false)
+        console.log("🚀 ~ file: LoginScreen.js ~ line 273 ~ handleCheckUser ~ data", data)
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+            "email": data.user.email,
+            "fullName": data.user.name,
+            "image": data.user.photo
+        });
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+        fetch("https://jaja.id/backend/user/google", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                if (result.status.code === 200) {
+                    handleUser('NkxxN3I5cFlhUUVZTkQ4akZJVFhrUmxpbHUzTzhOODNaSGRjSGh4bVo1ZmJSa3Q2cE9pUmJhVUwySHgxQWtMUDgvWk5tR2pkbnExZUpjakRBeVdLbnFMa1BnQjdoM3RhYjRnVDdBbEFIaWVKVG5TenUvR2s4djFxUThOMG5zR3lFakZTb2ovb0xOOWtwUXN2T2pXZHhETnJ6UkZSemsvVkRmS3NCckJZeUd0cG15eUxvdDlLWEE2WWZ0S1JIMnZTNDlQUE94RXY1Yjc3bWo5Z0JEb29uQT09')
+                } else {
+                    Alert.alert(
+                        "Sepertinya ada masalah.",
+                        "Get User : " + result.status.message + " " + result.status.code,
+                        [
+                            {
+                                text: "RELOAD", onPress: () => {
+                                    navigation.reset({
+                                        index: 0,
+                                        routes: [{ name: 'Splash' }],
+                                    })
+                                }
+                            }
+                        ],
+                        { cancelable: false }
+                    );
+                }
+            })
+            .catch(error => {
+                Alert.alert(
+                    "Error!",
+                    String(error),
+                    [
+                        {
+                            text: "RELOAD", onPress: () => {
+                                navigation.reset({
+                                    index: 0,
+                                    routes: [{ name: 'Splash' }],
+                                })
+                            }
+                        }
+                    ],
+                    { cancelable: false }
+                );
+            });
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar

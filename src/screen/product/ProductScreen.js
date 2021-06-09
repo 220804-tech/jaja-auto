@@ -4,7 +4,7 @@ import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { Button } from 'react-native-paper'
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-import { styles, colors, useNavigation, Hp, Wp, Ps, Loading, ServiceCart, ServiceUser, useFocusEffect, ServiceStore, ServiceProduct, FastImage } from '../../export'
+import { styles, colors, useNavigation, Hp, Wp, Ps, Loading, ServiceCart, ServiceUser, useFocusEffect, ServiceStore, ServiceProduct, FastImage, CheckSignal } from '../../export'
 const IS_IPHONE_X = SCREEN_HEIGHT === 812 || SCREEN_HEIGHT === 896;
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
@@ -52,7 +52,6 @@ export default function ProductScreen(props) {
     }, []);
 
     useEffect(() => {
-
         setLoading(true)
         if (props.route.params) {
             if (props.route.params.slug) {
@@ -70,11 +69,7 @@ export default function ProductScreen(props) {
     const getItem = (slug) => {
         let response;
         ServiceProduct.productDetail(reduxAuth, slug).then(res => {
-            if (String(res) == "TypeError: Network request failed") {
-                ToastAndroid.show("Tidak dapat terhubung, periksa koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.CENTER)
-                setLoading(false)
-                setRefreshing(false)
-            } else if (res.id) {
+            if (res.id) {
                 setidProduct(res.id)
                 response = "success"
                 dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res })
@@ -107,7 +102,12 @@ export default function ProductScreen(props) {
         useCallback(() => {
             try {
                 if (reduxAuth) {
+                    // CheckSignal().then(res => {
+                    //     if (res.connect) {
                     handleGetCart()
+                    //     }
+
+                    // })
                 }
             } catch (error) {
 

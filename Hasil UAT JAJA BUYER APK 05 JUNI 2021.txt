@@ -16,8 +16,10 @@ Hasil UAT JAJA BUYER APK 05 JUNI 2021
 - layout chat belum responsive #selesai
 
 Dari febri
-- belum ada feature terima pesanan
-- login google masih proses
+- belum ada feature terima pesanan 
+- login google masih proses #50% nunggu revisi API
+- redisgn card flashsale #selesai
+- handle loading menggunakan shimmer loading    
 
 Hasil testing dari Mas Ndaru
 Home 
