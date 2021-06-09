@@ -126,7 +126,7 @@ export const styles = StyleSheet.create({
     priceBefore: { fontSize: 12, fontWeight: '900', color: colors.BlackGrayScale, textDecorationLine: 'line-through', },
     priceAfter: { fontSize: 14, fontWeight: '900', color: colors.RedFlashsale },
 
-    appBar: { zIndex: 1000, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#64B0C9', height: Hp('7%'), width: Wp('100%'), color: colors.siplahDefault, paddingHorizontal: '3%' },
+    appBar: { zIndex: 1000, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#64B0C9', height: Hp('7%'), width: Wp('100%'), color: colors.siplahDefault, paddingHorizontal: '4%' },
     appBarText: { color: 'white', fontSize: 16, fontWeight: 'bold' },
     appBarButton: { tintColor: colors.White, height: 25, width: 25 },
 
