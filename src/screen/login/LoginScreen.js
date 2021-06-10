@@ -317,7 +317,7 @@ export default function LoginScreen(props) {
             .then(response => response.json())
             .then(result => {
                 if (result.status.code === 200) {
-                    handleUser('NkxxN3I5cFlhUUVZTkQ4akZJVFhrUmxpbHUzTzhOODNaSGRjSGh4bVo1ZmJSa3Q2cE9pUmJhVUwySHgxQWtMUDgvWk5tR2pkbnExZUpjakRBeVdLbnFMa1BnQjdoM3RhYjRnVDdBbEFIaWVKVG5TenUvR2s4djFxUThOMG5zR3lFakZTb2ovb0xOOWtwUXN2T2pXZHhETnJ6UkZSemsvVkRmS3NCckJZeUd0cG15eUxvdDlLWEE2WWZ0S1JIMnZTNDlQUE94RXY1Yjc3bWo5Z0JEb29uQT09')
+                    handleUser(result.data)
                 } else {
                     Alert.alert(
                         "Sepertinya ada masalah.",
