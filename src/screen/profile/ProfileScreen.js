@@ -16,8 +16,9 @@ export default function ProfileScreen(props) {
   const navigation = useNavigation();
   const dispatch = useDispatch()
   const reduxAuth = useSelector(state => state.auth.auth)
+  console.log("🚀 ~ file: ProfileScreen.js ~ line 19 ~ ProfileScreen ~ reduxAuth", reduxAuth)
 
-  const [auth, setAuth] = useState(true)
+  const [auth, setAuth] = useState(false)
   const [loading, setLoading] = useState(false)
   const reduxBadges = useSelector(state => state.user.badges)
   const reduxProfile = useSelector(state => state.user.user)
@@ -38,6 +39,12 @@ export default function ProfileScreen(props) {
       })
 
     }
+    EncryptedStorage.getItem('token').then(res => {
+      console.log("🚀 ~ file: ProfileScreen.js ~ line 42 ~ EncryptedStorage.getItem ~ res", res)
+      if (res) {
+        setAuth(JSON.stringify(res))
+      }
+    })
     getItem()
   }, [props])
 
@@ -48,10 +55,6 @@ export default function ProfileScreen(props) {
   );
 
 
-
-  const handleAuth = () => {
-    setAuth(true)
-  }
   const getItem = () => {
 
     // navigation.navigate("VerifikasiEmail", { email: user.email })
@@ -78,12 +81,12 @@ export default function ProfileScreen(props) {
               EncryptedStorage.clear().then(res => {
                 setTimeout(() => {
                   setLoading(false)
+                  dispatch({ type: 'USER_LOGOUT' })
                   navigation.reset({
                     index: 0,
                     routes: [{ name: 'Splash' }],
                   })
                 }, 500);
-
               })
             } catch (error) {
               setTimeout(() => {
@@ -115,9 +118,7 @@ export default function ProfileScreen(props) {
   return (
     <>
       {loading ? <Loading /> : null}
-      {!reduxAuth ?
-        <AuthLogin navigate={null} auth={handleAuth} />
-        :
+      {reduxAuth || auth ?
         <SafeAreaView style={(styles.container, { backgroundColor: colors.BlueJaja })}>
           <View style={styles.column}>
             <View style={[styles.column, { height: Hp('33%'), }]}>
@@ -214,7 +215,8 @@ export default function ProfileScreen(props) {
             </View>
           </View>
         </SafeAreaView >
-
+        :
+        <AuthLogin navigate={navigate ? navigate : null} />
       }
       {/* <View
             style={{

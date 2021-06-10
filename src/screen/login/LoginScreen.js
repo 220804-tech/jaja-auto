@@ -1,10 +1,10 @@
-import React, { useState, useEffect, createRef } from 'react'
+import React, { useState, useEffect, createRef, useCallback } from 'react'
 import { SafeAreaView, View, Text, Image, Alert, TouchableOpacity, ToastAndroid, StatusBar, TouchableHighlight } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import colors from '../../assets/colors'
 import { styles } from '../../assets/styles/styles'
 import { Button, TextInput } from 'react-native-paper'
-import { Language, Loading, CheckSignal, Wp, ServiceOrder } from '../../export'
+import { Language, Loading, CheckSignal, Wp, ServiceOrder, useFocusEffect, ServiceUser } from '../../export'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch } from 'react-redux'
 import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
@@ -35,12 +35,18 @@ export default function LoginScreen(props) {
             webClientId: "284366139562-tnj3641sdb4ia9om7bcp25vh3qn5vvo8.apps.googleusercontent.com",
             offlineAccess: true
         });
-        if (GoogleSignin.isSignedIn()) {
-            console.log("keluar");
-            signOut()
-        }
+
 
     }, [props])
+
+    useFocusEffect(
+        useCallback(() => {
+            if (GoogleSignin.isSignedIn()) {
+                console.log("keluar");
+                signOut()
+            }
+        }, []),
+    );
 
     const signOut = async () => {
         try {
@@ -172,6 +178,7 @@ export default function LoginScreen(props) {
                     })
                     getOrders(data)
                     console.log("🚀 ~ file: LoginScreen.js ~ line 206 ~ handleUser ~ navigate", navigate)
+                    ServiceUser.getBadges(data);
                     if (navigate) {
                         navigation.setParams({ 'navigate': null });
                         navigation.goBack();
@@ -184,6 +191,7 @@ export default function LoginScreen(props) {
                     }
                     setTimeout(() => {
                         dispatch({ type: 'SET_AUTH', payload: data })
+                        EncryptedStorage.setItem('token', JSON.stringify(data))
                     }, 500);
 
                 } catch (error) {
@@ -252,8 +260,23 @@ export default function LoginScreen(props) {
                 console.log("Sign In Cancelled : " + error.code);
             } else if (error.code === statusCodes.SIGN_IN_REQUIRED) {
                 console.log("Sign In Required : " + error.code);
-            } else if (error.code === statusCodes.IN_PROGRESS) {
-                console.log("Sign In Progress : " + error.code);
+            } else if (error.code == 12502 || error.code === statusCodes.IN_PROGRESS) {
+                Alert.alert(
+                    "Sepertinya ada masalah!",
+                    "Error with status code " + String(error.code), [
+                    {
+                        text: "Reload",
+                        onPress: () => {
+                            navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'Splash' }],
+                            })
+                        },
+                        style: "cancel"
+                    },
+                ],
+                    { cancelable: false }
+                );
             } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
                 console.log("Play Servie Not Available : " + error.code);
             } else {
@@ -274,7 +297,6 @@ export default function LoginScreen(props) {
 
     const handleCheckUser = (data) => {
         setLoading(false)
-        console.log("🚀 ~ file: LoginScreen.js ~ line 273 ~ handleCheckUser ~ data", data)
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 

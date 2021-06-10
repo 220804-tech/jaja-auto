@@ -66,8 +66,8 @@ export default function OrdersUnpaid() {
                         onRefresh={onRefresh}
                     />
                 }
-                renderItem={({ item, index }) => {
-                    let id = item.orderId
+                keyExtractor={item => item.orderId}
+                renderItem={({ item }) => {
                     return (
                         <TouchableOpacity style={[Os.card, styles.px_2, styles.pt]} onPress={() => handleOrderDetails(item)}>
                             {item.items.map((child, indx) => {

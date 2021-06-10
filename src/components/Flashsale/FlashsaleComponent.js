@@ -106,6 +106,7 @@ export default function FlashsaleComponent() {
                     {shimmerData.map(item => {
                         return (
                             <TouchableOpacity
+                                key={item}
                                 style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('60%'), alignItems: 'center' }]}>
                                 <FastImage
                                     style={[Ps.imageProduct, { height: Wp('33%'), width: '100%', backgroundColor: colors.Silver, borderTopRightRadius: 10, borderTopLeftRadius: 10 }]}

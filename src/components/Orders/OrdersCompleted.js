@@ -71,7 +71,9 @@ export default function OrdersUnpaid() {
                         onRefresh={onRefresh}
                     />
                 }
-                renderItem={({ item, index }) => {
+                keyExtractor={item => item.invoice}
+
+                renderItem={({ item }) => {
                     return (
                         <TouchableOpacity style={Os.card} onPress={() => handleOrderDetails(item)}>
                             <View style={[styles.row_between_center, styles.px_2, styles.mb_3, { width: '100%' }]}>

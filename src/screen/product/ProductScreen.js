@@ -343,29 +343,29 @@ export default function ProductScreen(props) {
                                     <Text style={[styles.font_14]}>Variasi Produk</Text>
                                     <Text style={[styles.font_12, { marginLeft: '3%', fontStyle: 'italic', color: colors.RedNotif, fontFamily: 'serif' }]}>{alert}</Text>
                                 </View>
-                                <View style={{ flex: 0, width: '100%' }}>
-                                    <FlatList
-                                        data={reduxSearch.productDetail.variant}
-                                        horizontal={true}
-                                        contentContainerStyle={{ flex: 0, flexDirection: 'row' }}
-                                        keyExtractor={(item, ind) => String(ind)}
-                                        showsHorizontalScrollIndicator={false}
-                                        renderItem={({ item }) => {
-                                            console.log("🚀 ~ file: ProductScreen.js ~ line 367 ~ renderContent ~ item", item)
-                                            return (
-                                                <Button disabled={item.stock ? false : true} contentStyle={{ marginRight: '2%' }} color={colors.BlueJaja} onPress={() => {
-                                                    console.log("🚀 ~ file: ProductScreen.js ~ line 367 ~ renderContent ~ item", item)
-                                                    setvariasiPressed(item.id)
-                                                    setvariasiSelected(item)
-                                                    setalert("")
-                                                }} style={{ borderColor: item.stock ? variasiPressed === item.id ? colors.BlueJaja : colors.BlackGrayScale : colors.Silver }} mode="outlined" labelStyle={{ color: item.stock ? variasiPressed === item.id ? colors.BlueJaja : colors.BlackGrayScale : colors.Silver, fontSize: 12 }} uppercase={false}>
-                                                    {item.name}
-                                                </Button>
-                                            )
-                                        }}
-                                    />
-                                    <Text style={[styles.font_12, styles.mt_3]}>Stok tersisa {variasiSelected.stock}</Text>
-                                </View>
+                                {/* <View style={[styles.column, { width: Wp('100%') }]}> */}
+                                <FlatList
+                                    data={reduxSearch.productDetail.variant}
+                                    horizontal={true}
+                                    // contentContainerStyle={{ flex: 0, flexDirection: 'row' }}
+                                    keyExtractor={(item, ind) => String(ind)}
+                                    showsHorizontalScrollIndicator={false}
+                                    renderItem={({ item }) => {
+                                        console.log("🚀 ~ file: ProductScreen.js ~ line 367 ~ renderContent ~ item", item)
+                                        return (
+                                            <Button disabled={item.stock ? false : true} color={colors.BlueJaja} onPress={() => {
+                                                console.log("🚀 ~ file: ProductScreen.js ~ line 367 ~ renderContent ~ item", item)
+                                                setvariasiPressed(item.id)
+                                                setvariasiSelected(item)
+                                                setalert("")
+                                            }} style={{ borderColor: item.stock ? variasiPressed === item.id ? colors.BlueJaja : colors.BlackGrayScale : colors.Silver, marginRight: 10 }} mode="outlined" labelStyle={{ color: item.stock ? variasiPressed === item.id ? colors.BlueJaja : colors.BlackGrayScale : colors.Silver, fontSize: 12 }} uppercase={false}>
+                                                {item.name}
+                                            </Button>
+                                        )
+                                    }}
+                                />
+                                {/* </View> */}
+                                <Text style={[styles.font_12, styles.mt_3]}>Stok tersisa {variasiSelected.stock}</Text>
                             </View>
                             : null
                         }

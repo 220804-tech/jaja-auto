@@ -103,6 +103,7 @@ export default function TrendingComponent() {
                         shimmerData.map(item => {
                             return (
                                 <TouchableOpacity
+                                    key={item}
                                     style={[Ts.cardtrnding]}>
                                     <FastImage
                                         style={[Ts.trendingImage, { borderTopLeftRadius: 10, borderBottomLeftRadius: 10, backgroundColor: colors.Silver }]}

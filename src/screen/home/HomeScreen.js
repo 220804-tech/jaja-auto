@@ -38,7 +38,6 @@ export default function HomeScreen() {
     const [scrollY, setscrollY] = useState(new Animated.Value(0))
     const [out, setOut] = useState(false)
     const [home, setHome] = useState(true)
-
     const [refreshing, setRefreshing] = useState(false);
     const reduxOut = useSelector(state => state.dashboard.out)
 
@@ -110,7 +109,6 @@ export default function HomeScreen() {
         } else {
             navigation.navigate("Login")
         }
-
     }
 
     const renderNavBar = (text) => (
@@ -127,7 +125,7 @@ export default function HomeScreen() {
                         : null
                     }
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.column, styles.mx_2]}>
+                <TouchableOpacity style={[styles.column, styles.mx_2]} onPress={() => navigation.navigate('Notification')}>
                     <Image source={require('../../assets/icons/notif.png')} style={{ width: 24, height: 24, tintColor: colors.White }} />
                     {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
                         <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalProductInCart >= 100 ? "99+" : reduxUser.badges.totalNotifUnread}</Text></View>
@@ -198,7 +196,7 @@ export default function HomeScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView
+            {/* <ScrollView
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
@@ -216,33 +214,49 @@ export default function HomeScreen() {
                         }
                     }
                 )}
-                onMomentumScrollEnd={({ nativeEvent }) => {
-                    if (isCloseToBottom(nativeEvent)) {
-                        loadMoreData()
-                    }
+            > */}
+            <ReactNativeParallaxHeader
+                headerMaxHeight={Hp('33%')}
+                extraScrollHeight={20}
+                navbarColor={colors.BlueJaja}
+                titleStyle={style.titleStyle}
+                title={title()}
+                renderNavBar={() => renderNavBar('Cari hobimu sekarang')}
+                renderContent={renderContent}
+                containerStyle={style.container}
+                contentContainerStyle={style.contentContainer}
+                innerContainerStyle={style.container}
+                headerFixedBackgroundColor={colors.BlueJajaa}
+                alwaysShowTitle={false}
+                scrollViewProps={{
+                    onScroll: Animated.event(
+                        [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                        Platform.OS === "android" ?
+                            {
+                                listener: event => {
+                                    if (isCloseToBottom(event.nativeEvent)) {
+                                        loadMoreData()
+                                    }
+                                }
+                            }
+                            : null
+                    ),
+                    onMomentumScrollEnd: ({ nativeEvent }) => {
+                        if (isCloseToBottom(nativeEvent)) {
+                            loadMoreData()
+                        }
+                    },
+                    refreshControl: (
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    )
                 }}
             >
-                <ReactNativeParallaxHeader
-                    headerMaxHeight={Hp('33%')}
-                    extraScrollHeight={20}
-                    navbarColor={colors.BlueJaja}
-                    titleStyle={style.titleStyle}
-                    title={title()}
-                    renderNavBar={() => renderNavBar('Cari hobimu sekarang')}
-                    renderContent={renderContent}
-                    containerStyle={style.container}
-                    contentContainerStyle={style.contentContainer}
-                    innerContainerStyle={style.container}
-                    headerFixedBackgroundColor={colors.BlueJajaa}
-                    alwaysShowTitle={false}
-                    scrollViewProps={{
-                        nestedScrollEnabled: true,
-                    }
-                    }
-                >
-                </ReactNativeParallaxHeader>
-            </ScrollView>
-        </SafeAreaView>
+            </ReactNativeParallaxHeader>
+            {/* </ScrollView> */}
+        </SafeAreaView >
 
     )
 }

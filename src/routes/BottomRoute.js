@@ -35,9 +35,6 @@ export default function BottomRoute() {
             headerShown: false, tabBarStyle: {
                 height: Hp('7.5%')
             },
-
-
-
         }}>
             <Tab.Screen name="Home" component={Home}
 

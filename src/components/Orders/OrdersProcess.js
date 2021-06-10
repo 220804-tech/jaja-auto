@@ -98,7 +98,8 @@ export default function OrdersProcess() {
                             onRefresh={onRefresh}
                         />
                     }
-                    renderItem={({ item, index }) => {
+                    keyExtractor={item => item.invoice}
+                    renderItem={({ item }) => {
                         return (
                             <TouchableOpacity style={Os.card} onPress={() => handleOrderDetails(item, "Sedang Disiapkan")}>
                                 <View style={[styles.row_between_center, styles.px_2, styles.mb_3, { width: '100%' }]}>
@@ -142,7 +143,8 @@ export default function OrdersProcess() {
                             onRefresh={onRefresh}
                         />
                     }
-                    renderItem={({ item, index }) => {
+                    keyExtractor={item => item.invoice}
+                    renderItem={({ item }) => {
                         return (
                             <TouchableOpacity style={Os.card} onPress={() => handleOrderDetails(item, "Menunggu Konfirmasi")}>
                                 <View style={[styles.row_between_center, styles.px_2, styles.mb_3, { width: '100%' }]}>

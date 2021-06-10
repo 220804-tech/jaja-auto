@@ -3,7 +3,6 @@ import { View, Text, SafeAreaView, Dimensions } from 'react-native'
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import Unpaid from '../../components/Orders/OrdersUnpaid'
 import Process from '../../components/Orders/OrdersProcess'
-import WaitConfirm from '../../components/Orders/OrdersWaitConfim'
 import Sent from '../../components/Orders/OrdersSent'
 import Completed from '../../components/Orders/OrdersCompleted'
 import Failed from '../../components/Orders/OrdersFailed'
@@ -15,11 +14,12 @@ import AuthLogin from '../login/LoginScreen'
 
 export default function OrderScreen() {
     const navigation = useNavigation();
-    const reduxAuth = useSelector(state => state.auth)
+    const reduxAuth = useSelector(state => state.auth.auth)
 
     const reduxOrder = useSelector(state => state.order.filter)
-    const [index, setIndex] = useState(0)
     const [auth, setAuth] = useState('')
+    const [index, setIndex] = useState(0)
+
     const [navigate, setNavigate] = useState("Pesanan")
 
     const [routes] = useState([
@@ -42,17 +42,18 @@ export default function OrderScreen() {
 
     useEffect(() => {
         EncryptedStorage.getItem('token').then(res => {
+            console.log("🚀 ~ file: OrderScreen.js ~ line 44 ~ EncryptedStorage.getItem ~ res", res)
             if (res) {
                 setAuth(JSON.stringify(res))
             }
         })
+        console.log("🚀 ~ file: OrderScreen.js ~ line 107 ~ OrderScreen ~ reduxAuth", reduxAuth)
+
     }, [])
 
     return (
         <>
-            {!reduxAuth.auth ?
-                <AuthLogin navigate={navigate ? navigate : null} />
-                :
+            {reduxAuth || auth ?
                 <SafeAreaView style={styles.container}>
                     <Appbar title="Pesanan" trolley={true} notif={true} />
                     <TabView
@@ -74,7 +75,7 @@ export default function OrderScreen() {
                                     console.log("🚀 ~ file: OrderScreen.js ~ line 74 ~ OrderScreen ~ route", reduxOrder[0])
                                     return (
                                         <>
-                                            {reduxAuth.auth && reduxOrder && reduxOrder.lenght ?
+                                            {reduxAuth && reduxOrder && reduxOrder.lenght ?
                                                 <View style={[styles.row_center, { width: '100%' }]}>
                                                     <Text style={{ color: colors.BlackGrayScale, fontSize: 12, textAlign: 'center', alignSelf: 'center' }}>{route.title} </Text>
                                                     {route.title === "Belum dibayar" && Object.keys(reduxOrder[0].lenght) && reduxOrder[0].total ?
@@ -99,9 +100,12 @@ export default function OrderScreen() {
                         )}
                     />
                 </SafeAreaView>
+                :
+                <AuthLogin navigate={navigate ? navigate : null} />
 
             }
         </>
     )
 }
+
 

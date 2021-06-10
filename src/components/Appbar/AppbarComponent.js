@@ -28,6 +28,8 @@ export default function AppbarComponent(props) {
             })
             getBadges()
             navigation.navigate("Trolley")
+        } else {
+            navigation.navigate('Login', { navigate: 'Trolley' })
         }
 
 
@@ -74,7 +76,7 @@ export default function AppbarComponent(props) {
                         : null
                     }
                     {props.notif ?
-                        <TouchableOpacity style={[styles.column, styles.mx_2]}>
+                        <TouchableOpacity style={[styles.column, styles.mx_2]} onPress={() => navigation.navigate('Notification')}>
                             <Image source={require('../../assets/icons/notif.png')} style={{ width: 24, height: 24, tintColor: colors.White }} />
                             {Object.keys(reduxUser).length && reduxUser.totalProductInCart ?
                                 <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.totalProductInCart >= 100 ? "99+" : reduxUser.totalNotifUnread}</Text></View>

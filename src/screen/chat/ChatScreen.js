@@ -14,6 +14,8 @@ import { useSelector } from 'react-redux'
 export default function ChatScreen({ route }) {
     const navigation = useNavigation();
     const reduxUser = useSelector(state => state.user.user)
+    const reduxAuth = useSelector(state => state.auth.auth)
+
     const pictureRef = createRef();
     const flatlist = createRef();
     const [isiChat, setIsiChat] = useState("");
@@ -30,7 +32,6 @@ export default function ChatScreen({ route }) {
     const [gambar, setGambar] = useState("");
     const [token, setToken] = useState("")
     const { data, product } = route.params;
-
 
     useEffect(() => {
         setnameChat(data.name);
@@ -64,7 +65,7 @@ export default function ChatScreen({ route }) {
                 from: reduxUser.uid,
                 image: gambar
             }
-            if (data) {
+            if (data && reduxAuth) {
                 console.log("🚀 ~ file: ChatScreen.js ~ line 72 ~ handleSend ~ firebaseDatabase.ServerValue.increment", firebaseDatabase.ServerValue.increment)
                 try {
                     var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;

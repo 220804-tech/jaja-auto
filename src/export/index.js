@@ -23,6 +23,7 @@ import * as ServiceCategory from '../services/Category'
 import * as ServiceProduct from '../services/Product'
 import * as ServiceStore from '../services/Store'
 import * as ServiceFirebase from '../services/Firebase'
+import * as ServiceNotif from '../services/Notification'
 
 import { style as Ps } from '../assets/styles/productStyles'
 import { style as Os } from '../assets/styles/orderStyle'
@@ -35,5 +36,5 @@ import colors from '../assets/colors'
 export {
     Appbar, CardProduct, Category, Flashsale, Maps, HobyAverage, RecomandedHobby, Trending, Language, Loading, CheckSignal, BasedOnSearch, styles,
     Ps, Wp, Hp, useNavigation, colors, useFocusEffect, FastImage, Form, ServiceCart, ServiceCheckout, ServiceUser, ServiceVoucher, ServiceOrder, Os,
-    ServiceCategory, ServiceProduct, ServiceStore, ServiceFirebase, Card, Ts
+    ServiceCategory, ServiceProduct, ServiceStore, ServiceFirebase, Card, Ts, ServiceNotif
 }

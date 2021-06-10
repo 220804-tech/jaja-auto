@@ -34,6 +34,7 @@ export async function getCheckout(auth) {
         })
         .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
 }
+
 export async function getShipping(auth) {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);

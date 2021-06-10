@@ -15,11 +15,12 @@ Hasil UAT JAJA BUYER APK 05 JUNI 2021
 - setelah login forceclose , masuk apk sudah login #selesai
 - layout chat belum responsive #selesai
 
-Dari febri
-- belum ada feature terima pesanan 
-- login google masih proses #50% nunggu revisi API
+Dari saya
+- belum ada feature terima pesanan #nunggu API
+- login google masih proses #80% nunggu revisi API
+- pelacakan orderan yang dikirim #90% nunggu revisi API
 - redisgn card flashsale #selesai
-- handle loading menggunakan shimmer loading    
+- handle loading menggunakan shimmer loading didashboard #selesai
 
 Hasil testing dari Mas Ndaru
 Home 
@@ -39,7 +40,7 @@ Detail toko
 - navigasi seragamkan dengan home, tapi dengan tombol kembali #selesai
 - tambahkan fitur filter dan sort
 - pencarian ganti "cari di toko" #selesai
-- tambah menu kategori toko
+- tambah menu kategori toko #belum ada datanya
 - deskripsi toko tidak perlu masuk fixed header #selesai
 - jarak card produk kiri dan kanan disempitkan lagi
 

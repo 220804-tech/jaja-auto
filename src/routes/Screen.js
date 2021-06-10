@@ -15,6 +15,7 @@ import Checkout from '../screen/checkout/CheckoutScreen'
 import Address from '../screen/address/AddressScreen'
 import AddAddress from '../screen/address/AddAddressScreen'
 import Midtrans from '../screen/midtrans/MidtransScreen'
+import Notification from '../screen/notifikasi/NotifikasiScreen'
 
 import VerifikasiEmail from '../screen/verifikasiEmail/VerifikasiEmailScreen'
 import Category from '../screen/category/CategoryScreen'
@@ -31,5 +32,5 @@ import CustomerService from '../screen/customerService/CustomerServiceScreen'
 export {
     Home, Product, ListChat, Chat, Orders, Profile, Login, Register, Splash, Search, Trolley, ProductSearch, Checkout, VerifikasiEmail, Account,
     Address, Category, AddAddress, Store, Midtrans, ForgotPassword, Feed, Review, ZoomReview, OrderDetails, AddReview, OrderDelivery,
-    CustomerService
+    CustomerService, Notification
 };

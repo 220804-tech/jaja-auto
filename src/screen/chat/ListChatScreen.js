@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, SafeAreaView, TouchableOpacity, FlatList, Image, StyleSheet } from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import { View, Text, SafeAreaView, TouchableOpacity, FlatList, Image, StyleSheet, RefreshControl } from "react-native";
 import { Paragraph } from 'react-native-paper'
 import database from "@react-native-firebase/database";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'
@@ -8,18 +8,22 @@ import { useSelector, useDispatch } from 'react-redux'
 export default function ListChat() {
     const navigation = useNavigation();
     const reduxUser = useSelector(state => state.user.user)
+    console.log("🚀 ~ file: ListChatScreen.js ~ line 11 ~ ListChat ~ reduxUser", reduxUser)
+    const reduxAuth = useSelector(state => state.auth.auth)
+
     const [phone, setPhone] = useState("");
     const [users, setUsers] = useState([]);
     const [dataProfile, setDataProfile] = useState({});
+    const [refreshing, setRefreshing] = useState(false);
 
     useEffect(() => {
         // Storage.getUID().then(res => {
         //     loadList(res)
         // }).catch(err => alert(err))
-        console.log("🚀 ~ file: HomeScreen.js ~ line 1000 ~ useEffect ~ navigation.state.routeName", navigation.getState().routeNames[0])
 
         loadList()
     }, []);
+
 
     const convertTimes = (timestamp) => {
         const d = new Date(timestamp);
@@ -28,7 +32,6 @@ export default function ListChat() {
     }
 
     const renderItem = ({ item }) => {
-        console.log("🚀 ~ file: ListChatScreen.js ~ line 29 ~ renderItem ~ item", item)
         return (
             <>
                 {item.message && item.message.text ?
@@ -65,33 +68,47 @@ export default function ListChat() {
     };
 
     function loadList(val) {
-        database().ref("/friend/" + reduxUser.uid).on("value", function (snapshot) {
-            var returnArray = [];
-            snapshot.forEach(function (snap) {
-                var item = snap.val();
-                item.id = snap.key;
-                if (item.id !== val && item.id !== "null") {
-                    returnArray.push(item);
-                    let sortedObj = returnArray.sort(function (a, b) {
-                        return new Date(b.time) - new Date(a.time);
-                    });
-                    setUsers(sortedObj);
-                }
+        if (reduxUser && Object.keys(reduxUser).length) {
+            database().ref("/friend/" + reduxUser.uid).on("value", function (snapshot) {
+                var returnArray = [];
+                snapshot.forEach(function (snap) {
+                    var item = snap.val();
+                    item.id = snap.key;
+                    if (item.id !== val && item.id !== "null") {
+                        returnArray.push(item);
+                        let sortedObj = returnArray.sort(function (a, b) {
+                            return new Date(b.time) - new Date(a.time);
+                        });
+                        setUsers(sortedObj);
+                    }
+                });
+                return returnArray;
             });
-            return returnArray;
-        });
+        }
     }
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        loadList()
+        setTimeout(() => {
+            setRefreshing(false)
+        }, 2000);
+
+    }, []);
 
     return (
         <SafeAreaView style={style.container}>
             <Appbar title="Chats" trolley={true} notif={true} />
             {
-                users.length != 0 ?
+                users.length ?
                     <View style={{ flex: 1, backgroundColor: colors.White }}>
                         <FlatList
                             data={users}
                             renderItem={renderItem}
                             keyExtractor={(item, idx) => String(idx) + "D"}
+                            refreshControl={<RefreshControl
+                                onRefresh={onRefresh}
+                                refreshing={refreshing}
+                            />}
                         />
                     </View>
                     :
@@ -100,7 +117,7 @@ export default function ListChat() {
                             style={styles.iconMarket}
                             source={require('../../assets/ilustrations/empty.png')}
                         />
-                        <Paragraph style={styles.textJajakan}>Ups..<Text style={styles.textCenter}> kamu belum chat siapapun</Text></Paragraph>
+                        <Paragraph style={styles.textJajakan}>Ups..<Text style={styles.textCenter}> {reduxAuth ? 'kamu belum chat siapapun' : 'sepertinya kamu belum login'}</Text></Paragraph>
                     </View>
 
             }
