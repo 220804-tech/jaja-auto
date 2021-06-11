@@ -21,6 +21,8 @@ Dari saya
 - pelacakan orderan yang dikirim #90% nunggu revisi API
 - redisgn card flashsale #selesai
 - handle loading menggunakan shimmer loading didashboard #selesai
+- list notifikasi #selesai
+- pusat bantuan di app #selesai (hanya ngelink ke website, masih progress di buat diweb)
 
 Hasil testing dari Mas Ndaru
 Home 

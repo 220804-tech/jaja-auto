@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, ScrollView, StyleSheet, Platform, Dimensions, Image, Alert } from 'react-native';
+import { SafeAreaView, View, Text, TouchableOpacity, Linking, StyleSheet, Platform, Dimensions, Image, Alert } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import FAIcon from 'react-native-vector-icons/FontAwesome';
 import { styles, Hp, Wp, colors, useNavigation, useFocusEffect, Loading, Appbar, ServiceCart } from '../../export'
@@ -200,7 +200,17 @@ export default function ProfileScreen(props) {
                 <Text style={style.title}> Pesanan Saya </Text>
               </View>
             </TouchableOpacity> */}
-              <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate('CustomerService')}>
+              <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => {
+                Linking.canOpenURL('https://jaja.id/bantuan/').then(supported => {
+                  console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 82 ~ Linking.canOpenURL ~ supported", supported)
+                  if (supported) {
+                    Linking.openURL('https://jaja.id/bantuan/')
+                  } else {
+                    ToastAndroid.show("Sepertinya ada masalah, coba lagi nanti.", ToastAndroid.LONG, ToastAndroid.TOP)
+
+                  }
+                })
+              }}>
                 {/* <FAIcon name="cog" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} /> */}
                 <Image style={{ width: 27, height: 27, marginRight: '3%' }} source={require(`../../assets/icons/service.png`)} />
                 <Text style={style.title}>Pusat Bantuan</Text>

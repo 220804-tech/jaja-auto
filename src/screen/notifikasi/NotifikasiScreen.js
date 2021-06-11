@@ -7,6 +7,7 @@ function NotifikasiScreen(props) {
     const [notifData, setnotifData] = useState([]);
     const [shimmer, setshimmer] = useState(Boolean);
     const reduxUser = useSelector(state => state.user.user)
+    console.log("🚀 ~ file: NotifikasiScreen.js ~ line 10 ~ NotifikasiScreen ~ reduxUser", reduxUser)
     const dispatch = useDispatch()
 
 
@@ -36,12 +37,12 @@ function NotifikasiScreen(props) {
             redirect: 'follow'
         };
 
-        fetch("https://jaja.id/core/seller/dashboard/notifikasi?id_toko=145", requestOptions)
+        fetch(`https://jaja.id/backend/notifikasi/${reduxUser.id}`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.status.code === 200) {
-                    console.log("masuk sini 45678 ", result.data.transaksi)
-                    setnotifData(result.data.transaksi)
+                    console.log("masuk sini 45678 ", result.data.notifikasi)
+                    setnotifData(result.data.notifikasi)
                 } else {
                     Alert.alert(
                         "Sepertinya ada masalah.",
@@ -108,7 +109,7 @@ function NotifikasiScreen(props) {
         <SafeAreaView style={style.container}>
             <Appbar back={true} title="Notifikasi" />
             <FlatList
-                data={sampleNotif}
+                data={notifData}
                 keyExtractor={item => item.notificationId}
                 renderItem={({ item, index }) => {
                     return (

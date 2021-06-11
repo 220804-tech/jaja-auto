@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { colors, FastImage, Ps, useNavigation } from '../../export'
@@ -6,11 +6,13 @@ import { colors, FastImage, Ps, useNavigation } from '../../export'
 export default function CardProductComponent(props) {
     const navigation = useNavigation()
     const dispatch = useDispatch()
+    const [img, setImg] = useState(require('../../assets/images/JajaId.png'))
 
     const handleShowDetail = item => {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
         navigation.navigate("Product", { slug: item.slug, image: item.image })
     }
+
 
     return (
         <FlatList
