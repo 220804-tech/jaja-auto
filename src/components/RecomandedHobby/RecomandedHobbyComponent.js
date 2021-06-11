@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, FlatList, Image, ToastAndroid, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { styles, colors, Card, Ps, Wp, FastImage } from '../../export'
+import { styles, colors, Card, Ps, Wp, FastImage, CheckSignal, ShimmerCardProduct } from '../../export'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import * as Progress from 'react-native-progress';
 import LinearGradient from 'react-native-linear-gradient';
@@ -13,7 +13,7 @@ export default function RecomandedHobbyComponent() {
     const [auth, setAuth] = useState("")
     const [page, setPage] = useState(1);
     const [storagedashRecommanded, setstoragedashRecommanded] = useState([])
-    const [shimmerData] = useState(['1X', '2X', '3X', '4X', '5X', '6X', '7X', '8X'])
+    const [loading, setLoading] = useState(false)
 
     const dispatch = useDispatch()
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
@@ -28,6 +28,10 @@ export default function RecomandedHobbyComponent() {
         })
         if (reduxLoadmore) {
             handleLoadMore()
+            setLoading(true)
+            setTimeout(() => {
+                setLoading(false)
+            }, 1000);
         }
     }, [reduxLoadmore])
 
@@ -60,9 +64,20 @@ export default function RecomandedHobbyComponent() {
 
             })
             .catch(error => {
-                if (String(error).slice(11, String(error).length) === "Network request failed") {
-                    res = 'network'
-                }
+                CheckSignal().then(res => {
+                    if (res.connect == false) {
+                        ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda", ToastAndroid.LONG, ToastAndroid.CENTER)
+                    } else {
+                        Alert.alert(
+                            "Error with status 13002",
+                            JSON.stringify(error)
+                            [
+                            { text: "OK", onPress: () => console.log("OK Pressed") }
+                            ],
+                            { cancelable: false }
+                        );
+                    }
+                })
                 console.log("🚀 ~ file: RecomandedHobbyComponent.js ~ line 60 ~ getData ~ error", String(error).slice(11, String(error).length) === "Network request failed")
                 // ToastAndroid.show(String(error).slice(11, String(error).length), ToastAndroid.SHORT, ToastAndroid.TOP)
             });
@@ -72,10 +87,13 @@ export default function RecomandedHobbyComponent() {
                 return ToastAndroid.show("Koneksi terputus, periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.TOP)
             } else {
                 res = "loading"
-                ToastAndroid.show("Sedang memuat..", ToastAndroid.SHORT, ToastAndroid.TOP)
+                if (!loading && reduxLoadmore) {
+                    ToastAndroid.show("Sedang memuat..", ToastAndroid.SHORT, ToastAndroid.TOP)
+                }
             }
         }, 5000);
         setTimeout(() => {
+
             if (res === 'loading') {
                 ToastAndroid.show("Koneksi lambat, periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.TOP)
             } else {
@@ -104,67 +122,17 @@ export default function RecomandedHobbyComponent() {
                     <Card data={reduxdashRecommanded && reduxdashRecommanded.length ? reduxdashRecommanded : storagedashRecommanded && storagedashRecommanded.length ? storagedashRecommanded : []} />
                 </View>
                 :
-                <ScrollView contentContainerStyle={{ flex: 0, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-                    {
-                        shimmerData.map(item => {
-                            return (
-                                <TouchableOpacity
-                                    style={Ps.cardProduct}
-                                    key={item}>
-                                    <FastImage
-                                        style={[Ps.imageProduct, styles.mb_2, { backgroundColor: colors.Silver }]}
-                                        source={require('../../assets/images/JajaId.png')}
-                                        resizeMode={FastImage.resizeMode.contain}
-                                        tintColor={colors.White}
-
-                                    />
-                                    {/* <Image source={require('../../assets/images/JajaId.png')} style={[Ps.imageProduct, { resizeMode: 'center', tintColor: colors.White, backgroundColor: colors.Silver }]} /> */}
-                                    <View style={Ps.bottomCard}>
-                                        <ShimmerPlaceHolder
-                                            LinearGradient={LinearGradient}
-                                            width={Wp('40%')}
-                                            height={Wp("4%")}
-                                            style={{ borderRadius: 1, marginBottom: '2%' }}
-                                            shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
-                                        />
-                                        <ShimmerPlaceHolder
-                                            LinearGradient={LinearGradient}
-                                            width={Wp('30%')}
-                                            height={Wp("4%")}
-                                            style={{ borderRadius: 1, marginBottom: '5%' }}
-                                            shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
-                                        />
-                                        <ShimmerPlaceHolder
-                                            LinearGradient={LinearGradient}
-                                            width={Wp('20%')}
-                                            height={Wp("4%")}
-                                            style={{ borderRadius: 1, marginBottom: '7%' }}
-                                            shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
-                                        />
-                                        <View style={Ps.location}>
-                                            {/* <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} /> */}
-                                            <ShimmerPlaceHolder
-                                                LinearGradient={LinearGradient}
-                                                width={Wp('30%')}
-                                                height={Wp("4%")}
-                                                style={{ borderRadius: 1, marginBottom: '5%' }}
-                                                shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
-                                            />
-                                        </View>
-                                    </View>
-                                </TouchableOpacity>
-                            )
-                        })
-                    }
-
-                </ScrollView>
+                <ShimmerCardProduct />
             }
             {reduxLoadmore ?
-                <View style={style.content}>
-                    <View style={style.loading}>
-                        <Progress.CircleSnail duration={550} size={30} color={[colors.BlueJaja, colors.YellowJaja]} />
+                loading ?
+                    <View style={style.content}>
+                        <View style={style.loading}>
+                            <Progress.CircleSnail duration={550} size={30} color={[colors.BlueJaja, colors.YellowJaja]} />
+                        </View>
                     </View>
-                </View>
+                    :
+                    <ShimmerCardProduct />
                 : null}
         </View>
     )

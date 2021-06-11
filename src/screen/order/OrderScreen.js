@@ -17,6 +17,7 @@ export default function OrderScreen() {
     const reduxAuth = useSelector(state => state.auth.auth)
 
     const reduxOrder = useSelector(state => state.order.filter)
+    console.log(reduxOrder);
     const [auth, setAuth] = useState('')
     const [index, setIndex] = useState(0)
 
@@ -66,34 +67,33 @@ export default function OrderScreen() {
                             <TabBar
                                 {...props}
                                 indicatorStyle={{ backgroundColor: colors.BlueJaja }}
-
                                 bounces={true}
                                 scrollEnabled={true}
-                                style={{ backgroundColor: colors.White, paddingLeft: '2%' }}
-                                tabStyle={{ minHeight: 50, flex: 0, width: 120, borderBottomColor: colors.BlueJaja, borderRightColor: 'grey' }} // here
+                                style={{ backgroundColor: colors.White }}
+                                tabStyle={{ minHeight: 50, flex: 0, width: 120, borderBottomColor: colors.BlueJaja, borderRightColor: 'grey', justifyContent: 'center', alignSelf: 'center' }} // here
                                 renderLabel={({ route, focused, color }) => {
-                                    console.log("🚀 ~ file: OrderScreen.js ~ line 74 ~ OrderScreen ~ route", reduxOrder[0])
                                     return (
-                                        <>
-                                            {reduxAuth && reduxOrder && reduxOrder.lenght ?
-                                                <View style={[styles.row_center, { width: '100%' }]}>
+                                        <View style={[styles.row_center, { width: 100, height: '100%' }]}>
+                                            {reduxOrder && reduxOrder.length ?
+                                                <View style={[styles.row_center, { width: '100%', textAlign: 'center' }]}>
                                                     <Text style={{ color: colors.BlackGrayScale, fontSize: 12, textAlign: 'center', alignSelf: 'center' }}>{route.title} </Text>
-                                                    {route.title === "Belum dibayar" && Object.keys(reduxOrder[0].lenght) && reduxOrder[0].total ?
+                                                    {route.title === "Belum dibayar" && Object.keys(reduxOrder[0]).length && reduxOrder[0].total ?
                                                         <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}>({reduxOrder[0].total > 9 ? "9+" : reduxOrder[0].total})</Text>
-                                                        : route.title === "Diproses" && Object.keys(reduxOrder[1].lenght) && Object.keys(reduxOrder[0].lenght) && reduxOrder[1].total || reduxOrder[2].total ?
+                                                        : route.title === "Diproses" && Object.keys(reduxOrder[1]).length && Object.keys(reduxOrder[0]).length && reduxOrder[1].total || reduxOrder[2].total ?
                                                             <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({reduxOrder[1].total + reduxOrder[2].total > 9 ? "9+" : reduxOrder[1].total + reduxOrder[2].total})</Text>
-                                                            : route.title === "Dikirim" && Object.keys(reduxOrder[3].lenght) && reduxOrder[3].total ?
+                                                            : route.title === "Dikirim" && Object.keys(reduxOrder[3]).length && reduxOrder[3].total ?
                                                                 <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({reduxOrder[3].total > 9 ? "9+" : reduxOrder[3].total})</Text>
-                                                                : route.title == "Selesai" && Object.keys(reduxOrder[4].lenght) && reduxOrder[4].total ?
+                                                                : route.title == "Selesai" && Object.keys(reduxOrder[4]).length && reduxOrder[4].total ?
                                                                     <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({reduxOrder[4].total > 9 ? "9+" : reduxOrder[4].total})</Text>
-                                                                    : route.title === "Dibatalkan" && Object.keys(reduxOrder[5].lenght) && reduxOrder[5].total ?
+                                                                    : route.title === "Dibatalkan" && Object.keys(reduxOrder[5]).length && reduxOrder[5].total ?
                                                                         <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({reduxOrder[5].total > 9 ? "9+" : reduxOrder[5].total})</Text>
                                                                         : null
                                                     }
                                                 </View>
                                                 :
-                                                <Text style={{ color: colors.BlackGrayScale, fontSize: 10, width: '80%', textAlign: 'center' }}>{route.title}</Text>}
-                                        </>
+                                                <Text style={{ color: colors.BlackGrayScale, fontSize: 10, width: '80%', textAlign: 'center' }}>{route.title}kont</Text>
+                                            }
+                                        </View>
                                     )
                                 }}
                             />

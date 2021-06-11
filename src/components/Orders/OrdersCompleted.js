@@ -78,7 +78,7 @@ export default function OrdersUnpaid() {
                         <TouchableOpacity style={Os.card} onPress={() => handleOrderDetails(item)}>
                             <View style={[styles.row_between_center, styles.px_2, styles.mb_3, { width: '100%' }]}>
                                 <View style={[styles.row_start_center, { width: '45%' }]}>
-                                    <Image style={{ width: Wp('8%'), height: Wp('8%'), borderRadius: 100, marginRight: '5%' }} source={{ uri: item.store.image }} />
+                                    <Image style={{ width: Wp('8%'), height: Wp('8%'), borderRadius: 100, marginRight: '5%', resizeMode: 'contain' }} source={{ uri: item.store.image }} />
                                     <Text numberOfLines={1} style={[styles.font_12, {}]}>{item.store.name}</Text>
                                 </View>
                                 <View style={[styles.row_end_center, { width: '40%', }]}>

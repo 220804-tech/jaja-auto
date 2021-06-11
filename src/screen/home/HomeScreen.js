@@ -18,6 +18,7 @@ export default function HomeScreen() {
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
 
     useAndroidBackHandler(() => {
+
         if (out) {
             return false;
         } else {
@@ -85,6 +86,7 @@ export default function HomeScreen() {
 
     useEffect(() => {
         EncryptedStorage.getItem('token').then(res => {
+            console.log(res, " kontlolsskajshyauil,mnbg");
             if (res) {
                 setAuth(JSON.parse(res))
             }
@@ -175,7 +177,7 @@ export default function HomeScreen() {
     };
 
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
-        const paddingToBottom = 20
+        const paddingToBottom = 15
         return layoutMeasurement.height + contentOffset.y >=
             contentSize.height - paddingToBottom
     }

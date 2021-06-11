@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Linking, ToastAndroid } from 'react-native'
-import { Appbar, colors, styles, Wp, Hp, useNavigation, useFocusEffect } from '../../export'
+import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Linking, ToastAndroid, Alert } from 'react-native'
+import { Appbar, colors, styles, Wp, Hp, useNavigation, useFocusEffect, Loading } from '../../export'
 import Clipboard from '@react-native-community/clipboard';
 
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from 'react-native-paper'
+import { set } from 'react-native-reanimated';
 export default function OrderDetailsScreen(props) {
     const navigation = useNavigation();
     const dispatch = useDispatch()
@@ -45,9 +46,34 @@ export default function OrderDetailsScreen(props) {
                 if (result.status.code === 200 || result.status.code === 204) {
                     console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 45 ~ getItem ~ result.status.code", result.status.code)
                     setDetails(result.data)
+                } else {
+                    Alert.alert(
+                        "Sepertinya ada masalah!",
+                        String(result.status.message + " => " + result.status.code),
+                        [
+                            { text: "OK", onPress: () => console.log("OK Pressed") }
+                        ],
+                        { cancelable: false }
+                    );
                 }
             })
-            .catch(error => console.log('error', error));
+            .catch(error => {
+                if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
+                    ToastAndroid("Tidak dapat hahaha, periksa kembali koneksi anda!")
+                } else {
+                    Alert.alert(
+                        "Error",
+                        String(error),
+                        [
+                            {
+                                text: "TUTUP",
+                                onPress: () => console.log("Cancel Pressed"),
+                                style: "cancel"
+                            },
+                        ]
+                    );
+                }
+            });
     }
 
     const handlePayment = () => {
@@ -62,10 +88,76 @@ export default function OrderDetailsScreen(props) {
         dispatch({ type: 'SET_RECEIPT', payload: details.items[0].trackingId })
         navigation.navigate('OrderDelivery')
     }
+    const handleDone = () => {
+        Alert.alert(
+            "Terima Pesanan",
+            "Anda akan menerima pesanan?",
+            [
+                {
+                    text: "OK", onPress: () => {
+                        setLoading(true)
+                        var myHeaders = new Headers();
+                        myHeaders.append("Authorization", reduxAuth);
+                        myHeaders.append("Cookie", "ci_session=7vgloal55kn733tsqch0v7lh1tfrcilq");
+
+                        var formdata = new FormData();
+                        formdata.append("invoice", details.items[0].invoice);
+
+                        var requestOptions = {
+                            method: 'POST',
+                            headers: myHeaders,
+                            body: formdata,
+                            redirect: 'follow'
+                        };
+
+                        fetch("https://jaja.id/backend/order/pesananDiterima", requestOptions)
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.status.code === 200) {
+                                    navigation.goBack()
+                                } else {
+                                    Alert.alert(
+                                        "Sepertinya ada masalah!",
+                                        String(result.status.message + " => " + result.status.code),
+                                        [
+                                            { text: "OK", onPress: () => console.log("OK Pressed") }
+                                        ],
+                                        { cancelable: false }
+                                    );
+                                }
+                                setTimeout(() => {
+                                    setLoading(false)
+                                }, 500);
+                            })
+                            .catch(error => {
+                                setLoading(false)
+                                if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
+                                    ToastAndroid("Tidak dapat hahaha, periksa kembali koneksi anda!")
+                                } else {
+                                    Alert.alert(
+                                        "Error",
+                                        String(error),
+                                        [
+                                            {
+                                                text: "TUTUP",
+                                                onPress: () => console.log("Cancel Pressed"),
+                                                style: "cancel"
+                                            },
+                                        ]
+                                    );
+                                }
+                            });
+                    }
+                }
+            ],
+            { cancelable: false }
+        );
+    }
 
     return (
         <SafeAreaView style={styles.container}>
             <Appbar title="Detail Pesanan" back={true} />
+            {loading ? <Loading /> : null}
             <ScrollView contentContainerStyle={{ flex: 0, flexDirection: 'column', paddingBottom: Hp('7%') }}>
                 <View style={[styles.column, styles.p_3, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                     <View style={[styles.row_between_center, { marginBottom: props.route.params.status !== "Menunggu Pembayaran" ? '4%' : "0%" }]}>
@@ -205,16 +297,23 @@ export default function OrderDetailsScreen(props) {
                                         <View style={[styles.column_between_center, { alignItems: 'flex-end' }]}>
                                             <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}>{item.shippingSelected.priceCurrencyFormat}</Text>
                                             <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}></Text>
-                                            <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}></Text>
+                                            {props.route.params.status === "Pengiriman" ?
+                                                <TouchableOpacity onPress={handleTracking} style={{ backgroundColor: colors.YellowJaja, borderRadius: 3, paddingHorizontal: '9%', paddingVertical: '3%' }}>
+                                                    <Text style={[styles.font_14, { color: colors.White }]}>Lacak</Text>
+                                                </TouchableOpacity>
+                                                :
+                                                <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}></Text>
+                                            }
                                         </View>
                                     </View>
+
                                 </View>
                             </View>
                         )
                     })
                     :
                     null}
-                <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '5%' }]}>
                     <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
                         <Image style={[styles.icon_23, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
                         <Text style={[styles.font_16, { fontWeight: 'bold', color: colors.BlueJaja }]}>Ringkasan Belanja</Text>
@@ -241,20 +340,22 @@ export default function OrderDetailsScreen(props) {
 
                     </View>
                 </View>
-                {props.route.params.status === "Pengiriman" ?
-                    <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
+                {details && Object.keys(details).length ?
+                    props.route.params.status === "Pengiriman" ?
 
-                        <Button onPress={handleTracking} style={{ alignSelf: 'center', width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
-                            Lacak Pengiriman
-                        </Button>
-                    </View>
-                    : props.route.params.status === "Pesanan Selesai" ?
-                        <View style={{ position: 'absolute', bottom: 0, zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center', marginBottom: '3%' }}>
-                            <Button icon="star" onPress={() => navigation.navigate('AddReview', { data: details.items[0].products })} style={{ alignSelf: 'center', width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
-                                Beri Penilaian
+                        <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'column', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
+                            <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%' }} contentStyle={{ width: '100%', height: '95%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained" >
+                                Terima Pesanan
                             </Button>
                         </View>
-                        : null
+                        : props.route.params.status === "Pesanan Selesai" ?
+                            <View style={{ position: 'absolute', bottom: 0, zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center', marginBottom: '3%' }}>
+                                <Button icon="star" onPress={() => navigation.navigate('AddReview', { data: details.items[0].products })} style={{ alignSelf: 'center', width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
+                                    Beri Penilaian
+                                </Button>
+                            </View>
+                            : null
+                    : null
                 }
             </ScrollView>
             {props.route.params && props.route.params.status === "Menunggu Pembayaran" ?

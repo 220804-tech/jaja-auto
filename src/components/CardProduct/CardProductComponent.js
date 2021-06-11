@@ -28,41 +28,90 @@ export default function CardProductComponent(props) {
             contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}
             renderItem={({ item, index }) => {
                 return (
-                    <TouchableOpacity
-                        onPress={() => handleShowDetail(item)}
-                        style={Ps.cardProduct}
-                        key={index}>
-                        {item.isDiscount ? <Text style={Ps.textDiscount}>{item.discount}%</Text> : null}
-                        <FastImage
-                            style={Ps.imageProduct}
-                            source={{
-                                uri: item.image,
-                                headers: { Authorization: 'someAuthToken' },
-                                priority: FastImage.priority.normal,
-                            }}
-                            resizeMode={FastImage.resizeMode.contain}
-                        />
+                    <>
+                        {item.image ?
+                            <TouchableOpacity
+                                onPress={() => handleShowDetail(item)}
+                                style={Ps.cardProduct}
+                                key={index}>
+                                {item.isDiscount ? <Text style={Ps.textDiscount}>{item.discount}%</Text> : null}
+                                <FastImage
+                                    style={Ps.imageProduct}
+                                    source={{
+                                        uri: item.image,
+                                        headers: { Authorization: 'someAuthToken' },
+                                        priority: FastImage.priority.normal,
+                                    }}
+                                    resizeMode={FastImage.resizeMode.contain}
+                                />
 
-                        <View style={Ps.bottomCard}>
-                            <Text
-                                numberOfLines={2}
-                                style={Ps.nameProduct}>
-                                {item.name}
-                            </Text>
-                            {item.isDiscount ?
-                                <>
-                                    <Text style={Ps.priceBefore}>{item.price}</Text>
-                                    <Text style={Ps.priceAfter}>{item.priceDiscount}</Text>
-                                </>
-                                :
-                                <Text style={Ps.price}>{item.price}</Text>
-                            }
-                            <View style={Ps.location}>
-                                <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
-                                <Text style={Ps.locarionName}>{item.location}</Text>
-                            </View>
-                        </View>
-                    </TouchableOpacity>
+                                <View style={Ps.bottomCard}>
+                                    <Text
+                                        numberOfLines={2}
+                                        style={Ps.nameProduct}>
+                                        {item.name}
+                                    </Text>
+                                    {item.isDiscount ?
+                                        <>
+                                            <Text style={Ps.priceBefore}>{item.price}</Text>
+                                            <Text style={Ps.priceAfter}>{item.priceDiscount}</Text>
+                                        </>
+                                        :
+                                        <Text style={Ps.price}>{item.price}</Text>
+                                    }
+                                    <View style={Ps.location}>
+                                        <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
+                                        <Text style={Ps.locarionName}>{item.location}</Text>
+                                    </View>
+                                </View>
+                            </TouchableOpacity>
+                            :
+                            <TouchableOpacity style={Ps.cardProduct}>
+                                <FastImage
+                                    style={[Ps.imageProduct, styles.mb_2, { backgroundColor: colors.Silver }]}
+                                    source={require('../../assets/images/JajaId.png')}
+                                    resizeMode={FastImage.resizeMode.contain}
+                                    tintColor={colors.White}
+
+                                />
+                                {/* <Image source={require('../../assets/images/JajaId.png')} style={[Ps.imageProduct, { resizeMode: 'center', tintColor: colors.White, backgroundColor: colors.Silver }]} /> */}
+                                <View style={Ps.bottomCard}>
+                                    <ShimmerPlaceHolder
+                                        LinearGradient={LinearGradient}
+                                        width={Wp('40%')}
+                                        height={Wp("4%")}
+                                        style={{ borderRadius: 1, marginBottom: '2%' }}
+                                        shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                    />
+                                    <ShimmerPlaceHolder
+                                        LinearGradient={LinearGradient}
+                                        width={Wp('30%')}
+                                        height={Wp("4%")}
+                                        style={{ borderRadius: 1, marginBottom: '5%' }}
+                                        shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                    />
+                                    <ShimmerPlaceHolder
+                                        LinearGradient={LinearGradient}
+                                        width={Wp('20%')}
+                                        height={Wp("4%")}
+                                        style={{ borderRadius: 1, marginBottom: '7%' }}
+                                        shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                    />
+                                    <View style={Ps.location}>
+                                        {/* <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} /> */}
+                                        <ShimmerPlaceHolder
+                                            LinearGradient={LinearGradient}
+                                            width={Wp('30%')}
+                                            height={Wp("4%")}
+                                            style={{ borderRadius: 1, marginBottom: '5%' }}
+                                            shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                        />
+                                    </View>
+                                </View>
+                            </TouchableOpacity>
+
+                        }
+                    </>
                 )
             }}
         />

@@ -80,10 +80,9 @@ export default function FlashsaleComponent() {
                                     }}>
                                         <View style={{
                                             backgroundColor: colors.RedFlashsale,
-                                            borderTopLeftRadius: 100,
-                                            borderBottomLeftRadius: 100,
+                                            borderRadius: 100,
                                             height: '100%',
-                                            width: '10%',
+                                            width: ((3 / parseInt(item.stockInFlashSale)) * 100) + "%",
                                         }}>
                                         </View>
                                         <Text style={{
@@ -93,7 +92,7 @@ export default function FlashsaleComponent() {
                                             marginTop: -1,
                                             fontSize: 13
                                         }}
-                                        >1{item.amountSold} Terjual</Text>
+                                        >{item.amountSold} Terjual</Text>
                                     </View>
 
                                 </View>

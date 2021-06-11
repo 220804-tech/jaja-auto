@@ -405,7 +405,7 @@ export default function AddAddressScreen(props) {
                                             value={phoneNumber}
                                             onFocus={() => settextInputColor(colors.BlueJaja)}
                                             onBlur={() => settextInputColor('#C0C0C0')}
-                                            keyboardType="default"
+                                            keyboardType="numeric"
                                             maxLength={100}
                                             onChangeText={(text) => setphoneNumber(text)}
                                             theme={{
@@ -417,22 +417,26 @@ export default function AddAddressScreen(props) {
                                     </View>
                                 </View>
                             </TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback>
-                                <View style={styles.form}>
-                                    <Text style={[styles.formTitle, { color: kcValue ? colors.BlackGrayScale : colors.Silver }]}>Provinsi</Text>
-                                    <View style={[styles.formItem, { borderBottomColor: colors.Silver }]}>
-                                        <Text style={[styles.formPlaceholder, { color: kcValue ? colors.BlackGrayScale : colors.Silver }]}>{provValue ? provValue : "Provinsi"}</Text>
-                                    </View>
-                                </View>
-                            </TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback onPress={() => console.log("Pressed")}>
-                                <View style={styles.form}>
-                                    <Text style={[styles.formTitle, { color: kcValue ? colors.BlackGrayScale : colors.Silver }]}>Kabupaten/Kota</Text>
-                                    <View style={[styles.formItem, { borderBottomColor: colors.Silver }]}>
-                                        <Text style={[styles.formPlaceholder, { color: kcValue ? colors.BlackGrayScale : colors.Silver }]}>{kabkotaValue ? kabkotaValue : "Kabupaten/kota"}</Text>
-                                    </View>
-                                </View>
-                            </TouchableWithoutFeedback>
+                            {kcValue ?
+                                <>
+                                    <TouchableWithoutFeedback>
+                                        <View style={styles.form}>
+                                            <Text style={[styles.formTitle, { color: kcValue ? colors.BlackGrayScale : colors.Silver }]}>Provinsi</Text>
+                                            <View style={[styles.formItem, { borderBottomColor: colors.Silver }]}>
+                                                <Text style={[styles.formPlaceholder, { color: kcValue ? colors.BlackGrayScale : colors.Silver }]}>{provValue ? provValue : "Provinsi"}</Text>
+                                            </View>
+                                        </View>
+                                    </TouchableWithoutFeedback>
+                                    <TouchableWithoutFeedback onPress={() => console.log("Pressed")}>
+                                        <View style={styles.form}>
+                                            <Text style={[styles.formTitle, { color: kcValue ? colors.BlackGrayScale : colors.Silver }]}>Kabupaten/Kota</Text>
+                                            <View style={[styles.formItem, { borderBottomColor: colors.Silver }]}>
+                                                <Text style={[styles.formPlaceholder, { color: kcValue ? colors.BlackGrayScale : colors.Silver }]}>{kabkotaValue ? kabkotaValue : "Kabupaten/kota"}</Text>
+                                            </View>
+                                        </View>
+                                    </TouchableWithoutFeedback>
+                                </>
+                                : null}
                             <TouchableWithoutFeedback onPress={() => actionSheetKecamatan.current?.setModalVisible(true)}>
                                 <View style={styles.form}>
                                     <Text style={styles.formTitle}>Kecamatan <Text style={{ color: colors.RedDanger }}>*</Text></Text>
@@ -520,7 +524,7 @@ export default function AddAddressScreen(props) {
                             </TouchableWithoutFeedback>
                             <TouchableWithoutFeedback>
                                 <View style={[styles.form, { marginBottom: '0%' }]}>
-                                    <Text style={styles.formTitle}>Alamat <Text style={{ color: colors.RedDanger }}>*</Text></Text>
+                                    <Text style={styles.formTitle}>Alamat Lengkap <Text style={{ color: colors.RedDanger }}>*</Text></Text>
                                     <View style={[styles.formItem, { padding: '0%' }]}>
                                         <TextInput
                                             style={styles.inputbox}

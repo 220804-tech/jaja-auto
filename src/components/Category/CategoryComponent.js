@@ -4,7 +4,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import { useSelector, useDispatch } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
-import { styles, colors, Hp, FastImage, useNavigation, ServiceCategory, useFocusEffect } from '../../export'
+import { styles, colors, Hp, FastImage, useNavigation, ServiceCategory, useFocusEffect, CheckSignal } from '../../export'
 
 export default function CategoryComponent() {
     let navigation = useNavigation();
@@ -85,7 +85,14 @@ export default function CategoryComponent() {
                         if (res.connect == false) {
                             ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda", ToastAndroid.LONG, ToastAndroid.CENTER)
                         } else {
-                            ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)
+                            Alert.alert(
+                                "Error with status 13001",
+                                JSON.stringify(error)
+                                [
+                                { text: "OK", onPress: () => console.log("OK Pressed") }
+                                ],
+                                { cancelable: false }
+                            );
                         }
                     })
                 });
@@ -115,7 +122,7 @@ export default function CategoryComponent() {
                 <TouchableOpacity onPress={() => handleCategory('Art Shop')}>
                     <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}>
                         Lihat Semua
-                </Text>
+                    </Text>
                 </TouchableOpacity>
             </View>
             {reduxDashboard && reduxDashboard.length || storageDashboard && storageDashboard.length ?

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import CheckBox from '@react-native-community/checkbox';
-import { View, Text, SafeAreaView, Image, TouchableOpacity, ToastAndroid, FlatList, StatusBar, Alert, RefreshControl } from 'react-native'
+import { View, Text, SafeAreaView, Image, TouchableOpacity, ToastAndroid, FlatList, StatusBar, Alert, RefreshControl, TouchableHighlight, TouchableWithoutFeedback } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { styles, Hp, Wp, Language, colors, useNavigation, Appbar, Ps, ServiceCart, Loading, ServiceCheckout, useFocusEffect } from '../../export'
 import { Button } from 'react-native-paper'
@@ -185,6 +185,10 @@ export default function TrolleyScreen() {
             setRefreshing(false)
         }, 3000);
     }, []);
+    const handleSelected = item => {
+        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+        navigation.navigate("Product", { slug: item.slug, image: item.image })
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -249,19 +253,21 @@ export default function TrolleyScreen() {
                                                     value={item.isSelected}
                                                     onValueChange={() => handleCheckbox("cart", indexParent, index)}
                                                 />
-                                                <Image style={{
-                                                    width: Wp('21%'),
-                                                    height: Wp('21%'),
-                                                    marginHorizontal: '3%',
-                                                    borderRadius: 5,
-                                                    backgroundColor: colors.BlackGrey
-                                                }}
-                                                    resizeMethod={"scale"}
-                                                    resizeMode={item.image ? "cover" : "center"}
-                                                    source={{ uri: item.image }}
-                                                />
+                                                <TouchableWithoutFeedback onPress={() => handleSelected(item)}>
+                                                    <Image style={{
+                                                        width: Wp('21%'),
+                                                        height: Wp('21%'),
+                                                        marginHorizontal: '3%',
+                                                        borderRadius: 5,
+                                                        backgroundColor: colors.BlackGrey
+                                                    }}
+                                                        resizeMethod={"scale"}
+                                                        resizeMode={item.image ? "cover" : "center"}
+                                                        source={{ uri: item.image }}
+                                                    />
+                                                </TouchableWithoutFeedback>
                                                 <View style={[styles.column_between_center, { alignItems: 'flex-start', height: Wp('21%'), width: '60%' }]}>
-                                                    <Text numberOfLines={1} style={[styles.font_14, { flex: 0, color: colors.BlueJaja, fontWeight: 'bold' }]}>{item.name}</Text>
+                                                    <Text onPress={() => handleSelected(item)} numberOfLines={1} style={[styles.font_14, { flex: 0, color: colors.BlueJaja, fontWeight: 'bold' }]}>{item.name}</Text>
                                                     <Text numberOfLines={1} style={[styles.font_10, { flex: 0, color: colors.BlackGrayScale }]}>{item.variant ? "Variant " + item.variant : ""}</Text>
                                                     {item.isDiscount ?
                                                         <View style={styles.row_around_center}>

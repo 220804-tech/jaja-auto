@@ -16,9 +16,9 @@ Hasil UAT JAJA BUYER APK 05 JUNI 2021
 - layout chat belum responsive #selesai
 
 Dari saya
-- belum ada feature terima pesanan #nunggu API
-- login google masih proses #80% nunggu revisi API
-- pelacakan orderan yang dikirim #90% nunggu revisi API
+- belum ada feature terima pesanan #SELESAI
+- login google masih proses #selesai
+- pelacakan orderan yang dikirim #99% nunggu revisi API
 - redisgn card flashsale #selesai
 - handle loading menggunakan shimmer loading didashboard #selesai
 - list notifikasi #selesai
@@ -74,3 +74,19 @@ Profil
 - icon menu ganti sama icon yg dibuat kharis #selesai
 
 
+Alamat 
+- input nomor telephone keyboard nuumber #selesai 
+- pin alamat kasih tombol
+- provinsi sama kabupaten di hidden sebelum kecamatan diisi #selesai
+- alamat diganti alamat lengkap #selesai
+- google maps auto default lokasi setelh pilih kecamatan
+
+
+Pesanan
+- menunggu dan disiap-kan jadi satu
+- list order ada gambar di detail nggk ada gambar
+- midtrans lihat pesanan dihilangkan
+- lacak pesanan di pindah ke card metode pengiriman #selesai
+
+Cart
+- cart item diklik pindah ke detail produk #selesai

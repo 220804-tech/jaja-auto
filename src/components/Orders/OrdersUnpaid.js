@@ -75,7 +75,7 @@ export default function OrdersUnpaid() {
                                     <View key={String(indx) + "X"} style={styles.my_2}>
                                         <View style={[styles.row_between_center, styles.px_2, styles.pb_2, styles.mb_3, { width: '100%', borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}>
                                             <View style={[styles.row_start_center, { width: '45%' }]}>
-                                                <Image style={{ width: Wp('8%'), height: Wp('8%'), borderRadius: 100, marginRight: '5%' }} source={{ uri: child.store.image }} />
+                                                <Image style={{ width: Wp('8%'), height: Wp('8%'), borderRadius: 100, marginRight: '5%', resizeMode: 'contain' }} source={{ uri: child.store.image }} />
                                                 <Text numberOfLines={1} style={[styles.font_12, {}]}>{child.store.name}</Text>
                                             </View>
                                         </View>

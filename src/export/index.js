@@ -8,6 +8,7 @@ import Trending from '../components/Trending/TrendingComponent'
 import BasedOnSearch from '../components/BasedOnSearch/BasedOnSearchComponent'
 import FastImage from 'react-native-fast-image'
 import Card from '../components/CardProduct/CardProductComponent'
+import ShimmerCardProduct from '../components/Shimmer/CardProduct'
 
 import Language from '../utils/language/Language'
 import Loading from '../components/Loading/LoadingComponent'
@@ -36,5 +37,5 @@ import colors from '../assets/colors'
 export {
     Appbar, CardProduct, Category, Flashsale, Maps, HobyAverage, RecomandedHobby, Trending, Language, Loading, CheckSignal, BasedOnSearch, styles,
     Ps, Wp, Hp, useNavigation, colors, useFocusEffect, FastImage, Form, ServiceCart, ServiceCheckout, ServiceUser, ServiceVoucher, ServiceOrder, Os,
-    ServiceCategory, ServiceProduct, ServiceStore, ServiceFirebase, Card, Ts, ServiceNotif
+    ServiceCategory, ServiceProduct, ServiceStore, ServiceFirebase, Card, Ts, ServiceNotif, ShimmerCardProduct
 }
