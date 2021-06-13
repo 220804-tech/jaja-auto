@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux'
 export default function ListChat() {
     const navigation = useNavigation();
     const reduxUser = useSelector(state => state.user.user)
-    console.log("🚀 ~ file: ListChatScreen.js ~ line 11 ~ ListChat ~ reduxUser", reduxUser)
+    console.log("🚀 ~ file: ListChatScreen.js ~ line 11 ~ ListChat ~ reduxUser", reduxUser.uid)
     const reduxAuth = useSelector(state => state.auth.auth)
 
     const [phone, setPhone] = useState("");
@@ -74,7 +74,8 @@ export default function ListChat() {
                 snapshot.forEach(function (snap) {
                     var item = snap.val();
                     item.id = snap.key;
-                    if (item.id !== val && item.id !== "null") {
+                    console.log(item.id, " firebase");
+                    if (item.id !== reduxUser.uid && item.id !== "null") {
                         returnArray.push(item);
                         let sortedObj = returnArray.sort(function (a, b) {
                             return new Date(b.time) - new Date(a.time);

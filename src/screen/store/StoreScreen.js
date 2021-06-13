@@ -28,8 +28,9 @@ export default function StoreScreen() {
             let dataSeller = {
                 name: reduxStore.name,
                 chat: reduxUser.user.uid + reduxStore.uid,
-                id: reduxStore.id
+                id: reduxStore.uid
             }
+            console.log(dataSeller, " qwqwq");
             setSeller(dataSeller)
         }
     }, [reduxStoreProduct, reduxStore])

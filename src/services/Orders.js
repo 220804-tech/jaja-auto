@@ -1,4 +1,4 @@
-import { ToastAndroid } from 'react-native'
+import { ToastAndroid, Alert } from 'react-native'
 
 export async function getUnpaid(auth) {
     var myHeaders = new Headers();
@@ -24,7 +24,23 @@ export async function getUnpaid(auth) {
                 return null
             }
         })
-        .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+        .catch(error => {
+            if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
+                ToastAndroid("Tidak dapat terhubung, periksa kembali koneksi anda!")
+            } else {
+                Alert.alert(
+                    "Error with status 12003",
+                    String(error),
+                    [
+                        {
+                            text: "TUTUP",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                        },
+                    ]
+                );
+            }
+        });
 }
 
 export async function getWaitConfirm(auth) {
@@ -51,7 +67,20 @@ export async function getWaitConfirm(auth) {
                 return null
             }
         })
-        .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+        .catch(error => {
+            if (String(error).slice(11, String(error).length) === "Network request failed") {
+                ToastAndroid.show("Tidak dapat terhubung, periksa koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
+            } else {
+                Alert.alert(
+                    "Error with status 12004",
+                    JSON.stringify(error)
+                    [
+                    { text: "OK", onPress: () => console.log("OK Pressed") }
+                    ],
+                    { cancelable: false }
+                );
+            }
+        });
 }
 
 export async function getProcess(auth) {
@@ -78,7 +107,23 @@ export async function getProcess(auth) {
                 return null
             }
         })
-        .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+        .catch(error => {
+            if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
+                ToastAndroid("Tidak dapat terhubung, periksa kembali koneksi anda!")
+            } else {
+                Alert.alert(
+                    "Error with status 12005",
+                    String(error),
+                    [
+                        {
+                            text: "TUTUP",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                        },
+                    ]
+                );
+            }
+        });
 }
 
 export async function getSent(auth) {
@@ -105,7 +150,23 @@ export async function getSent(auth) {
                 return null
             }
         })
-        .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+        .catch(error => {
+            if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
+                ToastAndroid("Tidak dapat terhubung, periksa kembali koneksi anda!")
+            } else {
+                Alert.alert(
+                    "Error with status 12006",
+                    String(error),
+                    [
+                        {
+                            text: "TUTUP",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                        },
+                    ]
+                );
+            }
+        });
 }
 
 export async function getCompleted(auth) {
@@ -132,7 +193,23 @@ export async function getCompleted(auth) {
                 return null
             }
         })
-        .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+        .catch(error => {
+            if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
+                ToastAndroid("Tidak dapat terhubung, periksa kembali koneksi anda!")
+            } else {
+                Alert.alert(
+                    "Error with status 12007",
+                    String(error),
+                    [
+                        {
+                            text: "TUTUP",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                        },
+                    ]
+                );
+            }
+        });
 }
 
 export async function getFailed(auth) {
@@ -159,6 +236,22 @@ export async function getFailed(auth) {
                 return null
             }
         })
-        .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+        .catch(error => {
+            if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
+                ToastAndroid("Tidak dapat terhubung, periksa kembali koneksi anda!")
+            } else {
+                Alert.alert(
+                    "Error with status 12008",
+                    JSON.stringify(error),
+                    [
+                        {
+                            text: "TUTUP",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                        },
+                    ]
+                );
+            }
+        });
 }
 

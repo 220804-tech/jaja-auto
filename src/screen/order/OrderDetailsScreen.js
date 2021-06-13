@@ -84,8 +84,6 @@ export default function OrderDetailsScreen(props) {
 
 
     const handleTracking = () => {
-        dispatch({ type: 'SET_INVOICE', payload: details.items[0].invoice })
-        dispatch({ type: 'SET_RECEIPT', payload: details.items[0].trackingId })
         navigation.navigate('OrderDelivery')
     }
     const handleDone = () => {
@@ -93,6 +91,11 @@ export default function OrderDetailsScreen(props) {
             "Terima Pesanan",
             "Anda akan menerima pesanan?",
             [
+                {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
                 {
                     text: "OK", onPress: () => {
                         setLoading(true)

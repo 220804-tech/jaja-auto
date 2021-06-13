@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Image, SafeAreaView, StatusBar, ToastAndroid } from 'react-native'
+import { View, Image, SafeAreaView, StatusBar, ToastAndroid, Alert } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp, } from 'react-native-responsive-screen';
 import Swiper from 'react-native-swiper'
 import { useSelector, useDispatch } from 'react-redux'
@@ -233,7 +233,6 @@ export default function SplashScreen() {
                         ],
                         { cancelable: false }
                     );
-
                 }
                 handleUnpaid()
             })
@@ -256,8 +255,8 @@ export default function SplashScreen() {
                         ],
                         { cancelable: false }
                     );
-
-                } handleWaitConfirm()
+                }
+                handleWaitConfirm()
             })
 
             ServiceOrder.getProcess(auth).then(resProcess => {

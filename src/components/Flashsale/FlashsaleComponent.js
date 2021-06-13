@@ -10,23 +10,15 @@ export default function FlashsaleComponent() {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const reduxdashFlashsale = useSelector(state => state.dashboard.flashsale)
-    const [storagedashFlashsale, setstoragedashFlashsale] = useState([])
 
     useEffect(() => {
-        getStorage()
     }, [])
 
     const handleShowDetail = item => {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
         navigation.navigate("Product", { slug: item.slug, image: item.image, flashsale: true })
     }
-    const getStorage = () => {
-        EncryptedStorage.getItem('dashflashsale').then(res => {
-            if (res) {
-                setstoragedashFlashsale(JSON.parse(res))
-            }
-        })
-    }
+
     const [shimmerData] = useState(['1X', '2X', '3X'])
 
     return (
@@ -82,7 +74,7 @@ export default function FlashsaleComponent() {
                                             backgroundColor: colors.RedFlashsale,
                                             borderRadius: 100,
                                             height: '100%',
-                                            width: ((3 / parseInt(item.stockInFlashSale)) * 100) + "%",
+                                            width: ((parseInt(item.amountSold) / parseInt(item.stockInFlashSale)) * 100) + "%",
                                         }}>
                                         </View>
                                         <Text style={{

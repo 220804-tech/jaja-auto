@@ -568,43 +568,21 @@ export default function Lainnya() {
                         />
                     </TouchableOpacity>
                 </View>
-                {open === "Nama Lengkap" ?
-                    <View style={styles.form}>
-                        <Text adjustsFontSizeToFit style={styles.formTitle}>{open}</Text>
-                        <View style={[styles.formItem, { paddingBottom: '1%', borderBottomColor: textInputColor, borderBottomWidth: 1 }]}>
-                            {/* <Text adjustsFontSizeToFit style={styles.formPlaceholder}>Testing toko</Text> */}
-                            <TextInput
-                                style={styles.inputbox}
-                                placeholder=""
-                                value={name}
-                                onFocus={() => settextInputColor(colors.BlueJaja)}
-                                onBlur={() => settextInputColor('#C0C0C0')}
-                                keyboardType="default"
-                                maxLength={25}
-                                onChangeText={(text) => setname(text)}
-                                theme={{
-                                    colors: {
-                                        primary: colors.BlueJaja,
-                                    },
-                                }}
-                            />
-                            {/* <Image /> */}
-                        </View>
-                    </View>
-                    : open === "Nomor Telephone" ?
+                <View style={[style.column, style.pb_5, style.mb_5]}>
+                    {open === "Nama Lengkap" ?
                         <View style={styles.form}>
                             <Text adjustsFontSizeToFit style={styles.formTitle}>{open}</Text>
                             <View style={[styles.formItem, { paddingBottom: '1%', borderBottomColor: textInputColor, borderBottomWidth: 1 }]}>
                                 {/* <Text adjustsFontSizeToFit style={styles.formPlaceholder}>Testing toko</Text> */}
                                 <TextInput
                                     style={styles.inputbox}
-                                    placeholder="Input nomor telephone"
-                                    value={telephone}
+                                    placeholder=""
+                                    value={name}
                                     onFocus={() => settextInputColor(colors.BlueJaja)}
                                     onBlur={() => settextInputColor('#C0C0C0')}
-                                    keyboardType="numeric"
-                                    maxLength={13}
-                                    onChangeText={(text) => settelephone(text)}
+                                    keyboardType="default"
+                                    maxLength={25}
+                                    onChangeText={(text) => setname(text)}
                                     theme={{
                                         colors: {
                                             primary: colors.BlueJaja,
@@ -614,33 +592,57 @@ export default function Lainnya() {
                                 {/* <Image /> */}
                             </View>
                         </View>
-                        : open === "Jenis Kelamin" ?
-                            <View style={{ flex: 0, justifyContent: 'space-around', alignItems: 'center', flexDirection: 'row' }}>
-                                <View style={{ flex: 0, alignItems: 'center', flexDirection: 'row' }}>
-                                    <RadioButton
-                                        value="first"
-                                        status={checked === 'first' ? 'checked' : 'unchecked'}
-                                        onPress={() => {
-                                            setChecked('first')
-                                            setgender("pria")
+                        : open === "Nomor Telephone" ?
+                            <View style={styles.form}>
+                                <Text adjustsFontSizeToFit style={styles.formTitle}>{open}</Text>
+                                <View style={[styles.formItem, { paddingBottom: '1%', borderBottomColor: textInputColor, borderBottomWidth: 1 }]}>
+                                    {/* <Text adjustsFontSizeToFit style={styles.formPlaceholder}>Testing toko</Text> */}
+                                    <TextInput
+                                        style={styles.inputbox}
+                                        placeholder="Input nomor telephone"
+                                        value={telephone}
+                                        onFocus={() => settextInputColor(colors.BlueJaja)}
+                                        onBlur={() => settextInputColor('#C0C0C0')}
+                                        keyboardType="numeric"
+                                        maxLength={13}
+                                        onChangeText={(text) => settelephone(text)}
+                                        theme={{
+                                            colors: {
+                                                primary: colors.BlueJaja,
+                                            },
                                         }}
                                     />
-                                    <Text adjustsFontSizeToFit style={style.font14}>Laki - Laki</Text>
-                                </View>
-                                <View style={{ flex: 0, alignItems: 'center', flexDirection: 'row' }}>
-                                    <RadioButton
-                                        value="second"
-                                        status={checked === 'second' ? 'checked' : 'unchecked'}
-                                        onPress={() => {
-                                            setChecked('second')
-                                            setgender("wanita")
-                                        }}
-                                    />
-                                    <Text adjustsFontSizeToFit style={style.font14}>Perempuan</Text>
+                                    {/* <Image /> */}
                                 </View>
                             </View>
-                            : null}
-            </ActionSheet>
+                            : open === "Jenis Kelamin" ?
+                                <View style={{ flex: 0, justifyContent: 'space-around', alignItems: 'center', flexDirection: 'row' }}>
+                                    < View style={{ flex: 0, alignItems: 'center', flexDirection: 'row' }}>
+                                        <RadioButton
+                                            value="first"
+                                            status={checked === 'first' ? 'checked' : 'unchecked'}
+                                            onPress={() => {
+                                                setChecked('first')
+                                                setgender("pria")
+                                            }}
+                                        />
+                                        <Text adjustsFontSizeToFit style={style.font14}>Laki - Laki</Text>
+                                    </View>
+                                    <View style={{ flex: 0, alignItems: 'center', flexDirection: 'row' }}>
+                                        <RadioButton
+                                            value="second"
+                                            status={checked === 'second' ? 'checked' : 'unchecked'}
+                                            onPress={() => {
+                                                setChecked('second')
+                                                setgender("wanita")
+                                            }}
+                                        />
+                                        <Text adjustsFontSizeToFit style={style.font14}>Perempuan</Text>
+                                    </View>
+                                </View>
+                                : null}
+                </View>
+            </ActionSheet >
             <ActionSheet onClose={() => handleUpdate(date, photo)} footerHeight={80} containerStyle={{ paddingHorizontal: '4%', paddingTop: '1%' }}
                 ref={passwordRef}>
                 <View style={[style.row_between_center, style.my_2]}>
@@ -759,7 +761,7 @@ export default function Lainnya() {
 
                         <Button color={colors.BlueJaja} mode="contained" onPress={handleAdd}>
                             Simpan
-                          </Button>
+                        </Button>
                     </View>
 
                 }
