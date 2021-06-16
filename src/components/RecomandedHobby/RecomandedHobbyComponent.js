@@ -1,12 +1,10 @@
 
 import React, { useEffect, useState } from 'react'
-import { View, Text, FlatList, Image, ToastAndroid, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
+import { View, Text, ToastAndroid, StyleSheet, Alert } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { styles, colors, Card, Ps, Wp, FastImage, CheckSignal, ShimmerCardProduct } from '../../export'
+import { styles, colors, Card, CheckSignal, ShimmerCardProduct } from '../../export'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import * as Progress from 'react-native-progress';
-import LinearGradient from 'react-native-linear-gradient';
-import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 
 export default function RecomandedHobbyComponent() {
 

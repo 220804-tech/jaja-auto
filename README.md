@@ -2,6 +2,7 @@
 
 ## Splashscreen && Transaksi(List Pesanan)
 # 12001 => Error api get dashboard 
+# 120012/120013 => Error api get dashboard in flashsale
 # 12002 => Error api get recommendation
 # 12003 => Error api get order unpaid
 # 12004 => Error api get order wait confirm

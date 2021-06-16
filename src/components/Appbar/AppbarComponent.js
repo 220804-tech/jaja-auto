@@ -34,6 +34,7 @@ export default function AppbarComponent(props) {
 
 
     }
+
     const getBadges = () => {
         ServiceUser.getBadges(reduxAuth ? reduxAuth : auth).then(res => {
             if (res) {
@@ -41,8 +42,7 @@ export default function AppbarComponent(props) {
             }
         })
     }
-
-
+    
     return (
         <View style={[styles.appBar, { justifyContent: 'flex-start', backgroundColor: props.Bg ? props.Bg : colors.BlueJaja }]}>
             <View style={[styles.row_start_center, { flex: 1 }]}>

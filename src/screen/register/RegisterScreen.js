@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Paragraph, TextInput } from 'react-native-paper'
-import { Hp, Wp, colors, Loading } from '../../export'
+import { Hp, Wp, colors, Loading, Appbar } from '../../export'
 import { Text, View, SafeAreaView, Image, StyleSheet, BackHandler, StatusBar, ScrollView, ToastAndroid } from 'react-native';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { connect } from 'react-redux'
@@ -29,14 +29,17 @@ class RegisterScreen extends Component {
         };
     }
     backAction = () => {
-        this.props.navigation.navigate('Login');
+        console.log(this.props.route.params);
+        if (this.props.route.params && this.props.route.params.navigate) {
+            console.log("masuk sini");
+            this.props.navigation.goBack()
+        } else {
+            this.props.navigation.navigate('Login');
+        }
         return true;
     };
 
     componentDidMount() {
-        console.log("🚀 ~ file: RegisterScreen.js ~ line 10 ~ RegisterScreen ~ constructor ~ props", this.props.dispatch)
-
-        // this.props.navigation.navigate('VertifikasiEmail')
         this.backHandler = BackHandler.addEventListener(
             'hardwareBackPress',
             this.backAction,
@@ -204,6 +207,7 @@ class RegisterScreen extends Component {
     render() {
         return (
             <SafeAreaView style={styles.container}>
+                <Appbar back={true} title="Kembali" Bg={colors.YellowJaja} />
                 <StatusBar backgroundColor={colors.YellowJaja} barStyle="light-content" />
                 {this.state.loading ? <Loading /> : null}
                 <ScrollView style={styles.scrollView} contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>

@@ -1,22 +1,20 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { SafeAreaView, View, Text, TouchableOpacity, Linking, StyleSheet, Platform, Dimensions, Image, Alert } from 'react-native';
-import FeatherIcon from 'react-native-vector-icons/Feather';
-import FAIcon from 'react-native-vector-icons/FontAwesome';
 import { styles, Hp, Wp, colors, useNavigation, useFocusEffect, Loading, Appbar, ServiceCart } from '../../export'
+import { Button } from 'react-native-paper'
 import EncryptedStorage from 'react-native-encrypted-storage';
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const IS_IPHONE_X = SCREEN_HEIGHT === 812 || SCREEN_HEIGHT === 896;
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
 const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
-import AuthLogin from '../login/LoginScreen'
 import { useDispatch, useSelector } from 'react-redux'
 
 export default function ProfileScreen(props) {
   const navigation = useNavigation();
   const dispatch = useDispatch()
   const reduxAuth = useSelector(state => state.auth.auth)
-  console.log("🚀 ~ file: ProfileScreen.js ~ line 19 ~ ProfileScreen ~ reduxAuth", reduxAuth)
+  const location = useSelector(state => state.user.user.location)
 
   const [auth, setAuth] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -46,11 +44,14 @@ export default function ProfileScreen(props) {
       }
     })
     getItem()
-  }, [props])
+    // if (!reduxAuth) {
+    //   handleAuth('Login')
+  }, [props, reduxAuth])
 
   useFocusEffect(
     useCallback(() => {
       getItem()
+
     }, []),
   );
 
@@ -114,238 +115,111 @@ export default function ProfileScreen(props) {
     })
     navigation.navigate("Trolley")
   }
+  const handleAuth = name => {
+    navigation.navigate(name, { navigate: name })
+  }
 
   return (
-    <>
+
+    <SafeAreaView style={(styles.container, { backgroundColor: colors.BlueJaja })}>
       {loading ? <Loading /> : null}
-      {reduxAuth || auth ?
-        <SafeAreaView style={(styles.container, { backgroundColor: colors.BlueJaja })}>
-          <View style={styles.column}>
-            <View style={[styles.column, { height: Hp('33%'), }]}>
-              {/* <View style={[styles.appBar, { alignItems: 'flex-start', paddingTop: Hp('2%') }]}>
-                <Text style={[styles.font_16, { fontWeight: 'bold', color: colors.White }]}>Akun Saya</Text>
-                <TouchableOpacity style={[styles.column, styles.mx_3]} onPress={() => handleGetCart()}>
-                  <Image source={require('../../assets/icons/notif.png')} style={{ width: 25, height: 25, tintColor: colors.White }} />
-                  {Object.keys(reduxBadges).length && reduxBadges.totalProductInCart ?
-                    <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxBadges.totalProductInCart >= 100 ? "99+" : reduxBadges.totalProductInCart}</Text></View>
-                    : null
-                  }
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.column, styles.mx_3]} onPress={() => handleGetCart()}>
-                  <Image source={require('../../assets/icons/cart.png')} style={{ width: 25, height: 25, tintColor: colors.White }} />
-                  {Object.keys(reduxBadges).length && reduxBadges.totalProductInCart ?
-                    <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxBadges.totalProductInCart >= 100 ? "99+" : reduxBadges.totalProductInCart}</Text></View>
-                    : null
-                  }
-                </TouchableOpacity>
-              </View> */}
-              <Appbar title="Akun Saya" trolley={true} notif={true} />
-              <View style={[styles.column, styles.px_2]}>
-                <View style={[styles.row, styles.p_2, styles.mb_4]}>
-                  <View style={{ height: Wp('17%'), width: Wp('17%'), backgroundColor: colors.Silver, borderRadius: 100, marginRight: '2%' }}>
-                    <Image source={{ uri: reduxProfile.image }} style={{ width: '100%', height: '100%', borderRadius: 100 }} />
-                  </View>
-                  <View style={[styles.column_around_center, { height: Wp('17%'), width: Wp('60%'), alignItems: 'flex-start' }]}>
-                    <Text numberOfLines={1} style={[styles.font_14, { color: colors.White, width: '100%' }]}>{reduxProfile.name}</Text>
-                    <View style={[styles.row_start_center, { width: '100%' }]}>
-                      <Text numberOfLines={1} style={[styles.font_14, styles.mr_3, { color: colors.White }]}>{reduxProfile.coin}</Text>
-                      <Image source={require('../../assets/icons/coin.png')} style={styles.icon_14} />
-                    </View>
+      <View style={styles.column}>
+        <View style={[styles.column, { height: reduxAuth ? Hp('33%') : Hp('22%'), }]}>
+          <Appbar title="Akun Saya" trolley={true} notif={true} />
+          <View style={[styles.column, styles.px_2]}>
+            <View style={[styles.row_start, styles.p_2, styles.mb_4]}>
+              <View style={{ height: Wp('17%'), width: Wp('17%'), backgroundColor: colors.White, borderRadius: 100, marginRight: '2%' }}>
+                <Image source={reduxAuth ? { uri: reduxProfile.image } : require('../../assets/images/JajaId.png')} style={{ resizeMode: 'contain', width: '100%', height: '100%', borderRadius: 100 }} />
+              </View>
+              {reduxAuth ?
+                <View style={[styles.column_around_center, { height: Wp('17%'), width: Wp('60%'), alignItems: 'flex-start' }]}>
+                  <Text numberOfLines={1} style={[styles.font_14, { color: colors.White, width: '100%' }]}>{reduxProfile.name}</Text>
+                  <View style={[styles.row_start_center, { width: '100%' }]}>
+                    <Text numberOfLines={1} style={[styles.font_14, styles.mr_3, { color: colors.White }]}>{reduxProfile.coin}</Text>
+                    <Image source={require('../../assets/icons/coin.png')} style={styles.icon_14} />
                   </View>
                 </View>
-                <View style={[styles.row_around_center, styles.mt_5, { width: '100%' }]}>
-                  <View style={[styles.column_center, { width: '50%' }]}>
-                    <Text numberOfLines={1} style={[styles.font_14, { color: colors.White, textAlign: 'center' }]}>0</Text>
-                    <Text style={[styles.font_14, { color: colors.White }]}>Voucher</Text>
-                  </View>
-                  <View style={[styles.column_center, { width: '50%' }]}>
-                    <Text numberOfLines={1} style={[styles.font_14, { color: colors.White, alignSelf: 'center', textAlign: 'center' }]}>0</Text>
-                    <Text style={[styles.font_14, { color: colors.White }]}>Toko Diikuti</Text>
-                  </View>
-                  {/* <View style={styles.column_center}>
-                  <Text style={[styles.font_14, { color: colors.White }]}>0</Text>
-                  <Text style={[styles.font_14, { color: colors.White }]}>Voucher Kamu</Text>
-                </View> */}
+                :
+                <View style={[styles.row_start, styles.mt_5, { height: Wp('17%'), width: '80%', justifyContent: 'flex-end' }]}>
+                  <Button onPress={() => handleAuth('Login')} color={colors.White} mode="contained" contentStyle={{ width: Wp('25%'), height: Wp('9%') }} style={{ width: Wp('25%'), height: Wp('9%') }} labelStyle={{ color: colors.YellowJaja, fontSize: 13 }} uppercase={false} >
+                    Login
+                  </Button>
+                  <Button onPress={() => handleAuth('Register')} color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('25%'), height: Wp('9%') }} style={{ marginLeft: '3%', width: Wp('25%'), height: Wp('9%') }} labelStyle={{ color: colors.White, fontSize: 13 }} uppercase={false} >
+                    Daftar
+                  </Button>
+                </View>
+              }
+            </View>
+            {reduxAuth ?
+              <View style={[styles.row_around_center, styles.mt_5, { width: '100%' }]}>
+                <View style={[styles.column_center, { width: '50%' }]}>
+                  <Text numberOfLines={1} style={[styles.font_14, { color: colors.White, textAlign: 'center' }]}>0</Text>
+                  <Text style={[styles.font_14, { color: colors.White }]}>Voucher</Text>
+                </View>
+                <View style={[styles.column_center, { width: '50%' }]}>
+                  <Text numberOfLines={1} style={[styles.font_14, { color: colors.White, alignSelf: 'center', textAlign: 'center' }]}>0</Text>
+                  <Text style={[styles.font_14, { color: colors.White }]}>Toko Diikuti</Text>
                 </View>
               </View>
-            </View>
-            <View style={{ flex: 0, flexDirection: 'column', zIndex: 9999, backgroundColor: colors.White, height: Hp('67%'), marginTop: Hp('-1%'), borderTopRightRadius: 21, borderTopLeftRadius: 21, paddingHorizontal: '4%', paddingTop: '2%' }}>
-              <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate('Account')}>
-                {/* <FAIcon name="user" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} /> */}
-                <Image style={{ width: 27, height: 27, marginRight: '3%' }} source={require(`../../assets/icons/customer.png`)} />
-                <Text style={style.title}>Profile</Text>
+              : null}
+          </View>
+        </View>
+        <View style={{ flex: 0, flexDirection: 'column', zIndex: 9999, backgroundColor: colors.White, height: reduxAuth ? Hp('67%') : Hp('85%'), marginTop: Hp('-1%'), borderTopRightRadius: 21, borderTopLeftRadius: 21, paddingHorizontal: '4%', paddingTop: '2%' }}>
+          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate('Account')}>
+            {/* <FAIcon name="user" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} /> */}
+            <Image style={{ width: 27, height: 27, marginRight: '3%' }} source={require(`../../assets/icons/customer.png`)} />
+            <Text style={style.title}>Profile</Text>
 
-              </TouchableOpacity>
-              {/* <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={() => navigation.navigate('Address')}>
+          </TouchableOpacity>
+          {/* <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={() => navigation.navigate('Address')}>
                 <View style={{ flexDirection: 'row' }}>
                   <FAIcon name="map-pin" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
                   <Text style={style.title}>  Alamat </Text>
                 </View>
               </TouchableOpacity> */}
-              <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate('Address')}>
-                {/* <FAIcon name="user" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} /> */}
-                <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/google-maps.png`)} />
-                <Text style={style.title}>Alamat</Text>
-
-              </TouchableOpacity>
-              {/* <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={handleCart}>
+          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate('Address')}>
+            {/* <FAIcon name="user" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} /> */}
+            <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/google-maps.png`)} />
+            <Text style={style.title}>Alamat</Text>
+            {location && location.length ? null : <Text style={[styles.ml_2, { color: colors.RedNotif, fontStyle: 'italic', fontSize: 13 }]}>( Alamat belum lengkap )</Text>}
+          </TouchableOpacity>
+          {/* <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={handleCart}>
                 <View style={{ flexDirection: 'row' }}>
                   <FAIcon name="user" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
                   <Text style={style.title}> Favorit </Text>
                 </View>
               </TouchableOpacity> */}
-              {/* <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={() => nva}>
+          {/* <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={() => nva}>
               <View style={{ flexDirection: 'row' }}>
                 <FAIcon name="bars" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
                 <Text style={style.title}> Pesanan Saya </Text>
               </View>
             </TouchableOpacity> */}
-              <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => {
-                Linking.canOpenURL('https://jaja.id/bantuan/').then(supported => {
-                  console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 82 ~ Linking.canOpenURL ~ supported", supported)
-                  if (supported) {
-                    Linking.openURL('https://jaja.id/bantuan/')
-                  } else {
-                    ToastAndroid.show("Sepertinya ada masalah, coba lagi nanti.", ToastAndroid.LONG, ToastAndroid.TOP)
+          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => {
+            Linking.canOpenURL('https://jaja.id/bantuan/').then(supported => {
+              console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 82 ~ Linking.canOpenURL ~ supported", supported)
+              if (supported) {
+                Linking.openURL('https://jaja.id/bantuan/')
+              } else {
+                ToastAndroid.show("Sepertinya ada masalah, coba lagi nanti.", ToastAndroid.LONG, ToastAndroid.TOP)
 
-                  }
-                })
-              }}>
-                {/* <FAIcon name="cog" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} /> */}
-                <Image style={{ width: 27, height: 27, marginRight: '3%' }} source={require(`../../assets/icons/service.png`)} />
-                <Text style={style.title}>Pusat Bantuan</Text>
+              }
+            })
+          }}>
+            {/* <FAIcon name="cog" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} /> */}
+            <Image style={{ width: 27, height: 27, marginRight: '3%' }} source={require(`../../assets/icons/service.png`)} />
+            <Text style={style.title}>Pusat Bantuan</Text>
 
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={handleLogout}>
-                {/* <FAIcon name="cog" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} /> */}
-                <Image style={{ width: 27, height: 27, marginRight: '3%' }} source={require(`../../assets/icons/logout.png`)} />
-                <Text style={style.title}>Keluar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={handleLogout}>
+            {/* <FAIcon name="cog" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} /> */}
+            <Image style={{ width: 27, height: 27, marginRight: '3%' }} source={require(`../../assets/icons/logout.png`)} />
+            <Text style={style.title}>Keluar</Text>
 
-              </TouchableOpacity>
-            </View>
-          </View>
-        </SafeAreaView >
-        :
-        <AuthLogin navigate={navigate ? navigate : null} />
-      }
-      {/* <View
-            style={{
-              height: 60,
-              flexDirection: 'row',
-              alignItems: 'flex-start',
-              marginTop: 20,
-              marginHorizontal: 20,
-            }}>
-            <Text
-              style={{
-                flex: 2,
-                color: 'white',
-                fontSize: Hp('2.5%'),
-                fontWeight: 'bold',
-              }}>
-              {'AKUN SAYA'}
-            </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'flex-start',
-              }}>
-              <TouchableOpacity
-                onPress={() => nav.navigate('Cart')}
-                style={{ width: 50, alignSelf: 'center' }}>
-                <FeatherIcon
-                  style={{
-                    flex: 2,
-                    color: 'white',
-                    fontSize: Hp('3%'),
-                    fontWeight: 'bold',
-                  }}
-                  name={'shopping-cart'}
-                />
-                <View
-                  style={{
-                    position: 'absolute',
-                    top: -10,
-                    right: 10,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    zIndex: 99,
-                    borderRadius: 5,
-                    width: Hp('2.3%'),
-                    height: Hp('2.3%'),
-                    backgroundColor: colors.RedFlashsale,
-                  }}>
-                  <Text style={{ color: 'white', fontSize: Hp('1.5%') }}>
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <ScrollView
-            style={{
-              backgroundColor: 'white',
-              borderTopLeftRadius: 15,
-              borderTopRightRadius: 15,
-            }}>
-            <View style={{ marginVertical: 25, marginHorizontal: 20 }}>
-              <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={() => navigation.navigate("Splash")}>
-                <View style={{ flexDirection: 'row' }}>
-                  <FAIcon name="rocket" size={30} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
-                  <Text style={style.title}> Pesanan Saya </Text>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={() => navigation.navigate("Search")}>
-                <View style={{ flexDirection: 'row' }}>
-                  <FAIcon name="rocket" size={30} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
-                  <Text style={style.title}> Favorit Saya </Text>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={() => navigation.navigate("Search")}>
-                <View style={{ flexDirection: 'row' }}>
-                  <FAIcon name="rocket" size={30} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
-                  <Text style={style.title}> Voucher Saya </Text>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={() => navigation.navigate("Search")}>
-                <View style={{ flexDirection: 'row' }}>
-                  <FAIcon name="rocket" size={30} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
-                  <Text style={style.title}> Koin JAJA </Text>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={() => navigation.navigate("Search")}>
-                <View style={{ flexDirection: 'row' }}>
-                  <FAIcon name="rocket" size={30} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
-                  <Text style={style.title}> Pengaturan Akun </Text>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={() => navigation.navigate("Search")}>
-                <View style={{ flexDirection: 'row' }}>
-                  <FAIcon name="rocket" size={30} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
-                  <Text style={style.title}> Pusat Bantuan </Text>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={() => navigation.navigate("Search")}>
-                <View style={{ flexDirection: 'row' }}>
-                  <FAIcon name="rocket" size={30} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
-                  <Text style={style.title}> Chat dengan JAJA </Text>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={handleLogout}>
-                <View style={{ flexDirection: 'row' }}>
-                  <FAIcon name="rocket" size={30} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
-                  <Text style={style.title}>Logout </Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </ScrollView> */}
-    </>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView >
   );
 }
 

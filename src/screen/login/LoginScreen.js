@@ -1,10 +1,10 @@
 import React, { useState, useEffect, createRef, useCallback } from 'react'
-import { SafeAreaView, View, Text, Image, Alert, TouchableOpacity, ToastAndroid, StatusBar, TouchableHighlight } from 'react-native'
+import { SafeAreaView, View, Text, Image, Alert, TouchableOpacity, ToastAndroid, StatusBar, TouchableHighlight, ScrollView } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import colors from '../../assets/colors'
 import { styles } from '../../assets/styles/styles'
 import { Button, TextInput } from 'react-native-paper'
-import { Language, Loading, CheckSignal, Wp, ServiceOrder, useFocusEffect, ServiceUser } from '../../export'
+import { Language, Loading, CheckSignal, Wp, ServiceOrder, useFocusEffect, ServiceUser, Appbar, Hp } from '../../export'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch } from 'react-redux'
 import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
@@ -101,6 +101,8 @@ export default function LoginScreen(props) {
                         if (result.status.message === "account has not been activated") {
                             ToastAndroid.show("Akun anda belum diverifikasi", ToastAndroid.LONG, ToastAndroid.CENTER)
                             navigation.navigate('VerifikasiEmail', { email: email })
+                        } else if (result.status.message === "data not found") {
+                            setAlertText('Email atau password anda salah!')
                         } else {
                             Alert.alert(
                                 "Jaja.id",
@@ -363,75 +365,76 @@ export default function LoginScreen(props) {
                 barStyle='default'
                 showHideTransition="fade"
             />
+            <Appbar back={true} title="Kembali" />
             {loading ? <Loading /> : null}
 
-            <View style={[styles.column_around_center, { width: Wp('100%') }]}>
-                <Image style={{ flex: 0, height: '50%', width: '70%', resizeMode: 'center' }} source={require('../../assets/images/JajaId.png')} />
-                <View style={[styles.column_center, { width: '100%' }]}>
-                    <Text style={[styles.alertText, styles.mb_3, { alignSelf: 'flex-start', paddingHorizontal: '7%' }]}>{alertText}</Text>
-                    {/* <View style={[styles.px_5, styles.mb_5, { backgroundColor: colors.Silver, width: '90%', borderRadius: 100, borderColor: focus === "first" ? colors.BlueJaja : colors.Silver, borderWidth: 1 }]}>
-                        <TextInput onChangeText={(text) => handleChange('email', text)} autoCompleteType='email' onFocus={() => setfocus('first')} placeholder="Email" keyboardType='url'></TextInput>
-                    </View> */}
-                    <TextInput
-                        ref={emailRef}
-                        returnKeyType="go"
-                        selectionColor={colors.BlueJaja}
-                        style={{ width: Wp('85%'), marginBottom: '2%' }}
-                        label="Alamat Email"
-                        keyboardType="ascii-capable"
-                        onChangeText={(text) => handleChange('email', text)}
-                        // onSubmitEditing={() => passwordRef.current.show()}
-                        mode="outlined"
-                        theme={{
-                            colors: {
-                                primary: colors.BlueJaja,
-                            },
-                        }}
+            <View style={[styles.column_around_center, { flex: 1 }]}>
+                <ScrollView>
+                    <View style={{ flex: 1, height: Hp('100%'), width: Wp('100%'), justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={[styles.row_center, { width: '100%', height: Hp('30%') }]}>
+                            <Image style={{ flex: 0, height: Wp('35%'), width: Wp('70%'), resizeMode: 'center' }} source={require('../../assets/images/JajaId.png')} />
+                        </View>
+                        <View style={[styles.column_center, { flex: 1, justifyContent: 'flex-start', paddingTop: '7%' }]}>
+                            <Text style={[styles.alertText, styles.mb_3, { alignSelf: 'center', width: Wp('85%') }]}>{alertText}</Text>
+                            <TextInput
+                                ref={emailRef}
+                                returnKeyType="go"
+                                selectionColor={colors.BlueJaja}
+                                style={{ width: Wp('85%'), marginBottom: '2%' }}
+                                label="Alamat Email"
+                                keyboardType="email-address"
+                                onChangeText={(text) => handleChange('email', text)}
+                                // onSubmitEditing={() => passwordRef.current.show()}
+                                mode="outlined"
+                                theme={{
+                                    colors: {
+                                        primary: colors.BlueJaja,
+                                    },
+                                }}
 
-                    />
-                    {/* <View style={[styles.px_5, styles.mb_5, { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', backgroundColor: colors.Silver, width: '90%', borderRadius: 100, borderColor: focus === "second" ? colors.BlueJaja : colors.Silver, borderWidth: 1 }]}>
-                        <TextInput style={{ width: '95%' }} onChangeText={(text) => handleChange('password', text)} onFocus={() => setfocus('second')} placeholder="Password" onSubmitEditing={() => setfocus("")} onEndEditing={() => setfocus("")}></TextInput>
-                    </View> */}
-                    <View style={{ flexDirection: 'row', width: Wp('85%'), justifyContent: 'center', alignItems: 'center', marginBottom: '4%' }}>
-                        <TextInput
-                            ref={passwordRef}
-                            // onSubmitEditing={() => this.login()}
-                            returnKeyType="go"
-                            style={{ width: Wp('85%') }}
-                            mode="outlined"
-                            selectionColor={colors.BlueJaja}
-                            label="Kata Sandi"
-                            // value={this.state.password}
-                            onChangeText={(text) => handleChange('password', text)}
-                            secureTextEntry={secure}
-                            theme={{
-                                colors: {
-                                    primary: colors.BlueJaja,
-                                },
-                            }}
-                        />
-                        <TouchableHighlight style={{ position: 'absolute', right: 11, alignItems: 'center', height: 24, width: 24, zIndex: 100, backgroundColor: colors.White }} onPress={() => setSecure(!secure)}>
-                            <Image style={styles.icon_24} source={secure ? require('../../assets/icons/eye-active.png') : require('../../assets/icons/eye-visible.png')} />
-                        </TouchableHighlight>
+                            />
+                            <View style={{ flexDirection: 'row', width: Wp('85%'), justifyContent: 'center', alignItems: 'center', marginBottom: '5%' }}>
+                                <TextInput
+                                    ref={passwordRef}
+                                    // onSubmitEditing={() => this.login()}
+                                    returnKeyType="go"
+                                    style={{ width: Wp('85%') }}
+                                    mode="outlined"
+                                    selectionColor={colors.BlueJaja}
+                                    label="Kata Sandi"
+                                    // value={this.state.password}
+                                    onChangeText={(text) => handleChange('password', text)}
+                                    secureTextEntry={secure}
+                                    theme={{
+                                        colors: {
+                                            primary: colors.BlueJaja,
+                                        },
+                                    }}
+                                />
+                                <TouchableHighlight style={{ position: 'absolute', right: 11, alignItems: 'center', height: 24, width: 24, zIndex: 100, backgroundColor: colors.White }} onPress={() => setSecure(!secure)}>
+                                    <Image style={styles.icon_24} source={secure ? require('../../assets/icons/eye-active.png') : require('../../assets/icons/eye-visible.png')} />
+                                </TouchableHighlight>
 
+                            </View>
+                            <Button mode="contained" color={colors.BlueJaja} labelStyle={{ color: colors.White }} style={{ width: Wp('85%'), padding: '1%', }} contentStyle={{ width: '100%' }} onPress={handleSubmit}>
+                                {Language("Masuk")}
+                            </Button>
+                            <View style={{ width: Wp('87%'), justifyContent: 'center', marginBottom: '1%', marginTop: '3%' }}>
+                                <GoogleSigninButton
+                                    style={{ width: "100%", height: 48 }}
+                                    size={GoogleSigninButton.Size.Wide}
+                                    color={GoogleSigninButton.Color.Dark}
+                                    onPress={onGoogleButtonPress} />
+                            </View>
+                            <View style={[styles.row_between_center, styles.mt_5, { width: Wp('85%') }]}>
+                                <TouchableOpacity onPress={() => navigation.navigate('Register')}><Text style={[styles.font_12]}>Belum punya akun?  <Text style={[styles.font_12, { color: colors.BlueJaja }]}>{Language("Register")}</Text></Text></TouchableOpacity>
+                                <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}><Text style={[styles.font_12, { color: colors.RedNotif }]}>{Language("Lupa password")}!</Text></TouchableOpacity>
+                            </View>
+                        </View>
                     </View>
-                    <Button mode="contained" color={colors.BlueJaja} labelStyle={{ color: colors.White }} style={{ width: Wp('85%'), padding: '1%', }} contentStyle={{ width: '100%' }} onPress={handleSubmit}>
-                        {Language("Masuk")}
-                    </Button>
-                    <View style={{ width: '87%', justifyContent: 'flex-end', marginBottom: '3%' }}>
-                        <GoogleSigninButton
-                            style={{ width: "100%", height: 48 }}
-                            size={GoogleSigninButton.Size.Wide}
-                            color={GoogleSigninButton.Color.Dark}
-                            onPress={onGoogleButtonPress} />
-                    </View>
-                    <View style={[styles.row_between_center, styles.mt_5, styles.px_3, { width: '90%' }]}>
-                        <TouchableOpacity onPress={() => navigation.navigate('Register')}><Text style={[styles.font_12]}>Belum punya akun?  <Text style={[styles.font_12, { color: colors.BlueJaja }]}>{Language("Register")}</Text></Text></TouchableOpacity>
-                        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}><Text style={[styles.font_12, { color: colors.RedNotif }]}>{Language("Lupa password")}!</Text></TouchableOpacity>
-                    </View>
-                </View>
+                </ScrollView>
             </View>
-        </SafeAreaView>
+        </SafeAreaView >
     )
 }
 

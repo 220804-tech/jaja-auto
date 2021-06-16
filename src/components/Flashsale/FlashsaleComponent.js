@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { View, Text, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native'
-import { styles, Ps, Language, useNavigation, FastImage, colors, Wp } from '../../export'
+import React, { useEffect, useState, useCallback } from 'react'
+import { View, Text, FlatList, Image, TouchableOpacity, ScrollView, Alert } from 'react-native'
+import { styles, Ps, Language, useNavigation, FastImage, colors, Wp, useFocusEffect } from '../../export'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { useSelector, useDispatch } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient';
@@ -10,9 +10,64 @@ export default function FlashsaleComponent() {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const reduxdashFlashsale = useSelector(state => state.dashboard.flashsale)
+    const reduxAuth = useSelector(state => state.auth.auth)
+
 
     useEffect(() => {
     }, [])
+
+
+    useFocusEffect(
+        useCallback(() => {
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", reduxAuth ? JSON.parse(reduxAuth) : "");
+            myHeaders.append("Cookie", "ci_session=gpkr7eq1528c92su0vj0rokdjutlsl2r");
+
+            var requestOptions = {
+                method: 'GET',
+                headers: reduxAuth ? myHeaders : "",
+                redirect: 'follow'
+            };
+
+            fetch("https://jaja.id/backend/home", requestOptions)
+                .then(response => response.json())
+                .then(resp => {
+                    console.log("file: FlashsaleComponent.js ~ line 35 ~ useCallback ~ resp", resp.status)
+                    if (resp.status.code == 200 || resp.status.code == 204) {
+                        if (resp.data.flashSale) {
+                            dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.data.flashSale })
+                            EncryptedStorage.setItem('dashflashsale', JSON.stringify(resp.data.flashSale))
+                        }
+                    } else {
+                        dispatch({ type: 'SET_DASHFLASHSALE', payload: [] })
+                        Alert.alert(
+                            "Error with status 120012",
+                            JSON.stringify(error)
+                            [
+                            { text: "OK", onPress: () => console.log("OK Pressed") }
+                            ],
+                            { cancelable: false }
+                        );
+                    }
+                })
+                .catch(error => {
+                    dispatch({ type: 'SET_DASHFLASHSALE', payload: [] })
+                    if (String(error).slice(11, String(error).length) === "Network request failed") {
+                        ToastAndroid.show("Gagal memuat, periksa kembali koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
+                    } else {
+                        Alert.alert(
+                            "Error with status 120013",
+                            JSON.stringify(error)
+                            [
+                            { text: "OK", onPress: () => console.log("OK Pressed") }
+                            ],
+                            { cancelable: false }
+                        );
+
+                    }
+                })
+        }, []),
+    );
 
     const handleShowDetail = item => {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })

@@ -141,7 +141,7 @@ export default function ChatScreen({ route }) {
     const renderRow = ({ item, index }) => {
         return (
             <View style={{ width: Wp("100%"), paddingTop: "2%" }}>
-                {item.date && index && String(messageList[index].date) !== "undefined" > 0 ?
+                {item.date && index && String(messageList[index].date) !== "undefined" > 0 && !item.productTitle ?
                     String(messageList[index].date).slice(6, 10) !== String(messageList[index - 1].date).slice(6, 10) ?
                         <View style={{ alignSelf: 'center', marginVertical: '3%' }}>
                             <Text style={{ fontSize: 18, color: colors.White, fontWeight: '900' }}>{String(messageList[index].date).slice(0, 10)}</Text>
@@ -177,13 +177,16 @@ export default function ChatScreen({ route }) {
                                     }}>
                                     {item.message}
                                 </Text>
-                                <Text
-                                    style={{
-                                        fontSize: Hp("1.1"),
-                                        color: "#FFF", textAlign: "right"
-                                    }}>
-                                    {item.date.slice(16, 21)}
-                                </Text>
+                                {item.date ?
+                                    <Text
+                                        style={{
+                                            fontSize: Hp("1.1"),
+                                            color: "#FFF", textAlign: "right"
+                                        }}>
+                                        {item.date.slice(16, 21)}
+                                    </Text>
+                                    : null
+                                }
                             </View>
                             <View style={{
                                 borderRadius: 50,
@@ -209,11 +212,9 @@ export default function ChatScreen({ route }) {
                             </View>
                         </View>
                         :
-
                         <View style={{
                             flex: 1,
                             width: '100%',
-                            // height: Wp("22%"),
                             padding: '3%',
                             borderRadius: 7,
                             borderTopRightRadius: 0,
@@ -308,14 +309,17 @@ export default function ChatScreen({ route }) {
                                 >
                                     {item.message}
                                 </Text>
-                                <Text
-                                    style={{
-                                        fontSize: Hp("1.2%"),
-                                        color: "#FFF"
-                                    }}
-                                >
-                                    {item.date.slice(16, 20)}
-                                </Text>
+                                {item.date ?
+                                    <Text
+                                        style={{
+                                            fontSize: Hp("1.2%"),
+                                            color: "#FFF"
+                                        }}
+                                    >
+                                        {item.date.slice(16, 20)}
+                                    </Text>
+                                    : null
+                                }
                             </View>
                         </View>
                     </View>

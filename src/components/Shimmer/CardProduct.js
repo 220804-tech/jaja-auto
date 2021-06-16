@@ -1,6 +1,6 @@
 
-import React, { useEffect, useState } from 'react'
-import { View, Text, FlatList, Image, ToastAndroid, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
+import React, { useState } from 'react'
+import { View, ScrollView, TouchableOpacity } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { styles, colors, Card, Ps, Wp, FastImage, CheckSignal } from '../../export'
 import EncryptedStorage from 'react-native-encrypted-storage';

@@ -17,7 +17,7 @@ export async function getCart(auth) {
     return await fetch("https://jaja.id/backend/cart?page=1&limit=5", requestOptions)
         .then(response => response.json())
         .then(result => {
-            if (result.status.code === 200) {
+            if (result.status.code === 200 || result.status.code === 204) {
                 return result.data;
             } else {
                 Alert.alert(

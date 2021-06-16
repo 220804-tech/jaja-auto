@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native'
-import { styles, Ps, Language, useNavigation, FastImage, Wp, Hp, colors, ServiceProduct, Ts } from '../../export'
+import { View, Text, FlatList, TouchableOpacity, ScrollView, Alert } from 'react-native'
+import { styles, Ps, Language, useNavigation, FastImage, Wp, Hp, colors, Ts } from '../../export'
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import LinearGradient from 'react-native-linear-gradient';
