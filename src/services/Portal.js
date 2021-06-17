@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux';
 import store from '../store/combineReducer'
 import Routes from '../routes/Routes'
 import EncryptedStorage from 'react-native-encrypted-storage';
-import firebase from 'firebase'
 import messaging from '@react-native-firebase/messaging';
 
 export default function Portal() {
@@ -22,6 +21,8 @@ export default function Portal() {
                     EncryptedStorage.setItem('deviceToken', JSON.stringify(res))
                 })
             }
+        }).catch(res => {
+
         })
     }
 

@@ -13,6 +13,7 @@ export default function SearchScreen() {
     const [historySearch, sethistorySearch] = useState([])
     const [storeSearch, setstoreSearch] = useState([])
     const [productSearch, setproductSearch] = useState([])
+    const [slug] = useState(['Badminton', 'Basketball', 'Cooking', 'Cycling', 'Fishing', 'Football', 'Photography', 'Reading',])
 
 
     useEffect(() => {
@@ -150,9 +151,7 @@ export default function SearchScreen() {
                 dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
             }
         })
-
         navigation.navigate('Store')
-
     }
 
     return (
@@ -233,7 +232,24 @@ export default function SearchScreen() {
                                         )
                                     }} />
                             </View>
-                            : null
+                            :
+                            <View style={styles.column}>
+                                <View style={[styles.row_between_center, styles.mb_5]}>
+                                    <Text style={[styles.font_14, { color: colors.BlueJaja }]} adjustsFontSizeToFit>Recomendation</Text>
+                                </View>
+                                <FlatList
+                                    data={slug}
+                                    showsHorizontalScrollIndicator={false}
+                                    keyExtractor={(item, index) => String(index)}
+                                    renderItem={({ item, index }) => {
+                                        return (
+                                            <TouchableOpacity onPress={() => handleSearchInput(item)} style={[styles.row_start_center, styles.mb_5]}>
+                                                <Image style={[styles.icon_23, styles.mr_3, { tintColor: colors.BlackGrey }]} source={require('../../assets/icons/star.png')} />
+                                                <Text style={[styles.font_14, { color: colors.BlackGrey }]}>{item}</Text>
+                                            </TouchableOpacity>
+                                        )
+                                    }} />
+                            </View>
                     }
                 </View>
                 {/* <View style={{ flex: 1, width: '100%', height: '50%' }}>

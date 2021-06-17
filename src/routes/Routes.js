@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import {
     Splash, Product, Search, Chat, Login, Profile, Register, Trolley, ProductSearch, Checkout, Address, VerifikasiEmail, Category,
-    EditAddress, AddAddress, Midtrans, Store, ForgotPassword, Review, ZoomReview, OrderDetails, AddReview, OrderDelivery, Account,
-    CustomerService, Notification
+    AddAddress, Midtrans, Store, ForgotPassword, Review, ZoomReview, OrderDetails, AddReview, OrderDelivery, Account, CustomerService,
+    Notification, Vouchers
 } from "./Screen";
 
 import BottomRoutes from './BottomRoute'
@@ -38,6 +38,7 @@ export default function Routes() {
                 <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
                 <Stack.Screen name="CustomerService" component={CustomerService} />
                 <Stack.Screen name="Notification" component={Notification} />
+                <Stack.Screen name="Vouchers" component={Vouchers} />
 
                 <Stack.Screen name="IsiChat" component={Chat} />
                 <Stack.Screen name="Register" component={Register} />

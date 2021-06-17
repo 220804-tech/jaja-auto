@@ -271,8 +271,8 @@ export default function ProductScreen(props) {
                         {
                             reduxSearch.productDetail.image.map((item, key) => {
                                 return (
-                                    <View style={{ width: Wp('100%'), height: Wp('100%') }}>
-                                        <Image key={String(key)} style={style.swiperProduct}
+                                    <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%') }}>
+                                        <Image style={style.swiperProduct}
                                             source={{ uri: item }}
                                         />
                                     </View>
@@ -458,8 +458,8 @@ export default function ProductScreen(props) {
                                                 <View style={[styles.row, { flexWrap: 'wrap' }]}>
                                                     {item.image.map((itm, idx) => {
                                                         return (
-                                                            <TouchableOpacity onPress={() => navigation.navigate('Review', { data: reduxSearch.productDetail.slug })} style={{ width: Wp('17%'), height: Wp('17%'), justifyContent: 'center', alignItems: 'center', backgroundColor: colors.BlackGrayScale, marginRight: '1%' }}>
-                                                                <Image key={String(idx) + "i"} source={{ uri: itm }} style={{ width: '100%', height: '100%' }} />
+                                                            <TouchableOpacity key={String(idx) + "i"} onPress={() => navigation.navigate('Review', { data: reduxSearch.productDetail.slug })} style={{ width: Wp('17%'), height: Wp('17%'), justifyContent: 'center', alignItems: 'center', backgroundColor: colors.BlackGrayScale, marginRight: '1%' }}>
+                                                                <Image source={{ uri: itm }} style={{ width: '100%', height: '100%' }} />
                                                             </TouchableOpacity>
                                                         )
                                                     })}

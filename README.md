@@ -16,8 +16,5 @@
 ## Recomended Component
 # 13002 => Error api get recommanded
 
-## Get list order
-# 12007 => Error api get order completed
-# 12007 => Error api get order completed
-# 12007 => Error api get order completed
-
+## Voucher Component
+# 14001 => Error get voucher

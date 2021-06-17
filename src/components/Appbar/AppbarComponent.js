@@ -31,8 +31,14 @@ export default function AppbarComponent(props) {
         } else {
             navigation.navigate('Login', { navigate: 'Trolley' })
         }
+    }
 
-
+    const handleNotif = () => {
+        if (reduxAuth || auth) {
+            navigation.navigate('Notification')
+        } else {
+            navigation.navigate('Login', { navigate: 'Trolley' })
+        }
     }
 
     const getBadges = () => {
@@ -42,7 +48,7 @@ export default function AppbarComponent(props) {
             }
         })
     }
-    
+
     return (
         <View style={[styles.appBar, { justifyContent: 'flex-start', backgroundColor: props.Bg ? props.Bg : colors.BlueJaja }]}>
             <View style={[styles.row_start_center, { flex: 1 }]}>
@@ -76,7 +82,7 @@ export default function AppbarComponent(props) {
                         : null
                     }
                     {props.notif ?
-                        <TouchableOpacity style={[styles.column, styles.mx_2]} onPress={() => navigation.navigate('Notification')}>
+                        <TouchableOpacity style={[styles.column, styles.mx_2]} onPress={handleNotif}>
                             <Image source={require('../../assets/icons/notif.png')} style={{ width: 24, height: 24, tintColor: colors.White }} />
                             {Object.keys(reduxUser).length && reduxUser.totalProductInCart ?
                                 <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.totalProductInCart >= 100 ? "99+" : reduxUser.totalNotifUnread}</Text></View>

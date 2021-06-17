@@ -5,17 +5,8 @@ import { name as appName } from './app.json';
 import messaging from '@react-native-firebase/messaging';
 LogBox.ignoreAllLogs()
 
-// Messaging().setBackgroundMessageHandler(async remoteMessage => {
-//     console.log("🚀 ~ file: index.js ~ line 15 ~ Messaging ~ remoteMessage", remoteMessage)
-//     console.log('Message handled in the background!', remoteMessage);
-// });
 messaging().setBackgroundMessageHandler(async remoteMessage => {
     console.log('Message handled in the background!', remoteMessage);
-});
+})
 
-messaging().onMessage(remoteMessage => {
-    // alert(JSON.stringify(remoteMessage.notification.title));
-    // ToastAndroid.show(JSON.stringify(remoteMessage.notification.body), ToastAndroid.LONG, ToastAndroid.TOP)
-    // navigation.navigate(remoteMessage.data.type);
-});
 AppRegistry.registerComponent(appName, () => App);

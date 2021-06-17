@@ -79,6 +79,7 @@ export default function ProfileScreen(props) {
             setLoading(true)
 
             try {
+              dispatch({ type: 'SET_NOTIF_COUNT', payload: { home: 0, chat: 0, orders: 0 } })
               EncryptedStorage.clear().then(res => {
                 setTimeout(() => {
                   setLoading(false)
@@ -117,6 +118,11 @@ export default function ProfileScreen(props) {
   }
   const handleAuth = name => {
     navigation.navigate(name, { navigate: name })
+  }
+
+  const handleCategory = (value) => {
+    dispatch({ type: 'SET_CATEGORY_STATUS', payload: value })
+    navigation.navigate('Category');
   }
 
   return (
@@ -165,23 +171,30 @@ export default function ProfileScreen(props) {
           </View>
         </View>
         <View style={{ flex: 0, flexDirection: 'column', zIndex: 9999, backgroundColor: colors.White, height: reduxAuth ? Hp('67%') : Hp('85%'), marginTop: Hp('-1%'), borderTopRightRadius: 21, borderTopLeftRadius: 21, paddingHorizontal: '4%', paddingTop: '2%' }}>
-          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate('Account')}>
-            {/* <FAIcon name="user" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} /> */}
-            <Image style={{ width: 27, height: 27, marginRight: '3%' }} source={require(`../../assets/icons/customer.png`)} />
-            <Text style={style.title}>Profile</Text>
-
-          </TouchableOpacity>
           {/* <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={() => navigation.navigate('Address')}>
                 <View style={{ flexDirection: 'row' }}>
                   <FAIcon name="map-pin" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
                   <Text style={style.title}>  Alamat </Text>
                 </View>
               </TouchableOpacity> */}
-          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate('Address')}>
+          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate(reduxAuth ? 'Account' : 'Login')}>
+            {/* <FAIcon name="user" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} /> */}
+            <Image style={{ width: 27, height: 27, marginRight: '3%' }} source={require(`../../assets/icons/customer.png`)} />
+            <Text style={style.title}>Profile</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate(reduxAuth ? 'Address' : 'Login')}>
             {/* <FAIcon name="user" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} /> */}
             <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/google-maps.png`)} />
             <Text style={style.title}>Alamat</Text>
             {location && location.length ? null : <Text style={[styles.ml_2, { color: colors.RedNotif, fontStyle: 'italic', fontSize: 13 }]}>( Alamat belum lengkap )</Text>}
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => handleCategory('Art Shop')}>
+            <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/books.png`)} />
+            <Text style={style.title}>Kategori Pilihan</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate(reduxAuth ? 'Vouchers' : 'Login')}>
+            <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/coupon.png`)} />
+            <Text style={style.title}>Voucher</Text>
           </TouchableOpacity>
           {/* <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={handleCart}>
                 <View style={{ flexDirection: 'row' }}>
@@ -211,12 +224,15 @@ export default function ProfileScreen(props) {
             <Text style={style.title}>Pusat Bantuan</Text>
 
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={handleLogout}>
-            {/* <FAIcon name="cog" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} /> */}
-            <Image style={{ width: 27, height: 27, marginRight: '3%' }} source={require(`../../assets/icons/logout.png`)} />
-            <Text style={style.title}>Keluar</Text>
+          {reduxAuth ?
+            <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={handleLogout}>
+              {/* <FAIcon name="cog" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} /> */}
+              <Image style={{ width: 27, height: 27, marginRight: '3%' }} source={require(`../../assets/icons/logout.png`)} />
+              <Text style={style.title}>Keluar</Text>
 
-          </TouchableOpacity>
+            </TouchableOpacity>
+            : null
+          }
         </View>
       </View>
     </SafeAreaView >

@@ -89,7 +89,7 @@ export default function CategoryScreen() {
     }
     return (
         <SafeAreaView style={styles.container}>
-            <Appbar back={true} title="Category" />
+            <Appbar back={true} title="Kategori" />
             <View style={[styles.row, { height: Hp('100%'), paddingBottom: Wp('12.5%') }]}>
                 <View style={[styles.column_center, { width: Wp('27%'), height: '100%', backgroundColor: colors.White }]}>
                     <FlatList
@@ -119,9 +119,9 @@ export default function CategoryScreen() {
                     />
                 </View>
                 <View style={[styles.column_start_center, styles.py_2, styles.p_2, { width: Wp('73%'), backgroundColor: colors.White }]}>
-                    <View style={{ backgroundColor: colors.YellowJaja, padding: '5%', width: '100%', borderRadius: 7, marginBottom: '5%' }}>
+                    <TouchableOpacity onPress={() => handleSelected(reduxCategory.category[pressed].slug)} style={{ backgroundColor: colors.YellowJaja, padding: '5%', width: '100%', borderRadius: 7, marginBottom: '5%' }}>
                         <Text adjustsFontSizeToFit style={[styles.font_16, { fontWeight: 'bold', color: colors.White, alignSelf: 'center' }]}>{reduxCategory.category[pressed].name}</Text>
-                    </View>
+                    </TouchableOpacity>
                     {reduxCategory.category[pressed].children.length ?
                         <FlatList
                             data={reduxCategory.category[pressed].children}
@@ -153,7 +153,7 @@ export default function CategoryScreen() {
                             }}
                         />
                         :
-                        <Text adjustsFontSizeToFit style={[styles.font_14, { marginTop: '2%' }]}>Category belum tersedia</Text>}
+                        <Text adjustsFontSizeToFit style={[styles.font_14, { marginTop: '2%' }]}>Kategori belum tersedia</Text>}
                 </View>
             </View>
         </SafeAreaView >

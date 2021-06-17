@@ -18,7 +18,6 @@ export default function HomeScreen() {
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
 
     useAndroidBackHandler(() => {
-
         if (out) {
             return false;
         } else {
@@ -68,10 +67,9 @@ export default function HomeScreen() {
 
     useFocusEffect(
         useCallback(() => {
-            setOut(false)
-            getBadges()
-            // handleGetCart()
             try {
+                setOut(false)
+                getBadges()
                 EncryptedStorage.getItem('historySearching').then(res => {
                     if (!res) {
                         let data = []
@@ -81,16 +79,19 @@ export default function HomeScreen() {
             } catch (error) {
 
             }
-        }, [auth]),
+        }, [reduxAuth]),
     );
 
     useEffect(() => {
-        EncryptedStorage.getItem('token').then(res => {
-            console.log(res, " kontlolsskajshyauil,mnbg");
-            if (res) {
-                setAuth(JSON.parse(res))
-            }
-        })
+        try {
+            EncryptedStorage.getItem('token').then(res => {
+                if (res) {
+                    setAuth(JSON.parse(res))
+                }
+            })
+        } catch (error) {
+
+        }
     }, [])
 
     const getBadges = () => {
@@ -101,15 +102,19 @@ export default function HomeScreen() {
         })
     }
     const handleGetCart = () => {
-        if (reduxAuth ? reduxAuth : auth) {
-            ServiceCart.getCart(reduxAuth ? reduxAuth : auth).then(res => {
-                if (res) {
-                    dispatch({ type: 'SET_CART', payload: res })
-                }
-            })
-            navigation.navigate("Trolley")
-        } else {
-            navigation.navigate("Login")
+        try {
+            if (reduxAuth ? reduxAuth : auth) {
+                ServiceCart.getCart(reduxAuth ? reduxAuth : auth).then(res => {
+                    if (res) {
+                        dispatch({ type: 'SET_CART', payload: res })
+                    }
+                })
+                navigation.navigate("Trolley")
+            } else {
+                navigation.navigate("Login")
+            }
+        } catch (error) {
+
         }
     }
 

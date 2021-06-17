@@ -263,22 +263,22 @@ export default function LoginScreen(props) {
             } else if (error.code === statusCodes.SIGN_IN_REQUIRED) {
                 console.log("Sign In Required : " + error.code);
             } else if (error.code == 12502 || error.code === statusCodes.IN_PROGRESS) {
-                Alert.alert(
-                    "Sepertinya ada masalah!",
-                    "Error with status code " + String(error.code), [
-                    {
-                        text: "Reload",
-                        onPress: () => {
-                            navigation.reset({
-                                index: 0,
-                                routes: [{ name: 'Splash' }],
-                            })
-                        },
-                        style: "cancel"
-                    },
-                ],
-                    { cancelable: false }
-                );
+                // Alert.alert(
+                //     "Sepertinya ada masalah!",
+                //     "Error with status code " + String(error.code), [
+                //     {
+                //         text: "Reload",
+                //         onPress: () => {
+                //             navigation.reset({
+                //                 index: 0,
+                //                 routes: [{ name: 'Splash' }],
+                //             })
+                //         },
+                //         style: "cancel"
+                //     },
+                // ],
+                //     { cancelable: false }
+                // );
             } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
                 console.log("Play Servie Not Available : " + error.code);
             } else {
@@ -298,7 +298,9 @@ export default function LoginScreen(props) {
     }
 
     const handleCheckUser = (data) => {
-        setLoading(false)
+        setTimeout(() => {
+            setLoading(false)
+        }, 2000);
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 

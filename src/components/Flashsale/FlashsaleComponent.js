@@ -20,7 +20,7 @@ export default function FlashsaleComponent() {
     useFocusEffect(
         useCallback(() => {
             var myHeaders = new Headers();
-            myHeaders.append("Authorization", reduxAuth ? JSON.parse(reduxAuth) : "");
+            myHeaders.append("Authorization", reduxAuth ? reduxAuth : "");
             myHeaders.append("Cookie", "ci_session=gpkr7eq1528c92su0vj0rokdjutlsl2r");
 
             var requestOptions = {
@@ -63,7 +63,6 @@ export default function FlashsaleComponent() {
                             ],
                             { cancelable: false }
                         );
-
                     }
                 })
         }, []),
@@ -104,7 +103,7 @@ export default function FlashsaleComponent() {
                                     }}
                                     resizeMode={FastImage.resizeMode.cover}
                                 />
-                                <View style={Ps.bottomCard}>
+                                <View style={[Ps.bottomCard, { width: '100%' }]}>
                                     <Text
                                         numberOfLines={1}
                                         style={Ps.nameProduct}>

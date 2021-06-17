@@ -42,7 +42,7 @@ export default function CardProductComponent(props) {
                                         headers: { Authorization: 'someAuthToken' },
                                         priority: FastImage.priority.normal,
                                     }}
-                                    resizeMode={FastImage.resizeMode.contain}
+                                    resizeMode={FastImage.resizeMode.cover}
                                 />
 
                                 <View style={Ps.bottomCard}>
@@ -59,10 +59,10 @@ export default function CardProductComponent(props) {
                                         :
                                         <Text style={Ps.price}>{item.price}</Text>
                                     }
-                                    <View style={Ps.location}>
-                                        <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
-                                        <Text style={Ps.locarionName}>{item.location}</Text>
-                                    </View>
+                                </View>
+                                <View style={Ps.location}>
+                                    <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
+                                    <Text style={Ps.locarionName}>{item.location}</Text>
                                 </View>
                             </TouchableOpacity>
                             :

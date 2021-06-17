@@ -18,24 +18,28 @@ export default function BottomRoute() {
     const location = useSelector(state => state.user.user.location)
     const reduxnotifCount = useSelector(state => state.notification.notifCount)
     const reduxAuth = useSelector(state => state.auth.auth)
-
     const dispatch = useDispatch()
+
     useEffect(() => {
-        if (uid) {
-            database()
-                .ref('/people/' + uid)
-                .on('value', snapshot => {
-                    let result = snapshot.val()
-                    console.log("file: BottomRoute.js ~ line 26 ~ local", reduxnotifCount.orders)
-                    if (result && result.notif) {
-                        dispatch({ type: 'SET_NOTIF_COUNT', payload: result.notif })
-                        setNotif(result.notif)
-                    }
-                    if (result && result.notif && result.notif.orders != reduxnotifCount.orders) {
-                        console.log("cokk update")
-                        getOrders()
-                    }
-                });
+        try {
+            if (uid) {
+                database()
+                    .ref('/people/' + uid)
+                    .on('value', snapshot => {
+                        let result = snapshot.val()
+                        console.log("file: BottomRoute.js ~ line 26 ~ local", reduxnotifCount.orders)
+                        if (result && result.notif) {
+                            dispatch({ type: 'SET_NOTIF_COUNT', payload: result.notif })
+                            setNotif(result.notif)
+                        }
+                        if (result && result.notif && result.notif.orders != reduxnotifCount.orders) {
+                            console.log("cokk update")
+                            getOrders()
+                        }
+                    });
+            }
+        } catch (error) {
+
         }
         // return () => database().ref(`/people/${uid}`).off('value', onValueChange);
     }, [])
@@ -286,21 +290,22 @@ export default function BottomRoute() {
                     }
                 }}
             />
-            <Tab.Screen name="Pesanan" component={Orders}
-                options={{
-                    tabBarLabel: ({ size, focused }) => (
-                        <Text style={{ fontSize: 12, color: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '3%' }}>{Language("Transaksi")}</Text>
-                    ),
-                    tabBarIcon: ({ size, focused }) => (
-                        <View style={style.column}>
-                            <Image style={{ width: size, height: size, tintColor: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '-2%' }} source={require(`../assets/icons/traffic-blue.png`)} />
-                            {reduxnotifCount && reduxnotifCount.orders ?
-                                <View style={style.countNotif}><Text style={style.textNotif}>{parseInt(reduxnotifCount.orders) > 99 ? "99+" : reduxnotifCount.orders}</Text></View> : null
-                            }
-                        </View>
-                    )
-                }}
-            />
+            {reduxAuth ?
+                <Tab.Screen name="Pesanan" component={Orders}
+                    options={{
+                        tabBarLabel: ({ size, focused }) => (
+                            <Text style={{ fontSize: 12, color: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '3%' }}>{Language("Transaksi")}</Text>
+                        ),
+                        tabBarIcon: ({ size, focused }) => (
+                            <View style={style.column}>
+                                <Image style={{ width: size, height: size, tintColor: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '-2%' }} source={require(`../assets/icons/traffic-blue.png`)} />
+                                {reduxnotifCount && reduxnotifCount.orders ?
+                                    <View style={style.countNotif}><Text style={style.textNotif}>{parseInt(reduxnotifCount.orders) > 99 ? "99+" : reduxnotifCount.orders}</Text></View> : null
+                                }
+                            </View>
+                        )
+                    }}
+                /> : null}
             <Tab.Screen name="Akun" component={Profile}
                 options={{
                     tabBarLabel: ({ size, focused }) => (
@@ -316,6 +321,6 @@ export default function BottomRoute() {
                     }
                 }}
             />
-        </Tab.Navigator >
+        </Tab.Navigator>
     );
 }

@@ -185,7 +185,6 @@ export default function checkoutScreen() {
                     .then(response => response.json())
                     .then(result => {
                         setLoad(false)
-                        console.log("🚀 ~ file: CheckoutScreen.js ~ line 136 ~ handleVoucher ~ result", result)
                         if (result.status.code === 200) {
                             ToastAndroid.show("Voucher berhasil digunakan.", ToastAndroid.LONG, ToastAndroid.CENTER)
                             getCheckout()
