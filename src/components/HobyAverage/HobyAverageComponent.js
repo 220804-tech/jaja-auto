@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { View, Text, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native'
+import React from 'react'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
 import colors from '../../assets/colors'
 import { styles } from '../../assets/styles/styles'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp, } from 'react-native-responsive-screen';

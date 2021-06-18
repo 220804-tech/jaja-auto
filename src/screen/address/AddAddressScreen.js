@@ -1,7 +1,7 @@
 import React, { useEffect, useState, createRef } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Image, TextInput, ScrollView, FlatList, SafeAreaView, Alert, ToastAndroid } from 'react-native'
 import { styles as style, Wp, Hp, colors, useNavigation, Loading, ServiceUser } from '../../export'
-import MapView, { ProviderPropType, Marker, PROVIDER_GOOGLE, AnimatedRegion } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import ActionSheet from 'react-native-actions-sheet';
 import * as Service from '../../services/Address';
 import Maps from './Maps'

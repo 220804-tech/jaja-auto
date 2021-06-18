@@ -4,7 +4,8 @@ import { Paragraph } from 'react-native-paper'
 import database from "@react-native-firebase/database";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import { colors, useNavigation, styles as style, Appbar } from "../../export";
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
+
 export default function ListChat() {
     const navigation = useNavigation();
     const reduxUser = useSelector(state => state.user.user)
@@ -17,10 +18,6 @@ export default function ListChat() {
     const [refreshing, setRefreshing] = useState(false);
 
     useEffect(() => {
-        // Storage.getUID().then(res => {
-        //     loadList(res)
-        // }).catch(err => alert(err))
-
         loadList()
     }, []);
 

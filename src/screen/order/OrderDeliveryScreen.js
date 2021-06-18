@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { View, Text, SafeAreaView, TouchableOpacity, Image, RefreshControl, FlatList, StyleSheet, ToastAndroid, ScrollView, Alert } from 'react-native'
+import { View, Text, SafeAreaView, RefreshControl, FlatList, StyleSheet, ToastAndroid, ScrollView, Alert } from 'react-native'
 import { DataTable, Divider } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
-import { styles as style, colors, useNavigation, useFocusEffect, Loading, CheckSignal, Appbar } from '../../export'
+import { styles as style, colors, useFocusEffect, Loading, CheckSignal, Appbar } from '../../export'
 
 export default function OrderDeliveryScreen(props) {
-    const navigation = useNavigation();
-    const [data, setdata] = useState([])
     const [loading, setLoading] = useState(false)
     const [refreshing, setRefreshing] = useState(false);
     const dispatch = useDispatch()
@@ -25,21 +23,14 @@ export default function OrderDeliveryScreen(props) {
     const onRefresh = useCallback(() => {
         setRefreshing(false);
         checkNetwork()
-        // if (invoice) {
         getItem()
-        // } else {
-        //     navigation.goBack()
-        //     setTimeout(() => ToastAndroid.show('Ada kesalahan teknis.', ToastAndroid.LONG, ToastAndroid.CENTER), 300);
-        // }
     }, []);
 
     const getItem = () => {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Cookie", "ci_session=croc9bj799b291gjd0oqd06b3vr2ehm8");
-
         var raw = "";
-
         var requestOptions = {
             method: 'GET',
             headers: myHeaders,
@@ -51,7 +42,6 @@ export default function OrderDeliveryScreen(props) {
             .then(result => {
                 if (result.status.code === 200 || result.status.code === 204) {
                     dispatch({ type: 'SET_TRACKING', payload: result.data.tracking })
-                    console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 45 ~ getItem ~ result.status.code", result.data.tracking)
                 } else {
                     setTimeout(() => {
                         Alert.alert(

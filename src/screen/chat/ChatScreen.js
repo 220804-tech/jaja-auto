@@ -1,18 +1,13 @@
 import React, { useState, useEffect, createRef } from "react";
-import { View, Text, SafeAreaView, TextInput, TouchableOpacity, Image, FlatList, Dimensions, KeyboardAvoidingView, ScrollView, StyleSheet, ImageBackground } from "react-native";
+import { View, Text, SafeAreaView, TextInput, TouchableOpacity, Image, FlatList, StyleSheet, ImageBackground } from "react-native";
 import { IconButton } from 'react-native-paper'
-import { useNavigation } from "@react-navigation/native";
-// import * as Storage from '../../service/Storage'
 import ImagePicker from "react-native-image-crop-picker";
-// import AsyncStorage from "@react-native-community/async-storage";
 import firebaseDatabase from '@react-native-firebase/database';
 import ActionSheet from 'react-native-actions-sheet';
-// import * as Utils from '../../utils'
 import { colors, Hp, Wp, Appbar, ServiceFirebase as Firebase } from "../../export";
 import { useSelector } from 'react-redux'
 
 export default function ChatScreen({ route }) {
-    const navigation = useNavigation();
     const reduxUser = useSelector(state => state.user.user)
     const reduxAuth = useSelector(state => state.auth.auth)
 

@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, ScrollView, StyleSheet, StatusBar, Platform, Dimensions, LogBox, ToastAndroid, RefreshControl } from 'react-native'
-import { styles, colors, useNavigation, Hp, Wp, Ps, Appbar, ServiceCart, ServiceUser, useFocusEffect, ServiceStore, ServiceProduct } from '../../export'
-import { useDispatch, useSelector } from "react-redux";
+import { View, Image, StatusBar, Dimensions } from 'react-native'
+import { colors, Hp, Wp, Appbar } from '../../export'
+import { useSelector } from "react-redux";
 const screen = Dimensions.get('screen');
-
-import StarRating from 'react-native-star-rating';
 import VideoPlayer from 'react-native-video-player';
 import Swiper from 'react-native-swiper'
 

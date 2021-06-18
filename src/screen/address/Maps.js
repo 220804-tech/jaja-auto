@@ -1,8 +1,7 @@
 import React, { useState, createRef, useEffect } from 'react'
 import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, TextInput, FlatList, Alert } from 'react-native'
-import MapView, { ProviderPropType, Marker, PROVIDER_GOOGLE, AnimatedRegion } from 'react-native-maps';
+import MapView from 'react-native-maps';
 import { Appbar, Button } from 'react-native-paper';
-import { Platform } from 'react-native';
 import ActionSheet from 'react-native-actions-sheet';
 import { colors, styles as style, Wp, Hp } from '../../export';
 

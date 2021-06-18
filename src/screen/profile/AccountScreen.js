@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, createRef } from "react";
-import { View, Text, SafeAreaView, Image, ScrollView, TouchableOpacity, RefreshControl, TouchableWithoutFeedback, TextInput, Alert, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, SafeAreaView, Image, TouchableOpacity, TouchableWithoutFeedback, TextInput, Alert, StyleSheet } from "react-native";
 import { RadioButton, Button } from "react-native-paper";
 import ImagePicker from 'react-native-image-crop-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';

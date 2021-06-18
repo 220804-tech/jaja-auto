@@ -6,18 +6,15 @@ import Process from '../../components/Orders/OrdersProcess'
 import Sent from '../../components/Orders/OrdersSent'
 import Completed from '../../components/Orders/OrdersCompleted'
 import Failed from '../../components/Orders/OrdersFailed'
-import { colors, styles, Appbar, useNavigation } from '../../export';
+import { colors, styles, Appbar } from '../../export';
 const initialLayout = { width: Dimensions.get('window').width };
 import { useSelector } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
-import AuthLogin from '../login/LoginScreen'
 
 export default function OrderScreen() {
-    const navigation = useNavigation();
     const reduxAuth = useSelector(state => state.auth.auth)
 
     const reduxOrder = useSelector(state => state.order.filter)
-    console.log(reduxOrder);
     const [auth, setAuth] = useState('')
     const [index, setIndex] = useState(0)
 

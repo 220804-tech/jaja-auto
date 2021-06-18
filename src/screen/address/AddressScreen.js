@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { SafeAreaView, Text, View, TouchableOpacity, ScrollView, StyleSheet, FlatList, Image, RefreshControl } from "react-native";
-import { Paragraph, Switch } from "react-native-paper";
+import { SafeAreaView, Text, View, TouchableOpacity, ScrollView, StyleSheet, FlatList, Image, RefreshControl, Alert } from "react-native";
+import { Paragraph, Switch, Appbar } from "react-native-paper";
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
-import { colors, styles as style, Wp, Hp, ServiceUser, ServiceCheckout, Loading } from '../../export'
-import { Appbar, Button } from 'react-native-paper';
+import { colors, styles as style, ServiceUser, ServiceCheckout, Loading } from '../../export'
 import * as Service from '../../services/Address';
 import { useDispatch, useSelector } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -12,7 +11,6 @@ export default function index(props) {
     const reduxUser = useSelector(state => state.user.user.location)
     const reduxAuth = useSelector(state => state.auth.auth)
     const navigation = useNavigation();
-    const [address, setAddress] = useState([])
     const [refreshControl, setRefreshControl] = useState(false)
     const [count, setcount] = useState(0)
     const [auth, setAuth] = useState(0)

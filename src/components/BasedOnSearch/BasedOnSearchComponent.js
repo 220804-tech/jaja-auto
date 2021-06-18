@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { View, Text, FlatList, Image, TouchableOpacity } from 'react-native'
 import colors from '../../assets/colors'
 import { styles } from '../../assets/styles/styles'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp, } from 'react-native-responsive-screen';
-import { Language } from '../../utils/language/Language'
 import { useSelector, useDispatch } from 'react-redux'
 
 export default function TrendingComponent() {

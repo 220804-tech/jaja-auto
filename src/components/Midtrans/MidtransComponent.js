@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { View, Text } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { WebView } from 'react-native-webview';
 import { useSelector } from 'react-redux'

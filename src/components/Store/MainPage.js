@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, FlatList, TouchableOpacity, Image, ScrollView, ToastAndroid } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { styles, Wp, Hp, colors, FastImage, Ps, useNavigation, Card } from '../../export'
+import { styles, Wp, Hp, colors, useNavigation, Card } from '../../export'
 import Swiper from 'react-native-swiper'
 import EncryptedStorage from 'react-native-encrypted-storage'
 
@@ -9,7 +9,6 @@ export default function MainPage() {
     const navigation = useNavigation();
     const dispatch = useDispatch()
     const vouchers = useSelector(state => state.store.store.voucher)
-    console.log("🚀 ~ file: MainPage.js ~ line 12 ~ MainPage ~ voucher", typeof vouchers)
     const products = useSelector(state => state.store.storeProduct)
     const [auth, setAuth] = useState("")
     const image = useSelector(state => state.store.store.image)

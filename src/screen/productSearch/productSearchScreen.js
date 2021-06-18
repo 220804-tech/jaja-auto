@@ -1,8 +1,8 @@
 import React, { useEffect, useState, createRef, useCallback } from 'react'
-import { SafeAreaView, View, Text, Image, TouchableOpacity, TextInput, FlatList, ToastAndroid, StyleSheet, ScrollView, Animated, RefreshControl } from 'react-native'
+import { SafeAreaView, View, Text, Image, TouchableOpacity, ToastAndroid, StyleSheet, ScrollView, Animated, RefreshControl } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import ActionSheet from "react-native-actions-sheet";
-import { useNavigation, colors, styles, Wp, CheckSignal, Loading, Hp, Ps, ServiceProduct, FastImage, Card } from '../../export'
+import { useNavigation, colors, styles, Wp, CheckSignal, Loading, Hp, Card } from '../../export'
 import { useDispatch, useSelector } from 'react-redux'
 import * as Progress from 'react-native-progress';
 
@@ -19,10 +19,6 @@ export default function ProductSearchScreen() {
     const [auth, setAuth] = useState("")
 
     const [count, setcount] = useState(0)
-    const [filter, setFilter] = useState(false);
-    const [brand, setBrand] = useState(false);
-    const [jabodetabek, setJabodetabek] = useState(false);
-    const [terbaru, setTerbaru] = useState(false);
     const [selectedFilter, setselectedFilter] = useState([]);
     const [loading, setLoading] = useState(false);
     const [loadmore, setLoadmore] = useState(false);
@@ -248,7 +244,7 @@ export default function ProductSearchScreen() {
                         <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
                         <Text numberOfLines={1} style={[styles.font_14, { width: '93%' }]}>{keyword ? keyword : ""}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setFilter(true) & actionSheetRef.current?.setModalVisible()} style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: '1%', backgroundColor: colors.BlueJaja, height: '100%', width: '15%', borderTopRightRadius: 10, borderBottomRightRadius: 10 }}>
+                    <TouchableOpacity onPress={() => actionSheetRef.current?.setModalVisible()} style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: '1%', backgroundColor: colors.BlueJaja, height: '100%', width: '15%', borderTopRightRadius: 10, borderBottomRightRadius: 10 }}>
                         <Image source={require('../../assets/icons/filter.png')} style={[styles.icon_25, { tintColor: colors.White }]} />
                     </TouchableOpacity>
                 </View>
@@ -256,7 +252,7 @@ export default function ProductSearchScreen() {
             <View style={[styles.column, { flex: 1, backgroundColor: colors.White }, styles.p_2]}>
                 {/* <View style={{ flex: 0, flexDirection: 'row', height: Hp('5%'), width: '100%', justifyContent: 'space-between', marginBottom: '3%' }}> */}
                 {/* <ScrollView horizontal={true} style={{ backgroundColor: 'pink', flex: 0, flexDirection: 'row' }} contentContainerStyle={{ flex: 0, flexDirection: 'row' }}> */}
-                {/* <TouchableOpacity onPress={() => setFilter(true) & actionSheetRef.current?.setModalVisible()} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: filter ? colors.BlueJaja : colors.BlackGrey, backgroundColor: filter ? colors.BlueJaja : colors.White, borderRadius: 15, paddingHorizontal: '4.5%', paddingVertical: '1%' }}>
+                {/* <TouchableOpacity onPress={() => actionSheetRef.current?.setModalVisible()} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: filter ? colors.BlueJaja : colors.BlackGrey, backgroundColor: filter ? colors.BlueJaja : colors.White, borderRadius: 15, paddingHorizontal: '4.5%', paddingVertical: '1%' }}>
                         <Image source={require('../../assets/icons/filter.png')} style={{ width: 15, height: 15, marginRight: '3%', tintColor: filter ? colors.White : colors.BlackGrayScale }} />
                         <Text adjustsFontSizeToFit style={[styles.font_12, { color: filter ? colors.White : colors.BlackGrayScale }]}>Filter</Text>
                     </TouchableOpacity> */}

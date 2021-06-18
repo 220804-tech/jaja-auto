@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import CheckBox from '@react-native-community/checkbox';
-import { View, Text, SafeAreaView, Image, TouchableOpacity, ToastAndroid, FlatList, StatusBar, Alert, RefreshControl, TouchableHighlight, TouchableWithoutFeedback } from 'react-native'
+import { View, Text, SafeAreaView, Image, TouchableOpacity, ToastAndroid, FlatList, StatusBar, RefreshControl, TouchableWithoutFeedback } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
-import { styles, Hp, Wp, Language, colors, useNavigation, Appbar, Ps, ServiceCart, Loading, ServiceCheckout, useFocusEffect } from '../../export'
+import { styles, Hp, Wp, colors, useNavigation, Appbar, ServiceCart, Loading, ServiceCheckout, useFocusEffect } from '../../export'
 import { Button } from 'react-native-paper'
 import { useDispatch, useSelector } from "react-redux";
 
@@ -12,12 +12,11 @@ export default function TrolleyScreen() {
 
     const reduxCart = useSelector(state => state.cart)
     const reduxAuth = useSelector(state => state.auth.auth)
-    const [toggleCheckBox, setToggleCheckBox] = useState(false)
     const [auth, setAuth] = useState("")
-    const [storePressed, setstorePressed] = useState({ id: "", isSelected: false })
     const [disableQty, setdisableQty] = useState(false)
     const [loading, setLoading] = useState(false)
     const [refreshing, setRefreshing] = useState(false);
+    const [disableCheckout, setDisableCheckout] = useState(false);
 
     useEffect(() => {
         setLoading(false)
@@ -44,7 +43,7 @@ export default function TrolleyScreen() {
 
 
     const handleCheckbox = (name, indexParent, indexChild) => {
-        console.log("🚀 ~ file: TrolleyScreen.js ~ line 40 ~ handleCheckbox ~ name", name)
+        setDisableCheckout(true)
         setLoading(true)
         let arr = reduxCart.cart;
         if (name === "store") {
@@ -86,12 +85,30 @@ export default function TrolleyScreen() {
                 } else {
                     ToastAndroid.show(result.status.message, ToastAndroid.LONG, ToastAndroid.CENTER)
                 }
+                setTimeout(() => {
+                    setDisableCheckout(false)
+                }, 500);
 
             })
-            .catch(error => console.log('error', error))
+            .catch(error => {
+                setDisableCheckout(false)
+                if (String(error).slice(11, String(error).length) === "Network request failed") {
+                    ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
+                } else {
+                    Alert.alert(
+                        "Error with status 16001",
+                        JSON.stringify(error)
+                        [
+                        { text: "OK", onPress: () => console.log("OK Pressed") }
+                        ],
+                        { cancelable: false }
+                    );
+                }
+            })
     }
 
     const handleQty = (name, indexParent, indexChild) => {
+        setDisableCheckouttrue()
         setdisableQty(true)
         let arr = reduxCart.cart;
         if (name === "plus") {
@@ -117,9 +134,6 @@ export default function TrolleyScreen() {
             "qty": arr.items[indexParent].products[indexChild].qty
         });
 
-
-        console.log("🚀 ~ file: TrolleyScreen.js ~ line 97 ~ handleQty ~ raw", raw)
-
         var requestOptions = {
             method: 'PUT',
             headers: myHeaders,
@@ -133,10 +147,27 @@ export default function TrolleyScreen() {
                 if (result.status.code === 200) {
                     handleApiCart()
                 } else {
-
+                    ToastAndroid.show(String(result.status.message) + " => " + String(result.message.code), ToastAndroid.LONG, ToastAndroid.TOP)
+                }
+                setTimeout(() => {
+                    setDisableCheckout(false)
+                }, 500);
+            })
+            .catch(error => {
+                setDisableCheckout(false)
+                if (String(error).slice(11, String(error).length) === "Network request failed") {
+                    ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
+                } else {
+                    Alert.alert(
+                        "Error with status 16002",
+                        JSON.stringify(error)
+                        [
+                        { text: "OK", onPress: () => console.log("OK Pressed") }
+                        ],
+                        { cancelable: false }
+                    );
                 }
             })
-            .catch(error => console.log('error', error))
     }
 
     const handleApiCart = () => {
@@ -168,7 +199,6 @@ export default function TrolleyScreen() {
         }
     }
 
-
     const handleDeleteCart = (id) => {
         setLoading(true)
         ServiceCart.deleteCart(reduxAuth ? reduxAuth : auth, id).then(res => {
@@ -185,6 +215,7 @@ export default function TrolleyScreen() {
             setRefreshing(false)
         }, 3000);
     }, []);
+
     const handleSelected = item => {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
         navigation.navigate("Product", { slug: item.slug, image: item.image })
@@ -212,8 +243,6 @@ export default function TrolleyScreen() {
                     contentContainerStyle={{ flex: 0, flexDirection: 'column', justifyContent: 'center', width: '100%', paddingBottom: Hp('7%') }}
                     keyExtractor={(item, index) => String(index)}
                     renderItem={({ item, index }) => {
-                        let idParent = item.store.id;
-                        console.log("🚀 ~ file: TrolleyScreen.js ~ line 176 ~ TrolleyScreen ~ item.store.id", item.store.id)
                         let indexParent = index
                         return (
                             <View onPress={() => handleSelected(item)} style={{ marginBottom: '2%', backgroundColor: colors.White, flex: 0, flexDirection: 'column', alignItems: 'flex-start' }}>

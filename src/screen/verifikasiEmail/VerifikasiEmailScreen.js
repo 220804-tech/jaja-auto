@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { SafeAreaView, Text, View, StyleSheet, Image, TouchableOpacity, BackHandler, Alert, StatusBar } from 'react-native';
-import { TextInput, Button, Paragraph } from 'react-native-paper';
+import { SafeAreaView, Text, View, StyleSheet, Image, BackHandler, Alert, StatusBar } from 'react-native';
+import { Button, Paragraph } from 'react-native-paper';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import { colors, Loading, Wp, Hp, styles, Appbar } from '../../export';
 export default class VerifikasiEmail extends Component {
@@ -323,7 +323,7 @@ export default class VerifikasiEmail extends Component {
                                 :
                                 <Button style={styles1.button2} disabled mode="contained">
                                     Kirim kode otp ulang ({this.state.timeOut})
-                            </Button>
+                                </Button>
                             }
                         </View>
                     }

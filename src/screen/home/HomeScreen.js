@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, StyleSheet, RefreshControl, Platform, Dimensions, LogBox, Animated, Alert } from 'react-native'
+import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, StyleSheet, RefreshControl, Platform, Dimensions, LogBox, Animated } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { BasedOnSearch, Trending, Category, Flashsale, Language, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect } from '../../export'
@@ -16,6 +16,7 @@ LogBox.ignoreAllLogs()
 
 export default function HomeScreen() {
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
+    const reduxProfile = useSelector(state => state.user.user)
 
     useAndroidBackHandler(() => {
         if (out) {
@@ -132,7 +133,7 @@ export default function HomeScreen() {
                         : null
                     }
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.column, styles.mx_2]} onPress={() => navigation.navigate('Notification')}>
+                <TouchableOpacity style={[styles.column, styles.mx_2]} onPress={() => reduxAuth || auth ? navigation.navigate('Notification') : navigation.navigate('Login')}>
                     <Image source={require('../../assets/icons/notif.png')} style={{ width: 24, height: 24, tintColor: colors.White }} />
                     {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
                         <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalProductInCart >= 100 ? "99+" : reduxUser.badges.totalNotifUnread}</Text></View>

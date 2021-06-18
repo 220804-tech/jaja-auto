@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, RefreshControl, ToastAndroid } from 'react-native'
+import { View, Text, FlatList, Image, TouchableOpacity, RefreshControl, ToastAndroid } from 'react-native'
 import { colors, styles, Hp, Wp, ServiceOrder, useNavigation, Os } from '../../export';
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';

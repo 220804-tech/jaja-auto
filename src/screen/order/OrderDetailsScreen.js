@@ -2,10 +2,8 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Linking, ToastAndroid, Alert } from 'react-native'
 import { Appbar, colors, styles, Wp, Hp, useNavigation, useFocusEffect, Loading } from '../../export'
 import Clipboard from '@react-native-community/clipboard';
-
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from 'react-native-paper'
-import { set } from 'react-native-reanimated';
 export default function OrderDetailsScreen(props) {
     const navigation = useNavigation();
     const dispatch = useDispatch()
@@ -44,7 +42,6 @@ export default function OrderDetailsScreen(props) {
             .then(response => response.json())
             .then(result => {
                 if (result.status.code === 200 || result.status.code === 204) {
-                    console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 45 ~ getItem ~ result.status.code", result.status.code)
                     setDetails(result.data)
                 } else {
                     Alert.alert(
@@ -59,7 +56,7 @@ export default function OrderDetailsScreen(props) {
             })
             .catch(error => {
                 if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
-                    ToastAndroid("Tidak dapat hahaha, periksa kembali koneksi anda!")
+                    ToastAndroid("Tidak dapat terhubung, periksa kembali koneksi anda!")
                 } else {
                     Alert.alert(
                         "Error",

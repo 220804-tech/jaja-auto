@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { SafeAreaView, Text, View, StyleSheet, Image, TouchableOpacity, BackHandler, Alert } from 'react-native';
+import { SafeAreaView, Text, View, StyleSheet, Alert } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import { colors, Hp, Wp, styles as style, Loading, Appbar } from '../../export';
@@ -286,7 +286,7 @@ export default class ForgotPasswordScreen extends Component {
                         labelStyle={{ color: colors.White }}
                         onPress={this.handleKirim}>
                         Kirim
-          </Button>
+                    </Button>
                 </>
             );
             // step 2 kirim otp ulang
@@ -334,7 +334,7 @@ export default class ForgotPasswordScreen extends Component {
                 <>
                     <Text style={styles.text2}>
                         Masukkan password baru anda yang mudah diingat, minimal password 6 digit!
-                     </Text>
+                    </Text>
                     <TextInput
                         style={styles.inputBox} name="password"
                         type="password"

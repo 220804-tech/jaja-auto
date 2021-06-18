@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, RefreshControl, ToastAndroid } from 'react-native'
+import { View, Text, FlatList, Image, TouchableOpacity, RefreshControl, ToastAndroid } from 'react-native'
 import { colors, styles, Wp, ServiceOrder, useNavigation, Os } from '../../export';
 import { Button } from 'react-native-paper'
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -13,10 +13,6 @@ export default function OrdersUnpaid() {
     const reduxUnpaid = useSelector(state => state.order.unPaid)
     const [refreshing, setRefreshing] = useState(false);
 
-    useEffect(() => {
-
-    }, [])
-
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         getItem()
@@ -27,14 +23,13 @@ export default function OrdersUnpaid() {
 
 
     const getItem = () => {
-        console.log("🚀 ~ file: OrdersUnpaid.js ~ line 38 ~ ServiceOrder.getUnpaid ~ auth", reduxAuth)
         ServiceOrder.getUnpaid(reduxAuth).then(resUnpaid => {
-            console.log("🚀 ~ file: OrdersUnpaid.js ~ line 38 ~ ServiceOrder.getUnpaid ~ resUnpaid", resUnpaid)
             if (resUnpaid) {
                 dispatch({ type: 'SET_UNPAID', payload: resUnpaid.items })
                 dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
                 setTimeout(() => ToastAndroid.show("Data berhasil diperbahrui", ToastAndroid.SHORT, ToastAndroid.CENTER), 500);
             } else {
+                console.log("🚀 ~ file: OrdersUnpaid.js ~ line 38 ~ ServiceOrder.getUnpaid ~ resUnpaid", resUnpaid)
                 handleUnpaid()
             }
         }).catch(err => {

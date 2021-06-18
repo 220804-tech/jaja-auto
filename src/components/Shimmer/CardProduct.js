@@ -1,10 +1,7 @@
 
 import React, { useState } from 'react'
 import { View, ScrollView, TouchableOpacity } from 'react-native'
-import { useSelector, useDispatch } from 'react-redux'
-import { styles, colors, Card, Ps, Wp, FastImage, CheckSignal } from '../../export'
-import EncryptedStorage from 'react-native-encrypted-storage';
-import * as Progress from 'react-native-progress';
+import { styles, colors, Ps, Wp, FastImage } from '../../export'
 import LinearGradient from 'react-native-linear-gradient';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 

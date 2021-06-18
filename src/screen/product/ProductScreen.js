@@ -4,7 +4,7 @@ import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { Button } from 'react-native-paper'
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-import { styles, colors, useNavigation, Hp, Wp, Ps, Loading, ServiceCart, ServiceUser, useFocusEffect, ServiceStore, ServiceProduct, FastImage, CheckSignal } from '../../export'
+import { styles, colors, useNavigation, Hp, Wp, Ps, Loading, ServiceCart, ServiceUser, useFocusEffect, ServiceStore, ServiceProduct, FastImage } from '../../export'
 const IS_IPHONE_X = SCREEN_HEIGHT === 812 || SCREEN_HEIGHT === 896;
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
@@ -126,7 +126,6 @@ export default function ProductScreen(props) {
 
     const handleAddCart = (name) => {
         setdisableCart(true)
-        console.log("🚀 ~ file: ProductScreen.js ~ line 72 ~ handleAddCart ~ auth", auth)
         if (reduxAuth) {
             if (reduxSearch.productDetail.variant && reduxSearch.productDetail.variant.length) {
                 if (Object.keys(variasiSelected).length) {
@@ -187,10 +186,10 @@ export default function ProductScreen(props) {
 
                 } else {
                     Alert.alert(
-                        "Sepertinya ada masalah.",
-                        "Error add cart, " + result.status.message + " => " + result.status.code + "\n" + raw,
+                        "Error with status code 17001",
+                        String(result.status.message) + " => " + String(result.status.code)
                         [
-                            { text: "OK", onPress: () => console.log("OK Pressed") }
+                        { text: "OK", onPress: () => console.log("OK Pressed") }
                         ],
                         { cancelable: false }
                     );
@@ -201,7 +200,7 @@ export default function ProductScreen(props) {
                     ToastAndroid.show("Tidak dapat terhubung, periksa koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.CENTER)
                 } else {
                     Alert.alert(
-                        "Error",
+                        "Error with status code 17001",
                         JSON.stringify(error)
                         [
                         { text: "OK", onPress: () => console.log("OK Pressed") }
@@ -351,10 +350,8 @@ export default function ProductScreen(props) {
                                     keyExtractor={(item, ind) => String(ind)}
                                     showsHorizontalScrollIndicator={false}
                                     renderItem={({ item }) => {
-                                        console.log("🚀 ~ file: ProductScreen.js ~ line 367 ~ renderContent ~ item", item)
                                         return (
                                             <Button disabled={item.stock ? false : true} color={colors.BlueJaja} onPress={() => {
-                                                console.log("🚀 ~ file: ProductScreen.js ~ line 367 ~ renderContent ~ item", item)
                                                 setvariasiPressed(item.id)
                                                 setvariasiSelected(item)
                                                 setalert("")

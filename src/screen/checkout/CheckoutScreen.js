@@ -4,22 +4,17 @@
 
 import React, { useEffect, useState, createRef, useRef, useCallback } from 'react'
 import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, Alert, StatusBar, FlatList, ToastAndroid, TextInput, RefreshControl } from 'react-native'
-import { Appbar, colors, styles, Wp, Hp, useNavigation, ServiceCheckout, Loading, ServiceVoucher, useFocusEffect } from '../../export'
+import { Appbar, colors, styles, Wp, Hp, useNavigation, ServiceCheckout, Loading } from '../../export'
 import { Button } from 'react-native-paper'
 import ActionSheet from "react-native-actions-sheet";
 import CheckBox from '@react-native-community/checkbox';
 import { useDispatch, useSelector } from "react-redux";
 import EncryptedStorage from 'react-native-encrypted-storage';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-// import Language from '../../utils/language/Language'
 export default function checkoutScreen() {
     const navigation = useNavigation()
-    const flatlistRef = useRef(null);
     const dispatch = useDispatch();
     const reduxCheckout = useSelector(state => state.checkout.checkout)
-    console.log("🚀 ~ file: CheckoutScreen.js ~ line 20 ~ checkoutScreen ~ reduxCheckout", reduxCheckout.dispacth)
-
-
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxShipping = useSelector(state => state.checkout.shipping)
     const [refreshControl, setRefreshControl] = useState(false)
@@ -48,9 +43,6 @@ export default function checkoutScreen() {
     const [notes, setNotes] = useState([])
     const [sendDate, setsendDate] = useState("")
 
-    const [count, setCount] = useState(0)
-
-    const [month, setMonth] = useState(new Date().getMonth())
     const [rangeDate, setrangeDate] = useState([])
     const [listMonth, setlistMonth] = useState(["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "September", "Desember"])
     useEffect(() => {

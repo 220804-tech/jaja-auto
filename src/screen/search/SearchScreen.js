@@ -8,7 +8,6 @@ export default function SearchScreen() {
 
     const dispatch = useDispatch();
     const reduxSlug = useSelector(state => state.search.slug)
-    console.log("🚀 ~ file: SearchScreen.js ~ line 11 ~ SearchScreen ~ reduxSlug", reduxSlug)
     const [count, setCount] = useState(0)
     const [historySearch, sethistorySearch] = useState([])
     const [storeSearch, setstoreSearch] = useState([])

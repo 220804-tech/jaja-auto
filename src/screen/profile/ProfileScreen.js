@@ -130,7 +130,7 @@ export default function ProfileScreen(props) {
     <SafeAreaView style={(styles.container, { backgroundColor: colors.BlueJaja })}>
       {loading ? <Loading /> : null}
       <View style={styles.column}>
-        <View style={[styles.column, { height: reduxAuth ? Hp('33%') : Hp('22%'), }]}>
+        <View style={[styles.column, { height: Hp('22%') }]}>
           <Appbar title="Akun Saya" trolley={true} notif={true} />
           <View style={[styles.column, styles.px_2]}>
             <View style={[styles.row_start, styles.p_2, styles.mb_4]}>
@@ -156,7 +156,7 @@ export default function ProfileScreen(props) {
                 </View>
               }
             </View>
-            {reduxAuth ?
+            {/* {reduxAuth ?
               <View style={[styles.row_around_center, styles.mt_5, { width: '100%' }]}>
                 <View style={[styles.column_center, { width: '50%' }]}>
                   <Text numberOfLines={1} style={[styles.font_14, { color: colors.White, textAlign: 'center' }]}>0</Text>
@@ -167,10 +167,10 @@ export default function ProfileScreen(props) {
                   <Text style={[styles.font_14, { color: colors.White }]}>Toko Diikuti</Text>
                 </View>
               </View>
-              : null}
+              : null} */}
           </View>
         </View>
-        <View style={{ flex: 0, flexDirection: 'column', zIndex: 9999, backgroundColor: colors.White, height: reduxAuth ? Hp('67%') : Hp('85%'), marginTop: Hp('-1%'), borderTopRightRadius: 21, borderTopLeftRadius: 21, paddingHorizontal: '4%', paddingTop: '2%' }}>
+        <View style={{ flex: 0, flexDirection: 'column', zIndex: 998, backgroundColor: colors.White, height: Hp('85%'), marginTop: Hp('-1%'), borderTopRightRadius: 21, borderTopLeftRadius: 21, paddingHorizontal: '4%', paddingTop: '2%' }}>
           {/* <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={() => navigation.navigate('Address')}>
                 <View style={{ flexDirection: 'row' }}>
                   <FAIcon name="map-pin" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />

@@ -1,35 +1,13 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, RefreshControl, FlatList } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, FlatList, Alert, I18nManager, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { colors, Hp, Appbar, styles as style, ServiceNotif } from '../../export';
+import { Appbar, styles as style, colors, Wp, Hp } from '../../export';
+import { Paragraph } from 'react-native-paper'
 function NotifikasiScreen(props) {
-    const [index, setIndex] = useState(0);
     const [notifData, setnotifData] = useState([]);
     const [shimmer, setshimmer] = useState(Boolean);
     const reduxUser = useSelector(state => state.user.user)
-    console.log("🚀 ~ file: NotifikasiScreen.js ~ line 10 ~ NotifikasiScreen ~ reduxUser", reduxUser)
     const dispatch = useDispatch()
-
-
-    const sampleNotif = [
-        {
-            notificationId: "1ZX", from: 'jaja', title: "Selamat datang di Jaja.id.", invoice: "INFOJAJA.ID", text: 'Terimakasih telah berguabung dengan jaja, nikmati pengalaman berbelanja yang simpel dan mudah.', date: '2021-06-08', time: '11-23'
-        },
-        {
-            notificationId: "2XZ", from: 'toko', title: "Pembayaranmu berhasil.", invoice: '20210611EURE', text: 'Tunggu ya, sampai penjual mengkonfrmasi.', date: '2021-06-08', time: '14-56'
-        },
-        {
-            notificationId: "3ZX", from: 'toko', title: "Pesananmu telah di konfirmasi.", invoice: '20210611EURE', text: 'Pesanan akan diproses, maksimal pengiriman 3 hari setelah paket dikonfirmasi', date: '2021-06-08', time: '17-43'
-        },
-        {
-            notificationId: "4XZ", from: 'toko', title: "Pesananmu telah di kirim.", invoice: '20210611EURE', text: 'Estimasi pengiriman 3 - 5 hari kerja', date: '2021-06-10', time: '08-27'
-        },
-        {
-            notificationId: "5ZX", from: 'toko', title: "Pesananmu telah sampai.", invoice: '20210611EURE', text: 'Jangan lupa untuk memberikan penilaian seperti photo atau video.', date: '2021-06-12', time: '17-32'
-
-        }
-    ]
-
 
     const handleNotifikasi = () => {
         var requestOptions = {
@@ -37,15 +15,15 @@ function NotifikasiScreen(props) {
             redirect: 'follow'
         };
 
-        fetch(`https://jaja.id/backend/notifikasi/${reduxUser.id}`, requestOptions)
+        console.log("file: NotifikasiScreen.js ~ line 20 ~ handleNotifikasi ~ reduxUser.id", reduxUser.id)
+        fetch(`https://jaja.id/backend/notifikasi/${reduxUser ? reduxUser.id : ''}`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                if (result.status.code === 200) {
-                    console.log("masuk sini 45678 ", result.data.notifikasi)
+                if (result.status.code === 200 || result.status.code === 204) {
                     setnotifData(result.data.notifikasi)
                 } else {
                     Alert.alert(
-                        "Sepertinya ada masalah.",
+                        "Error with status code : 15001",
                         String(result.status.message) + " => " + String(result.status.code),
                         [
                             {
@@ -79,10 +57,12 @@ function NotifikasiScreen(props) {
     }
 
     useEffect(() => {
-        handleNotifikasi()
+        if (reduxUser && Object.keys(reduxUser).length) {
+            handleNotifikasi()
+        }
         // readData()
         // setshimmer(true)
-    }, [])
+    }, [reduxUser])
 
     const readData = async () => {
         try {
@@ -108,34 +88,45 @@ function NotifikasiScreen(props) {
     return (
         <SafeAreaView style={style.container}>
             <Appbar back={true} title="Notifikasi" />
-            <FlatList
-                data={notifData}
-                keyExtractor={item => item.notificationId}
-                renderItem={({ item, index }) => {
-                    return (
-                        <TouchableOpacity onPress={() => handleShow(item)}>
-                            <TouchableOpacity key={index} style={styles.card} onPress={() => handleShow(item)}>
-                                <View style={[style.row_between_center, { flex: 0 }]}>
-                                    <Text style={styles.textDate}>{item.invoice}</Text>
-                                    <Text style={styles.textDate}>{item.date} {item.time}</Text>
-                                </View>
+            {notifData && notifData.length ?
+                <FlatList
+                    data={notifData}
+                    keyExtractor={item => item.notificationId}
+                    renderItem={({ item, index }) => {
+                        return (
+                            <TouchableOpacity onPress={() => handleShow(item)}>
+                                <TouchableOpacity key={index} style={styles.card} onPress={() => handleShow(item)}>
+                                    <View style={[style.row_between_center, { flex: 0 }]}>
+                                        <Text style={styles.textDate}>{item.invoice}</Text>
+                                        <Text style={styles.textDate}>{item.date} {item.time}</Text>
+                                    </View>
 
-                                <View style={styles.bodyCard}>
-                                    <Text style={styles.textTitle}>{item.title}</Text>
-                                    <Text style={styles.textBody}>{item.text}</Text>
-                                </View>
+                                    <View style={styles.bodyCard}>
+                                        <Text style={styles.textTitle}>{item.title}</Text>
+                                        <Text style={styles.textBody}>{item.text}</Text>
+                                    </View>
+                                </TouchableOpacity>
                             </TouchableOpacity>
-                        </TouchableOpacity>
-                    )
-                }}
-            />
-
-        </SafeAreaView>
+                        )
+                    }}
+                />
+                :
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.White }}>
+                    <Image
+                        style={styles.iconMarket}
+                        source={require('../../assets/ilustrations/empty.png')}
+                    />
+                    <Paragraph style={styles.textJajakan}>Ups..<Text style={styles.textCenter}> sepertinya belum ada informasi untukmu.</Text></Paragraph>
+                </View>
+            }
+        </SafeAreaView >
     );
 }
 export default NotifikasiScreen
 
 const styles = StyleSheet.create({
+    textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 18, fontWeight: 'bold', color: colors.BlueJaja, fontFamily: 'notoserif', marginVertical: Hp('2%') },
+    iconMarket: { alignSelf: "center", width: Wp('80%'), height: Hp('40%') },
     card: {
         flex: 0,
         backgroundColor: 'white',

@@ -18,3 +18,12 @@
 
 ## Voucher Component
 # 14001 => Error get voucher
+
+## Notifikasi
+# 15001 => Error get notifikasi
+
+## Trolley
+# 16001 => Error edit qty
+
+## Product Detail
+# 17002 => Error add cart

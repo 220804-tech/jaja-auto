@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, SafeAreaView, Image, StyleSheet, Alert, Animated, Easing, TouchableOpacity, BackHandler } from 'react-native'
-import MidtransComponent from '../../components/Midtrans/MidtransComponent'
-import { Loading, styles, Wp, Hp, colors, useNavigation, ServiceCheckout, Appbar } from '../../export'
+import { View, Text, SafeAreaView, Image, StyleSheet, Alert, Animated, BackHandler } from 'react-native'
+import { styles, Wp, Hp, colors, useNavigation, ServiceCheckout, Appbar } from '../../export'
 import { WebView } from 'react-native-webview';
 import { useSelector } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
