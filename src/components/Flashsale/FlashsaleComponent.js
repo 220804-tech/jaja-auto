@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { View, Text, FlatList, Image, TouchableOpacity, ScrollView, Alert } from 'react-native'
-import { styles, Ps, Language, useNavigation, FastImage, colors, Wp, useFocusEffect, Hp } from '../../export'
+import { styles, Ps, Language, useNavigation, FastImage, colors, Wp, useFocusEffect, Hp, ServiceCore } from '../../export'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { useSelector, useDispatch } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient';
@@ -20,54 +20,32 @@ export default function FlashsaleComponent() {
 
     useFocusEffect(
         useCallback(() => {
-            var myHeaders = new Headers();
-            myHeaders.append("Authorization", reduxAuth ? reduxAuth : "");
-            myHeaders.append("Cookie", "ci_session=gpkr7eq1528c92su0vj0rokdjutlsl2r");
-
-            var requestOptions = {
-                method: 'GET',
-                headers: reduxAuth ? myHeaders : "",
-                redirect: 'follow'
-            };
-
-            fetch("https://jaja.id/backend/home", requestOptions)
-                .then(response => response.json())
-                .then(resp => {
-                    console.log("file: FlashsaleComponent.js ~ line 35 ~ useCallback ~ resp", resp.status)
-                    if (resp.status.code == 200 || resp.status.code == 204) {
-                        if (resp.data.flashSale) {
-                            dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.data.flashSale })
-                            EncryptedStorage.setItem('dashflashsale', JSON.stringify(resp.data.flashSale))
-                        }
-                    } else {
-                        dispatch({ type: 'SET_DASHFLASHSALE', payload: [] })
+            ServiceCore.getDateTime().then(res => {
+                if (res) {
+                    let date = new Date()
+                    if (date.toJSON().toString().slice(0, 10) !== res.dateNow) {
                         Alert.alert(
-                            "Error with status 120012",
-                            JSON.stringify(error)
+                            "Peringatan!",
+                            `Sepertinya tanggal tidak sesuai!`,
                             [
-                            { text: "OK", onPress: () => console.log("OK Pressed") }
+                                { text: "OK", onPress: () => navigation.goBack() }
                             ],
                             { cancelable: false }
                         );
-                    }
-                })
-                .catch(error => {
-                    dispatch({ type: 'SET_DASHFLASHSALE', payload: [] })
-                    if (String(error).slice(11, String(error).length) === "Network request failed") {
-                        ToastAndroid.show("Gagal memuat, periksa kembali koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
                     } else {
-                        Alert.alert(
-                            "Error with status 120013",
-                            JSON.stringify(error)
-                            [
-                            { text: "OK", onPress: () => console.log("OK Pressed") }
-                            ],
-                            { cancelable: false }
-                        );
+                        ServiceCore.getFlashsale().then(resp => {
+                            if (resp) {
+                                dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.flashsale })
+                            }
+                        })
+
                     }
-                })
+                }
+            })
         }, []),
     );
+
+
 
     const handleShowDetail = item => {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
@@ -82,11 +60,11 @@ export default function FlashsaleComponent() {
                 <Text style={styles.flashsale}>
                     Flashsale
                 </Text>
-                {/* <TouchableOpacity onPress={() => navigation.navigate('Flashsale')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Flashsale')}>
                     <Text style={[styles.font_12, { fontWeight: 'bold', color: colors.BlueJaja }]}>
                         Lihat Semua <Image source={require('../../assets/icons/play.png')} style={[styles.icon_10, { tintColor: colors.BlueJaja }]} />
                     </Text>
-                </TouchableOpacity> */}
+                </TouchableOpacity>
             </View>
             {reduxdashFlashsale && reduxdashFlashsale.length ?
                 <FlatList
@@ -99,7 +77,7 @@ export default function FlashsaleComponent() {
                             <TouchableOpacity
                                 style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('57%'), alignItems: 'center' }]}
                                 onPress={() => handleShowDetail(item)} >
-                                <Text style={{ position: 'absolute', fontSize: 14, zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '6%', paddingHorizontal: '3%', top: 0, right: 5, borderBottomRightRadius: 5, borderBottomLeftRadius: 5, }}>{item.discount}%</Text>
+                                <Text style={{ position: 'absolute', fontSize: 14, zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '6%', paddingHorizontal: '3%', top: 0, right: 5, borderBottomRightRadius: 5, borderBottomLeftRadius: 5, }}>{item.discountFlash}%</Text>
                                 <FastImage
                                     style={[Ps.imageProduct, { height: Wp('33%'), width: '100%' }]}
                                     source={{
@@ -116,7 +94,7 @@ export default function FlashsaleComponent() {
                                         {item.name}
                                     </Text>
                                     <Text style={Ps.priceBefore}>{item.price}</Text>
-                                    <Text style={Ps.priceAfter}>{item.priceDiscount}</Text>
+                                    <Text style={Ps.priceAfter}>{item.priceDiscountFlash}</Text>
 
                                 </View>
                                 <View style={{ flex: 0, width: '95%', alignSelf: 'center', height: Wp('4%'), justifyContent: 'center', marginTop: '1%' }}>

@@ -1,19 +1,27 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { SafeAreaView, View, Text, TouchableOpacity, Dimensions, ToastAndroid, Alert } from 'react-native'
-import { styles, colors, Wp, Appbar, useFocusEffect } from '../../export'
+import { Button } from 'react-native-paper'
+import { styles, colors, Wp, Appbar, useFocusEffect, ServiceCore, useNavigation, Countdown } from '../../export'
 const initialLayout = { width: Dimensions.get('window').width };
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import FlashsaleFirstComponent from '../../components/Flashsale/FlashsaleFirstComponent';
 import FlashsaleSecondComponent from '../../components/Flashsale/FlashsaleSecondComponent';
-
+import { useDispatch, useSelector } from 'react-redux';
 export default function FlashsaleScreen() {
+    const navigation = useNavigation()
+    const reduxFlashsale = useSelector(state => state.dashboard.flashsale)
+    const dispatch = useDispatch()
     const [index, setIndex] = useState(0)
 
 
-    const [routes] = useState([
-        { key: 'first', title: '09.00' },
-        { key: 'second', title: '18.00' },
+    const [date, setDate] = useState({
+        first: '',
+        second: ''
+    })
 
+    const [routes, setRoutes] = useState([
+        { key: 'first', title: '09.00', message: "" },
+        { key: 'second', title: '18.00', message: "" },
     ]);
 
     const renderScene = SceneMap({
@@ -21,10 +29,50 @@ export default function FlashsaleScreen() {
         second: FlashsaleSecondComponent,
     });
 
+
+
+
     useFocusEffect(
         useCallback(() => {
+
+            ServiceCore.getDateTime().then(res => {
+                if (res) {
+                    let date = new Date()
+                    if (date.toJSON().toString().slice(0, 10) !== res.dateNow) {
+                        Alert.alert(
+                            "Peringatan!",
+                            `Sepertinya tanggal tidak sesuai!`,
+                            [
+                                { text: "OK", onPress: () => navigation.goBack() }
+                            ],
+                            { cancelable: false }
+                        );
+                    } else {
+                        ServiceCore.getFlashsale().then(resp => {
+                            if (resp) {
+                                dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.flashsale })
+                                // handleDate(res)
+                            }
+                        })
+
+                    }
+                }
+            })
         }, []),
     );
+
+
+
+    const handleDate = (valDate) => {
+        let newdate = []
+        if (String(valDate.timeNow).replace(/:/g, "") >= "090000" && String(valDate.timeNow).replace(/:/g, "") < "180000" && String(valDate.timeNow).replace(/:/g, "") >= "090000" && String(valDate.timeNow).replace(/:/g, "") <= "240000") {
+            newdate[0].message = "Sedang Berlangsung"
+            newdate[1].message = "Akan Datang"
+        } else if (String(valDate.timeNow).replace(/:/g, "") >= "090000" && String(valDate.timeNow).replace(/:/g, "") >= "180000" && String(valDate.timeNow).replace(/:/g, "") >= "090000" && String(valDate.timeNow).replace(/:/g, "") <= "240000") {
+            newdate[9].first = "Telah Berakhir"
+            newdate[1].second = "Sedang Berlangsung"
+        }
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -41,18 +89,19 @@ export default function FlashsaleScreen() {
                         bounces={true}
                         scrollEnabled={true}
                         style={{ backgroundColor: 'white' }}
-                        // tabStyle={{ minHeight: 50, flex: 0, width: Wp('33.3%'), borderRightColor: 'grey' }} // here
+                        tabStyle={{ minHeight: 50, flex: 0, width: Wp('50%') }} // here
                         renderLabel={({ route, focused, color }) => {
                             return (
-                                <View style={styles.column}>
+                                <View style={[styles.column_center, { width: '100%' }]}>
                                     <Text style={[styles.font_14, { color: colors.BlueJaja }]}>{route.title}</Text>
-                                    <Text style={[styles.font_14, { color: colors.BlueJaja }]}>{route.title}</Text>
+                                    <Text style={[styles.font_12, { color: colors.BlueJaja }]}>{route.message}</Text>
                                 </View>
                             )
                         }}
                     />
                 )}
             />
-        </SafeAreaView>
+            <Countdown />
+        </SafeAreaView >
     )
 }

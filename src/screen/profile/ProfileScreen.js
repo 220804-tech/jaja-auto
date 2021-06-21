@@ -189,8 +189,8 @@ export default function ProfileScreen(props) {
             {location && location.length ? null : <Text style={[styles.ml_2, { color: colors.RedNotif, fontStyle: 'italic', fontSize: 13 }]}>( Alamat belum lengkap )</Text>}
           </TouchableOpacity>
           <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => handleCategory('Art Shop')}>
-            <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/books.png`)} />
-            <Text style={style.title}>Kategori Pilihan</Text>
+            <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/loupe.png`)} />
+            <Text style={style.title}>Wishlist</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate(reduxAuth ? 'Vouchers' : 'Login')}>
             <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/coupon.png`)} />

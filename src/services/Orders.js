@@ -30,14 +30,15 @@ export async function getUnpaid(auth) {
             } else {
                 Alert.alert(
                     "Error with status 12003",
-                    String(error),
+                    `${String(error)}`,
                     [
                         {
                             text: "TUTUP",
                             onPress: () => console.log("Cancel Pressed"),
                             style: "cancel"
-                        },
-                    ]
+                        }
+                    ],
+                    { cancelable: false }
                 );
             }
         });
@@ -73,9 +74,13 @@ export async function getWaitConfirm(auth) {
             } else {
                 Alert.alert(
                     "Error with status 12004",
-                    JSON.stringify(error)
+                    `${String(error)}`,
                     [
-                    { text: "OK", onPress: () => console.log("OK Pressed") }
+                        {
+                            text: "TUTUP",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                        }
                     ],
                     { cancelable: false }
                 );
@@ -113,14 +118,15 @@ export async function getProcess(auth) {
             } else {
                 Alert.alert(
                     "Error with status 12005",
-                    String(error),
+                    `${String(error)}`,
                     [
                         {
                             text: "TUTUP",
                             onPress: () => console.log("Cancel Pressed"),
                             style: "cancel"
-                        },
-                    ]
+                        }
+                    ],
+                    { cancelable: false }
                 );
             }
         });
@@ -156,14 +162,15 @@ export async function getSent(auth) {
             } else {
                 Alert.alert(
                     "Error with status 12006",
-                    String(error),
+                    `${String(error)}`,
                     [
                         {
                             text: "TUTUP",
                             onPress: () => console.log("Cancel Pressed"),
                             style: "cancel"
-                        },
-                    ]
+                        }
+                    ],
+                    { cancelable: false }
                 );
             }
         });
@@ -199,14 +206,15 @@ export async function getCompleted(auth) {
             } else {
                 Alert.alert(
                     "Error with status 12007",
-                    String(error),
+                    `${String(error)}`,
                     [
                         {
                             text: "TUTUP",
                             onPress: () => console.log("Cancel Pressed"),
                             style: "cancel"
-                        },
-                    ]
+                        }
+                    ],
+                    { cancelable: false }
                 );
             }
         });
@@ -242,14 +250,15 @@ export async function getFailed(auth) {
             } else {
                 Alert.alert(
                     "Error with status 12008",
-                    JSON.stringify(error),
+                    `${String(error)}`,
                     [
                         {
                             text: "TUTUP",
                             onPress: () => console.log("Cancel Pressed"),
                             style: "cancel"
-                        },
-                    ]
+                        }
+                    ],
+                    { cancelable: false }
                 );
             }
         });

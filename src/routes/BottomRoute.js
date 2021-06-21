@@ -294,7 +294,7 @@ export default function BottomRoute() {
                 <Tab.Screen name="Pesanan" component={Orders}
                     options={{
                         tabBarLabel: ({ size, focused }) => (
-                            <Text style={{ fontSize: 12, color: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '3%' }}>{Language("Transaksi")}</Text>
+                            <Text style={{ fontSize: 12, color: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '3%' }}>{Language("Pesanan")}</Text>
                         ),
                         tabBarIcon: ({ size, focused }) => (
                             <View style={style.column}>

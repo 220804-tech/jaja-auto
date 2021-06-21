@@ -25,6 +25,7 @@ import * as ServiceProduct from '../services/Product'
 import * as ServiceStore from '../services/Store'
 import * as ServiceFirebase from '../services/Firebase'
 import * as ServiceNotif from '../services/Notification'
+import * as ServiceCore from '../services/Core'
 
 import { style as Ps } from '../assets/styles/productStyles'
 import { style as Os } from '../assets/styles/orderStyle'
@@ -34,8 +35,10 @@ import { styles } from '../assets/styles/styles'
 import { widthPercentageToDP as Wp, heightPercentageToDP as Hp } from 'react-native-responsive-screen';
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import colors from '../assets/colors'
+
+import Countdown from '../components/Flashsale/CountdownComponent'
 export {
     Appbar, CardProduct, Category, Flashsale, Maps, HobyAverage, RecomandedHobby, Trending, Language, Loading, CheckSignal, BasedOnSearch, styles,
     Ps, Wp, Hp, useNavigation, colors, useFocusEffect, FastImage, Form, ServiceCart, ServiceCheckout, ServiceUser, ServiceVoucher, ServiceOrder, Os,
-    ServiceCategory, ServiceProduct, ServiceStore, ServiceFirebase, Card, Ts, ServiceNotif, ShimmerCardProduct
+    ServiceCategory, ServiceProduct, ServiceStore, ServiceFirebase, Card, Ts, ServiceNotif, ShimmerCardProduct, ServiceCore, Countdown
 }

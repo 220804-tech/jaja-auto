@@ -12,8 +12,8 @@ export default {
     RedNotif: "#fa3e3e",
     RedMaroon: "#c11d30",
     RedDanger: '#f46a6a',
-    RedFlashsale: "#f24343",
-
+    // RedFlashsale: "#f24343",
+    RedFlashsale: "#FB7181",
     Green: '#00ff00',
     GreenSuccess: '#34c38f',
     YellowJaja: "#FDB93D",
