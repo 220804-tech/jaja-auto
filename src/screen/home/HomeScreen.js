@@ -3,7 +3,9 @@ import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, StyleS
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { BasedOnSearch, Trending, Category, Flashsale, Language, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect } from '../../export'
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT, width } = Dimensions.get('window');
+const { height: hg } = Dimensions.get('screen')
+
 import FastImage from 'react-native-fast-image'
 import { useDispatch, useSelector } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -85,6 +87,7 @@ export default function HomeScreen() {
 
     useEffect(() => {
         try {
+            dispatch({ 'type': 'SET_LOADMORE', payload: false })
             EncryptedStorage.getItem('token').then(res => {
                 if (res) {
                     setAuth(JSON.parse(res))
@@ -184,14 +187,14 @@ export default function HomeScreen() {
     };
 
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
-        const paddingToBottom = 15
         return layoutMeasurement.height + contentOffset.y >=
-            contentSize.height - paddingToBottom
+            contentSize.height - (hg * 0.37)
     }
 
     const loadMoreData = () => {
         if (!reduxLoadmore) {
             dispatch({ 'type': 'SET_LOADMORE', payload: true })
+            console.log("masuk as")
         }
     }
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import CheckBox from '@react-native-community/checkbox';
-import { View, Text, SafeAreaView, Image, TouchableOpacity, ToastAndroid, FlatList, StatusBar, RefreshControl, TouchableWithoutFeedback } from 'react-native'
+import { View, Text, SafeAreaView, Image, TouchableOpacity, ToastAndroid, FlatList, StatusBar, RefreshControl, TouchableWithoutFeedback, Alert } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { styles, Hp, Wp, colors, useNavigation, Appbar, ServiceCart, Loading, ServiceCheckout, useFocusEffect } from '../../export'
 import { Button } from 'react-native-paper'
@@ -108,7 +108,7 @@ export default function TrolleyScreen() {
     }
 
     const handleQty = (name, indexParent, indexChild) => {
-        setDisableCheckouttrue()
+        setDisableCheckout(true)
         setdisableQty(true)
         let arr = reduxCart.cart;
         if (name === "plus") {
@@ -144,16 +144,26 @@ export default function TrolleyScreen() {
         fetch("https://jaja.id/backend/cart/qty?action=change", requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("file: TrolleyScreen.js ~ line 147 ~ handleQty ~ result", result)
                 if (result.status.code === 200) {
                     handleApiCart()
+                } else if (result.status.code === 400) {
+                    if (result.status.message === "quantity cannot more than stock") {
+                        ToastAndroid.show('Stok produk tidak cukup', ToastAndroid.LONG, ToastAndroid.TOP)
+                    } else {
+                        ToastAndroid.show(String(result.status.message) + " => " + String(result.message.code), ToastAndroid.LONG, ToastAndroid.TOP)
+
+                    }
                 } else {
                     ToastAndroid.show(String(result.status.message) + " => " + String(result.message.code), ToastAndroid.LONG, ToastAndroid.TOP)
                 }
+                handleFailed(name, indexParent, indexChild)
                 setTimeout(() => {
                     setDisableCheckout(false)
                 }, 500);
             })
             .catch(error => {
+                handleFailed(name, indexParent, indexChild)
                 setDisableCheckout(false)
                 if (String(error).slice(11, String(error).length) === "Network request failed") {
                     ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
@@ -168,6 +178,19 @@ export default function TrolleyScreen() {
                     );
                 }
             })
+    }
+    const handleFailed = (name, indexParent, indexChild) => {
+        let arr = reduxCart.cart;
+        if (name === "plus") {
+            arr.items[indexParent].products[indexChild].qty = String(parseInt(arr.items[indexParent].products[indexChild].qty) - 1)
+        } else {
+            if (arr.items[indexParent].products[indexChild].qty <= 1) {
+                arr.items[indexParent].products[indexChild].qty = 1
+            } else {
+                arr.items[indexParent].products[indexChild].qty = String(parseInt(arr.items[indexParent].products[indexChild].qty) + 1)
+            }
+        }
+        dispatch({ type: "SET_CART", payload: arr })
     }
 
     const handleApiCart = () => {

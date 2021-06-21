@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native'
 import { useDispatch } from 'react-redux'
-import { colors, FastImage, Ps, useNavigation } from '../../export'
+import { colors, FastImage, Ps, useNavigation, styles, Wp } from '../../export'
+import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
+import LinearGradient from 'react-native-linear-gradient';
 
 export default function CardProductComponent(props) {
     const navigation = useNavigation()
@@ -22,21 +24,25 @@ export default function CardProductComponent(props) {
             updateCellsBatchingPeriod={100} // Increase time between renders
             windowSize={7}
             data={props.data}
+            numColumns={2}
             scrollEnabled={true}
-            keyExtractor={(item, index) => String(index)}
+            keyExtractor={(item, index) => String(index) + "X"}
             onScroll={(e) => console.log("event ", e)}
-            contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}
+            contentContainerStyle={{ justifyContent: 'space-between' }}
             renderItem={({ item, index }) => {
+                let load = false
                 return (
                     <>
-                        {item.image ?
+                        {!load ?
                             <TouchableOpacity
                                 onPress={() => handleShowDetail(item)}
-                                style={Ps.cardProduct}
+                                style={[Ps.cardProduct, { marginRight: '3.5%' }]}
                                 key={index}>
                                 {item.isDiscount ? <Text style={Ps.textDiscount}>{item.discount}%</Text> : null}
                                 <FastImage
                                     style={Ps.imageProduct}
+                                    onLoadStart={() => load = true}
+                                    onLoadEnd={() => load = false}
                                     source={{
                                         uri: item.image,
                                         headers: { Authorization: 'someAuthToken' },
@@ -66,16 +72,17 @@ export default function CardProductComponent(props) {
                                 </View>
                             </TouchableOpacity>
                             :
-                            <TouchableOpacity style={Ps.cardProduct}>
+                            <TouchableOpacity
+                                style={Ps.cardProduct}
+                                key={item}>
                                 <FastImage
-                                    style={[Ps.imageProduct, styles.mb_2, { backgroundColor: colors.Silver }]}
+                                    style={[Ps.imageProduct, { backgroundColor: colors.Silver }]}
                                     source={require('../../assets/images/JajaId.png')}
                                     resizeMode={FastImage.resizeMode.contain}
                                     tintColor={colors.White}
 
                                 />
-                                {/* <Image source={require('../../assets/images/JajaId.png')} style={[Ps.imageProduct, { resizeMode: 'center', tintColor: colors.White, backgroundColor: colors.Silver }]} /> */}
-                                <View style={Ps.bottomCard}>
+                                <View style={[Ps.bottomCard, { height: Wp('31%') }]}>
                                     <ShimmerPlaceHolder
                                         LinearGradient={LinearGradient}
                                         width={Wp('40%')}
@@ -97,8 +104,7 @@ export default function CardProductComponent(props) {
                                         style={{ borderRadius: 1, marginBottom: '7%' }}
                                         shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
                                     />
-                                    <View style={Ps.location}>
-                                        {/* <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} /> */}
+                                    <View style={{ position: 'absolute', bottom: 0, padding: '4%' }}>
                                         <ShimmerPlaceHolder
                                             LinearGradient={LinearGradient}
                                             width={Wp('30%')}

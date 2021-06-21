@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { View, Text, FlatList, Image, TouchableOpacity, ScrollView, Alert } from 'react-native'
-import { styles, Ps, Language, useNavigation, FastImage, colors, Wp, useFocusEffect } from '../../export'
+import { styles, Ps, Language, useNavigation, FastImage, colors, Wp, useFocusEffect, Hp } from '../../export'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { useSelector, useDispatch } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
+import { color } from 'react-native-reanimated'
 
 export default function FlashsaleComponent() {
     const navigation = useNavigation()
@@ -77,10 +78,15 @@ export default function FlashsaleComponent() {
 
     return (
         <View style={styles.p_3}>
-            <View style={styles.row}>
+            <View style={styles.row_between_center}>
                 <Text style={styles.flashsale}>
                     Flashsale
                 </Text>
+                {/* <TouchableOpacity onPress={() => navigation.navigate('Flashsale')}>
+                    <Text style={[styles.font_12, { fontWeight: 'bold', color: colors.BlueJaja }]}>
+                        Lihat Semua <Image source={require('../../assets/icons/play.png')} style={[styles.icon_10, { tintColor: colors.BlueJaja }]} />
+                    </Text>
+                </TouchableOpacity> */}
             </View>
             {reduxdashFlashsale && reduxdashFlashsale.length ?
                 <FlatList
@@ -91,7 +97,7 @@ export default function FlashsaleComponent() {
                     renderItem={({ item, index }) => {
                         return (
                             <TouchableOpacity
-                                style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('60%'), alignItems: 'center' }]}
+                                style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('57%'), alignItems: 'center' }]}
                                 onPress={() => handleShowDetail(item)} >
                                 <Text style={{ position: 'absolute', fontSize: 14, zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '6%', paddingHorizontal: '3%', top: 0, right: 5, borderBottomRightRadius: 5, borderBottomLeftRadius: 5, }}>{item.discount}%</Text>
                                 <FastImage
@@ -103,7 +109,7 @@ export default function FlashsaleComponent() {
                                     }}
                                     resizeMode={FastImage.resizeMode.cover}
                                 />
-                                <View style={[Ps.bottomCard, { width: '100%' }]}>
+                                <View style={[Ps.bottomCard, { alignSelf: 'flex-start', width: '100%', height: Wp('18%'), justifyContent: 'center', alignItems: 'flex-start' }]}>
                                     <Text
                                         numberOfLines={1}
                                         style={Ps.nameProduct}>
@@ -111,37 +117,47 @@ export default function FlashsaleComponent() {
                                     </Text>
                                     <Text style={Ps.priceBefore}>{item.price}</Text>
                                     <Text style={Ps.priceAfter}>{item.priceDiscount}</Text>
+
                                 </View>
-
-
-                                <View style={{ flex: 0, width: '95%', alignItems: 'center', height: '18%', justifyContent: 'flex-start', marginTop: '1%' }}>
+                                <View style={{ flex: 0, width: '95%', alignSelf: 'center', height: Wp('4%'), justifyContent: 'center', marginTop: '1%' }}>
                                     <View style={{
                                         borderRadius: 100,
                                         borderColor: colors.RedFlashsale,
                                         backgroundColor: "#FFc9b9",
-                                        borderWidth: 1,
-                                        height: '45%',
+                                        borderWidth: 0.5,
+                                        height: '90%',
                                         width: "100%",
-                                        marginHorizontal: 8,
+
                                     }}>
                                         <View style={{
                                             backgroundColor: colors.RedFlashsale,
-                                            borderRadius: 100,
+                                            // borderRadius: 100,
+                                            borderTopLeftRadius: 100,
+                                            borderBottomLeftRadius: 100,
+                                            borderTopRightRadius: ((parseInt(item.amountSold) / parseInt(item.stockInFlashSale)) * 100) < 97 ? 0 : 100,
+                                            borderBottomRightRadius: ((parseInt(item.amountSold) / parseInt(item.stockInFlashSale)) * 100) < 97 ? 0 : 100,
                                             height: '100%',
                                             width: ((parseInt(item.amountSold) / parseInt(item.stockInFlashSale)) * 100) + "%",
+
                                         }}>
                                         </View>
                                         <Text style={{
                                             position: "absolute",
+                                            top: 0,
+                                            bottom: 0,
                                             alignSelf: "center",
+                                            textAlign: 'center',
+                                            textAlignVertical: 'center',
                                             color: "white",
                                             marginTop: -1,
-                                            fontSize: 13
+                                            fontSize: 10,
+                                            fontWeight: 'bold'
                                         }}
                                         >{item.amountSold} Terjual</Text>
                                     </View>
-
                                 </View>
+
+
                             </TouchableOpacity>
                         )
                     }}
@@ -152,50 +168,48 @@ export default function FlashsaleComponent() {
                         return (
                             <TouchableOpacity
                                 key={item}
-                                style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('60%'), alignItems: 'center' }]}>
+                                style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('57%'), alignItems: 'center' }]}>
                                 <FastImage
                                     style={[Ps.imageProduct, { height: Wp('33%'), width: '100%', backgroundColor: colors.Silver, borderTopRightRadius: 10, borderTopLeftRadius: 10 }]}
                                     source={require('../../assets/images/JajaId.png')}
                                     tintColor={colors.White}
                                     resizeMode={FastImage.resizeMode.center}
                                 />
-                                <View style={[Ps.bottomCard, styles.mt_2, { alignSelf: 'flex-start' }]}>
-                                    <View style={{ width: '95%', marginBottom: '5%' }}>
+                                <View style={[Ps.bottomCard, styles.mt_3, { alignSelf: 'flex-start' }]}>
+                                    <View style={{ width: '95%', marginBottom: '5%', paddingLeft: '0.5%' }}>
                                         <ShimmerPlaceHolder
                                             LinearGradient={LinearGradient}
                                             width={Wp('31%')}
                                             height={Wp("3.5%")}
-                                            style={{ borderRadius: 1 }}
+                                            style={{ borderRadius: 2 }}
                                             shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
                                         />
                                     </View>
-                                    <View style={{ width: '95%', marginBottom: '3%' }}>
+                                    <View style={{ width: '95%', marginBottom: '4%', paddingLeft: '0.5%' }}>
                                         <ShimmerPlaceHolder
                                             LinearGradient={LinearGradient}
                                             width={Wp('21%')}
                                             height={Wp("3.5%")}
-                                            style={{ borderRadius: 1 }}
+                                            style={{ borderRadius: 2 }}
                                             shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
                                         />
                                     </View>
-                                    <View style={{ width: '95%', marginBottom: '6%' }}>
+                                    <View style={{ width: '95%', marginBottom: '8%', paddingLeft: '0.5%' }}>
                                         <ShimmerPlaceHolder
                                             LinearGradient={LinearGradient}
                                             width={Wp('25%')}
                                             height={Wp("4%")}
-                                            style={{ borderRadius: 1 }}
+                                            style={{ borderRadius: 2 }}
                                             shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
                                         />
                                     </View>
-                                    {/* <View style={{ width: '100%' }}> */}
                                     <ShimmerPlaceHolder
                                         LinearGradient={LinearGradient}
                                         width={Wp('31%')}
-                                        height={Wp("5%")}
+                                        height={Wp("3.8%")}
                                         style={{ borderRadius: 100 }}
                                         shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
                                     />
-                                    {/* </View> */}
                                 </View>
                             </TouchableOpacity>
                         )

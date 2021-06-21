@@ -4,13 +4,16 @@ const initialState = {
     sorts: [],
     keywordSearch: "",
     productDetail: {},
-    slug: ""
+    slug: "",
+    maxProduct: false
 }
 export default function storeSearch(state = initialState, action) {
     const { type, payload } = action;
     switch (type) {
         case 'SET_SEARCH':
             return { ...state, searchProduct: payload }
+        case 'SET_MAX_SEARCH':
+            return { ...state, maxProduct: payload }
         case 'SET_FILTERS':
             return { ...state, filters: payload }
         case 'SET_SORTS':

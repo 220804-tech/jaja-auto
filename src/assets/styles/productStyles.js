@@ -1,18 +1,19 @@
 import { StyleSheet } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { Wp } from '../../export';
 import colors from '../colors';
 
 export const style = StyleSheet.create({
     cardProduct: {
         borderRadius: 3,
-        width: wp("44%"),
+        width: wp("45%"),
         // minHeight: wp('70%'),
         height: wp("75%"),
         marginLeft: 1,
         marginTop: 5,
         marginBottom: 5,
         justifyContent: "flex-start",
-        elevation: 2,
+        elevation: 1,
         backgroundColor: colors.White,
         flexDirection: 'column',
         alignItems: 'flex-start',

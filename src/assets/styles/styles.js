@@ -121,6 +121,8 @@ export const styles = StyleSheet.create({
     icon_18: { width: 18, height: 18 },
     icon_16: { width: 16, height: 16, tintColor: colors.BlackGrayScale },
     icon_14: { width: 14, height: 14 },
+    icon_12: { width: 12, height: 12 },
+    icon_10: { width: 10, height: 10 },
 
     alertText: { fontSize: 14, color: colors.RedNotif },
     priceBefore: { fontSize: 12, fontWeight: '900', color: colors.BlackGrayScale, textDecorationLine: 'line-through', },

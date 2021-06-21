@@ -1,10 +1,10 @@
 import React, { useEffect, useState, createRef, useCallback } from 'react'
-import { SafeAreaView, View, Text, Image, TouchableOpacity, ToastAndroid, StyleSheet, ScrollView, Animated, RefreshControl } from 'react-native'
+import { SafeAreaView, View, Text, Image, TouchableOpacity, ToastAndroid, StyleSheet, ScrollView, Animated, RefreshControl, Dimensions } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import ActionSheet from "react-native-actions-sheet";
-import { useNavigation, colors, styles, Wp, CheckSignal, Loading, Hp, Card } from '../../export'
+import { useNavigation, colors, styles, Wp, CheckSignal, Loading, Hp, Card, ShimmerCardProduct } from '../../export'
 import { useDispatch, useSelector } from 'react-redux'
-import * as Progress from 'react-native-progress';
+const { height: hg } = Dimensions.get('screen')
 
 export default function ProductSearchScreen() {
     const navigation = useNavigation();
@@ -13,6 +13,8 @@ export default function ProductSearchScreen() {
     const keyword = useSelector(state => state.search.keywordSearch)
     const reduxFilters = useSelector(state => state.search.filters)
     const reduxSorts = useSelector(state => state.search.sorts)
+    const reduxmaxProduct = useSelector(state => state.search.maxProduct)
+
     const dispatch = useDispatch()
     const [scrollY, setscrollY] = useState(new Animated.Value(0))
 
@@ -45,6 +47,7 @@ export default function ProductSearchScreen() {
 
     const handleFetch = () => {
         actionSheetRef.current?.setModalVisible(false)
+        dispatch({ type: 'SET_MAX_SEARCH', payload: false })
         setTimeout(() => {
             setLoading(true)
         }, 200);
@@ -87,6 +90,7 @@ export default function ProductSearchScreen() {
 
     const handleReset = () => {
         actionSheetRef.current?.setModalVisible(false)
+        dispatch({ type: 'SET_MAX_SEARCH', payload: false })
         setTimeout(() => {
             setLoading(true)
         }, 200);
@@ -155,9 +159,6 @@ export default function ProductSearchScreen() {
         if (name === 'filter') {
             let val = reduxFilters[indexParent].name
             let valChild = reduxFilters[indexParent].items[indexChild].value
-            console.log("🚀 ~ file: productSearchScreen.js ~ line 120 ~ handleSelected ~ valChild", valChild)
-
-            console.log("🚀 ~ file: productSearchScreen.js ~ line 119 ~ handleSelected ~ val", val)
             if (val === "Lokasi") {
                 if (location === valChild) {
                     setLocation("")
@@ -192,6 +193,7 @@ export default function ProductSearchScreen() {
         }
     }
     const handleLoadMore = () => {
+        console.log("reloaddddddddddddddd")
         if (loadmore === false) {
             setLoadmore(true)
             setPage(page + 1)
@@ -202,9 +204,7 @@ export default function ProductSearchScreen() {
         }
     }
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
-        const paddingToBottom = 20
-        return layoutMeasurement.height + contentOffset.y >=
-            contentSize.height - paddingToBottom
+        return layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 0.37)
     }
 
     const fetchLoadmore = () => {
@@ -216,8 +216,12 @@ export default function ProductSearchScreen() {
         fetch(`https://jaja.id/backend/product/search/result?page=${page + 1}&limit=6&keyword=${keyword}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                if (result.status.code === 200 || result.status.code === 204) {
-                    dispatch({ type: 'SET_SEARCH', payload: data.concat(result.data.items) })
+                if (result.status.code === 200) {
+                    if (result.data.items && result.data.items.length) {
+                        dispatch({ type: 'SET_SEARCH', payload: data.concat(result.data.items) })
+                    } else {
+                        dispatch({ type: 'SET_MAX_SEARCH', payload: true })
+                    }
                 }
             })
             .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER) & setLoadmore(false));
@@ -249,7 +253,7 @@ export default function ProductSearchScreen() {
                     </TouchableOpacity>
                 </View>
             </View>
-            <View style={[styles.column, { flex: 1, backgroundColor: colors.White }, styles.p_2]}>
+            <View style={[styles.column, { flex: 1, backgroundColor: colors.White }, styles.p_3]}>
                 {/* <View style={{ flex: 0, flexDirection: 'row', height: Hp('5%'), width: '100%', justifyContent: 'space-between', marginBottom: '3%' }}> */}
                 {/* <ScrollView horizontal={true} style={{ backgroundColor: 'pink', flex: 0, flexDirection: 'row' }} contentContainerStyle={{ flex: 0, flexDirection: 'row' }}> */}
                 {/* <TouchableOpacity onPress={() => actionSheetRef.current?.setModalVisible()} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: filter ? colors.BlueJaja : colors.BlackGrey, backgroundColor: filter ? colors.BlueJaja : colors.White, borderRadius: 15, paddingHorizontal: '4.5%', paddingVertical: '1%' }}>
@@ -300,68 +304,13 @@ export default function ProductSearchScreen() {
                             }}
                         >
                             <Card data={data} />
-                            {/* <FlatList
-                                data={data}
-                                scrollEnabled={false}
-                                removeClippedSubviews={true} // Unmount components when outside of window 
-                                initialNumToRender={2} // Reduce initial render amount
-                                maxToRenderPerBatch={1} // Reduce number in each render batch
-                                updateCellsBatchingPeriod={100} // Increase time between renders
-                                windowSize={7}
-                                horizontal={false}
-                                numColumns={2}
-                                keyExtractor={(item, index) => String(index) + "G9"}
-                                renderItem={({ item, index }) => {
-                                    return (
-                                        <TouchableOpacity
-                                            onPress={() => handleShowDetail(item)}
-                                            style={[Ps.cardProduct, { width: Wp('45%'), marginRight: Wp('4%') }]}
-                                            key={index}>
-                                            {item.isDiscount ? <Text adjustsFontSizeToFit style={Ps.textDiscount}>{item.discount}%</Text> : null}
-                                            <FastImage
-                                                style={Ps.imageProduct}
-                                                source={{
-                                                    uri: item.image,
-                                                    headers: { Authorization: 'someAuthToken' },
-                                                    priority: FastImage.priority.normal,
-                                                }}
-                                                resizeMode={FastImage.resizeMode.cover}
-                                            />
-                                            <View style={Ps.bottomCard}>
-                                                <Text adjustsFontSizeToFit
-                                                    numberOfLines={2}
-                                                    style={Ps.nameProduct}>
-                                                    {item.name}
-                                                </Text>
-                                                {item.isDiscount ?
-                                                    <>
-                                                        <Text adjustsFontSizeToFit style={Ps.priceBefore}>{item.price}</Text>
-                                                        <Text adjustsFontSizeToFit style={Ps.priceAfter}>{item.priceDiscount}</Text>
-                                                    </>
-                                                    :
-                                                    <Text adjustsFontSizeToFit style={Ps.price}>{item.price}</Text>
-                                                }
-                                                <View style={Ps.location}>
-                                                    <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
-                                                    <Text adjustsFontSizeToFit style={Ps.locarionName}>{item.location}</Text>
-                                                </View>
-                                            </View>
-                                        </TouchableOpacity>
 
-                                    )
-                                }}
-                            /> */}
-                            {loadmore ?
-                                <View style={style.content}>
-                                    <View style={style.loading}>
-                                        <Progress.CircleSnail duration={550} size={30} color={[colors.BlueJaja, colors.YellowJaja]} />
-                                    </View>
-                                </View>
-                                : null}
+                            {reduxmaxProduct ? <Text style={[styles.font_14, styles.my_5, { alignSelf: 'center', color: colors.BlueJaja, width: Wp('100%'), textAlign: 'center' }]}>Semua produk berhasil ditampilkan</Text> : <ShimmerCardProduct />}
+
                         </ScrollView>
 
                     </View>
-                    : <Text style={[styles.font_14, styles.mt_5, { alignSelf: 'center' }]}>Produk tidak ditemukan!</Text>
+                    : reduxmaxProduct ? null : <Text style={[styles.font_14, styles.mt_5, { alignSelf: 'center' }]}>Produk tidak ditemukan!</Text>
                 }
 
             </View>

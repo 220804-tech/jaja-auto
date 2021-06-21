@@ -6,7 +6,8 @@ const initialState = {
     basedOnSearch: [],
     recommanded: [],
     loadmore: false,
-    out: false
+    out: false,
+    maxRecomandded: false
 }
 export default function storeDashboard(state = initialState, action) {
     const { type, payload } = action;
@@ -23,6 +24,8 @@ export default function storeDashboard(state = initialState, action) {
             return { ...state, basedOnSearch: payload }
         case 'SET_DASHRECOMMANDED':
             return { ...state, recommanded: payload }
+        case 'SET_MAX_RECOMMANDED':
+            return { ...state, maxRecomandded: payload }
         case 'SET_LOADMORE':
             return { ...state, loadmore: payload }
         case 'SET_OUT':

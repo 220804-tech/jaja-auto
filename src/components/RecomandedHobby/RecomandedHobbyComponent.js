@@ -16,6 +16,7 @@ export default function RecomandedHobbyComponent() {
     const dispatch = useDispatch()
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
     const reduxdashRecommanded = useSelector(state => state.dashboard.recommanded)
+    const reduxmaxRecommanded = useSelector(state => state.dashboard.maxRecomandded)
 
     useEffect(() => {
         getStorage()
@@ -49,16 +50,17 @@ export default function RecomandedHobbyComponent() {
         fetch(`https://jaja.id/backend/product/recommendation?page=${page + 1}&limit=6`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: RecomandedHobbyComponent.js ~ line 44 ~ getData ~ page + 1", page + 1)
-                console.log("🚀 ~ file: RecomandedHobbyComponent.js ~ line 101 ~ setTimeout ~ result.data.items", result.data)
+                console.log("🚀 ~ file: RecomandedHobbyComponent.js ~ line 101 ~ setTimeout ~ result.data.items", result)
 
                 setTimeout(() => {
-                    if (result.status.code == 200 || result.status.code == 204) {
+                    if (result.status.code == 200) {
                         dispatch({ type: 'SET_DASHRECOMMANDED', payload: reduxdashRecommanded.concat(result.data.items) })
                         EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))
+                    } else if (result.status.code === 204) {
+                        dispatch({ 'type': 'SET_MAX_RECOMMANDED', payload: true })
                     }
                     dispatch({ 'type': 'SET_LOADMORE', payload: false })
-                }, 1000);
+                }, 500);
 
             })
             .catch(error => {
@@ -91,7 +93,6 @@ export default function RecomandedHobbyComponent() {
             }
         }, 5000);
         setTimeout(() => {
-
             if (res === 'loading') {
                 ToastAndroid.show("Koneksi lambat, periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.TOP)
             } else {
@@ -109,7 +110,7 @@ export default function RecomandedHobbyComponent() {
     }
 
     return (
-        <View style={styles.p_3}>
+        <View style={[styles.column, styles.p_3]}>
             <View style={styles.row}>
                 <Text style={styles.titleDashboard}>
                     Rekomendasi Hobby
@@ -122,16 +123,16 @@ export default function RecomandedHobbyComponent() {
                 :
                 <ShimmerCardProduct />
             }
-            {reduxLoadmore ?
+            {/* {reduxLoadmore ?
                 loading ?
                     <View style={style.content}>
                         <View style={style.loading}>
                             <Progress.CircleSnail duration={550} size={30} color={[colors.BlueJaja, colors.YellowJaja]} />
                         </View>
                     </View>
-                    :
-                    <ShimmerCardProduct />
-                : null}
+                    : */}
+            {reduxmaxRecommanded ? <Text style={[styles.font_14, styles.mt_5, { alignSelf: 'center', color: colors.BlueJaja }]}>Semua produk berhasil ditampilkan</Text> : <ShimmerCardProduct />}
+            {/* : null} */}
         </View>
     )
 }

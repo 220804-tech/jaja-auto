@@ -1,7 +1,7 @@
-import React, { useEffect, useState, createRef } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView, View, Text, Image, TouchableOpacity, TextInput, FlatList, ToastAndroid } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
-import { useNavigation, colors, styles, Wp, CheckSignal, ServiceStore } from '../../export'
+import { useNavigation, colors, styles, Wp, CheckSignal, ServiceStore, useFocusEffect } from '../../export'
 import { useDispatch, useSelector } from 'react-redux'
 export default function SearchScreen() {
     const navigation = useNavigation();
@@ -19,6 +19,11 @@ export default function SearchScreen() {
         getItem();
     }, [])
 
+    useFocusEffect(
+        useCallback(() => {
+            dispatch({ type: 'SET_MAX_SEARCH', payload: false })
+        }, []),
+    );
     const getItem = () => {
         try {
             EncryptedStorage.getItem('historySearching').then(res => {
@@ -38,7 +43,6 @@ export default function SearchScreen() {
 
     const handleSearch = (text) => {
         if (text) {
-            console.log("🚀 ~ file: SearchScreen.js ~ line 39 ~ handleSearch ~ text", text)
             var myHeaders = new Headers();
             myHeaders.append("Cookie", "ci_session=bk461otlv7le6rfqes5eim0h9cf99n3u");
 
@@ -88,6 +92,7 @@ export default function SearchScreen() {
             if (res) {
                 const HashSet = new Set(JSON.parse(res))
                 HashSet.add(keyword)
+                sethistorySearch(Array.from(HashSet))
                 EncryptedStorage.setItem("historySearching", JSON.stringify(Array.from(HashSet)))
             }
         })

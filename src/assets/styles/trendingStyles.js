@@ -12,7 +12,7 @@ export const style = StyleSheet.create({
         marginBottom: 5,
         justifyContent: "flex-start",
         alignItems: "center",
-        elevation: 2,
+        elevation: 1,
         backgroundColor: colors.White,
         flexDirection: 'row'
     },
