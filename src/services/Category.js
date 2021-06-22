@@ -1,4 +1,4 @@
-import { ToastAndroid } from 'react-native'
+import { ToastAndroid, Alert } from 'react-native'
 export async function getAllCategory() {
 
     var myHeaders = new Headers();

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { SafeAreaView, Text, View, TouchableOpacity, ScrollView, StyleSheet, FlatList, Image, RefreshControl, Alert } from "react-native";
+import { SafeAreaView, Text, View, TouchableOpacity, ScrollView, StyleSheet, FlatList, Image, RefreshControl, Alert, ToastAndroid } from "react-native";
 import { Paragraph, Switch, Appbar } from "react-native-paper";
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { colors, styles as style, ServiceUser, ServiceCheckout, Loading } from '../../export'
@@ -186,9 +186,31 @@ export default function index(props) {
             })
     }
 
+    const handleDelete = item => {
+        Alert.alert(
+            "Peringatan!",
+            "Anda ingin menghapus alamat?",
+            [
+                {
+                    text: "Tidak",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                {
+                    text: "Hapus", onPress: () => {
+                        setLoading(true)
+                        setTimeout(() => {
+                            setLoading(false)
+                            ToastAndroid.show("Alamat berhasil dihapus.", ToastAndroid.LONG, ToastAndroid.CENTER)
+                        }, 1000);
+                    }
+                }],
+            { cancelable: false }
+        );
+    }
     const renderItem = ({ item, index }) => {
         return (
-            <TouchableOpacity onPress={() => status === "checkout" ? handleChangePrimary(item.id) : navigation.navigate("AddAddress", { data: item, edit: true })} style={[style.column_start_center, styles.card]}>
+            <TouchableOpacity onLongPress={() => handleDelete(item)} onPress={() => status === "checkout" ? handleChangePrimary(item.id) : navigation.navigate("AddAddress", { data: item, edit: true })} style={[style.column_start_center, styles.card]}>
                 <View style={styles.body}>
                     <View style={style.row_between_center}>
                         <Text numberOfLines={1} style={[styles.textName, { width: '55%' }]}>{item.nama_penerima ? item.nama_penerima : ""}</Text>

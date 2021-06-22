@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { SafeAreaView, View, Text, TouchableOpacity, Dimensions, ToastAndroid, Alert } from 'react-native'
 import { Button } from 'react-native-paper'
-import { styles, colors, Wp, Appbar, useFocusEffect, ServiceCore, useNavigation, Countdown } from '../../export'
+import { styles, colors, Wp, Appbar, useFocusEffect, ServiceCore, useNavigation, Hp, Countdown } from '../../export'
 const initialLayout = { width: Dimensions.get('window').width };
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import FlashsaleFirstComponent from '../../components/Flashsale/FlashsaleFirstComponent';
@@ -12,12 +12,6 @@ export default function FlashsaleScreen() {
     const reduxFlashsale = useSelector(state => state.dashboard.flashsale)
     const dispatch = useDispatch()
     const [index, setIndex] = useState(0)
-
-
-    const [date, setDate] = useState({
-        first: '',
-        second: ''
-    })
 
     const [routes, setRoutes] = useState([
         { key: 'first', title: '09.00', message: "" },
@@ -34,7 +28,6 @@ export default function FlashsaleScreen() {
 
     useFocusEffect(
         useCallback(() => {
-
             ServiceCore.getDateTime().then(res => {
                 if (res) {
                     let date = new Date()
@@ -51,20 +44,20 @@ export default function FlashsaleScreen() {
                         ServiceCore.getFlashsale().then(resp => {
                             if (resp) {
                                 dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.flashsale })
-                                // handleDate(res)
+                                handleDate(res)
                             }
                         })
 
                     }
                 }
             })
-        }, []),
+        }, [routes]),
     );
 
 
 
     const handleDate = (valDate) => {
-        let newdate = []
+        let newdate = routes
         if (String(valDate.timeNow).replace(/:/g, "") >= "090000" && String(valDate.timeNow).replace(/:/g, "") < "180000" && String(valDate.timeNow).replace(/:/g, "") >= "090000" && String(valDate.timeNow).replace(/:/g, "") <= "240000") {
             newdate[0].message = "Sedang Berlangsung"
             newdate[1].message = "Akan Datang"
@@ -72,11 +65,15 @@ export default function FlashsaleScreen() {
             newdate[9].first = "Telah Berakhir"
             newdate[1].second = "Sedang Berlangsung"
         }
+        setRoutes(newdate)
+        setIndex(0)
+        console.log("file: FlashsaleScreen.js ~ line 61 ~ handleDate ~ newdate", newdate)
     }
 
     return (
         <SafeAreaView style={styles.container}>
             <Appbar back={true} title="Flashsale" />
+
             <TabView
                 navigationState={{ index, routes }}
                 renderScene={renderScene}
@@ -101,7 +98,21 @@ export default function FlashsaleScreen() {
                     />
                 )}
             />
-            <Countdown />
+            <View style={[styles.row_center, {
+                position: 'absolute', bottom: 0, width: Wp('100%'), height: Wp('15%'), backgroundColor: colors.White,
+                shadowColor: "#000",
+                shadowOffset: {
+                    width: 0,
+                    height: 5,
+                },
+                shadowOpacity: 0.36,
+                shadowRadius: 6.68,
+
+                elevation: 20,
+            }]}>
+                <Text style={[styles.font_14, { color: colors.RedFlashsale }]}>Sedang Berlangsung..</Text>
+                <Countdown size={14} wrap={9} />
+            </View>
         </SafeAreaView >
     )
 }

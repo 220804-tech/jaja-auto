@@ -1,4 +1,4 @@
-import { ToastAndroid } from 'react-native'
+import { ToastAndroid, Alert } from 'react-native'
 export async function getStore(slug) {
     var myHeaders = new Headers();
     myHeaders.append("Cookie", "ci_session=99epvnp1f3qv3bc9ed9hnkf32j11devb");

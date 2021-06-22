@@ -10,7 +10,7 @@ import order from './storeOrder'
 import category from './storeCategory'
 import store from './storeStore'
 import auth from './storeAuth'
-
+import profile from './storeProfile'
 
 export default combineReducers({
     notification,
@@ -23,5 +23,6 @@ export default combineReducers({
     order,
     category,
     store,
-    auth
+    auth,
+    profile
 })

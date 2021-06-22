@@ -766,18 +766,18 @@ export default function checkoutScreen() {
                     <View style={[styles.row_between_center, styles.p_3]}>
                         <View style={styles.column}>
                             <Text style={[styles.font_14, { marginBottom: '1%' }]}>Total belanja</Text>
+                            <Text style={[styles.font_14, { marginBottom: '1%' }]}>Voucher Jaja.id</Text>
                             <Text style={[styles.font_14, { marginBottom: '1%' }]}>Ongkos kirim</Text>
                             <Text style={[styles.font_14, { marginBottom: '1%' }]}>Biaya penanganan</Text>
                             {/* <Text style={[styles.font_14, { marginBottom: '1%' }]}>Voucher Toko</Text> */}
-                            <Text style={[styles.font_14, { marginBottom: '1%' }]}>Voucher Jaja.id</Text>
 
                         </View>
                         <View style={styles.column_center_end}>
                             <Text style={[styles.font_14, { marginBottom: '1%' }]}>{reduxCheckout.subTotalCurrencyFormat}</Text>
+                            <Text style={[styles.font_14, { marginBottom: '1%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountJajaCurrencyFormat}</Text>
                             <Text style={[styles.font_14, { marginBottom: '1%' }]}>{reduxCheckout.shippingCostCurrencyFormat}</Text>
                             <Text style={[styles.font_14, { marginBottom: '1%' }]}>Rp0</Text>
                             {/* <Text style={[styles.font_14, { marginBottom: '1%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountCurrencyFormat}</Text> */}
-                            <Text style={[styles.font_14, { marginBottom: '1%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountJajaCurrencyFormat}</Text>
 
                         </View>
 

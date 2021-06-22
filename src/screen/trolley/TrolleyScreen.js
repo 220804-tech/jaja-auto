@@ -205,7 +205,7 @@ export default function TrolleyScreen() {
     }
 
     const handleCheckout = () => {
-        if (reduxCart.cart.totalCartCurrencyFormat !== "Rp0") {
+        if (reduxCart.cart.totalCartCurrencyFormat !== "Rp0" && disableCheckout === false) {
             navigation.navigate('Checkout')
             dispatch({ type: 'SET_CHECKOUT', payload: {} })
             ServiceCheckout.getCheckout(reduxAuth ? reduxAuth : auth).then(res => {

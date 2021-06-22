@@ -2,12 +2,13 @@ import React from 'react'
 import { View, Text, FlatList, TouchableOpacity } from 'react-native'
 import { Button } from 'react-native-paper'
 import { useSelector } from 'react-redux'
-import { colors, FastImage, Ps, styles, Wp } from '../../export'
+import { colors, FastImage, Ps, styles, Wp, Countdown } from '../../export'
 
 export default function FlashsaleFirstComponent() {
     const reduxFlashsale = useSelector(state => state.dashboard.flashsale)
     return (
         <View style={[styles.container, { backgroundColor: colors.White }]}>
+            {/* <Countdown /> */}
             <FlatList
                 data={reduxFlashsale}
                 keyExtractor={(item, index) => String(index) + "FZ"}

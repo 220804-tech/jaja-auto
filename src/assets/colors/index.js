@@ -14,6 +14,8 @@ export default {
     RedDanger: '#f46a6a',
     // RedFlashsale: "#f24343",
     RedFlashsale: "#FB7181",
+    RedFlashSoft: "#F9D7D6",
+
     Green: '#00ff00',
     GreenSuccess: '#34c38f',
     YellowJaja: "#FDB93D",

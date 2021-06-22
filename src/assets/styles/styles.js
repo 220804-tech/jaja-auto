@@ -138,12 +138,12 @@ export const styles = StyleSheet.create({
     textNotif: { fontSize: 9, color: colors.White, fontWeight: '900' },
     cardProduct: { flex: 0, flexDirection: 'column', marginRight: 11, width: Wp('33%'), height: Wp('53%'), borderRadius: 4, backgroundColor: colors.White, alignItems: 'center' },
     flashsale: {
-        fontSize: Wp("5%"),
+        fontSize: 18,
         fontWeight: "bold",
         letterSpacing: 0,
-        textAlign: "left",
-        color: colors.RedFlashsale,
-        marginBottom: '3%'
+        color: colors.White,
+        marginBottom: '3%',
+        // fontFamily: 'Roboto'
     },
     titleDashboard: {
         fontSize: 18,

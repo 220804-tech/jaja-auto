@@ -33,13 +33,12 @@ export const style = StyleSheet.create({
     },
     nameProduct: {
         fontSize: 14,
-        fontFamily: 'Lato-Bold',
-        textAlign: "left",
         alignSelf: 'flex-start',
-        marginBottom: '2%'
+        marginBottom: '2%',
+        color: colors.BlackGrayScale
     },
     priceBefore: { fontSize: 12, fontWeight: '900', color: colors.BlackGrayScale, textDecorationLine: 'line-through', },
-    priceAfter: { fontSize: 16, fontWeight: '900', color: colors.RedFlashsale },
+    priceAfter: { fontSize: 16, fontWeight: 'bold', color: colors.BlueJaja },
     price: { fontSize: 14, fontWeight: '900', color: colors.BlackGrayScale },
     location: { flex: 0, flexDirection: 'row', marginTop: '3%', position: 'absolute', bottom: 10, left: 3 },
     locarionName: { fontSize: 12, color: colors.BlackGrayScale, marginRight: '2%', textAlignVertical: 'top' },

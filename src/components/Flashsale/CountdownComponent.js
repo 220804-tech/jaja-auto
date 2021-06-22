@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { SafeAreaView, View, Text, TouchableOpacity, Dimensions, ToastAndroid, Alert } from 'react-native'
 import { Button } from 'react-native-paper'
-import { ServiceCore } from '../../export';
+import { colors, ServiceCore, styles, Wp } from '../../export';
 export default class CountdownComponent extends React.Component {
-    constructor() {
+    constructor(props) {
         super();
         this.state = { time: {}, seconds: 0 };
         this.timer = 0;
@@ -29,10 +29,11 @@ export default class CountdownComponent extends React.Component {
     }
 
     componentDidMount() {
+        console.log("file: CountdownComponent.js ~ line 7 ~ CountdownComponent ~ constructor ~ props", this.props.size)
         ServiceCore.getDateTime().then(res => {
             if (res) {
                 if (String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") < "180000" && String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") <= "240000") {
-                    this.timeToSeconds('17:30:00', "first")
+                    this.timeToSeconds(res.timeNow, "first")
                 } else if (String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") >= "180000" && String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") <= "240000") {
                     this.timeToSeconds(res.timeNow, "second")
                 }
@@ -41,9 +42,6 @@ export default class CountdownComponent extends React.Component {
     }
 
     timeToSeconds = (time, status) => {
-        console.log("===================================")
-
-        console.log("file: CountdownComponent.js ~ line 44 ~ CountdownComponent ~ time", time)
         let hours = 0;
         let minutes = (60 - parseInt(time.slice(3, 5))) * 60;
         let secs = 60 - parseInt(time.slice(6, 8))
@@ -52,13 +50,18 @@ export default class CountdownComponent extends React.Component {
         } else if (status === "second") {
             hours = (24 - parseInt(time.slice(0, 2))) * 3600;
         }
-        console.log("file: CountdownComponent.js ~ line 55 ~ CountdownComponent ~ hours", hours)
-        console.log("file: CountdownComponent.js ~ line 56 ~ CountdownComponent ~ minutes", minutes)
-        console.log("file: CountdownComponent.js ~ line 57 ~ CountdownComponent ~ secs", secs)
-        let timeLeftVar = this.secondsToTime(hours - minutes - secs);
-        this.setState({ time: timeLeftVar, seconds: hours - minutes - secs });
+        if (minutes < 3600) {
+            console.log("masuk minute")
+            hours = (hours - 3600) + minutes
+        }
+        if (secs > 0) {
+            console.log("masuk secs")
+            hours = (hours - 60) + secs
+        }
+
+        let timeLeftVar = this.secondsToTime(hours);
+        this.setState({ time: timeLeftVar, seconds: hours });
         this.startTimer()
-        console.log("file: CountdownComponent.js ~ line 62 ~ CountdownComponent ~ hours- minutes- secs", hours - minutes - secs)
     }
 
     startTimer() {
@@ -83,8 +86,18 @@ export default class CountdownComponent extends React.Component {
 
     render() {
         return (
-            <View>
-                <Text>h: {this.state.time.h} m: {this.state.time.m} s: {this.state.time.s}</Text>
+            <View style={[styles.row_center, styles.m, { backgroundColor: this.props.home ? colors.RedFlashsale : colors.White }]}>
+                <View style={[styles.row_center, styles.mx_3, { borderRadius: 5, width: Wp(`${this.props.wrap}+"%`), height: Wp(`${this.props.wrap}+"%`), backgroundColor: this.props.home ? colors.White : colors.RedFlashsale }]}>
+                    <Text style={[{ fontSize: this.props.size, color: this.props.home ? colors.RedFlashsale : colors.White }]}>{String(this.state.time.h).length === 1 ? "0" + this.state.time.h : this.state.time.h}</Text>
+                </View>
+                <Text style={[styles.font_20, { color: this.props.home ? colors.White : colors.RedFlashsale, fontWeight: 'bold' }]}>:</Text>
+                <View style={[styles.row_center, styles.mx_3, { borderRadius: 5, width: Wp(`${this.props.wrap}+"%`), height: Wp(`${this.props.wrap}+"%`), backgroundColor: this.props.home ? colors.White : colors.RedFlashsale }]}>
+                    <Text style={[{ fontSize: this.props.size, color: this.props.home ? colors.RedFlashsale : colors.White }]}>{String(this.state.time.m).length === 1 ? "0" + this.state.time.m : this.state.time.m}</Text>
+                </View>
+                <Text style={[styles.font_20, { color: this.props.home ? colors.White : colors.RedFlashsale, fontWeight: 'bold' }]}>:</Text>
+                <View style={[styles.row_center, styles.mx_3, { borderRadius: 5, width: Wp(`${this.props.wrap}+"%`), height: Wp(`${this.props.wrap}+"%`), backgroundColor: this.props.home ? colors.White : colors.RedFlashsale }]}>
+                    <Text style={[{ fontSize: this.props.size, color: this.props.home ? colors.RedFlashsale : colors.White }]}>{String(this.state.time.s).length === 1 ? "0" + this.state.time.s : this.state.time.s}</Text>
+                </View>
             </View>
         );
     }

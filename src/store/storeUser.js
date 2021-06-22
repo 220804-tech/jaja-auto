@@ -10,7 +10,6 @@ export default function storeUser(state = initialState, action) {
         case 'SET_USER':
             return { ...state, user: payload }
         case 'USER_LOGOUT':
-            console.log("🚀 ~ file: storeUser.js ~ line 17 ~ storeUser ~ USER_LOGOUT")
             return { ...state, badges: {}, user: {} }
         default:
             return state;

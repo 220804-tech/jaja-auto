@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux'
 export default function ListChat() {
     const navigation = useNavigation();
     const reduxUser = useSelector(state => state.user.user)
-    console.log("🚀 ~ file: ListChatScreen.js ~ line 11 ~ ListChat ~ reduxUser", reduxUser.uid)
     const reduxAuth = useSelector(state => state.auth.auth)
 
     const [phone, setPhone] = useState("");
@@ -19,7 +18,7 @@ export default function ListChat() {
 
     useEffect(() => {
         loadList()
-    }, []);
+    }, [reduxUser]);
 
 
     const convertTimes = (timestamp) => {
@@ -64,7 +63,9 @@ export default function ListChat() {
         );
     };
 
-    function loadList(val) {
+    function loadList() {
+        console.log("file: ListChatScreen.js ~ line 69 ~ loadList ~ reduxUser", reduxUser)
+        console.log("file: ListChatScreen.js ~ line 13 ~ ListChat ~ reduxAuth", reduxAuth)
         if (reduxUser && Object.keys(reduxUser).length) {
             database().ref("/friend/" + reduxUser.uid).on("value", function (snapshot) {
                 var returnArray = [];

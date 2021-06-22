@@ -30,9 +30,12 @@ import Account from '../screen/profile/AccountScreen';
 import ForgotPassword from '../screen/password/ForgotPasswordScreen'
 import CustomerService from '../screen/customerService/CustomerServiceScreen'
 import Flashsale from '../screen/flashsale/FlashsaleScreen'
+import Wishlist from '../screen/wishlist/WishlistScreen'
+import HistoryProduct from "../screen/historyProduct/HistoryProductScreen";
+
 
 export {
     Home, Product, ListChat, Chat, Orders, Profile, Login, Register, Splash, Search, Trolley, ProductSearch, Checkout, VerifikasiEmail, Account,
     Address, Category, AddAddress, Store, Midtrans, ForgotPassword, Feed, Review, ZoomReview, OrderDetails, AddReview, OrderDelivery,
-    CustomerService, Notification, Vouchers, Flashsale
+    CustomerService, Notification, Vouchers, Flashsale, Wishlist, HistoryProduct
 };

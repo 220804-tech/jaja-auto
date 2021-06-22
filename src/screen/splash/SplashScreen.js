@@ -100,10 +100,10 @@ export default function SplashScreen() {
                             dispatch({ type: 'SET_DASHCATEGORY', payload: resp.data.categoryChoice })
                             EncryptedStorage.setItem('dashcategory', JSON.stringify(resp.data.categoryChoice))
                         }
-                        if (resp.data.flashSale) {
-                            dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.data.flashSale })
-                            EncryptedStorage.setItem('dashflashsale', JSON.stringify(resp.data.flashSale))
-                        }
+                        // if (resp.data.flashSale) {
+                        //     dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.data.flashSale })
+                        //     EncryptedStorage.setItem('dashflashsale', JSON.stringify(resp.data.flashSale))
+                        // }
                         if (resp.data.trending) {
                             dispatch({ type: 'SET_DASHTRENDING', payload: resp.data.trending })
                             EncryptedStorage.setItem('dashtrending', JSON.stringify(resp.data.trending))

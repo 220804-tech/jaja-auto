@@ -59,9 +59,9 @@ export default function BottomRoute() {
                 } else {
                     Alert.alert(
                         "Error with status 12003",
-                        JSON.stringify(error)
+                        `${JSON.stringify(error)}`,
                         [
-                        { text: "OK", onPress: () => console.log("OK Pressed") }
+                            { text: "OK", onPress: () => console.log("OK Pressed") }
                         ],
                         { cancelable: false }
                     );
@@ -81,9 +81,9 @@ export default function BottomRoute() {
                 } else {
                     Alert.alert(
                         "Error with status 12004",
-                        JSON.stringify(error)
+                        `${JSON.stringify(error)}`,
                         [
-                        { text: "OK", onPress: () => console.log("OK Pressed") }
+                            { text: "OK", onPress: () => console.log("OK Pressed") }
                         ],
                         { cancelable: false }
                     );
@@ -104,9 +104,9 @@ export default function BottomRoute() {
                 } else {
                     Alert.alert(
                         "Error with status 12005",
-                        JSON.stringify(error)
+                        `${JSON.stringify(error)}`,
                         [
-                        { text: "OK", onPress: () => console.log("OK Pressed") }
+                            { text: "OK", onPress: () => console.log("OK Pressed") }
                         ],
                         { cancelable: false }
                     );
@@ -126,9 +126,9 @@ export default function BottomRoute() {
                 } else {
                     Alert.alert(
                         "Error with status 12006",
-                        JSON.stringify(error)
+                        `${JSON.stringify(error)}`,
                         [
-                        { text: "OK", onPress: () => console.log("OK Pressed") }
+                            { text: "OK", onPress: () => console.log("OK Pressed") }
                         ],
                         { cancelable: false }
                     );
@@ -148,9 +148,9 @@ export default function BottomRoute() {
                 } else {
                     Alert.alert(
                         "Error with status 12007",
-                        JSON.stringify(error)
+                        `${JSON.stringify(error)}`,
                         [
-                        { text: "OK", onPress: () => console.log("OK Pressed") }
+                            { text: "OK", onPress: () => console.log("OK Pressed") }
                         ],
                         { cancelable: false }
                     );
@@ -171,9 +171,9 @@ export default function BottomRoute() {
                 } else {
                     Alert.alert(
                         "Error with status 12008",
-                        JSON.stringify(error)
+                        `${JSON.stringify(error)}`,
                         [
-                        { text: "OK", onPress: () => console.log("OK Pressed") }
+                            { text: "OK", onPress: () => console.log("OK Pressed") }
                         ],
                         { cancelable: false }
                     );

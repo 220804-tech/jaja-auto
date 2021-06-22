@@ -1,14 +1,13 @@
 import React, { useEffect, useState, createRef } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Image, TextInput, ScrollView, FlatList, SafeAreaView, Alert, ToastAndroid } from 'react-native'
 import { styles as style, Wp, Hp, colors, useNavigation, Loading, ServiceUser } from '../../export'
-import MapView, { Marker } from 'react-native-maps';
+import { useAndroidBackHandler } from "react-navigation-backhandler";
 import ActionSheet from 'react-native-actions-sheet';
 import * as Service from '../../services/Address';
 import Maps from './Maps'
-import { useDispatch, useSelector } from 'react-redux'
-import { Appbar, Button } from 'react-native-paper';
+import { useDispatch } from 'react-redux'
+import { Appbar, Button, Checkbox } from 'react-native-paper';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import { Checkbox } from 'react-native-paper';
 export default function AddAddressScreen(props) {
     const navigation = useNavigation();
     const dispatch = useDispatch()
@@ -64,9 +63,16 @@ export default function AddAddressScreen(props) {
         latitudeDelta: 0.0922 * 0.025,
         longitudeDelta: 0.0421 * 0.025,
     })
+    useAndroidBackHandler(() => {
+        if (status === 'map') {
+            setStatus('edit')
+            return true
+        } else {
+            return false;
+        }
 
+    });
     useEffect(() => {
-
         if (props.route.params && props.route.params.edit) {
             let value = props.route.params.data;
             setnamaPenerima(value.nama_penerima)
@@ -355,7 +361,29 @@ export default function AddAddressScreen(props) {
         //     }
         // }
     }
-
+    const handleDelete = item => {
+        Alert.alert(
+            "Peringatan!",
+            "Anda ingin menghapus alamat?",
+            [
+                {
+                    text: "Tidak",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                {
+                    text: "Hapus", onPress: () => {
+                        setLoading(true)
+                        setTimeout(() => {
+                            setLoading(false)
+                            ToastAndroid.show("Alamat berhasil dihapus.", ToastAndroid.LONG, ToastAndroid.CENTER)
+                            navigation.goBack()
+                        }, 1000);
+                    }
+                }],
+            { cancelable: false }
+        );
+    }
     return (
         <SafeAreaView style={style.container}>
             {loading ? <Loading /> : null}
@@ -544,26 +572,23 @@ export default function AddAddressScreen(props) {
                                     </View>
                                 </View>
                             </TouchableWithoutFeedback>
-                            <View onPress={() => setStatus("map")} style={[style.row_start_center, { flex: 0, marginTop: '5%' }]}>
-                                <View style={styles.maps}>
-                                    <MapView
-                                        onPress={() => setStatus("map")}
-                                        style={{ flex: 1 }}
-                                        // onRegionChangeComplete={onRegionChange}
-                                        region={region}>
-                                        <Marker
-                                            coordinate={region}
-                                        />
-                                    </MapView>
+                            <View style={[style.column_start, style.mt_3]}>
+                                <Text style={styles.formTitle}>Alamat Google</Text>
+                                <View onPress={() => setStatus("map")} style={[style.row_start_center, style.mt_2]}>
+                                    <TouchableOpacity onPress={() => setStatus("map")} style={styles.maps}>
+                                        <Image style={{ width: '100%', height: '100%' }} source={require('../../assets/icons/map.jpg')} />
+                                    </TouchableOpacity>
+                                    <View style={{ flex: 1 }}>
+                                        {alamatGoogle === "" ?
+                                            <Text onPress={() => setStatus("map")} style={{ fontSize: 14, color: colors.RedDanger, fontFamily: 'serif' }}>Lokasi belum dipin</Text>
+                                            :
+                                            <Text onPress={() => setStatus("map")} style={{ fontSize: 14, color: colors.BlackGrayScale, fontFamily: 'serif', borderBottomWidth: 0.5 }}>{alamatGoogle}</Text>
+                                        }
+                                    </View>
                                 </View>
-                                <View style={{ flex: 1 }}>
-                                    {alamatGoogle === "" ?
-                                        <Text onPress={() => setStatus("map")} style={{ fontSize: 14, color: colors.RedDanger, fontFamily: 'serif' }}>Lokasi belum dipin</Text>
-                                        :
-                                        <Text onPress={() => setStatus("map")} style={{ fontSize: 14, color: colors.BlackGrayScale, fontFamily: 'serif', borderBottomWidth: 0.5 }}>{alamatGoogle}</Text>
-                                    }
-                                </View>
+
                             </View>
+                            {view === 'edit' ? <Button onPress={handleDelete} mode='contained' color={colors.RedDanger} style={{ width: '100%', marginVertical: '5%' }} contentStyle={{ width: '100%' }} labelStyle={{ color: colors.White }}>Hapus Alamat</Button> : null}
                         </View>
                     </ScrollView>
                 </>
@@ -707,7 +732,7 @@ const styles = StyleSheet.create({
         bottom: 0,
     },
 
-    maps: { width: Wp('21%'), height: Wp('21%'), marginRight: '3%' },
+    maps: { width: Wp('17%'), height: Wp('17%'), marginRight: '3%' },
     inputbox: {
         width: '100%',
         backgroundColor: 'transparent',

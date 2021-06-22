@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { View, Text, FlatList, Image, TouchableOpacity, ScrollView, Alert } from 'react-native'
-import { styles, Ps, Language, useNavigation, FastImage, colors, Wp, useFocusEffect, Hp, ServiceCore } from '../../export'
+import { styles, Ps, Language, useNavigation, FastImage, colors, Wp, useFocusEffect, Hp, ServiceCore, Countdown } from '../../export'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { useSelector, useDispatch } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient';
@@ -55,14 +55,23 @@ export default function FlashsaleComponent() {
     const [shimmerData] = useState(['1X', '2X', '3X'])
 
     return (
-        <View style={styles.p_3}>
-            <View style={styles.row_between_center}>
-                <Text style={styles.flashsale}>
-                    Flashsale
-                </Text>
+        <View style={[styles.column, styles.p_3, { backgroundColor: colors.RedFlashsale }]}>
+            <View style={[styles.row_between_center, styles.mb_2,]}>
+                <View style={[styles.row_start_center]}>
+                    <View style={[styles.row_center, { height: Wp('6%') }]}>
+                        <Text style={[styles.flashsale, styles.ml_2, { marginRight: '-1%', height: '100%' }]}>
+                            F
+                        </Text>
+                        <Image style={[styles.icon_16, { tintColor: colors.White, marginRight: '-1%' }]} source={require('../../assets/icons/flash.png')} />
+                        <Text style={[[styles.flashsale, { height: '100%' }]]}>
+                            ashsale
+                        </Text>
+                    </View>
+                    <Countdown size={11} wrap={6} home={true} />
+                </View>
                 <TouchableOpacity onPress={() => navigation.navigate('Flashsale')}>
-                    <Text style={[styles.font_12, { fontWeight: 'bold', color: colors.BlueJaja }]}>
-                        Lihat Semua <Image source={require('../../assets/icons/play.png')} style={[styles.icon_10, { tintColor: colors.BlueJaja }]} />
+                    <Text style={[{ fontSize: 13, fontWeight: 'bold', color: colors.White }]}>
+                        Lihat Semua <Image source={require('../../assets/icons/play.png')} style={[styles.icon_10, { tintColor: colors.White }]} />
                     </Text>
                 </TouchableOpacity>
             </View>
@@ -75,9 +84,8 @@ export default function FlashsaleComponent() {
                     renderItem={({ item, index }) => {
                         return (
                             <TouchableOpacity
-                                style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('57%'), alignItems: 'center' }]}
+                                style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('57%'), alignItems: 'center', elevation: 2 }]}
                                 onPress={() => handleShowDetail(item)} >
-                                <Text style={{ position: 'absolute', fontSize: 14, zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '6%', paddingHorizontal: '3%', top: 0, right: 5, borderBottomRightRadius: 5, borderBottomLeftRadius: 5, }}>{item.discountFlash}%</Text>
                                 <FastImage
                                     style={[Ps.imageProduct, { height: Wp('33%'), width: '100%' }]}
                                     source={{
@@ -90,18 +98,22 @@ export default function FlashsaleComponent() {
                                 <View style={[Ps.bottomCard, { alignSelf: 'flex-start', width: '100%', height: Wp('18%'), justifyContent: 'center', alignItems: 'flex-start' }]}>
                                     <Text
                                         numberOfLines={1}
-                                        style={Ps.nameProduct}>
+                                        style={Ps.name_product}>
                                         {item.name}
                                     </Text>
-                                    <Text style={Ps.priceBefore}>{item.price}</Text>
-                                    <Text style={Ps.priceAfter}>{item.priceDiscountFlash}</Text>
+                                    <View style={styles.row}>
+                                        <Text style={[Ps.priceBefore, styles.mr_3,]}>{item.price}</Text>
+                                        <Text style={{ fontSize: 12, zIndex: 1, backgroundColor: colors.RedFlashSoft, color: colors.RedFlashsale, paddingVertical: '1%', paddingHorizontal: '5%' }}>{item.discountFlash}%</Text>
+
+                                    </View>
+                                    <Text style={[Ps.priceAfter, { color: colors.RedFlashsale }]}>{item.priceDiscountFlash}</Text>
 
                                 </View>
                                 <View style={{ flex: 0, width: '95%', alignSelf: 'center', height: Wp('4%'), justifyContent: 'center', marginTop: '1%' }}>
                                     <View style={{
                                         borderRadius: 100,
                                         borderColor: colors.RedFlashsale,
-                                        backgroundColor: "#FFc9b9",
+                                        backgroundColor: colors.RedFlashSoft,
                                         borderWidth: 0.5,
                                         height: '90%',
                                         width: "100%",

@@ -27,7 +27,6 @@ export default function CardProductComponent(props) {
             numColumns={2}
             scrollEnabled={true}
             keyExtractor={(item, index) => String(index) + "X"}
-            onScroll={(e) => console.log("event ", e)}
             contentContainerStyle={{ justifyContent: 'space-between' }}
             renderItem={({ item, index }) => {
                 let load = false
@@ -63,7 +62,7 @@ export default function CardProductComponent(props) {
                                             <Text style={Ps.priceAfter}>{item.priceDiscount}</Text>
                                         </>
                                         :
-                                        <Text style={Ps.price}>{item.price}</Text>
+                                        <Text style={[Ps.price, { fontWeight: 'bold', color: colors.BlueJaja }]}>{item.price}</Text>
                                     }
                                 </View>
                                 <View style={Ps.location}>

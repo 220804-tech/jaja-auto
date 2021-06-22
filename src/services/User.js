@@ -1,4 +1,4 @@
-import { ToastAndroid } from 'react-native'
+import { ToastAndroid, Alert } from 'react-native'
 export async function getBadges(auth) {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);
@@ -17,17 +17,17 @@ export async function getBadges(auth) {
             if (result.status.code === 200) {
                 return result.data;
             } else {
-                Alert.alert(
-                    "Jaja.id",
-                    String(result.status.message) + " => " + String(result.status.code),
-                    [
-                        {
-                            text: "TUTUP",
-                            onPress: () => console.log("Cancel Pressed"),
-                            style: "cancel"
-                        },
-                    ]
-                );
+                // Alert.alert(
+                //     "Jaja.id",
+                //     String(result.status.message) + " => " + String(result.status.code),
+                //     [
+                //         {
+                //             text: "TUTUP",
+                //             onPress: () => console.log("Cancel Pressed"),
+                //             style: "cancel"
+                //         },
+                //     ]
+                // );
                 return null
             }
         })

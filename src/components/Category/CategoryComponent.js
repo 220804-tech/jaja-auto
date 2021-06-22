@@ -87,7 +87,7 @@ export default function CategoryComponent() {
                         } else {
                             Alert.alert(
                                 "Error with status 13001",
-                                JSON.stringify(error)
+                                `${JSON.stringify(error)}`
                                 [
                                 { text: "OK", onPress: () => console.log("OK Pressed") }
                                 ],
@@ -120,8 +120,8 @@ export default function CategoryComponent() {
                     Kategori Pilihan
                 </Text>
                 <TouchableOpacity onPress={() => handleCategory('Art Shop')}>
-                    <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}>
-                        Lihat Semua
+                    <Text style={[{ fontSize: 13, fontWeight: 'bold', color: colors.BlueJaja }]}>
+                        Lihat Semua <Image source={require('../../assets/icons/play.png')} style={[styles.icon_10, { tintColor: colors.BlueJaja }]} />
                     </Text>
                 </TouchableOpacity>
             </View>
