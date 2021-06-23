@@ -24,8 +24,6 @@ export default function FlashsaleScreen() {
     });
 
 
-
-
     useFocusEffect(
         useCallback(() => {
             ServiceCore.getDateTime().then(res => {

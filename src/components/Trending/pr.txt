@@ -1,0 +1,22 @@
+1. Di hp tertentu (Dark mode) tampilan popup tidak terlihat jelas #pending
+
+Profile
+2. Fitur hapus alamat di profile belum ada                                          *selesai*
+3. Halaman list Wishlist                                                            *selesai*
+4. Halaman list Terakir Dilihat                                                     *selesai*
+5. Halaman kode Referal (Optional)                                                  *pending*
+
+Flashsale/Product
+6. Detail flashsale tidak sesuai                                                    *selesai*
+7. Add Wishlist                                                                     *selesai*
+8. tutup halaman flashsale bila flashsale kosong                                    *selesai*
+
+Trolley
+8. Saat tambah quantity di trolley variasi tidak sesuai *pending*
+
+Checkout
+9. List voucher di checkout, jangan tampilkan voucher yang sudah pernah digunakan   *pending*
+10. Voucher jaja di kasih status untuk ongkir atau total belanja                    *pending*
+
+Orders
+11. Tambahin notif/gambar bila tidak ada pesanan                                    *selesai*

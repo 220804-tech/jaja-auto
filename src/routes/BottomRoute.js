@@ -22,12 +22,11 @@ export default function BottomRoute() {
 
     useEffect(() => {
         try {
-            if (uid) {
+            if (uid && reduxAuth) {
                 database()
                     .ref('/people/' + uid)
                     .on('value', snapshot => {
                         let result = snapshot.val()
-                        console.log("file: BottomRoute.js ~ line 26 ~ local", reduxnotifCount.orders)
                         if (result && result.notif) {
                             dispatch({ type: 'SET_NOTIF_COUNT', payload: result.notif })
                             setNotif(result.notif)
@@ -37,6 +36,8 @@ export default function BottomRoute() {
                             getOrders()
                         }
                     });
+            } else {
+                dispatch({ type: 'SET_NOTIF_COUNT', payload: { home: 0, chat: 0, orders: 0 } })
             }
         } catch (error) {
 

@@ -188,11 +188,11 @@ export default function ProfileScreen(props) {
             <Text style={style.title}>Alamat</Text>
             {location && location.length ? null : <Text style={[styles.ml_2, { color: colors.RedNotif, fontStyle: 'italic', fontSize: 13 }]}>( Alamat belum lengkap )</Text>}
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate('Wishlist')}>
+          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate(reduxAuth ? 'Wishlist' : 'Login')}>
             <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/love.png`)} />
             <Text style={style.title}>Favorit</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate('HistoryProduct')}>
+          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate(reduxAuth ? 'HistoryProduct' : 'Login')}>
             <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/history.png`)} />
             <Text style={style.title}>Terakhir Dilihat</Text>
           </TouchableOpacity>

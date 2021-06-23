@@ -1,16 +1,14 @@
 import React, { useEffect } from 'react'
 import { SafeAreaView, View, Text, Alert, ScrollView } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { colors, useNavigation, Card, Appbar, styles } from '../../export'
+import { RecomandedHobby, useNavigation, Card, Appbar, styles } from '../../export'
 
 
 export default function HistoryProductScreen() {
     const dispatch = useDispatch()
     const navigation = useNavigation()
-    const reduxWistlist = useSelector(state => state.profile.historyProduct)
+    const reduxHistoryProduct = useSelector(state => state.profile.historyProduct)
     const reduxUser = useSelector(state => state.user.user)
-
-    console.log("file: WishlistScreen.js ~ line 8 ~ WishlistScreen ~ reduxWistlist", reduxUser.id)
 
     useEffect(() => {
         getItem()
@@ -49,9 +47,15 @@ export default function HistoryProductScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <Appbar back={true} title='Terakhir Diihat' />
-            <View style={[styles.column, styles.px_3, styles.mb_5, styles.pb_5]}>
+            <View style={[styles.column, styles.mb_5, styles.pb_5]}>
                 <ScrollView contentContainerStyle={styles.pb_5}>
-                    <Card data={reduxWistlist.concat(reduxWistlist.concat(reduxWistlist.concat(reduxWistlist.concat(reduxWistlist))))} />
+                    {reduxHistoryProduct && reduxHistoryProduct.length ?
+                        <View style={[styles.column, styles.px_3]}>
+                            <Card data={reduxHistoryProduct} />
+                        </View>
+                        : <Text style={[styles.font_14, styles.my_5, styles.py_5, { alignSelf: 'center' }]}>Riwayat kamu masih kosong!</Text>
+                    }
+                    {/* <RecomandedHobby /> */}
                 </ScrollView>
             </View>
         </SafeAreaView>

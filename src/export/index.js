@@ -35,10 +35,13 @@ import { styles } from '../assets/styles/styles'
 import { widthPercentageToDP as Wp, heightPercentageToDP as Hp } from 'react-native-responsive-screen';
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import colors from '../assets/colors'
+import OrderNotFound from '../components/NotFound/OrderNotFound'
+import DefaultNotFound from '../components/NotFound/DefaultNotFound'
 
 import Countdown from '../components/Flashsale/CountdownComponent'
 export {
     Appbar, CardProduct, Category, Flashsale, Maps, HobyAverage, RecomandedHobby, Trending, Language, Loading, CheckSignal, BasedOnSearch, styles,
     Ps, Wp, Hp, useNavigation, colors, useFocusEffect, FastImage, Form, ServiceCart, ServiceCheckout, ServiceUser, ServiceVoucher, ServiceOrder, Os,
-    ServiceCategory, ServiceProduct, ServiceStore, ServiceFirebase, Card, Ts, ServiceNotif, ShimmerCardProduct, ServiceCore, Countdown
+    ServiceCategory, ServiceProduct, ServiceStore, ServiceFirebase, Card, Ts, ServiceNotif, ShimmerCardProduct, ServiceCore, Countdown, OrderNotFound,
+    DefaultNotFound
 }

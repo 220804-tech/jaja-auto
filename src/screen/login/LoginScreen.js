@@ -179,8 +179,13 @@ export default function LoginScreen(props) {
                         }
                     })
                     getOrders(data)
-                    console.log("🚀 ~ file: LoginScreen.js ~ line 206 ~ handleUser ~ navigate", navigate)
-                    ServiceUser.getBadges(data);
+                    ServiceUser.getBadges(data).then(res => {
+                        if (res) {
+                            dispatch({ type: "SET_BADGES", payload: res })
+                        } else {
+                            dispatch({ type: "SET_BADGES", payload: {} })
+                        }
+                    })
                     if (navigate) {
                         navigation.setParams({ 'navigate': null });
                         navigation.goBack();

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native'
 import { useDispatch } from 'react-redux'
-import { colors, FastImage, Ps, useNavigation, styles, Wp } from '../../export'
+import { colors, FastImage, Ps, useNavigation, Wp } from '../../export'
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -38,17 +38,23 @@ export default function CardProductComponent(props) {
                                 style={[Ps.cardProduct, { marginRight: '3.5%' }]}
                                 key={index}>
                                 {item.isDiscount ? <Text style={Ps.textDiscount}>{item.discount}%</Text> : null}
-                                <FastImage
-                                    style={Ps.imageProduct}
-                                    onLoadStart={() => load = true}
-                                    onLoadEnd={() => load = false}
-                                    source={{
-                                        uri: item.image,
-                                        headers: { Authorization: 'someAuthToken' },
-                                        priority: FastImage.priority.normal,
-                                    }}
-                                    resizeMode={FastImage.resizeMode.cover}
-                                />
+                                {item.image ?
+                                    <FastImage
+                                        style={Ps.imageProduct}
+                                        onLoadStart={() => load = true}
+                                        onLoadEnd={() => load = false}
+                                        source={{
+                                            uri: item.image,
+                                            headers: { Authorization: 'someAuthToken' },
+                                            priority: FastImage.priority.normal,
+                                        }}
+                                        resizeMode={FastImage.resizeMode.cover}
+                                    /> :
+                                    <FastImage
+                                        style={Ps.imageProduct}
+                                        source={require('../../assets/images/JajaId.png')}
+                                        resizeMode={FastImage.resizeMode.cover}
+                                    />}
 
                                 <View style={Ps.bottomCard}>
                                     <Text

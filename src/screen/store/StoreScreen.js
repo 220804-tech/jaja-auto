@@ -74,6 +74,7 @@ export default function StoreScreen() {
             ServiceCart.getCart(reduxAuth).then(res => {
                 if (res) {
                     dispatch({ type: 'SET_CART', payload: res })
+
                 }
             })
             navigation.navigate("Trolley")

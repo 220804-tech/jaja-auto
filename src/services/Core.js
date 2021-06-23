@@ -49,6 +49,7 @@ export async function getFlashsale() {
     return await fetch("https://jaja.id/backend/flashsale", requestOptions)
         .then(response => response.json())
         .then(result => {
+            console.log("file: Core.js ~ line 52 ~ getFlashsale ~ result", result)
             if (result.status.code === 200 || result.status.code === 204) {
                 return result.data;
             } else {

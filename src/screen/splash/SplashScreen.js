@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { ServiceOrder, colors, styles, useNavigation } from '../../export';
 import database from '@react-native-firebase/database';
+import { getFlashsale } from '../../services/Core';
 
 export default function SplashScreen() {
     const reduxDashboard = useSelector(state => state.dashboard)
@@ -37,6 +38,7 @@ export default function SplashScreen() {
             EncryptedStorage.getItem('token').then(resp => {
                 getItem(resp)
                 getData()
+                getFlashsale()
                 getOrders(resp)
                 dispatch({ type: 'SET_AUTH', payload: JSON.parse(resp) })
 

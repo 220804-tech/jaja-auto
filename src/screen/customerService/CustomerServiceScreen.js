@@ -11,7 +11,7 @@ export default function CustomerServiceScreen() {
         <SafeAreaView style={styles.container}>
             <StatusBar hidden={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
             <Image style={styles.iconMarket} source={require('../../assets/ilustrations/empty.png')} />
-            <Paragraph style={styles.textJajakan}>Ups, <Text style={styles.textCenter}>feature ini akan segera hadir, nantikan update selanjutnya.</Text></Paragraph>
+            <Paragraph style={styles.textJajakan}>Ups.. <Text style={styles.textCenter}>feature ini akan segera hadir, nantikan update selanjutnya.</Text></Paragraph>
             <Button labelStyle={{ color: 'white' }} onPress={() => handleOpen()} mode="contained" color={colors.BlueJaja} style={styles.button}>Kembali</Button>
         </SafeAreaView>
     )

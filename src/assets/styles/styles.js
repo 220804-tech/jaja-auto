@@ -151,7 +151,7 @@ export const styles = StyleSheet.create({
         letterSpacing: 0,
         textAlign: "left",
         fontFamily: 'Lato-Bold',
-        color: colors.BlueJaja,
+        color: colors.BlackTitle,
         marginBottom: '3%'
     },
     dashboardContent: {

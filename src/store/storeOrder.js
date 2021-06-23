@@ -1,11 +1,18 @@
 const initialState = {
     unPaid: [],
+    unPaidEmpty: false,
     waitConfirm: [],
+    waitConfirmEmpty: false,
     process: [],
+    processEmpty: false,
     sent: [],
+    sentEmpty: false,
     completed: [],
+    completedEmpty: false,
     failed: [],
+    failedEmpty: false,
     filter: [],
+    filterEmpty: false,
     tracking: [],
     receipt: "",
     invoice: ""
@@ -25,6 +32,18 @@ export default function storeOrder(state = initialState, action) {
             return { ...state, completed: payload }
         case 'SET_FAILED':
             return { ...state, failed: payload }
+        case 'SET_UNPAID_EMPTY':
+            return { ...state, unPaidEmpty: payload }
+        case 'SET_WAITCONFIRM_EMPTY':
+            return { ...state, waitConfirmEmpty: payload }
+        case 'SET_PROCESS_EMPTY':
+            return { ...state, processEmpty: payload }
+        case 'SET_SENT_EMPTY':
+            return { ...state, sentEmpty: payload }
+        case 'SET_COMPLETED_EMPTY':
+            return { ...state, completedEmpty: payload }
+        case 'SET_FAILED_EMPTY':
+            return { ...state, failedEmpty: payload }
         case 'SET_ORDER_FILTER':
             return { ...state, filter: payload }
         case 'SET_TRACKING':

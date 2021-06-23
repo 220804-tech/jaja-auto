@@ -1,6 +1,7 @@
 const initialState = {
     category: [],
     flashsale: [],
+    showFlashsale: true,
     trending: [],
     hobyAverage: [],
     basedOnSearch: [],
@@ -16,6 +17,8 @@ export default function storeDashboard(state = initialState, action) {
             return { ...state, category: payload }
         case 'SET_DASHFLASHSALE':
             return { ...state, flashsale: payload }
+        case 'SET_SHOW_FLASHSALE':
+            return { ...state, showFlashsale: payload }
         case 'SET_DASHTRENDING':
             return { ...state, trending: payload }
         case 'SET_DASHHOBYAVERAGE':

@@ -45,6 +45,8 @@ export default function AppbarComponent(props) {
         ServiceUser.getBadges(reduxAuth ? reduxAuth : auth).then(res => {
             if (res) {
                 dispatch({ type: "SET_BADGES", payload: res })
+            } else {
+                dispatch({ type: "SET_BADGES", payload: {} })
             }
         })
     }

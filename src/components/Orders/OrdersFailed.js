@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { View, Text, FlatList, Image, TouchableOpacity, RefreshControl, ToastAndroid } from 'react-native'
-import { colors, styles, Wp, ServiceOrder, useNavigation, Os } from '../../export';
+import { colors, styles, Wp, ServiceOrder, useNavigation, Os, DefaultNotFound } from '../../export';
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
 
@@ -108,7 +108,8 @@ export default function OrdersFailed() {
                             </TouchableOpacity>
                         )
                     }}
-                /> : null
+                /> :
+                <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong" ilustration={require('../../assets/ilustrations/empty.png')} />
             }
         </View>
     )

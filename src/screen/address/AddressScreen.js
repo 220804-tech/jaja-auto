@@ -192,17 +192,22 @@ export default function index(props) {
             "Anda ingin menghapus alamat?",
             [
                 {
-                    text: "Tidak",
+                    text: "BATAL",
                     onPress: () => console.log("Cancel Pressed"),
                     style: "cancel"
                 },
                 {
                     text: "Hapus", onPress: () => {
                         setLoading(true)
-                        setTimeout(() => {
-                            setLoading(false)
-                            ToastAndroid.show("Alamat berhasil dihapus.", ToastAndroid.LONG, ToastAndroid.CENTER)
-                        }, 1000);
+                        ServiceUser.deleteAddress(reduxAuth, item.id).then(res => {
+                            if (res && res.status && res.status === 200) {
+                                ToastAndroid.show("Alamat berhasil dihapus.", ToastAndroid.LONG, ToastAndroid.CENTER)
+                            }
+                            getData()
+                            setTimeout(() => setLoading(false), 1000);
+
+                        })
+                        setTimeout(() => setLoading(false), 3000);
                     }
                 }],
             { cancelable: false }
@@ -214,10 +219,6 @@ export default function index(props) {
                 <View style={styles.body}>
                     <View style={style.row_between_center}>
                         <Text numberOfLines={1} style={[styles.textName, { width: '55%' }]}>{item.nama_penerima ? item.nama_penerima : ""}</Text>
-
-                        {/* <TouchableOpacity onPress={() => console.log("pressed")}>
-                            <Image style={styles.options} source={require('../../assets/icons/edit_pen.png')} />
-                        </TouchableOpacity> */}
                         {status === "checkout" ?
                             <Text style={style.font_14}>{item.label}</Text>
                             :
@@ -264,11 +265,14 @@ export default function index(props) {
                     <RefreshControl refreshing={refreshControl} onRefresh={onRefresh} />
                 }
                 contentContainerStyle={{ paddingHorizontal: '4%', paddingBottom: '15%', paddingTop: '4%' }}>
-                <FlatList
-                    data={reduxUser}
-                    keyExtractor={(item, idx) => String(idx)}
-                    renderItem={renderItem}
-                />
+                {reduxUser && reduxUser.length ?
+                    <FlatList
+                        data={reduxUser}
+                        keyExtractor={(item, idx) => String(idx)}
+                        renderItem={renderItem}
+                    /> :
+                    <Text style={[style.font_14, style.my_5, style.py_5, { alignSelf: 'center' }]}>Alamat kamu masih kosong!</Text>
+                }
             </ScrollView>
         </SafeAreaView>
     )

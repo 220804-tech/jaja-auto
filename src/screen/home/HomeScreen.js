@@ -19,6 +19,7 @@ LogBox.ignoreAllLogs()
 export default function HomeScreen() {
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
     const reduxProfile = useSelector(state => state.user.user)
+    const reduxShowFlashsale = useSelector(state => state.dashboard.showFlashsale)
 
     useAndroidBackHandler(() => {
         if (out) {
@@ -96,12 +97,16 @@ export default function HomeScreen() {
         } catch (error) {
 
         }
+        console.log("file: HomeScreen.js ~ line 191 ~ renderContent ~ reduxShowFlashsale", reduxShowFlashsale)
+
     }, [])
 
     const getBadges = () => {
         ServiceUser.getBadges(reduxAuth ? reduxAuth : auth).then(result => {
             if (result) {
                 dispatch({ type: "SET_BADGES", payload: result })
+            } else {
+                dispatch({ type: "SET_BADGES", payload: {} })
             }
         })
     }
@@ -175,7 +180,7 @@ export default function HomeScreen() {
         return (
             <View style={styles.column}>
                 <Category />
-                <Flashsale />
+                {reduxShowFlashsale ? <Flashsale /> : null}
                 <Trending />
                 {/* <BasedOnSearch /> */}
                 {/* <HobbyAverage /> */}

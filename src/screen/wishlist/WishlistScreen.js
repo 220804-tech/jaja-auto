@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { SafeAreaView, View, Text, Alert, ScrollView } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { colors, useNavigation, Card, Appbar, styles } from '../../export'
+import { useNavigation, Card, Appbar, styles, RecomandedHobby } from '../../export'
 
 
 export default function WishlistScreen() {
@@ -49,9 +49,15 @@ export default function WishlistScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <Appbar back={true} title='Favorit' />
-            <View style={[styles.column, styles.px_3, styles.mb_5, styles.pb_5]}>
+            <View style={[styles.column, styles.mb_5, styles.pb_5]}>
                 <ScrollView contentContainerStyle={styles.pb_5}>
-                    <Card data={reduxWistlist.concat(reduxWistlist.concat(reduxWistlist.concat(reduxWistlist.concat(reduxWistlist))))} />
+                    {reduxWistlist && reduxWistlist.length ?
+                        <View style={[styles.column, styles.px_3]}>
+                            <Card data={reduxWistlist} />
+                        </View>
+                        : <Text style={[styles.font_14, styles.my_5, styles.py_5, { alignSelf: 'center' }]}>Favorit kamu masih kosong!</Text>
+                    }
+                    {/* <RecomandedHobby /> */}
                 </ScrollView>
             </View>
         </SafeAreaView>

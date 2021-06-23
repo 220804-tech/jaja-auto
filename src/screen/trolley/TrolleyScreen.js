@@ -27,7 +27,7 @@ export default function TrolleyScreen() {
                 navigation.navigate("Login")
             }
         })
-    }, [])
+    }, [reduxCart.cart])
 
     useFocusEffect(
         useCallback(() => {
@@ -61,7 +61,7 @@ export default function TrolleyScreen() {
             arr.items[indexParent].products[indexChild].isSelected = !arr.items[indexParent].products[indexChild].isSelected
         }
         dispatch({ type: 'SET_CART', payload: arr })
-        setLoading(false)
+        // setLoading(false)
         var myHeaders = new Headers();
         myHeaders.append("Authorization", reduxAuth ? reduxAuth : auth);
         myHeaders.append("Content-Type", "application/json");
@@ -79,7 +79,6 @@ export default function TrolleyScreen() {
         fetch("https://jaja.id/backend/cart/selected", requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: TrolleyScreen.js ~ line 51 ~ handleCheckbox ~ result", result)
                 if (result.status.code === 200) {
                     handleApiCart()
                 } else {
@@ -111,6 +110,7 @@ export default function TrolleyScreen() {
         setDisableCheckout(true)
         setdisableQty(true)
         let arr = reduxCart.cart;
+        console.log("file: TrolleyScreen.js ~ line 110 ~ handleQty ~ name", arr.items[indexParent].products[indexChild])
         if (name === "plus") {
             arr.items[indexParent].products[indexChild].qty = String(parseInt(arr.items[indexParent].products[indexChild].qty) + 1)
         } else {
@@ -120,8 +120,8 @@ export default function TrolleyScreen() {
                 arr.items[indexParent].products[indexChild].qty = String(parseInt(arr.items[indexParent].products[indexChild].qty) - 1)
             }
         }
-        dispatch({ type: "SET_CART", payload: arr })
         setTimeout(() => {
+            // dispatch({ type: "SET_CART", payload: arr })
             setdisableQty(false)
         }, 100);
         var myHeaders = new Headers();
@@ -131,7 +131,8 @@ export default function TrolleyScreen() {
 
         var raw = JSON.stringify({
             "productId": arr.items[indexParent].products[indexChild].productId,
-            "qty": arr.items[indexParent].products[indexChild].qty
+            "qty": arr.items[indexParent].products[indexChild].qty,
+            'variantId': arr.items[indexParent].products[indexChild].variantId
         });
 
         var requestOptions = {
@@ -144,20 +145,18 @@ export default function TrolleyScreen() {
         fetch("https://jaja.id/backend/cart/qty?action=change", requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("file: TrolleyScreen.js ~ line 147 ~ handleQty ~ result", result)
                 if (result.status.code === 200) {
-                    handleApiCart()
                 } else if (result.status.code === 400) {
                     if (result.status.message === "quantity cannot more than stock") {
                         ToastAndroid.show('Stok produk tidak cukup', ToastAndroid.LONG, ToastAndroid.TOP)
                     } else {
                         ToastAndroid.show(String(result.status.message) + " => " + String(result.message.code), ToastAndroid.LONG, ToastAndroid.TOP)
-
                     }
                 } else {
                     ToastAndroid.show(String(result.status.message) + " => " + String(result.message.code), ToastAndroid.LONG, ToastAndroid.TOP)
+                    handleFailed(name, indexParent, indexChild)
                 }
-                handleFailed(name, indexParent, indexChild)
+                handleApiCart()
                 setTimeout(() => {
                     setDisableCheckout(false)
                 }, 500);
@@ -266,6 +265,7 @@ export default function TrolleyScreen() {
                     contentContainerStyle={{ flex: 0, flexDirection: 'column', justifyContent: 'center', width: '100%', paddingBottom: Hp('7%') }}
                     keyExtractor={(item, index) => String(index)}
                     renderItem={({ item, index }) => {
+                        console.log("file: TrolleyScreen.js ~ line 270 ~ TrolleyScreen ~ item", item.products[0].qty)
                         let indexParent = index
                         return (
                             <View onPress={() => handleSelected(item)} style={{ marginBottom: '2%', backgroundColor: colors.White, flex: 0, flexDirection: 'column', alignItems: 'flex-start' }}>

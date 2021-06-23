@@ -3,7 +3,7 @@ import { View, Text, SafeAreaView, TouchableOpacity, FlatList, Image, StyleSheet
 import { Paragraph } from 'react-native-paper'
 import database from "@react-native-firebase/database";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'
-import { colors, useNavigation, styles as style, Appbar } from "../../export";
+import { colors, useNavigation, styles as style, Appbar, DefaultNotFound } from "../../export";
 import { useSelector } from 'react-redux'
 
 export default function ListChat() {
@@ -111,14 +111,7 @@ export default function ListChat() {
                         />
                     </View>
                     :
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.White }}>
-                        <Image
-                            style={styles.iconMarket}
-                            source={require('../../assets/ilustrations/empty.png')}
-                        />
-                        <Paragraph style={styles.textJajakan}>Ups..<Text style={styles.textCenter}> {reduxAuth ? 'kamu belum chat siapapun' : 'sepertinya kamu belum login'}</Text></Paragraph>
-                    </View>
-
+                    <DefaultNotFound textHead="Ups.." textBody={reduxAuth ? "kamu belum chat siapapun" : "sepertinya kamu belum login"} ilustration={require('../../assets/ilustrations/empty.png')} />
             }
         </SafeAreaView>
     );

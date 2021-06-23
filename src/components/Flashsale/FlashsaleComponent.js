@@ -34,8 +34,12 @@ export default function FlashsaleComponent() {
                         );
                     } else {
                         ServiceCore.getFlashsale().then(resp => {
-                            if (resp) {
+                            console.log("file: FlashsaleComponent.js ~ line 200 ~ ServiceCore.getFlashsale ~ resp", resp)
+                            if (resp && resp.flashsale && resp.flashsale.length) {
+                                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: true })
                                 dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.flashsale })
+                            } else {
+                                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
                             }
                         })
 
@@ -103,7 +107,7 @@ export default function FlashsaleComponent() {
                                     </Text>
                                     <View style={styles.row}>
                                         <Text style={[Ps.priceBefore, styles.mr_3,]}>{item.price}</Text>
-                                        <Text style={{ fontSize: 12, zIndex: 1, backgroundColor: colors.RedFlashSoft, color: colors.RedFlashsale, paddingVertical: '1%', paddingHorizontal: '5%' }}>{item.discountFlash}%</Text>
+                                        <Text style={{ fontSize: 12, zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '1%', paddingHorizontal: '5%' }}>{item.discountFlash}%</Text>
 
                                     </View>
                                     <Text style={[Ps.priceAfter, { color: colors.RedFlashsale }]}>{item.priceDiscountFlash}</Text>
@@ -160,7 +164,7 @@ export default function FlashsaleComponent() {
                                 key={item}
                                 style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('57%'), alignItems: 'center' }]}>
                                 <FastImage
-                                    style={[Ps.imageProduct, { height: Wp('33%'), width: '100%', backgroundColor: colors.Silver, borderTopRightRadius: 10, borderTopLeftRadius: 10 }]}
+                                    style={[Ps.imageProduct, { height: Wp('33%'), width: '100%', backgroundColor: colors.Silver, borderTopRightRadius: 3, borderTopLeftRadius: 3 }]}
                                     source={require('../../assets/images/JajaId.png')}
                                     tintColor={colors.White}
                                     resizeMode={FastImage.resizeMode.center}

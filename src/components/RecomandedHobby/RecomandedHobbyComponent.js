@@ -6,7 +6,7 @@ import { styles, colors, Card, CheckSignal, ShimmerCardProduct } from '../../exp
 import EncryptedStorage from 'react-native-encrypted-storage';
 import * as Progress from 'react-native-progress';
 
-export default function RecomandedHobbyComponent() {
+export default function RecomandedHobbyComponent(props) {
 
     const [auth, setAuth] = useState("")
     const [page, setPage] = useState(1);
@@ -112,7 +112,7 @@ export default function RecomandedHobbyComponent() {
     return (
         <View style={[styles.column, styles.p_3]}>
             <View style={styles.row}>
-                <Text style={styles.titleDashboard}>
+                <Text style={[styles.titleDashboard, { color: props.color ? props.color : colors.BlueJaja }]}>
                     Rekomendasi Hobby
                 </Text>
             </View>
