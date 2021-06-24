@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { SafeAreaView, View, Text, Alert, ScrollView } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { RecomandedHobby, useNavigation, Card, Appbar, styles } from '../../export'
+import { RecomandedHobby, useNavigation, Card, Appbar, styles, colors } from '../../export'
 
 
 export default function HistoryProductScreen() {
@@ -47,7 +47,7 @@ export default function HistoryProductScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <Appbar back={true} title='Terakhir Diihat' />
-            <View style={[styles.column, styles.mb_5, styles.pb_5]}>
+            <View style={[styles.column, styles.pb_5, { flex: 1, backgroundColor: colors.White }]}>
                 <ScrollView contentContainerStyle={styles.pb_5}>
                     {reduxHistoryProduct && reduxHistoryProduct.length ?
                         <View style={[styles.column, styles.px_3]}>

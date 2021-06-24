@@ -142,7 +142,7 @@ export default function ProfileScreen(props) {
                   <Text numberOfLines={1} style={[styles.font_14, { color: colors.White, width: '100%' }]}>{reduxProfile.name}</Text>
                   <View style={[styles.row_start_center, { width: '100%' }]}>
                     <Text numberOfLines={1} style={[styles.font_14, styles.mr_3, { color: colors.White }]}>{reduxProfile.coin}</Text>
-                    <Image source={require('../../assets/icons/coin.png')} style={styles.icon_14} />
+                    <Image source={require('../../assets/icons/coin.jpg')} style={styles.icon_14} />
                   </View>
                 </View>
                 :
@@ -199,6 +199,10 @@ export default function ProfileScreen(props) {
           <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate(reduxAuth ? 'Vouchers' : 'Login')}>
             <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/coupon.png`)} />
             <Text style={style.title}>Voucher</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate(reduxAuth ? 'Reward' : 'Login')}>
+            <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/star.png`)} />
+            <Text style={style.title}>Reward</Text>
           </TouchableOpacity>
           {/* <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={handleCart}>
                 <View style={{ flexDirection: 'row' }}>

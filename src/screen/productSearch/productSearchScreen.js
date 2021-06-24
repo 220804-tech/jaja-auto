@@ -213,7 +213,7 @@ export default function ProductSearchScreen() {
             redirect: 'follow'
         };
 
-        fetch(`https://jaja.id/backend/product/search/result?page=${page + 1}&limit=6&keyword=${keyword}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
+        fetch(`https://jaja.id/backend/product/search/result?page=${page + 1}&limit=10&keyword=${keyword}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.status.code === 200) {

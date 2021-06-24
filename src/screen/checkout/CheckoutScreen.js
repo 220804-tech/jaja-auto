@@ -732,7 +732,6 @@ export default function checkoutScreen() {
                             <Image style={[styles.icon_25, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/offer.png')} />
                             <Text style={[styles.font_16, { fontWeight: 'bold', color: colors.BlueJaja }]}>Voucher Diskon</Text>
                         </View>
-                        {console.log("🚀 ~ file: CheckoutScreen.js ~ line 737 ~ checkoutScreen ~ reduxCheckout", reduxCheckout)}
                         <View style={[styles.column, styles.p_3]}>
                             <View style={[styles.row_between_center, styles.mb]}>
                                 <Text numberOfLines={1} style={[styles.font_14]}>{reduxCheckout.voucherJajaSelected.name}</Text>
@@ -765,19 +764,21 @@ export default function checkoutScreen() {
                     </View>
                     <View style={[styles.row_between_center, styles.p_3]}>
                         <View style={styles.column}>
-                            <Text style={[styles.font_14, { marginBottom: '1%' }]}>Total belanja</Text>
-                            <Text style={[styles.font_14, { marginBottom: '1%' }]}>Voucher Jaja.id</Text>
-                            <Text style={[styles.font_14, { marginBottom: '1%' }]}>Ongkos kirim</Text>
-                            <Text style={[styles.font_14, { marginBottom: '1%' }]}>Biaya penanganan</Text>
-                            {/* <Text style={[styles.font_14, { marginBottom: '1%' }]}>Voucher Toko</Text> */}
+                            <Text style={[styles.font_13, { marginBottom: '2%' }]}>Total Belanja</Text>
+                            {reduxCheckout.voucherJajaType === "diskon" ? <Text style={[styles.font_13, { marginBottom: '2%' }]}>Diskon</Text> : null}
+                            <Text style={[styles.font_13, { marginBottom: '2%' }]}>Biaya Pengiriman</Text>
+                            {reduxCheckout.voucherJajaType !== "diskon" ? <Text style={[styles.font_13, { marginBottom: '2%' }]}>Diskon Pengiriman</Text> : null}
+                            <Text style={[styles.font_13, { marginBottom: '2%' }]}>Biaya penanganan</Text>
+                            {/* <Text style={[styles.font_13, { marginBottom: '2%' }]}>Voucher Toko</Text> */}
 
                         </View>
                         <View style={styles.column_center_end}>
-                            <Text style={[styles.font_14, { marginBottom: '1%' }]}>{reduxCheckout.subTotalCurrencyFormat}</Text>
-                            <Text style={[styles.font_14, { marginBottom: '1%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountJajaCurrencyFormat}</Text>
-                            <Text style={[styles.font_14, { marginBottom: '1%' }]}>{reduxCheckout.shippingCostCurrencyFormat}</Text>
-                            <Text style={[styles.font_14, { marginBottom: '1%' }]}>Rp0</Text>
-                            {/* <Text style={[styles.font_14, { marginBottom: '1%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountCurrencyFormat}</Text> */}
+                            <Text style={[styles.font_13, { marginBottom: '2%' }]}>{reduxCheckout.subTotalCurrencyFormat}</Text>
+                            {reduxCheckout.voucherJajaType === "diskon" ? <Text style={[styles.font_13, { marginBottom: '2%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountJajaCurrencyFormat}</Text> : null}
+                            <Text style={[styles.font_13, { marginBottom: '2%' }]}>{reduxCheckout.shippingCostCurrencyFormat}</Text>
+                            {reduxCheckout.voucherJajaType !== "diskon" ? <Text style={[styles.font_13, { marginBottom: '2%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountJajaCurrencyFormat}</Text> : null}
+                            <Text style={[styles.font_13, { marginBottom: '2%' }]}>Rp0</Text>
+                            {/* <Text style={[styles.font_13, { marginBottom: '1%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountCurrencyFormat}</Text> */}
 
                         </View>
 

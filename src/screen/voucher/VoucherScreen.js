@@ -16,6 +16,7 @@ export default function VoucherScreen() {
     }, [])
 
     const getItem = () => {
+        setLoading(true)
         var myHeaders = new Headers();
         myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Cookie", "ci_session=keor4a23m53ul7lnlafdhdtoshr7cd1v");
@@ -34,8 +35,14 @@ export default function VoucherScreen() {
                 } else {
                     ToastAndroid.show(String(result.status.message) + " => " + String(result.status.code), ToastAndroid.LONG, ToastAndroid.CENTER)
                 }
+                setTimeout(() => {
+                    setLoading(false)
+                }, 500);
             })
             .catch(error => {
+                setTimeout(() => {
+                    setLoading(false)
+                }, 500);
                 if (String(error).slice(11, String(error).length) === "Network request failed") {
                     ToastAndroid.show("Gagal memuat, periksa kembali koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
                 } else {

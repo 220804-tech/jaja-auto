@@ -2,8 +2,10 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, StyleSheet, RefreshControl, Platform, Dimensions, LogBox, Animated } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
-import { BasedOnSearch, Trending, Category, Flashsale, Language, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect } from '../../export'
+import { BasedOnSearch, Trending, Category, Flashsale, Language, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect, } from '../../export'
 const { height: SCREEN_HEIGHT, width } = Dimensions.get('window');
+import DeviceInfo from 'react-native-device-info';
+
 const { height: hg } = Dimensions.get('screen')
 
 import FastImage from 'react-native-fast-image'
@@ -80,6 +82,9 @@ export default function HomeScreen() {
                         EncryptedStorage.setItem("historySearching", JSON.stringify(data))
                     }
                 })
+                let uniqueId = DeviceInfo.getUniqueId()
+                console.log("file: HomeScreen.js ~ line 88 ~ useCallback ~ sasasasasasas", uniqueId)
+
             } catch (error) {
 
             }
@@ -193,13 +198,14 @@ export default function HomeScreen() {
 
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
         return layoutMeasurement.height + contentOffset.y >=
-            contentSize.height - (hg * 0.37)
+            contentSize.height - (hg * 0.70) || layoutMeasurement.height + contentOffset.y >=
+            contentSize.height - (hg * 0.05)
     }
 
     const loadMoreData = () => {
-        if (!reduxLoadmore) {
+        if (reduxLoadmore === false) {
+            // console.log("masuk as")
             dispatch({ 'type': 'SET_LOADMORE', payload: true })
-            console.log("masuk as")
         }
     }
 
@@ -252,6 +258,7 @@ export default function HomeScreen() {
                             {
                                 listener: event => {
                                     if (isCloseToBottom(event.nativeEvent)) {
+                                        console.log("oNSCROLL ");
                                         loadMoreData()
                                     }
                                 }

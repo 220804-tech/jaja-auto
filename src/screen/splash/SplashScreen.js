@@ -176,7 +176,7 @@ export default function SplashScreen() {
             redirect: 'follow'
         };
 
-        fetch("https://jaja.id/backend/product/recommendation?page=1&limit=10", requestOptions)
+        fetch("https://jaja.id/backend/product/recommendation?page=1&limit=20", requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.status.code == 200 || result.status.code == 204) {

@@ -1,0 +1,11 @@
+- User melihat produk dan menyimpan kategori produk tersebut
+- Api mengeluarkan semua produk (daerahnya saja) sesuai kategori yang disimpan 
+- Frontend memproses semua daerah (kota) dan memfilter daerah terdekat 
+- Frontend mengembalikan daerah yang sudah di filter ke backend
+- Backend mengembalikan produk sesuai filter kategori dan daerah yang dikirim frontend 
+
+user kategori
+
+sport
+pakaian
+elektronik

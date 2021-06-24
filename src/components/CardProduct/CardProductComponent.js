@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { colors, FastImage, Ps, useNavigation, Wp } from '../../export'
@@ -14,7 +14,20 @@ export default function CardProductComponent(props) {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
         navigation.navigate("Product", { slug: item.slug, image: item.image })
     }
+    useEffect(() => {
+        // dispatch({ type: 'SET_DASHRECOMMANDED', payload: [] })
+    }, [])
 
+    FastImage.preload([
+        {
+            uri: 'https://picsum.photos/700',
+            headers: { Authorization: 'someAuthToken' },
+        },
+        {
+            uri: 'https://picsum.photos/700',
+            headers: { Authorization: 'someAuthToken' },
+        },
+    ])
 
     return (
         <FlatList
@@ -29,33 +42,23 @@ export default function CardProductComponent(props) {
             keyExtractor={(item, index) => String(index) + "X"}
             contentContainerStyle={{ justifyContent: 'space-between' }}
             renderItem={({ item, index }) => {
-                let load = false
                 return (
                     <>
-                        {!load ?
+                        {!item.loading ?
                             <TouchableOpacity
                                 onPress={() => handleShowDetail(item)}
                                 style={[Ps.cardProduct, { marginRight: '3.5%' }]}
                                 key={index}>
                                 {item.isDiscount ? <Text style={Ps.textDiscount}>{item.discount}%</Text> : null}
-                                {item.image ?
-                                    <FastImage
-                                        style={Ps.imageProduct}
-                                        onLoadStart={() => load = true}
-                                        onLoadEnd={() => load = false}
-                                        source={{
-                                            uri: item.image,
-                                            headers: { Authorization: 'someAuthToken' },
-                                            priority: FastImage.priority.normal,
-                                        }}
-                                        resizeMode={FastImage.resizeMode.cover}
-                                    /> :
-                                    <FastImage
-                                        style={Ps.imageProduct}
-                                        source={require('../../assets/images/JajaId.png')}
-                                        resizeMode={FastImage.resizeMode.cover}
-                                    />}
-
+                                <FastImage
+                                    style={Ps.imageProduct}
+                                    source={{
+                                        uri: item.image,
+                                        headers: { Authorization: 'someAuthToken' },
+                                        priority: FastImage.priority.normal,
+                                    }}
+                                    resizeMode={FastImage.resizeMode.cover}
+                                />
                                 <View style={Ps.bottomCard}>
                                     <Text
                                         numberOfLines={2}
@@ -78,7 +81,7 @@ export default function CardProductComponent(props) {
                             </TouchableOpacity>
                             :
                             <TouchableOpacity
-                                style={Ps.cardProduct}
+                                style={[Ps.cardProduct, { marginRight: '3.5%' }]}
                                 key={item}>
                                 <FastImage
                                     style={[Ps.imageProduct, { backgroundColor: colors.Silver }]}
@@ -120,7 +123,6 @@ export default function CardProductComponent(props) {
                                     </View>
                                 </View>
                             </TouchableOpacity>
-
                         }
                     </>
                 )

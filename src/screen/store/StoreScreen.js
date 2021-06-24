@@ -129,10 +129,10 @@ export default function StoreScreen() {
                                     <View style={[styles.column_start, { height: Wp('15%') }]}>
                                         <Text style={[styles.font_14, { color: colors.BlackGrayScale, fontWeight: 'bold', marginBottom: '3%' }]}>{reduxStore.name}</Text>
                                         <Text style={[styles.font_12, { color: colors.BlackGrayScale, marginBottom: '3%' }]}>{reduxStore.location.city}</Text>
-                                        {reduxStore.rating === "0.0" ?
+                                        {reduxStore.rating !== "0.0" ?
                                             <View style={styles.row_center}>
-                                                <Text style={[styles.font_14, { color: colors.BlackGrayScale }]}>4.0{reduxStore.rating === "0.0" ? null : reduxStore.rating} </Text>
-                                                <Image source={require('../../assets/icons/star.png')} style={styles.icon_14} />
+                                                <Text style={[styles.font_14, { color: colors.BlackGrayScale }]}>{reduxStore.rating} </Text>
+                                                <Image source={require('../../assets/icons/star.png')} style={[styles.icon_14, { tintColor: colors.YellowJaja }]} />
                                             </View>
                                             :
                                             <View style={styles.row_center}>

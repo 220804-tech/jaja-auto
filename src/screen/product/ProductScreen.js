@@ -349,24 +349,27 @@ export default function ProductScreen(props) {
             <View style={[styles.column, { backgroundColor: '#e8e8e8', paddingBottom: Hp('6%') }]}>
                 {reduxSearch.productDetail && Object.keys(reduxSearch.productDetail).length ?
                     <View style={styles.column}>
-                        <View style={[styles.row_between_center, { backgroundColor: colors.RedFlashsale, width: Wp('100%'), paddingHorizontal: '3%', paddingVertical: '2%' }]}>
-                            <View style={[styles.column_center_start, { width: '60%' }]}>
-                                <View style={[styles.row_center, { height: Wp('6%') }]}>
-                                    <Text style={[styles.flashsale, { marginRight: '-1%', height: '100%', fontSize: 20 }]}>
-                                        F
-                                    </Text>
-                                    <Image style={[styles.icon_21, { tintColor: colors.White, marginRight: '-1%' }]} source={require('../../assets/icons/flash.png')} />
-                                    <Text style={[[styles.flashsale, { height: '100%', fontSize: 20 }]]}>
-                                        ashsale
-                                    </Text>
-                                </View>
-                                <Text style={[styles.font_12, { color: colors.White, }]}>Sedang Berlangsung..</Text>
+                        {flashsale ?
+                            <View style={[styles.row_between_center, { backgroundColor: colors.RedFlashsale, width: Wp('100%'), paddingHorizontal: '3%', paddingVertical: '2%' }]}>
+                                <View style={[styles.column_center_start, { width: '60%' }]}>
+                                    <View style={[styles.row_center, { height: Wp('6%') }]}>
+                                        <Text style={[styles.flashsale, { marginRight: '-1%', height: '100%', fontSize: 20 }]}>
+                                            F
+                                        </Text>
+                                        <Image style={[styles.icon_21, { tintColor: colors.White, marginRight: '-1%' }]} source={require('../../assets/icons/flash.png')} />
+                                        <Text style={[[styles.flashsale, { height: '100%', fontSize: 20 }]]}>
+                                            ashsale
+                                        </Text>
+                                    </View>
+                                    <Text style={[styles.font_12, { color: colors.White, }]}>Sedang Berlangsung..</Text>
 
+                                </View>
+                                <View style={[styles.row_center_end, { width: '40%' }]}>
+                                    <Countdown size={12} wrap={7} home={true} />
+                                </View>
                             </View>
-                            <View style={[styles.row_center_end, { width: '40%' }]}>
-                                <Countdown size={12} wrap={7} home={true} />
-                            </View>
-                        </View>
+                            : null
+                        }
                         <View style={{ flex: 0, flexDirection: 'column', backgroundColor: colors.White, padding: '3%', marginBottom: '1%' }}>
                             <Text style={{ fontSize: 18, color: colors.BlackGrayScale, fontWeight: 'bold', marginBottom: '2%' }}>{reduxSearch.productDetail.name}</Text>
                             {Object.keys(variasiSelected).length ?
@@ -383,7 +386,9 @@ export default function ProductScreen(props) {
                                 :
                                 reduxSearch.productDetail.isDiscount ?
                                     <View style={styles.row}>
-                                        <Text style={{ fontSize: 14, color: colors.White, fontWeight: 'bold', backgroundColor: colors.RedFlashsale, padding: '2%', borderRadius: 5, marginRight: '2%' }}>{reduxSearch.productDetail.discount}%</Text>
+                                        <View style={[styles.row_center, { width: Wp('11%'), height: Wp('11%'), backgroundColor: colors.RedFlashsale, padding: '1.5%', borderRadius: 5, marginRight: '2%' }]}>
+                                            <Text style={{ fontSize: 14, color: colors.White, fontWeight: 'bold' }}>50%</Text>
+                                        </View>
                                         <View style={styles.column}>
                                             <Text style={Ps.priceBefore}>{reduxSearch.productDetail.price}</Text>
                                             <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{reduxSearch.productDetail.priceDiscount}</Text>

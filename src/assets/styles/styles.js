@@ -109,10 +109,15 @@ export const styles = StyleSheet.create({
     font_8: { fontSize: 8, fontWeight: '900', color: colors.BlackGrayScale },
     font_10: { fontSize: 10, fontWeight: '900', color: colors.BlackGrayScale },
     font_12: { fontSize: 12, fontWeight: '900', color: colors.BlackGrayScale },
+    font_13: { fontSize: 13, fontWeight: '900', color: colors.BlackGrayScale },
     font_14: { fontSize: 14, fontWeight: '900', color: colors.BlackGrayScale },
     font_16: { fontSize: 16, fontWeight: '900', color: colors.BlackGrayScale },
     font_18: { fontSize: 18, fontWeight: '900', color: colors.BlackGrayScale },
     font_20: { fontSize: 20, fontWeight: '900', color: colors.BlackGrayScale },
+    font_22: { fontSize: 22, fontWeight: '900', color: colors.BlackGrayScale },
+    font_24: { fontSize: 24, fontWeight: '900', color: colors.BlackGrayScale },
+    font_26: { fontSize: 26, fontWeight: '900', color: colors.BlackGrayScale },
+
     icon_25: { width: 25, height: 25 },
     icon_24: { width: 24, height: 24 },
     icon_23: { width: 23, height: 23 },
@@ -151,7 +156,7 @@ export const styles = StyleSheet.create({
         letterSpacing: 0,
         textAlign: "left",
         fontFamily: 'Lato-Bold',
-        color: colors.BlackTitle,
+        color: colors.BlueJaja,
         marginBottom: '3%'
     },
     dashboardContent: {

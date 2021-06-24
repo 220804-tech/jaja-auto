@@ -15,8 +15,8 @@ Trolley
 8. Saat tambah quantity di trolley variasi tidak sesuai *pending*
 
 Checkout
-9. List voucher di checkout, jangan tampilkan voucher yang sudah pernah digunakan   *pending*
-10. Voucher jaja di kasih status untuk ongkir atau total belanja                    *pending*
+9. List voucher di checkout, jangan tampilkan voucher yang sudah pernah digunakan   *selesai*
+10. Voucher jaja di kasih status untuk ongkir atau total belanja                    *selesai*
 
 Orders
 11. Tambahin notif/gambar bila tidak ada pesanan                                    *selesai*
