@@ -180,12 +180,12 @@ export default function VoucherScreen() {
                                             <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
                                             <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
                                         </View>
-                                        <View style={[styles.column_center, styles.p, { height: '100%', width: '33%', marginLeft: Wp('3%'), backgroundColor: colors.BlueJaja }]}>
-                                            <Text style={[styles.font_16, styles.mb_2, { color: colors.White, fontWeight: 'bold', alignSelf: 'center' }]}>{item.name}</Text>
+                                        <View style={[styles.column_center, styles.p, { height: '100%', width: '30%', marginLeft: Wp('3%'), backgroundColor: colors.BlueJaja }]}>
+                                            <Text style={[styles.font_14, styles.mb_2, { color: colors.White, fontWeight: 'bold', alignSelf: 'center' }]}>{item.name}</Text>
                                         </View>
                                         <View style={[styles.column_center, styles.px_2, { width: '33%' }]}>
-                                            <Text numberOfLines={3} style={[styles.font_16, styles.mb_2, { color: colors.BlueJaja, fontWeight: 'bold', width: '100%' }]}>Diskon {item.discountText}</Text>
-                                            <Text style={[styles.font_8, { position: 'absolute', bottom: 5, color: colors.BlueJaja, fontWeight: 'bold', width: '100%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
+                                            <Text numberOfLines={3} style={[styles.font_14, styles.mb_2, { color: colors.BlueJaja, fontWeight: 'bold', width: '100%' }]}>Diskon {item.discountText}</Text>
+                                            <Text style={[styles.font_8, { position: 'absolute', bottom: 5, color: colors.BlueJaja, fontWeight: 'bold', width: '100%', backgroundColor: 'silver' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
                                         </View>
                                         <View style={[styles.column_center, { width: '33%' }]}>
                                             <TouchableOpacity onPress={() => handleVoucher(item, index)} style={{ width: '50%', height: '35%', backgroundColor: item.isClaimed ? colors.White : colors.BlueJaja, padding: '2%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.BlueJaja, borderRadius: 5 }}>

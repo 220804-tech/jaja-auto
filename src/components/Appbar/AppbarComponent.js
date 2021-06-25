@@ -67,7 +67,7 @@ export default function AppbarComponent(props) {
                         </TouchableOpacity>
                     : null}
                 {props.title ?
-                    <Text style={[styles.font_16, { fontWeight: 'bold', color: colors.White }]}>{Language(props.title)}</Text>
+                    <Text style={[styles.font_16, { fontWeight: 'bold', color: colors.White, width: '60%' }]}>{Language(props.title)}</Text>
                     : null
                 }
             </View>

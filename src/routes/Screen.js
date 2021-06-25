@@ -33,10 +33,11 @@ import Flashsale from '../screen/flashsale/FlashsaleScreen'
 import Wishlist from '../screen/wishlist/WishlistScreen'
 import HistoryProduct from "../screen/historyProduct/HistoryProductScreen";
 import Reward from "../screen/reward/RewardScreen";
+import Referral from "../screen/reward/ReferralScreen";
 
 
 export {
     Home, Product, ListChat, Chat, Orders, Profile, Login, Register, Splash, Search, Trolley, ProductSearch, Checkout, VerifikasiEmail, Account,
     Address, Category, AddAddress, Store, Midtrans, ForgotPassword, Feed, Review, ZoomReview, OrderDetails, AddReview, OrderDelivery,
-    CustomerService, Notification, Vouchers, Flashsale, Wishlist, HistoryProduct, Reward
+    CustomerService, Notification, Vouchers, Flashsale, Wishlist, HistoryProduct, Reward, Referral
 };

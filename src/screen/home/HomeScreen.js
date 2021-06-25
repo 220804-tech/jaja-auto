@@ -50,21 +50,21 @@ export default function HomeScreen() {
     const images = [
         {
             title: "Sport & Outdoor",
-            image: require("../../assets/images/splashscreen/splash_musics.jpg"),
+            image: "https://nimda.jaja.id/asset/front/images/file/aee601e2b447abd891ae9c74f1bd5021.jpg",
             loading: require("../../assets/gifs/splashscreen/loading_page.gif"),
             router: "KategoriSport",
             color: "#68b0c8"
         },
         {
             title: "Sport & Outdoor",
-            image: require("../../assets/images/splashscreen/splash_localpride.jpg"),
+            image: "https://nimda.jaja.id/asset/front/images/file/835df82b3973315acf6cbbfc42773558.png",
             loading: require("../../assets/gifs/splashscreen/loading_page.gif"),
             router: "KategoriSport",
             color: "#fdb94c"
         },
         {
             title: "Toys",
-            image: require("../../assets/images/splashscreen/splash_toys.jpg"),
+            image: "https://nimda.jaja.id/asset/front/images/file/5e177ef22d9e286155e8a3c2cd9e00aa.png",
             loading: require("../../assets/gifs/splashscreen/loading_page.gif"),
             router: "KategoriBuku",
             color: "#68b0c8"
@@ -172,8 +172,8 @@ export default function HomeScreen() {
                 {images.map((item, key) => {
                     return (
                         <Image key={String(key)} style={style.swiperBanner}
-                            resizeMode={item["image"] == '' ? "center" : "cover"}
-                            source={item["image"]}
+                            resizeMode={item.image ? "contain" : "cover"}
+                            source={{ uri: item.image }}
                         />
                     );
                 })}
@@ -239,7 +239,7 @@ export default function HomeScreen() {
                 )}
             > */}
             <ReactNativeParallaxHeader
-                headerMaxHeight={Hp('33%')}
+                headerMaxHeight={Hp('30%')}
                 extraScrollHeight={20}
                 navbarColor={colors.BlueJaja}
                 titleStyle={style.titleStyle}
@@ -318,6 +318,6 @@ const style = StyleSheet.create({
         fontSize: 18,
     },
     touchIcon: { width: '14%', justifyContent: 'center', alignItems: 'center' },
-    swiperBanner: { width: "100%", height: Hp('33%'), resizeMode: 'contain' },
+    swiperBanner: { width: "100%", height: Hp('30%'), resizeMode: 'contain', backgroundColor: colors.BlueJaja },
     searchBar: { flexDirection: 'row', backgroundColor: colors.White, borderRadius: 10, height: NAV_BAR_HEIGHT / 1.9, width: '70%', alignItems: 'center', paddingHorizontal: '4%' }
 });

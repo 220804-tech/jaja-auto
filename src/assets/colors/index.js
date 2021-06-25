@@ -2,12 +2,13 @@ export default {
     siplahDefault: '#36405e',
     White: "#FFFFFF",
     Silver: "#C0C0C0",
+    BlackSilver: '#b8b8b8',
     BlackGrey: "#9A9A9A",
     BlackTitle: '#6e6e6e',
+
     BlackGrayScale: '#454545',
     DarkCharcoal: '#333333',
     Black: '#000000',
-
 
     Red: "#ff0000",
     RedNotif: "#fa3e3e",

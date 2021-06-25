@@ -1,15 +1,24 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { SafeAreaView, View, Text, StyleSheet, Image } from 'react-native'
 import { Button } from 'react-native-paper'
-import { colors, styles, Wp, Hp, Appbar, } from '../../export'
+import { colors, styles, Wp, Hp, Appbar, useNavigation, } from '../../export'
+
 export default function RewardScreen() {
+    const navigation = useNavigation();
+    const [status, setStatus] = useState('false');
+
+    useEffect(() => {
+
+    }, [])
+
+
     return (
         <SafeAreaView style={styles.container}>
             <Appbar back={true} title="Reward" />
             <View style={[styles.column, styles.p_3, { flex: 1, backgroundColor: colors.White }]}>
                 <View style={[styles.column, style.card]}>
                     <View style={[style.banner, styles.px_4, styles.py_5]}>
-                        <Text style={[styles.font_14, { color: colors.White }]}>Undang teman kamu untuk instal Jaja.id dan dapatkan koin belanja hingga 50.000</Text>
+                        <Text style={[styles.font_14, { color: colors.White, fontWeight: 'bold' }]}>Undang teman kamu untuk instal Jaja.id dan dapatkan koin belanja hingga 100.000</Text>
                     </View>
                     <View style={[styles.row_center_start, styles.p_4]}>
                         <View style={[styles.column_start, { width: '58%' }]}>
@@ -27,14 +36,15 @@ export default function RewardScreen() {
                         </View>
                     </View>
                     <View style={[styles.column_center_start, styles.px_4, styles.pt, styles.pb_5]}>
-                        <Text numberOfLines={2} style={[styles.font_13, styles.mb_5]}>Dapatkan 50.000 KOIN setiap hari, selama event ini berlangsung</Text>
-                        <Button color={colors.BlueJaja} labelStyle={{ color: colors.White, fontWeight: 'bold', fontSize: 12 }} mode="contained" style={{ borderRadius: 100, paddingHorizontal: '3%' }}>Pelajari</Button>
+                        <Text numberOfLines={2} style={[styles.font_13, styles.mb_5, { fontStyle: 'italic', color: colors.RedFlashsale }]}>* Promo ini hanya berlaku selama event berlangsung</Text>
+                        <Button onPress={() => navigation.navigate('Referral')} color={colors.BlueJaja} labelStyle={{ color: colors.White, fontWeight: 'bold', fontSize: 12 }} mode="contained" style={{ borderRadius: 100, paddingHorizontal: '3%' }}>Pelajari</Button>
                     </View>
                 </View>
             </View>
         </SafeAreaView >
     )
 }
+
 const style = StyleSheet.create({
     card: {
         backgroundColor: colors.White,
