@@ -142,7 +142,7 @@ export default function ProfileScreen(props) {
                   <Text numberOfLines={1} style={[styles.font_14, { color: colors.White, width: '100%' }]}>{reduxProfile.name}</Text>
                   <View style={[styles.row_start_center, { width: '100%' }]}>
                     <Text numberOfLines={1} style={[styles.font_14, styles.mr_3, { color: colors.White }]}>{reduxProfile.coin}</Text>
-                    <Image source={require('../../assets/icons/coin.jpg')} style={styles.icon_14} />
+                    <Image source={require('../../assets/icons/coin.png')} style={styles.icon_14} />
                   </View>
                 </View>
                 :
