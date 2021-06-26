@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, Linking, StyleSheet, Platform, Dimensions, Image, Alert } from 'react-native';
+import { SafeAreaView, View, Text, TouchableOpacity, Linking, StyleSheet, Platform, Dimensions, Image, Alert, TouchableHighlight } from 'react-native';
 import { styles, Hp, Wp, colors, useNavigation, useFocusEffect, Loading, Appbar, ServiceCart } from '../../export'
 import { Button } from 'react-native-paper'
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -9,7 +9,7 @@ const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
 const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 import { useDispatch, useSelector } from 'react-redux'
-
+import { getDistance, getPreciseDistance } from 'geolib';
 export default function ProfileScreen(props) {
   const navigation = useNavigation();
   const dispatch = useDispatch()
@@ -121,6 +121,39 @@ export default function ProfileScreen(props) {
     navigation.navigate('Category');
   }
 
+  const calculateDistance = () => {
+    var dis = getDistance(
+      { latitude: -4.4543, longitude: 96.1527 },
+      { latitude: -6.1751, longitude: 106.9756 },
+    );
+    alert(
+      `Distance\n\n${dis} Meter\nOR\n${dis / 1000} KM`
+    );
+  };
+
+  const calculatePreciseDistance = () => {
+    var pdis = getPreciseDistance(
+      { latitude: -6.321586109862249, longitude: 106.87017515272444 },
+      { latitude: -6.168069464610844, longitude: 107.00333140704073 },
+    );
+    alert(
+      `Precise Distance\n\n${pdis} Meter\nOR\n${pdis / 1000} KM`
+    );
+  };
+
+
+  {/* {reduxAuth ?
+    <View style={[styles.row_around_center, styles.mt_5, { width: '100%' }]}>
+      <View style={[styles.column_center, { width: '50%' }]}>
+        <Text numberOfLines={1} style={[styles.font_14, { color: colors.White, textAlign: 'center' }]}>0</Text>
+        <Text style={[styles.font_14, { color: colors.White }]}>Voucher</Text>
+      </View>
+      <View style={[styles.column_center, { width: '50%' }]}>
+        <Text numberOfLines={1} style={[styles.font_14, { color: colors.White, alignSelf: 'center', textAlign: 'center' }]}>0</Text>
+        <Text style={[styles.font_14, { color: colors.White }]}>Toko Diikuti</Text>
+      </View>
+    </View>
+    : null} */}
   return (
 
     <SafeAreaView style={(styles.container, { backgroundColor: colors.BlueJaja })}>
@@ -152,34 +185,14 @@ export default function ProfileScreen(props) {
                 </View>
               }
             </View>
-            {/* {reduxAuth ?
-              <View style={[styles.row_around_center, styles.mt_5, { width: '100%' }]}>
-                <View style={[styles.column_center, { width: '50%' }]}>
-                  <Text numberOfLines={1} style={[styles.font_14, { color: colors.White, textAlign: 'center' }]}>0</Text>
-                  <Text style={[styles.font_14, { color: colors.White }]}>Voucher</Text>
-                </View>
-                <View style={[styles.column_center, { width: '50%' }]}>
-                  <Text numberOfLines={1} style={[styles.font_14, { color: colors.White, alignSelf: 'center', textAlign: 'center' }]}>0</Text>
-                  <Text style={[styles.font_14, { color: colors.White }]}>Toko Diikuti</Text>
-                </View>
-              </View>
-              : null} */}
           </View>
         </View>
         <View style={{ flex: 0, flexDirection: 'column', zIndex: 998, backgroundColor: colors.White, height: Hp('85%'), marginTop: Hp('-1%'), borderTopRightRadius: 21, borderTopLeftRadius: 21, paddingHorizontal: '4%', paddingTop: '2%' }}>
-          {/* <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={() => navigation.navigate('Address')}>
-                <View style={{ flexDirection: 'row' }}>
-                  <FAIcon name="map-pin" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
-                  <Text style={style.title}>  Alamat </Text>
-                </View>
-              </TouchableOpacity> */}
           <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate(reduxAuth ? 'Account' : 'Login')}>
-            {/* <FAIcon name="user" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} /> */}
             <Image style={{ width: 27, height: 27, marginRight: '3%' }} source={require(`../../assets/icons/customer.png`)} />
             <Text style={style.title}>Profile</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate(reduxAuth ? 'Address' : 'Login')}>
-            {/* <FAIcon name="user" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} /> */}
             <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/google-maps.png`)} />
             <Text style={style.title}>Alamat</Text>
             {location && location.length ? null : <Text style={[styles.ml_2, { color: colors.RedNotif, fontStyle: 'italic', fontSize: 13 }]}>( Alamat belum lengkap )</Text>}
@@ -200,18 +213,6 @@ export default function ProfileScreen(props) {
             <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/star.png`)} />
             <Text style={style.title}>Reward</Text>
           </TouchableOpacity>
-          {/* <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={handleCart}>
-                <View style={{ flexDirection: 'row' }}>
-                  <FAIcon name="user" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
-                  <Text style={style.title}> Favorit </Text>
-                </View>
-              </TouchableOpacity> */}
-          {/* <TouchableOpacity style={{ borderBottomWidth: 0.3 }} onPress={() => nva}>
-              <View style={{ flexDirection: 'row' }}>
-                <FAIcon name="bars" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
-                <Text style={style.title}> Pesanan Saya </Text>
-              </View>
-            </TouchableOpacity> */}
           <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => {
             Linking.canOpenURL('https://jaja.id/bantuan/').then(supported => {
               console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 82 ~ Linking.canOpenURL ~ supported", supported)
@@ -223,14 +224,12 @@ export default function ProfileScreen(props) {
               }
             })
           }}>
-            {/* <FAIcon name="cog" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} /> */}
             <Image style={{ width: 27, height: 27, marginRight: '3%' }} source={require(`../../assets/icons/service.png`)} />
             <Text style={style.title}>Pusat Bantuan</Text>
 
           </TouchableOpacity>
           {reduxAuth ?
             <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={handleLogout}>
-              {/* <FAIcon name="cog" size={27} color={colors.BlueJaja} style={{ alignSelf: 'center' }} /> */}
               <Image style={{ width: 27, height: 27, marginRight: '3%' }} source={require(`../../assets/icons/logout.png`)} />
               <Text style={style.title}>Keluar</Text>
 
@@ -239,6 +238,39 @@ export default function ProfileScreen(props) {
           }
         </View>
       </View>
+      {/* <View style={style.container}>
+        <View style={style.container}>
+          <Text style={style.header}>
+            Example to Calculate Distance Between Two Locations
+          </Text>
+          <Text style={style.textStyle}>
+            Distance between
+            {'\n'}
+            Jakarta Ciracas(-6.323116, 106.870941)
+            and,
+            Bekasi Tarumajaya (-6.168069464610844, 107.00333140704073)
+          </Text>
+          <TouchableHighlight
+            style={style.buttonStyle}
+            onPress={calculateDistance}>
+            <Text>Get Distance</Text>
+          </TouchableHighlight>
+          <Text style={style.textStyle}>
+            Precise Distance between
+            {'\n'}
+            India(20.0504188, 64.4139099)
+            and
+            UK (51.528308, -0.3817765)
+          </Text>
+          <TouchableHighlight
+            style={style.buttonStyle}
+            onPress={calculatePreciseDistance}>
+            <Text>
+              Get Precise Distance
+            </Text>
+          </TouchableHighlight>
+        </View>
+      </View> */}
     </SafeAreaView >
   );
 }
@@ -250,4 +282,25 @@ const style = StyleSheet.create({
     marginVertical: 15,
   },
   touchIcon: { width: '14%', justifyContent: 'center', alignItems: 'center' },
+  header: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: 'black',
+    textAlign: 'center',
+    paddingVertical: 20,
+  },
+  textStyle: {
+    marginTop: 30,
+    fontSize: 16,
+    textAlign: 'center',
+    color: 'black',
+    paddingVertical: 20,
+  },
+  buttonStyle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 50,
+    backgroundColor: '#dddddd',
+    margin: 10,
+  },
 });

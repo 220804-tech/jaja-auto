@@ -1,7 +1,8 @@
 import React, { useEffect, useState, createRef } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Image, TextInput, ScrollView, FlatList, SafeAreaView, Alert, ToastAndroid } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Image, TextInput, ScrollView, FlatList, SafeAreaView, Alert, ToastAndroid, Dimensions } from 'react-native'
 import { styles as style, Wp, Hp, colors, useNavigation, Loading, ServiceUser } from '../../export'
 import { useAndroidBackHandler } from "react-navigation-backhandler";
+const { width, height } = Dimensions.get('screen')
 import ActionSheet from 'react-native-actions-sheet';
 import * as Service from '../../services/Address';
 import Maps from './Maps'
@@ -57,12 +58,7 @@ export default function AddAddressScreen(props) {
     const [klValue, setklValue] = useState("")
     const [klColor, setklColor] = useState(colors.Silver)
     const [textInputColor, settextInputColor] = useState("#C0C0C0");
-    const [region, setRegion] = useState({
-        latitude: Number(-6.2617525),
-        longitude: Number(106.8407469),
-        latitudeDelta: 0.0922 * 0.025,
-        longitudeDelta: 0.0421 * 0.025,
-    })
+    const [region, setRegion] = useState({})
     useAndroidBackHandler(() => {
         if (status === 'map') {
             setStatus('edit')
@@ -72,6 +68,48 @@ export default function AddAddressScreen(props) {
         }
 
     });
+
+    const handleSearchLatLong = (item) => {
+        var value = item['place_id'];
+        console.log("_cariLatlon: " + value);
+        if (value) {
+            fetch("https://maps.googleapis.com/maps/api/geocode/json?place_id=" + value + "&key=AIzaSyB4C8a6rkM6BKu1W0owWvStPzGHoc4ZBXI")
+                .then((response) => response.json())
+                .then(responseJson => {
+                    let point = responseJson.results[0].geometry;
+                    const northeastLat = point.bounds.northeast.lat, southwestLat = point.bounds.southwest.lat;
+                    const northeastLng = point.bounds.northeast.lng, southwestLng = point.bounds.southwest.lng;
+                    setRegion({
+                        latitude: (northeastLat + southwestLat) / 2, // 2D middle point
+                        longitude: (northeastLng + southwestLng) / 2, // 2D middle point
+                        latitudeDelta: Math.max(northeastLat, southwestLat) - Math.min(northeastLat, southwestLat),
+                        longitudeDelta: (Math.max(northeastLng, southwestLng) - Math.min(northeastLng, southwestLng)) * height / width,
+                    })
+                    console.log("file: Maps.js ~ line 106 ~ .then ~ responseJson.results[0].geometry.location.lng", responseJson.results[0].geometry.location.lng)
+                    console.log("file: Maps.js ~ line 106 ~ .then ~ responseJson.results[0].geometry.location.lat", responseJson.results[0].geometry.location.lat)
+                    console.log("file: AddAddressScreen.js ~ line 96 ~ .then ~ responseJson.results[0].geometry.", responseJson.results[0].geometry)
+                })
+                .catch((error) => console.log("error 117", error));
+        }
+
+    }
+
+    const handleSearchKecamatan = (text) => {
+        try {
+            if (String(text).length > 2) {
+                fetch("https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" + text + "&key=AIzaSyC_O0-LKyAboQn0O5_clZnePHSpQQ5slQU")
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+                        console.log("file: Maps.js ~ line 120 ~ .then ~ responseJson", responseJson.predictions[0])
+                        handleSearchLatLong(responseJson.predictions[0])
+                    })
+                    .catch((error) => console.log("error", error));
+            }
+        } catch (error) {
+            console.log("file: AddAddressScreen.js ~ line 103 ~ handleSearchKecamatan ~ error", error)
+        }
+    }
+
     useEffect(() => {
         if (props.route.params && props.route.params.edit) {
             let value = props.route.params.data;
@@ -89,17 +127,24 @@ export default function AddAddressScreen(props) {
             setlabel(value.label)
             setalamat(value.alamat_lengkap)
             setalamatGoogle(value.alamat_google)
-            let reg = region;
-            reg.latitude = Number(value.latitude)
-            reg.longitude = Number(value.longitude)
-            setRegion(reg)
+            setRegion({
+                latitude: parseFloat(value.latitude),
+                longitude: parseFloat(value.longitude),
+                latitudeDelta: 0.0922 * 0.025,
+                longitudeDelta: 0.0421 * 0.025,
+            })
             Service.getKelurahan(value.kecamatan_kd).then(res => {
-                console.log("handleSelected -> res", res)
                 setkelurahan(res.kelurahan)
                 setkelurahanApi(res.kelurahan)
             })
             setView("edit")
         } else {
+            setRegion({
+                latitude: -6.2617525,
+                longitude: 106.8407469,
+                latitudeDelta: 0.0922 * 0.025,
+                longitudeDelta: 0.0421 * 0.025,
+            })
             setView("add")
         }
         setshowButton(false)
@@ -281,8 +326,8 @@ export default function AddAddressScreen(props) {
 
     const handleSelected = (name, value) => {
         setshowButton(true)
-        console.log("handleSelected -> name, value", name, value)
         if (name === "kecamatan") {
+            handleSearchKecamatan(value.kecamatan)
             setprovinsiId(value.province_id)
             setprovValue(value.province)
             setkabkotaId(value.city_id)
@@ -293,12 +338,10 @@ export default function AddAddressScreen(props) {
             setklValue("Pilih kelurahan")
             setkelurahanId("")
             setklColor(colors.BlackGrayScale)
-
             setalertTextKecamatan("")
             actionSheetKecamatan.current?.setModalVisible(false)
 
             Service.getKelurahan(value.kecamatan_kd).then(res => {
-                console.log("handleSelected -> res", res)
                 setkelurahan(res.kelurahan)
                 setkelurahanApi(res.kelurahan)
             })
@@ -593,7 +636,7 @@ export default function AddAddressScreen(props) {
                     </ScrollView>
                 </>
                 :
-                <Maps data={address} handleAlamat={handleAlamat} status={handleStatus} />
+                <Maps data={address} handleAlamat={handleAlamat} status={handleStatus} region={region} />
             }
 
             <ActionSheet containerStyle={{ paddingHorizontal: '4%', flexDirection: 'column' }} ref={actionSheetKecamatan}>
@@ -601,15 +644,15 @@ export default function AddAddressScreen(props) {
                     <Text style={style.actionSheetTitle}>Kecamatan</Text>
                     <TouchableOpacity onPress={() => actionSheetKecamatan.current?.setModalVisible(false)}>
                         <Image
-                            style={style.icon_16}
+                            style={[style.icon_16, { tintColor: colors.BlueJaja }]}
                             source={require('../../assets/icons/close.png')}
                         />
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={[style.searchBar, { height: Hp('6%]'), width: Wp('92%'), backgroundColor: "#D3D3D3" }]}>
+                <View style={[style.searchBar, { height: Hp('6%]'), width: Wp('92%'), backgroundColor: "#D3D3D3" }]}>
                     <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%', tintColor: colors.BlackGrey }} />
                     <TextInput keyboardType="name-phone-pad" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={style.font_14} placeholder='Cari kecamatan..' onChangeText={(value) => handleSearch(value, "kecamatan")}></TextInput>
-                </TouchableOpacity>
+                </View>
                 {/* <View style={style.search}>
                     <View style={{ height: '100%', width: '6%', marginRight: '1%' }}>
                         <Image
@@ -634,7 +677,7 @@ export default function AddAddressScreen(props) {
                         <FlatList
                             data={kecamatan.slice(0, 50)}
                             renderItem={renderKecamatan}
-                            keyExtractor={item => item.id_data}
+                            keyExtractor={(item, index) => String(index) + "XH"}
                         />
 
                     </ScrollView>
@@ -645,23 +688,23 @@ export default function AddAddressScreen(props) {
                     <Text style={style.actionSheetTitle}>Kelurahan</Text>
                     <TouchableOpacity onPress={() => actionSheetKecamatan.current?.setModalVisible(false)}>
                         <Image
-                            style={style.icon_16}
+                            style={[style.icon_16, { tintColor: colors.BlueJaja }]}
                             source={require('../../assets/icons/close.png')}
                         />
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={[style.searchBar, { height: Hp('6%]'), width: Wp('92%'), backgroundColor: "#D3D3D3" }]}>
+                <View style={[style.searchBar, { height: Hp('6%]'), width: Wp('92%'), backgroundColor: "#D3D3D3" }]}>
                     <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%', tintColor: colors.BlackGrey }} />
                     <TextInput keyboardType="name-phone-pad" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={style.font_14} placeholder='Cari kelurahan..' onChangeText={(text) => handleSearch(text, "kelurahan")}>
                     </TextInput>
-                </TouchableOpacity>
+                </View>
                 <View style={{ height: Hp('50%'), paddingHorizontal: Wp('2%') }}>
                     <ScrollView style={{ flex: 1 }}>
                         {kelurahan && kelurahan.length ?
                             <FlatList
                                 data={kelurahan.slice(0, 100)}
                                 renderItem={renderKelurahan}
-                                keyExtractor={item => item.kelurahan_id}
+                                keyExtractor={(item, index) => String(index) + "XH"}
                             /> : null
                         }
                     </ScrollView>

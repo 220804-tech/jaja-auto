@@ -1,9 +1,10 @@
 import React, { useState, createRef, useEffect } from 'react'
-import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, TextInput, FlatList, Alert } from 'react-native'
+import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, TextInput, FlatList, Alert, Dimensions } from 'react-native'
 import MapView from 'react-native-maps';
 import { Appbar, Button } from 'react-native-paper';
 import ActionSheet from 'react-native-actions-sheet';
 import { colors, styles as style, Wp, Hp } from '../../export';
+const { width, height } = Dimensions.get('screen')
 
 export default function map(props) {
     const actionSheetRef = createRef();
@@ -17,16 +18,22 @@ export default function map(props) {
     const [address_components, setaddress_components] = useState('')
     const [dataSearch, setdataSearch] = useState([])
 
-    const [region, setRegion] = useState({
-        latitude: -6.2617525,
-        longitude: 106.8407469,
-        latitudeDelta: 0.0922 * 0.025,
-        longitudeDelta: 0.0421 * 0.025,
-    })
+    const [region, setRegion] = useState({})
+    const ASPECT_RATIO = width / height;
+    const LATITUDE_DELTA = 0.0922;
 
     useEffect(() => {
-
-    }, [props])
+        if (props.region) {
+            setRegion(props.region)
+        } else {
+            setRegion({
+                latitude: -6.2617525,
+                longitude: 106.8407469,
+                latitudeDelta: 0.0922 * 0.025,
+                longitudeDelta: 0.0421 * 0.025,
+            })
+        }
+    }, [])
 
     const onRegionChange = region => {
         let data = region;
@@ -36,7 +43,6 @@ export default function map(props) {
     }
 
     const handleCheckLokasi = () => {
-
         fetch("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + region.latitude + "," + region.longitude + "&sensor=false&key=AIzaSyB4C8a6rkM6BKu1W0owWvStPzGHoc4ZBXI")
             .then((response) => response.json())
             .then((responseJson) => {
@@ -91,17 +97,17 @@ export default function map(props) {
     };
 
     const cariLatlon = (item) => {
-        var value = item['place_id'];
-        console.log("_cariLatlon: " + value);
+        var value = item.place_id;
         if (value) {
             fetch("https://maps.googleapis.com/maps/api/geocode/json?place_id=" + value + "&key=AIzaSyB4C8a6rkM6BKu1W0owWvStPzGHoc4ZBXI")
                 .then((response) => response.json())
                 .then((responseJson) => {
+                    let geometry = responseJson.results[0].geometry
                     setRegion({
-                        latitude: responseJson.results[0].geometry.location.lat,
-                        longitude: responseJson.results[0].geometry.location.lng,
-                        latitudeDelta: 0.0922 * 0.025,
-                        longitudeDelta: 0.0421 * 0.025,
+                        latitude: geometry.location.lat,
+                        longitude: geometry.location.lng,
+                        latitudeDelta: geometry.viewport.northeast.lat - geometry.viewport.southwest.lat,
+                        longitudeDelta: (geometry.viewport.northeast.lat - geometry.viewport.southwest.lat) * ASPECT_RATIO
                     })
                     setaddress_components(responseJson.results[0].address_components)
                     setTimeout(() => handleShowData(), 500);
@@ -116,7 +122,11 @@ export default function map(props) {
         if (String(text).length > 2) {
             fetch("https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" + text + "&key=AIzaSyC_O0-LKyAboQn0O5_clZnePHSpQQ5slQU")
                 .then((response) => response.json())
-                .then((responseJson) => setdataSearch(responseJson.predictions))
+                .then((responseJson) => {
+                    console.log("file: Maps.js ~ line 120 ~ .then ~ responseJson", responseJson.predictions[0].place_id)
+                    setdataSearch(responseJson.predictions)
+                    cariLatlon(responseJson.predictions[0])
+                })
                 .catch((error) => console.log("error", error));
         }
     }
@@ -239,7 +249,7 @@ export default function map(props) {
                     <FlatList
                         data={dataSearch}
                         showsHorizontalScrollIndicator={false}
-                        keyExtractor={(item, index) => index.toString()}
+                        keyExtractor={(item, index) => String(index) + "AC"}
                         renderItem={({ item, index }) => (
                             <TouchableOpacity
                                 key={index}
