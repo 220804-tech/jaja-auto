@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { SafeAreaView, View, Text, StyleSheet, Image } from 'react-native'
 import { Button } from 'react-native-paper'
 import { colors, styles, Wp, Hp, Appbar, useNavigation, } from '../../export'
+import { useSelector } from 'react-redux';
 
 export default function RewardScreen() {
+    const reduxUser = useSelector(state => state.user.user)
     const navigation = useNavigation();
     const [status, setStatus] = useState('false');
 

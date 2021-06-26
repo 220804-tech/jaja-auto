@@ -27,18 +27,14 @@ export default function ProfileScreen(props) {
 
   useEffect(() => {
     if (Object.keys(reduxProfile).length === 0) {
-      console.log("🚀 ~ file: ProfileScreen.js ~ line 31 ~ useEffect ~ reduxProfile", reduxProfile)
       EncryptedStorage.getItem('user').then(res => {
-        console.log("🚀 ~ file: ProfileScreen.js ~ line 2000 ~ EncryptedStorage.getItem ~ res", res)
         if (res) {
           console.log("🚀 ~ file: ProfileScreen.js ~ line 33 ~ EncryptedStorage.getItem ~ res", res)
           dispatch({ type: 'SET_USER', payload: JSON.parse(res) })
         }
       })
-
     }
     EncryptedStorage.getItem('token').then(res => {
-      console.log("🚀 ~ file: ProfileScreen.js ~ line 42 ~ EncryptedStorage.getItem ~ res", res)
       if (res) {
         setAuth(JSON.stringify(res))
       }

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, ToastAndroid, StyleSheet, Alert } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { styles, colors, Card, CheckSignal, ShimmerCardProduct } from '../../export'
+import { styles, colors, CardProduct, CheckSignal, ShimmerCardProduct, Utils } from '../../export'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import * as Progress from 'react-native-progress';
 
@@ -113,7 +113,7 @@ export default function RecomandedHobbyComponent(props) {
             </View>
             {reduxdashRecommanded && reduxdashRecommanded.length || storagedashRecommanded && storagedashRecommanded.length ?
                 <View style={styles.column}>
-                    <Card data={reduxdashRecommanded && reduxdashRecommanded.length ? reduxdashRecommanded : storagedashRecommanded && storagedashRecommanded.length ? storagedashRecommanded : []} />
+                    <CardProduct data={reduxdashRecommanded && reduxdashRecommanded.length ? reduxdashRecommanded : storagedashRecommanded && storagedashRecommanded.length ? storagedashRecommanded : []} />
                 </View>
                 :
                 <ShimmerCardProduct />

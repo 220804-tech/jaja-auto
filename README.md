@@ -1,5 +1,9 @@
 *** Error reporting ***
 
+## Registrasi
+# 11001 => Error post registrasi
+
+
 ## Splashscreen && Transaksi(List Pesanan)
 # 12001 => Error api get dashboard 
 # 120012/120013 => Error api get dashboard in flashsale

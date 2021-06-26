@@ -4,9 +4,11 @@ import { Button } from 'react-native-paper'
 import { colors, styles, Wp, Hp, Appbar, } from '../../export'
 import ImgToBase64 from 'react-native-image-base64';
 import Share from 'react-native-share';
+import { useSelector } from 'react-redux';
 
 export default function ReferralScreen() {
-    const [status, setStatus] = useState(true)
+    const reduxUser = useSelector(state => state.user.user)
+    console.log("file: ReferralScreen.js ~ line 11 ~ ReferralScreen ~ reduxUser", reduxUser.pin)
     const [image, setImage] = useState('')
 
 
@@ -21,11 +23,14 @@ export default function ReferralScreen() {
 
     const handleShare = () => {
         try {
+            console.log("file: ReferralScreen.js ~ line 32 ~ handleShare ~ image", image)
+            let string = String(reduxUser.pin).toLocaleUpperCase()
             const shareOptions = {
                 title: 'Jaja',
-                message: 'Jaja.id Pakai kode undanganku dan dapatkan 10.000 koin https://play.google.com/store/apps/details?id=com.seller.jaja', // Note that according to the documentation at least one of "message" or "url" fields is required
+                message: `Pakai kode undanganku ${string} dan dapatkan 10.000 koin, untuk belanja di Jaja.id, instal sekarang https://play.google.com/store/apps/details?id=com.seller.jaja`, // Note that according to the documentation at least one of "message" or "url" fields is required
                 url: image,
             };
+            console.log("file: ReferralScreen.js ~ line 33 ~ handleShare ~ shareOptions", shareOptions)
 
             Share.open(shareOptions)
                 .then((res) => {
@@ -63,7 +68,7 @@ export default function ReferralScreen() {
                             KODE UNDANGAN KAMU
                         </Text>
                         <Text style={[styles.font_18, { color: colors.BlueJaja }]}>
-                            FXQ861
+                            {String(reduxUser.pin).toLocaleUpperCase()}
                         </Text>
                     </View>
                     <Button onPress={handleShare} color={colors.BlueJaja} labelStyle={{ color: colors.White, fontWeight: 'bold', fontSize: 10 }} mode="contained" style={{ borderRadius: 100 }}>Bagikan Kode</Button>

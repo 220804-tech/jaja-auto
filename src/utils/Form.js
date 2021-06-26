@@ -1,3 +1,4 @@
+import { Alert } from 'react-native'
 export function regexEmail(e) {
     console.log(e, ' email');
     let val = e.nativeEvent.text;
@@ -11,3 +12,21 @@ export function regexEmail(e) {
         return false
     }
 }
+
+export function regex(name, value) {
+    if (name === "number") {
+        return (value.replace(/[^0-9]/gi, ''))
+    }
+}
+
+export function cardAlert(status, error) {
+    Alert.alert(
+        `Error with status ${error}`,
+        `${status.message + ' => ' + status.code}`,
+        [
+            { text: "OK", onPress: () => console.log("OK Pressed") }
+        ],
+        { cancelable: false }
+    );
+}
+

@@ -1,6 +1,7 @@
 export default {
     siplahDefault: '#36405e',
     White: "#FFFFFF",
+    WhiteSilver: '#d4d4d4',
     Silver: "#C0C0C0",
     BlackSilver: '#b8b8b8',
     BlackGrey: "#9A9A9A",
@@ -30,6 +31,8 @@ export default {
     BluePrimary: '#556ee6',
     BlueInfo: '#2CA8FF',
     Cyan: '#00ffff',
+    BlueLink: '#6495ED',
+
 
 
 };
