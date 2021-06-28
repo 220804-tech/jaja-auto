@@ -57,7 +57,7 @@ export default function CardProductComponent(props) {
                                         headers: { Authorization: 'someAuthToken' },
                                         priority: FastImage.priority.normal,
                                     }}
-                                    resizeMode={FastImage.resizeMode.cover}
+                                    resizeMode={FastImage.resizeMode.contain}
                                 />
                                 <View style={Ps.bottomCard}>
                                     <Text

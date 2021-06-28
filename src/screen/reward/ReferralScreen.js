@@ -102,7 +102,7 @@ export default function ReferralScreen() {
                             </View>
                             <Text numberOfLines={6} style={[styles.font_16, styles.ml_4, { width: '80%' }]}>Tidak sampai disitu, kamu juga akan mendapatkan 2.000 Koin, ketika teman kamu berhasil mengundang teman lainnya.<Text style={[styles.font_12, { fontStyle: 'italic' }]}> ( Hanya berlaku 1 hirarki ke undangan selanjutnya )</Text></Text>
                         </View>
-                        <Text numberOfLines={3} style={[styles.font_14, styles.my_5, { fontStyle: 'italic' }]}>Undang teman kamu sekarang, untuk mendapatkan koin jaja sebanyak- banyaknya</Text>
+                        <Text numberOfLines={3} style={[styles.font_14, styles.my_5, { fontStyle: 'italic' }]}>*Undang teman kamu sekarang, untuk mendapatkan koin jaja sebanyak- banyaknya</Text>
                     </View>
                 </View>
             </View>

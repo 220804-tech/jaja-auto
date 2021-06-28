@@ -36,8 +36,8 @@ export default function TrendingComponent() {
         })
     }
     return (
-        <View style={styles.p_3}>
-            <View style={styles.row}>
+        <View style={[styles.column, styles.p_3]}>
+            <View style={[styles.row, styles.mb_3]}>
                 <Text style={styles.titleDashboard}>
                     Sedang Trending
                 </Text>

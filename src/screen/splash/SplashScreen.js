@@ -6,7 +6,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { ServiceOrder, colors, styles, useNavigation } from '../../export';
 import database from '@react-native-firebase/database';
-import { getFlashsale } from '../../services/Core';
 
 export default function SplashScreen() {
     const reduxDashboard = useSelector(state => state.dashboard)
@@ -38,7 +37,7 @@ export default function SplashScreen() {
             EncryptedStorage.getItem('token').then(resp => {
                 getItem(resp)
                 getData()
-                getFlashsale()
+                // getFlashsale()
                 getOrders(resp)
                 dispatch({ type: 'SET_AUTH', payload: JSON.parse(resp) })
 
@@ -159,9 +158,9 @@ export default function SplashScreen() {
             } else {
                 Alert.alert(
                     "Error with status 12001",
-                    JSON.stringify(error)
+                    JSON.stringify(error),
                     [
-                    { text: "OK", onPress: () => console.log("OK Pressed") }
+                        { text: "OK", onPress: () => console.log("OK Pressed") }
                     ],
                     { cancelable: false }
                 );
@@ -203,9 +202,9 @@ export default function SplashScreen() {
                 } else {
                     Alert.alert(
                         "Error with status 12002",
-                        JSON.stringify(error)
+                        JSON.stringify(error),
                         [
-                        { text: "OK", onPress: () => console.log("OK Pressed") }
+                            { text: "OK", onPress: () => console.log("OK Pressed") }
                         ],
                         { cancelable: false }
                     );
@@ -231,9 +230,9 @@ export default function SplashScreen() {
                     } else {
                         Alert.alert(
                             "Error with status 12003",
-                            JSON.stringify(error)
+                            JSON.stringify(error),
                             [
-                            { text: "OK", onPress: () => console.log("OK Pressed") }
+                                { text: "OK", onPress: () => console.log("OK Pressed") }
                             ],
                             { cancelable: false }
                         );
@@ -253,9 +252,9 @@ export default function SplashScreen() {
                     } else {
                         Alert.alert(
                             "Error with status 12004",
-                            JSON.stringify(error)
+                            JSON.stringify(error),
                             [
-                            { text: "OK", onPress: () => console.log("OK Pressed") }
+                                { text: "OK", onPress: () => console.log("OK Pressed") }
                             ],
                             { cancelable: false }
                         );
@@ -275,9 +274,9 @@ export default function SplashScreen() {
                     } else {
                         Alert.alert(
                             "Error with status 12005",
-                            JSON.stringify(error)
+                            JSON.stringify(error),
                             [
-                            { text: "OK", onPress: () => console.log("OK Pressed") }
+                                { text: "OK", onPress: () => console.log("OK Pressed") }
                             ],
                             { cancelable: false }
                         );
@@ -297,9 +296,9 @@ export default function SplashScreen() {
                     } else {
                         Alert.alert(
                             "Error with status 12006",
-                            JSON.stringify(error)
+                            JSON.stringify(error),
                             [
-                            { text: "OK", onPress: () => console.log("OK Pressed") }
+                                { text: "OK", onPress: () => console.log("OK Pressed") }
                             ],
                             { cancelable: false }
                         );
@@ -319,9 +318,9 @@ export default function SplashScreen() {
                     } else {
                         Alert.alert(
                             "Error with status 12007",
-                            JSON.stringify(error)
+                            JSON.stringify(error),
                             [
-                            { text: "OK", onPress: () => console.log("OK Pressed") }
+                                { text: "OK", onPress: () => console.log("OK Pressed") }
                             ],
                             { cancelable: false }
                         );
@@ -342,9 +341,9 @@ export default function SplashScreen() {
                     } else {
                         Alert.alert(
                             "Error with status 12008",
-                            JSON.stringify(error)
+                            JSON.stringify(error),
                             [
-                            { text: "OK", onPress: () => console.log("OK Pressed") }
+                                { text: "OK", onPress: () => console.log("OK Pressed") }
                             ],
                             { cancelable: false }
                         );

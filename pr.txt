@@ -20,3 +20,18 @@ Checkout
 
 Orders
 11. Tambahin notif/gambar bila tidak ada pesanan                                    *selesai*
+
+
+UAT Apps Jaja Jumat 25 Juni 2021
+
+- Feature - Undang teman (Referral)                                                                             #selesai
+- Revisi - Hapus alamat menggunakan slide                                                                       #selesai
+- Feature  - List seller terdekat sesuai pencarian produk yang pernah di cari user                              #progres
+- Feature - Filter produk di halaman Favorit
+- Feature - Filter produk di halaman Terakhir Dilihat
+- Revisi - Keterangan diskon voucher di checkout
+- Feature - Toko bisa mengaktifkan gratis ongkir (jaja seller)
+- Feature - User bisa menggunakan gratis ongkir dari seller yang mengaktifkan feature tersebut sesuai S&K 
+- Revisi - Popup syarat ketentuan pemakaian voucher
+- Feature - User bisa kirim gambar ke penjual
+- Migrasi chat ke database

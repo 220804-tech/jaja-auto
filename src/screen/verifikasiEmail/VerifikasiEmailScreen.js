@@ -249,7 +249,7 @@ export default class VerifikasiEmail extends Component {
                 setTimeout(() => {
                     Alert.alert(
                         "Jaja.id",
-                        error, [
+                        `${String(error)}`, [
                         {
                             text: "Ok",
                             onPress: () => {
@@ -434,7 +434,7 @@ export default class VerifikasiEmail extends Component {
                         setTimeout(() => {
                             Alert.alert(
                                 "Jaja.id",
-                                error, [
+                                `${String(error)}`, [
                                 {
                                     text: "Ok",
                                     onPress: () => console.log("Pressed"),
@@ -466,7 +466,7 @@ export default class VerifikasiEmail extends Component {
                     setTimeout(() => {
                         Alert.alert(
                             "Jaja.id",
-                            error, [
+                            `${String(error)}`, [
                             {
                                 text: "Ok",
                                 onPress: () => console.log("Pressed"),

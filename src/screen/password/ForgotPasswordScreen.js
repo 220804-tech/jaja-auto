@@ -81,13 +81,14 @@ export default class ForgotPasswordScreen extends Component {
                         setTimeout(() => {
                             Alert.alert(
                                 "Jaja.id",
-                                "Email tidak terdaftar!", [
-                                {
-                                    text: "Ok",
-                                    onPress: () => console.log("Pressed"),
-                                    style: "cancel"
-                                }
-                            ],
+                                "Email tidak terdaftar!",
+                                [
+                                    {
+                                        text: "Ok",
+                                        onPress: () => console.log("Pressed"),
+                                        style: "cancel"
+                                    }
+                                ],
                                 { cancelable: false }
                             );
                         }, 600);
@@ -155,13 +156,14 @@ export default class ForgotPasswordScreen extends Component {
                     setTimeout(() => {
                         Alert.alert(
                             "Jaja.id",
-                            "Periksa email anda untuk melihat kode verifikasi!", [
-                            {
-                                text: "Ok",
-                                onPress: () => console.log("Pressed"),
-                                style: "cancel"
-                            }
-                        ],
+                            "Periksa email anda untuk melihat kode verifikasi!",
+                            [
+                                {
+                                    text: "Ok",
+                                    onPress: () => console.log("Pressed"),
+                                    style: "cancel"
+                                }
+                            ],
                             { cancelable: false }
                         );
                     }, 600);
@@ -169,20 +171,21 @@ export default class ForgotPasswordScreen extends Component {
                     setTimeout(() => {
                         Alert.alert(
                             "Jaja.id",
-                            "Anda belum mengirim email verifikasi!", [
-                            {
-                                text: "Ok",
-                                onPress: () => {
-                                    this.setState({
-                                        step1: true,
-                                        step2: false,
-                                        step3: false,
-                                        loading: false
-                                    });
-                                },
-                                style: "cancel"
-                            }
-                        ],
+                            "Anda belum mengirim email verifikasi!",
+                            [
+                                {
+                                    text: "Ok",
+                                    onPress: () => {
+                                        this.setState({
+                                            step1: true,
+                                            step2: false,
+                                            step3: false,
+                                            loading: false
+                                        });
+                                    },
+                                    style: "cancel"
+                                }
+                            ],
                             { cancelable: false }
                         );
                     }, 300);
@@ -234,7 +237,7 @@ export default class ForgotPasswordScreen extends Component {
                 setTimeout(() => {
                     Alert.alert(
                         "Jaja.id",
-                        error, [
+                        `${String(error)}`, [
                         {
                             text: "Ok",
                             onPress: () => {
@@ -534,7 +537,7 @@ export default class ForgotPasswordScreen extends Component {
                     setTimeout(() => {
                         Alert.alert(
                             "Jaja.id",
-                            error, [
+                            `${String(error)}`, [
                             {
                                 text: "Ok",
                                 onPress: () => console.log("Pressed"),

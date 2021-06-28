@@ -28,9 +28,12 @@ export default function MidtransScreen() {
         })
 
         const backAction = () => {
-            Alert.alert("Jaja.id", "Pesanan ini dapat kamu lihat di halaman pesanan", [
-                { text: "OK", onPress: () => navigation.navigate("Pesanan") }
-            ]);
+            Alert.alert(
+                "Jaja.id",
+                "Pesanan ini dapat kamu lihat di halaman pesanan",
+                [
+                    { text: "OK", onPress: () => navigation.navigate("Pesanan") }
+                ]);
             return true;
         }
         const backHandler = BackHandler.addEventListener(

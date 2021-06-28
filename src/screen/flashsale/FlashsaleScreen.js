@@ -27,6 +27,7 @@ export default function FlashsaleScreen() {
     useFocusEffect(
         useCallback(() => {
             ServiceCore.getDateTime().then(res => {
+                console.log("file: FlashsaleScreen.js ~ line 30 ~ ServiceCore.getDateTime ~ res", res)
                 if (res) {
                     let date = new Date()
                     if (date.toJSON().toString().slice(0, 10) !== res.dateNow) {
@@ -39,10 +40,13 @@ export default function FlashsaleScreen() {
                             { cancelable: false }
                         );
                     } else {
+                        console.log("masuk sini")
                         ServiceCore.getFlashsale().then(resp => {
-                            if (resp) {
+                            if (resp && resp.flashsale && resp.flashsale.length) {
+                                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: true })
                                 dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.flashsale })
-                                handleDate(res)
+                            } else {
+                                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
                             }
                         })
 

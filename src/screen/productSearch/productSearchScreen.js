@@ -2,7 +2,7 @@ import React, { useEffect, useState, createRef, useCallback } from 'react'
 import { SafeAreaView, View, Text, Image, TouchableOpacity, ToastAndroid, StyleSheet, ScrollView, Animated, RefreshControl, Dimensions } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import ActionSheet from "react-native-actions-sheet";
-import { useNavigation, colors, styles, Wp, CheckSignal, Loading, Hp, Card, ShimmerCardProduct } from '../../export'
+import { useNavigation, colors, styles, Wp, Loading, Hp, CardProduct, ShimmerCardProduct, Utils } from '../../export'
 import { useDispatch, useSelector } from 'react-redux'
 const { height: hg } = Dimensions.get('screen')
 
@@ -76,7 +76,7 @@ export default function ProductSearchScreen() {
                 // dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
             })
             .catch(error => {
-                CheckSignal().then(res => {
+                Utils.CheckSignal().then(res => {
                     if (res.connect == false) {
                         ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda", ToastAndroid.LONG, ToastAndroid.CENTER)
                     } else {
@@ -122,7 +122,7 @@ export default function ProductSearchScreen() {
                 // dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
             })
             .catch(error => {
-                CheckSignal().then(res => {
+                Utils.CheckSignal().then(res => {
                     if (res.connect == false) {
                         ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda", ToastAndroid.LONG, ToastAndroid.CENTER)
                     } else {
@@ -303,7 +303,7 @@ export default function ProductSearchScreen() {
                                 }
                             }}
                         >
-                            <Card data={data} />
+                            <CardProduct data={data} />
 
                             {reduxmaxProduct ? <Text style={[styles.font_14, styles.my_5, { alignSelf: 'center', color: colors.BlueJaja, width: Wp('100%'), textAlign: 'center' }]}>Semua produk berhasil ditampilkan</Text> : <ShimmerCardProduct />}
 

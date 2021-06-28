@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { SafeAreaView, View, Text, TouchableOpacity, Dimensions, ToastAndroid, Alert } from 'react-native'
 import { Button } from 'react-native-paper'
+import { min } from 'react-native-reanimated';
 import { colors, ServiceCore, styles, Wp } from '../../export';
 export default class CountdownComponent extends React.Component {
     constructor(props) {
@@ -29,13 +30,18 @@ export default class CountdownComponent extends React.Component {
     }
 
     componentDidMount() {
-        console.log("file: CountdownComponent.js ~ line 7 ~ CountdownComponent ~ constructor ~ props", this.props.size)
         ServiceCore.getDateTime().then(res => {
-            if (res) {
+            console.log("file: CountdownComponent.js ~ line 34 ~ CountdownComponent ~ ServiceCore.getDateTime ~ res", res)
+            let hours = new Date().getHours()
+            let minutes = new Date().getMinutes()
+            console.log("file: CountdownComponent.js ~ line 37", hours + "" + minutes == String(res.timeNow.replace(/:/g, "").slice(0, 4)))
+            if (res && hours + "" + minutes == String(res.timeNow.replace(/:/g, "").slice(0, 4))) {
                 if (String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") < "180000" && String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") <= "240000") {
                     this.timeToSeconds(res.timeNow, "first")
                 } else if (String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") >= "180000" && String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") <= "240000") {
                     this.timeToSeconds(res.timeNow, "second")
+                } else {
+                    this.timeToSeconds(res.timeNow, "wait")
                 }
             }
         })

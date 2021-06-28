@@ -1,7 +1,7 @@
 const initialState = {
     category: [],
     flashsale: [],
-    showFlashsale: true,
+    showFlashsale: false,
     trending: [],
     hobyAverage: [],
     basedOnSearch: [],

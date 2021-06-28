@@ -48,9 +48,9 @@ export default function VoucherScreen() {
                 } else {
                     Alert.alert(
                         "Error with status 14001",
-                        String(error)
+                        String(error),
                         [
-                        { text: "OK", onPress: () => console.log("OK Pressed") }
+                            { text: "OK", onPress: () => console.log("OK Pressed") }
                         ],
                         { cancelable: false }
                     );

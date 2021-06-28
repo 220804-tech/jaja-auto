@@ -25,9 +25,9 @@ export async function getDateTime() {
             } else {
                 Alert.alert(
                     "Error get time",
-                    JSON.stringify(error)
+                    JSON.stringify(error),
                     [
-                    { text: "OK", onPress: () => console.log("OK Pressed") }
+                        { text: "OK", onPress: () => console.log("OK Pressed") }
                     ],
                     { cancelable: false }
                 );
@@ -49,7 +49,6 @@ export async function getFlashsale() {
     return await fetch("https://jaja.id/backend/flashsale", requestOptions)
         .then(response => response.json())
         .then(result => {
-            console.log("file: Core.js ~ line 52 ~ getFlashsale ~ result", result)
             if (result.status.code === 200 || result.status.code === 204) {
                 return result.data;
             } else {
@@ -62,9 +61,9 @@ export async function getFlashsale() {
             } else {
                 Alert.alert(
                     "Error get flashsale",
-                    JSON.stringify(error)
+                    JSON.stringify(error),
                     [
-                    { text: "OK", onPress: () => console.log("OK Pressed") }
+                        { text: "OK", onPress: () => console.log("OK Pressed") }
                     ],
                     { cancelable: false }
                 );

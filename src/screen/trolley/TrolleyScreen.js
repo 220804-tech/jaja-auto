@@ -96,9 +96,9 @@ export default function TrolleyScreen() {
                 } else {
                     Alert.alert(
                         "Error with status 16001",
-                        JSON.stringify(error)
+                        JSON.stringify(error),
                         [
-                        { text: "OK", onPress: () => console.log("OK Pressed") }
+                            { text: "OK", onPress: () => console.log("OK Pressed") }
                         ],
                         { cancelable: false }
                     );
@@ -169,9 +169,9 @@ export default function TrolleyScreen() {
                 } else {
                     Alert.alert(
                         "Error with status 16002",
-                        JSON.stringify(error)
+                        JSON.stringify(error),
                         [
-                        { text: "OK", onPress: () => console.log("OK Pressed") }
+                            { text: "OK", onPress: () => console.log("OK Pressed") }
                         ],
                         { cancelable: false }
                     );

@@ -3,7 +3,7 @@ import { View, Text, Image, TouchableOpacity } from 'react-native'
 import colors from '../../assets/colors'
 import { styles } from '../../assets/styles/styles'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp, } from 'react-native-responsive-screen';
-import { Language } from '../../utils/language/Language'
+import { Language } from '../../utils/Language'
 import { useSelector, useDispatch } from 'react-redux'
 
 export default function RecomandedHobbyComponent() {

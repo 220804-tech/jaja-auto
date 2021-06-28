@@ -3,10 +3,7 @@ export async function getCart(auth) {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);
     myHeaders.append("Cookie", "ci_session=gaq70d91jnebu24rvqr1ttb6p0akqshs");
-
     var raw = "";
-
-    console.log("🚀 ~ file: Cart.js ~ line 10 ~ getCart ~ auth", auth)
     var requestOptions = {
         method: 'GET',
         headers: myHeaders,
@@ -40,7 +37,7 @@ export async function getCart(auth) {
             } else {
                 Alert.alert(
                     "Error",
-                    String(error),
+                    `${String(error)}`,
                     [
                         {
                             text: "TUTUP",

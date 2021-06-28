@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { SafeAreaView, Text, View, TouchableOpacity, ScrollView, StyleSheet, FlatList, Image, RefreshControl, Alert, ToastAndroid } from "react-native";
+import { SafeAreaView, Text, View, TouchableOpacity, ScrollView, StyleSheet, FlatList, Image, RefreshControl, Alert, ToastAndroid, TouchableHighlight, TouchableWithoutFeedback } from "react-native";
 import { Paragraph, Switch, Appbar } from "react-native-paper";
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { colors, styles as style, ServiceUser, ServiceCheckout, Loading } from '../../export'
 import * as Service from '../../services/Address';
 import { useDispatch, useSelector } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
+import Swipeable from 'react-native-swipeable';
+
 export default function index(props) {
     const dispatch = useDispatch()
     const reduxUser = useSelector(state => state.user.user.location)
@@ -15,6 +17,7 @@ export default function index(props) {
     const [count, setcount] = useState(0)
     const [auth, setAuth] = useState(0)
     const [status, setStatus] = useState("Profile")
+    const [itemSelected, setSelectedItem] = useState('')
     const [loading, setLoading] = useState(false)
     useEffect(() => {
         setRefreshControl(false)
@@ -86,9 +89,13 @@ export default function index(props) {
     }
 
     const getLocation = () => {
+        setLoading(true)
         Service.getKecamatan().then((res) => {
             EncryptedStorage.setItem('kecamatanApi', JSON.stringify(res.kecamatan))
         });
+        setTimeout(() => {
+            setLoading(false)
+        }, 2000);
     }
 
     const toggleSwitch = (idx) => {
@@ -187,6 +194,8 @@ export default function index(props) {
     }
 
     const handleDelete = item => {
+        console.log("file: AddressScreen.js ~ line 197 ~ index ~ item", itemSelected)
+
         Alert.alert(
             "Peringatan!",
             "Anda ingin menghapus alamat?",
@@ -199,7 +208,7 @@ export default function index(props) {
                 {
                     text: "Hapus", onPress: () => {
                         setLoading(true)
-                        ServiceUser.deleteAddress(reduxAuth, item.id).then(res => {
+                        ServiceUser.deleteAddress(reduxAuth, itemSelected.id).then(res => {
                             if (res && res.status && res.status === 200) {
                                 ToastAndroid.show("Alamat berhasil dihapus.", ToastAndroid.LONG, ToastAndroid.CENTER)
                             }
@@ -213,41 +222,54 @@ export default function index(props) {
             { cancelable: false }
         );
     }
-    const renderItem = ({ item, index }) => {
+    // const leftContent = <Text>Pull to activate</Text>;
+
+    const rightButtons = [
+        <TouchableOpacity onPress={() => status === "checkout" ? handleChangePrimary(item.id) : navigation.navigate("AddAddress", { data: itemSelected, edit: true })} style={[styles.card, style.column_center, { height: '100%', width: '20%', backgroundColor: colors.BlueJaja }]}>
+            <Image style={[style.icon_25, { tintColor: colors.White }]} source={require('../../assets/icons/edit_pen.png')} />
+        </TouchableOpacity>,
+        <TouchableOpacity onPress={handleDelete} style={[styles.card, style.column_center, { height: '100%', width: '20%', backgroundColor: colors.RedDanger }]}>
+            <Image style={[style.icon_25, { tintColor: colors.White }]} source={require('../../assets/icons/delete.png')} />
+        </TouchableOpacity>
+
+    ]
+    const renderItem = ({ item }) => {
         return (
-            <TouchableOpacity onLongPress={() => handleDelete(item)} onPress={() => status === "checkout" ? handleChangePrimary(item.id) : navigation.navigate("AddAddress", { data: item, edit: true })} style={[style.column_start_center, styles.card]}>
-                <View style={styles.body}>
-                    <View style={style.row_between_center}>
-                        <Text numberOfLines={1} style={[styles.textName, { width: '55%' }]}>{item.nama_penerima ? item.nama_penerima : ""}</Text>
-                        {status === "checkout" ?
-                            <Text style={style.font_14}>{item.label}</Text>
-                            :
-                            <View style={[style.row_end_center, { width: '40%' }]}>
-                                <Text adjustsFontSizeToFit numberOfLines={1} style={[style.font_12, { fontWeight: 'bold', color: item.is_primary ? colors.BlueJaja : colors.Silver }]}>Alamat utama</Text>
-                                <Switch
-                                    trackColor={{ false: "#767577", true: "#99e6ff" }}
-                                    thumbColor={item.is_primary ? colors.BlueJaja : "#f4f3f4"}
-                                    ios_backgroundColor="#3e3e3e"
-                                    onValueChange={() => toggleSwitch(index)}
-                                    value={item.is_primary} />
+            <Swipeable rightButtons={rightButtons} onRightActionRelease={() => setSelectedItem(item)}>
+                <TouchableWithoutFeedback onPress={() => status === "checkout" ? handleChangePrimary(item.id) : navigation.navigate("AddAddress", { data: item, edit: true })} style={[style.column_start_center, styles.card]}>
+                    <View style={styles.body}>
+                        <View style={style.row_between_center}>
+                            <Text numberOfLines={1} style={[styles.textName, { width: '55%' }]}>{item.nama_penerima ? item.nama_penerima : ""}</Text>
+                            {status === "checkout" ?
+                                <Text style={style.font_14}>{item.label}</Text>
+                                :
+                                <View style={[style.row_end_center, { width: '40%' }]}>
+                                    <Text adjustsFontSizeToFit numberOfLines={1} style={[style.font_12, { fontWeight: 'bold', color: item.is_primary ? colors.BlueJaja : colors.Silver }]}>Alamat utama</Text>
+                                    <Switch
+                                        trackColor={{ false: "#767577", true: "#99e6ff" }}
+                                        thumbColor={item.is_primary ? colors.BlueJaja : "#f4f3f4"}
+                                        ios_backgroundColor="#3e3e3e"
+                                        onValueChange={() => toggleSwitch(index)}
+                                        value={item.is_primary} />
+                                </View>
+                            }
+                        </View>
+                        <Text adjustsFontSizeToFit style={styles.textNum}>{item.no_telepon ? item.no_telepon : ""}</Text>
+                        <Paragraph numberOfLines={3} style={styles.textAlamat}>{item.provinsi + ", " + item.kota_kabupaten + ", " + item.kecamatan + ", " + item.kelurahan + ", " + item.kode_pos + ", " + item.alamat_lengkap}</Paragraph>
+                        <View style={[style.row_between_center, style.mt_3]}>
+                            <Text style={[style.font_12, { color: colors.BlueJaja, fontFamily: 'serif' }]}>{item.label}</Text>
+                            <View style={{ flex: 0, justifyContent: 'flex-end', flexDirection: 'row' }}>
+                                <Text adjustsFontSizeToFit style={[styles.textAlamat, { fontSize: 12, textAlignVertical: "bottom", marginRight: '1%', fontFamily: 'serif', color: item.latitude ? colors.BlueJaja : colors.RedDanger }]}> {item.alamat_google ? "Lokasi sudah dipin" : "Lokasi belum dipin"}</Text>
+                                <Image style={styles.map} source={require('../../assets/icons/google-maps.png')} />
                             </View>
-                        }
-                    </View>
-                    <Text adjustsFontSizeToFit style={styles.textNum}>{item.no_telepon ? item.no_telepon : ""}</Text>
-                    <Paragraph numberOfLines={3} style={styles.textAlamat}>{item.provinsi + ", " + item.kota_kabupaten + ", " + item.kecamatan + ", " + item.kelurahan + ", " + item.kode_pos + ", " + item.alamat_lengkap}</Paragraph>
-                    <View style={[style.row_between_center, style.mt_3]}>
-                        <Text style={[style.font_12, { color: colors.BlueJaja, fontFamily: 'serif' }]}>{item.label}</Text>
-                        <View style={{ flex: 0, justifyContent: 'flex-end', flexDirection: 'row' }}>
-                            <Text adjustsFontSizeToFit style={[styles.textAlamat, { fontSize: 12, textAlignVertical: "bottom", marginRight: '1%', fontFamily: 'serif', color: item.latitude ? colors.BlueJaja : colors.RedDanger }]}> {item.alamat_google ? "Lokasi sudah dipin" : "Lokasi belum dipin"}</Text>
-                            <Image style={styles.map} source={require('../../assets/icons/google-maps.png')} />
                         </View>
                     </View>
-                </View>
-            </TouchableOpacity>
+                </TouchableWithoutFeedback>
+            </Swipeable >
         )
     }
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[style.container]}>
             {loading ? <Loading /> : null}
             <Appbar.Header style={style.appBar}>
                 <View style={style.row_start_center}>
@@ -264,7 +286,7 @@ export default function index(props) {
                 refreshControl={
                     <RefreshControl refreshing={refreshControl} onRefresh={onRefresh} />
                 }
-                contentContainerStyle={{ paddingHorizontal: '4%', paddingBottom: '15%', paddingTop: '4%' }}>
+                contentContainerStyle={{ paddingBottom: '15%' }}>
                 {reduxUser && reduxUser.length ?
                     <FlatList
                         data={reduxUser}
@@ -280,15 +302,8 @@ export default function index(props) {
 const styles = StyleSheet.create({
     card: {
         backgroundColor: colors.White, justifyContent: 'flex-start',
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.22,
-        shadowRadius: 2.22,
         elevation: 1,
-        marginBottom: '3%'
+        // marginBottom: '3%'
     },
     maps: { flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' },
     map: { width: 21, height: 21, marginRight: '0%' },

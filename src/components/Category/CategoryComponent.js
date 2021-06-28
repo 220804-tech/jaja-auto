@@ -87,9 +87,9 @@ export default function CategoryComponent() {
                         } else {
                             Alert.alert(
                                 "Error with status 13001",
-                                `${JSON.stringify(error)}`
+                                `${JSON.stringify(error)}`,
                                 [
-                                { text: "OK", onPress: () => console.log("OK Pressed") }
+                                    { text: "OK", onPress: () => console.log("OK Pressed") }
                                 ],
                                 { cancelable: false }
                             );
@@ -116,7 +116,7 @@ export default function CategoryComponent() {
     return (
         <View style={styles.p_3}>
             <View style={styles.row_between_center}>
-                <Text style={styles.titleDashboard}>
+                <Text style={[styles.titleDashboard, styles.mb_3]}>
                     Kategori Pilihan
                 </Text>
                 <TouchableOpacity onPress={() => handleCategory('Art Shop')}>

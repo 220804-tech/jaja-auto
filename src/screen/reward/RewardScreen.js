@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 
 export default function RewardScreen() {
     const reduxUser = useSelector(state => state.user.user)
+    console.log("file: RewardScreen.js ~ line 9 ~ RewardScreen ~ reduxUser", reduxUser)
     const navigation = useNavigation();
     const [status, setStatus] = useState('false');
 
@@ -25,11 +26,11 @@ export default function RewardScreen() {
                     <View style={[styles.row_center_start, styles.p_4]}>
                         <View style={[styles.column_start, { width: '58%' }]}>
                             <View style={styles.row_center}>
-                                <Text numberOfLines={1} style={styles.font_22}>0 </Text>
+                                <Text numberOfLines={1} style={styles.font_22}>{reduxUser.coin} </Text>
                                 <Image style={styles.icon_21} source={require('../../assets/icons/coin.png')} />
 
                             </View>
-                            <Text numberOfLines={2} style={styles.font_14}>Bonus koin yang telah kamu dapatkan</Text>
+                            <Text numberOfLines={2} style={styles.font_14}>Koin yang telah kamu dapatkan</Text>
                         </View>
                         <View style={{ borderRightWidth: 2, borderRightColor: colors.Silver, opacity: 0.2, height: '100%', marginHorizontal: '2%' }}></View>
                         <View style={[styles.column_start, { width: '38%' }]}>
@@ -39,7 +40,7 @@ export default function RewardScreen() {
                     </View>
                     <View style={[styles.column_center_start, styles.px_4, styles.pt, styles.pb_5]}>
                         <Text numberOfLines={2} style={[styles.font_13, styles.mb_5, { fontStyle: 'italic', color: colors.RedFlashsale }]}>* Promo ini hanya berlaku selama event berlangsung</Text>
-                        <Button onPress={() => navigation.navigate('Referral')} color={colors.BlueJaja} labelStyle={{ color: colors.White, fontWeight: 'bold', fontSize: 12 }} mode="contained" style={{ borderRadius: 100, paddingHorizontal: '3%' }}>Pelajari</Button>
+                        <Button onPress={() => navigation.navigate('Referral')} color={colors.BlueJaja} labelStyle={{ color: colors.White, fontWeight: 'bold', fontSize: 12 }} mode="contained" style={{ borderRadius: 100 }}>Pelajari</Button>
                     </View>
                 </View>
             </View>

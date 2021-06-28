@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Home, Feed, Orders, ListChat, Profile } from './Screen'
 import { styles as style } from '../assets/styles/styles'
 import colors from '../assets/colors';
-import Language from '../utils/language/Language';
+import Language from '../utils/Language';
 import FAIcon from 'react-native-vector-icons/FontAwesome5';
 import database from '@react-native-firebase/database';
 import { useDispatch, useSelector } from 'react-redux';
@@ -94,7 +94,6 @@ export default function BottomRoute() {
 
             ServiceOrder.getProcess(reduxAuth).then(resProcess => {
                 if (resProcess) {
-                    console.log("file: BottomRoute.js ~ line 90 ~ ServiceOrder.getProcess ~ resProcess", resProcess.items)
                     dispatch({ type: 'SET_PROCESS', payload: resProcess.items })
                 } else {
                     handleProcess()

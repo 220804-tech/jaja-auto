@@ -1,4 +1,6 @@
 import { Alert } from 'react-native'
+import NetInfo from "@react-native-community/netinfo";
+
 export function regexEmail(e) {
     console.log(e, ' email');
     let val = e.nativeEvent.text;
@@ -30,3 +32,12 @@ export function cardAlert(status, error) {
     );
 }
 
+
+export async function CheckSignal() {
+    let signalInfo = {}
+    await NetInfo.fetch().then(state => {
+        signalInfo.type = state.type
+        signalInfo.connect = state.isConnected
+    });
+    return signalInfo
+}

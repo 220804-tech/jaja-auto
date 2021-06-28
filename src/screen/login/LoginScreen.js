@@ -289,13 +289,14 @@ export default function LoginScreen(props) {
             } else {
                 Alert.alert(
                     "Jaja.id",
-                    String(error) + String(error.code), [
-                    {
-                        text: "Ok",
-                        onPress: () => console.log("Pressed"),
-                        style: "cancel"
-                    },
-                ],
+                    String(error) + String(error.code),
+                    [
+                        {
+                            text: "Ok",
+                            onPress: () => console.log("Pressed"),
+                            style: "cancel"
+                        },
+                    ],
                     { cancelable: false }
                 );
             }

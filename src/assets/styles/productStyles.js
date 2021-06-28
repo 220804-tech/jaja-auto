@@ -26,7 +26,7 @@ export const style = StyleSheet.create({
         height: wp("44%"),
         borderTopLeftRadius: 3,
         borderTopRightRadius: 3,
-        resizeMode: 'center'
+        // resizeMode: 'center'
     },
     bottomCard: {
         flex: 0, flexDirection: 'column', padding: '3%'
@@ -40,7 +40,7 @@ export const style = StyleSheet.create({
     priceBefore: { fontSize: 12, fontWeight: '900', color: colors.BlackGrayScale, textDecorationLine: 'line-through', },
     priceAfter: { fontSize: 16, fontWeight: 'bold', color: colors.BlueJaja },
     price: { fontSize: 14, fontWeight: '900', color: colors.BlackGrayScale },
-    location: { flex: 0, flexDirection: 'row', marginTop: '3%', position: 'absolute', bottom: 10, left: 3 },
+    location: { flex: 0, flexDirection: 'row', marginTop: '3%', position: 'absolute', bottom: 10, left: 3, width: '80   %' },
     locarionName: { fontSize: 12, color: colors.BlackGrayScale, marginRight: '2%', textAlignVertical: 'top' },
     locationIcon: {
         width: 15,

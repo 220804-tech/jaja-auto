@@ -130,8 +130,8 @@ export default function AddAddressScreen(props) {
             setRegion({
                 latitude: parseFloat(value.latitude),
                 longitude: parseFloat(value.longitude),
-                latitudeDelta: 0.0922 * 0.025,
-                longitudeDelta: 0.0421 * 0.025,
+                latitudeDelta: 0.0043,
+                longitudeDelta: 0.0034
             })
             Service.getKelurahan(value.kecamatan_kd).then(res => {
                 setkelurahan(res.kelurahan)
@@ -390,7 +390,7 @@ export default function AddAddressScreen(props) {
 
     const handleAlamat = (data) => {
         console.log("🚀 ~ file: edit.js ~ line 162 ~ handleAlamat ~ data", data)
-        // setRegion(data.region)   
+        setRegion(data.region)
         setalamatGoogle(data.alamatGoogle)
         setshowButton(true)
     }

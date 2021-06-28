@@ -143,7 +143,7 @@ export const styles = StyleSheet.create({
     textNotif: { fontSize: 9, color: colors.White, fontWeight: '900' },
     cardProduct: { flex: 0, flexDirection: 'column', marginRight: 11, width: Wp('33%'), height: Wp('53%'), borderRadius: 4, backgroundColor: colors.White, alignItems: 'center' },
     flashsale: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: "bold",
         letterSpacing: 0,
         color: colors.White,
@@ -151,13 +151,13 @@ export const styles = StyleSheet.create({
         // fontFamily: 'Roboto'
     },
     titleDashboard: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: "bold",
         letterSpacing: 0,
         textAlign: "left",
         fontFamily: 'Lato-Bold',
         color: colors.BlueJaja,
-        marginBottom: '3%'
+        // marginBottom: '3%'
     },
     dashboardContent: {
         marginTop: -28,

@@ -5,6 +5,8 @@ export default {
     Silver: "#C0C0C0",
     BlackSilver: '#b8b8b8',
     BlackGrey: "#9A9A9A",
+    Blackk: "#8A8A8A",
+
     BlackTitle: '#6e6e6e',
 
     BlackGrayScale: '#454545',

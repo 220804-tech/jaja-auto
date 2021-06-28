@@ -66,9 +66,9 @@ export default function RecomandedHobbyComponent(props) {
                     } else {
                         Alert.alert(
                             "Error with status 13002",
-                            JSON.stringify(error)
+                            JSON.stringify(error),
                             [
-                            { text: "OK", onPress: () => console.log("OK Pressed") }
+                                { text: "OK", onPress: () => console.log("OK Pressed") }
                             ],
                             { cancelable: false }
                         );
@@ -106,7 +106,7 @@ export default function RecomandedHobbyComponent(props) {
 
     return (
         <View style={[styles.column, styles.p_3]}>
-            <View style={styles.row}>
+            <View style={[styles.row, styles.mb_3]}>
                 <Text style={[styles.titleDashboard, { color: props.color ? props.color : colors.BlueJaja }]}>
                     Rekomendasi Hobby
                 </Text>

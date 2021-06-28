@@ -23,6 +23,7 @@ export default function map(props) {
     const LATITUDE_DELTA = 0.0922;
 
     useEffect(() => {
+        console.log("file: Maps.js ~ line 27 ~ useEffect ~ props.region", props.region)
         if (props.region) {
             setRegion(props.region)
         } else {
@@ -46,7 +47,6 @@ export default function map(props) {
         fetch("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + region.latitude + "," + region.longitude + "&sensor=false&key=AIzaSyB4C8a6rkM6BKu1W0owWvStPzGHoc4ZBXI")
             .then((response) => response.json())
             .then((responseJson) => {
-                console.log("🚀 ~ file: map.js ~ line 34 ~ .then ~ responseJson", responseJson)
                 setalamatGoogle(responseJson.results[0].address_components[1].long_name + ' , ' + responseJson.results[0].address_components[0].short_name)
                 setalamatGoogleDetail(responseJson.results[0].formatted_address)
                 setdataGoogle(responseJson.results[0])

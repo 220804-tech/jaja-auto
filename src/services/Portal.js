@@ -17,7 +17,6 @@ export default function Portal() {
             const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
             if (enabled) {
                 messaging().getToken().then(res => {
-                    console.log("🚀 ~ file: Portal.js ~ line 22 ~ messaging ~ res", res)
                     EncryptedStorage.setItem('deviceToken', JSON.stringify(res))
                 })
             }

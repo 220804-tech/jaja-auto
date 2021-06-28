@@ -116,48 +116,48 @@ export default function StoreScreen() {
             </View>
             {/* <View style={{ flex: 1, height: Hp('100%') }}> */}
             <View style={{ flex: 1 }}>
-                <ScrollView contentContainerStyle={{ alignItems: 'flex-start' }}>
-                    {loading ? <Loading /> : null}
-                    {/* <ScrollView contentContainerStyle={{ height: Hp('100%') }}> */}
-                    <View style={[styles.column, styles.p_4, { backgroundColor: colors.White, elevation: 3, width: Wp('100%') }]}>
-                        <View style={styles.row_between_center}>
-                            {Object.keys(reduxStore).length !== 0 ?
-                                <View style={styles.row_start_center}>
-                                    <View style={{ width: Wp('15%'), height: Wp('15%'), borderRadius: 5, marginRight: '5%', borderWidth: 0.5, borderColor: '#f5f5f5', backgroundColor: colors.White }}>
-                                        <Image source={{ uri: reduxStore.image.profile ? reduxStore.image.profile : null }} style={{ width: '100%', height: '100%', resizeMode: 'contain', borderRadius: 5 }} />
-                                    </View>
-                                    <View style={[styles.column_start, { height: Wp('15%') }]}>
-                                        <Text style={[styles.font_14, { color: colors.BlackGrayScale, fontWeight: 'bold', marginBottom: '3%' }]}>{reduxStore.name}</Text>
-                                        <Text style={[styles.font_12, { color: colors.BlackGrayScale, marginBottom: '3%' }]}>{reduxStore.location.city}</Text>
-                                        {reduxStore.rating !== "0.0" ?
-                                            <View style={styles.row_center}>
-                                                <Text style={[styles.font_14, { color: colors.BlackGrayScale }]}>{reduxStore.rating} </Text>
-                                                <Image source={require('../../assets/icons/star.png')} style={[styles.icon_14, { tintColor: colors.YellowJaja }]} />
-                                            </View>
-                                            :
-                                            <View style={styles.row_center}>
-                                            </View>}
-                                    </View>
+                {/* <ScrollView contentContainerStyle={{ alignItems: 'flex-start' }}> */}
+                {loading ? <Loading /> : null}
+                {/* <ScrollView contentContainerStyle={{ height: Hp('100%') }}> */}
+                <View style={[styles.column, styles.p_4, { backgroundColor: colors.White, elevation: 3, width: Wp('100%') }]}>
+                    <View style={styles.row_between_center}>
+                        {Object.keys(reduxStore).length !== 0 ?
+                            <View style={styles.row_start_center}>
+                                <View style={{ width: Wp('15%'), height: Wp('15%'), borderRadius: 5, marginRight: '5%', borderWidth: 0.5, borderColor: '#f5f5f5', backgroundColor: colors.White }}>
+                                    <Image source={{ uri: reduxStore.image.profile ? reduxStore.image.profile : null }} style={{ width: '100%', height: '100%', resizeMode: 'contain', borderRadius: 5 }} />
                                 </View>
-                                : null
-                            }
-                            <Button onPress={handleChat} mode="contained" icon="chat" labelStyle={{ fontSize: 12, color: colors.White }} color={colors.BlueJaja} >
-                                Chat
-                            </Button>
-                            {/* <Button mode="contained" icon="plus" labelStyle={{ fontSize: 12 }} >
+                                <View style={[styles.column_start, { height: Wp('15%') }]}>
+                                    <Text style={[styles.font_14, { color: colors.BlackGrayScale, fontWeight: 'bold', marginBottom: '3%' }]}>{reduxStore.name}</Text>
+                                    <Text style={[styles.font_12, { color: colors.BlackGrayScale, marginBottom: '3%' }]}>{reduxStore.location.city}</Text>
+                                    {reduxStore.rating !== "0.0" ?
+                                        <View style={styles.row_center}>
+                                            <Text style={[styles.font_14, { color: colors.BlackGrayScale }]}>{reduxStore.rating} </Text>
+                                            <Image source={require('../../assets/icons/star.png')} style={[styles.icon_14, { tintColor: colors.YellowJaja }]} />
+                                        </View>
+                                        :
+                                        <View style={styles.row_center}>
+                                        </View>}
+                                </View>
+                            </View>
+                            : null
+                        }
+                        <Button onPress={handleChat} mode="contained" icon="chat" labelStyle={{ fontSize: 12, color: colors.White }} color={colors.BlueJaja} >
+                            Chat
+                        </Button>
+                        {/* <Button mode="contained" icon="plus" labelStyle={{ fontSize: 12 }} >
                                 Ikuti
                             </Button> */}
-                        </View>
-                        {reduxStore.greeting ?
-                            <View style={[styles.pt_2]}>
-                                <Paragraph style={styles.font_24}>{reduxStore.greeting}</Paragraph>
-                            </View>
-                            : null}
-
                     </View>
-                    <View style={[{ flex: 1, backgroundColor: colors.White }]}>
-                        <MainPage />
-                        {/* <TabView
+                    {reduxStore.greeting ?
+                        <View style={[styles.pt_2]}>
+                            <Paragraph style={styles.font_13}>{reduxStore.greeting}</Paragraph>
+                        </View>
+                        : null}
+
+                </View>
+                <View style={[{ flex: 1, backgroundColor: colors.White }]}>
+                    <MainPage />
+                    {/* <TabView
                             navigationState={{ index, routes }}
                             renderScene={renderScene}
                             onIndexChange={setIndex}
@@ -178,8 +178,8 @@ export default function StoreScreen() {
                                 />
                             )}
                         /> */}
-                    </View>
-                </ScrollView>
+                </View>
+                {/* </ScrollView> */}
             </View>
             {/* </View> */}
         </SafeAreaView >

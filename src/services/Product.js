@@ -32,7 +32,7 @@ export async function productDetail(auth, slug) {
         })
         .catch(error => {
             if (String(error).slice(11, String(error).length).replace(" ", "") === "Network request failed") {
-                ToastAndroid.show("Tidak dapat asasas, periksa koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.CENTER)
+                ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.CENTER)
 
             }
 

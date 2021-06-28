@@ -4,7 +4,7 @@ import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { Button } from 'react-native-paper'
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-import { CheckSignal, styles, colors, useNavigation, Hp, Wp, Ps, Loading, ServiceCart, ServiceUser, useFocusEffect, ServiceStore, ServiceProduct, FastImage, RecomandedHobby, Countdown } from '../../export'
+import { FilterLocation, CheckSignal, styles, colors, useNavigation, Hp, Wp, Ps, Loading, ServiceCart, ServiceUser, useFocusEffect, ServiceStore, ServiceProduct, FastImage, RecomandedHobby, Countdown } from '../../export'
 const IS_IPHONE_X = SCREEN_HEIGHT === 812 || SCREEN_HEIGHT === 896;
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
@@ -12,7 +12,10 @@ const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 import { useDispatch, useSelector } from "react-redux";
 import ActionSheet from "react-native-actions-sheet";
 import StarRating from 'react-native-star-rating';
+import { getDistance, getPreciseDistance } from 'geolib';
+
 LogBox.ignoreAllLogs()
+
 
 export default function ProductScreen(props) {
     const navigation = useNavigation()
@@ -21,8 +24,6 @@ export default function ProductScreen(props) {
     const reduxSearch = useSelector(state => state.search)
     const reduxUser = useSelector(state => state.user)
     const reduxAuth = useSelector(state => state.auth.auth)
-    const sasa = useSelector(state => state.auth)
-    console.log("file: ProductScreen.js ~ line 25 ~ ProductScreen ~ sasa", sasa)
 
     const dispatch = useDispatch()
 
@@ -70,6 +71,10 @@ export default function ProductScreen(props) {
         let response;
         ServiceProduct.productDetail(reduxAuth, slug).then(res => {
             if (res) {
+                if (res.sellerTerdekat.length) {
+                    console.log("masyk sini")
+                    FilterLocation(res.sellerTerdekat)
+                }
                 if (res.flashsale && Object.keys(res.flashsale).length) {
                     setFlashsale(true)
                     setFlashsaleData(res.flashsale)
@@ -79,6 +84,9 @@ export default function ProductScreen(props) {
                 setLike(res.isWishlist)
                 setidProduct(res.id)
                 response = "success"
+                if (res.stock == '0') {
+                    setdisableCart(true)
+                }
                 dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res })
                 let dataSeller = res.store
                 dataSeller.chat = reduxUser.user.uid + dataSeller.uid
@@ -109,10 +117,8 @@ export default function ProductScreen(props) {
         useCallback(() => {
             try {
                 CheckSignal().then(res => {
-                    console.log("file: ProductScreen.js ~ line 115 ~ CheckSignal ~ res", res)
-
+                    // console.log("file: ProductScreen.js ~ line 115 ~ CheckSignal ~ res", res)
                 })
-                console.log("file: ProductScreen.js ~ line 112 ~ useCallback ~ reduxAuth", reduxAuth)
                 if (reduxAuth) {
                     // CheckSignal().then(res => {
                     //     if (res.connect) {
@@ -129,6 +135,72 @@ export default function ProductScreen(props) {
         }, []),
     );
 
+    const filterDistance = (citys) => {
+        try {
+            let array = [];
+            citys.map(city => {
+                if (String(city.city_name)) {
+                    fetch("https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" + city.city_name + "&key=AIzaSyC_O0-LKyAboQn0O5_clZnePHSpQQ5slQU")
+                        .then((response) => response.json())
+                        .then((responseJson) => {
+                            fetch("https://maps.googleapis.com/maps/api/geocode/json?place_id=" + responseJson.predictions[0].place_id + "&key=AIzaSyB4C8a6rkM6BKu1W0owWvStPzGHoc4ZBXI")
+                                .then(response => response.json())
+                                .then(response => {
+                                    if (reduxUser.user.location[0].latitude && reduxUser.user.location[0].longitude) {
+                                        let point = response.results[0].geometry.location;
+                                        var pdis = getDistance(
+                                            { latitude: reduxUser.user.location[0].latitude, longitude: reduxUser.user.location[0].longitude },
+                                            { latitude: point.lat, longitude: point.lng },
+                                        );
+                                        console.log("file: ProductScreen.js ~ line 143 ~ filterDistance ~ city.city_name", city.city_name)
+
+                                        console.log("fil-6.321471630175809, 106.87048599579524e: ProductScreen.js ~ line 154 ~ .then ~ pdis KM ", pdis + " => " + pdis / 1000 + "KM")
+                                        //     , console.log("file: ProductScreen.js ~ line 143 ~ filterDistance ~ city.city_name", city.city_name)
+
+                                    }
+                                })
+                                .catch((error) => console.log("error 117", error));
+                            // var pdis = getPreciseDistance(
+                            //     { latitude: -6.321586109862249, longitude: 106.87017515272444 },
+                            //     { latitude: -6.168069464610844, longitude: 107.00333140704073 },
+                            // );
+                            // alert(
+                            //     `Precise Distance\n\n${pdis} Meter\nOR\n${pdis / 1000} KM`
+                            // );
+
+
+                        })
+                        .catch((error) => console.log("error", error));
+                }
+            })
+        } catch (error) {
+            console.log("file: AddAddressScreen.js ~ line 103 ~ handleSearchKecamatan ~ error", error)
+        }
+    }
+    const handleSearchLatLong = (item) => {
+        var value = item['place_id'];
+        console.log("_cariLatlon: " + value);
+        if (value) {
+            fetch("https://maps.googleapis.com/maps/api/geocode/json?place_id=" + value + "&key=AIzaSyB4C8a6rkM6BKu1W0owWvStPzGHoc4ZBXI")
+                .then((response) => response.json())
+                .then(responseJson => {
+                    let point = responseJson.results[0].geometry;
+                    const northeastLat = point.bounds.northeast.lat, southwestLat = point.bounds.southwest.lat;
+                    const northeastLng = point.bounds.northeast.lng, southwestLng = point.bounds.southwest.lng;
+                    setRegion({
+                        latitude: (northeastLat + southwestLat) / 2, // 2D middle point
+                        longitude: (northeastLng + southwestLng) / 2, // 2D middle point
+                        latitudeDelta: Math.max(northeastLat, southwestLat) - Math.min(northeastLat, southwestLat),
+                        longitudeDelta: (Math.max(northeastLng, southwestLng) - Math.min(northeastLng, southwestLng)) * height / width,
+                    })
+                    console.log("file: Maps.js ~ line 106 ~ .then ~ responseJson.results[0].geometry.location.lng", responseJson.results[0].geometry.location.lng)
+                    console.log("file: Maps.js ~ line 106 ~ .then ~ responseJson.results[0].geometry.location.lat", responseJson.results[0].geometry.location.lat)
+                    console.log("file: AddAddressScreen.js ~ line 96 ~ .then ~ responseJson.results[0].geometry.", responseJson.results[0].geometry)
+                })
+                .catch((error) => console.log("error 117", error));
+        }
+
+    }
     const getBadges = () => {
         ServiceUser.getBadges(reduxAuth).then(res => {
             if (res) {
@@ -201,9 +273,9 @@ export default function ProductScreen(props) {
                 } else {
                     Alert.alert(
                         "Error with status code 17001",
-                        String(result.status.message) + " => " + String(result.status.code)
+                        String(result.status.message) + " => " + String(result.status.code),
                         [
-                        { text: "OK", onPress: () => console.log("OK Pressed") }
+                            { text: "OK", onPress: () => console.log("OK Pressed") }
                         ],
                         { cancelable: false }
                     );
@@ -215,9 +287,9 @@ export default function ProductScreen(props) {
                 } else {
                     Alert.alert(
                         "Error with status code 17001",
-                        JSON.stringify(error)
+                        JSON.stringify(error),
                         [
-                        { text: "OK", onPress: () => console.log("OK Pressed") }
+                            { text: "OK", onPress: () => console.log("OK Pressed") }
                         ],
                         { cancelable: false }
                     );
@@ -661,11 +733,11 @@ export default function ProductScreen(props) {
                 <TouchableOpacity onPress={handleChat} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
                     <Image source={require('../../assets/icons/chats.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: flashsale ? colors.RedFlashsale : colors.BlueJaja }} />
                 </TouchableOpacity>
-                <TouchableOpacity disabled={false} onPress={() => handleAddCart("trolley")} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
+                <TouchableOpacity disabled={disableCart} onPress={() => handleAddCart("trolley")} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
                     <Image source={require('../../assets/icons/cart.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: flashsale ? colors.RedFlashsale : colors.BlueJaja }} />
                 </TouchableOpacity>
                 <Button disabled={disableCart} onPress={() => handleAddCart("buyNow")} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={flashsale ? colors.RedFlashsale : colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained">
-                    Beli Sekarang
+                    {reduxSearch.productDetail.stock == '0' ? 'Stok Habis' : 'Beli Sekarang'}
                 </Button>
             </View>
 

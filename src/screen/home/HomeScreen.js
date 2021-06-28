@@ -2,13 +2,11 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, StyleSheet, RefreshControl, Platform, Dimensions, LogBox, Animated } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
-import { BasedOnSearch, Trending, Category, Flashsale, Language, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect, } from '../../export'
+import { BasedOnSearch, Trending, Category, Flashsale, Language, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect, NearestStore, } from '../../export'
 const { height: SCREEN_HEIGHT, width } = Dimensions.get('window');
 import DeviceInfo from 'react-native-device-info';
 
 const { height: hg } = Dimensions.get('screen')
-
-import FastImage from 'react-native-fast-image'
 import { useDispatch, useSelector } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
 const IS_IPHONE_X = SCREEN_HEIGHT === 812 || SCREEN_HEIGHT === 896;
@@ -83,7 +81,6 @@ export default function HomeScreen() {
                     }
                 })
                 let uniqueId = DeviceInfo.getUniqueId()
-                console.log("file: HomeScreen.js ~ line 88 ~ useCallback ~ sasasasasasas", uniqueId)
 
             } catch (error) {
 
@@ -185,7 +182,8 @@ export default function HomeScreen() {
         return (
             <View style={styles.column}>
                 <Category />
-                {reduxShowFlashsale ? <Flashsale /> : null}
+                <Flashsale />
+                <NearestStore />
                 <Trending />
                 {/* <BasedOnSearch /> */}
                 {/* <HobbyAverage /> */}
