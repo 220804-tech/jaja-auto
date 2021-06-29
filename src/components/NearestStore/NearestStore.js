@@ -10,8 +10,7 @@ import TextTicker from 'react-native-text-ticker'
 export default function NearestStore() {
     const navigation = useNavigation()
     const dispatch = useDispatch()
-    const reduxdashFlashsale = useSelector(state => state.dashboard.flashsale)
-    const reduxAuth = useSelector(state => state.auth.auth)
+    const reduxdashNearestStore = useSelector(state => state.dashboard.nearestStore)
 
 
     useEffect(() => {
@@ -46,18 +45,18 @@ export default function NearestStore() {
         <View style={[styles.column, styles.px_3, styles.py_4, { backgroundColor: colors.White }]}>
             <View style={[styles.row_between_center, styles.mb_3]}>
                 <Text style={styles.titleDashboard}>
-                    Berdasarkan Pencarian Kamu
+                    Berdasarkan Toko Terdekat
                 </Text>
-                <TouchableOpacity onPress={() => handleCategory('Art Shop')}>
+                {/* <TouchableOpacity onPress={() => handleCategory('Art Shop')}>
                     <Text style={[{ fontSize: 13, fontWeight: 'bold', color: colors.BlueJaja }]}>
                         Lihat Semua <Image source={require('../../assets/icons/play.png')} style={[styles.icon_10, { tintColor: colors.BlueJaja }]} />
                     </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
-            {reduxdashFlashsale && reduxdashFlashsale.length ?
+            {reduxdashNearestStore && reduxdashNearestStore.length ?
                 <FlatList
                     showsHorizontalScrollIndicator={false}
-                    data={reduxdashFlashsale}
+                    data={reduxdashNearestStore.slice(0, 20)}
                     horizontal={true}
                     keyExtractor={(item, index) => String(index)}
                     renderItem={({ item, index }) => {
@@ -73,23 +72,30 @@ export default function NearestStore() {
                                             headers: { Authorization: 'someAuthToken' },
                                             priority: FastImage.priority.normal,
                                         }}
-                                        resizeMode={FastImage.resizeMode.cover}
+                                        resizeMode={FastImage.resizeMode.contain}
                                     />
-                                    <View style={[styles.font_14, styles.px_5, styles.py, { position: 'absolute', bottom: 0, backgroundColor: colors.RedFlashsale, borderTopRightRadius: 11 }]}>
+                                    <View style={[styles.font_14, styles.px_5, styles.py, { position: 'absolute', bottom: 0, backgroundColor: colors.BlueJaja, borderTopRightRadius: 11 }]}>
                                         <Text style={[styles.font_8, { color: colors.White }]}>Seller Terdekat</Text>
                                     </View>
                                 </View>
-                                <View style={[Ps.bottomCard, { alignSelf: 'flex-start', width: '100%', height: Wp('18%'), justifyContent: 'center', alignItems: 'flex-start' }]}>
-                                    <Text numberOfLines={1} style={Ps.name_product}>{item.name}</Text>
-                                    <View style={styles.row}>
-                                        <Text style={[Ps.priceBefore, styles.mr_3,]}>{item.price}</Text>
-                                        <Text style={{ fontSize: 10, zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '1%', paddingHorizontal: '5%', borderRadius: 2 }}>{item.discountFlash}%</Text>
-                                    </View>
-                                    <Text style={[Ps.priceAfter]}>{item.priceDiscountFlash}</Text>
+                                <View style={[Ps.bottomCard, { alignSelf: 'flex-start', width: '100%', height: Wp('18%'), justifyContent: 'flex-start', alignItems: 'flex-start' }]}>
+                                    <Text numberOfLines={1} style={[Ps.nameProduct, { fontSize: 13 }]}>{item.name}</Text>
+
+                                    {item.isDiscount ?
+                                        <>
+                                            <View style={styles.row}>
+                                                <Text style={[Ps.priceBefore, styles.mr_3,]}>{item.price}</Text>
+                                                <Text style={{ fontSize: 10, zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '1%', paddingHorizontal: '5%', borderRadius: 2 }}>{item.discount}%</Text>
+                                            </View>
+                                            <Text style={Ps.priceAfter}>{item.price}</Text>
+                                        </>
+                                        :
+                                        <Text style={[Ps.price, { fontWeight: 'bold', color: colors.BlueJaja }]}>{item.price}</Text>
+                                    }
                                 </View>
-                                <View style={Ps.location}>
+                                <View style={[Ps.location, { width: '94%' }]}>
                                     <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
-                                    <Text style={Ps.locarionName}>{item.location}</Text>
+                                    <Text numberOfLines={1} style={[Ps.locarionName, { fontSize: 10, width: '85%' }]}>{item.location}</Text>
                                 </View>
                             </TouchableOpacity>
                         )

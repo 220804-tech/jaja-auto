@@ -6,6 +6,8 @@ const initialState = {
     hobyAverage: [],
     basedOnSearch: [],
     recommanded: [],
+    nearestStore: [],
+    showNearestStore: false,
     loadmore: false,
     out: false,
     maxRecomandded: false
@@ -19,6 +21,10 @@ export default function storeDashboard(state = initialState, action) {
             return { ...state, flashsale: payload }
         case 'SET_SHOW_FLASHSALE':
             return { ...state, showFlashsale: payload }
+        case 'SET_DASHNEAREST':
+            return { ...state, nearestStore: payload }
+        case 'SET_SHOW_NEAREST':
+            return { ...state, showNearestStore: payload }
         case 'SET_DASHTRENDING':
             return { ...state, trending: payload }
         case 'SET_DASHHOBYAVERAGE':

@@ -20,6 +20,7 @@ export default function HomeScreen() {
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
     const reduxProfile = useSelector(state => state.user.user)
     const reduxShowFlashsale = useSelector(state => state.dashboard.showFlashsale)
+    const reduxShowNearest = useSelector(state => state.dashboard.showNearestStore)
 
     useAndroidBackHandler(() => {
         if (out) {
@@ -41,7 +42,7 @@ export default function HomeScreen() {
     const [auth, setAuth] = useState("")
     const [scrollY, setscrollY] = useState(new Animated.Value(0))
     const [out, setOut] = useState(false)
-    const [home, setHome] = useState(true)
+    const [nearestProduct, setnearestProduct] = useState(false)
     const [refreshing, setRefreshing] = useState(false);
     const reduxOut = useSelector(state => state.dashboard.out)
 
@@ -96,11 +97,19 @@ export default function HomeScreen() {
                     setAuth(JSON.parse(res))
                 }
             })
+
+            EncryptedStorage.getItem('nearestProduct').then(res => {
+                console.log("file: HomeScreen.js ~ line 102 ~ EncryptedStorage.getItem ~ res", res)
+                if (res && res.length) {
+                    setnearestProduct(true)
+                    dispatch({ type: 'SET_DASHNEAREST', payload: JSON.parse(res) })
+                }
+            })
+
+
         } catch (error) {
 
         }
-        console.log("file: HomeScreen.js ~ line 191 ~ renderContent ~ reduxShowFlashsale", reduxShowFlashsale)
-
     }, [])
 
     const getBadges = () => {
@@ -182,9 +191,10 @@ export default function HomeScreen() {
         return (
             <View style={styles.column}>
                 <Category />
-                <Flashsale />
-                <NearestStore />
+                {reduxShowFlashsale ? <Flashsale /> : null}
                 <Trending />
+                {nearestProduct ? <NearestStore /> : null}
+
                 {/* <BasedOnSearch /> */}
                 {/* <HobbyAverage /> */}
                 <RecomandedHobby />

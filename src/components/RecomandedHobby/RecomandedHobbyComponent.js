@@ -53,6 +53,7 @@ export default function RecomandedHobbyComponent(props) {
                 if (result.status.code == 200) {
                     dispatch({ type: 'SET_DASHRECOMMANDED', payload: reduxdashRecommanded.concat(result.data.items) })
                     EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))
+                    dispatch({ 'type': 'SET_MAX_RECOMMANDED', payload: false })
                 } else if (result.status.code === 204) {
                     dispatch({ 'type': 'SET_MAX_RECOMMANDED', payload: true })
                 }
@@ -60,6 +61,8 @@ export default function RecomandedHobbyComponent(props) {
 
             })
             .catch(error => {
+                dispatch({ 'type': 'SET_MAX_RECOMMANDED', payload: true })
+
                 CheckSignal().then(signal => {
                     if (signal.connect == false) {
                         ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda", ToastAndroid.LONG, ToastAndroid.CENTER)

@@ -185,16 +185,13 @@ export default function VoucherScreen() {
                                         </View>
                                         <View style={[styles.column_center, styles.px_2, { width: '33%' }]}>
                                             <Text numberOfLines={3} style={[styles.font_14, styles.mb_2, { color: colors.BlueJaja, fontWeight: 'bold', width: '100%' }]}>Diskon {item.discountText}</Text>
-                                            <Text style={[styles.font_8, { position: 'absolute', bottom: 5, color: colors.BlueJaja, fontWeight: 'bold', width: '100%', backgroundColor: 'silver' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
+                                            <Text style={[styles.font_8, { position: 'absolute', bottom: 5, color: colors.BlueJaja, fontWeight: 'bold', width: '100%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
                                         </View>
                                         <View style={[styles.column_center, { width: '33%' }]}>
                                             <TouchableOpacity onPress={() => handleVoucher(item, index)} style={{ width: '50%', height: '35%', backgroundColor: item.isClaimed ? colors.White : colors.BlueJaja, padding: '2%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.BlueJaja, borderRadius: 5 }}>
                                                 <Text style={[styles.font_14, { color: item.isClaimed ? colors.BlueJaja : colors.White }]}>{item.isClaimed ? item.isSelected ? "Terpakai" : "Pakai" : "Klaim"}</Text>
                                             </TouchableOpacity>
                                         </View>
-                                        {/* <View style={{ position: 'absolute', right: 0, top: 0, backgroundColor: colors.BlueJaja, height: '30%', width: '7%', zIndex: 100, borderBottomLeftRadius: 7, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={[styles.font_14, { color: colors.White, alignSelf: 'center', fontFamily: 'Roboto' }]}>J</Text>
-                                </View> */}
                                     </View>
                                 </View>
                             )

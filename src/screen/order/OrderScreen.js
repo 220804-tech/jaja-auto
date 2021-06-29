@@ -46,7 +46,6 @@ export default function OrderScreen() {
             }
         })
         console.log("🚀 ~ file: OrderScreen.js ~ line 107 ~ OrderScreen ~ reduxAuth", reduxAuth)
-
     }, [])
 
     return (

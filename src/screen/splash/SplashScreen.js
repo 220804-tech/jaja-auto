@@ -224,20 +224,6 @@ export default function SplashScreen() {
                     } else {
                         handleUnpaid()
                     }
-                }).catch(error => {
-                    if (String(error).slice(11, String(error).length) === "Network request failed") {
-                        ToastAndroid.show("Tidak dapat terhubung, periksa koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
-                    } else {
-                        Alert.alert(
-                            "Error with status 12003",
-                            JSON.stringify(error),
-                            [
-                                { text: "OK", onPress: () => console.log("OK Pressed") }
-                            ],
-                            { cancelable: false }
-                        );
-                    }
-                    handleUnpaid()
                 })
 
                 ServiceOrder.getWaitConfirm(auth).then(reswaitConfirm => {
@@ -246,110 +232,34 @@ export default function SplashScreen() {
                     } else {
                         handleWaitConfirm()
                     }
-                }).catch(error => {
-                    if (String(error).slice(11, String(error).length) === "Network request failed") {
-                        ToastAndroid.show("Tidak dapat terhubung, periksa koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
-                    } else {
-                        Alert.alert(
-                            "Error with status 12004",
-                            JSON.stringify(error),
-                            [
-                                { text: "OK", onPress: () => console.log("OK Pressed") }
-                            ],
-                            { cancelable: false }
-                        );
-                    }
-                    handleWaitConfirm()
                 })
-
                 ServiceOrder.getProcess(auth).then(resProcess => {
                     if (resProcess) {
                         dispatch({ type: 'SET_PROCESS', payload: resProcess.items })
                     } else {
                         handleProcess()
                     }
-                }).catch(error => {
-                    if (String(error).slice(11, String(error).length) === "Network request failed") {
-                        ToastAndroid.show("Tidak dapat terhubung, periksa koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
-                    } else {
-                        Alert.alert(
-                            "Error with status 12005",
-                            JSON.stringify(error),
-                            [
-                                { text: "OK", onPress: () => console.log("OK Pressed") }
-                            ],
-                            { cancelable: false }
-                        );
-
-                    } handleProcess()
                 })
-
                 ServiceOrder.getSent(auth).then(resSent => {
                     if (resSent) {
                         dispatch({ type: 'SET_SENT', payload: resSent.items })
                     } else {
                         handleSent()
                     }
-                }).catch(error => {
-                    if (String(error).slice(11, String(error).length) === "Network request failed") {
-                        ToastAndroid.show("Tidak dapat terhubung, periksa koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
-                    } else {
-                        Alert.alert(
-                            "Error with status 12006",
-                            JSON.stringify(error),
-                            [
-                                { text: "OK", onPress: () => console.log("OK Pressed") }
-                            ],
-                            { cancelable: false }
-                        );
-
-                    } handleSent()
                 })
-
                 ServiceOrder.getCompleted(auth).then(resCompleted => {
                     if (resCompleted) {
                         dispatch({ type: 'SET_COMPLETED', payload: resCompleted.items })
                     } else {
                         handleCompleted()
                     }
-                }).catch(error => {
-                    if (String(error).slice(11, String(error).length) === "Network request failed") {
-                        ToastAndroid.show("Tidak dapat terhubung, periksa koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
-                    } else {
-                        Alert.alert(
-                            "Error with status 12007",
-                            JSON.stringify(error),
-                            [
-                                { text: "OK", onPress: () => console.log("OK Pressed") }
-                            ],
-                            { cancelable: false }
-                        );
-
-                    }
-                    handleCompleted()
                 })
-
                 ServiceOrder.getFailed(auth).then(resFailed => {
                     if (resFailed) {
                         dispatch({ type: 'SET_FAILED', payload: resFailed.items })
                     } else {
                         handleFailed()
                     }
-                }).catch(error => {
-                    if (String(error).slice(11, String(error).length) === "Network request failed") {
-                        ToastAndroid.show("Tidak dapat terhubung, periksa koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
-                    } else {
-                        Alert.alert(
-                            "Error with status 12008",
-                            JSON.stringify(error),
-                            [
-                                { text: "OK", onPress: () => console.log("OK Pressed") }
-                            ],
-                            { cancelable: false }
-                        );
-
-                    }
-                    handleFailed()
                 })
             }
         } catch (error) {

@@ -26,6 +26,7 @@ UAT Apps Jaja Jumat 25 Juni 2021
 
 - Feature - Undang teman (Referral)                                                                             #selesai
 - Revisi - Hapus alamat menggunakan slide                                                                       #selesai
+- Revisi - Hapus cart menggunakan slide                                                                         #selesai
 - Feature  - List seller terdekat sesuai pencarian produk yang pernah di cari user                              #progres
 - Feature - Filter produk di halaman Favorit
 - Feature - Filter produk di halaman Terakhir Dilihat

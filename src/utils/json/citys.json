@@ -956,7 +956,7 @@
             "long": 108.5523
         },
         {
-            "kabko": "KOTA  Q",
+            "kabko": "KOTA DEPOK",
             "lat": -6.4025,
             "long": 106.7942
         },
@@ -964,6 +964,11 @@
             "kabko": "KOTA SUKABUMI",
             "lat": -6.9277,
             "long": 106.93
+        },
+        {
+            "kabko": "KOTA TASIKMALAYA",
+            "lat": -7.3506,
+            "long": 108.2172
         },
         {
             "kabko": "KOTA TASIKMALAYA",
@@ -997,6 +1002,11 @@
         },
         {
             "kabko": "KAB. KEPULAUAN SERIBU",
+            "lat": -5.6122,
+            "long": 106.617
+        },
+        {
+            "kabko": "KAB. ADMINISTRASI KEPULAUAN SERIBU",
             "lat": -5.6122,
             "long": 106.617
         },

@@ -100,7 +100,7 @@ export default function FlashsaleComponent() {
                                                 headers: { Authorization: 'someAuthToken' },
                                                 priority: FastImage.priority.normal,
                                             }}
-                                            resizeMode={FastImage.resizeMode.cover}
+                                            resizeMode={FastImage.resizeMode.contain}
                                         />
                                         <View style={[Ps.bottomCard, { alignSelf: 'flex-start', width: '100%', height: Wp('18%'), justifyContent: 'center', alignItems: 'flex-start' }]}>
                                             <Text

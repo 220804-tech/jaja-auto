@@ -12,7 +12,6 @@ const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 import { useDispatch, useSelector } from "react-redux";
 import ActionSheet from "react-native-actions-sheet";
 import StarRating from 'react-native-star-rating';
-import { getDistance, getPreciseDistance } from 'geolib';
 
 LogBox.ignoreAllLogs()
 
@@ -71,9 +70,9 @@ export default function ProductScreen(props) {
         let response;
         ServiceProduct.productDetail(reduxAuth, slug).then(res => {
             if (res) {
-                if (res.sellerTerdekat.length) {
+                if (reduxAuth && res.sellerTerdekat.length && reduxUser.user && Object.keys(reduxUser.user).length && Object.keys(res.category).length && res.category.slug) {
                     console.log("masyk sini")
-                    FilterLocation(res.sellerTerdekat)
+                    FilterLocation(res.sellerTerdekat, reduxUser.user.location, res.category.slug, reduxAuth)
                 }
                 if (res.flashsale && Object.keys(res.flashsale).length) {
                     setFlashsale(true)
@@ -110,7 +109,6 @@ export default function ProductScreen(props) {
                 return ToastAndroid.show("Tidak dapat terhubung, periksa koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.CENTER)
             }
         }, 5000);
-
     }
 
     useFocusEffect(
@@ -135,48 +133,35 @@ export default function ProductScreen(props) {
         }, []),
     );
 
-    const filterDistance = (citys) => {
-        try {
-            let array = [];
-            citys.map(city => {
-                if (String(city.city_name)) {
-                    fetch("https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" + city.city_name + "&key=AIzaSyC_O0-LKyAboQn0O5_clZnePHSpQQ5slQU")
-                        .then((response) => response.json())
-                        .then((responseJson) => {
-                            fetch("https://maps.googleapis.com/maps/api/geocode/json?place_id=" + responseJson.predictions[0].place_id + "&key=AIzaSyB4C8a6rkM6BKu1W0owWvStPzGHoc4ZBXI")
-                                .then(response => response.json())
-                                .then(response => {
-                                    if (reduxUser.user.location[0].latitude && reduxUser.user.location[0].longitude) {
-                                        let point = response.results[0].geometry.location;
-                                        var pdis = getDistance(
-                                            { latitude: reduxUser.user.location[0].latitude, longitude: reduxUser.user.location[0].longitude },
-                                            { latitude: point.lat, longitude: point.lng },
-                                        );
-                                        console.log("file: ProductScreen.js ~ line 143 ~ filterDistance ~ city.city_name", city.city_name)
+    // const filterDistance = (citys) => {
+    //     try {
+    //         let array = [];
+    //         citys.map(city => {
+    //             if (String(city.city_name)) {
+    //                 fetch("https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" + city.city_name + "&key=AIzaSyC_O0-LKyAboQn0O5_clZnePHSpQQ5slQU")
+    //                     .then((response) => response.json())
+    //                     .then((responseJson) => {
+    //                         fetch("https://maps.googleapis.com/maps/api/geocode/json?place_id=" + responseJson.predictions[0].place_id + "&key=AIzaSyB4C8a6rkM6BKu1W0owWvStPzGHoc4ZBXI")
+    //                             .then(response => response.json())
+    //                             .then(response => {
+    //                                 if (reduxUser.user.location[0].latitude && reduxUser.user.location[0].longitude) {
+    //                                     let point = response.results[0].geometry.location;
+    //                                     var pdis = getDistance(
+    //                                         { latitude: reduxUser.user.location[0].latitude, longitude: reduxUser.user.location[0].longitude },
+    //                                         { latitude: point.lat, longitude: point.lng },
+    //                                     );
+    //                                 }
+    //                             })
+    //                             .catch((error) => console.log("error 117", error));
+    //                     })
+    //                     .catch((error) => console.log("error", error));
+    //             }
+    //         })
+    //     } catch (error) {
+    //         console.log("file: AddAddressScreen.js ~ line 103 ~ handleSearchKecamatan ~ error", error)
+    //     }
+    // }
 
-                                        console.log("fil-6.321471630175809, 106.87048599579524e: ProductScreen.js ~ line 154 ~ .then ~ pdis KM ", pdis + " => " + pdis / 1000 + "KM")
-                                        //     , console.log("file: ProductScreen.js ~ line 143 ~ filterDistance ~ city.city_name", city.city_name)
-
-                                    }
-                                })
-                                .catch((error) => console.log("error 117", error));
-                            // var pdis = getPreciseDistance(
-                            //     { latitude: -6.321586109862249, longitude: 106.87017515272444 },
-                            //     { latitude: -6.168069464610844, longitude: 107.00333140704073 },
-                            // );
-                            // alert(
-                            //     `Precise Distance\n\n${pdis} Meter\nOR\n${pdis / 1000} KM`
-                            // );
-
-
-                        })
-                        .catch((error) => console.log("error", error));
-                }
-            })
-        } catch (error) {
-            console.log("file: AddAddressScreen.js ~ line 103 ~ handleSearchKecamatan ~ error", error)
-        }
-    }
     const handleSearchLatLong = (item) => {
         var value = item['place_id'];
         console.log("_cariLatlon: " + value);
@@ -526,8 +511,8 @@ export default function ProductScreen(props) {
                                             : null}
                                     </View>
                                 </View>
-                                <TouchableOpacity style={{ padding: '2%', borderWidth: 1, borderColor: flashsale ? colors.RedFlashsale : colors.BlueJaja, borderRadius: 100 }} onPress={handleStore}>
-                                    <Text style={[styles.font_14, { color: flashsale ? colors.RedFlashsale : colors.BlueJaja, fontWeight: 'bold' }]}>Kunjungi Toko</Text>
+                                <TouchableOpacity style={[styles.row_center, { padding: '2%', borderWidth: 1, borderColor: flashsale ? colors.RedFlashsale : colors.BlueJaja, borderRadius: 100 }]} onPress={handleStore}>
+                                    <Text style={[styles.font_12, { color: flashsale ? colors.RedFlashsale : colors.BlueJaja, fontWeight: 'bold' }]}>Kunjungi Toko</Text>
                                 </TouchableOpacity>
                             </View>
                             : null}

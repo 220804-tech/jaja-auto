@@ -462,7 +462,7 @@ export default function ChatScreen({ route }) {
 
                     </View> : null
                 }
-                <View style={{ height: product ? '77%' : '87%', backgroundColor: 'transparent' }}>
+                <View style={{ flex: 1, backgroundColor: 'transparent', marginBottom: Hp('13.7%') }}>
                     {messageList && messageList.length ?
                         <FlatList
                             inverted={-1}

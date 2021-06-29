@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { SafeAreaView, View, Text, Alert, ScrollView } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { RecomandedHobby, useNavigation, Card, Appbar, styles, colors } from '../../export'
+import { RecomandedHobby, useNavigation, CardProduct, Appbar, styles, colors } from '../../export'
 
 
 export default function HistoryProductScreen() {
@@ -51,7 +51,7 @@ export default function HistoryProductScreen() {
                 <ScrollView contentContainerStyle={styles.pb_5}>
                     {reduxHistoryProduct && reduxHistoryProduct.length ?
                         <View style={[styles.column, styles.px_3]}>
-                            <Card data={reduxHistoryProduct} />
+                            <CardProduct data={reduxHistoryProduct} />
                         </View>
                         : <Text style={[styles.font_14, styles.my_5, styles.py_5, { alignSelf: 'center' }]}>Riwayat kamu masih kosong!</Text>
                     }

@@ -5,6 +5,7 @@ import EncryptedStorage from 'react-native-encrypted-storage'
 import { styles, Hp, Wp, colors, useNavigation, Appbar, ServiceCart, Loading, ServiceCheckout, useFocusEffect } from '../../export'
 import { Button } from 'react-native-paper'
 import { useDispatch, useSelector } from "react-redux";
+import Swipeable from 'react-native-swipeable';
 
 export default function TrolleyScreen() {
     let navigation = useNavigation()
@@ -17,6 +18,7 @@ export default function TrolleyScreen() {
     const [loading, setLoading] = useState(false)
     const [refreshing, setRefreshing] = useState(false);
     const [disableCheckout, setDisableCheckout] = useState(false);
+    const [cartSelected, setSelectedCard] = useState('')
 
     useEffect(() => {
         setLoading(false)
@@ -223,7 +225,7 @@ export default function TrolleyScreen() {
 
     const handleDeleteCart = (id) => {
         setLoading(true)
-        ServiceCart.deleteCart(reduxAuth ? reduxAuth : auth, id).then(res => {
+        ServiceCart.deleteCart(reduxAuth ? reduxAuth : auth, cartSelected).then(res => {
             if (res == 200) {
                 handleApiCart()
             }
@@ -242,6 +244,12 @@ export default function TrolleyScreen() {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
         navigation.navigate("Product", { slug: item.slug, image: item.image })
     }
+    const rightButtons = [
+        <TouchableOpacity onPress={handleDeleteCart} style={[styles.column_center, { height: '100%', width: '20%', backgroundColor: colors.RedDanger }]}>
+            <Image style={[styles.icon_25, { tintColor: colors.White }]} source={require('../../assets/icons/delete.png')} />
+        </TouchableOpacity>
+
+    ]
 
     return (
         <SafeAreaView style={styles.container}>
@@ -265,7 +273,6 @@ export default function TrolleyScreen() {
                     contentContainerStyle={{ flex: 0, flexDirection: 'column', justifyContent: 'center', width: '100%', paddingBottom: Hp('7%') }}
                     keyExtractor={(item, index) => String(index)}
                     renderItem={({ item, index }) => {
-                        console.log("file: TrolleyScreen.js ~ line 270 ~ TrolleyScreen ~ item", item.products[0].qty)
                         let indexParent = index
                         return (
                             <View onPress={() => handleSelected(item)} style={{ marginBottom: '2%', backgroundColor: colors.White, flex: 0, flexDirection: 'column', alignItems: 'flex-start' }}>
@@ -299,59 +306,58 @@ export default function TrolleyScreen() {
                                     style={{ width: '100%', paddingVertical: '3%' }}
                                     renderItem={({ item, index }) => {
                                         return (
-                                            <View onPress={() => handleSelected(item)} style={{ marginBottom: '2%', backgroundColor: colors.White, flex: 0, flexDirection: 'row', alignItems: 'center', paddingLeft: '5%', paddingRight: '3%' }}>
-                                                <CheckBox
-                                                    disabled={false}
-                                                    value={item.isSelected}
-                                                    onValueChange={() => handleCheckbox("cart", indexParent, index)}
-                                                />
-                                                <TouchableWithoutFeedback onPress={() => handleSelected(item)}>
-                                                    <Image style={{
-                                                        width: Wp('21%'),
-                                                        height: Wp('21%'),
-                                                        marginHorizontal: '3%',
-                                                        borderRadius: 5,
-                                                        backgroundColor: colors.BlackGrey
-                                                    }}
-                                                        resizeMethod={"scale"}
-                                                        resizeMode={item.image ? "cover" : "center"}
-                                                        source={{ uri: item.image }}
+                                            <Swipeable rightButtons={rightButtons} onRightActionRelease={() => setSelectedCard(item.cartId)}>
+                                                <View onPress={() => handleSelected(item)} style={{ marginBottom: '2%', backgroundColor: colors.White, flex: 0, flexDirection: 'row', alignItems: 'center', paddingLeft: '5%', paddingRight: '3%' }}>
+                                                    <CheckBox
+                                                        disabled={false}
+                                                        value={item.isSelected}
+                                                        onValueChange={() => handleCheckbox("cart", indexParent, index)}
                                                     />
-                                                </TouchableWithoutFeedback>
-                                                <View style={[styles.column_between_center, { alignItems: 'flex-start', height: Wp('21%'), width: '60%' }]}>
-                                                    <Text onPress={() => handleSelected(item)} numberOfLines={1} style={[styles.font_14, { flex: 0, color: colors.BlueJaja, fontWeight: 'bold' }]}>{item.name}</Text>
-                                                    <Text numberOfLines={1} style={[styles.font_10, { flex: 0, color: colors.BlackGrayScale }]}>{item.variant ? "Variant " + item.variant : ""}</Text>
-                                                    {item.isDiscount ?
-                                                        <View style={styles.row_around_center}>
-                                                            <Text numberOfLines={1} style={[styles.priceBefore, { flex: 0, color: colors.BlackGrayScale, marginRight: '2%' }]}>{item.priceCurrencyFormat}</Text>
-                                                            <Text numberOfLines={1} style={[styles.priceAfter, { flex: 0, color: colors.RedMaroon }]}>{item.priceDiscountCurrencyFormat}</Text>
-                                                        </View>
-                                                        :
-                                                        <Text numberOfLines={1} style={[styles.priceAfter, { flex: 0, color: colors.RedMaroon }]}>{item.priceCurrencyFormat}</Text>
-                                                    }
-                                                    <View style={[styles.row_between_center, { flex: 1, marginTop: '2%' }]}>
-                                                        <View style={[styles.row_around_center, { flex: 1 }]}>
-                                                            <TouchableOpacity disabled={disableQty} onPress={() => handleQty('min', indexParent, index)} style={{ backgroundColor: colors.BlueJaja, borderRadius: 5, justifyContent: 'center', height: Wp('7%'), width: Wp('7%'), alignItems: 'center', marginRight: '5%' }}>
-                                                                <Text style={[styles.font_20, { color: colors.White, fontWeight: 'bold' }]}>-</Text>
-                                                            </TouchableOpacity>
-                                                            <Text style={[styles.font_14]}>{item.qty}</Text>
-                                                            <TouchableOpacity disabled={disableQty} onPress={() => handleQty('plus', indexParent, index)} style={{ backgroundColor: colors.BlueJaja, borderRadius: 5, height: Wp('7%'), width: Wp('7%'), justifyContent: 'center', alignItems: 'center', marginLeft: '5%' }}>
-                                                                <Text style={[styles.font_20, { color: colors.White, fontWeight: 'bold' }]}>+</Text>
-                                                            </TouchableOpacity>
-                                                        </View>
-                                                        <View style={{ flex: 1, height: '100%', justifyContent: 'center', alignItems: 'flex-end' }}>
-                                                            <TouchableOpacity onPress={() => handleDeleteCart(item.cartId)} style={{ height: '100%', justifyContent: 'center', alignItems: 'flex-end', width: '30%' }}>
-                                                                <Image style={[styles.icon_25, { tintColor: colors.RedDanger }]} source={require('../../assets/icons/delete.png')} />
-                                                            </TouchableOpacity>
+                                                    <TouchableWithoutFeedback onPress={() => handleSelected(item)}>
+                                                        <Image style={{
+                                                            width: Wp('21%'),
+                                                            height: Wp('21%'),
+                                                            marginHorizontal: '3%',
+                                                            borderRadius: 5,
+                                                            backgroundColor: colors.BlackGrey
+                                                        }}
+                                                            resizeMethod={"scale"}
+                                                            resizeMode={item.image ? "cover" : "center"}
+                                                            source={{ uri: item.image }}
+                                                        />
+                                                    </TouchableWithoutFeedback>
+                                                    <View style={[styles.column_between_center, { alignItems: 'flex-start', height: Wp('21%'), width: '60%' }]}>
+                                                        <Text onPress={() => handleSelected(item)} numberOfLines={1} style={[styles.font_14, { flex: 0, color: colors.BlueJaja, fontWeight: 'bold' }]}>{item.name}</Text>
+                                                        <Text numberOfLines={1} style={[styles.font_10, { flex: 0, color: colors.BlackGrayScale }]}>{item.variant ? "Variant " + item.variant : ""}</Text>
+                                                        {item.isDiscount ?
+                                                            <View style={styles.row_around_center}>
+                                                                <Text numberOfLines={1} style={[styles.priceBefore, { flex: 0, color: colors.BlackGrayScale, marginRight: '2%' }]}>{item.priceCurrencyFormat}</Text>
+                                                                <Text numberOfLines={1} style={[styles.priceAfter, { flex: 0, color: colors.RedMaroon }]}>{item.priceDiscountCurrencyFormat}</Text>
+                                                            </View>
+                                                            :
+                                                            <Text numberOfLines={1} style={[styles.priceAfter, { flex: 0, color: colors.RedMaroon }]}>{item.priceCurrencyFormat}</Text>
+                                                        }
+                                                        <View style={[styles.row_between_center, { flex: 1, marginTop: '2%' }]}>
+                                                            <View style={[styles.row_around_center, { flex: 1 }]}>
+                                                                <TouchableOpacity disabled={disableQty} onPress={() => handleQty('min', indexParent, index)} style={{ backgroundColor: colors.BlueJaja, borderRadius: 5, justifyContent: 'center', height: Wp('7%'), width: Wp('7%'), alignItems: 'center', marginRight: '5%' }}>
+                                                                    <Text style={[styles.font_20, { color: colors.White, fontWeight: 'bold' }]}>-</Text>
+                                                                </TouchableOpacity>
+                                                                <Text style={[styles.font_14]}>{item.qty}</Text>
+                                                                <TouchableOpacity disabled={disableQty} onPress={() => handleQty('plus', indexParent, index)} style={{ backgroundColor: colors.BlueJaja, borderRadius: 5, height: Wp('7%'), width: Wp('7%'), justifyContent: 'center', alignItems: 'center', marginLeft: '5%' }}>
+                                                                    <Text style={[styles.font_20, { color: colors.White, fontWeight: 'bold' }]}>+</Text>
+                                                                </TouchableOpacity>
+                                                            </View>
+                                                            <View style={{ flex: 1, height: '100%', justifyContent: 'center', alignItems: 'flex-end' }}>
+                                                            </View>
                                                         </View>
                                                     </View>
                                                 </View>
-
-                                            </View>
+                                            </Swipeable >
                                         )
                                     }}
                                 />
                             </View>
+
                         )
                     }}
                 />

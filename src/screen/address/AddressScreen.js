@@ -265,7 +265,7 @@ export default function index(props) {
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
-            </Swipeable >
+            </Swipeable>
         )
     }
     return (

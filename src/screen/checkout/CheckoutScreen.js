@@ -11,6 +11,8 @@ import CheckBox from '@react-native-community/checkbox';
 import { useDispatch, useSelector } from "react-redux";
 import EncryptedStorage from 'react-native-encrypted-storage';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import Swipeable from 'react-native-swipeable';
+
 export default function checkoutScreen() {
     const navigation = useNavigation()
     const dispatch = useDispatch();
@@ -33,6 +35,7 @@ export default function checkoutScreen() {
     const [voucherFilters, setvoucherFilters] = useState([])
     const [indexStore, setindexStore] = useState(0)
     const [sendTime, setsendTime] = useState("setiap saat")
+    const [selectedCard, setSelectedCard] = useState("")
 
     const [vouchers, setVouchers] = useState([])
     const [voucherOpen, setvoucherOpen] = useState("")
@@ -520,7 +523,6 @@ export default function checkoutScreen() {
                         }, 250);
 
                     }
-
                 }
             ]
         );
@@ -547,6 +549,11 @@ export default function checkoutScreen() {
         }, 5000);
     }, []);
 
+    const rightButtons = [
+        <TouchableOpacity style={[styles.column_center, { height: '100%', width: '20%', backgroundColor: colors.BlueJaja }]}>
+            <Text numberOfLines={4} style={[styles.font_10, { width: '90%', color: colors.White, alignSelf: 'center', textAlign: 'center' }]}>Minumum total belanja 50.000</Text>
+        </TouchableOpacity>
+    ]
 
     return (
         <SafeAreaView style={styles.container}>
@@ -795,7 +802,7 @@ export default function checkoutScreen() {
                     Pilih pembayaran
                 </Button>
             </View>
-            <ActionSheet ref={actionSheetVoucher} onOpen={() => setloadAs(false)} onClose={() => setvoucherOpen("")} delayActionSheetDraw={false} containerStyle={{ minHeight: Hp('20%'), maxHeight: Hp('60%'), padding: '4%', }}>
+            <ActionSheet ref={actionSheetVoucher} onOpen={() => setloadAs(false)} onClose={() => setvoucherOpen("")} delayActionSheetDraw={false} containerStyle={{ padding: '4%', }}>
                 <View style={[styles.row_between_center, styles.py_2, styles.mb_3]}>
                     <Text style={[styles.font_14, { color: colors.BlueJaja, fontWeight: 'bold', width: '60%' }]}>Pilih Voucher</Text>
                     <TouchableOpacity onPressIn={() => actionSheetVoucher.current?.setModalVisible()}>
@@ -803,53 +810,82 @@ export default function checkoutScreen() {
                     </TouchableOpacity>
                 </View>
                 {loadAs ? <Loading /> : null}
-                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 80 }}>
-                    <View style={styles.column}>
+                <View style={[styles.column, { minHeight: Hp('20%'), maxHeight: Hp('80%') }]}>
+                    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 80 }}>
                         {reduxCheckout.voucherJaja && reduxCheckout.voucherJaja.length || vouchers && vouchers.length ?
                             <FlatList
+                                // style={{  }}
                                 data={voucherOpen === "store" ? vouchers : reduxCheckout.voucherJaja}
                                 keyExtractor={(item) => item.id}
                                 extraData={voucherOpen === "store" ? vouchers : reduxCheckout.voucherJaja}
                                 renderItem={({ item, index }) => {
+                                    console.log("file: CheckoutScreen.js ~ line 984 ~ checkoutScreen ~ item", item)
+
                                     return (
-                                        <View style={[styles.row_start_center, styles.mb_3]}>
-                                            <View style={[styles.column, { width: '70%', height: Wp('20%'), backgroundColor: colors.BlueJaja }]}>
-                                                <View style={{ position: 'absolute', height: Wp('20%'), width: Wp('5%'), backgroundColor: colors.BlueJaja, flexDirection: 'column', paddingVertical: '1%', justifyContent: 'center' }}>
-                                                    <View style={{ height: Wp('3.65%'), width: Wp('2%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                                    <View style={{ height: Wp('3.65%'), width: Wp('2%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                                    <View style={{ height: Wp('3.65%'), width: Wp('2%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                                    <View style={{ height: Wp('3.65%'), width: Wp('2%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                                    <View style={{ height: Wp('3.65%'), width: Wp('2%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                                </View>
+                                        // <TouchableOpacity onPress={() => syaratKetentuan === item.id ? setsyaratKetentuan("") : setsyaratKetentuan(item.id)} style={[styles.row_start_center, styles.mb_3]}>
+                                        //     <View style={[styles.column, { width: '72%', height: Wp('20%'), backgroundColor: colors.BlueJaja }]}>
+                                        //         <View style={{ position: 'absolute', height: Wp('20%'), width: Wp('5%'), backgroundColor: colors.BlueJaja, flexDirection: 'column', paddingVertical: '1%', justifyContent: 'center' }}>
+                                        //             <View style={{ height: Wp('3.65%'), width: Wp('2%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                        //             <View style={{ height: Wp('3.65%'), width: Wp('2%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                        //             <View style={{ height: Wp('3.65%'), width: Wp('2%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                        //             <View style={{ height: Wp('3.65%'), width: Wp('2%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                        //             <View style={{ height: Wp('3.65%'), width: Wp('2%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                        //         </View>
 
-                                                <View style={[styles.column_center_start, { height: '100%', marginLeft: Wp('6%') }]}>
-                                                    <Text style={[styles.font_14, styles.mb_2, { color: colors.White, fontWeight: 'bold', width: '77%' }]}>Diskon {item.discountText}</Text>
-                                                    {/* <Text style={[styles.font_10, { color: colors.White, fontWeight: 'bold' }]}>Min pembelian {item.minimum}</Text> */}
-                                                    <Text style={[styles.font_8, { color: colors.White, fontWeight: 'bold', backgroundColor: 'silver', width: '50%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
-                                                </View>
+                                        //         <View style={[styles.column_center_start, { height: '100%', marginLeft: Wp('6%') }]}>
+                                        //             {syaratKetentuan === item.id ?
+                                        //                 <Text style={[styles.font_14, styles.mb_2, { color: colors.White, fontWeight: 'bold', width: '77%' }]}>{item.name}</Text>
+                                        //                 :
+                                        //                 <Text style={[styles.font_14, styles.mb_2, { color: colors.White, fontWeight: 'bold', width: '77%' }]}>Diskon {item.discountText}</Text>
+                                        //             }
+                                        //             <Text style={[styles.font_8, { color: colors.White, fontWeight: 'bold', width: '50%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
+                                        //         </View>
 
-                                                {voucherOpen == "jaja" ?
-                                                    <View style={{ position: 'absolute', right: 0, top: 0, backgroundColor: colors.YellowJaja, height: '30%', width: '7%', zIndex: 100, borderBottomLeftRadius: 7 }}>
-                                                        <Text style={[styles.font_14, { color: colors.White, alignSelf: 'center', fontFamily: 'Roboto' }]}>J</Text>
+                                        //         {voucherOpen == "jaja" ?
+                                        //             <View style={{ position: 'absolute', right: 0, top: 0, backgroundColor: colors.YellowJaja, height: '30%', width: '7%', zIndex: 100, borderBottomLeftRadius: 7 }}>
+                                        //                 <Text style={[styles.font_14, { color: colors.White, alignSelf: 'center', fontFamily: 'Roboto' }]}>J</Text>
+                                        //             </View>
+                                        //             : null
+                                        //         }
+                                        //     </View>
+                                        //     <TouchableOpacity onPress={() => handleVoucher(item, index)} style={{ marginLeft: '2%', width: '25%', backgroundColor: item.isClaimed ? colors.White : colors.RedFlashsale, padding: '2%', height: Wp('20%'), justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.RedFlashsale, borderRadius: 5 }}>
+                                        //         <Text style={[styles.font_14, { color: item.isClaimed ? colors.RedFlashsale : colors.White }]}>{item.isClaimed ? item.isSelected ? "Terpakai" : "Pakai" : "Klaim"}</Text>
+                                        //     </TouchableOpacity>
+                                        // </TouchableOpacity>
+                                        <View style={[styles.row_center, styles.mb_3]}>
+                                            <Swipeable rightButtons={rightButtons} onRightActionRelease={() => setSelectedCard(item)}>
+
+                                                <View style={[styles.row, { width: '100%', height: Wp('25%'), backgroundColor: colors.White, borderTopWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, borderColor: colors.BlueJaja }]}>
+                                                    <View style={{ position: 'absolute', height: '100%', width: Wp('5%'), backgroundColor: colors.BlueJaja, flexDirection: 'column', justifyContent: 'center' }}>
+                                                        <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                        <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                        <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                        <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                        <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                        <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
                                                     </View>
-                                                    : null}
-                                            </View>
-
-                                            {/* </View> */}
-                                            {/* <Button loading={loadAs} mode="contained" onPress={() => console.log('Pressed')}>
-                                                Press me
-                                            </Button> */}
-                                            <TouchableOpacity onPress={() => handleVoucher(item, index)} style={{ marginLeft: '2%', width: '25%', backgroundColor: item.isClaimed ? colors.White : colors.RedFlashsale, padding: '2%', height: Wp('20%'), justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.RedFlashsale, borderRadius: 5 }}>
-                                                <Text style={[styles.font_14, { color: item.isClaimed ? colors.RedFlashsale : colors.White }]}>{item.isClaimed ? item.isSelected ? "Terpakai" : "Pakai" : "Klaim"}</Text>
-                                            </TouchableOpacity>
+                                                    <View style={[styles.column_center, styles.p, { height: '100%', width: '30%', marginLeft: Wp('3%'), backgroundColor: colors.BlueJaja }]}>
+                                                        <Text style={[styles.font_14, styles.mb_2, { color: colors.White, fontWeight: 'bold', alignSelf: 'center' }]}>{item.name}</Text>
+                                                    </View>
+                                                    <View style={[styles.column_center, styles.px_2, { width: '33%' }]}>
+                                                        <Text numberOfLines={3} style={[styles.font_14, styles.mb_2, { color: colors.BlueJaja, fontWeight: 'bold', width: '100%' }]}>Diskon {item.discountText}</Text>
+                                                        <Text style={[styles.font_8, { position: 'absolute', bottom: 5, color: colors.BlueJaja, fontWeight: 'bold', width: '100%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
+                                                    </View>
+                                                    <View style={[styles.column_center, { width: '40%' }]}>
+                                                        <TouchableOpacity onPress={() => handleVoucher(item, index)} style={{ width: '50%', height: '35%', backgroundColor: item.isClaimed ? colors.White : colors.BlueJaja, padding: '2%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.BlueJaja, borderRadius: 5 }}>
+                                                            <Text style={[styles.font_14, { color: item.isClaimed ? colors.BlueJaja : colors.White }]}>{item.isClaimed ? item.isSelected ? "Terpakai" : "Pakai" : "Klaim"}</Text>
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                </View>
+                                            </Swipeable>
                                         </View>
                                     )
                                 }}
                             /> :
                             <Text style={[styles.font_14, styles.mt_5, { alignSelf: 'center' }]}>Kamu belum punya voucher</Text>}
-                    </View>
+                    </ScrollView>
+                </View>
 
-                </ScrollView>
             </ActionSheet>
             <ActionSheet ref={actionSheetDelivery} delayActionSheetDraw={false} containerStyle={{ width: Wp('100%') }}>
                 <View style={[styles.row_between_center, styles.py_2, styles.px_4, styles.mb_3]}>

@@ -64,7 +64,7 @@ export default function TrendingComponent() {
                                         headers: { Authorization: 'someAuthToken' },
                                         priority: FastImage.priority.normal,
                                     }}
-                                    resizeMode={FastImage.resizeMode.cover}
+                                    resizeMode={FastImage.resizeMode.contain}
                                 />
                                 <View style={{ marginLeft: 5, width: '65%', flexDirection: 'column' }}>
                                     <Text

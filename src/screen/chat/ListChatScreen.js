@@ -64,8 +64,6 @@ export default function ListChat() {
     };
 
     function loadList() {
-        console.log("file: ListChatScreen.js ~ line 69 ~ loadList ~ reduxUser", reduxUser)
-        console.log("file: ListChatScreen.js ~ line 13 ~ ListChat ~ reduxAuth", reduxAuth)
         if (reduxUser && Object.keys(reduxUser).length) {
             database().ref("/friend/" + reduxUser.uid).on("value", function (snapshot) {
                 var returnArray = [];
