@@ -13,7 +13,8 @@ export async function productDetail(auth, slug) {
     return await fetch(`https://jaja.id/backend/product/${slug}`, requestOptions)
         .then(response => response.json())
         .then(result => {
-            if (result.status.code == 200) {
+            console.log("file: Product.js ~ line 16 ~ productDetail ~ result", result)
+            if (result && result.status.code == 200) {
                 return result.data;
             } else {
                 Alert.alert(
@@ -31,11 +32,10 @@ export async function productDetail(auth, slug) {
             }
         })
         .catch(error => {
+            console.log("file: Product.js ~ line 35 ~ productDetail ~ error", error)
             if (String(error).slice(11, String(error).length).replace(" ", "") === "Network request failed") {
                 ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.CENTER)
-
             }
-
         });
 
 }

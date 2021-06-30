@@ -19,16 +19,6 @@ export default function NearestStore() {
 
     useFocusEffect(
         useCallback(() => {
-
-            ServiceCore.getFlashsale().then(resp => {
-                if (resp && resp.flashsale && resp.flashsale.length) {
-                    dispatch({ type: 'SET_SHOW_FLASHSALE', payload: true })
-                    dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.flashsale })
-                } else {
-                    dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-                }
-            })
-
         }, []),
     );
 

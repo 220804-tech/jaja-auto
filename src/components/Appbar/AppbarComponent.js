@@ -9,19 +9,10 @@ export default function AppbarComponent(props) {
     const reduxUser = useSelector(state => state.user.badges)
     const reduxAuth = useSelector(state => state.auth.auth)
     const dispatch = useDispatch()
-    const [auth, setAuth] = useState("")
-
-    useEffect(() => {
-        EncryptedStorage.getItem('token').then(res => {
-            if (res) {
-                setAuth(JSON.parse(res))
-            }
-        })
-    }, [])
 
     const handleGetCart = () => {
-        if (reduxAuth || auth) {
-            ServiceCart.getCart(reduxAuth ? reduxAuth : auth).then(res => {
+        if (reduxAuth) {
+            ServiceCart.getCart(reduxAuth).then(res => {
                 if (res) {
                     dispatch({ type: 'SET_CART', payload: res })
                 }
@@ -34,7 +25,7 @@ export default function AppbarComponent(props) {
     }
 
     const handleNotif = () => {
-        if (reduxAuth || auth) {
+        if (reduxAuthh) {
             navigation.navigate('Notification')
         } else {
             navigation.navigate('Login', { navigate: 'Trolley' })
@@ -42,7 +33,7 @@ export default function AppbarComponent(props) {
     }
 
     const getBadges = () => {
-        ServiceUser.getBadges(reduxAuth ? reduxAuth : auth).then(res => {
+        ServiceUser.getBadges(reduxAuth).then(res => {
             if (res) {
                 dispatch({ type: "SET_BADGES", payload: res })
             } else {

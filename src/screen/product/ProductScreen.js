@@ -69,6 +69,7 @@ export default function ProductScreen(props) {
     const getItem = (slug) => {
         let response;
         ServiceProduct.productDetail(reduxAuth, slug).then(res => {
+            console.log("file: ProductScreen.js ~ line 72 ~ ServiceProduct.productDetail ~ res", res)
             if (res) {
                 if (reduxAuth && res.sellerTerdekat.length && reduxUser.user && Object.keys(reduxUser.user).length && Object.keys(res.category).length && res.category.slug) {
                     console.log("masyk sini")

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, SafeAreaView, TouchableOpacity, Image, TextInput, StatusBar, Dimensions, ScrollView } from 'react-native'
-import { styles, colors, Wp, Hp, useNavigation, ServiceStore, Loading, ServiceCart } from '../../export'
-import { useSelector, useDispatch } from 'react-redux'
+import { Dimensions, Image, SafeAreaView, ScrollView, StatusBar, Text, View } from 'react-native'
 import { Button, Paragraph } from 'react-native-paper'
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
-const initialLayout = { width: Dimensions.get('window').width };
+import { SceneMap, TabBar, TabView } from 'react-native-tab-view'
+import { useDispatch, useSelector } from 'react-redux'
+import Products from '../../components/Store/AllProducts'
 import MainPage from '../../components/Store/MainPage'
 import Posts from '../../components/Store/Posts'
-import Products from '../../components/Store/AllProducts'
+import { colors, Loading, ServiceCart, ServiceStore, styles, useNavigation, Wp, AppbarSecond } from '../../export'
+const initialLayout = { width: Dimensions.get('window').width };
 const layout = Dimensions.get('screen').height
+
 export default function StoreScreen() {
     const navigation = useNavigation();
     const reduxStore = useSelector(state => state.store.store)
@@ -93,27 +94,7 @@ export default function StoreScreen() {
                 barStyle='light-content'
                 showHideTransition="fade"
             />
-            <View style={[styles.appBar, { flex: 0, height: Hp('6.5%'), backgroundColor: colors.BlueJaja }]}>
-                <TouchableOpacity style={styles.row_start_center} onPress={() => navigation.goBack()}>
-                    <Image style={[styles.appBarButton, { tintColor: colors.White }]} source={require('../../assets/icons/arrow.png')} />
-                </TouchableOpacity>
-                <View style={[styles.searchBar, { backgroundColor: colors.BlueJaja, paddingHorizontal: '0%' }]}>
-                    <View style={[styles.row, { width: '85%', marginRight: '1%', backgroundColor: colors.White, height: '100%', alignItems: 'center', borderRadius: 10, paddingHorizontal: '3%' }]}>
-                        <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
-                        <TextInput keyboardType="name-phone-pad" returnKeyType="search" adjustsFontSizeToFit style={styles.font_14} placeholder='Cari di toko..' onSubmitEditing={(value) => handleSearch(value.nativeEvent.text)}></TextInput>
-                    </View>
-                    {/* <TouchableOpacity onPress={() => setFilter(true) & actionSheetRef.current?.setModalVisible()} style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: '1%', backgroundColor: colors.BlueJaja, height: '100%', width: '15%', borderTopRightRadius: 10, borderBottomRightRadius: 10 }}>
-                        <Image source={require('../../assets/icons/filter.png')} style={[styles.icon_25, { tintColor: colors.White }]} />
-                    </TouchableOpacity> */}
-                    <TouchableOpacity style={[styles.column, styles.mx_3]} onPress={() => handleGetCart()}>
-                        <Image source={require('../../assets/icons/cart.png')} style={{ width: 25, height: 25, tintColor: colors.White }} />
-                        {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
-                            <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalProductInCart >= 100 ? "99+" : reduxUser.badges.totalProductInCart}</Text></View>
-                            : null
-                        }
-                    </TouchableOpacity>
-                </View>
-            </View>
+            <AppbarSecond handleSearch={handleSearch} title='Cari di toko..' />
             {/* <View style={{ flex: 1, height: Hp('100%') }}> */}
             <View style={{ flex: 1 }}>
                 {/* <ScrollView contentContainerStyle={{ alignItems: 'flex-start' }}> */}
@@ -185,3 +166,4 @@ export default function StoreScreen() {
         </SafeAreaView >
     )
 }
+

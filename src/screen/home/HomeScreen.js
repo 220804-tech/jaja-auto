@@ -74,15 +74,9 @@ export default function HomeScreen() {
         useCallback(() => {
             try {
                 setOut(false)
-                getBadges()
-                EncryptedStorage.getItem('historySearching').then(res => {
-                    if (!res) {
-                        let data = []
-                        EncryptedStorage.setItem("historySearching", JSON.stringify(data))
-                    }
-                })
-                let uniqueId = DeviceInfo.getUniqueId()
-
+                if (reduxAuth) {
+                    getBadges()
+                }
             } catch (error) {
 
             }
@@ -97,7 +91,6 @@ export default function HomeScreen() {
                     setAuth(JSON.parse(res))
                 }
             })
-
             EncryptedStorage.getItem('nearestProduct').then(res => {
                 console.log("file: HomeScreen.js ~ line 102 ~ EncryptedStorage.getItem ~ res", res)
                 if (res && res.length) {
@@ -105,8 +98,12 @@ export default function HomeScreen() {
                     dispatch({ type: 'SET_DASHNEAREST', payload: JSON.parse(res) })
                 }
             })
-
-
+            EncryptedStorage.getItem('historySearching').then(res => {
+                if (!res) {
+                    let data = []
+                    EncryptedStorage.setItem("historySearching", JSON.stringify(data))
+                }
+            })
         } catch (error) {
 
         }

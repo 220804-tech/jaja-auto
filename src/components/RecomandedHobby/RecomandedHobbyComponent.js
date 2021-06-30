@@ -4,7 +4,6 @@ import { View, Text, ToastAndroid, StyleSheet, Alert } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { styles, colors, CardProduct, CheckSignal, ShimmerCardProduct, Utils } from '../../export'
 import EncryptedStorage from 'react-native-encrypted-storage';
-import * as Progress from 'react-native-progress';
 
 export default function RecomandedHobbyComponent(props) {
 
