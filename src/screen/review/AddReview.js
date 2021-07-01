@@ -286,15 +286,6 @@ export default function AddReview(props) {
                 </Button>
             </View>
             <ActionSheet containerStyle={{ flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.White }} ref={galeryRef}>
-                {/* <View style={styles.row_between_center}>
-                    <Text style={styles.actionSheetTitle}>Pilih gambar</Text>
-                    <TouchableOpacity onPress={() => galeryRef.current?.setModalVisible(false)}  >
-                        <Image
-                            style={styles.icon_16}
-                            source={require('../../assets/icons/close.png')}
-                        />
-                    </TouchableOpacity>
-                </View> */}
                 <View style={[styles.column, { backgroundColor: '#ededed' }]}>
                     <TouchableOpacity onPress={handleOpenCamera} style={{ borderBottomWidth: 0.5, borderBottomColor: colors.Silver, alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%' }}>
                         <Text style={[styles.font_16, { fontWeight: '900', alignSelf: 'center' }]}>Ambil Foto</Text>

@@ -4,12 +4,13 @@ import { IconButton } from 'react-native-paper'
 import ImagePicker from "react-native-image-crop-picker";
 import firebaseDatabase from '@react-native-firebase/database';
 import ActionSheet from 'react-native-actions-sheet';
-import { colors, Hp, Wp, Appbar, ServiceFirebase as Firebase } from "../../export";
+import { colors, Hp, Wp, Appbar, ServiceFirebase as Firebase, styles as style } from "../../export";
 import { useSelector } from 'react-redux'
 
 export default function ChatScreen({ route }) {
     const reduxUser = useSelector(state => state.user.user)
     const reduxAuth = useSelector(state => state.auth.auth)
+    const galeryRef = createRef()
 
     const pictureRef = createRef();
     const flatlist = createRef();
@@ -51,14 +52,16 @@ export default function ChatScreen({ route }) {
         return () => firebaseDatabase().ref('/messages/' + data.chat).off('value', onValueChange);
     }, [data, product]);
 
-    const handleSend = () => {
-        if (isiChat.length > 0 || gambar !== "") {
+    const handleSend = (image) => {
+        console.log("file: ChatScreen.js ~ line 56 ~ handleSend ~ image", image)
+        if (isiChat.length > 0 || image) {
+            let chat = isiChat.length > 0 ? isiChat : 'Mengirim gambar'
             var message = {
                 message: isiChat,
                 time: firebaseDatabase.ServerValue.TIMESTAMP,
                 date: new Date().toString(),
                 from: reduxUser.uid,
-                image: gambar
+                image: image
             }
             if (data && reduxAuth) {
                 console.log("🚀 ~ file: ChatScreen.js ~ line 72 ~ handleSend ~ firebaseDatabase.ServerValue.increment", firebaseDatabase.ServerValue.increment)
@@ -66,12 +69,12 @@ export default function ChatScreen({ route }) {
                     var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
                     console.log("🚀 ~ file: ChatScreen.js ~ line 135 ~ handleSendProduct ~ msgId", msgId)
                     firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
-                    firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: isiChat, time: new Date().toString() } });
-                    firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: { text: isiChat, time: new Date().toString() }, amount: 1, time: new Date().toString() });
+                    firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: chat, time: new Date().toString() } });
+                    firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: { text: chat, time: new Date().toString() }, amount: 1, time: new Date().toString() });
                     let fire = firebaseDatabase().ref("/people/" + data.id).limitToLast(20).on("value", async function (snapshot) {
                         let item = await snapshot.val();
                         if (item.token) {
-                            await Firebase.notifChat(item.token, { body: isiChat, title: reduxUser.name })
+                            await Firebase.notifChat(item.token, { body: chat, title: reduxUser.name })
                         }
                         firebaseDatabase().ref(`/people/${data.id}`).off('value', fire)
                     })
@@ -118,22 +121,10 @@ export default function ChatScreen({ route }) {
             setGambar("")
         }
     }
-    const getItem = async () => {
-        // try {
-        //     let res = await Storage.getToko()
-        //     setFotoSeller(res.foto)
-        //     firebaseDatabase().ref("/people/" + data.id).on("value", function (snap) {
-        //         var item = snap.val();
-        //         if (item != null && item.photo != null) {
-        //             setesellerImage(item.photo)
-        //         }
-        //     })
-        // } catch (error) {
-        //     ToastAndroid.show(error, ToastAndroid.LONG, ToastAndroid.CENTER)
-        // }
-    }
+
 
     const renderRow = ({ item, index }) => {
+        console.log("file: ChatScreen.js ~ line 126 ~ renderRow ~ item", item.image)
         return (
             <View style={{ width: Wp("100%"), paddingTop: "2%" }}>
                 {item.date && index && String(messageList[index].date) !== "undefined" > 0 && !item.productTitle ?
@@ -145,67 +136,75 @@ export default function ChatScreen({ route }) {
                 }
                 {item.from === reduxUser.uid ?
                     !item.productTitle ?
-                        <View style={{
-                            width: "100%",
-                            justifyContent: "flex-end",
-                            alignSelf: "center",
-                            flexDirection: "row",
-                            paddingHorizontal: Wp("5%"),
-                        }}>
-                            <View
-                                style={{
-                                    maxWidth: "80%",
-                                    borderWidth: 0.2,
-                                    borderRadius: 15,
-                                    borderColor: colors.BlueJaja,
-                                    borderTopRightRadius: 0,
-                                    marginVertical: 5,
-                                    marginHorizontal: 10,
-                                    backgroundColor: colors.BlueJaja,
-                                    padding: 10,
-                                }}>
-                                <Text
-                                    adjustsFontSizeToFit
+                        item.image ?
+                            <View style={[style.row_center, { width: Wp('65%'), height: Wp('65%'), backgroundColor: colors.BlueJaja, alignSelf: 'flex-end', paddingRight: '5%', borderRadius: 5 }]}>
+                                {console.log("dfghjkllkjihugyftdrsdfgvbhjk", item.image)}
+                                {/* <View style={[style.row_center, { width: '100%', height: '100%', backgroundColor: colors.BlueJaja }]}> */}
+                                <Image source={{ uri: item.image }} style={{ width: Wp('56%'), height: Wp('62%'), resizeMode: 'contain', alignSelf: 'center', justifyContent: 'center', alignItems: 'center', borderRadius: 2 }} />
+                                {/* </View> */}
+                            </View>
+                            :
+                            <View style={{
+                                width: "100%",
+                                justifyContent: "flex-end",
+                                alignSelf: "center",
+                                flexDirection: "row",
+                                paddingHorizontal: Wp("5%"),
+                            }}>
+                                <View
                                     style={{
-                                        fontSize: 14,
-                                        color: "#FFF", textAlign: "right"
+                                        maxWidth: "80%",
+                                        borderWidth: 0.2,
+                                        borderRadius: 15,
+                                        borderColor: colors.BlueJaja,
+                                        borderTopRightRadius: 0,
+                                        marginVertical: 5,
+                                        marginHorizontal: 10,
+                                        backgroundColor: colors.BlueJaja,
+                                        padding: 10,
                                     }}>
-                                    {item.message}
-                                </Text>
-                                {item.date ?
                                     <Text
+                                        adjustsFontSizeToFit
                                         style={{
-                                            fontSize: Hp("1.1"),
+                                            fontSize: 14,
                                             color: "#FFF", textAlign: "right"
                                         }}>
-                                        {item.date.slice(16, 21)}
+                                        {item.message}
                                     </Text>
-                                    : null
-                                }
+                                    {item.date ?
+                                        <Text
+                                            style={{
+                                                fontSize: Hp("1.1"),
+                                                color: "#FFF", textAlign: "right"
+                                            }}>
+                                            {item.date.slice(16, 21)}
+                                        </Text>
+                                        : null
+                                    }
+                                </View>
+                                <View style={{
+                                    borderRadius: 50,
+                                    width: Hp("6%"),
+                                    height: Hp("6%"),
+                                    backgroundColor: colors.BlackGrayScale,
+                                    overflow: "hidden"
+                                }}>
+                                    <Image
+                                        style={{
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            width: Hp("6%"),
+                                            height: Hp("6%"),
+                                            borderRadius: 50,
+                                            // backgroundColor: colors.BlackGrayScale,
+                                            overflow: "hidden"
+                                        }}
+                                        resizeMethod={"scale"}
+                                        // resizeMode={item["image"] == '' ? "center" : "cover"}
+                                        source={{ uri: reduxUser.image }}
+                                    />
+                                </View>
                             </View>
-                            <View style={{
-                                borderRadius: 50,
-                                width: Hp("6%"),
-                                height: Hp("6%"),
-                                backgroundColor: colors.BlackGrayScale,
-                                overflow: "hidden"
-                            }}>
-                                <Image
-                                    style={{
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        width: Hp("6%"),
-                                        height: Hp("6%"),
-                                        borderRadius: 50,
-                                        // backgroundColor: colors.BlackGrayScale,
-                                        overflow: "hidden"
-                                    }}
-                                    resizeMethod={"scale"}
-                                    // resizeMode={item["image"] == '' ? "center" : "cover"}
-                                    source={{ uri: reduxUser.image }}
-                                />
-                            </View>
-                        </View>
                         :
                         <View style={{
                             flex: 1,
@@ -257,6 +256,7 @@ export default function ChatScreen({ route }) {
 
                     :
                     <View style={{ flex: 1, flexDirection: "row" }}>
+
                         <View style={{
                             width: "100%",
                             justifyContent: "flex-start",
@@ -343,73 +343,54 @@ export default function ChatScreen({ route }) {
         setIsiChat(value)
     }
 
+    const handleOpenCamera = () => {
+        galeryRef.current?.setModalVisible(false)
+        ImagePicker.openCamera({
+            width: 400,
+            height: 400,
+            cropping: true,
+            compressImageQuality: 0.8,
+            // includeBase64: true
+        }).then(image => {
+            handleSend(image.path)
+        });
+    }
 
-
-    function LoadMessages(val) {
-        if (data !== null) {
+    const handlePickVideo = (indx) => {
+        galeryRef.current?.setModalVisible(false)
+        ImagePicker.openCamera({
+            mediaType: "video",
+            compressVideoPreset: '640x480',
+            compressImageQuality: 0.8,
+            maxFiles: 1,
+            includeBase64: true,
+        }).then(async video => {
             try {
-                firebaseDatabase().ref('/messages').child(data.chat).on('value', function (snapshoot) {
-                    if (snapshoot.val() !== null) {
-                        const values = Object.values(snapshoot.val())
-                        // let result = Object.keys(snapshoot.val()).map((key) => [Number(key), obj[key]]);
-                        // setMessageList(arr.sort((a, b) => (a.time > b.time ? 1 : -1)).reverse())
-                    }
-                })
+                console.log("🚀 ~ file: AddReview.js ~ line 105 ~ handlePickVideo ~ video", video)
+                let base64data = await RNFS.readFile(video.path, 'base64').then();
+                let newData = JSON.parse(JSON.stringify(data))
+                newData[indx].videoShow = video.path;
+                newData[indx].video = base64data;
+                setData(newData)
+                setIdx(null)
             } catch (error) {
-                console.log("🚀 ~ file: ChatScreen.js ~ line 372 ~ LoadMessages ~ error", error)
+                console.log("🚀 ~ file: AddReview.js ~ line ss100 ~ handlePickVideo ~ error", error)
             }
-        } else {
-            // try {
-            //     if (dataFriend !== "") {
-            //         firebaseDatabase().ref('/messages').child(dataFriend).on('value', snapshoot => {
-            //             if (snapshoot.val() !== null) {
-            //                 const values = Object.values(snapshoot.val())
-            //                 let arr = []
-            //                 for (const key of values) {
-            //                     arr.push(key)
-            //                 }
-            //                 setMessageList(arr.sort((a, b) => (a.time > b.time ? 1 : -1)).reverse())
-            //             }
-            //         })
-            //     } else {
-            //         firebaseDatabase().ref('/messages').child(val).on('value', snapshoot => {
-            //             if (snapshoot.val() !== null) {
-            //                 const values = Object.values(snapshoot.val())
-            //                 let arr = []
-            //                 for (const key of values) {
-            //                     arr.push(key)
-            //                 }
-            //                 setMessageList(arr.sort((a, b) => (a.time > b.time ? 1 : -1)).reverse())
-            //             }
-            //         })
-            //     }
-            // } catch (error) {
-            // }
-        }
+        });
+    }
+    const handlePickImage = () => {
+        galeryRef.current?.setModalVisible(false)
+        ImagePicker.openPicker({
+            width: 400,
+            height: 400,
+            cropping: true,
+            compressImageQuality: 0.8,
+            includeBase64: true
+        }).then(image => {
+            handleSend(image.path)
+        });
     }
 
-    function ImageChoose(side) {
-        if (side === "camera") {
-            ImagePicker.openCamera({
-                width: 200,
-                height: 200,
-            }).then(image => {
-                setGambar(image.path)
-            });
-        } else {
-            ImagePicker.openPicker({
-                width: 200,
-                height: 200,
-                cropping: true,
-                includeBase64: true,
-                compressImageQuality: 1,
-            }).then(image => {
-                setGambar(image.path)
-            });
-        }
-        pictureRef.current.hide()
-
-    }
     return (
 
         <SafeAreaView style={{ flex: 1, height: Hp('100%') }}>
@@ -488,45 +469,55 @@ export default function ChatScreen({ route }) {
                         justifyContent: 'space-around',
                         backgroundColor: 'transparent',
                     }}>
-                    <TextInput
-                        style={{
-                            width: "80%",
-                            fontSize: Wp("4%"),
-                            height: Hp('5.5%'),
-                            borderColor: "gray",
-                            borderRadius: 100,
-                            paddingHorizontal: 20,
-                            backgroundColor: colors.White,
-                            opacity: 0.8
-                        }}
-                        underlineColorAndroid="transparent"
-                        onChangeText={(text) => setChat(text)} onSubmitEditing={() => handleSend()}
-                        value={isiChat}
-                    />
+                    <View style={[style.row_start_center, { width: "80%", height: Hp('5.5%'), borderRadius: 100, backgroundColor: colors.White, opacity: 0.8 }]}>
+                        <TextInput
+                            style={{
+                                width: "85%",
+                                fontSize: Wp("4%"),
+                                borderColor: "gray",
+                                borderBottomLeftRadius: 100,
+                                borderTopLeftRadius: 100,
+                                paddingHorizontal: 20,
+                            }}
+                            underlineColorAndroid="transparent"
+                            onChangeText={(text) => setChat(text)} onSubmitEditing={() => handleSend(null)}
+                            value={isiChat}
+                        />
+                        {!isiChat.length ?
+                            <IconButton
+                                icon={require('../../assets/icons/camera.png')}
+                                style={{ margin: 0, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100 }}
+                                color={colors.BlueJaja}
+                                onPress={() => galeryRef.current?.setModalVisible(true)}
+                            /> : null}
+                    </View>
 
                     <IconButton
                         icon={require('../../assets/icons/send.png')}
                         style={{ margin: 0, backgroundColor: colors.BlueJaja, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100 }}
                         color={colors.White}
-                        onPress={() => handleSend()}
+                        onPress={() => handleSend(null)}
                     />
                 </View>
 
             </ImageBackground>
-            <ActionSheet ref={pictureRef}
-                title={"Select a Photo"}
-                options={["Take Photo", "Choose Photo Library", "Cancel"]}
-                cancelButtonIndex={2}
-                destructiveButtonIndex={1}
-                onPress={index => {
-                    if (index == 0) {
-                        ImageChoose("camera");
-                    } else if (index == 1) {
-                        ImageChoose("galery");
-                    } else {
-                        null;
-                    }
-                }} />
+
+
+            <ActionSheet containerStyle={{ flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.White }} ref={galeryRef}>
+                <View style={[styles.column, style.pb, { backgroundColor: '#ededed' }]}>
+                    <TouchableOpacity onPress={handleOpenCamera} style={{ borderBottomWidth: 0.5, borderBottomColor: colors.Silver, alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%' }}>
+                        <Text style={[styles.font_16, { fontWeight: '900', alignSelf: 'center' }]}>Ambil Foto</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={handlePickImage} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%', marginBottom: '1%' }}>
+                        <Text style={[styles.font_16, { fontWeight: '900', alignSelf: 'center' }]}>Buka Galeri</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => galeryRef.current?.setModalVisible(false)} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '2%' }}>
+                        <Text style={[styles.font_16, { fontWeight: '900', alignSelf: 'center', color: colors.RedNotif }]}>Batal</Text>
+                    </TouchableOpacity>
+                </View>
+            </ActionSheet>
+
 
         </SafeAreaView >
     );

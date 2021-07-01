@@ -31,3 +31,7 @@
 
 ## Product Detail
 # 17002 => Error add cart
+
+## Terakhir Dilihat
+# 18001 => Error api get terakhir dilihat
+# 18002 => Error api get terakhir dilihat filter

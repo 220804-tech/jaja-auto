@@ -65,8 +65,7 @@ export default function SearchScreen() {
                         }
                         setstoreSearch(result.data.store)
                     }
-                })
-                .catch(error => console.log('error', error));
+                }).catch(error => console.log('error', error));
         } else {
             console.log("test")
             setproductSearch([])

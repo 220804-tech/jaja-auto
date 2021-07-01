@@ -27,10 +27,41 @@ export default function ListChat() {
         return date
     }
 
+    const loadList = () => {
+        if (reduxUser && Object.keys(reduxUser).length) {
+            database().ref("/friend/" + reduxUser.uid).on("value", function (snapshot) {
+                console.log("file: ListChatScreen.js ~ line 33 ~ reduxUser.uid", reduxUser.uid)
+                var returnArray = [];
+                snapshot.forEach(function (snap) {
+                    var item = snap.val();
+                    item.id = snap.key;
+                    console.log(item.id, " firebase");
+                    if (item.id !== reduxUser.uid && item.id !== "null") {
+                        returnArray.push(item);
+                        let sortedObj = returnArray.sort(function (a, b) {
+                            return new Date(b.time) - new Date(a.time);
+                        });
+                        setUsers(sortedObj);
+                    }
+                });
+                return returnArray;
+            });
+        }
+    }
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        loadList()
+        setTimeout(() => {
+            setRefreshing(false)
+        }, 2000);
+
+    }, []);
+
     const renderItem = ({ item }) => {
+        console.log("file: ListChatScreen.js ~ line 90 ~ renderItem ~ item", item)
         return (
             <>
-                {item.message && item.message.text ?
+                {item.message.text ?
                     <TouchableOpacity
                         onPress={() => navigation.navigate("IsiChat", { data: item, newData: null })}
                         style={{
@@ -58,39 +89,14 @@ export default function ListChat() {
                                 : null
                             }
                         </View>
-                    </TouchableOpacity> : null}
+                    </TouchableOpacity>
+                    : null
+                }
             </>
         );
     };
 
-    function loadList() {
-        if (reduxUser && Object.keys(reduxUser).length) {
-            database().ref("/friend/" + reduxUser.uid).on("value", function (snapshot) {
-                var returnArray = [];
-                snapshot.forEach(function (snap) {
-                    var item = snap.val();
-                    item.id = snap.key;
-                    console.log(item.id, " firebase");
-                    if (item.id !== reduxUser.uid && item.id !== "null") {
-                        returnArray.push(item);
-                        let sortedObj = returnArray.sort(function (a, b) {
-                            return new Date(b.time) - new Date(a.time);
-                        });
-                        setUsers(sortedObj);
-                    }
-                });
-                return returnArray;
-            });
-        }
-    }
-    const onRefresh = useCallback(() => {
-        setRefreshing(true);
-        loadList()
-        setTimeout(() => {
-            setRefreshing(false)
-        }, 2000);
 
-    }, []);
 
     return (
         <SafeAreaView style={style.container}>
