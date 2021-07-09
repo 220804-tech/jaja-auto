@@ -1,4 +1,5 @@
 import { ToastAndroid, Alert } from 'react-native'
+import { Utils } from '../export';
 export async function getCart(auth) {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);
@@ -69,8 +70,12 @@ export async function deleteCart(auth, idCart) {
             if (result.status.code === 200) {
                 return 200;
             } else {
+                Utils.handleResponse(result)
                 return null
             }
         })
-        .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+        .catch(error => {
+            Utils.handleError(error)
+            return null
+        });
 }

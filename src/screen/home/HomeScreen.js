@@ -92,7 +92,6 @@ export default function HomeScreen() {
                 }
             })
             EncryptedStorage.getItem('nearestProduct').then(res => {
-                console.log("file: HomeScreen.js ~ line 102 ~ EncryptedStorage.getItem ~ res", res)
                 if (res && res.length) {
                     setnearestProduct(true)
                     dispatch({ type: 'SET_DASHNEAREST', payload: JSON.parse(res) })

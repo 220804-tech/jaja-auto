@@ -231,8 +231,9 @@ export default function index(props) {
         <TouchableOpacity onPress={handleDelete} style={[styles.card, style.column_center, { height: '100%', width: '20%', backgroundColor: colors.RedDanger }]}>
             <Image style={[style.icon_25, { tintColor: colors.White }]} source={require('../../assets/icons/delete.png')} />
         </TouchableOpacity>
-
     ]
+
+    
     const renderItem = ({ item }) => {
         return (
             <Swipeable rightButtons={rightButtons} onRightActionRelease={() => setSelectedItem(item)}>

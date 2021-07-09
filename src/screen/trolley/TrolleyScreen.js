@@ -1,15 +1,19 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef, memo } from 'react'
 import CheckBox from '@react-native-community/checkbox';
 import { View, Text, SafeAreaView, Image, TouchableOpacity, ToastAndroid, FlatList, StatusBar, RefreshControl, TouchableWithoutFeedback, Alert } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
-import { styles, Hp, Wp, colors, useNavigation, Appbar, ServiceCart, Loading, ServiceCheckout, useFocusEffect } from '../../export'
+import { styles, Hp, Wp, colors, useNavigation, Appbar, ServiceCart, Loading, ServiceCheckout, useFocusEffect, } from '../../export'
 import { Button } from 'react-native-paper'
 import { useDispatch, useSelector } from "react-redux";
 import Swipeable from 'react-native-swipeable';
 
-export default function TrolleyScreen() {
+export const TrolleyScreen = React.memo(({ id, onRemove }) => {
+    // export default function TrolleyScreen() {
     let navigation = useNavigation()
     const dispatch = useDispatch()
+    let [swipeRef] = useState(null);
+
+    const onRemoves = useCallback(() => onRemove(id), [id]);
 
     const reduxCart = useSelector(state => state.cart)
     const reduxAuth = useSelector(state => state.auth.auth)
@@ -22,13 +26,15 @@ export default function TrolleyScreen() {
 
     useEffect(() => {
         setLoading(false)
-        EncryptedStorage.getItem('token').then(res => {
-            if (res) {
-                setAuth(JSON.parse(res))
-            } else {
-                navigation.navigate("Login")
-            }
-        })
+        if (!auth) {
+            EncryptedStorage.getItem('token').then(res => {
+                if (res) {
+                    setAuth(JSON.parse(res))
+                } else {
+                    navigation.navigate("Login")
+                }
+            })
+        }
     }, [reduxCart.cart])
 
     useFocusEffect(
@@ -196,10 +202,9 @@ export default function TrolleyScreen() {
 
     const handleApiCart = () => {
         ServiceCart.getCart(reduxAuth ? reduxAuth : auth).then(res => {
+            console.log("🚀 ~ file: TrolleyScreen.js ~ line 200 ~ ServiceCart.getCart ~ res", res)
             if (res) {
-                setTimeout(() => {
-                    setLoading(false)
-                }, 1000);
+                setTimeout(() => setLoading(false), 1000);
                 dispatch({ type: 'SET_CART', payload: res })
             }
         })
@@ -224,11 +229,13 @@ export default function TrolleyScreen() {
     }
 
     const handleDeleteCart = (id) => {
+        console.log("🚀 ~ file: TrolleyScreen.js ~ line 234 ~ handleDeleteCart ~ id", id)
         setLoading(true)
-        ServiceCart.deleteCart(reduxAuth ? reduxAuth : auth, cartSelected).then(res => {
+        ServiceCart.deleteCart(reduxAuth ? reduxAuth : auth, id).then(res => {
             if (res == 200) {
                 handleApiCart()
             }
+            setTimeout(() => setLoading(false), 1000);
         })
     }
 
@@ -244,12 +251,31 @@ export default function TrolleyScreen() {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
         navigation.navigate("Product", { slug: item.slug, image: item.image })
     }
-    const rightButtons = [
-        <TouchableOpacity onPress={handleDeleteCart} style={[styles.column_center, { height: '100%', width: '20%', backgroundColor: colors.RedDanger }]}>
-            <Image style={[styles.icon_25, { tintColor: colors.White }]} source={require('../../assets/icons/delete.png')} />
-        </TouchableOpacity>
+    // const swipeComponent = useCallback(() => {
+    //     return [
+    //         <TouchableOpacity onPress={() => {
+    //             // onDeleteClick();
+    //             swipeRef.recenter();
+    //             handleDeleteCart(item.cartId)
+    //         }} style={[styles.column_center, { height: '100%', width: '20%', backgroundColor: colors.RedDanger }]}>
+    //             <Image style={[styles.icon_25, { tintColor: colors.White }]} source={require('../../assets/icons/delete.png')} />
+    //         </TouchableOpacity>
+    //     ];
+    // }, [])
 
-    ]
+
+    const swipeComponent = useCallback(() => {
+        return (
+            <TouchableOpacity onPress={() => {
+                console.log("🚀 ~ file: TrolleyScreen.js ~ line 271 ~ swipeComponent ~ swipeRef", swipeRef)
+                swipeRef.recenter();
+                // handleDeleteCart(item.cartId)
+            }} style={[styles.column_center, { height: '100%', width: '20%', backgroundColor: colors.RedDanger }]}>
+                <Image style={[styles.icon_25, { tintColor: colors.White }]} source={require('../../assets/icons/delete.png')} />
+            </TouchableOpacity>
+        )
+    }, []);
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -306,8 +332,9 @@ export default function TrolleyScreen() {
                                     style={{ width: '100%', paddingVertical: '3%' }}
                                     renderItem={({ item, index }) => {
                                         return (
-                                            <Swipeable rightButtons={rightButtons} onRightActionRelease={() => setSelectedCard(item.cartId)}>
+                                            <Swipeable onRef={(ref) => { swipeRef = ref; }} rightButtons={[swipeComponent(item)]}>
                                                 <View onPress={() => handleSelected(item)} style={{ marginBottom: '2%', backgroundColor: colors.White, flex: 0, flexDirection: 'row', alignItems: 'center', paddingLeft: '5%', paddingRight: '3%' }}>
+
                                                     <CheckBox
                                                         disabled={false}
                                                         value={item.isSelected}
@@ -378,4 +405,6 @@ export default function TrolleyScreen() {
             </View>
         </SafeAreaView >
     )
-}
+
+
+})

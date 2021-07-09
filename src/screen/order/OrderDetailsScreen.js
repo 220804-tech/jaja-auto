@@ -162,18 +162,18 @@ export default function OrderDetailsScreen(props) {
                 <View style={[styles.column, styles.p_3, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                     <View style={[styles.row_between_center, { marginBottom: props.route.params.status !== "Menunggu Pembayaran" ? '4%' : "0%" }]}>
                         <View style={[styles.row]}>
-                            <Image style={[styles.icon_23, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/process.png')} />
-                            <Text style={[styles.font_16, { fontWeight: 'bold', color: colors.BlueJaja }]}> Status Pesanan</Text>
+                            <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/process.png')} />
+                            <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}> Status Pesanan</Text>
                         </View>
-                        <View style={[styles.p, { backgroundColor: colors.YellowJaja, borderRadius: 3 }]}>
-                            <Text numberOfLines={1} style={[styles.font_12, { color: colors.White }]}>{status}</Text>
+                        <View style={[styles.px, styles.px_3, { backgroundColor: colors.YellowJaja, borderRadius: 3 }]}>
+                            <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>{status}</Text>
                         </View>
                     </View>
                     {props.route.params.status !== "Menunggu Pembayaran" ?
                         details ?
                             <View style={styles.row_between_center}>
                                 <View style={[styles.row]}>
-                                    <Text style={[styles.font_14]}>#{details.items[0].invoice}</Text>
+                                    <Text style={[styles.font_13]}>#{details.items[0].invoice}</Text>
                                 </View>
                                 <TouchableOpacity onPress={() => {
                                     Linking.canOpenURL(details.downloadOrderPdf).then(supported => {
@@ -201,16 +201,16 @@ export default function OrderDetailsScreen(props) {
                 {details ?
                     <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                         <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                            <Image style={[styles.icon_23, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/google-maps.png')} />
-                            <Text style={[styles.font_16, { fontWeight: 'bold', color: colors.BlueJaja }]}>Alamat Pengiriman</Text>
+                            <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/google-maps.png')} />
+                            <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Alamat Pengiriman</Text>
                         </View>
                         <View style={[styles.column, styles.p_3]}>
                             <View style={styles.row_between_center}>
-                                <Text numberOfLines={1} style={[styles.font_14, { width: '70%' }]}>{details.address.receiverName}</Text>
+                                <Text numberOfLines={1} style={[styles.font_13, { width: '70%' }]}>{details.address.receiverName}</Text>
                             </View>
-                            <Text numberOfLines={1} style={[styles.font_14]}>{details.address.phoneNumber}</Text>
+                            <Text numberOfLines={1} style={[styles.font_13]}>{details.address.phoneNumber}</Text>
 
-                            <Text numberOfLines={3} style={[styles.font_14, styles.mt_2]}>{details.address.address.replace(/<br>/g, "")}</Text>
+                            <Text numberOfLines={3} style={[styles.font_12, styles.mt_2]}>{details.address.address.replace(/<br>/g, "")}</Text>
                         </View>
                     </View> : null}
                 {details && details.items.length ?
@@ -218,8 +218,8 @@ export default function OrderDetailsScreen(props) {
                         return (
                             <View key={String(idxStore)} style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                                 <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                                    <Image style={[styles.icon_23, { marginRight: '2%' }]} source={require('../../assets/icons/store.png')} />
-                                    <Text style={[styles.font_16, { fontWeight: 'bold', color: colors.BlueJaja }]}>{item.store.name}</Text>
+                                    <Image style={[styles.icon_19, { marginRight: '2%' }]} source={require('../../assets/icons/store.png')} />
+                                    <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.store.name}</Text>
                                 </View>
                                 {item.products.map((child, idx) => {
                                     return (
@@ -232,8 +232,8 @@ export default function OrderDetailsScreen(props) {
                                                 />
                                                 <View style={[styles.column_between_center, { alignItems: 'flex-start', height: '90%', width: Wp('82%'), paddingHorizontal: '3%' }]}>
                                                     <View style={[styles.column, { width: '100%' }]}>
-                                                        <Text numberOfLines={1} style={[styles.font_16, { color: colors.BlueJaja, fontWeight: 'bold' }]}>{child.name}</Text>
-                                                        <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlackGrayScale }]}>{child.variant ? child.variant : ""}</Text>
+                                                        <Text numberOfLines={1} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>{child.name}</Text>
+                                                        <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlackGrayScale }]}>{child.variant ? child.variant : ""}</Text>
                                                     </View>
                                                     <View style={{ flexDirection: 'column', width: '100%', alignItems: 'flex-end', paddingHorizontal: '2%' }}>
                                                         {child.isDiscount ?
@@ -283,8 +283,8 @@ export default function OrderDetailsScreen(props) {
                                     : null
                                 }
                                 <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                                    <Image style={[styles.icon_23, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/vehicle-yellow.png')} />
-                                    <Text style={[styles.font_16, { fontWeight: 'bold', color: colors.BlueJaja }]}>Metode Pengiriman</Text>
+                                    <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/vehicle-yellow.png')} />
+                                    <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pengiriman</Text>
                                 </View>
 
                                 <View style={[styles.column, styles.p_3, { width: '100%' }]}>
@@ -292,14 +292,14 @@ export default function OrderDetailsScreen(props) {
                                         <View style={[styles.column_between_center, { alignItems: 'flex-start' }]}>
                                             <Text numberOfLines={1} style={[styles.font_14]}>{item.shippingSelected.name}</Text>
                                             <Text numberOfLines={1} style={[styles.font_12]}>Regular</Text>
-                                            <Text numberOfLines={1} style={[styles.font_12, { fontStyle: 'italic' }]}>Estimasi {item.shippingSelected.etdText}</Text>
+                                            <Text numberOfLines={1} style={[styles.font_12, styles.T_italic,]}>Estimasi {item.shippingSelected.etdText}</Text>
                                         </View>
                                         <View style={[styles.column_between_center, { alignItems: 'flex-end' }]}>
                                             <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}>{item.shippingSelected.priceCurrencyFormat}</Text>
                                             <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}></Text>
                                             {props.route.params.status === "Pengiriman" ?
-                                                <TouchableOpacity onPress={handleTracking} style={{ backgroundColor: colors.YellowJaja, borderRadius: 3, paddingHorizontal: '9%', paddingVertical: '3%' }}>
-                                                    <Text style={[styles.font_14, { color: colors.White }]}>Lacak</Text>
+                                                <TouchableOpacity onPress={handleTracking} style={{ backgroundColor: colors.YellowJaja, borderRadius: 5, paddingHorizontal: '10%', paddingVertical: '3%' }}>
+                                                    <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}> Lacak </Text>
                                                 </TouchableOpacity>
                                                 :
                                                 <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}></Text>
@@ -315,25 +315,25 @@ export default function OrderDetailsScreen(props) {
                     null}
                 <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '5%' }]}>
                     <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                        <Image style={[styles.icon_23, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
-                        <Text style={[styles.font_16, { fontWeight: 'bold', color: colors.BlueJaja }]}>Ringkasan Belanja</Text>
+                        <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
+                        <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Ringkasan Belanja</Text>
                     </View>
                     <View style={[styles.row_between_center, styles.p_3]}>
                         <View style={styles.column}>
-                            <Text style={[styles.font_14, { marginBottom: '1%' }]}>Total belanja</Text>
-                            <Text style={[styles.font_14, { marginBottom: '1%' }]}>Ongkos kirim</Text>
-                            <Text style={[styles.font_14, { marginBottom: '1%' }]}>Biaya penanganan</Text>
-                            {/* <Text style={[styles.font_14, { marginBottom: '1%' }]}>Voucher Toko</Text> */}
-                            <Text style={[styles.font_14, { marginBottom: '1%' }]}>Voucher Jaja.id</Text>
+                            <Text style={[styles.font_13, { marginBottom: '1%' }]}>Total belanja</Text>
+                            <Text style={[styles.font_13, { marginBottom: '1%' }]}>Ongkos kirim</Text>
+                            <Text style={[styles.font_13, { marginBottom: '1%' }]}>Biaya penanganan</Text>
+                            {/* <Text style={[styles.font_13, { marginBottom: '1%' }]}>Voucher Toko</Text> */}
+                            <Text style={[styles.font_13, { marginBottom: '1%' }]}>Voucher Jaja.id</Text>
 
                         </View>
                         {details ?
                             <View style={styles.column_center_end}>
-                                <Text style={[styles.font_14, { marginBottom: '1%' }]}>{details.subTotalCurrencyFormat}</Text>
-                                <Text style={[styles.font_14, { marginBottom: '1%' }]}>{details.shippingCostCurrencyFormat}</Text>
-                                <Text style={[styles.font_14, { marginBottom: '1%' }]}>Rp0</Text>
-                                {/* <Text style={[styles.font_14, { marginBottom: '1%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountCurrencyFormat}</Text> */}
-                                <Text style={[styles.font_14, { marginBottom: '1%', color: details.voucherDiscountJaja ? colors.RedFlashsale : colors.BlackGrayScale }]}>{details.voucherDiscountJajaCurrencyFormat}</Text>
+                                <Text style={[styles.font_13, { marginBottom: '1%' }]}>{details.subTotalCurrencyFormat}</Text>
+                                <Text style={[styles.font_13, { marginBottom: '1%' }]}>{details.shippingCostCurrencyFormat}</Text>
+                                <Text style={[styles.font_13, { marginBottom: '1%' }]}>Rp0</Text>
+                                {/* <Text style={[styles.font_13, { marginBottom: '1%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountCurrencyFormat}</Text> */}
+                                <Text style={[styles.font_13, { marginBottom: '1%', color: details.voucherDiscountJaja ? colors.RedFlashsale : colors.BlackGrayScale }]}>{details.voucherDiscountJajaCurrencyFormat}</Text>
                             </View>
                             : null
                         }
@@ -347,7 +347,7 @@ export default function OrderDetailsScreen(props) {
                             <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%', marginBottom: '2%' }} contentStyle={{ width: '100%', height: '95%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained" >
                                 Terima Pesanan
                             </Button>
-                            <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%' }} contentStyle={{ width: '100%', height: '95%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
+                            <Button onPress={() => navigation.navigate('Complain')} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
                                 Komplain
                             </Button>
                         </View>

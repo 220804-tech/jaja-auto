@@ -41,3 +41,40 @@ export async function CheckSignal() {
     });
     return signalInfo
 }
+
+export function handleResponse(error) {
+    if (error.status.code !== 200 && error.status.code !== 204) {
+        Alert.alert(
+            "Error with status 12001",
+            String(error.status.message) + " => " + String(error.status.code),
+            [
+                {
+                    text: "TUTUP",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                }
+            ],
+            { cancelable: false }
+        );
+    } else {
+
+    }
+}
+export function handleError(error, name) {
+    if (String(error).slice(11, String(error).length) === "Network request failed") {
+        ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.TOP)
+    } else {
+        Alert.alert(
+            "Error with status 12001",
+            `${name + " " + String(error)}`,
+            [
+                {
+                    text: "TUTUP",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                }
+            ],
+            { cancelable: false }
+        );
+    }
+}

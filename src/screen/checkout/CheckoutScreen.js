@@ -780,7 +780,7 @@ export default function checkoutScreen() {
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>Total Belanja</Text>
                             {reduxCheckout.voucherJajaType === "diskon" ? <Text style={[styles.font_13, { marginBottom: '2%' }]}>Diskon Belanja</Text> : null}
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>Biaya Pengiriman</Text>
-                            {reduxCheckout.voucherJajaType !== "diskon" ? <Text style={[styles.font_13, { marginBottom: '2%' }]}>Diskon Pengiriman</Text> : null}
+                            {reduxCheckout.voucherJajaType === "ongkir" ? <Text style={[styles.font_13, { marginBottom: '2%' }]}>Diskon Pengiriman</Text> : null}
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>Biaya penanganan</Text>
                             {/* <Text style={[styles.font_13, { marginBottom: '2%' }]}>Voucher Toko</Text> */}
 

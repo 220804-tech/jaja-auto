@@ -45,7 +45,6 @@ export default function OrderScreen() {
                 setAuth(JSON.stringify(res))
             }
         })
-        console.log("🚀 ~ file: OrderScreen.js ~ line 107 ~ OrderScreen ~ reduxAuth", reduxAuth)
     }, [])
 
     return (
