@@ -138,10 +138,7 @@ export default function ChatScreen({ route }) {
                     !item.productTitle ?
                         item.image ?
                             <View style={[style.row_center, { width: Wp('65%'), height: Wp('65%'), backgroundColor: colors.BlueJaja, alignSelf: 'flex-end', paddingRight: '5%', borderRadius: 5 }]}>
-                                {console.log("dfghjkllkjihugyftdrsdfgvbhjk", item.image)}
-                                {/* <View style={[style.row_center, { width: '100%', height: '100%', backgroundColor: colors.BlueJaja }]}> */}
-                                <Image source={{ uri: item.image }} style={{ width: Wp('56%'), height: Wp('62%'), resizeMode: 'contain', alignSelf: 'center', justifyContent: 'center', alignItems: 'center', borderRadius: 2 }} />
-                                {/* </View> */}
+                                <Image source={{ uri: item.image }} style={{ width: '96%', height: '96%', resizeMode: 'cover', alignSelf: 'center', justifyContent: 'center', alignItems: 'center', borderRadius: 2 }} />
                             </View>
                             :
                             <View style={{
@@ -504,7 +501,7 @@ export default function ChatScreen({ route }) {
 
 
             <ActionSheet containerStyle={{ flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.White }} ref={galeryRef}>
-                <View style={[styles.column, style.pb, { backgroundColor: '#ededed' }]}>
+                <View style={[style.column, style.pb, { backgroundColor: '#ededed' }]}>
                     <TouchableOpacity onPress={handleOpenCamera} style={{ borderBottomWidth: 0.5, borderBottomColor: colors.Silver, alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%' }}>
                         <Text style={[styles.font_16, { fontWeight: '900', alignSelf: 'center' }]}>Ambil Foto</Text>
                     </TouchableOpacity>

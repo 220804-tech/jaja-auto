@@ -131,7 +131,7 @@ export default function OrderDetailsScreen(props) {
                             })
                             .catch(error => {
                                 setLoading(false)
-                                if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
+                                if (String(error).slice(11, String(error).length).replace(" ", "") === "Network request failed") {
                                     ToastAndroid("Tidak dapat hahaha, periksa kembali koneksi anda!")
                                 } else {
                                     Alert.alert(
@@ -344,8 +344,11 @@ export default function OrderDetailsScreen(props) {
                     props.route.params.status === "Pengiriman" ?
 
                         <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'column', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
-                            <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%' }} contentStyle={{ width: '100%', height: '95%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained" >
+                            <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%', marginBottom: '2%' }} contentStyle={{ width: '100%', height: '95%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained" >
                                 Terima Pesanan
+                            </Button>
+                            <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%' }} contentStyle={{ width: '100%', height: '95%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
+                                Komplain
                             </Button>
                         </View>
                         : props.route.params.status === "Pesanan Selesai" ?
