@@ -1,7 +1,7 @@
 import Home from "../screen/home/HomeScreen";
 import Product from "../screen/product/ProductScreen";
 import ListChat from "../screen/chat/ListChatScreen";
-import { TrolleyScreen as Trolley } from '../screen/trolley/TrolleyScreen'
+import Trolley from '../screen/trolley/TrolleyScreen'
 import Chat from "../screen/chat/ChatScreen";
 import Orders from '../screen/order/OrderScreen';
 import OrderDetails from '../screen/order/OrderDetailsScreen';
@@ -34,11 +34,12 @@ import Wishlist from '../screen/wishlist/WishlistScreen'
 import HistoryProduct from "../screen/historyProduct/HistoryProductScreen";
 import Reward from "../screen/reward/RewardScreen";
 import Referral from "../screen/reward/ReferralScreen";
-import Complain from "../screen/order/OrderComplain";
+import RequestComplain from "../screen/order/RequestComplainScreen";
+import ResponseComplain from "../screen/order/ResponseComplainScreen";
 
 
 export {
     Home, Product, ListChat, Chat, Orders, Profile, Login, Register, Splash, Search, Trolley, ProductSearch, Checkout, VerifikasiEmail, Account,
     Address, Category, AddAddress, Store, Midtrans, ForgotPassword, Feed, Review, ZoomReview, OrderDetails, AddReview, OrderDelivery,
-    CustomerService, Notification, Vouchers, Flashsale, Wishlist, HistoryProduct, Reward, Referral, Complain
+    CustomerService, Notification, Vouchers, Flashsale, Wishlist, HistoryProduct, Reward, Referral, RequestComplain, ResponseComplain
 };

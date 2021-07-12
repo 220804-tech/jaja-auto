@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { colors, Hp, styles, useNavigation } from '../../export';
+import { colors, Hp, styles, useNavigation, ServiceCart } from '../../export';
 import { useSelector, useDispatch } from 'react-redux'
 
 export default function AppbarSecond(props) {
@@ -16,7 +16,6 @@ export default function AppbarSecond(props) {
                     dispatch({ type: 'SET_CART', payload: res })
                 }
             })
-            getBadges()
             navigation.navigate("Trolley")
         } else {
             navigation.navigate('Login', { navigate: 'Trolley' })

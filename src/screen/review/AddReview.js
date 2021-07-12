@@ -273,8 +273,8 @@ export default function AddReview(props) {
                                             <Image style={{ width: Wp('3.5%'), height: Wp('3.5%'), tintColor: colors.Silver }} source={require('../../assets/icons/close.png')} />
                                         </TouchableOpacity>
                                     </View>
-                                    : null}
-
+                                    : null
+                                }
                             </View>
                         </View>
                     )

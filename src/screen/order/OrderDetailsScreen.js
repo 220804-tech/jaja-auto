@@ -347,7 +347,7 @@ export default function OrderDetailsScreen(props) {
                             <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%', marginBottom: '2%' }} contentStyle={{ width: '100%', height: '95%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained" >
                                 Terima Pesanan
                             </Button>
-                            <Button onPress={() => navigation.navigate('Complain')} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
+                            <Button onPress={() => navigation.navigate('RequestComplain')} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
                                 Komplain
                             </Button>
                         </View>

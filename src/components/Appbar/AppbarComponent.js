@@ -25,7 +25,7 @@ export default function AppbarComponent(props) {
     }
 
     const handleNotif = () => {
-        if (reduxAuthh) {
+        if (reduxAuth) {
             navigation.navigate('Notification')
         } else {
             navigation.navigate('Login', { navigate: 'Trolley' })

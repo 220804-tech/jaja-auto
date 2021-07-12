@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, memo } from 'react'
+import React, { useState, useEffect, useCallback, useRef, createRef } from 'react'
 import CheckBox from '@react-native-community/checkbox';
 import { View, Text, SafeAreaView, Image, TouchableOpacity, ToastAndroid, FlatList, StatusBar, RefreshControl, TouchableWithoutFeedback, Alert } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
@@ -7,13 +7,10 @@ import { Button } from 'react-native-paper'
 import { useDispatch, useSelector } from "react-redux";
 import Swipeable from 'react-native-swipeable';
 
-export const TrolleyScreen = React.memo(({ id, onRemove }) => {
-    // export default function TrolleyScreen() {
+export default function TrolleyScreen() {
     let navigation = useNavigation()
     const dispatch = useDispatch()
-    let [swipeRef] = useState(null);
-
-    const onRemoves = useCallback(() => onRemove(id), [id]);
+    const [swipeRef, setSwipeRef] = useState(Object.create(null));
 
     const reduxCart = useSelector(state => state.cart)
     const reduxAuth = useSelector(state => state.auth.auth)
@@ -23,6 +20,8 @@ export const TrolleyScreen = React.memo(({ id, onRemove }) => {
     const [refreshing, setRefreshing] = useState(false);
     const [disableCheckout, setDisableCheckout] = useState(false);
     const [cartSelected, setSelectedCard] = useState('')
+    const [idx, setIndex] = useState(0)
+    if (swipeRef && !Object.keys(swipeRef).length) swipeRef[idx] = createRef();
 
     useEffect(() => {
         setLoading(false)
@@ -35,6 +34,7 @@ export const TrolleyScreen = React.memo(({ id, onRemove }) => {
                 }
             })
         }
+
     }, [reduxCart.cart])
 
     useFocusEffect(
@@ -263,18 +263,23 @@ export const TrolleyScreen = React.memo(({ id, onRemove }) => {
     //     ];
     // }, [])
 
+    // const recenterAll = () => {
+    //     console.log("🚀 ~ file: TrolleyScreen.js ~ line 269 ~ recenterAll ~ recenterAll", recenterAll)
+    //     setSw
+    //     Object.values(swipeRef).filter(s => s.current).forEach(s => s.current.recenter());
+    // }
+    const swipeComponent = (item) => {
 
-    const swipeComponent = useCallback(() => {
-        return (
+        return [
             <TouchableOpacity onPress={() => {
-                console.log("🚀 ~ file: TrolleyScreen.js ~ line 271 ~ swipeComponent ~ swipeRef", swipeRef)
-                swipeRef.recenter();
                 // handleDeleteCart(item.cartId)
-            }} style={[styles.column_center, { height: '100%', width: '20%', backgroundColor: colors.RedDanger }]}>
+            }} style={[styles.column_center, { height: '91.5%', width: '18%', backgroundColor: colors.RedDanger }]}>
                 <Image style={[styles.icon_25, { tintColor: colors.White }]} source={require('../../assets/icons/delete.png')} />
             </TouchableOpacity>
-        )
-    }, []);
+        ]
+    }
+
+    const deleteSwipeable = index => delete swipeablesRef[index];
 
 
     return (
@@ -301,7 +306,7 @@ export const TrolleyScreen = React.memo(({ id, onRemove }) => {
                     renderItem={({ item, index }) => {
                         let indexParent = index
                         return (
-                            <View onPress={() => handleSelected(item)} style={{ marginBottom: '2%', backgroundColor: colors.White, flex: 0, flexDirection: 'column', alignItems: 'flex-start' }}>
+                            <View onPress={() => handleSelected(item)} style={[styles.column_center, styles.mb_2, { backgroundColor: colors.White }]}>
                                 <View style={[styles.row_start_center, styles.p_2, { width: '100%', borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}>
                                     <CheckBox
                                         disabled={false}
@@ -329,11 +334,14 @@ export const TrolleyScreen = React.memo(({ id, onRemove }) => {
                                     data={item.products}
                                     keyExtractor={(item, idx) => String(idx)}
                                     contentContainerStyle={{ flex: 0, width: '100%', }}
-                                    style={{ width: '100%', paddingVertical: '3%' }}
+                                    style={[styles.py_2, { width: '100%' }]}
                                     renderItem={({ item, index }) => {
+                                        console.log("🚀 ~ file: TrolleyScreen.js ~ line 335 ~ TrolleyScreen ~ index", index)
                                         return (
-                                            <Swipeable onRef={(ref) => { swipeRef = ref; }} rightButtons={[swipeComponent(item)]}>
-                                                <View onPress={() => handleSelected(item)} style={{ marginBottom: '2%', backgroundColor: colors.White, flex: 0, flexDirection: 'row', alignItems: 'center', paddingLeft: '5%', paddingRight: '3%' }}>
+                                            <Swipeable ref={swipeRef[index]} onRef={(ref) => setSwipeRef(ref)} rightButtons={swipeComponent(item)} onRightActionRelease={() => {
+                                                setIndex(index)
+                                            }} >
+                                                <View onPress={() => handleSelected(item)} style={[styles.row_center, styles.mb_2, styles.p_2]}>
 
                                                     <CheckBox
                                                         disabled={false}
@@ -342,8 +350,8 @@ export const TrolleyScreen = React.memo(({ id, onRemove }) => {
                                                     />
                                                     <TouchableWithoutFeedback onPress={() => handleSelected(item)}>
                                                         <Image style={{
-                                                            width: Wp('21%'),
-                                                            height: Wp('21%'),
+                                                            width: Wp('24%'),
+                                                            height: Wp('24%'),
                                                             marginHorizontal: '3%',
                                                             borderRadius: 5,
                                                             backgroundColor: colors.BlackGrey
@@ -353,24 +361,24 @@ export const TrolleyScreen = React.memo(({ id, onRemove }) => {
                                                             source={{ uri: item.image }}
                                                         />
                                                     </TouchableWithoutFeedback>
-                                                    <View style={[styles.column_between_center, { alignItems: 'flex-start', height: Wp('21%'), width: '60%' }]}>
-                                                        <Text onPress={() => handleSelected(item)} numberOfLines={1} style={[styles.font_14, { flex: 0, color: colors.BlueJaja, fontWeight: 'bold' }]}>{item.name}</Text>
-                                                        <Text numberOfLines={1} style={[styles.font_10, { flex: 0, color: colors.BlackGrayScale }]}>{item.variant ? "Variant " + item.variant : ""}</Text>
+                                                    <View style={[styles.column_center, { alignItems: 'flex-start', height: Wp('21%'), width: '60%' }]}>
+                                                        <Text onPress={() => handleSelected(item)} numberOfLines={1} style={[styles.font_13, styles.T_semi_bold, { flex: 0, color: colors.BlueJaja }]}>{item.name}</Text>
+                                                        <Text numberOfLines={1} style={[styles.font_10, { flex: 0, color: colors.BlackGrayScale }]}>Biru{item.variant ? "Variant " + item.variant : ""}</Text>
                                                         {item.isDiscount ?
                                                             <View style={styles.row_around_center}>
                                                                 <Text numberOfLines={1} style={[styles.priceBefore, { flex: 0, color: colors.BlackGrayScale, marginRight: '2%' }]}>{item.priceCurrencyFormat}</Text>
-                                                                <Text numberOfLines={1} style={[styles.priceAfter, { flex: 0, color: colors.RedMaroon }]}>{item.priceDiscountCurrencyFormat}</Text>
+                                                                <Text numberOfLines={1} style={[styles.priceAfter, styles.font_13, styles.T_semi_bold, { color: colors.RedFlashsale }]}>{item.priceDiscountCurrencyFormat}</Text>
                                                             </View>
                                                             :
                                                             <Text numberOfLines={1} style={[styles.priceAfter, { flex: 0, color: colors.RedMaroon }]}>{item.priceCurrencyFormat}</Text>
                                                         }
-                                                        <View style={[styles.row_between_center, { flex: 1, marginTop: '2%' }]}>
+                                                        <View style={[styles.row_between_center, { flex: 0 }]}>
                                                             <View style={[styles.row_around_center, { flex: 1 }]}>
-                                                                <TouchableOpacity disabled={disableQty} onPress={() => handleQty('min', indexParent, index)} style={{ backgroundColor: colors.BlueJaja, borderRadius: 5, justifyContent: 'center', height: Wp('7%'), width: Wp('7%'), alignItems: 'center', marginRight: '5%' }}>
+                                                                <TouchableOpacity disabled={disableQty} onPress={() => handleQty('min', indexParent, index)} style={[styles.row_center, styles.mr_5, { backgroundColor: colors.BlueJaja, borderRadius: 5, height: Wp('7%'), width: Wp('7%') }]} >
                                                                     <Text style={[styles.font_20, { color: colors.White, fontWeight: 'bold' }]}>-</Text>
                                                                 </TouchableOpacity>
                                                                 <Text style={[styles.font_14]}>{item.qty}</Text>
-                                                                <TouchableOpacity disabled={disableQty} onPress={() => handleQty('plus', indexParent, index)} style={{ backgroundColor: colors.BlueJaja, borderRadius: 5, height: Wp('7%'), width: Wp('7%'), justifyContent: 'center', alignItems: 'center', marginLeft: '5%' }}>
+                                                                <TouchableOpacity disabled={disableQty} onPress={() => handleQty('plus', indexParent, index)} style={[styles.row_center, styles.ml_5, { backgroundColor: colors.BlueJaja, borderRadius: 5, height: Wp('7%'), width: Wp('7%') }]} >
                                                                     <Text style={[styles.font_20, { color: colors.White, fontWeight: 'bold' }]}>+</Text>
                                                                 </TouchableOpacity>
                                                             </View>
@@ -405,6 +413,4 @@ export const TrolleyScreen = React.memo(({ id, onRemove }) => {
             </View>
         </SafeAreaView >
     )
-
-
-})
+}
