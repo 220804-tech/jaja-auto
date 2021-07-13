@@ -9,10 +9,14 @@ import ActionSheet from 'react-native-actions-sheet';
 import VideoPlayer from 'react-native-video-player';
 import RNFS from 'react-native-fs';
 import FAIcon from 'react-native-vector-icons/FontAwesome5';
+import { useSelector } from 'react-redux';
 
-export default function OrderComplain() {
+export default function OrderComplain(props) {
     const navigation = useNavigation()
     const galeryRef = createRef()
+
+    const reduxAuth = useSelector(state => state.auth.auth)
+
     const [activeSections, setactiveSections] = useState(null)
     const [checked, setChecked] = useState(null);
     const [categoryCompalain, setcategoryCompalain] = useState('');
@@ -22,6 +26,8 @@ export default function OrderComplain() {
     const [loading, setLoading] = useState(false);
 
     const [images, setImages] = useState([]);
+    const [imagesShow, setImagesShow] = useState([]);
+
     const [video, setVideo] = useState('');
     const [videoShow, setVideoShow] = useState('');
     const [index, setIndex] = useState(0);
@@ -62,14 +68,34 @@ export default function OrderComplain() {
                                 category: categoryCompalain,
                                 title: titleComplain,
                                 body: textComplain,
-                                image: activeSections !== "1CV" ? images.length : null,
-                                video: activeSections !== "1CV" ? videoShow : null
+                                image: activeSections !== "1CV" ? images.length ? images : null : null,
+                                video: activeSections !== "1CV" ? videoShow : null,
+                                data: props.route.params.data
                             }
+                            var myHeaders = new Headers();
+                            myHeaders.append("Authorization", reduxAuth);
+                            myHeaders.append("Cookie", "ci_session=k105i7anakha8p9mrdjgiq65nr5kvdaa");
+
+                            var requestOptions = {
+                                method: 'GET',
+                                headers: myHeaders,
+                                redirect: 'follow'
+                            };
+
+                            fetch(`https://jaja.id/backend/order/komplainPesanan?invoice=${props.route.params.invoice}&jenis_komplain=${categoryCompalain}&judul_komplain=${titleComplain}&komplain=${textComplain}&gambar=${images}&video=${video}`, requestOptions)
+                                .then(response => response.json())
+                                .then(result => {
+                                    console.log("🚀 ~ file: RequestComplainScreen.js ~ line 86 ~ handleSendComplain ~ result", result)
+                                    // if (result.status.code === 200) {
+                                    setTimeout(() => {
+                                        setLoading(false)
+                                        // navigation.navigate('ResponseComplain')
+                                    }, 2500);
+                                    // }
+                                })
+                                .catch(error => console.log('error', error));
                             EncryptedStorage.setItem('RequestComplain', JSON.stringify(requestComplain))
-                            setTimeout(() => {
-                                setLoading(false)
-                                navigation.navigate('ResponseComplain')
-                            }, 2500);
+
                         }
                     },
 
@@ -89,9 +115,12 @@ export default function OrderComplain() {
             includeBase64: true
         }).then(media => {
             let fileImage = JSON.parse(JSON.stringify(images))
+            let fileImageShow = JSON.parse(JSON.stringify(images))
             if (fileImage.length < 4) {
-                fileImage.push(media)
+                fileImage.push(media.data)
+                fileImageShow.push(media.path)
                 setImages(fileImage)
+                setImagesShow(fileImageShow)
             }
             setIndex(index + 1)
         });
@@ -107,9 +136,12 @@ export default function OrderComplain() {
             includeBase64: true
         }).then(media => {
             let fileImage = JSON.parse(JSON.stringify(images))
+            let fileImageShow = JSON.parse(JSON.stringify(images))
             if (fileImage.length < 4) {
-                fileImage.push(media)
+                fileImage.push(media.data)
+                fileImageShow.push(media.path)
                 setImages(fileImage)
+                setImagesShow(fileImageShow)
             }
             setIndex(index + 1)
         });
@@ -138,8 +170,11 @@ export default function OrderComplain() {
     const handleRemoveMedia = (name, i) => {
         if (name === 'image') {
             let newData = images;
+            let newDataShow = imagesShow;
+
             newData.splice(i, 1)
             setImages(newData)
+            setImagesShow(newDataShow)
             setIndex(index + 1)
         } else {
             setVideo("")
@@ -167,7 +202,7 @@ export default function OrderComplain() {
                             return (
                                 <View style={[styles.column_center_start, styles.mb_5, styles.p_3, { backgroundColor: colors.White, elevation: 2, width: '100%', }]}>
                                     <TouchableOpacity onPress={() => setactiveSections(item.id) & setChecked(null) & setcategoryCompalain(item.title) & settitleComplain("") & setalertText("")}><Text style={[styles.font_14, styles.T_semi_bold]}>{item.title}</Text></TouchableOpacity>
-                                    <Collapsible style={{ width: '100%', backgroundColor: '#FDFDFD' }} collapsed={activeSections !== item.id ? true : false}>
+                                    <Collapsible style={{ width: '100%' }} collapsed={activeSections !== item.id ? true : false}>
                                         {
                                             item.content.length ?
                                                 <View style={[styles.column, styles.px_3]}>
@@ -231,7 +266,7 @@ export default function OrderComplain() {
                             <Text numberOfLines={2} style={[styles.font_14, styles.T_semi_bold, styles.mb_3]}>Lengkapi bukti komplain : </Text>
 
                             <View style={styles.row_start_center}>
-                                <TouchableOpacity disabled={images.length < 3 ? false : true} onPress={() => galeryRef.current?.setModalVisible()} style={[styles.row, styles.py, styles.px_2, styles.m_2, { borderWidth: 0.5, borderColor: colors.Silver, borderRadius: 3, marginLeft: '0%' }]}>
+                                <TouchableOpacity disabled={imagesShow.length < 3 ? false : true} onPress={() => galeryRef.current?.setModalVisible()} style={[styles.row, styles.py, styles.px_2, styles.m_2, { borderWidth: 0.5, borderColor: colors.Silver, borderRadius: 3, marginLeft: '0%' }]}>
                                     <FAIcon name="camera" size={16} color={colors.BlueJaja} style={{ alignSelf: 'center' }} />
                                     <Text style={[styles.font_12, styles.ml_5]}>Unggah Foto</Text>
                                 </TouchableOpacity>
@@ -242,7 +277,7 @@ export default function OrderComplain() {
                             </View>
 
                             <View style={[styles.row, { flexWrap: 'wrap' }]}>
-                                {images.map((val, indx) => {
+                                {imagesShow.map((val, indx) => {
                                     return (
                                         <View key={indx + "N"} style={styles.my_2}>
                                             <Image style={{ width: Wp('20%'), height: Wp('20%'), marginRight: 15, backgroundColor: 'pink' }} source={{ uri: val.path }} />

@@ -41,6 +41,7 @@ export default function OrderDetailsScreen(props) {
         fetch(`https://jaja.id/backend/order/${props.route.params.data}`, requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 44 ~ getItem ~ result", result)
                 if (result.status.code === 200 || result.status.code === 204) {
                     setDetails(result.data)
                 } else {
@@ -84,6 +85,77 @@ export default function OrderDetailsScreen(props) {
         navigation.navigate('OrderDelivery')
     }
     const handleDone = () => {
+        Alert.alert(
+            "Terima Pesanan",
+            "Anda akan menerima pesanan?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                {
+                    text: "OK", onPress: () => {
+                        setLoading(true)
+                        var myHeaders = new Headers();
+                        myHeaders.append("Authorization", reduxAuth);
+                        myHeaders.append("Cookie", "ci_session=7vgloal55kn733tsqch0v7lh1tfrcilq");
+
+                        var formdata = new FormData();
+                        formdata.append("invoice", details.items[0].invoice);
+
+                        var requestOptions = {
+                            method: 'POST',
+                            headers: myHeaders,
+                            body: formdata,
+                            redirect: 'follow'
+                        };
+
+                        fetch("https://jaja.id/backend/order/pesananDiterima", requestOptions)
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.status.code === 200) {
+                                    navigation.goBack()
+                                } else {
+                                    Alert.alert(
+                                        "Sepertinya ada masalah!",
+                                        String(result.status.message + " => " + result.status.code),
+                                        [
+                                            { text: "OK", onPress: () => console.log("OK Pressed") }
+                                        ],
+                                        { cancelable: false }
+                                    );
+                                }
+                                setTimeout(() => {
+                                    setLoading(false)
+                                }, 500);
+                            })
+                            .catch(error => {
+                                setLoading(false)
+                                if (String(error).slice(11, String(error).length).replace(" ", "") === "Network request failed") {
+                                    ToastAndroid("Tidak dapat hahaha, periksa kembali koneksi anda!")
+                                } else {
+                                    Alert.alert(
+                                        "Error",
+                                        String(error),
+                                        [
+                                            {
+                                                text: "TUTUP",
+                                                onPress: () => console.log("Cancel Pressed"),
+                                                style: "cancel"
+                                            },
+                                        ]
+                                    );
+                                }
+                            });
+                    }
+                }
+            ],
+            { cancelable: false }
+        );
+    }
+
+    const handleCancel = () => {
         Alert.alert(
             "Terima Pesanan",
             "Anda akan menerima pesanan?",
@@ -321,7 +393,7 @@ export default function OrderDetailsScreen(props) {
                     <View style={[styles.row_between_center, styles.p_3]}>
                         <View style={styles.column}>
                             <Text style={[styles.font_13, { marginBottom: '1%' }]}>Total belanja</Text>
-                            <Text style={[styles.font_13, { marginBottom: '1%' }]}>Ongkos kirim</Text>
+                            <Text style={[styles.font_13, { marginBottom: '1%' }]}>Ongkos </Text>
                             <Text style={[styles.font_13, { marginBottom: '1%' }]}>Biaya penanganan</Text>
                             {/* <Text style={[styles.font_13, { marginBottom: '1%' }]}>Voucher Toko</Text> */}
                             <Text style={[styles.font_13, { marginBottom: '1%' }]}>Voucher Jaja.id</Text>
@@ -342,12 +414,11 @@ export default function OrderDetailsScreen(props) {
                 </View>
                 {details && Object.keys(details).length ?
                     props.route.params.status === "Pengiriman" ?
-
                         <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'column', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
                             <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%', marginBottom: '2%' }} contentStyle={{ width: '100%', height: '95%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained" >
                                 Terima Pesanan
                             </Button>
-                            <Button onPress={() => navigation.navigate('RequestComplain')} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
+                            <Button onPress={() => navigation.navigate('RequestComplain', { data: details.items[0].products[0], invoice: details.items[0].invoice })} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
                                 Komplain
                             </Button>
                         </View>
@@ -357,7 +428,13 @@ export default function OrderDetailsScreen(props) {
                                     Beri Penilaian
                                 </Button>
                             </View>
-                            : null
+                            : props.route.params.status === "Menunggu Pembayaran" || props.route.params.status === "Menunggu Konfirmasi" ?
+                                <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'column', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
+                                    <Button onPress={handleCancel} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
+                                        Batalkan Pesanan
+                                    </Button>
+                                </View>
+                                : null
                     : null
                 }
             </ScrollView>
