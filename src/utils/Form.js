@@ -65,7 +65,7 @@ export function handleError(error, name) {
         ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.TOP)
     } else {
         Alert.alert(
-            "Error with status 12001",
+            "Error with status 19001",
             `${name + " " + String(error)}`,
             [
                 {

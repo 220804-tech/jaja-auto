@@ -1,6 +1,6 @@
 import React, { useState, createRef } from 'react'
 import { SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, StatusBar, Image, ScrollView, Alert } from 'react-native'
-import { styles, Appbar, colors, Wp, Loading, useNavigation } from '../../export'
+import { styles, Appbar, colors, Wp, Loading, useNavigation, Utils } from '../../export'
 import { Button, Checkbox } from 'react-native-paper';
 import Collapsible from 'react-native-collapsible';
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -76,25 +76,47 @@ export default function OrderComplain(props) {
                             myHeaders.append("Authorization", reduxAuth);
                             myHeaders.append("Cookie", "ci_session=k105i7anakha8p9mrdjgiq65nr5kvdaa");
 
+
+                            var raw = {
+                                "complain": [
+                                    {
+                                        "invoice": props.route.params.invoice,
+                                        "jenis_komplain": categoryCompalain,
+                                        "judul_komplain": titleComplain,
+                                        "komplain": textComplain,
+                                        "video": video,
+                                        "images": images,
+                                    }
+                                ]
+                            }
+                            EncryptedStorage.setItem('RequestComplain', JSON.stringify(requestComplain))
+
                             var requestOptions = {
-                                method: 'GET',
+                                method: 'POST',
                                 headers: myHeaders,
+                                body: raw,
                                 redirect: 'follow'
                             };
 
-                            fetch(`https://jaja.id/backend/order/komplainPesanan?invoice=${props.route.params.invoice}&jenis_komplain=${categoryCompalain}&judul_komplain=${titleComplain}&komplain=${textComplain}&gambar=${images}&video=${video}`, requestOptions)
+
+                            fetch("https://jaja.id/backend/order/complain", requestOptions)
                                 .then(response => response.json())
                                 .then(result => {
                                     console.log("🚀 ~ file: RequestComplainScreen.js ~ line 86 ~ handleSendComplain ~ result", result)
-                                    // if (result.status.code === 200) {
+                                    if (result.status.code === 200) {
+                                        setTimeout(() => {
+                                            setLoading(false)
+                                            navigation.navigate('ResponseComplain')
+                                        }, 2500);
+                                    }
                                     setTimeout(() => {
                                         setLoading(false)
-                                        // navigation.navigate('ResponseComplain')
-                                    }, 2500);
-                                    // }
+                                    }, 3000);
                                 })
-                                .catch(error => console.log('error', error));
-                            EncryptedStorage.setItem('RequestComplain', JSON.stringify(requestComplain))
+                                .catch(error => {
+                                    Utils.handleError(error);
+                                    setLoading(false)
+                                });
 
                         }
                     },
