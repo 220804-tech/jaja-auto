@@ -36,10 +36,11 @@ import Reward from "../screen/reward/RewardScreen";
 import Referral from "../screen/reward/ReferralScreen";
 import RequestComplain from "../screen/order/RequestComplainScreen";
 import ResponseComplain from "../screen/order/ResponseComplainScreen";
+import OrderCancel from "../screen/order/OrderCancel";
 
 
 export {
     Home, Product, ListChat, Chat, Orders, Profile, Login, Register, Splash, Search, Trolley, ProductSearch, Checkout, VerifikasiEmail, Account,
     Address, Category, AddAddress, Store, Midtrans, ForgotPassword, Feed, Review, ZoomReview, OrderDetails, AddReview, OrderDelivery,
-    CustomerService, Notification, Vouchers, Flashsale, Wishlist, HistoryProduct, Reward, Referral, RequestComplain, ResponseComplain
+    CustomerService, Notification, Vouchers, Flashsale, Wishlist, HistoryProduct, Reward, Referral, RequestComplain, ResponseComplain, OrderCancel
 };

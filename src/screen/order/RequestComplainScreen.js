@@ -64,33 +64,24 @@ export default function OrderComplain(props) {
                     {
                         text: "Ajukan", onPress: () => {
                             setLoading(true)
-                            let requestComplain = {
-                                category: categoryCompalain,
-                                title: titleComplain,
-                                body: textComplain,
-                                image: activeSections !== "1CV" ? images.length ? images : null : null,
-                                video: activeSections !== "1CV" ? videoShow : null,
-                                data: props.route.params.data
-                            }
+
                             var myHeaders = new Headers();
                             myHeaders.append("Authorization", reduxAuth);
-                            myHeaders.append("Cookie", "ci_session=k105i7anakha8p9mrdjgiq65nr5kvdaa");
+                            myHeaders.append("Content-Type", "application/json");
+                            myHeaders.append("Cookie", "ci_session=l1rrrft9qubbbtehfvggsk6191gscd8o");
 
-
-                            var raw = {
+                            var raw = JSON.stringify({
                                 "complain": [
                                     {
                                         "invoice": props.route.params.invoice,
                                         "jenis_komplain": categoryCompalain,
                                         "judul_komplain": titleComplain,
                                         "komplain": textComplain,
-                                        "video": video,
-                                        "images": images,
+                                        "video": activeSections !== "1CV" ? video : null,
+                                        "images": activeSections !== "1CV" ? images.length ? images : null : null,
                                     }
                                 ]
-                            }
-                            EncryptedStorage.setItem('RequestComplain', JSON.stringify(requestComplain))
-
+                            })
                             var requestOptions = {
                                 method: 'POST',
                                 headers: myHeaders,
@@ -102,18 +93,19 @@ export default function OrderComplain(props) {
                             fetch("https://jaja.id/backend/order/complain", requestOptions)
                                 .then(response => response.json())
                                 .then(result => {
-                                    console.log("🚀 ~ file: RequestComplainScreen.js ~ line 86 ~ handleSendComplain ~ result", result)
                                     if (result.status.code === 200) {
                                         setTimeout(() => {
                                             setLoading(false)
-                                            navigation.navigate('ResponseComplain')
                                         }, 2500);
                                     }
+                                    navigation.navigate('ResponseComplain')
                                     setTimeout(() => {
                                         setLoading(false)
                                     }, 3000);
                                 })
                                 .catch(error => {
+                                    navigation.navigate('ResponseComplain')
+
                                     Utils.handleError(error);
                                     setLoading(false)
                                 });
@@ -137,7 +129,7 @@ export default function OrderComplain(props) {
             includeBase64: true
         }).then(media => {
             let fileImage = JSON.parse(JSON.stringify(images))
-            let fileImageShow = JSON.parse(JSON.stringify(images))
+            let fileImageShow = JSON.parse(JSON.stringify(imagesShow))
             if (fileImage.length < 4) {
                 fileImage.push(media.data)
                 fileImageShow.push(media.path)
@@ -195,6 +187,7 @@ export default function OrderComplain(props) {
             let newDataShow = imagesShow;
 
             newData.splice(i, 1)
+            newDataShow.splice(i, 1)
             setImages(newData)
             setImagesShow(newDataShow)
             setIndex(index + 1)
@@ -302,7 +295,7 @@ export default function OrderComplain(props) {
                                 {imagesShow.map((val, indx) => {
                                     return (
                                         <View key={indx + "N"} style={styles.my_2}>
-                                            <Image style={{ width: Wp('20%'), height: Wp('20%'), marginRight: 15, backgroundColor: 'pink' }} source={{ uri: val.path }} />
+                                            <Image style={{ width: Wp('20%'), height: Wp('20%'), marginRight: 15, backgroundColor: colors.WhiteGrey }} source={{ uri: val }} />
                                             <TouchableOpacity style={{ position: 'absolute', top: 0, right: 15, width: Wp('4.3%'), height: Wp('4.3%'), justifyContent: 'center', alignItems: 'center' }} onPress={() => handleRemoveMedia('image', indx)}>
                                                 <Image style={{ width: Wp('3%'), height: Wp('3%'), tintColor: colors.Silver }} source={require('../../assets/icons/close.png')} />
                                             </TouchableOpacity>
@@ -334,7 +327,6 @@ export default function OrderComplain(props) {
 
                     <Text style={[styles.font_13, styles.my_5, { color: colors.RedNotif }]}>{alertText}</Text>
                     <Button onPress={handleSendComplain} style={{ width: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained">Ajukan komplain</Button>
-
                 </View>
             </ScrollView>
             <ActionSheet containerStyle={{ flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.White }} ref={galeryRef}>
