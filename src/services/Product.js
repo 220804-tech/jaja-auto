@@ -13,7 +13,6 @@ export async function productDetail(auth, slug) {
     return await fetch(`https://jaja.id/backend/product/${slug}`, requestOptions)
         .then(response => response.json())
         .then(result => {
-            console.log("file: Product.js ~ line 16 ~ productDetail ~ result", result)
             if (result && result.status.code == 200) {
                 return result.data;
             } else {

@@ -21,14 +21,13 @@ export default function RewardScreen() {
             <View style={[styles.column, styles.p_3, { flex: 1, backgroundColor: colors.White }]}>
                 <View style={[styles.column, style.card]}>
                     <View style={[style.banner, styles.px_4, styles.py_5]}>
-                        <Text style={[styles.font_14, { color: colors.White, fontWeight: 'bold' }]}>Undang teman kamu untuk instal Jaja.id dan dapatkan koin belanja hingga 100.000</Text>
+                        <Text style={[styles.font_14, { color: colors.White, fontWeight: 'bold' }]}>Undang teman kamu untuk install Jaja.id dan dapatkan koin belanja hingga 100.000</Text>
                     </View>
                     <View style={[styles.row_center_start, styles.p_4]}>
                         <View style={[styles.column_start, { width: '58%' }]}>
                             <View style={styles.row_center}>
                                 <Text numberOfLines={1} style={styles.font_22}>{reduxUser.coin} </Text>
                                 <Image style={styles.icon_21} source={require('../../assets/icons/coin.png')} />
-
                             </View>
                             <Text numberOfLines={2} style={styles.font_14}>Koin yang telah kamu dapatkan</Text>
                         </View>

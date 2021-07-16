@@ -1,4 +1,6 @@
 import { ToastAndroid, Alert } from 'react-native'
+import { Utils } from '../export';
+
 export async function getAllCategory() {
 
     var myHeaders = new Headers();
@@ -30,17 +32,5 @@ export async function getAllCategory() {
                 return null
             }
         })
-        .catch(error => {
-            Alert.alert(
-                "Error get user",
-                JSON.stringify(error),
-                [
-                    {
-                        text: "TUTUP",
-                        onPress: () => console.log("Cancel Pressed"),
-                        style: "cancel"
-                    },
-                ]
-            );
-        });
+        .catch(error => Utils.handleError(error));
 }

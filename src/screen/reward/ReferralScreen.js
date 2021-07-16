@@ -27,7 +27,7 @@ export default function ReferralScreen() {
             let string = String(reduxUser.pin).toLocaleUpperCase()
             const shareOptions = {
                 title: 'Jaja',
-                message: `Pakai kode undanganku ${string} dan dapatkan 10.000 koin, untuk belanja di Jaja.id, instal sekarang https://play.google.com/store/apps/details?id=com.seller.jaja`, // Note that according to the documentation at least one of "message" or "url" fields is required
+                message: `Pakai kode referral saya *${string}* dan dapatkan 10.000 koin, untuk belanja di Jaja.id, instal sekarang https://play.google.com/store/apps/details?id=com.seller.jaja`, // Note that according to the documentation at least one of "message" or "url" fields is required
                 url: image,
             };
             console.log("file: ReferralScreen.js ~ line 33 ~ handleShare ~ shareOptions", shareOptions)
@@ -65,7 +65,7 @@ export default function ReferralScreen() {
                 <View style={[styles.row_between_center, style.card, styles.p_4, styles.mb_4]}>
                     <View style={styles.column}>
                         <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlackSilver }]}>
-                            KODE UNDANGAN KAMU
+                            KODE REFERRAL KAMU
                         </Text>
                         <Text style={[styles.font_18, { color: colors.BlueJaja }]}>
                             {String(reduxUser.pin).toLocaleUpperCase()}
@@ -82,7 +82,7 @@ export default function ReferralScreen() {
                             <View style={[styles.row_center, { backgroundColor: colors.BlueJaja, width: Wp('8%'), height: Wp('8%'), borderRadius: 100 }]}>
                                 <Text numberOfLines={1} style={[styles.font_18, { color: colors.White, fontWeight: 'bold' }]}>1</Text>
                             </View>
-                            <Text numberOfLines={4} style={[styles.font_16, styles.ml_4, { width: '80%' }]}>Bagikan kode undangan kamu dengan cara tap BAGIKAN KODE</Text>
+                            <Text numberOfLines={4} style={[styles.font_16, styles.ml_4, { width: '80%' }]}>Bagikan kode referral kamu dengan cara tap BAGIKAN KODE</Text>
                         </View>
                         <View style={[styles.row_start_center, styles.mb_5, styles.mt_5, { width: '100%' }]}>
                             <View style={[styles.row_center, { backgroundColor: colors.BlueJaja, width: Wp('8%'), height: Wp('8%'), borderRadius: 100 }]}>

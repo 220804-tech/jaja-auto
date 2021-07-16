@@ -44,6 +44,7 @@ export default async function FilterLocation(locations, user, category, auth) {
             fetch(`https://jaja.id/backend/product/produkTerdekat?category=${category}&city_name=${citys}`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
+                    console.log("🚀 ~ file: FilterLocation.js ~ line 47 ~ setTimeout ~ result", result)
 
                     if (result.status.code === 200 && result.data.produkTerdekat && result.data.produkTerdekat.length) {
                         EncryptedStorage.getItem('nearestStore').then(res => {
