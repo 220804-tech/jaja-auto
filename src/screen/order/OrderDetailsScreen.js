@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Linking, ToastAndroid, Alert } from 'react-native'
-import { Appbar, colors, styles, Wp, Hp, useNavigation, useFocusEffect, Loading } from '../../export'
+import { Appbar, colors, styles, Wp, Hp, useNavigation, useFocusEffect, Loading, Utils } from '../../export'
 import Clipboard from '@react-native-community/clipboard';
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from 'react-native-paper'
@@ -43,33 +43,14 @@ export default function OrderDetailsScreen(props) {
             .then(result => {
                 if (result.status.code === 200 || result.status.code === 204) {
                     setDetails(result.data)
+                    dispatch({ type: 'SET_INVOICE', payload: result.data.items[0].invoice })
+
                 } else {
-                    Alert.alert(
-                        "Sepertinya ada masalah!",
-                        String(result.status.message + " => " + result.status.code),
-                        [
-                            { text: "OK", onPress: () => console.log("OK Pressed") }
-                        ],
-                        { cancelable: false }
-                    );
+                    Utils.handleResponse(result);
                 }
             })
             .catch(error => {
-                if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
-                    ToastAndroid("Tidak dapat terhubung, periksa kembali koneksi anda!")
-                } else {
-                    Alert.alert(
-                        "Error get detail",
-                        String(error),
-                        [
-                            {
-                                text: "TUTUP",
-                                onPress: () => console.log("Cancel Pressed"),
-                                style: "cancel"
-                            },
-                        ]
-                    );
-                }
+                Utils.handleError(error, "Error get detail order")
             });
     }
 

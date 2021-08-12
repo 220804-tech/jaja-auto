@@ -7,7 +7,7 @@ import ActionSheet from 'react-native-actions-sheet';
 import ActionSheetCamera from 'react-native-actions-sheet';
 import EncryptedStorage from "react-native-encrypted-storage";
 import { useSelector, useDispatch } from 'react-redux'
-import { colors, styles as style, Wp, useNavigation, Loading, Hp, Appbar } from "../../export";
+import { colors, styles as style, Wp, useNavigation, Loading, Hp, Appbar, Utils } from "../../export";
 
 export default function Lainnya() {
     const reduxAuth = useSelector(state => state.auth.auth)
@@ -18,7 +18,7 @@ export default function Lainnya() {
 
     const imageRef = createRef();
     const [profile, setProfile] = useState([]);
-    const [id, setid] = useState("");
+    const [accountBank, setAccountBank] = useState("");
     const [email, setemail] = useState("");
     const [name, setname] = useState("");
     const [date, setdate] = useState("");
@@ -77,6 +77,7 @@ export default function Lainnya() {
                         setphoto(image)
                         setemail(result.data.email)
                         setview(result.data.havePassword)
+                        setAccountBank(result.data.accountBank)
                     } else {
                         Alert.alert(
                             "Jaja.id",
@@ -142,6 +143,10 @@ export default function Lainnya() {
         } else if (e === "Password") {
             setOpen("Password")
             setTimeout(() => passwordRef.current?.setModalVisible(true), 50);
+        } else if (e === "Account Bank") {
+            setOpen("Account Bank")
+            setTimeout(() => actionSheetRef.current?.setModalVisible(true), 50);
+
         }
     }
     const showDatePicker = (text) => {
@@ -461,21 +466,12 @@ export default function Lainnya() {
                         }, 100);
                     } else {
                         setloading(false)
+                        Utils.handleResponse(result)
                     }
                 })
                 .catch(error => {
                     setloading(false)
-                    Alert.alert(
-                        "Jaja.id",
-                        String(error), [
-                        {
-                            text: "Ok",
-                            onPress: () => console.log("Pressed"),
-                            style: "cancel"
-                        },
-                    ],
-                        { cancelable: false }
-                    );
+                    Utils.handleError(error, "Error change password")
                 });
         }
     }
@@ -553,14 +549,25 @@ export default function Lainnya() {
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => handleEdit("Account Bank")}>
+                    <View style={styles.form}>
+                        <Text adjustsFontSizeToFit style={styles.formTitle}>Rekening</Text>
+                        <View style={styles.formItem}>
+                            <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{accountBank ? accountBank : 'Tambah Rekening'}</Text>
+                            <Text adjustsFontSizeToFit style={styles.ubah}>{accountBank ? "Ubah" : "Tambah"}</Text>
+                        </View>
+                    </View>
+                </TouchableWithoutFeedback>
                 {showButton ? <Button onPress={handleSimpan} color={colors.BlueJaja} mode="contained" labelStyle={{ color: colors.White }}>Simpan</Button> : null}
             </View>
+
+
 
 
             <ActionSheet onClose={() => handleUpdate(date, photo)} footerHeight={80} containerStyle={{ paddingHorizontal: '4%', paddingTop: '1%' }}
                 ref={actionSheetRef}>
                 <View style={[style.row_between_center, style.my_2]}>
-                    <Text adjustsFontSizeToFit style={style.actionSheetTitle}>Atur Pofile</Text>
+                    <Text adjustsFontSizeToFit style={style.actionSheetTitle}>Atur Profile</Text>
                     <TouchableOpacity onPress={() => actionSheetRef.current?.setModalVisible(false)}  >
                         <Image
                             style={[style.icon_16, { tintColor: colors.BlackGrey }]}
@@ -640,7 +647,30 @@ export default function Lainnya() {
                                         <Text adjustsFontSizeToFit style={style.font14}>Perempuan</Text>
                                     </View>
                                 </View>
-                                : null}
+                                : open === "Account Bank" ?
+                                    <View style={styles.form}>
+                                        <Text adjustsFontSizeToFit style={styles.formTitle}>{open}</Text>
+                                        <View style={[styles.formItem, { paddingBottom: '1%', borderBottomColor: textInputColor, borderBottomWidth: 1 }]}>
+                                            {/* <Text adjustsFontSizeToFit style={styles.formPlaceholder}>Testing toko</Text> */}
+                                            <TextInput
+                                                style={styles.inputbox}
+                                                placeholder="Masukkan nomor akun"
+                                                value={accountBank}
+                                                onFocus={() => settextInputColor(colors.BlueJaja)}
+                                                onBlur={() => settextInputColor('#C0C0C0')}
+                                                keyboardType="numeric"
+                                                maxLength={13}
+                                                onChangeText={(text) => setAccountBank(text)}
+                                                theme={{
+                                                    colors: {
+                                                        primary: colors.BlueJaja,
+                                                    },
+                                                }}
+                                            />
+                                            {/* <Image /> */}
+                                        </View>
+                                    </View>
+                                    : null}
                 </View>
             </ActionSheet >
             <ActionSheet onClose={() => handleUpdate(date, photo)} footerHeight={80} containerStyle={{ paddingHorizontal: '4%', paddingTop: '1%' }}

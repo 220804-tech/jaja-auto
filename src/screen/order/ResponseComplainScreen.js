@@ -1,23 +1,20 @@
-import React, { useEffect, useState } from 'react'
-import { View, Text, SafeAreaView, Image, TextInput, ScrollView, StatusBar, Alert } from 'react-native'
-import EncryptedStorage from 'react-native-encrypted-storage'
+import React, { useEffect, useState, useCallback } from 'react'
+import { View, Text, SafeAreaView, Image, TextInput, ScrollView, StatusBar, Alert, RefreshControl } from 'react-native'
 import { styles, Appbar, colors, Wp, Hp, Utils, useNavigation } from '../../export'
-import Collapsible from 'react-native-collapsible';
-import { IconButton, Button } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-export default function ResponseComplain(props) {
+export default function ResponseComplain() {
     const navigation = useNavigation();
 
     const reduxAuth = useSelector(state => state.auth.auth)
+    const reduxInvoice = useSelector(state => state.order.invoice)
+    const [refreshing, setRefreshing] = useState(false);
+    const [reload, setReload] = useState(0);
+
     const [details, setDetails] = useState("")
-
-    const [activeSections, setactiveSections] = useState(true)
-    const [chat, setChat] = useState("")
     const [imageLength, setImageLength] = useState(0)
-
-    const [resiBuyer, setResiBuyer] = useState('asasa')
-
+    const [resiBuyer, setResiBuyer] = useState('')
     const [detailSolution] = useState({
         refund: `1. Pembeli harus mengirim barang ke alamat penjual menggunakan jasa kurir JNE terdekat.
         \n2. Pembeli harus memasukkan nomor resi pengiriman di bawah ini, sebagai bukti pengiriman.
@@ -39,12 +36,11 @@ export default function ResponseComplain(props) {
     })
 
     useEffect(() => {
-        EncryptedStorage.getItem('RequestComplain').then(res => {
-            if (res) {
-                // setDetails(JSON.parse(res))
-            }
-        })
+        getItem()
+    }, [])
 
+    const getItem = () => {
+        console.log("masuk")
         var myHeaders = new Headers();
         myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Cookie", "ci_session=rq2cevhmm63hlhiro9l2ltcnvmcknvce");
@@ -55,9 +51,10 @@ export default function ResponseComplain(props) {
             redirect: 'follow'
         };
 
-        fetch(`https://jaja.id/backend/order/komplainDetail?invoice=${props.route.params.invoice}`, requestOptions)
+        fetch(`https://jaja.id/backend/order/komplainDetail?invoice=${reduxInvoice}`, requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: ResponseComplainScreen.js ~ line 51 ~ useEffect ~ result", result)
                 if (result.status.code === 200) {
                     let res = result.data[0];
                     let imgLength = 0
@@ -66,17 +63,21 @@ export default function ResponseComplain(props) {
                     if (res.gambar2) imgLength += 1
                     if (res.gambar3) imgLength += 1
                     setImageLength(imgLength)
-                    console.log("🚀 ~ file: ResponseComplainScreen.js ~ line 38 ~ useEffect ~ result.data[0]", result.data[0])
+                } else {
+                    Utils.handleResponse(result)
                 }
             })
-            .catch(error => console.log('error', error));
-    }, [])
-
-    const handleSend = (vaL) => {
-
+            .catch(error => Utils.handleError(error, "Error get detail complain"));
     }
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        getItem()
+        setTimeout(() => {
+            setRefreshing(false)
+        }, 2000);
+    }, []);
     const handleReceiptNumber = () => {
-        console.log("jajaja")
         var myHeaders = new Headers();
         myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Cookie", "ci_session=06hsuo4cuq7thfvijjnk64ucdtu1eb99");
@@ -87,19 +88,16 @@ export default function ResponseComplain(props) {
             redirect: 'follow'
         };
 
-        console.log("🚀 ~ file: ResponseComplainScreen.js ~ line 90 ~ handleReceiptNumber ~ props.route.params.invoice}", props.route.params.invoice)
-        console.log("🚀 ~ file: ResponseComplainScreen.js ~ line 91 ~ handleReceiptNumber ~ resiBuyer", resiBuyer)
-        fetch(`https://jaja.id/backend/order/inputResiCustomer?invoice=${props.route.params.invoice}&resi_customer=${resiBuyer}`, requestOptions)
+        fetch(`https://jaja.id/backend/order/inputResiCustomer?invoice=${reduxInvoice}&resi_customer=${resiBuyer}`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: ResponseComplainScreen.js ~ line 94 ~ ResponseComplain ~ result", result)
                 if (result.status.code == 200) {
-
+                    getItem()
                 } else {
                     Utils.handleResponse(result)
                 }
             })
-            .catch(error => Utils.handleError(error));
+            .catch(error => Utils.handleError(error, "Error input receipt number"));
     }
 
     const handleAccept = () => {
@@ -120,7 +118,7 @@ export default function ResponseComplain(props) {
                         myHeaders.append("Cookie", "ci_session=7vgloal55kn733tsqch0v7lh1tfrcilq");
 
                         var formdata = new FormData();
-                        formdata.append("invoice", props.route.params.invoice);
+                        formdata.append("invoice", reduxInvoice);
 
                         var requestOptions = {
                             method: 'POST',
@@ -138,7 +136,7 @@ export default function ResponseComplain(props) {
                                     Utils.handleResponse(result)
                                 }
                             })
-                            .catch(error => Utils.handleError(error));
+                            .catch(error => Utils.handleError(error, "Error order confirm"));
                     }
                 }
             ],
@@ -155,13 +153,18 @@ export default function ResponseComplain(props) {
                 showHideTransition="fade"
             />
             <Appbar back={true} title="Komplain Pesanan" Bg={colors.YellowJaja} />
-            <ScrollView style={{ marginBottom: Hp('8%') }}>
+            <ScrollView style={{ marginBottom: Hp('8%') }}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }>
                 <View style={[styles.column_center, styles.p_3]}>
                     <View style={[styles.column, styles.py_2, styles.px_4, styles.mb_2, styles.T_medium, { width: '100%', backgroundColor: colors.White, borderBottomRightRadius: 10, borderBottomLeftRadius: 10, borderTopRightRadius: 10 }]}>
                         <Text style={[styles.font_12]}>Komplain anda telah diajukan, akan di proses paling lambat 4X24 Jam</Text>
                     </View>
                     {details ?
-                        // <Collapsible style={{ width: '100%' }} collapsed={activeSections}>
                         <View style={[styles.column, styles.p_4, { width: '100%', backgroundColor: colors.White, borderBottomRightRadius: 10, borderBottomLeftRadius: 10, borderTopLeftRadius: 10 }]}>
                             <Text style={[styles.font_13, styles.T_semi_bold, styles.my]}>Detail komplain</Text>
                             <View style={[styles.column, styles.px_2]}>
@@ -192,7 +195,6 @@ export default function ResponseComplain(props) {
                                 <Text style={[styles.font_12, styles.mt_2]}>- {details.video ? '1' : '0'} Video dilampirkan</Text>
                             </View>
                         </View>
-                        // </Collapsible>
                         : null
                     }
                     {details.status === "confirmed" || details.status === "sendback" || details.status === "delivered" ?
@@ -221,7 +223,7 @@ export default function ResponseComplain(props) {
                             <Text style={[styles.font_13]}>Komplain anda telah di proses penjual, penjual akan menghubungi jasa kurir terkait.</Text>
                         </View>
 
-                        : details.solusi === 'refund' || details.solusi == "change" && !details.resi_customer ?
+                        : !details.resi_customer && details.solusi === 'refund' || details.solusi == "change" ?
                             <View style={[styles.column, styles.py_2, styles.px_4, styles.my_2, styles.T_medium, { width: '100%', backgroundColor: colors.White, borderBottomRightRadius: 10, borderBottomLeftRadius: 10, borderTopRightRadius: 10 }]}>
                                 <Text style={[styles.font_13, styles.mb]}>Masukkan resi pengiriman anda disini :</Text>
                                 <View style={[styles.row_between_center, { width: '100%' }]}>

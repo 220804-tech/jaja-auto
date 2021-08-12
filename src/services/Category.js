@@ -32,5 +32,5 @@ export async function getAllCategory() {
                 return null
             }
         })
-        .catch(error => Utils.handleError(error));
+        .catch(error => Utils.handleError(error, "Error get categorys"));
 }

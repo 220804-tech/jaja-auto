@@ -1,9 +1,8 @@
 import React, { useState, createRef } from 'react'
-import { SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, StatusBar, Image, ScrollView, Alert } from 'react-native'
+import { SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, StatusBar, Image, ScrollView, Alert, } from 'react-native'
 import { styles, Appbar, colors, Wp, Loading, useNavigation, Utils } from '../../export'
 import { Button, Checkbox } from 'react-native-paper';
 import Collapsible from 'react-native-collapsible';
-import EncryptedStorage from 'react-native-encrypted-storage';
 import ImagePicker from 'react-native-image-crop-picker';
 import ActionSheet from 'react-native-actions-sheet';
 import VideoPlayer from 'react-native-video-player';
@@ -11,12 +10,12 @@ import RNFS from 'react-native-fs';
 import FAIcon from 'react-native-vector-icons/FontAwesome5';
 import { useSelector } from 'react-redux';
 
-export default function OrderComplain(props) {
+export default function Complain() {
     const navigation = useNavigation()
     const galeryRef = createRef()
 
     const reduxAuth = useSelector(state => state.auth.auth)
-
+    const reduxInvoice = useSelector(state => state.order.invoice)
     const [activeSections, setactiveSections] = useState(null)
     const [checked, setChecked] = useState(null);
     const [categoryCompalain, setcategoryCompalain] = useState('');
@@ -39,83 +38,87 @@ export default function OrderComplain(props) {
     ]
 
     const handleSendComplain = () => {
-        if (!activeSections) {
-            setalertText('Pilih salah satu alasan komplain!')
-        } else if (!titleComplain || titleComplain == " " || titleComplain == "  ") {
-            setalertText('Judul komplain tidak boleh kosong')
-        } else if (titleComplain.length < 4) {
-            setalertText('Judul komplain terlalu singkat')
-        } else if (!textComplain || textComplain == " " || textComplain == "  ") {
-            setalertText('Alasan komplain tidak boleh kosong!')
-        } else if (textComplain.length < 10) {
-            setalertText('Alasan komplain terlalu singkat!')
-        } else if (activeSections !== "1CV" && !images.length) {
-            setalertText('Bukti gambar tidak boleh kosong!')
-        } else if (activeSections !== "1CV" && !video) {
-            setalertText('Bukti video tidak boleh kosong')
-        } else {
-            setalertText('')
-            Alert.alert(
-                "Komplain Pesanan",
-                `Kamu yakin akan mengajukan komplain?`,
-                [
+        try {
+            if (!activeSections) {
+                setalertText('Pilih salah satu alasan komplain!')
+            } else if (!titleComplain || titleComplain == " " || titleComplain == "  ") {
+                setalertText('Judul komplain tidak boleh kosong')
+            } else if (titleComplain.length < 4) {
+                setalertText('Judul komplain terlalu singkat')
+            } else if (!textComplain || textComplain == " " || textComplain == "  ") {
+                setalertText('Alasan komplain tidak boleh kosong!')
+            } else if (textComplain.length < 10) {
+                setalertText('Alasan komplain terlalu singkat!')
+            } else if (activeSections !== "1CV" && !images.length) {
+                setalertText('Bukti gambar tidak boleh kosong!')
+            } else if (activeSections !== "1CV" && !video) {
+                setalertText('Bukti video tidak boleh kosong')
+            } else {
+                setalertText('')
+                Alert.alert(
+                    "Komplain Pesanan",
+                    `Kamu yakin akan mengajukan komplain?`,
+                    [
 
-                    { text: "Batal", onPress: () => console.log("OK Pressed") },
-                    {
-                        text: "Ajukan", onPress: () => {
-                            setLoading(true)
+                        { text: "Batal", onPress: () => console.log("OK Pressed") },
+                        {
+                            text: "Ajukan", onPress: () => {
+                                setLoading(true)
 
-                            var myHeaders = new Headers();
-                            myHeaders.append("Authorization", reduxAuth);
-                            myHeaders.append("Content-Type", "application/json");
-                            myHeaders.append("Cookie", "ci_session=l1rrrft9qubbbtehfvggsk6191gscd8o");
+                                var myHeaders = new Headers();
+                                myHeaders.append("Authorization", reduxAuth);
+                                myHeaders.append("Content-Type", "application/json");
+                                myHeaders.append("Cookie", "ci_session=l1rrrft9qubbbtehfvggsk6191gscd8o");
 
-                            var raw = JSON.stringify({
-                                "complain": [
-                                    {
-                                        "invoice": props.route.params.invoice,
-                                        "jenis_komplain": categoryCompalain,
-                                        "judul_komplain": titleComplain,
-                                        "komplain": textComplain,
-                                        "video": activeSections !== "1CV" ? video : null,
-                                        "images": activeSections !== "1CV" ? images.length ? images : null : null,
-                                    }
-                                ]
-                            })
-                            var requestOptions = {
-                                method: 'POST',
-                                headers: myHeaders,
-                                body: raw,
-                                redirect: 'follow'
-                            };
+                                var raw = JSON.stringify({
+                                    "complain": [
+                                        {
+                                            "invoice": reduxInvoice,
+                                            "jenis_komplain": categoryCompalain,
+                                            "judul_komplain": titleComplain,
+                                            "komplain": textComplain,
+                                            "video": activeSections !== "1CV" ? video : null,
+                                            "images": activeSections !== "1CV" ? images.length ? images : null : null,
+                                        }
+                                    ]
+                                })
+                                var requestOptions = {
+                                    method: 'POST',
+                                    headers: myHeaders,
+                                    body: raw,
+                                    redirect: 'follow'
+                                };
 
 
-                            fetch("https://jaja.id/backend/order/complain", requestOptions)
-                                .then(response => response.json())
-                                .then(result => {
-                                    if (result.status.code === 200) {
+                                fetch("https://jaja.id/backend/order/complain", requestOptions)
+                                    .then(response => response.json())
+                                    .then(result => {
+                                        if (result.status.code === 200) {
+                                            setTimeout(() => {
+                                                setLoading(false)
+                                            }, 2500);
+                                        }
+                                        navigation.navigate('ResponseComplain')
                                         setTimeout(() => {
                                             setLoading(false)
-                                        }, 2500);
-                                    }
-                                    navigation.navigate('ResponseComplain')
-                                    setTimeout(() => {
+                                        }, 3000);
+                                    })
+                                    .catch(error => {
+                                        navigation.navigate('ResponseComplain')
+
+                                        Utils.handleError(error, "Error request complain.");
                                         setLoading(false)
-                                    }, 3000);
-                                })
-                                .catch(error => {
-                                    navigation.navigate('ResponseComplain')
+                                    });
 
-                                    Utils.handleError(error);
-                                    setLoading(false)
-                                });
+                            }
+                        },
 
-                        }
-                    },
-
-                ],
-                { cancelable: false }
-            );
+                    ],
+                    { cancelable: false }
+                );
+            }
+        } catch (error) {
+            Utils.handleError(error, "Error request complain");
         }
     }
 

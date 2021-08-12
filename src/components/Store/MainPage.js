@@ -79,13 +79,9 @@ export default function MainPage() {
                                 keyExtractor={(item) => item.id}
                                 data={vouchers}
                                 renderItem={({ item }) => {
-                                    console.log("🚀 ~ file: MainPage.js ~ line 138 ~ MainPage ~ item", item)
-
-
                                     return (
                                         <View style={[styles.row_start_center, styles.mb_3, { width: Wp('45%'), height: Wp('17%'), marginRight: 10 }]}>
                                             <View style={[styles.row_between_center, styles.pr_2, { width: '100%', height: '100%', backgroundColor: colors.BlueJaja }]}>
-                                                {/* <View style={[styles.column, { width: '70%' }]}> */}
                                                 <View style={[styles.column, { width: '70%', height: '100%' }]}>
                                                     <View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: colors.BlueJaja, flexDirection: 'column', paddingVertical: '1%', justifyContent: 'center' }}>
                                                         <View style={{ height: '18%', width: '8%', backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
@@ -130,10 +126,8 @@ export default function MainPage() {
                                 activeDotColor={colors.BlueJaja}
                                 paginationStyle={{ bottom: 10 }}
                                 autoplay={true}
-                                loop={true}
-                            >
+                                loop={true}>
                                 {image.promoBanner.map((item, key) => {
-                                    console.log("🚀 ~ file: MainPage.js ~ line 137 ~ {image.promoBanner.map ~ item", item)
                                     return (
                                         <>
                                             {item ?

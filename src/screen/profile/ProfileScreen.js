@@ -18,8 +18,8 @@ export default function ProfileScreen(props) {
 
   const [auth, setAuth] = useState(false)
   const [loading, setLoading] = useState(false)
-  const reduxBadges = useSelector(state => state.user.badges)
   const reduxProfile = useSelector(state => state.user.user)
+  console.log("🚀 ~ file: ProfileScreen.js ~ line 23 ~ ProfileScreen ~ reduxProfile", reduxProfile.refund)
 
 
   const [navigate, setNavigate] = useState("Akun")
@@ -190,7 +190,8 @@ export default function ProfileScreen(props) {
         <View style={{ flex: 0, flexDirection: 'column', zIndex: 998, backgroundColor: colors.White, height: Hp('85%'), marginTop: Hp('-1%'), borderTopRightRadius: 21, borderTopLeftRadius: 21, paddingHorizontal: '4%', paddingTop: '2%' }}>
           <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate(reduxAuth ? 'Account' : 'Login')}>
             <Image style={{ width: 27, height: 27, marginRight: '3%' }} source={require(`../../assets/icons/customer.png`)} />
-            <Text style={style.title}>Profile</Text>
+            <Text style={style.title}>Pengaturan Akun</Text>
+            {reduxProfile.refund ? null : <Text style={[styles.ml_2, { color: colors.RedNotif, fontStyle: 'italic', fontSize: 13 }]}>( Masukkan rekening )</Text>}
           </TouchableOpacity>
           <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate(reduxAuth ? 'Address' : 'Login')}>
             <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/google-maps.png`)} />

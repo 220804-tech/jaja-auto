@@ -248,6 +248,7 @@ export default function TrolleyScreen() {
     }, []);
 
     const handleSelected = item => {
+        console.log("🚀 ~ file: TrolleyScreen.js ~ line 251 ~ TrolleyScreen ~ item", item)
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
         navigation.navigate("Product", { slug: item.slug, image: item.image })
     }
@@ -272,7 +273,7 @@ export default function TrolleyScreen() {
 
         return [
             <TouchableOpacity onPress={() => {
-                // handleDeleteCart(item.cartId)
+                handleDeleteCart(item.cartId)
             }} style={[styles.column_center, { height: '91.5%', width: '18%', backgroundColor: colors.RedDanger }]}>
                 <Image style={[styles.icon_25, { tintColor: colors.White }]} source={require('../../assets/icons/delete.png')} />
             </TouchableOpacity>

@@ -75,7 +75,7 @@ export async function deleteCart(auth, idCart) {
             }
         })
         .catch(error => {
-            Utils.handleError(error)
+            Utils.handleError(error, "Error delete cart")
             return null
         });
 }

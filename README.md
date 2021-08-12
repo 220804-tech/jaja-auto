@@ -35,3 +35,7 @@
 ## Terakhir Dilihat
 # 18001 => Error api get terakhir dilihat
 # 18002 => Error api get terakhir dilihat filter
+
+## Terakhir Dilihat
+# 19001 => Handle all error like network, bad request, dll.
+# 18002 => handle response error
