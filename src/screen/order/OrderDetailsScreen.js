@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Linking, ToastAndroid, Alert } from 'react-native'
+import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Linking, ToastAndroid, Alert, RefreshControl } from 'react-native'
 import { Appbar, colors, styles, Wp, Hp, useNavigation, useFocusEffect, Loading, Utils } from '../../export'
 import Clipboard from '@react-native-community/clipboard';
 import { useDispatch, useSelector } from "react-redux";
@@ -9,9 +9,15 @@ export default function OrderDetailsScreen(props) {
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
     const [details, setDetails] = useState(null)
+    const [refreshing, setRefreshing] = useState(null)
 
     const reduxCheckout = useSelector(state => state.checkout.checkout)
     const reduxAuth = useSelector(state => state.auth.auth)
+    const reduxOrderStatus = useSelector(state => state.order.orderStatus)
+    console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 17 ~ OrderDetailsScreen ~ reduxOrderStatus", reduxOrderStatus)
+    const reduxOrderInvoice = useSelector(state => state.order.invoice)
+
+    console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 18 ~ OrderDetailsScreen ~ reduxOrderInvoice", reduxOrderInvoice)
 
     const { status } = props.route.params;
 
@@ -24,6 +30,12 @@ export default function OrderDetailsScreen(props) {
             getItem()
         }, []),
     );
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        getItem()
+    }, []);
+
 
     const getItem = () => {
         var myHeaders = new Headers();
@@ -38,24 +50,24 @@ export default function OrderDetailsScreen(props) {
             body: raw,
             redirect: 'follow'
         };
-        fetch(`https://jaja.id/backend/order/${props.route.params.data}`, requestOptions)
+
+        fetch(`https://jaja.id/backend/order/${reduxOrderInvoice}`, requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 57 ~ getItem ~ result", result)
                 if (result.status.code === 200 || result.status.code === 204) {
                     setDetails(result.data)
                     dispatch({ type: 'SET_INVOICE', payload: result.data.items[0].invoice })
-
                 } else {
-                    Utils.handleResponse(result);
+                    Utils.handleErrorResponse(result, "Error with status code : 22003");
                 }
             })
             .catch(error => {
-                Utils.handleError(error, "Error get detail order")
+                Utils.handleError(error, "Error with status code : 22004")
             });
     }
 
     const handlePayment = () => {
-        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 57 ~ handlePayment ~ details.orderId", details.orderId)
         dispatch({ type: 'SET_ORDERID', payload: details.orderId })
         navigation.navigate("Midtrans")
     }
@@ -63,6 +75,7 @@ export default function OrderDetailsScreen(props) {
     const handleTracking = () => {
         navigation.navigate('OrderDelivery')
     }
+
     const handleDone = () => {
         Alert.alert(
             "Terima Pesanan",
@@ -93,39 +106,16 @@ export default function OrderDetailsScreen(props) {
                         fetch("https://jaja.id/backend/order/pesananDiterima", requestOptions)
                             .then(response => response.json())
                             .then(result => {
+                                setLoading(false)
                                 if (result.status.code === 200) {
                                     navigation.goBack()
                                 } else {
-                                    Alert.alert(
-                                        "Sepertinya ada masalah!",
-                                        String(result.status.message + " => " + result.status.code),
-                                        [
-                                            { text: "OK", onPress: () => console.log("OK Pressed") }
-                                        ],
-                                        { cancelable: false }
-                                    );
+                                    Utils.handleErrorResponse(result, "Error with status code : 22001")
                                 }
-                                setTimeout(() => {
-                                    setLoading(false)
-                                }, 500);
                             })
                             .catch(error => {
                                 setLoading(false)
-                                if (String(error).slice(11, String(error).length).replace(" ", "") === "Network request failed") {
-                                    ToastAndroid("Tidak dapat hahaha, periksa kembali koneksi anda!")
-                                } else {
-                                    Alert.alert(
-                                        "Error",
-                                        String(error),
-                                        [
-                                            {
-                                                text: "TUTUP",
-                                                onPress: () => console.log("Cancel Pressed"),
-                                                style: "cancel"
-                                            },
-                                        ]
-                                    );
-                                }
+                                Utils.handleError(error, "Error with status 22002")
                             });
                     }
                 }
@@ -133,11 +123,20 @@ export default function OrderDetailsScreen(props) {
             { cancelable: false }
         );
     }
+
     return (
         <SafeAreaView style={styles.container}>
             <Appbar title="Detail Pesanan" back={true} />
             {loading ? <Loading /> : null}
-            <ScrollView contentContainerStyle={{ flex: 0, flexDirection: 'column', paddingBottom: Hp('7%') }}>
+
+            <ScrollView
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
+                contentContainerStyle={{ flex: 0, flexDirection: 'column', paddingBottom: Hp('7%') }}>
                 <View style={[styles.column, styles.p_3, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                     <View style={[styles.row_between_center, { marginBottom: props.route.params.status !== "Menunggu Pembayaran" ? '4%' : "0%" }]}>
                         <View style={[styles.row]}>

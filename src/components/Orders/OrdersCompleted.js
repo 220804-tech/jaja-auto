@@ -57,6 +57,8 @@ export default function OrdersUnpaid() {
         })
     }
     const handleOrderDetails = (item) => {
+        dispatch({ type: 'SET_INVOICE', payload: item.invoice })
+        dispatch({ type: 'SET_ORDER_STATUS', payload: "Pesanan Selesai" })
         navigation.navigate('OrderDetails', { data: item.invoice, status: "Pesanan Selesai" })
     }
 

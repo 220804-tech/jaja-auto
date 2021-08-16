@@ -15,7 +15,8 @@ const initialState = {
     filterEmpty: false,
     tracking: [],
     receipt: "",
-    invoice: ""
+    invoice: "",
+    orderStatus: ""
 }
 export default function storeOrder(state = initialState, action) {
     const { type, payload } = action;
@@ -52,6 +53,8 @@ export default function storeOrder(state = initialState, action) {
             return { ...state, receipt: payload }
         case 'SET_INVOICE':
             return { ...state, invoice: payload }
+        case 'SET_ORDER_STATUS':
+            return { ...state, orderStatus: payload }
         default:
             return state;
     }

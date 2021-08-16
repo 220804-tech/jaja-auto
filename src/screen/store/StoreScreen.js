@@ -94,7 +94,7 @@ export default function StoreScreen() {
                 barStyle='light-content'
                 showHideTransition="fade"
             />
-            <AppbarSecond handleSearch={handleSearch} title='Cari di toko..' />
+            <AppbarSecond handleSearch={handleSearch} title={reduxStore && Object.keys(reduxStore).length && reduxStore.name ? `Cari di ${reduxStore.name}..` : 'Cari di toko..'} />
             {/* <View style={{ flex: 1, height: Hp('100%') }}> */}
             <View style={{ flex: 1 }}>
                 {/* <ScrollView contentContainerStyle={{ alignItems: 'flex-start' }}> */}

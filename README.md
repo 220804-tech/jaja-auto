@@ -8,12 +8,15 @@
 # 12001 => Error api get dashboard 
 # 120012/120013 => Error api get dashboard in flashsale
 # 12002 => Error api get recommendation
-# 12003 => Error api get order unpaid
-# 12004 => Error api get order wait confirm
-# 12005 => Error api get order process
-# 12006 => Error api get order sent
-# 12007 => Error api get order completed
-# 12008 => Error api get order failed
+# 12003, 12004 => Error api get order unpaid
+# 12005, 12006 => Error api get order wait confirm
+# 12007, 12008 => Error api get order process
+# 12009, 120010 => Error api get order sent
+# 12011, 12012 => Error api get order completed
+# 12013, 12014 => Error api get order failed
+
+## Order Tracking
+# 12015, 12016 => Error api get order failed
 
 ## Category Component
 # 13001 => Error api get category 
@@ -24,7 +27,7 @@
 # 14001 => Error get voucher
 
 ## Notifikasi
-# 15001 => Error get notifikasi
+# 15001, => Error get notifikasi
 
 ## Trolley
 # 16001 => Error edit qty
@@ -39,3 +42,7 @@
 ## Terakhir Dilihat
 # 19001 => Handle all error like network, bad request, dll.
 # 18002 => handle response error
+
+## Pesanan
+# 22001, 22002 => Terima Pesanan
+# 22003, 22004 => Detail pesanan

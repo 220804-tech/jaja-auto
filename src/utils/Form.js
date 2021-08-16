@@ -1,13 +1,10 @@
-import { Alert } from 'react-native'
+import { Alert, ToastAndroid } from 'react-native'
 import NetInfo from "@react-native-community/netinfo";
 
 export function regexEmail(e) {
-    console.log(e, ' email');
     let val = e.nativeEvent.text;
-    let regex = /^(([^<>()\[\]\\.,;:\s@”]+(\.[^<>()\[\]\\.,;:\s@”]+)*)|(“.+”))@((\[[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}])|(([a-zA-Z\-0–9]+\.)+[a-zA-Z]{2,}))$/;
-    let rest = regex.test(e.nativeEvent.text);
-    console.log("index -> handleEmail -> val.length", val.length)
-
+    let rgx = /^(([^<>()\[\]\\.,;:\s@”]+(\.[^<>()\[\]\\.,;:\s@”]+)*)|(“.+”))@((\[[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}])|(([a-zA-Z\-0–9]+\.)+[a-zA-Z]{2,}))$/;
+    let rest = rgx.test(e.nativeEvent.text);
     if (val.length > 4 && rest === true) {
         return true
     } else if (val.length === 0) {
@@ -43,9 +40,9 @@ export async function CheckSignal() {
 }
 
 export function handleResponse(error) {
-    if (error.status.code !== 200 && error.status.code !== 204) {
+    if (error && Object.keys(error).length && error.status.code !== 200 && error.status.code !== 204) {
         Alert.alert(
-            "Error with status 12001",
+            "Error with status 21001",
             String(error.status.message) + " => " + String(error.status.code),
             [
                 {
@@ -57,9 +54,51 @@ export function handleResponse(error) {
             { cancelable: false }
         );
     } else {
-
+        Alert.alert(
+            "Error with status 21002",
+            String(error),
+            [
+                {
+                    text: "TUTUP",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                }
+            ],
+            { cancelable: false }
+        );
     }
 }
+
+export function handleErrorResponse(error, errorCode) {
+    if (error && Object.keys(error).length && error.status.code !== 200 && error.status.code !== 204) {
+        Alert.alert(
+            errorCode,
+            String(error.status.message) + " => " + String(error.status.code),
+            [
+                {
+                    text: "TUTUP",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                }
+            ],
+            { cancelable: false }
+        );
+    } else {
+        Alert.alert(
+            errorCode,
+            String(error),
+            [
+                {
+                    text: "TUTUP",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                }
+            ],
+            { cancelable: false }
+        );
+    }
+}
+
 export function handleError(error, name) {
     if (String(error).slice(11, String(error).length) === "Network request failed") {
         ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.TOP)
@@ -78,3 +117,5 @@ export function handleError(error, name) {
         );
     }
 }
+
+

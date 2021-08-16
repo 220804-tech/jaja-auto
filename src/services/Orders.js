@@ -1,4 +1,5 @@
 import { ToastAndroid, Alert } from 'react-native'
+import { Utils } from '../export';
 
 export async function getUnpaid(auth) {
     if (auth) {
@@ -15,33 +16,18 @@ export async function getUnpaid(auth) {
             redirect: 'follow'
         };
 
-        return await fetch("https://jaja.id/backend/order?page=1&limit=10&status=notPaid", requestOptions)
+        return await fetch("https://jaja.id/backend/order?page=1&limit=50&status=notPaid", requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.status.code === 200 || result.status.code === 204) {
                     return result.data;
                 } else {
-                    ToastAndroid.show(String(result.status.message), ToastAndroid.LONG, ToastAndroid.CENTER)
+                    Utils.handleErrorResponse(result, "Error with status code : 12003")
                     return null
                 }
             })
             .catch(error => {
-                if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
-                    ToastAndroid("Tidak dapat terhubung, periksa kembali koneksi anda!")
-                } else {
-                    Alert.alert(
-                        "Error with status 12003",
-                        `${String(error)}`,
-                        [
-                            {
-                                text: "TUTUP",
-                                onPress: () => console.log("Cancel Pressed"),
-                                style: "cancel"
-                            }
-                        ],
-                        { cancelable: false }
-                    );
-                }
+                Utils.handleError(error, "Error with status code : 12004")
             });
     }
 }
@@ -61,33 +47,18 @@ export async function getWaitConfirm(auth) {
             redirect: 'follow'
         };
 
-        return await fetch("https://jaja.id/backend/order?page=1&limit=10&status=waitConfirm", requestOptions)
+        return await fetch("https://jaja.id/backend/order?page=1&limit=50&status=waitConfirm", requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.status.code === 200 || result.status.code === 204) {
                     return result.data;
                 } else {
-                    ToastAndroid.show(String(result.status.message), ToastAndroid.LONG, ToastAndroid.CENTER)
+                    Utils.handleErrorResponse(result, "Error with status code : 12005")
                     return null
                 }
             })
             .catch(error => {
-                if (String(error).slice(11, String(error).length) === "Network request failed") {
-                    ToastAndroid.show("Tidak dapat terhubung, periksa koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
-                } else {
-                    Alert.alert(
-                        "Error with status 12004",
-                        `${String(error)}`,
-                        [
-                            {
-                                text: "TUTUP",
-                                onPress: () => console.log("Cancel Pressed"),
-                                style: "cancel"
-                            }
-                        ],
-                        { cancelable: false }
-                    );
-                }
+                Utils.handleError(error, "Error with status code : 12006")
             });
     }
 }
@@ -113,27 +84,12 @@ export async function getProcess(auth) {
                 if (result.status.code === 200 || result.status.code === 204) {
                     return result.data;
                 } else {
-                    ToastAndroid.show(String(result.status.message), ToastAndroid.LONG, ToastAndroid.CENTER)
+                    Utils.handleErrorResponse(result, "Error with status code : 12007")
                     return null
                 }
             })
             .catch(error => {
-                if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
-                    ToastAndroid("Tidak dapat terhubung, periksa kembali koneksi anda!")
-                } else {
-                    Alert.alert(
-                        "Error with status 12005",
-                        `${String(error)}`,
-                        [
-                            {
-                                text: "TUTUP",
-                                onPress: () => console.log("Cancel Pressed"),
-                                style: "cancel"
-                            }
-                        ],
-                        { cancelable: false }
-                    );
-                }
+                Utils.handleError(error, "Error with status code : 12008")
             });
     }
 }
@@ -159,27 +115,12 @@ export async function getSent(auth) {
                 if (result.status.code === 200 || result.status.code === 204) {
                     return result.data;
                 } else {
-                    ToastAndroid.show(String(result.status.message), ToastAndroid.LONG, ToastAndroid.CENTER)
+                    Utils.handleErrorResponse(result, "Error with status code : 12009")
                     return null
                 }
             })
             .catch(error => {
-                if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
-                    ToastAndroid("Tidak dapat terhubung, periksa kembali koneksi anda!")
-                } else {
-                    Alert.alert(
-                        "Error with status 12006",
-                        `${String(error)}`,
-                        [
-                            {
-                                text: "TUTUP",
-                                onPress: () => console.log("Cancel Pressed"),
-                                style: "cancel"
-                            }
-                        ],
-                        { cancelable: false }
-                    );
-                }
+                Utils.handleError(error, "Error with status code : 12010")
             });
     }
 }
@@ -205,27 +146,12 @@ export async function getCompleted(auth) {
                 if (result.status.code === 200 || result.status.code === 204) {
                     return result.data;
                 } else {
-                    ToastAndroid.show(String(result.status.message), ToastAndroid.LONG, ToastAndroid.CENTER)
+                    Utils.handleErrorResponse(result, "Error with status code : 120011")
                     return null
                 }
             })
             .catch(error => {
-                if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
-                    ToastAndroid("Tidak dapat terhubung, periksa kembali koneksi anda!")
-                } else {
-                    Alert.alert(
-                        "Error with status 12007",
-                        `${String(error)}`,
-                        [
-                            {
-                                text: "TUTUP",
-                                onPress: () => console.log("Cancel Pressed"),
-                                style: "cancel"
-                            }
-                        ],
-                        { cancelable: false }
-                    );
-                }
+                Utils.handleError(error, "Error with status code : 12012")
             });
     }
 }
@@ -245,33 +171,18 @@ export async function getFailed(auth) {
             redirect: 'follow'
         };
 
-        return await fetch("https://jaja.id/backend/order?page=1&limit=10&status=canceled", requestOptions)
+        return await fetch("https://jaja.id/backend/order?page=1&limit=50&status=canceled", requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.status.code === 200 || result.status.code === 204) {
                     return result.data;
                 } else {
-                    ToastAndroid.show(String(result.status.message), ToastAndroid.LONG, ToastAndroid.CENTER)
+                    Utils.handleErrorResponse(result, "Error with status code : 12013")
                     return null
                 }
             })
             .catch(error => {
-                if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
-                    ToastAndroid("Tidak dapat terhubung, periksa kembali koneksi anda!")
-                } else {
-                    Alert.alert(
-                        "Error with status 12008",
-                        `${String(error)}`,
-                        [
-                            {
-                                text: "TUTUP",
-                                onPress: () => console.log("Cancel Pressed"),
-                                style: "cancel"
-                            }
-                        ],
-                        { cancelable: false }
-                    );
-                }
+                Utils.handleError(error, "Error with status code : 12014")
             });
     }
 }

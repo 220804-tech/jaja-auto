@@ -2,9 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { View, Text, SafeAreaView, RefreshControl, FlatList, StyleSheet, ToastAndroid, ScrollView, Alert } from 'react-native'
 import { DataTable, Divider } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
-import { styles as style, colors, useFocusEffect, Loading, CheckSignal, Appbar } from '../../export'
+import { styles as style, colors, useFocusEffect, Loading, CheckSignal, Appbar, Utils } from '../../export'
 
-export default function OrderDeliveryScreen(props) {
+export default function OrderDeliveryScreen() {
     const [loading, setLoading] = useState(false)
     const [refreshing, setRefreshing] = useState(false);
     const dispatch = useDispatch()
@@ -18,7 +18,7 @@ export default function OrderDeliveryScreen(props) {
     useEffect(() => {
         setLoading(true)
         getItem()
-    }, [props])
+    }, [])
 
     const onRefresh = useCallback(() => {
         setRefreshing(false);
@@ -43,23 +43,11 @@ export default function OrderDeliveryScreen(props) {
                 if (result.status.code === 200 || result.status.code === 204) {
                     dispatch({ type: 'SET_TRACKING', payload: result.data.tracking })
                 } else {
-                    setTimeout(() => {
-                        Alert.alert(
-                            "Jaja.id",
-                            result.status.message + " " + result.status.code,
-                            [
-                                {
-                                    text: "TUTUP",
-                                    onPress: () => console.log("Cancel Pressed"),
-                                    style: "cancel"
-                                }
-                            ]
-                        )
-                    }, 500);
+                    Utils.handleErrorResponse(result, "Error with status code : 12015")
                 }
                 setLoading(false)
             })
-            .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+            .catch(error => Utils.handleError(error, "Error with status code : 12016"));
     }
 
     useFocusEffect(
@@ -70,20 +58,18 @@ export default function OrderDeliveryScreen(props) {
 
     const checkNetwork = () => {
         try {
-            CheckSignal().then(res => {
-                handleLoopSignal(res);
-                if (res.connect === false) {
-                    CheckSignal().then(resp => {
-                        setTimeout(() => handleLoopSignal(resp), 4000);
-                        if (resp.connect === false) {
+            setTimeout(() => {
+                CheckSignal().then(resp => {
+                    handleLoopSignal(resp)
+                    if (resp.connect === false) {
+                        setTimeout(() => {
                             CheckSignal().then(respo => {
-                                setTimeout(() => handleLoopSignal(respo), 8000);
+                                handleLoopSignal(respo)
                             })
-                        }
-                    })
-
-                }
-            })
+                        }, 8000);
+                    }
+                })
+            }, 4000);
         } catch (error) {
             ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)
         }
@@ -91,12 +77,11 @@ export default function OrderDeliveryScreen(props) {
 
 
     const handleLoopSignal = (signal) => {
-        if (signal.connect === false) {
-            ToastAndroid.show("Periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.CENTER)
-        } else {
+        if (signal.connect) {
             getItem();
+        } else {
+            ToastAndroid.show("Periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.CENTER)
         }
-        return signal.connect
     }
 
 

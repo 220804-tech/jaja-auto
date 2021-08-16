@@ -275,15 +275,6 @@ export default function ResponseComplain() {
                     } */}
                 </View>
             </ScrollView>
-            {/* <View style={[styles.row_center, {
-                position: 'absolute',
-                bottom: 0,
-                marginBottom: Hp('8.5%'),
-                width: Wp('94%'),
-                // backgroundColor: 'silver',
-                alignSelf: 'center'
-            }]}>
-            </View> */}
             <View
                 style={{
                     position: 'absolute',

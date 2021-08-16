@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, FlatList, Alert, I18nManager, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { Appbar, styles as style, colors, Wp, Hp } from '../../export';
+import { Appbar, styles as style, colors, Wp, Hp, Utils } from '../../export';
 import { Paragraph } from 'react-native-paper'
 function NotifikasiScreen(props) {
     const [notifData, setnotifData] = useState([]);
@@ -37,22 +37,7 @@ function NotifikasiScreen(props) {
                 }
             })
             .catch(error => {
-                if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
-                    ToastAndroid("Tidak dapat hahaha, periksa kembali koneksi anda!")
-                } else {
-                    Alert.alert(
-                        "Error",
-                        String(error),
-                        [
-                            {
-                                text: "TUTUP",
-                                onPress: () => console.log("Cancel Pressed"),
-                                style: "cancel"
-                            },
-                        ]
-                    );
-                }
-
+                Utils.handleError(error, 'Error with status code : 15002')
             });
     }
 

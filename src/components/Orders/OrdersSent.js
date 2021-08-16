@@ -59,6 +59,7 @@ export default function OrdersSent() {
     const handleOrderDetails = (item) => {
         dispatch({ type: 'SET_INVOICE', payload: item.invoice })
         dispatch({ type: 'SET_RECEIPT', payload: item.trackingId })
+        dispatch({ type: 'SET_ORDER_STATUS', payload: 'Pengiriman' })
         navigation.navigate('OrderDetails', { data: item.invoice, status: "Pengiriman" })
     }
 

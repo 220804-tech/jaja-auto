@@ -77,6 +77,8 @@ export default function OrdersProcess() {
         })
     }
     const handleOrderDetails = (item, name) => {
+        dispatch({ type: 'SET_INVOICE', payload: item.invoice })
+        dispatch({ type: 'SET_ORDER_STATUS', payload: name })
         navigation.navigate('OrderDetails', { data: item.invoice, status: name })
     }
     return (
