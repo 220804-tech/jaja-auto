@@ -20,6 +20,7 @@ export default function HomeScreen() {
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
     const reduxProfile = useSelector(state => state.user.user)
     const reduxShowFlashsale = useSelector(state => state.dashboard.showFlashsale)
+    console.log("🚀 ~ file: HomeScreen.js ~ line 23 ~ HomeScreen ~ reduxShowFlashsale", reduxShowFlashsale)
     const reduxShowNearest = useSelector(state => state.dashboard.showNearestStore)
 
     useAndroidBackHandler(() => {
@@ -84,6 +85,8 @@ export default function HomeScreen() {
     );
 
     useEffect(() => {
+        console.log("🚀 ~ file: HomeScreen.js ~ line 202 ~ renderContent ~ reduxShowFlashsale", reduxShowFlashsale)
+
         try {
             dispatch({ 'type': 'SET_LOADMORE', payload: false })
             EncryptedStorage.getItem('token').then(res => {
@@ -187,9 +190,9 @@ export default function HomeScreen() {
         return (
             <View style={styles.column}>
                 <Category />
-                {reduxShowFlashsale ? <Flashsale /> : null}
                 <Trending />
                 {nearestProduct ? <NearestStore /> : null}
+                {reduxShowFlashsale ? <Flashsale /> : null}
 
                 {/* <BasedOnSearch /> */}
                 {/* <HobbyAverage /> */}

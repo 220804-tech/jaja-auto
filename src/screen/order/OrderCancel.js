@@ -7,6 +7,11 @@ import { useSelector } from 'react-redux';
 
 export default function OrderComplain(props) {
     const navigation = useNavigation()
+    const reduxOrderStatus = useSelector(state => state.order.orderStatus)
+    const reduxOrderInvoice = useSelector(state => state.order.invoice)
+    console.log("🚀 ~ file: OrderCancel.js ~ line 12 ~ OrderComplain ~ reduxOrderInvoice", reduxOrderInvoice)
+
+    console.log("🚀 ~ file: OrderCancel.js ~ line 11 ~ OrderComplain ~ reduxOrderStatus", reduxOrderStatus)
 
     const reduxAuth = useSelector(state => state.auth.auth)
 
@@ -44,45 +49,48 @@ export default function OrderComplain(props) {
                     {
                         text: "Batalkan", onPress: () => {
                             setLoading(true)
-
                             var myHeaders = new Headers();
                             myHeaders.append("Authorization", reduxAuth);
-                            myHeaders.append("Cookie", "ci_session=l1rrrft9qubbbtehfvggsk6191gscd8o");
-
-
+                            myHeaders.append("Cookie", "ci_session=dek9j11bii7l7sqi5ujffskglpj315vc");
+                            var raw = "";
                             var requestOptions = {
                                 method: 'GET',
                                 headers: myHeaders,
+                                body: raw,
                                 redirect: 'follow'
                             };
-
-
-                            console.log("🚀 ~ file: OrderCancel.js ~ line 62 ~ handleSendCancel ~ props.route.params.invoice", props.route.params.invoice)
-
-                            // fetch(`https://jaja.id/backend/order/cancel/invoice=${props.route.params.invoice}`, requestOptions)
-                            //     .then(response => response.json())
-                            //     .then(result => {
-                            //         if (result.status.code === 200) {
-                            //             setTimeout(() => {
-                            //                 setLoading(false)
-                            //             }, 2500);
-                            //         }
-                            //         navigation.navigate('Pesanan')
-                            //         setTimeout(() => {
-                            //             setLoading(false)
-                            //         }, 3000);
-                            //     })
-                            //     .catch(error => {
-                            //         navigation.navigate('ResponseComplain')
-
-                            //         Utils.handleError(error);
-                            //         setLoading(false)
-                            //     });
-                            setTimeout(() => {
-                                setLoading(false)
-                                navigation.navigate('Pesanan')
-                            }, 3000);
-
+                            console.log("🚀 ~ file: OrderCancel.js ~ line 63 ~ handleSendCancel ~ reduxOrderInvoice", reduxOrderInvoice)
+                            if (reduxOrderStatus == "Menunggu Pembayaran") {
+                                fetch(`https://jaja.id/backend/order/batalBelumbayar?order_id=${reduxOrderInvoice}`, requestOptions)
+                                    .then(response => response.json())
+                                    .then(result => {
+                                        setLoading(false)
+                                        if (result && Object.keys(result).length && result.status.code == 200) {
+                                            navigation.navigate('Pesanan')
+                                        } else {
+                                            Utils.handleErrorResponse(result, "Error with status code : 12017")
+                                        }
+                                    })
+                                    .catch(error => {
+                                        setLoading(false)
+                                        Utils.handleError(error, "Error with status code : 12018")
+                                    });
+                            } else {
+                                fetch(`https://jaja.id/backend/order/batalMenungguKonfirmasi?invoice=${reduxOrderInvoice}`, requestOptions)
+                                    .then(response => response.json())
+                                    .then(result => {
+                                        setLoading(false)
+                                        if (result && Object.keys(result).length && result.status.code == 200) {
+                                            navigation.navigate('Pesanan')
+                                        } else {
+                                            Utils.handleErrorResponse(result, "Error with status code : 12019")
+                                        }
+                                    })
+                                    .catch(error => {
+                                        setLoading(false)
+                                        Utils.handleError(error, "Error with status code : 12020")
+                                    });
+                            }
                         }
                     },
 

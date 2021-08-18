@@ -17,6 +17,7 @@ export default function FlashsaleComponent() {
 
 
     useEffect(() => {
+        console.log("flashsalee")
         ServiceCore.getDateTime().then(res => {
             if (res) {
                 let date = new Date()

@@ -53,10 +53,7 @@ export default function TrendingComponent() {
                             <TouchableOpacity
                                 onPress={() => handleShowDetail(item)}
                                 style={Ts.cardtrnding}
-                                key={index}
-                            >
-                                {/* wilayah view */}
-
+                                key={index}>
                                 <FastImage
                                     style={Ts.trendingImage}
                                     source={{
@@ -66,7 +63,7 @@ export default function TrendingComponent() {
                                     }}
                                     resizeMode={FastImage.resizeMode.contain}
                                 />
-                                <View style={{ marginLeft: 5, width: '65%', flexDirection: 'column' }}>
+                                <View style={{ marginLeft: '0.5%', width: '65%', flexDirection: 'column' }}>
                                     <Text
                                         numberOfLines={2}
                                         style={{

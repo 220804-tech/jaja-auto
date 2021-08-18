@@ -75,7 +75,6 @@ export default function StoreScreen() {
             ServiceCart.getCart(reduxAuth).then(res => {
                 if (res) {
                     dispatch({ type: 'SET_CART', payload: res })
-
                 }
             })
             navigation.navigate("Trolley")
@@ -95,11 +94,8 @@ export default function StoreScreen() {
                 showHideTransition="fade"
             />
             <AppbarSecond handleSearch={handleSearch} title={reduxStore && Object.keys(reduxStore).length && reduxStore.name ? `Cari di ${reduxStore.name}..` : 'Cari di toko..'} />
-            {/* <View style={{ flex: 1, height: Hp('100%') }}> */}
             <View style={{ flex: 1 }}>
-                {/* <ScrollView contentContainerStyle={{ alignItems: 'flex-start' }}> */}
                 {loading ? <Loading /> : null}
-                {/* <ScrollView contentContainerStyle={{ height: Hp('100%') }}> */}
                 <View style={[styles.column, styles.p_4, { backgroundColor: colors.White, elevation: 3, width: Wp('100%') }]}>
                     <View style={styles.row_between_center}>
                         {Object.keys(reduxStore).length !== 0 ?
@@ -125,9 +121,6 @@ export default function StoreScreen() {
                         <Button onPress={handleChat} mode="contained" icon="chat" labelStyle={{ fontSize: 12, color: colors.White }} color={colors.BlueJaja} >
                             Chat
                         </Button>
-                        {/* <Button mode="contained" icon="plus" labelStyle={{ fontSize: 12 }} >
-                                Ikuti
-                            </Button> */}
                     </View>
                     {reduxStore.greeting ?
                         <View style={[styles.pt_2]}>
@@ -138,31 +131,8 @@ export default function StoreScreen() {
                 </View>
                 <View style={[{ flex: 1, backgroundColor: colors.White }]}>
                     <MainPage />
-                    {/* <TabView
-                            navigationState={{ index, routes }}
-                            renderScene={renderScene}
-                            onIndexChange={setIndex}
-                            initialLayout={initialLayout}
-                            renderTabBar={props => (
-                                <TabBar
-                                    indicatorStyle={{ backgroundColor: colors.BlueJaja }}
-                                    {...props}
-                                    bounces={true}
-                                    scrollEnabled={true}
-                                    style={{ backgroundColor: 'white', width: '100%', paddingHorizontal: '1%' }}
-                                    tabStyle={{ minHeight: 50, flex: 0, width: Wp('33.3%'), borderRightColor: 'grey' }} // here
-                                    renderLabel={({ route, focused, color }) => {
-                                        return (
-                                            <Text style={{ color: colors.BlackGrayScale, fontSize: 10, width: 100, textAlign: 'center' }}>{route.title}</Text>
-                                        )
-                                    }}
-                                />
-                            )}
-                        /> */}
                 </View>
-                {/* </ScrollView> */}
             </View>
-            {/* </View> */}
         </SafeAreaView >
     )
 }

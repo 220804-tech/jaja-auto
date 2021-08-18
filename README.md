@@ -18,6 +18,10 @@
 ## Order Tracking
 # 12015, 12016 => Error api get order failed
 
+
+## Order Tracking
+# 12017, 12018 => Error api batalkan pesanan dengan status Belum Bayar
+
 ## Category Component
 # 13001 => Error api get category 
 ## Recomended Component

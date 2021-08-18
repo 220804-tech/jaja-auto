@@ -108,6 +108,7 @@ export const styles = StyleSheet.create({
 
     font_8: { fontSize: 8, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_10: { fontSize: 10, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
+    font_11: { fontSize: 11, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_12: { fontSize: 12, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_13: { fontSize: 13, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_14: { fontSize: 14, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },

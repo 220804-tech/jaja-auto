@@ -15,6 +15,7 @@ export default function RecomandedHobbyComponent(props) {
     const dispatch = useDispatch()
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
     const reduxdashRecommanded = useSelector(state => state.dashboard.recommanded)
+    console.log("🚀 ~ file: RecomandedHobbyComponent.js ~ line 18 ~ RecomandedHobbyComponent ~ reduxdashRecommanded", reduxdashRecommanded[0])
     const reduxmaxRecommanded = useSelector(state => state.dashboard.maxRecomandded)
 
     useEffect(() => {

@@ -14,10 +14,8 @@ export default function OrderDetailsScreen(props) {
     const reduxCheckout = useSelector(state => state.checkout.checkout)
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxOrderStatus = useSelector(state => state.order.orderStatus)
-    console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 17 ~ OrderDetailsScreen ~ reduxOrderStatus", reduxOrderStatus)
     const reduxOrderInvoice = useSelector(state => state.order.invoice)
 
-    console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 18 ~ OrderDetailsScreen ~ reduxOrderInvoice", reduxOrderInvoice)
 
     const { status } = props.route.params;
 
@@ -51,13 +49,14 @@ export default function OrderDetailsScreen(props) {
             redirect: 'follow'
         };
 
+        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 57 ~ getItem ~ reduxOrderInvoice", reduxOrderInvoice)
         fetch(`https://jaja.id/backend/order/${reduxOrderInvoice}`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 57 ~ getItem ~ result", result)
                 if (result.status.code === 200 || result.status.code === 204) {
                     setDetails(result.data)
-                    dispatch({ type: 'SET_INVOICE', payload: result.data.items[0].invoice })
+                    // dispatch({ type: 'SET_INVOICE', payload: result.data.items[0].invoice })
                 } else {
                     Utils.handleErrorResponse(result, "Error with status code : 22003");
                 }
@@ -339,7 +338,7 @@ export default function OrderDetailsScreen(props) {
                             </View>
                             : props.route.params.status === "Menunggu Pembayaran" || props.route.params.status === "Menunggu Konfirmasi" ?
                                 <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'column', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
-                                    <Button onPress={() => navigation.navigate('OrderCancel', { invoice: details.items[0].invoice })} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
+                                    <Button onPress={() => navigation.navigate('OrderCancel')} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
                                         Batalkan Pesanan
                                     </Button>
                                 </View>

@@ -721,7 +721,7 @@ export default function ProductScreen(props) {
                 <TouchableOpacity disabled={disableCart} onPress={() => handleAddCart("trolley")} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
                     <Image source={require('../../assets/icons/cart.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: flashsale ? colors.RedFlashsale : colors.BlueJaja }} />
                 </TouchableOpacity>
-                <Button disabled={disableCart} onPress={() => handleAddCart("buyNow")} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={flashsale ? colors.RedFlashsale : colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained">
+                <Button disabled={disableCart} onPress={() => handleAddCart("buyNow")} style={{ width: '50%', height: '100%', backgroundColor: disableCart ? colors.BlackGrayScale : flashsale ? colors.RedFlashsale : colors.BlueJaja }} contentStyle={{ width: '100%', height: '100%' }} color={disableCart ? colors.BlackGrayScale : flashsale ? colors.RedFlashsale : colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained">
                     {reduxSearch.productDetail.stock == '0' ? 'Stok Habis' : 'Beli Sekarang'}
                 </Button>
             </View>

@@ -99,17 +99,23 @@ export default function index(props) {
     }
 
     const toggleSwitch = (idx) => {
-        let arr = reduxUser;
-        if (!arr[idx].is_primary) {
-            arr[idx].is_primary = !arr[idx].is_primary;
-            handleChangePrimary(arr[idx].id)
-        }
-        for (let index = 0; index < arr.length; index++) {
-            if (index !== idx) {
-                arr[index].is_primary = false
+        console.log("🚀 ~ file: AddressScreen.js ~ line 102 ~ toggleSwitch ~ idx", idx)
+        try {
+            let arr = reduxUser;
+            console.log("🚀 ~ file: AddressScreen.js ~ line 104 ~ toggleSwitch ~ arr", arr)
+            if (!arr[idx].is_primary) {
+                arr[idx].is_primary = !arr[idx].is_primary;
+                handleChangePrimary(arr[idx].id)
             }
+            for (let index = 0; index < arr.length; index++) {
+                if (index !== idx) {
+                    arr[index].is_primary = false
+                }
+            }
+            setcount(count + 1)
+        } catch (error) {
+            alert(error)
         }
-        setcount(count + 1)
         // setAddress(arr)
 
     }
@@ -149,9 +155,9 @@ export default function index(props) {
                                 ServiceCheckout.getCheckout(auth).then(reps => {
                                     if (reps) {
                                         dispatch({ type: 'SET_CHECKOUT', payload: reps })
-                                        setTimeout(() => {
-                                            navigation.goBack()
-                                        }, 1000);
+                                        // setTimeout(() => {
+                                        //     navigation.goBack()
+                                        // }, 1000);
                                     }
                                 })
                                 ServiceCheckout.getShipping(auth).then(res => {
@@ -194,8 +200,6 @@ export default function index(props) {
     }
 
     const handleDelete = item => {
-        console.log("file: AddressScreen.js ~ line 197 ~ index ~ item", itemSelected)
-
         Alert.alert(
             "Peringatan!",
             "Anda ingin menghapus alamat?",
@@ -231,9 +235,8 @@ export default function index(props) {
         <TouchableOpacity onPress={handleDelete} style={[styles.card, style.column_center, { height: '100%', width: '20%', backgroundColor: colors.RedDanger }]}>
             <Image style={[style.icon_25, { tintColor: colors.White }]} source={require('../../assets/icons/delete.png')} />
         </TouchableOpacity>
-
     ]
-    const renderItem = ({ item }) => {
+    const renderItem = ({ item, index }) => {
         return (
             <Swipeable rightButtons={rightButtons} onRightActionRelease={() => setSelectedItem(item)}>
                 <TouchableWithoutFeedback onPress={() => status === "checkout" ? handleChangePrimary(item.id) : navigation.navigate("AddAddress", { data: item, edit: true })} style={[style.column_start_center, styles.card]}>
@@ -245,12 +248,15 @@ export default function index(props) {
                                 :
                                 <View style={[style.row_end_center, { width: '40%' }]}>
                                     <Text adjustsFontSizeToFit numberOfLines={1} style={[style.font_12, { fontWeight: 'bold', color: item.is_primary ? colors.BlueJaja : colors.Silver }]}>Alamat utama</Text>
-                                    <Switch
-                                        trackColor={{ false: "#767577", true: "#99e6ff" }}
-                                        thumbColor={item.is_primary ? colors.BlueJaja : "#f4f3f4"}
-                                        ios_backgroundColor="#3e3e3e"
-                                        onValueChange={() => toggleSwitch(index)}
-                                        value={item.is_primary} />
+                                    {reduxUser && reduxUser.length > 1 ?
+                                        <Switch
+                                            trackColor={{ false: "#767577", true: "#99e6ff" }}
+                                            thumbColor={item.is_primary ? colors.BlueJaja : "#f4f3f4"}
+                                            ios_backgroundColor="#3e3e3e"
+                                            onValueChange={() => toggleSwitch(index)}
+                                            value={item.is_primary} />
+                                        : null
+                                    }
                                 </View>
                             }
                         </View>

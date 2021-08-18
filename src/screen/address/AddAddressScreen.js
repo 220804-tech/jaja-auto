@@ -437,7 +437,7 @@ export default function AddAddressScreen(props) {
                             <TouchableOpacity onPress={() => navigation.goBack()}>
                                 <Image style={style.appBarButton} source={require('../../assets/icons/arrow.png')} />
                             </TouchableOpacity>
-                            <Text style={style.appBarText}>{props.route.params && props.route.params.edit ? " Ubah Alamat" : "Tambah Alamat"}</Text>
+                            <Text style={style.appBarText}>{props.route.params && props.route.params.edit ? "Ubah Alamat" : "Tambah Alamat"}</Text>
                         </View>
                         {kcValue ? <Button mode="text" color={colors.White} onPress={handleSave}>Simpan</Button> : null}
                     </Appbar.Header>
@@ -651,7 +651,7 @@ export default function AddAddressScreen(props) {
                 </View>
                 <View style={[style.searchBar, { height: Hp('6%]'), width: Wp('92%'), backgroundColor: "#D3D3D3" }]}>
                     <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%', tintColor: colors.BlackGrey }} />
-                    <TextInput keyboardType="name-phone-pad" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={style.font_14} placeholder='Cari kecamatan..' onChangeText={(value) => handleSearch(value, "kecamatan")}></TextInput>
+                    <TextInput maxLength={30} keyboardType="name-phone-pad" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={[style.font_14, { width: '90%', marginBottom: '-1%' }]} placeholder='Cari kecamatan..' onChangeText={(value) => handleSearch(value, "kecamatan")}></TextInput>
                 </View>
                 {/* <View style={style.search}>
                     <View style={{ height: '100%', width: '6%', marginRight: '1%' }}>

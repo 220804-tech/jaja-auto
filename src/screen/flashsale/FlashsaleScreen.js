@@ -26,6 +26,7 @@ export default function FlashsaleScreen() {
 
     useFocusEffect(
         useCallback(() => {
+            console.log("testing")
             ServiceCore.getDateTime().then(res => {
                 console.log("file: FlashsaleScreen.js ~ line 30 ~ ServiceCore.getDateTime ~ res", res)
                 if (res) {

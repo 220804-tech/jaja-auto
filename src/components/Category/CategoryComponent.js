@@ -4,7 +4,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import { useSelector, useDispatch } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
-import { styles, colors, Hp, FastImage, useNavigation, ServiceCategory, useFocusEffect, CheckSignal, Utils } from '../../export'
+import { styles, colors, Hp, Wp, FastImage, useNavigation, ServiceCategory, useFocusEffect, CheckSignal, Utils } from '../../export'
 
 export default function CategoryComponent() {
     let navigation = useNavigation();
@@ -59,11 +59,14 @@ export default function CategoryComponent() {
         navigation.navigate('Category');
     }
     const handleSelected = (res) => {
+        console.log("🚀 ~ file: CategoryComponent.js ~ line 65 ~ handleSelected ~ handleSelected", res)
         handleFetch(res)
         handleSaveKeyword(res)
     }
 
     const handleFetch = (text) => {
+        console.log("🚀 ~ file: CategoryComponent.js ~ line 98 ~ handleFetch ~ handleFetch", text)
+
         if (text) {
             dispatch({ type: 'SET_KEYWORD', payload: text })
             var myHeaders = new Headers();
@@ -77,15 +80,22 @@ export default function CategoryComponent() {
             fetch(`https://jaja.id/backend/product/category/${text}?page=1&limit=100&keyword=&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    if (result && Object.keys(result).length) {
+                    console.log("🚀 ~ file: CategoryComponent.js ~ line 83 ~ handleFetch ~ result", result)
+                    if (result && Object.keys(result).length && result.status.code == 200) {
                         dispatch({ type: 'SET_SEARCH', payload: result.data.items })
                         dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
                         dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
                     } else {
-                        Utils.handleResponse(result)
+                        dispatch({ type: 'SET_SEARCH', payload: [] })
+                        dispatch({ type: 'SET_FILTERS', payload: [] })
+                        dispatch({ type: 'SET_SORTS', payload: [] })
+                        // Utils.handleErrorResponse(result, 'Error with status 130012')
                     }
                 })
                 .catch(error => {
+                    dispatch({ type: 'SET_SEARCH', payload: [] })
+                    dispatch({ type: 'SET_FILTERS', payload: [] })
+                    dispatch({ type: 'SET_SORTS', payload: [] })
                     Utils.handleError(error, 'Error with status 13001')
                 });
 
@@ -128,8 +138,8 @@ export default function CategoryComponent() {
                             <TouchableOpacity
                                 style={{
                                     borderRadius: 10,
-                                    width: Hp("9%"),
-                                    height: Hp("9%"),
+                                    width: Wp("19%"),
+                                    height: Wp("19%"),
                                     marginLeft: 1,
                                     marginRight: 11,
                                     marginTop: 5,
@@ -143,7 +153,7 @@ export default function CategoryComponent() {
                                 key={index}
                             >
                                 <FastImage
-                                    style={{ width: Hp("5%"), height: Hp("5%"), }}
+                                    style={{ width: Wp("9%"), height: Wp("9%"), }}
                                     source={{
                                         uri: item.icon,
                                         headers: { Authorization: 'someAuthToken' },
@@ -152,17 +162,7 @@ export default function CategoryComponent() {
                                     resizeMode={FastImage.resizeMode.contain}
                                 />
 
-                                <Text
-                                    style={{
-                                        fontSize: Hp("1.6%"),
-                                        fontStyle: "normal",
-                                        letterSpacing: 0,
-                                        textAlign: "center",
-                                        color: colors.BlueJaja,
-                                    }}
-                                >
-                                    {item.name}
-                                </Text>
+                                <Text numberOfLines={2} style={[styles.font_11, { color: colors.BlueJaja, alignSelf: 'center', textAlign: 'center' }]}>{item.name}</Text>
                             </TouchableOpacity>
                         )
                     }}

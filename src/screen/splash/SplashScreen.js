@@ -4,7 +4,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp, } from 'react-na
 import Swiper from 'react-native-swiper'
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage'
-import { ServiceOrder, colors, styles, useNavigation } from '../../export';
+import { ServiceOrder, colors, styles, useNavigation, ServiceCore } from '../../export';
 import database from '@react-native-firebase/database';
 
 export default function SplashScreen() {
@@ -37,7 +37,7 @@ export default function SplashScreen() {
             EncryptedStorage.getItem('token').then(resp => {
                 getItem(resp)
                 getData()
-                // getFlashsale()
+                getFlashsale()
                 getOrders(resp)
                 dispatch({ type: 'SET_AUTH', payload: JSON.parse(resp) })
 
@@ -58,6 +58,33 @@ export default function SplashScreen() {
         }, 4000);
     }, [])
 
+    const getFlashsale = () => {
+        ServiceCore.getDateTime().then(res => {
+            if (res) {
+                let date = new Date()
+                if (date.toJSON().toString().slice(0, 10) !== res.dateNow) {
+                    Alert.alert(
+                        "Peringatan!",
+                        `Sepertinya tanggal tidak sesuai!`,
+                        [
+                            { text: "OK", onPress: () => navigation.goBack() }
+                        ],
+                        { cancelable: false }
+                    );
+                } else {
+                    ServiceCore.getFlashsale().then(resp => {
+                        if (resp && resp.flashsale && resp.flashsale.length) {
+                            dispatch({ type: 'SET_SHOW_FLASHSALE', payload: true })
+                            dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.flashsale })
+                        } else {
+                            dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+                        }
+                    })
+
+                }
+            }
+        })
+    }
 
     const getFirebase = (user) => {
         EncryptedStorage.getItem('deviceToken').then(res => {

@@ -6,7 +6,7 @@ export const style = StyleSheet.create({
         borderRadius: 10,
         width: Wp("46%"),
         height: Wp("20%"),
-        marginLeft: 5,
+        marginLeft: 2,
         marginRight: 11,
         marginTop: 5,
         marginBottom: 5,

@@ -225,20 +225,12 @@ export default function map(props) {
                 containerStyle={[styles.bodySearch, { padding: 0 }]}
 
             >
-                {/* <View style={[style.searchBar, { backgroundColor: 'pink' }]}>
-                    <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
 
-                    <TextInput
-                        style={{ color: colors.BlackGrayScale }}
-                        placeholder="Nama Jalan/Perumahan/Gedung "
-                        onChangeText={text => handleSearch(text)}
-                    />
-                </View> */}
                 <View style={[style.appBar, { marginTop: '-3%', paddingBottom: '1%' }]}>
 
                     <TouchableOpacity style={style.searchBar}>
                         <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
-                        <TextInput keyboardType="name-phone-pad" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={style.font_14} placeholder='Nama Jalan/Perumahan/Gedung' onChangeText={text => handleSearch(text)} onSubmitEditing={(value) => handleSearch(value.nativeEvent.text)}></TextInput>
+                        <TextInput keyboardType="name-phone-pad" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={[style.font_13, { width: '91%', marginBottom: '-1%' }]} placeholder='Nama Jalan/Perumahan/Gedung' onChangeText={text => handleSearch(text)} onSubmitEditing={(value) => handleSearch(value.nativeEvent.text)}></TextInput>
                     </TouchableOpacity>
                     <TouchableOpacity style={style.row_start_center} onPress={() => actionSheetRef.current?.setModalVisible()}>
                         <Image style={[style.appBarButton, { transform: [{ rotate: '270deg' }] }]} source={require('../../assets/icons/arrow.png')} />
