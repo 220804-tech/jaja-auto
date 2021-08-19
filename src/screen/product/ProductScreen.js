@@ -346,7 +346,7 @@ export default function ProductScreen(props) {
     }
     const handleLogin = () => navigation.navigate('Login', { navigate: "Product" })
 
-    const renderNavBar = (text) => (
+    const renderNavBar = () => (
         <View style={style.navContainer}>
             <View style={style.navBar}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, padding: '3%', backgroundColor: colors.BlueJaja, justifyContent: 'center', alignItems: 'center', borderRadius: 100 }}>
@@ -398,8 +398,6 @@ export default function ProductScreen(props) {
     const handleShowDetail = item => {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
         navigation.navigate("Product", { slug: item.slug, image: item.image })
-
-
     }
     const renderContent = () => {
         return (
@@ -678,41 +676,31 @@ export default function ProductScreen(props) {
 
 
     return (
-        <SafeAreaView style={styles.container}>
-            {/* <StatusBar translucent backgroundColor='transparent' barStyle="dark-content" /> */}
-            <StatusBar
+        <SafeAreaView style={styles.container}>     
+            {/* <StatusBar translucent /> */}
+            {/* <StatusBar
                 animated={true}
 
-                backgroundColor={colors.BlueJaja}
-                barStyle='light-content'
+                backgroundColor='transparent'
+                barStyle='default'
                 showHideTransition="fade"
-            />
+            /> */}
             {loading ? <Loading /> : null}
+            <ReactNativeParallaxHeader
+                headerMinHeight={Hp('7%')}
+                headerMaxHeight={Wp('100%')}
+                extraScrollHeight={20}
+                navbarColor={colors.BlueJaja}
+                titleStyle={style.titleStyle}
+                title={title()}
+                // backgroundImageScale={1.2}
+                renderNavBar={() => renderNavBar('Cari hobimu sekarang')}
+                renderContent={renderContent}
 
-            <ScrollView
-                contentContainerStyle={styles.scrollView}
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                    />
-                }
-            >
-                <ReactNativeParallaxHeader
-                    headerMinHeight={Hp('7%')}
-                    headerMaxHeight={Wp('100%')}
-                    extraScrollHeight={20}
-                    navbarColor={colors.BlueJaja}
-                    titleStyle={style.titleStyle}
-                    title={title()}
-                    backgroundImageScale={1.2}
-                    renderNavBar={() => renderNavBar('Cari hobimu sekarang')}
-                    renderContent={renderContent}
-                    headerFixedBackgroundColor={colors.BlueJaja}
-                    alwaysShowTitle={false}
-                    scrollViewProps={{ nestedScrollEnabled: true }}
-                />
-            </ScrollView>
+                headerFixedBackgroundColor={colors.BlueJaja}
+                alwaysShowTitle={false}
+                scrollViewProps={{ nestedScrollEnabled: true }}
+            />
 
             <View style={{ position: 'absolute', bottom: 0, height: Hp('6%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
                 <TouchableOpacity onPress={handleChat} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
