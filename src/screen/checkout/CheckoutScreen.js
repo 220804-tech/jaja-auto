@@ -576,7 +576,7 @@ export default function checkoutScreen() {
                 <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                     <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
                         <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/google-maps.png')} />
-                        <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}>Alamat Pengiriman</Text>
+                        <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Alamat Pengiriman</Text>
                     </View>
                     {reduxCheckout.address && Object.keys(reduxCheckout.address).length ?
                         <View style={[styles.column, styles.p_3]}>
@@ -608,7 +608,7 @@ export default function checkoutScreen() {
                                 <View key={String(idxStore)} style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                                     <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
                                         <Image style={[styles.icon_21, { marginRight: '2%' }]} source={require('../../assets/icons/store.png')} />
-                                        <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}>{item.store.name}</Text>
+                                        <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.store.name}</Text>
                                     </View>
                                     {item.products.map((child, idx) => {
                                         return (
@@ -621,7 +621,7 @@ export default function checkoutScreen() {
                                                     />
                                                     <View style={[styles.column_between_center, { alignItems: 'flex-start', height: '90%', width: Wp('82%'), paddingHorizontal: '3%' }]}>
                                                         <View style={[styles.column, { width: '100%' }]}>
-                                                            <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja, fontWeight: 'bold' }]}>{child.name}</Text>
+                                                            <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}>{child.name}</Text>
                                                             <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlackGrayScale }]}>{child.variant ? child.variant : ""}</Text>
                                                         </View>
                                                         <View style={{ flexDirection: 'column', width: '100%', alignItems: 'flex-end', paddingHorizontal: '2%' }}>
@@ -643,7 +643,7 @@ export default function checkoutScreen() {
                                                     </View>
                                                 </View>
                                                 <View style={[styles.row_end_center, styles.px_2]}>
-                                                    <Text numberOfLines={1} style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}> {child.subTotalCurrencyFormat}</Text>
+                                                    <Text numberOfLines={1} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}> {child.subTotalCurrencyFormat}</Text>
                                                 </View>
                                             </View>
                                         )
@@ -664,8 +664,8 @@ export default function checkoutScreen() {
                                                 </TouchableOpacity>
                                             </View>
                                             <View style={[styles.row_end_center, styles.px_2]}>
-                                                <Text style={[styles.font_14, { fontStyle: 'italic' }]}>Subtotal </Text>
-                                                <Text numberOfLines={1} style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}> {item.totalDiscountCurrencyFormat}</Text>
+                                                <Text style={[styles.font_14, styles.T_italic]}>Subtotal </Text>
+                                                <Text numberOfLines={1} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}> {item.totalDiscountCurrencyFormat}</Text>
                                             </View>
                                         </View>
                                         :
@@ -685,7 +685,7 @@ export default function checkoutScreen() {
                                         <>
                                             <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
                                                 <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/vehicle-yellow.png')} />
-                                                <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}>Metode Pengiriman</Text>
+                                                <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pengiriman</Text>
                                             </View>
                                             {item.shippingSelected.name ?
                                                 <TouchableOpacity onPress={() => {
@@ -741,11 +741,11 @@ export default function checkoutScreen() {
                         <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                             <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
                                 <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/offer.png')} />
-                                <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}>Voucher Diskon</Text>
+                                <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Voucher Diskon</Text>
                             </View>
                             <View style={[styles.column, styles.p_3]}>
                                 <View style={[styles.row_between_center, styles.mb]}>
-                                    <Text numberOfLines={1} style={[styles.font_14]}>{reduxCheckout.voucherJajaSelected.name}</Text>
+                                    <Text numberOfLines={1} style={[styles.font_13]}>{reduxCheckout.voucherJajaSelected.name}</Text>
                                     <TouchableOpacity onPress={() => setvoucherOpen("jaja")}>
                                         <Text style={[styles.font_12, { color: colors.BlueJaja }]}>Ubah</Text>
                                     </TouchableOpacity>
@@ -770,7 +770,7 @@ export default function checkoutScreen() {
                 <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                     <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
                         <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
-                        <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}>Ringkasan Belanja</Text>
+                        <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Ringkasan Belanja</Text>
                     </View>
                     <View style={[styles.row_between_center, styles.p_3]}>
                         <View style={styles.column}>
@@ -792,8 +792,8 @@ export default function checkoutScreen() {
             </ScrollView>
             <View style={{ position: 'absolute', bottom: 0, zIndex: 100, elevation: 1, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
                 <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '3%', paddingLeft: '5%', paddingVertical: '1%' }}>
-                    <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja, }]}>Total pembayaran :</Text>
-                    <Text numberOfLines={1} style={[styles.font_20, { fontWeight: 'bold', color: colors.BlueJaja }]}>{reduxCheckout.totalCurrencyFormat}</Text>
+                    <Text style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja, }]}>Total pembayaran :</Text>
+                    <Text numberOfLines={1} style={[styles.font_18, styles.T_semi_bold, { color: colors.BlueJaja }]}>{reduxCheckout.totalCurrencyFormat}</Text>
                 </View>
                 <Button onPress={handleCheckout} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained" >
                     Pilih pembayaran
@@ -801,7 +801,7 @@ export default function checkoutScreen() {
             </View>
             <ActionSheet ref={actionSheetVoucher} onOpen={() => setloadAs(false)} onClose={() => setvoucherOpen("")} delayActionSheetDraw={false} containerStyle={{ padding: '4%', }}>
                 <View style={[styles.row_between_center, styles.py_2, styles.mb_5]}>
-                    <Text style={[styles.font_14, { color: colors.BlueJaja, fontWeight: 'bold', width: '60%' }]}>Pilih Voucher</Text>
+                    <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja, width: '60%' }]}>Pilih Voucher</Text>
                     <TouchableOpacity onPressIn={() => actionSheetVoucher.current?.setModalVisible()}>
                         <Image style={[styles.icon_16, { tintColor: colors.BlueJaja }]} source={require('../../assets/icons/close.png')} />
                     </TouchableOpacity>
@@ -828,15 +828,15 @@ export default function checkoutScreen() {
                                                     <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
                                                 </View>
                                                 <View style={[styles.column_center, styles.p, { height: '100%', width: '30%', marginLeft: Wp('3%'), backgroundColor: colors.BlueJaja }]}>
-                                                    <Text style={[styles.font_14, styles.mb_2, { color: colors.White, fontWeight: 'bold', alignSelf: 'center', textAlign: 'center' }]}>{item.category ? item.category === "ongkir" ? 'GRATIS BIAYA PENGIRIMAN' : String(item.category).toUpperCase() + " " + item.discountText : "DISKON " + item.discountText}</Text>
+                                                    <Text style={[styles.font_14, styles.mb_2, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White, alignSelf: 'center', textAlign: 'center' }]}>{item.category ? item.category === "ongkir" ? 'GRATIS BIAYA PENGIRIMAN' : String(item.category).toUpperCase() + " " + item.discountText : "DISKON " + item.discountText}</Text>
                                                 </View>
                                                 <View style={[styles.column_center, styles.px_2, { width: '44%' }]}>
-                                                    <Text numberOfLines={3} style={[styles.font_13, styles.mb_2, { color: colors.BlueJaja, fontWeight: 'bold', width: '100%' }]}>{item.name}</Text>
-                                                    <Text style={[styles.font_8, { position: 'absolute', bottom: 5, color: colors.BlueJaja, fontWeight: 'bold', width: '100%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
+                                                    <Text numberOfLines={3} style={[styles.font_13, styles.mb_2, styles.T_semi_bold, { color: colors.BlueJaja, width: '100%' }]}>{item.name}</Text>
+                                                    <Text style={[styles.font_8, styles.T_semi_bold, { position: 'absolute', bottom: 5, color: colors.BlueJaja, width: '100%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
                                                 </View>
                                                 <View style={[styles.column_center, { width: '22%' }]}>
                                                     <TouchableOpacity onPress={() => handleVoucher(item, index)} style={{ width: '90%', height: '30%', backgroundColor: item.isClaimed ? colors.White : colors.BlueJaja, padding: '2%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.BlueJaja, borderRadius: 5 }}>
-                                                        <Text style={[styles.font_10, { color: item.isClaimed ? colors.BlueJaja : colors.White, fontWeight: 'bold' }]}>{item.isClaimed ? item.isSelected ? "TERPAKAI" : "PAKAI" : "KLAIM"}</Text>
+                                                        <Text style={[styles.font_10, styles.T_semi_bold, { marginBottom: '-1%', color: item.isClaimed ? colors.BlueJaja : colors.White }]}>{item.isClaimed ? item.isSelected ? "TERPAKAI" : "PAKAI" : "KLAIM"}</Text>
                                                     </TouchableOpacity>
                                                     <TouchableOpacity onPress={() => handleDescription(item)} style={{ position: 'absolute', bottom: 5 }}>
                                                         <Text style={[styles.font_12, { color: colors.BlueLink }]}>S&K</Text>
@@ -851,13 +851,14 @@ export default function checkoutScreen() {
                     </ScrollView>
                 </View>
             </ActionSheet>
-            <ActionSheet ref={actionSheetDelivery} delayActionSheetDraw={false} containerStyle={{ width: Wp('100%') }}>
+            <ActionSheet ref={actionSheetDelivery} delayActionSheetDraw={false} containerStyle={{ width: Wp('100%') }} containerStyle={{ padding: '2%' }}>
                 <View style={[styles.row_between_center, styles.py_2, styles.px_4, styles.mb_3]}>
-                    <Text style={[styles.font_14, { color: colors.BlueJaja, fontWeight: 'bold' }]}>Pilih Ekspedisi</Text>
-                    <TouchableOpacity onPressIn={() => actionSheetDelivery.current?.setModalVisible()}>
-                        <Image style={[styles.icon_16, { tintColor: colors.BlueJaja }]} source={require('../../assets/icons/close.png')} />
+                    <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.BlueJaja }]}>Pilih Ekspedisi</Text>
+                    <TouchableOpacity style={{ backgroundColor: 'transparent', paddingVertical: '2%', paddingHorizontal: '3%' }} onPressIn={() => actionSheetDelivery.current?.setModalVisible()}>
+                        <Image style={[styles.icon_12, { tintColor: colors.BlueJaja }]} source={require('../../assets/icons/close.png')} />
                     </TouchableOpacity>
                 </View>
+
                 <View style={{ flexDirection: 'column', minHeight: Hp('20%'), maxHeight: Hp('60%'), width: '100%', paddingBottom: '5%' }}>
 
                     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ width: '100%' }}>
@@ -884,11 +885,11 @@ export default function checkoutScreen() {
                                                             return (
                                                                 <TouchableOpacity onPress={() => deliverySelected(code, item)} style={[styles.column_center_start, styles.mb_3, styles.py_2, { width: '100%' }]}>
                                                                     <View style={styles.row_between_center}>
-                                                                        <Text style={[styles.font_14, { fontWeight: 'bold', flex: 1 }]}>{name}</Text>
-                                                                        <Text style={[styles.font_14, { fontWeight: 'bold' }]}>{item.priceCurrencyFormat}</Text>
+                                                                        <Text style={[styles.font_14, styles.T_medium, { flex: 1 }]}>{name}</Text>
+                                                                        <Text style={[styles.font_14, styles.T_medium,]}>{item.priceCurrencyFormat}</Text>
 
                                                                     </View>
-                                                                    <Text style={[styles.font_12, { fontStyle: 'italic' }]}>Estimasi {item.etdText}</Text>
+                                                                    <Text style={[styles.font_12, styles.T_italic]}>Estimasi {item.etdText}</Text>
                                                                 </TouchableOpacity>
                                                             )
                                                         }}
@@ -900,7 +901,7 @@ export default function checkoutScreen() {
                                         }}
                                     />
                                     <View style={[styles.row_between_center, styles.py_2, styles.px_4, styles.mb]}>
-                                        <Text style={[styles.font_14, styles.mt_3, { color: colors.BlueJaja, fontWeight: 'bold' }]}>Pilih Waktu Pengiriman</Text>
+                                        <Text style={[styles.font_14, styles.mt_3, styles.T_semi_bold, { color: colors.BlueJaja }]}>Pilih Waktu Pengiriman</Text>
                                     </View>
                                     <View style={[styles.column_center_start, styles.mb_2, styles.py_2, styles.px_2, { width: '100%' }]}>
                                         <FlatList
@@ -923,21 +924,22 @@ export default function checkoutScreen() {
                                                                 }}
                                                             />
                                                             <View style={styles.row_between_center}>
-                                                                <Text style={[styles.font_14, { fontWeight: 'bold', flex: 1 }]}>{item.name}</Text>
-                                                                <Text style={[styles.font_14, { fontWeight: 'bold' }]}>{item.priceCurrencyFormat}</Text>
+                                                                <Text style={[styles.font_14, styles.T_medium, { flex: 1 }]}>{item.name}</Text>
+                                                                <Text style={[styles.font_14, styles.T_medium]}>{item.priceCurrencyFormat}</Text>
                                                             </View>
                                                         </TouchableOpacity>
-                                                        {sendTime === "pilih tanggal" && item.value === "pilih tanggal" ?
-                                                            <TouchableOpacity style={[styles.column, styles.px_2, { width: '100%' }]} onPress={() => setDatePickerVisibility(true)}>
-                                                                <View style={styles.row_between_center}>
-                                                                    <Text style={styles.font_14}>{sendDate}</Text>
-                                                                    <Image source={require('../../assets/icons/calendar.png')} style={[styles.icon_19, { tintColor: colors.BlueJaja }]} />
-                                                                </View>
-                                                                <View style={{ width: '100%', borderTopWidth: 1, borderTopColor: colors.Silver, marginTop: '2%' }}>
-                                                                    <Text style={[styles.font_12, { fontStyle: 'italic' }]}>Minimal tanggal pengiriman {maxSendDate}</Text>
-                                                                </View>
-                                                            </TouchableOpacity>
-                                                            : null
+                                                        {
+                                                            sendTime === "pilih tanggal" && item.value === "pilih tanggal" ?
+                                                                <TouchableOpacity style={[styles.column, styles.px_2, { width: '100%' }]} onPress={() => setDatePickerVisibility(true)}>
+                                                                    <View style={styles.row_between_center}>
+                                                                        <Text style={styles.font_14}>{sendDate}</Text>
+                                                                        <Image source={require('../../assets/icons/calendar.png')} style={[styles.icon_19, { tintColor: colors.BlueJaja }]} />
+                                                                    </View>
+                                                                    <View style={{ width: '100%', borderTopWidth: 1, borderTopColor: colors.Silver, marginTop: '2%' }}>
+                                                                        <Text style={[styles.font_12, styles.T_italic]}>Minimal tanggal pengiriman {maxSendDate}</Text>
+                                                                    </View>
+                                                                </TouchableOpacity>
+                                                                : null
                                                         }
                                                     </View>
                                                 )

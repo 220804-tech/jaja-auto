@@ -112,6 +112,7 @@ export const styles = StyleSheet.create({
     font_12: { fontSize: 12, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_13: { fontSize: 13, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_14: { fontSize: 14, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
+    font_15: { fontSize: 15, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_16: { fontSize: 16, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_18: { fontSize: 18, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_20: { fontSize: 20, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
@@ -177,7 +178,7 @@ export const styles = StyleSheet.create({
     },
     search: { flexDirection: 'row', paddingHorizontal: '3%', borderRadius: 5, flex: 1, marginHorizontal: '0.5%', marginVertical: '3%', backgroundColor: colors.Silver },
 
-    searchBar: { flex: 0, flexDirection: 'row', backgroundColor: colors.White, borderRadius: 10, height: '80%', width: '90%', alignItems: 'center', paddingHorizontal: '4%' },
+    searchBar: { flex: 0, flexDirection: 'row', backgroundColor: colors.White, borderRadius: 11, height: '77%', width: '90%', alignItems: 'center', paddingHorizontal: '4%' },
 
     FL_TouchAble: { borderBottomColor: colors.Silver, borderBottomWidth: 1, paddingVertical: '3%' },
     FL_TouchAbleItem: { fontSize: 14, fontWeight: "bold", color: colors.BlackGrayScale },

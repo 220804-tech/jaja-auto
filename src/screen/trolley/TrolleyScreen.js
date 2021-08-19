@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, createRef } from 'reac
 import CheckBox from '@react-native-community/checkbox';
 import { View, Text, SafeAreaView, Image, TouchableOpacity, ToastAndroid, FlatList, StatusBar, RefreshControl, TouchableWithoutFeedback, Alert } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
-import { styles, Hp, Wp, colors, useNavigation, Appbar, ServiceCart, Loading, ServiceCheckout, useFocusEffect, } from '../../export'
+import { styles, Hp, Wp, colors, useNavigation, Appbar, ServiceCart, Loading, ServiceCheckout, useFocusEffect, DefaultNotFound, Utils, } from '../../export'
 import { Button } from 'react-native-paper'
 import { useDispatch, useSelector } from "react-redux";
 import Swipeable from 'react-native-swipeable';
@@ -99,18 +99,7 @@ export default function TrolleyScreen() {
             })
             .catch(error => {
                 setDisableCheckout(false)
-                if (String(error).slice(11, String(error).length) === "Network request failed") {
-                    ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
-                } else {
-                    Alert.alert(
-                        "Error with status 16001",
-                        JSON.stringify(error),
-                        [
-                            { text: "OK", onPress: () => console.log("OK Pressed") }
-                        ],
-                        { cancelable: false }
-                    );
-                }
+                Utils.handleError(error, 'Error with status code : 12027')
             })
     }
 
@@ -172,18 +161,7 @@ export default function TrolleyScreen() {
             .catch(error => {
                 handleFailed(name, indexParent, indexChild)
                 setDisableCheckout(false)
-                if (String(error).slice(11, String(error).length) === "Network request failed") {
-                    ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
-                } else {
-                    Alert.alert(
-                        "Error with status 16002",
-                        JSON.stringify(error),
-                        [
-                            { text: "OK", onPress: () => console.log("OK Pressed") }
-                        ],
-                        { cancelable: false }
-                    );
-                }
+                Utils.handleError(error, 'Error with status code : 16002')
             })
     }
     const handleFailed = (name, indexParent, indexChild) => {
@@ -211,7 +189,8 @@ export default function TrolleyScreen() {
     }
 
     const handleCheckout = () => {
-        if (reduxCart.cart.totalCartCurrencyFormat !== "Rp0" && disableCheckout === false) {
+        console.log("🚀 ~ file: TrolleyScreen.js ~ line 215 ~ handleCheckout ~ reduxCart.cart.totalCartCurrencyFormat", reduxCart.cart)
+        if (reduxCart.cart.totalData != '0' && disableCheckout === false && reduxCart.cart.totalCart != 0) {
             navigation.navigate('Checkout')
             dispatch({ type: 'SET_CHECKOUT', payload: {} })
             ServiceCheckout.getCheckout(reduxAuth ? reduxAuth : auth).then(res => {
@@ -225,7 +204,13 @@ export default function TrolleyScreen() {
                     dispatch({ type: 'SET_SHIPPING', payload: res })
                 }
             })
+        } else if (reduxCart.cart.totalCart == 0) {
+            ToastAndroid.show("Pilih salah satu produk yang ingin dibeli!", ToastAndroid.LONG, ToastAndroid.TOP)
+
+        } else {
+            setDisableCheckout(true)
         }
+
     }
 
     const handleDeleteCart = (id) => {
@@ -252,23 +237,7 @@ export default function TrolleyScreen() {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
         navigation.navigate("Product", { slug: item.slug, image: item.image })
     }
-    // const swipeComponent = useCallback(() => {
-    //     return [
-    //         <TouchableOpacity onPress={() => {
-    //             // onDeleteClick();
-    //             swipeRef.recenter();
-    //             handleDeleteCart(item.cartId)
-    //         }} style={[styles.column_center, { height: '100%', width: '20%', backgroundColor: colors.RedDanger }]}>
-    //             <Image style={[styles.icon_25, { tintColor: colors.White }]} source={require('../../assets/icons/delete.png')} />
-    //         </TouchableOpacity>
-    //     ];
-    // }, [])
 
-    // const recenterAll = () => {
-    //     console.log("🚀 ~ file: TrolleyScreen.js ~ line 269 ~ recenterAll ~ recenterAll", recenterAll)
-    //     setSw
-    //     Object.values(swipeRef).filter(s => s.current).forEach(s => s.current.recenter());
-    // }
     const swipeComponent = (item) => {
 
         return [
@@ -280,20 +249,18 @@ export default function TrolleyScreen() {
         ]
     }
 
-    const deleteSwipeable = index => delete swipeablesRef[index];
-
-
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar
                 animated={true}
+                translucent={false}
                 backgroundColor={colors.BlueJaja}
-                barStyle='default'
+                barStyle='light-content'
                 showHideTransition="fade"
             />
             <Appbar back={true} title="Keranjang" />
             {loading ? <Loading /> : null}
-            {reduxCart.cart.items ?
+            {reduxCart.cart.items && reduxCart.cart.items.length ?
                 <FlatList
                     data={reduxCart.cart.items}
                     refreshControl={
@@ -326,8 +293,8 @@ export default function TrolleyScreen() {
                                         source={{ uri: item.store.image }}
                                     />
                                     <View style={[styles.column_around_center, { alignItems: 'flex-start' }]}>
-                                        <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlackGrayScale, fontWeight: 'bold' }]}>{item.store.name}</Text>
-                                        <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlackGrayScale }]}>{item.store.location}</Text>
+                                        <Text numberOfLines={1} style={[styles.font_14, styles.T_medium, { color: colors.BlackGrayScale }]}>{item.store.name}</Text>
+                                        <Text numberOfLines={1} style={[styles.font_13, { color: colors.BlackGrayScale }]}>{item.store.location}</Text>
                                     </View>
                                 </View>
 
@@ -376,11 +343,11 @@ export default function TrolleyScreen() {
                                                         <View style={[styles.row_between_center, { flex: 0 }]}>
                                                             <View style={[styles.row_around_center, { flex: 1 }]}>
                                                                 <TouchableOpacity disabled={disableQty} onPress={() => handleQty('min', indexParent, index)} style={[styles.row_center, styles.mr_5, { backgroundColor: colors.BlueJaja, borderRadius: 5, height: Wp('7%'), width: Wp('7%') }]} >
-                                                                    <Text style={[styles.font_20, { color: colors.White, fontWeight: 'bold' }]}>-</Text>
+                                                                    <Text style={[styles.font_20, styles.T_semi_bold, { color: colors.White, marginTop: '-2.5%' }]}>-</Text>
                                                                 </TouchableOpacity>
                                                                 <Text style={[styles.font_14]}>{item.qty}</Text>
                                                                 <TouchableOpacity disabled={disableQty} onPress={() => handleQty('plus', indexParent, index)} style={[styles.row_center, styles.ml_5, { backgroundColor: colors.BlueJaja, borderRadius: 5, height: Wp('7%'), width: Wp('7%') }]} >
-                                                                    <Text style={[styles.font_20, { color: colors.White, fontWeight: 'bold' }]}>+</Text>
+                                                                    <Text style={[styles.font_20, styles.T_semi_bold, { color: colors.White, marginTop: '-2.5%' }]}>+</Text>
                                                                 </TouchableOpacity>
                                                             </View>
                                                             <View style={{ flex: 1, height: '100%', justifyContent: 'center', alignItems: 'flex-end' }}>
@@ -397,18 +364,14 @@ export default function TrolleyScreen() {
                         )
                     }}
                 />
-                :
-
-                <View style={{ flex: 0, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text>Keranjang anda masih kosog!</Text>
-                </View>
+                : <DefaultNotFound textHead="Ups.." textBody="Tampaknya keranjang anda masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
             }
-            <View style={{ position: 'absolute', bottom: 0, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
-                <View style={{ width: '50%', justifyContent: 'flex-end', paddingHorizontal: '3%', paddingLeft: '5%', paddingVertical: '1%' }}>
-                    <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}>Subtotal :</Text>
-                    <Text numberOfLines={1} style={[styles.font_20, { fontWeight: 'bold', color: colors.BlueJaja }]}>{reduxCart.cart.totalCartCurrencyFormat}</Text>
+            <View style={{ position: 'absolute', bottom: 0, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row', elevation: 1 }}>
+                <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '3%', paddingLeft: '5%', paddingVertical: '1%' }}>
+                    <Text style={[styles.font_16, styles.T_medium, { color: colors.BlueJaja }]}>Subtotal :</Text>
+                    <Text numberOfLines={1} style={[styles.font_18, styles.T_semi_bold, { color: colors.BlueJaja }]}>{reduxCart.cart.totalCartCurrencyFormat ? reduxCart.cart.totalCartCurrencyFormat : 'Rp0'}</Text>
                 </View>
-                <Button onPress={handleCheckout} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained" >
+                <Button disabled={disableCheckout} onPress={handleCheckout} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_14, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                     Checkout
                 </Button>
             </View>

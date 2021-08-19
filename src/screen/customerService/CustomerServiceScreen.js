@@ -11,7 +11,7 @@ export default function CustomerServiceScreen() {
         <SafeAreaView style={styles.container}>
             <StatusBar hidden={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
             <Image style={styles.iconMarket} source={require('../../assets/ilustrations/empty.png')} />
-            <Paragraph style={styles.textJajakan}>Ups.. <Text style={styles.textCenter}>feature ini akan segera hadir, nantikan update selanjutnya.</Text></Paragraph>
+            <Paragraph style={styles.textJajakan}>Ups.. <Text style={styles.textCenter}>feature ini akan segera hadir, nantikan update selanjutnya..</Text></Paragraph>
             <Button labelStyle={{ color: 'white' }} onPress={() => handleOpen()} mode="contained" color={colors.BlueJaja} style={styles.button}>Kembali</Button>
         </SafeAreaView>
     )
@@ -20,8 +20,8 @@ export default function CustomerServiceScreen() {
 const styles = StyleSheet.create({
     container: { flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: colors.White },
     iconMarket: { alignSelf: "center", width: Wp('80%'), height: Hp('40%') },
-    textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 18, fontWeight: 'bold', color: colors.BlackGrayScale, fontFamily: 'serif', marginVertical: Hp("2%") },
-    textCenter: { fontSize: 18, fontWeight: '900', color: colors.BlackGrayScale, fontFamily: 'serif' },
+    textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 16, fontWeight: 'bold', color: colors.BlackGrayScale, fontFamily: 'serif', marginVertical: Hp("2%") },
+    textCenter: { fontSize: 16, fontWeight: '900', color: colors.BlackGrayScale, fontFamily: 'serif' },
     button: {
         color: colors.BlueJaja,
         width: Wp('77%'),

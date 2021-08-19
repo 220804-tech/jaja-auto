@@ -204,7 +204,7 @@ export default function ProductSearchScreen() {
         }
     }
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
-        return layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 0.37)
+        return layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 0.77)
     }
 
     const fetchLoadmore = () => {
@@ -306,7 +306,6 @@ export default function ProductSearchScreen() {
                             <CardProduct data={data} />
 
                             {reduxmaxProduct ? <Text style={[styles.font_14, styles.my_5, { alignSelf: 'center', color: colors.BlueJaja, width: Wp('100%'), textAlign: 'center' }]}>Semua produk berhasil ditampilkan</Text> : <ShimmerCardProduct />}
-
                         </ScrollView>
 
                     </View>

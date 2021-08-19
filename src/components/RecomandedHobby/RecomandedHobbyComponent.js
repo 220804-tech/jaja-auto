@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, ToastAndroid, StyleSheet, Alert } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { styles, colors, CardProduct, CheckSignal, ShimmerCardProduct, Utils } from '../../export'
+import { styles, colors, CardProduct, CheckSignal, ShimmerCardProduct } from '../../export'
 import EncryptedStorage from 'react-native-encrypted-storage';
 
 export default function RecomandedHobbyComponent(props) {
@@ -15,7 +15,6 @@ export default function RecomandedHobbyComponent(props) {
     const dispatch = useDispatch()
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
     const reduxdashRecommanded = useSelector(state => state.dashboard.recommanded)
-    console.log("🚀 ~ file: RecomandedHobbyComponent.js ~ line 18 ~ RecomandedHobbyComponent ~ reduxdashRecommanded", reduxdashRecommanded[0])
     const reduxmaxRecommanded = useSelector(state => state.dashboard.maxRecomandded)
 
     useEffect(() => {

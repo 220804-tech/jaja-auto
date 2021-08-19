@@ -1,34 +1,30 @@
 import React, { useEffect, useState, createRef, useCallback } from 'react'
-import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, ScrollView, StyleSheet, StatusBar, Platform, Dimensions, LogBox, ToastAndroid, RefreshControl, Alert } from 'react-native'
+import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, StyleSheet, StatusBar, Platform, Dimensions, LogBox, ToastAndroid, RefreshControl, Alert, ScrollView } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { Button } from 'react-native-paper'
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-import { FilterLocation, CheckSignal, styles, colors, useNavigation, Hp, Wp, Ps, Loading, ServiceCart, ServiceUser, useFocusEffect, ServiceStore, ServiceProduct, FastImage, RecomandedHobby, Countdown } from '../../export'
+import { FilterLocation, CheckSignal, styles, colors, useNavigation, Hp, Wp, Ps, Loading, ServiceCart, ServiceUser, useFocusEffect, ServiceStore, ServiceProduct, FastImage, RecomandedHobby, Countdown, Utils } from '../../export'
 const IS_IPHONE_X = SCREEN_HEIGHT === 812 || SCREEN_HEIGHT === 896;
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
 const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 import { useDispatch, useSelector } from "react-redux";
-import ActionSheet from "react-native-actions-sheet";
 import StarRating from 'react-native-star-rating';
-
 LogBox.ignoreAllLogs()
 
 
 export default function ProductScreen(props) {
     const navigation = useNavigation()
-    const actionSheetTrolley = createRef();
-    const [productDetail, setproductDetail] = useState({})
     const reduxSearch = useSelector(state => state.search)
     const reduxUser = useSelector(state => state.user)
     const reduxAuth = useSelector(state => state.auth.auth)
+    const reduxStore = useSelector(state => state.store.store)
 
     const dispatch = useDispatch()
 
     const [refreshing, setRefreshing] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [auth, setauth] = useState("")
     const [like, setLike] = useState(false)
     const [alert, setalert] = useState("")
     const [idProduct, setidProduct] = useState("")
@@ -48,9 +44,16 @@ export default function ProductScreen(props) {
     const [disableCart, setdisableCart] = useState(false)
 
     const onRefresh = React.useCallback(() => {
-        setRefreshing(true);
-        if (props.route.params && props.route.params.slug) {
-            getItem(props.route.params.slug)
+        // setLoading(true);
+        if (props.route.params) {
+            if (props.route.params.slug) {
+                getItem(props.route.params.slug)
+                ToastAndroid.show("Refreshing..", ToastAndroid.LONG, ToastAndroid.CENTER)
+
+                // setFlashsale(false)
+            } else if (props.route.params.flashsale) {
+                // setFlashsale(true)
+            }
         }
     }, []);
 
@@ -71,7 +74,6 @@ export default function ProductScreen(props) {
         ServiceProduct.productDetail(reduxAuth, slug).then(res => {
             if (res) {
                 if (reduxAuth && res.sellerTerdekat.length && reduxUser.user && Object.keys(reduxUser.user).length && Object.keys(res.category).length && res.category.slug) {
-                    console.log("masyk sini")
                     FilterLocation(res.sellerTerdekat, reduxUser.user.location, res.category.slug, reduxAuth)
                 }
                 if (res.flashsale && Object.keys(res.flashsale).length) {
@@ -133,59 +135,6 @@ export default function ProductScreen(props) {
         }, []),
     );
 
-    // const filterDistance = (citys) => {
-    //     try {
-    //         let array = [];
-    //         citys.map(city => {
-    //             if (String(city.city_name)) {
-    //                 fetch("https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" + city.city_name + "&key=AIzaSyC_O0-LKyAboQn0O5_clZnePHSpQQ5slQU")
-    //                     .then((response) => response.json())
-    //                     .then((responseJson) => {
-    //                         fetch("https://maps.googleapis.com/maps/api/geocode/json?place_id=" + responseJson.predictions[0].place_id + "&key=AIzaSyB4C8a6rkM6BKu1W0owWvStPzGHoc4ZBXI")
-    //                             .then(response => response.json())
-    //                             .then(response => {
-    //                                 if (reduxUser.user.location[0].latitude && reduxUser.user.location[0].longitude) {
-    //                                     let point = response.results[0].geometry.location;
-    //                                     var pdis = getDistance(
-    //                                         { latitude: reduxUser.user.location[0].latitude, longitude: reduxUser.user.location[0].longitude },
-    //                                         { latitude: point.lat, longitude: point.lng },
-    //                                     );
-    //                                 }
-    //                             })
-    //                             .catch((error) => console.log("error 117", error));
-    //                     })
-    //                     .catch((error) => console.log("error", error));
-    //             }
-    //         })
-    //     } catch (error) {
-    //         console.log("file: AddAddressScreen.js ~ line 103 ~ handleSearchKecamatan ~ error", error)
-    //     }
-    // }
-
-    const handleSearchLatLong = (item) => {
-        var value = item['place_id'];
-        console.log("_cariLatlon: " + value);
-        if (value) {
-            fetch("https://maps.googleapis.com/maps/api/geocode/json?place_id=" + value + "&key=AIzaSyB4C8a6rkM6BKu1W0owWvStPzGHoc4ZBXI")
-                .then((response) => response.json())
-                .then(responseJson => {
-                    let point = responseJson.results[0].geometry;
-                    const northeastLat = point.bounds.northeast.lat, southwestLat = point.bounds.southwest.lat;
-                    const northeastLng = point.bounds.northeast.lng, southwestLng = point.bounds.southwest.lng;
-                    setRegion({
-                        latitude: (northeastLat + southwestLat) / 2, // 2D middle point
-                        longitude: (northeastLng + southwestLng) / 2, // 2D middle point
-                        latitudeDelta: Math.max(northeastLat, southwestLat) - Math.min(northeastLat, southwestLat),
-                        longitudeDelta: (Math.max(northeastLng, southwestLng) - Math.min(northeastLng, southwestLng)) * height / width,
-                    })
-                    console.log("file: Maps.js ~ line 106 ~ .then ~ responseJson.results[0].geometry.location.lng", responseJson.results[0].geometry.location.lng)
-                    console.log("file: Maps.js ~ line 106 ~ .then ~ responseJson.results[0].geometry.location.lat", responseJson.results[0].geometry.location.lat)
-                    console.log("file: AddAddressScreen.js ~ line 96 ~ .then ~ responseJson.results[0].geometry.", responseJson.results[0].geometry)
-                })
-                .catch((error) => console.log("error 117", error));
-        }
-
-    }
     const getBadges = () => {
         ServiceUser.getBadges(reduxAuth).then(res => {
             if (res) {
@@ -232,19 +181,15 @@ export default function ProductScreen(props) {
             "variantId": variasiPressed,
             "qty": qty
         });
-        console.log("🚀 ~ file: ProductScreen.js ~ line 106 ~ handleApiCart ~ raw", raw)
-
         var requestOptions = {
             method: 'POST',
             headers: myHeaders,
             body: raw,
             redirect: 'follow'
         };
-
         fetch("https://jaja.id/backend/cart", requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: ProductScreen.js ~ line 177 ~ handleApiCart ~ result", result)
                 if (result.status.code === 200) {
                     ToastAndroid.show('Produk berhasil ditambahkan', ToastAndroid.LONG, ToastAndroid.TOP)
                     if (name === "buyNow") {
@@ -256,29 +201,11 @@ export default function ProductScreen(props) {
                     ToastAndroid.show("Stok produk tidak tersedia", ToastAndroid.LONG, ToastAndroid.CENTER)
 
                 } else {
-                    Alert.alert(
-                        "Error with status code 17001",
-                        String(result.status.message) + " => " + String(result.status.code),
-                        [
-                            { text: "OK", onPress: () => console.log("OK Pressed") }
-                        ],
-                        { cancelable: false }
-                    );
+                    Utils.handleErrorResponse(result, 'Error with status code : 12023')
                 }
             })
             .catch(error => {
-                if (String(error) == "TypeError: Network request failed") {
-                    ToastAndroid.show("Tidak dapat terhubung, periksa koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.CENTER)
-                } else {
-                    Alert.alert(
-                        "Error with status code 17001",
-                        JSON.stringify(error),
-                        [
-                            { text: "OK", onPress: () => console.log("OK Pressed") }
-                        ],
-                        { cancelable: false }
-                    );
-                }
+                Utils.handleError(error, 'Error with status code : 12024')
             });
     }
 
@@ -293,6 +220,12 @@ export default function ProductScreen(props) {
     }
 
     const handleStore = () => {
+        if (reduxStore && Object.keys(reduxStore).length) {
+            if (reduxStore.name != seller.name) {
+                dispatch({ "type": 'SET_STORE', payload: {} })
+                dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
+            }
+        }
         let slug = reduxSearch.productDetail.store.slug
         ServiceStore.getStore(slug).then(res => {
             if (res) {
@@ -339,7 +272,7 @@ export default function ProductScreen(props) {
                         setLike(!like)
                     }
                 })
-                .catch(error => console.log('error', error));
+                .catch(error => Utils.handleError(error, "Error with status code : 12025"));
         } else {
             handleLogin()
         }
@@ -348,11 +281,12 @@ export default function ProductScreen(props) {
 
     const renderNavBar = () => (
         <View style={style.navContainer}>
+            <View style={style.statusBar} />
+
             <View style={style.navBar}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, padding: '3%', backgroundColor: colors.BlueJaja, justifyContent: 'center', alignItems: 'center', borderRadius: 100 }}>
                     <Image source={require('../../assets/icons/arrow.png')} style={{ width: 25, height: 25, marginRight: '3%', tintColor: colors.White }} />
                 </TouchableOpacity>
-
                 <TouchableOpacity onPress={handleTrolley} style={{ width: 40, height: 40, padding: '3%', backgroundColor: colors.BlueJaja, justifyContent: 'center', alignItems: 'center', borderRadius: 100 }}>
                     <Image source={require('../../assets/icons/cart.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: colors.White }} />
                     {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
@@ -606,7 +540,7 @@ export default function ProductScreen(props) {
 
                         {reduxSearch.productDetail.otherProduct && reduxSearch.productDetail.otherProduct.length ?
                             <View style={[styles.column, styles.p_4, styles.mb_2, { backgroundColor: colors.White, paddingBottom: '5%' }]}>
-                                <Text style={{ fontSize: 18, fontWeight: 'bold', color: colors.BlueJaja, marginBottom: '3%' }}>Produk Lainnya Di {reduxSearch.productDetail.store.name}</Text>
+                                <Text style={[styles.font_16, styles.T_medium, { color: colors.BlueJaja }]}>Produk Lainnya Di {reduxSearch.productDetail.store.name}</Text>
                                 <FlatList
                                     horizontal={true}
                                     removeClippedSubviews={true} // Unmount components when outside of window 
@@ -676,30 +610,27 @@ export default function ProductScreen(props) {
 
 
     return (
-        <SafeAreaView style={styles.container}>     
-            {/* <StatusBar translucent /> */}
-            {/* <StatusBar
-                animated={true}
-
-                backgroundColor='transparent'
-                barStyle='default'
-                showHideTransition="fade"
-            /> */}
+        <SafeAreaView style={styles.container}>
             {loading ? <Loading /> : null}
+            <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
             <ReactNativeParallaxHeader
-                headerMinHeight={Hp('7%')}
+                headerMinHeight={Hp('10%')}
                 headerMaxHeight={Wp('100%')}
                 extraScrollHeight={20}
+                statusBarColor='transparent'
                 navbarColor={colors.BlueJaja}
-                titleStyle={style.titleStyle}
-                title={title()}
-                // backgroundImageScale={1.2}
-                renderNavBar={() => renderNavBar('Cari hobimu sekarang')}
-                renderContent={renderContent}
 
+                titleStyle={{ height: Wp('100%') }}
+                title={title()}
+                backgroundImageScale={1.2}
+                renderNavBar={renderNavBar}
+                renderContent={renderContent}
                 headerFixedBackgroundColor={colors.BlueJaja}
                 alwaysShowTitle={false}
-                scrollViewProps={{ nestedScrollEnabled: true }}
+                scrollViewProps={{
+                    nestedScrollEnabled: true,
+                    refreshControl: <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }}
             />
 
             <View style={{ position: 'absolute', bottom: 0, height: Hp('6%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
@@ -713,56 +644,30 @@ export default function ProductScreen(props) {
                     {reduxSearch.productDetail.stock == '0' ? 'Stok Habis' : 'Beli Sekarang'}
                 </Button>
             </View>
-
-
-            <ActionSheet ref={actionSheetTrolley} delayActionSheetDraw={false} containerStyle={{ height: Hp('60%'), padding: '4%' }}>
-                <View style={[styles.row_between_center, styles.py_2, styles.mb_3]}>
-                    <Text style={[styles.font_16, { color: colors.BlueJaja, fontWeight: 'bold' }]}>Tambah ke trolley</Text>
-                    <TouchableOpacity onPressIn={() => actionSheetTrolley.current?.setModalVisible()}>
-                        <Image style={[styles.icon_16, { tintColor: colors.BlueJaja }]} source={require('../../assets/icons/close.png')} />
-                    </TouchableOpacity>
-                </View>
-                <ScrollView showsVerticalScrollIndicator={false}>
-
-                </ScrollView>
-            </ActionSheet>
         </SafeAreaView >
     )
 }
 
 const style = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    contentContainer: {
-        flexGrow: 1,
-
-    },
     navContainer: {
-        height: HEADER_HEIGHT,
+        height: Hp('10%'),
+        justifyContent: 'flex-end',
         marginHorizontal: 10,
+        backgroundColor: 'transparent'
     },
     statusBar: {
         height: STATUS_BAR_HEIGHT,
         backgroundColor: 'transparent',
     },
     navBar: {
-        height: NAV_BAR_HEIGHT,
+        height: '100%',
         justifyContent: 'space-between',
         alignItems: 'center',
+        paddingTop: '5%',
         flexDirection: 'row',
         backgroundColor: 'transparent',
         paddingHorizontal: '1%'
     },
-    titleStyle: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 18,
-        height: Hp('50%')
-    },
-    touchIcon: { width: '14%', justifyContent: 'center', alignItems: 'center' },
-    swiperBanner: { width: "100%", height: 250, resizeMode: 'contain' },
     swiperProduct: { width: '100%', height: '100%', resizeMode: 'contain' },
-
-    searchBar: { flexDirection: 'row', backgroundColor: colors.White, borderRadius: 10, height: NAV_BAR_HEIGHT / 1.9, width: '70%', alignItems: 'center', paddingHorizontal: '4%' }
+    searchBar: { flexDirection: 'row', backgroundColor: colors.White, borderRadius: 11, height: NAV_BAR_HEIGHT / 1.7, width: '70%', alignItems: 'center', paddingHorizontal: '4%' }
 });

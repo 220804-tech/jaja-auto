@@ -138,7 +138,7 @@ export default function OrdersProcess() {
                             )
                         }}
                     />
-                    : <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong" ilustration={require('../../assets/ilustrations/empty.png')} />
+                    : <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
                 : reduxWaitConfirm && reduxWaitConfirm.length ?
                     <FlatList
                         data={reduxWaitConfirm}
@@ -185,7 +185,7 @@ export default function OrdersProcess() {
                             )
                         }}
                     />
-                    : <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong" ilustration={require('../../assets/ilustrations/empty.png')} />
+                    : <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
             }
         </View>
     )

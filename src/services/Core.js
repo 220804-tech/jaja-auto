@@ -1,4 +1,5 @@
 import { ToastAndroid, Alert } from 'react-native'
+import { Utils } from '../export';
 
 export async function getDateTime() {
     var myHeaders = new Headers();
@@ -20,18 +21,7 @@ export async function getDateTime() {
             }
         })
         .catch(error => {
-            if (String(error).slice(11, String(error).length) === "Network request failed") {
-                ToastAndroid.show("Tidak dapat terhubung, periksa koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
-            } else {
-                Alert.alert(
-                    "Error get time",
-                    JSON.stringify(error),
-                    [
-                        { text: "OK", onPress: () => console.log("OK Pressed") }
-                    ],
-                    { cancelable: false }
-                );
-            }
+            Utils.handleError(error, 'Error with status code : 12022')
         });
 }
 

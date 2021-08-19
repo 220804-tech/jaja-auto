@@ -22,6 +22,32 @@
 ## Order Tracking
 # 12017, 12018 => Error api batalkan pesanan dengan status Belum Bayar
 
+
+## Store
+# 12019 => Error api get store detail
+# 12020 => Error api get store product
+
+## Splashscreen
+# 12021 => Error api get dashboard
+
+## Home
+# 12022 => Error api get date time
+
+## Cart
+# 12023, 12024 => Error add cart
+
+## Wishlist 
+# 12025 => Error add wishlish (like product)
+
+
+## Nearest Product (Filter Location) 
+# 12026 => Error get nearest product
+
+
+## Trolley/Cart
+# 12027 => Error edit quantity 
+
+
 ## Category Component
 # 13001 => Error api get category 
 ## Recomended Component

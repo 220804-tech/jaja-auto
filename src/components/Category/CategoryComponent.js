@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { View, Text, FlatList, Image, TouchableOpacity, ScrollView, Alert, ToastAndroid } from 'react-native'
+import { View, Text, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { useSelector, useDispatch } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient';

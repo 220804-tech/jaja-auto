@@ -39,7 +39,7 @@ export default function CardProductComponent(props) {
             data={props.data}
             numColumns={2}
             scrollEnabled={true}
-            keyExtractor={(item, index) => String(index) + "X"}
+            keyExtractor={(item, index) => String(item.id) + index + "XH"}
             contentContainerStyle={{ justifyContent: 'space-between' }}
             renderItem={({ item, index }) => {
                 return (

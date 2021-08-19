@@ -111,7 +111,7 @@ export default function OrdersFailed() {
                         )
                     }}
                 /> :
-                <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong" ilustration={require('../../assets/ilustrations/empty.png')} />
+                <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
             }
         </View>
     )

@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, StyleSheet, RefreshControl, Platform, Dimensions, LogBox, Animated } from 'react-native'
+import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, StyleSheet, RefreshControl, Platform, ScrollView, Dimensions, LogBox, Animated, StatusBar } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
-import { BasedOnSearch, Trending, Category, Flashsale, Language, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect, NearestStore, } from '../../export'
+import { BasedOnSearch, Trending, Category, Flashsale, Language, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect, NearestStore, ServiceCore, } from '../../export'
 const { height: SCREEN_HEIGHT, width } = Dimensions.get('window');
 import DeviceInfo from 'react-native-device-info';
+import ParallaxScrollView from 'react-native-parallax-scrollview';
 
 const { height: hg } = Dimensions.get('screen')
 import { useDispatch, useSelector } from 'react-redux'
@@ -85,8 +86,6 @@ export default function HomeScreen() {
     );
 
     useEffect(() => {
-        console.log("🚀 ~ file: HomeScreen.js ~ line 202 ~ renderContent ~ reduxShowFlashsale", reduxShowFlashsale)
-
         try {
             dispatch({ 'type': 'SET_LOADMORE', payload: false })
             EncryptedStorage.getItem('token').then(res => {
@@ -136,9 +135,9 @@ export default function HomeScreen() {
 
         }
     }
-
     const renderNavBar = (text) => (
         <View style={style.navContainer}>
+            <View style={style.statusBar} />
             <View style={style.navBar}>
                 <TouchableOpacity style={style.searchBar} onPress={() => navigation.navigate("Search")}>
                     <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
@@ -161,7 +160,6 @@ export default function HomeScreen() {
             </View>
         </View >
     );
-
     const title = () => {
         return (
             <Swiper
@@ -185,44 +183,199 @@ export default function HomeScreen() {
             </Swiper>
         );
     };
-
     const renderContent = () => {
         return (
             <View style={styles.column}>
-                <Category />
-                <Trending />
-                {nearestProduct ? <NearestStore /> : null}
-                {reduxShowFlashsale ? <Flashsale /> : null}
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    }
+                >
+                    <Category />
+                    <Trending />
+                    {nearestProduct ? <NearestStore /> : null}
+                    {reduxShowFlashsale ? <Flashsale /> : null}
 
-                {/* <BasedOnSearch /> */}
-                {/* <HobbyAverage /> */}
-                <RecomandedHobby />
+                    {/* <BasedOnSearch /> */}
+                    {/* <HobbyAverage /> */}
+                    <RecomandedHobby />
+                </ScrollView>
 
 
             </View>
         );
     };
-
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
         return layoutMeasurement.height + contentOffset.y >=
-            contentSize.height - (hg * 0.70) || layoutMeasurement.height + contentOffset.y >=
-            contentSize.height - (hg * 0.05)
+            contentSize.height - (hg * 0.80) || layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 0.05)
     }
-
     const loadMoreData = () => {
         if (reduxLoadmore === false) {
             // console.log("masuk as")
             dispatch({ 'type': 'SET_LOADMORE', payload: true })
         }
     }
-
     const onRefresh = useCallback(() => {
+        console.log('refreshing')
         setRefreshing(true);
+        getItem()
+        getData()
+        getFlashsale()
+        getBadges()
         setTimeout(() => {
             setRefreshing(false)
+            console.log('refreshed')
         }, 2000);
-
     }, []);
+
+    const getItem = async (token) => {
+        try {
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", reduxAuth);
+            myHeaders.append("Cookie", "ci_session=gpkr7eq1528c92su0vj0rokdjutlsl2r");
+
+            var raw = "";
+
+            var requestOptions = {
+                method: 'GET',
+                headers: token ? myHeaders : "",
+                body: raw,
+                redirect: 'follow'
+            };
+            let hasil = null;
+            fetch("https://jaja.id/backend/home", requestOptions)
+                .then(response => response.json())
+                .then(resp => {
+                    hasil = true;
+                    if (resp.status.code == 200 || resp.status.code == 204) {
+                        console.log('get item succes')
+                        if (resp.data.categoryChoice) {
+                            dispatch({ type: 'SET_DASHCATEGORY', payload: resp.data.categoryChoice })
+                            EncryptedStorage.setItem('dashcategory', JSON.stringify(resp.data.categoryChoice))
+                        }
+                        if (resp.data.trending) {
+                            dispatch({ type: 'SET_DASHTRENDING', payload: resp.data.trending })
+                            EncryptedStorage.setItem('dashtrending', JSON.stringify(resp.data.trending))
+                        }
+                        if (resp.data.basedOnSearch) {
+                            dispatch({ type: 'SET_DASHPOPULAR', payload: resp.data.basedOnSearch })
+                            EncryptedStorage.setItem('dashpopular', JSON.stringify(resp.data.basedOnSearch))
+                        }
+                    } else {
+                        handleError(resp.status.message + " => " + resp.status.code)
+                    }
+                })
+                .catch(error => {
+                    hasil = true
+                    handleError(error)
+                })
+            setTimeout(() => {
+                if (hasil !== true) {
+                    return ToastAndroid.show("Tidak dapat tehubung, periksa kembali koneksi anda", ToastAndroid.LONG, ToastAndroid.TOP)
+                }
+            }, 15000);
+        } catch (error) {
+            handleError(error)
+        }
+    }
+    const getData = () => {
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        fetch("https://jaja.id/backend/product/recommendation?page=1&limit=20", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                if (result.status.code == 200 || result.status.code == 204) {
+                    console.log('get data succes')
+                    dispatch({ type: 'SET_DASHRECOMMANDED', payload: result.data.items })
+                    EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))
+                } else {
+                    EncryptedStorage.getItem('dashrecommanded').then(res => {
+                        if (res) {
+                            dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(res) })
+                        }
+                        ToastAndroid.show(result.status.message + " : " + result.status.code, ToastAndroid.LONG, ToastAndroid.CENTER)
+                    })
+
+                }
+            })
+            .catch(error => {
+                EncryptedStorage.getItem('dashrecommanded').then(store => {
+                    if (store) {
+                        dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(store) })
+                    }
+                })
+                Utils.handleError(error, 'Error with status code : 12002')
+            });
+    }
+    const getFlashsale = () => {
+        ServiceCore.getDateTime().then(res => {
+            if (res) {
+                let date = new Date()
+                if (date.toJSON().toString().slice(0, 10) !== res.dateNow) {
+                    Alert.alert(
+                        "Peringatan!",
+                        `Sepertinya tanggal tidak sesuai!`,
+                        [
+                            { text: "OK", onPress: () => navigation.goBack() }
+                        ],
+                        { cancelable: false }
+                    );
+                } else {
+                    ServiceCore.getFlashsale().then(resp => {
+                        if (resp && resp.flashsale && resp.flashsale.length) {
+                            console.log('get flashsale succes')
+                            dispatch({ type: 'SET_SHOW_FLASHSALE', payload: true })
+                            dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.flashsale })
+                        } else {
+                            console.log('get flashsale succes')
+                            dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+                        }
+                    })
+
+                }
+            }
+        })
+    }
+
+    const handleError = (error) => {
+        try {
+            EncryptedStorage.getItem('dashcategory').then(result => {
+                if (result) {
+                    dispatch({ type: 'SET_DASHCATEGORY', payload: JSON.parse(result) })
+                }
+            })
+            EncryptedStorage.getItem('dashtrending').then(result => {
+                if (result) {
+                    dispatch({ type: 'SET_DASHTRENDING', payload: JSON.parse(result) })
+                }
+            })
+            EncryptedStorage.getItem('dashhobyaverage').then(result => {
+                if (result) {
+                    dispatch({ type: 'SET_DASHHOBYAVERAGE', payload: JSON.parse(result) })
+                }
+            })
+            if (String(error).slice(11, String(error).length) === "Network request failed") {
+                ToastAndroid.show("Tidak dapat terhubung, periksa koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
+            } else {
+                Alert.alert(
+                    "Error with status 12001",
+                    JSON.stringify(error),
+                    [
+                        { text: "OK", onPress: () => console.log("OK Pressed") }
+                    ],
+                    { cancelable: false }
+                );
+            }
+        } catch (err) {
+            return ToastAndroid.show("Handle Error " + String(err), ToastAndroid.LONG, ToastAndroid.TOP)
+        }
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -245,20 +398,26 @@ export default function HomeScreen() {
                     }
                 )}
             > */}
+            {/* <StatusBar translucent backgroundColor="transparent" /> */}
             <ReactNativeParallaxHeader
+                headerMinHeight={Hp('8%')}
                 headerMaxHeight={Hp('30%')}
                 extraScrollHeight={20}
                 navbarColor={colors.BlueJaja}
+
                 titleStyle={style.titleStyle}
                 title={title()}
+
                 renderNavBar={() => renderNavBar('Cari hobimu sekarang')}
                 renderContent={renderContent}
                 containerStyle={style.container}
                 contentContainerStyle={style.contentContainer}
                 innerContainerStyle={style.container}
-                headerFixedBackgroundColor={colors.BlueJajaa}
+                headerFixedBackgroundColor='transparent'
                 alwaysShowTitle={false}
+
                 scrollViewProps={{
+                    refreshControl: <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />,
                     onScroll: Animated.event(
                         [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                         Platform.OS === "android" ?
@@ -276,16 +435,58 @@ export default function HomeScreen() {
                         if (isCloseToBottom(nativeEvent)) {
                             loadMoreData()
                         }
-                    },
-                    refreshControl: (
+                    }
+
+                }}
+            >
+            </ReactNativeParallaxHeader>
+            {/* <ParallaxScrollView
+
+                windowHeight={SCREEN_HEIGHT * 0.4}
+                backgroundSource={title()}
+                // navBarTitle='John Oliver'
+                // userName='John Oliver'
+                // userTitle='Comedian'
+                headerView={(
+                    <View style={styles.headerView}>
+                        <View style={styles.headerTextView}>
+                            <Text style={styles.headerTextViewTitle}>My App</Text>
+                            <Text style={styles.headerTextViewSubtitle}>
+                                Custom Header View
+                            </Text>
+                        </View>
+                    </View>
+                )}
+                // userImage='http://i.imgur.com/RQ1iLOs.jpg'
+                leftIcon={{ name: 'rocket', color: 'rgba(193, 193, 193, 1)', size: 30, type: 'font-awesome' }}
+                rightIcon={{ name: 'user', color: 'rgba(193, 193, 193, 1)', size: 30, type: 'font-awesome' }}
+            >
+                <ScrollView
+                    refreshControl={
                         <RefreshControl
                             refreshing={refreshing}
                             onRefresh={onRefresh}
                         />
-                    )
-                }}
-            >
-            </ReactNativeParallaxHeader>
+                    }
+                    style={{ flex: 1, backgroundColor: 'rgba(228, 117, 125, 1)' }}>
+                    <View style={{ height: 300, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 32, color: 'white' }}>Custom view</Text>
+                    </View>
+                    <View style={{ height: 300, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 32, color: 'white' }}>keep going.</Text>
+                    </View>
+                    <View style={{ height: 300, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 32, color: 'white' }}>keep going..</Text>
+                    </View>
+                    <View style={{ height: 300, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 32, color: 'white' }}>keep going...</Text>
+                    </View>
+                    <View style={{ height: 300, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 32, color: 'white' }}>the end! :)</Text>
+                    </View>
+                </ScrollView>
+            </ParallaxScrollView> */}
+
             {/* </ScrollView> */}
         </SafeAreaView >
 
@@ -302,9 +503,10 @@ const style = StyleSheet.create({
     navContainer: {
         height: HEADER_HEIGHT,
         justifyContent: 'center',
-        alignItems: 'center',
+        // alignItems: 'center',
         paddingHorizontal: '2%',
         paddingVertical: '2%',
+        // paddingTop: '3.5%',
         backgroundColor: 'transparent',
     },
     statusBar: {
@@ -326,5 +528,5 @@ const style = StyleSheet.create({
     },
     touchIcon: { width: '14%', justifyContent: 'center', alignItems: 'center' },
     swiperBanner: { width: "100%", height: Hp('30%'), resizeMode: 'contain', backgroundColor: colors.BlueJaja },
-    searchBar: { flexDirection: 'row', backgroundColor: colors.White, borderRadius: 10, height: NAV_BAR_HEIGHT / 1.9, width: '70%', alignItems: 'center', paddingHorizontal: '4%' }
+    searchBar: { flexDirection: 'row', backgroundColor: colors.White, borderRadius: 11, height: NAV_BAR_HEIGHT / 1.8, width: '70%', alignItems: 'center', paddingHorizontal: '4%' }
 });

@@ -4,7 +4,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp, } from 'react-na
 import Swiper from 'react-native-swiper'
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage'
-import { ServiceOrder, colors, styles, useNavigation, ServiceCore } from '../../export';
+import { ServiceOrder, colors, styles, useNavigation, ServiceCore, Utils } from '../../export';
 import database from '@react-native-firebase/database';
 
 export default function SplashScreen() {
@@ -34,13 +34,12 @@ export default function SplashScreen() {
 
     useEffect(() => {
         try {
-            EncryptedStorage.getItem('token').then(resp => {
-                getItem(resp)
+            EncryptedStorage.getItem('token').then(auth => {
+                getItem(auth)
                 getData()
                 getFlashsale()
-                getOrders(resp)
-                dispatch({ type: 'SET_AUTH', payload: JSON.parse(resp) })
-
+                getOrders(auth)
+                dispatch({ type: 'SET_AUTH', payload: JSON.parse(auth) })
             })
             EncryptedStorage.getItem('user').then(res => {
                 if (res) {
@@ -52,7 +51,6 @@ export default function SplashScreen() {
         } catch (error) {
             // return ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.TOP)
         }
-
         setTimeout(() => {
             navigation.replace('Beranda')
         }, 4000);
@@ -90,6 +88,7 @@ export default function SplashScreen() {
         EncryptedStorage.getItem('deviceToken').then(res => {
             if (res) {
                 let token = JSON.parse(res)
+                dispatch({ type: 'SET_DEVICE_TOKEN', payload: token })
                 database().ref("/people/" + user.uid).once('value').then(snapshot => {
                     let item = snapshot.val();
                     if (!item || !item.notif) {
@@ -128,10 +127,6 @@ export default function SplashScreen() {
                             dispatch({ type: 'SET_DASHCATEGORY', payload: resp.data.categoryChoice })
                             EncryptedStorage.setItem('dashcategory', JSON.stringify(resp.data.categoryChoice))
                         }
-                        // if (resp.data.flashSale) {
-                        //     dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.data.flashSale })
-                        //     EncryptedStorage.setItem('dashflashsale', JSON.stringify(resp.data.flashSale))
-                        // }
                         if (resp.data.trending) {
                             dispatch({ type: 'SET_DASHTRENDING', payload: resp.data.trending })
                             EncryptedStorage.setItem('dashtrending', JSON.stringify(resp.data.trending))
@@ -145,6 +140,7 @@ export default function SplashScreen() {
                     }
                 })
                 .catch(error => {
+                    Utils.handleError(error, 'Error with status code : 19021')
                     handleError(error)
                 })
             setTimeout(() => {
@@ -165,11 +161,6 @@ export default function SplashScreen() {
                     dispatch({ type: 'SET_DASHCATEGORY', payload: JSON.parse(result) })
                 }
             })
-            // EncryptedStorage.getItem('dashflashsale').then(result => {
-            //     if (result) {
-            //         dispatch({ type: 'SET_DASHFLASHSALE', payload: JSON.parse(result) })
-            //     }
-            // })
             EncryptedStorage.getItem('dashtrending').then(result => {
                 if (result) {
                     dispatch({ type: 'SET_DASHTRENDING', payload: JSON.parse(result) })
@@ -196,6 +187,7 @@ export default function SplashScreen() {
             return ToastAndroid.show("Handle Error " + String(err), ToastAndroid.LONG, ToastAndroid.TOP)
         }
     }
+
     const getData = () => {
         var requestOptions = {
             method: 'GET',
@@ -224,19 +216,7 @@ export default function SplashScreen() {
                         dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(store) })
                     }
                 })
-                if (String(error).slice(11, String(error).length) === "Network request failed") {
-                    ToastAndroid.show("Tidak dapat terhubung, periksa koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
-                } else {
-                    Alert.alert(
-                        "Error with status 12002",
-                        JSON.stringify(error),
-                        [
-                            { text: "OK", onPress: () => console.log("OK Pressed") }
-                        ],
-                        { cancelable: false }
-                    );
-
-                }
+                Utils.handleError(error, 'Error with status code : 12002')
             });
     }
 

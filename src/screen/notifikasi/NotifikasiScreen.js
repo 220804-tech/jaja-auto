@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, FlatList, Alert, I18nManager, Image } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { Appbar, styles as style, colors, Wp, Hp, Utils } from '../../export';
-import { Paragraph } from 'react-native-paper'
+import { Appbar, styles as style, colors, Wp, Hp, Utils, DefaultNotFound } from '../../export';
 function NotifikasiScreen(props) {
     const [notifData, setnotifData] = useState([]);
     const [shimmer, setshimmer] = useState(Boolean);
@@ -95,14 +94,8 @@ function NotifikasiScreen(props) {
                         )
                     }}
                 />
-                :
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.White }}>
-                    <Image
-                        style={styles.iconMarket}
-                        source={require('../../assets/ilustrations/empty.png')}
-                    />
-                    <Paragraph style={styles.textJajakan}>Ups..<Text style={styles.textCenter}> sepertinya belum ada informasi untukmu.</Text></Paragraph>
-                </View>
+                : <DefaultNotFound textHead="Ups.." textBody="Tampaknya belum ada informasi untukmu.." ilustration={require('../../assets/ilustrations/empty.png')} />
+
             }
         </SafeAreaView >
     );
@@ -110,8 +103,6 @@ function NotifikasiScreen(props) {
 export default NotifikasiScreen
 
 const styles = StyleSheet.create({
-    textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 18, fontWeight: 'bold', color: colors.BlueJaja, fontFamily: 'notoserif', marginVertical: Hp('2%') },
-    iconMarket: { alignSelf: "center", width: Wp('80%'), height: Hp('40%') },
     card: {
         flex: 0,
         backgroundColor: 'white',
@@ -127,8 +118,7 @@ const styles = StyleSheet.create({
     },
     textTitle: {
         fontSize: 14,
-        fontWeight: 'bold',
-        fontFamily: 'notoserif',
+        fontFamily: 'Poppins-Medium',
         paddingHorizontal: '3%',
         color: '#454545',
         marginBottom: '2%'
@@ -138,11 +128,9 @@ const styles = StyleSheet.create({
         color: '#454545',
         fontSize: 11,
         textAlign: 'left',
-        fontWeight: 'bold',
-        fontFamily: 'sans-serif-thin',
+        fontFamily: 'Poppins-Italic',
         fontStyle: 'italic',
         marginBottom: '3%',
-        fontFamily: 'sans-serif-thin',
         paddingHorizontal: '3%',
         paddingVertical: '0.5%',
     },
@@ -150,8 +138,7 @@ const styles = StyleSheet.create({
         color: 'grey',
         fontSize: 12,
         textAlign: 'left',
-        fontWeight: 'bold',
-        fontFamily: 'sans-serif-thin',
+        fontFamily: 'Poppins-SemiBold',
         paddingHorizontal: '3%',
 
     }

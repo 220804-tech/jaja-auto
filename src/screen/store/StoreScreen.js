@@ -50,12 +50,10 @@ export default function StoreScreen() {
     });
 
     const handleSearch = (text) => {
-        console.log("🚀 ~ file: StoreScreen.js ~ line 43 ~ handleSearch ~ text", text)
         if (text !== " " && text !== "  " && text !== "   " && text !== "    " && text !== "     ") {
             setLoading(true)
             ServiceStore.getStoreProduct(reduxStore.slug, text, "", "", "", "", "").then(res => {
                 setTimeout(() => setLoading(false), 1000);
-                console.log("🚀 ~ file: StoreScreen.js ~ line 46 ~ ServiceStore.getStoreProduct ~ res", res)
                 if (res) {
                     dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
                 }
@@ -88,6 +86,7 @@ export default function StoreScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar
+                translucent={false}
                 animated={true}
                 backgroundColor={colors.BlueJaja}
                 barStyle='light-content'

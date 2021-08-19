@@ -115,7 +115,7 @@ export default function ListChat() {
                         />
                     </View>
                     :
-                    <DefaultNotFound textHead="Ups.." textBody={reduxAuth ? "kamu belum chat siapapun" : "sepertinya kamu belum login"} ilustration={require('../../assets/ilustrations/empty.png')} />
+                    <DefaultNotFound textHead="Ups.." textBody={reduxAuth ? "kamu belum chat siapapun.." : "sepertinya kamu belum login.."} ilustration={require('../../assets/ilustrations/empty.png')} />
             }
         </SafeAreaView>
     );

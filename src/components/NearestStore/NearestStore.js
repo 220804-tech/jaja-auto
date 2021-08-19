@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { View, Text, FlatList, Image, TouchableOpacity, ScrollView, Alert } from 'react-native'
-import { styles, Ps, Language, useNavigation, FastImage, colors, Wp, useFocusEffect, Hp, ServiceCore, Countdown } from '../../export'
-import EncryptedStorage from 'react-native-encrypted-storage'
+import { View, Text, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native'
+import { styles, Ps, useNavigation, FastImage, colors, Wp, useFocusEffect, } from '../../export'
 import { useSelector, useDispatch } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'

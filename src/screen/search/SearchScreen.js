@@ -28,7 +28,6 @@ export default function SearchScreen() {
         try {
             EncryptedStorage.getItem('historySearching').then(res => {
                 if (res) {
-                    console.log("🚀 ~ file: SearchScreen.js ~ line 24 ~ EncryptedStorage.getItem ~ res", res)
                     sethistorySearch(JSON.parse(res))
                 } else {
                     let data = []
@@ -52,7 +51,7 @@ export default function SearchScreen() {
                 redirect: 'follow'
             };
 
-            fetch(`https://jaja.id/backend/product/search?limit=5&keyword=${text}`, requestOptions)
+            fetch(`https://jaja.id/backend/product/search?limit=20&keyword=${text}`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     console.log("🚀 ~ file: SearchScreen.js ~ line 49 ~ handleSearch ~ result", result.data.store)
@@ -84,8 +83,9 @@ export default function SearchScreen() {
         handleSaveKeyword(res.name)
     }
 
-    const handleSaveKeyword = (keyword) => {
+    const handleSaveKeyword = (text) => {
         let newArr = historySearch;
+        let keyword = String(text).toLocaleLowerCase()
         newArr.push(keyword)
         EncryptedStorage.getItem('historySearching').then(res => {
             if (res) {
@@ -105,7 +105,8 @@ export default function SearchScreen() {
 
     }
 
-    const handleFetch = (text) => {
+    const handleFetch = (keyword) => {
+        let text = String(keyword).toLocaleLowerCase();
         // if (text) {
         var myHeaders = new Headers();
         myHeaders.append("Cookie", "ci_session=bk461otlv7le6rfqes5eim0h9cf99n3u");
@@ -116,7 +117,7 @@ export default function SearchScreen() {
             redirect: 'follow'
         };
 
-        fetch(`https://jaja.id/backend/product/search/result?page=1&limit=10&keyword=${text}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
+        fetch(`https://jaja.id/backend/product/search/result?page=1&limit=20&keyword=${text}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 dispatch({ type: 'SET_SEARCH', payload: result.data.items })
@@ -133,7 +134,7 @@ export default function SearchScreen() {
                     }
                 })
             });
-        dispatch({ type: 'SET_SLUG', payload: text })
+        dispatch({ type: 'SET_SLUG', payload: String(text).toLocaleLowerCase() })
 
         navigation.navigate('ProductSearch')
         // } 
@@ -165,7 +166,7 @@ export default function SearchScreen() {
                 </TouchableOpacity>
                 <View style={styles.searchBar}>
                     <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
-                    <TextInput keyboardType="name-phone-pad" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={styles.font_14} placeholder='Cari hobimu sekarang..' onChangeText={(text) => handleSearch(text)} onSubmitEditing={(value) => handleSearchInput(value.nativeEvent.text)}></TextInput>
+                    <TextInput keyboardType="name-phone-pad" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={[styles.font_13, { width: '90%', marginBottom: '-1%' }]} placeholder='Cari hobimu disini..' onChangeText={(text) => handleSearch(text)} onSubmitEditing={(value) => handleSearchInput(value.nativeEvent.text)}></TextInput>
                 </View>
                 {/* <TouchableOpacity style={style.searchBar} onPress={() => navigation.navigate("Search")}>
                     <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
@@ -180,7 +181,7 @@ export default function SearchScreen() {
                             <FlatList
                                 data={productSearch}
                                 showsHorizontalScrollIndicator={false}
-                                keyExtractor={(item) => item.id}
+                                keyExtractor={(item) => item.id + 'SX'}
                                 extraData={productSearch}
                                 renderItem={({ item }) => {
                                     console.log("🚀 ~ file: SearchScreen.js ~ line 178 ~ SearchScreen ~ item", item)
@@ -199,7 +200,7 @@ export default function SearchScreen() {
                                 <FlatList
                                     data={storeSearch}
                                     showsHorizontalScrollIndicator={false}
-                                    keyExtractor={(item) => item.id}
+                                    keyExtractor={(item) => item.id + 'FD'}
                                     extraData={count}
                                     renderItem={({ item }) => {
                                         console.log("🚀 ~ file: SearchScreen.js ~ line 213 ~ SearchScreen ~ item", item)
@@ -225,7 +226,7 @@ export default function SearchScreen() {
                                 <FlatList
                                     data={historySearch}
                                     showsHorizontalScrollIndicator={false}
-                                    keyExtractor={(item, index) => String(index)}
+                                    keyExtractor={(item, index) => String(index) + "SA"}
                                     renderItem={({ item, index }) => {
                                         return (
                                             <TouchableOpacity onPress={() => handleSearchInput(item)} style={styles.row}>
@@ -238,13 +239,14 @@ export default function SearchScreen() {
                             :
                             <View style={styles.column}>
                                 <View style={[styles.row_between_center, styles.mb_5]}>
-                                    <Text style={[styles.font_14, { color: colors.BlueJaja }]} adjustsFontSizeToFit>Recomendation</Text>
+                                    <Text style={[styles.font_14, { color: colors.BlueJaja }]} adjustsFontSizeToFit>Rekomendasi</Text>
                                 </View>
                                 <FlatList
                                     data={slug}
                                     showsHorizontalScrollIndicator={false}
-                                    keyExtractor={(item, index) => String(index)}
+                                    keyExtractor={(item, index) => String(item) + 'LK'}
                                     renderItem={({ item, index }) => {
+                                        console.log("🚀 ~ file: SearchScreen.js ~ line 249 ~ SearchScreen ~ item", item)
                                         return (
                                             <TouchableOpacity onPress={() => handleSearchInput(item)} style={[styles.row_start_center, styles.mb_5]}>
                                                 <Image style={[styles.icon_23, styles.mr_3, { tintColor: colors.BlackGrey }]} source={require('../../assets/icons/star.png')} />
