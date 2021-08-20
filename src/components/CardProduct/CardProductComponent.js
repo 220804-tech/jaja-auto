@@ -43,7 +43,6 @@ export default function CardProductComponent(props) {
             keyExtractor={(item, index) => String(item.id) + index + "XH"}
             contentContainerStyle={{ justifyContent: 'space-between' }}
             renderItem={({ item, index }) => {
-                console.log("🚀 ~ file: CardProductComponent.js ~ line 46 ~ CardProductComponent ~ item", item)
                 return (
                     <>
                         {!item.loading ?

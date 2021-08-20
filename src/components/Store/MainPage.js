@@ -26,15 +26,15 @@ export default function MainPage() {
         navigation.navigate("Product", { slug: item.slug, image: item.image })
     }
 
-    const handleLoadMore = () => {
-        if (reduxLoadmore) {
-            setLoadmore(true)
-        }
-        setTimeout(() => {
-            dispatch({ 'type': 'SET_LOADMORE', payload: false })
-        }, 5000);
+    // const handleLoadMore = () => {
+    //     if (reduxLoadmore) {
+    //         setLoadmore(true)
+    //     }
+    //     setTimeout(() => {
+    //         dispatch({ 'type': 'SET_LOADMORE', payload: false })
+    //     }, 5000);
 
-    }
+    // }
 
     const handleVoucher = (val) => {
         console.log("🚀 ~ file: MainPage.js ~ line 59 ~ handleVoucher ~ val", val)

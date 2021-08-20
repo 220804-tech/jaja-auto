@@ -32,7 +32,9 @@ export default function SplashScreen() {
         }
     ]
 
+
     useEffect(() => {
+
         try {
             EncryptedStorage.getItem('token').then(auth => {
                 getItem(auth)
@@ -48,12 +50,14 @@ export default function SplashScreen() {
                     getFirebase(JSON.parse(res))
                 }
             })
+
         } catch (error) {
             // return ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.TOP)
         }
         setTimeout(() => {
             navigation.replace('Beranda')
         }, 4000);
+
     }, [])
 
     const getFlashsale = () => {

@@ -31,14 +31,8 @@ export default class CountdownComponent extends React.Component {
 
     componentDidMount() {
         ServiceCore.getDateTime().then(res => {
-            console.log("file: CountdownComponent.js ~ line 34 ~ CountdownComponent ~ ServiceCore.getDateTime ~ res", res)
             let hours = new Date().getHours()
             let minutes = new Date().getMinutes()
-            console.log("file: CountdownComponent.js ~ line 37", hours + "" + minutes == String(res.timeNow.replace(/:/g, "").slice(0, 4)))
-            console.log("🚀 ~ file: CountdownComponent.js ~ line 38 ~ CountdownComponent ~ ServiceCore.getDateTime", hours + "" + minutes)
-
-            console.log("🚀 ~ file: CountdownComponent.js ~ line 42 ~ CountdownComponent ~ ServiceCore.getDateTime ~ minutes length", String(minutes).length == 1 ? '0' + minutes : minutes)
-            console.log("🚀 ~ file: CountdownComponent.js ~ line 38 ~ CountdownComponent ~ ServiceCore.getDateTime", String(res.timeNow.replace(/:/g, "").slice(0, 4)))
             if (String(minutes).length == 1) {
                 minutes = '0' + minutes;
             }
@@ -67,7 +61,6 @@ export default class CountdownComponent extends React.Component {
             hours = (24 - parseInt(time.slice(0, 2))) * 3600;
         }
         if (minutes < 3600) {
-            console.log("masuk minute")
             hours = (hours - 3600) + minutes
         }
         if (secs > 0) {

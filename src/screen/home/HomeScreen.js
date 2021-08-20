@@ -2,11 +2,11 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, StyleSheet, RefreshControl, Platform, ScrollView, Dimensions, LogBox, Animated, StatusBar } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
-import { BasedOnSearch, Trending, Category, Flashsale, Language, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect, NearestStore, ServiceCore, } from '../../export'
+import { BasedOnSearch, Trending, Category, Flashsale, Loading, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect, NearestStore, ServiceCore, } from '../../export'
 const { height: SCREEN_HEIGHT, width } = Dimensions.get('window');
 import DeviceInfo from 'react-native-device-info';
 import ParallaxScrollView from 'react-native-parallax-scrollview';
-
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 const { height: hg } = Dimensions.get('screen')
 import { useDispatch, useSelector } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -46,6 +46,8 @@ export default function HomeScreen() {
     const [out, setOut] = useState(false)
     const [nearestProduct, setnearestProduct] = useState(false)
     const [refreshing, setRefreshing] = useState(false);
+    const [loading, setLoading] = useState(false);
+
     const reduxOut = useSelector(state => state.dashboard.out)
 
     const images = [
@@ -71,6 +73,18 @@ export default function HomeScreen() {
             color: "#68b0c8"
         }
     ]
+    const handleDynamicLink = link => {
+        console.log("🚀 ~ file: SplashScreen.js ~ line 36 ~ SplashScreen ~ link", link)
+        // Handle dynamic link inside your own application
+        if (link.url === 'https://jajaidbuyer.page.link/Splash') {
+            setLoading(true)
+            setTimeout(() => {
+                setLoading(false)
+                navigation.navigate('Pesanan')
+            }, 500);
+            console.log("masuk sini")
+        }
+    };
 
     useFocusEffect(
         useCallback(() => {
@@ -108,6 +122,9 @@ export default function HomeScreen() {
         } catch (error) {
 
         }
+        const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
+        // When the component is unmounted, remove the listener
+        return () => unsubscribe();
     }, [])
 
     const getBadges = () => {
@@ -379,6 +396,7 @@ export default function HomeScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
+            {loading ? <Loading /> : null}
             {/* <ScrollView
                 refreshControl={
                     <RefreshControl

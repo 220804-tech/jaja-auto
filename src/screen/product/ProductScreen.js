@@ -22,6 +22,7 @@ export default function ProductScreen(props) {
     const reduxUser = useSelector(state => state.user)
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxStore = useSelector(state => state.store.store)
+    const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
 
     const dispatch = useDispatch()
 
