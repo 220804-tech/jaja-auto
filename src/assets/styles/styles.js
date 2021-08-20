@@ -107,6 +107,7 @@ export const styles = StyleSheet.create({
     py_5: { paddingVertical: '5%' },
 
     font_8: { fontSize: 8, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
+    font_9: { fontSize: 9, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_10: { fontSize: 10, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_11: { fontSize: 11, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_12: { fontSize: 12, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
@@ -163,10 +164,8 @@ export const styles = StyleSheet.create({
     },
     titleDashboard: {
         fontSize: 16,
-        fontWeight: "bold",
-        letterSpacing: 0,
         textAlign: "left",
-        fontFamily: 'Lato-Bold',
+        fontFamily: 'Poppins-Medium',
         color: colors.BlueJaja,
         // marginBottom: '3%'
     },

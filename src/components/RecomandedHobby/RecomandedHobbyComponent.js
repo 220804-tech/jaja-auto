@@ -49,6 +49,7 @@ export default function RecomandedHobbyComponent(props) {
         fetch(`https://jaja.id/backend/product/recommendation?page=${page + 1}&limit=6`, requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: RecomandedHobbyComponent.js ~ line 52 ~ getData ~ result", result)
                 if (result.status.code == 200) {
                     dispatch({ type: 'SET_DASHRECOMMANDED', payload: reduxdashRecommanded.concat(result.data.items) })
                     EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))

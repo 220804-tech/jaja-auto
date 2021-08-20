@@ -42,6 +42,9 @@ export default class CountdownComponent extends React.Component {
             if (String(minutes).length == 1) {
                 minutes = '0' + minutes;
             }
+            if (String(hours).length == 1) {
+                hours = '0' + hours;
+            }
             if (res && hours + "" + minutes == String(res.timeNow.replace(/:/g, "").slice(0, 4))) {
                 if (String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") < "180000" && String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") <= "240000") {
                     this.timeToSeconds(res.timeNow, "first")

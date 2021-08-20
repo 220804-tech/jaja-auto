@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react'
 import { View, ScrollView, TouchableOpacity } from 'react-native'
-import { styles, colors, Ps, Wp, FastImage } from '../../export'
+import { colors, Ps, Wp, FastImage } from '../../export'
 import LinearGradient from 'react-native-linear-gradient';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 
@@ -17,7 +17,13 @@ export default function CardProduct() {
                             style={Ps.cardProduct}
                             key={item}>
                             <FastImage
-                                style={[Ps.imageProduct, { backgroundColor: colors.Silver }]}
+                                style={{
+                                    backgroundColor: colors.Silver,
+                                    width: Wp("44%"),
+                                    height: Wp("44%"),
+                                    borderTopLeftRadius: 3,
+                                    borderTopRightRadius: 3,
+                                }}
                                 source={require('../../assets/images/JajaId.png')}
                                 resizeMode={FastImage.resizeMode.contain}
                                 tintColor={colors.White}

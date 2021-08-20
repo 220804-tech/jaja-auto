@@ -1,5 +1,5 @@
 import React, { useEffect, useState, createRef, useCallback } from 'react'
-import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, StyleSheet, StatusBar, Platform, Dimensions, LogBox, ToastAndroid, RefreshControl, Alert, ScrollView } from 'react-native'
+import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, StyleSheet, StatusBar, Animated, Platform, Dimensions, LogBox, ToastAndroid, RefreshControl, Alert, ScrollView } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { Button } from 'react-native-paper'
@@ -9,6 +9,8 @@ const IS_IPHONE_X = SCREEN_HEIGHT === 812 || SCREEN_HEIGHT === 896;
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
 const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
+const { height: hg } = Dimensions.get('screen')
+
 import { useDispatch, useSelector } from "react-redux";
 import StarRating from 'react-native-star-rating';
 LogBox.ignoreAllLogs()
@@ -22,6 +24,8 @@ export default function ProductScreen(props) {
     const reduxStore = useSelector(state => state.store.store)
 
     const dispatch = useDispatch()
+
+    const [scrollY, setscrollY] = useState(new Animated.Value(0))
 
     const [refreshing, setRefreshing] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -37,6 +41,7 @@ export default function ProductScreen(props) {
     const [productId, setproductId] = useState("")
     const [flashsale, setFlashsale] = useState(false)
     const [flashsaleData, setFlashsaleData] = useState({})
+    console.log("🚀 ~ file: ProductScreen.js ~ line 44 ~ ProductScreen ~ flashsaleData", flashsaleData)
     const [variantId, setvariantId] = useState("")
     const [lelangId, setlelangId] = useState("")
     const [qty, setqty] = useState(1)
@@ -79,6 +84,11 @@ export default function ProductScreen(props) {
                 if (res.flashsale && Object.keys(res.flashsale).length) {
                     setFlashsale(true)
                     setFlashsaleData(res.flashsale)
+                    if (res.flashsale.stokFlash <= 0) {
+                        setdisableCart(true)
+                    } else {
+                        setdisableCart(false)
+                    }
                 } else {
                     setFlashsale(false)
                 }
@@ -173,10 +183,10 @@ export default function ProductScreen(props) {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Content-Type", "application/json");
-
+        console.log("🚀 ~ file: ProductScreen.js ~ line 215 ~ handleApiCart ~ flashsaleData", flashsaleData.id_flashsale)
         var raw = JSON.stringify({
             "productId": idProduct,
-            "flashSaleId": flashsale ? flashSaleId : "",
+            "flashSaleId": flashsale ? flashsaleData.id_flashsale : "",
             "lelangId": "",
             "variantId": variasiPressed,
             "qty": qty
@@ -333,6 +343,16 @@ export default function ProductScreen(props) {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
         navigation.navigate("Product", { slug: item.slug, image: item.image })
     }
+    const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+        return layoutMeasurement.height + contentOffset.y >=
+            contentSize.height - (hg * 0.80) || layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 0.05)
+    }
+    const loadMoreData = () => {
+        if (reduxLoadmore === false) {
+            // console.log("masuk as")
+            dispatch({ 'type': 'SET_LOADMORE', payload: true })
+        }
+    }
     const renderContent = () => {
         return (
             <View style={[styles.column, { backgroundColor: '#e8e8e8', paddingBottom: Hp('6%') }]}>
@@ -373,10 +393,10 @@ export default function ProductScreen(props) {
                                     :
                                     <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{variasiSelected.price}</Text>
                                 :
-                                reduxSearch.productDetail.isDiscount ?
+                                flashsale ?
                                     <View style={styles.row}>
                                         <View style={[styles.row_center, { width: Wp('11%'), height: Wp('11%'), backgroundColor: colors.RedFlashsale, padding: '1.5%', borderRadius: 5, marginRight: '2%' }]}>
-                                            <Text style={{ fontSize: 14, color: colors.White, fontWeight: 'bold' }}>50%</Text>
+                                            <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{flashsaleData.discountFlash}%</Text>
                                         </View>
                                         <View style={styles.column}>
                                             <Text style={Ps.priceBefore}>{reduxSearch.productDetail.price}</Text>
@@ -384,7 +404,18 @@ export default function ProductScreen(props) {
                                         </View>
                                     </View>
                                     :
-                                    <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{reduxSearch.productDetail.price}</Text>
+                                    reduxSearch.productDetail.isDiscount ?
+                                        <View style={styles.row}>
+                                            <View style={[styles.row_center, { width: Wp('11%'), height: Wp('11%'), backgroundColor: colors.RedFlashsale, padding: '1.5%', borderRadius: 5, marginRight: '2%' }]}>
+                                                <Text style={{ fontSize: 14, color: colors.White, fontWeight: 'bold' }}>{reduxSearch.productDetail.discount}%</Text>
+                                            </View>
+                                            <View style={styles.column}>
+                                                <Text style={Ps.priceBefore}>{reduxSearch.productDetail.price}</Text>
+                                                <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{reduxSearch.productDetail.priceDiscount}</Text>
+                                            </View>
+                                        </View>
+                                        :
+                                        <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{reduxSearch.productDetail.price}</Text>
                             }
 
                             <View style={[styles.row_between_center, styles.mt_3]}>
@@ -629,7 +660,25 @@ export default function ProductScreen(props) {
                 alwaysShowTitle={false}
                 scrollViewProps={{
                     nestedScrollEnabled: true,
-                    refreshControl: <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    refreshControl: <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />,
+                    onScroll: Animated.event(
+                        [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                        Platform.OS === "android" ?
+                            {
+                                listener: event => {
+                                    if (isCloseToBottom(event.nativeEvent)) {
+                                        console.log("oNSCROLL ");
+                                        loadMoreData()
+                                    }
+                                }
+                            }
+                            : null
+                    ),
+                    onMomentumScrollEnd: ({ nativeEvent }) => {
+                        if (isCloseToBottom(nativeEvent)) {
+                            loadMoreData()
+                        }
+                    }
                 }}
             />
 

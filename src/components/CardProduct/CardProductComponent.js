@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native'
 import { useDispatch } from 'react-redux'
-import { colors, FastImage, Ps, useNavigation, Wp } from '../../export'
+import { colors, FastImage, Ps, styles, useNavigation, Wp } from '../../export'
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 import LinearGradient from 'react-native-linear-gradient';
+import { Item } from 'react-native-paper/lib/typescript/components/List/List'
 
 export default function CardProductComponent(props) {
     const navigation = useNavigation()
@@ -42,6 +43,7 @@ export default function CardProductComponent(props) {
             keyExtractor={(item, index) => String(item.id) + index + "XH"}
             contentContainerStyle={{ justifyContent: 'space-between' }}
             renderItem={({ item, index }) => {
+                console.log("🚀 ~ file: CardProductComponent.js ~ line 46 ~ CardProductComponent ~ item", item)
                 return (
                     <>
                         {!item.loading ?
@@ -50,15 +52,20 @@ export default function CardProductComponent(props) {
                                 style={[Ps.cardProduct, { marginRight: '3.5%' }]}
                                 key={index}>
                                 {item.isDiscount ? <Text style={Ps.textDiscount}>{item.discount}%</Text> : null}
-                                <FastImage
-                                    style={Ps.imageProduct}
-                                    source={{
-                                        uri: item.image,
-                                        headers: { Authorization: 'someAuthToken' },
-                                        priority: FastImage.priority.normal,
-                                    }}
-                                    resizeMode={FastImage.resizeMode.contain}
-                                />
+                                <View style={[styles.column, { height: Wp('44%'), width: Wp('44%'), borderTopLeftRadius: 3, borderTopRightRadius: 3 }]}>
+                                    <FastImage
+                                        style={Ps.imageProduct}
+                                        source={{
+                                            uri: item.image,
+                                            headers: { Authorization: 'someAuthToken' },
+                                            priority: FastImage.priority.normal,
+                                        }}
+                                        resizeMode={FastImage.resizeMode.contain}
+                                    />
+                                    <View style={[styles.font_14, styles.px_5, styles.py, { position: 'absolute', bottom: 0, backgroundColor: colors.BlueJaja, borderTopRightRadius: 11, justifyContent: 'center', alignItems: 'center' }]}>
+                                        <Text style={[styles.font_9, { marginBottom: '-2%', marginLeft: '-1.5%', color: colors.White }]}>Gratis Ongkir</Text>
+                                    </View>
+                                </View>
                                 <View style={Ps.bottomCard}>
                                     <Text
                                         numberOfLines={2}
@@ -68,61 +75,30 @@ export default function CardProductComponent(props) {
                                     {item.isDiscount ?
                                         <>
                                             <Text style={Ps.priceBefore}>{item.price}</Text>
-                                            <Text style={Ps.priceAfter}>{item.priceDiscount}</Text>
+                                            <View style={styles.row_start_center}>
+                                                <Text style={Ps.priceAfter}>{item.priceDiscount}</Text>
+                                                {item.isFlashsale ? <Image style={[styles.icon_16, { tintColor: colors.RedFlashsale, marginTop: '-1.5%', marginLeft: '2%' }]} source={require('../../assets/icons/flash.png')} /> : null}
+                                            </View>
                                         </>
                                         :
-                                        <Text style={[Ps.price, { fontWeight: 'bold', color: colors.BlueJaja }]}>{item.price}</Text>
+                                        <Text style={[Ps.price, { color: colors.BlueJaja }]}>{item.price}</Text>
                                     }
                                 </View>
-                                <View style={Ps.location}>
-                                    <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
-                                    <Text style={Ps.locarionName}>{item.location}</Text>
+                                <View style={[Ps.cardBottom, styles.py]}>
+                                    <View style={[Ps.location]}>
+                                        <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
+                                        <Text style={[Ps.locarionName]}>{item.location}</Text>
+                                    </View>
+                                    {item.freeOngkir == 'Y' ?
+                                        <View style={{ width: Wp('7%'), height: Wp('7%'), justifyContent: 'center' }}>
+                                            <Image style={[{ width: '100%', height: '100%', margin: 0 }]} source={require('../../assets/icons/free-delivery.png')} />
+                                        </View>
+                                        : null}
+
                                 </View>
                             </TouchableOpacity>
                             :
-                            <TouchableOpacity
-                                style={[Ps.cardProduct, { marginRight: '3.5%' }]}
-                                key={item}>
-                                <FastImage
-                                    style={[Ps.imageProduct, { backgroundColor: colors.Silver }]}
-                                    source={require('../../assets/images/JajaId.png')}
-                                    resizeMode={FastImage.resizeMode.contain}
-                                    tintColor={colors.White}
-
-                                />
-                                <View style={[Ps.bottomCard, { height: Wp('31%') }]}>
-                                    <ShimmerPlaceHolder
-                                        LinearGradient={LinearGradient}
-                                        width={Wp('40%')}
-                                        height={Wp("4%")}
-                                        style={{ borderRadius: 1, marginBottom: '2%' }}
-                                        shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
-                                    />
-                                    <ShimmerPlaceHolder
-                                        LinearGradient={LinearGradient}
-                                        width={Wp('30%')}
-                                        height={Wp("4%")}
-                                        style={{ borderRadius: 1, marginBottom: '5%' }}
-                                        shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
-                                    />
-                                    <ShimmerPlaceHolder
-                                        LinearGradient={LinearGradient}
-                                        width={Wp('20%')}
-                                        height={Wp("4%")}
-                                        style={{ borderRadius: 1, marginBottom: '7%' }}
-                                        shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
-                                    />
-                                    <View style={{ position: 'absolute', bottom: 0, padding: '4%' }}>
-                                        <ShimmerPlaceHolder
-                                            LinearGradient={LinearGradient}
-                                            width={Wp('30%')}
-                                            height={Wp("4%")}
-                                            style={{ borderRadius: 1, marginBottom: '5%' }}
-                                            shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
-                                        />
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
+                            null
                         }
                     </>
                 )
