@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { View, Text, FlatList, Image, TouchableOpacity, RefreshControl, ToastAndroid } from 'react-native'
+import { View, Text, FlatList, Image, RefreshControl, ToastAndroid } from 'react-native'
 import { colors, styles, Wp, ServiceOrder, useNavigation, Os, DefaultNotFound } from '../../export';
 import { Button } from 'react-native-paper'
 import EncryptedStorage from 'react-native-encrypted-storage';
-
 import { useSelector, useDispatch } from 'react-redux'
+import { TouchableOpacity } from 'react-native-gesture-handler';
 export default function OrdersUnpaid() {
     const navigation = useNavigation()
     const dispatch = useDispatch()
@@ -79,7 +79,6 @@ export default function OrdersUnpaid() {
                                                     <Text numberOfLines={1} style={[styles.font_12, {}]}>{child.store.name}</Text>
                                                 </View>
                                             </View>
-
                                             <View style={[styles.row, styles.mb, styles.px_2, { width: '100%' }]}>
                                                 <Image style={Os.image}
                                                     resizeMethod={"scale"}

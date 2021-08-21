@@ -44,8 +44,13 @@
 # 12026 => Error get nearest product
 
 
-## Trolley/Cart
+## Trolley(Cart)
 # 12027 => Error edit quantity 
+
+
+## Profile
+# 12028, 12029 => Error edit profile
+# 12030, 12031 => Error add account bank
 
 
 ## Category Component

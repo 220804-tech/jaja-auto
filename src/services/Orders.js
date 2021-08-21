@@ -19,7 +19,7 @@ export async function getUnpaid(auth) {
         return await fetch("https://jaja.id/backend/order?page=1&limit=50&status=notPaid", requestOptions)
             .then(response => response.json())
             .then(result => {
-                if (result.status.code === 200 || result.status.code === 204) {
+                if (result && Object.keys(result).length && result.status.code === 200 || result.status.code === 204) {
                     return result.data;
                 } else {
                     Utils.handleErrorResponse(result, "Error with status code : 12003")
@@ -50,7 +50,7 @@ export async function getWaitConfirm(auth) {
         return await fetch("https://jaja.id/backend/order?page=1&limit=50&status=waitConfirm", requestOptions)
             .then(response => response.json())
             .then(result => {
-                if (result.status.code === 200 || result.status.code === 204) {
+                if (result && Object.keys(result).length && result.status.code === 200 || result.status.code === 204) {
                     return result.data;
                 } else {
                     Utils.handleErrorResponse(result, "Error with status code : 12005")
@@ -81,7 +81,7 @@ export async function getProcess(auth) {
         return await fetch("https://jaja.id/backend/order?page=1&limit=10&status=prepared", requestOptions)
             .then(response => response.json())
             .then(result => {
-                if (result.status.code === 200 || result.status.code === 204) {
+                if (result && Object.keys(result).length && result.status.code === 200 || result.status.code === 204) {
                     return result.data;
                 } else {
                     Utils.handleErrorResponse(result, "Error with status code : 12007")
@@ -112,7 +112,7 @@ export async function getSent(auth) {
         return await fetch("https://jaja.id/backend/order?page=1&limit=10&status=sent", requestOptions)
             .then(response => response.json())
             .then(result => {
-                if (result.status.code === 200 || result.status.code === 204) {
+                if (result && Object.keys(result).length && result.status.code === 200 || result.status.code === 204) {
                     return result.data;
                 } else {
                     Utils.handleErrorResponse(result, "Error with status code : 12009")
@@ -143,7 +143,7 @@ export async function getCompleted(auth) {
         return await fetch("https://jaja.id/backend/order?page=1&limit=10&status=done", requestOptions)
             .then(response => response.json())
             .then(result => {
-                if (result.status.code === 200 || result.status.code === 204) {
+                if (result && Object.keys(result).length && result.status.code === 200 || result.status.code === 204) {
                     return result.data;
                 } else {
                     Utils.handleErrorResponse(result, "Error with status code : 120011")
@@ -174,7 +174,7 @@ export async function getFailed(auth) {
         return await fetch("https://jaja.id/backend/order?page=1&limit=50&status=canceled", requestOptions)
             .then(response => response.json())
             .then(result => {
-                if (result.status.code === 200 || result.status.code === 204) {
+                if (result && Object.keys(result).length && result.status.code === 200 || result.status.code === 204) {
                     return result.data;
                 } else {
                     Utils.handleErrorResponse(result, "Error with status code : 12013")

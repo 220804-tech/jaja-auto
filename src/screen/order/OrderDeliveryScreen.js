@@ -10,7 +10,9 @@ export default function OrderDeliveryScreen() {
     const dispatch = useDispatch()
     const reduxTracking = useSelector(state => state.order.tracking)
     const reduxReceipt = useSelector(state => state.order.receipt)
+    console.log("🚀 ~ file: OrderDeliveryScreen.js ~ line 13 ~ OrderDeliveryScreen ~ reduxReceipt", reduxReceipt)
     const reduxInvoice = useSelector(state => state.order.invoice)
+    console.log("🚀 ~ file: OrderDeliveryScreen.js ~ line 15 ~ OrderDeliveryScreen ~ reduxInvoice", reduxInvoice)
     const reduxAuth = useSelector(state => state.auth.auth)
 
 

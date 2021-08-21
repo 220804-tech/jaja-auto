@@ -230,13 +230,10 @@ export default function Lainnya() {
         fetch("https://jaja.id/backend/user/profile", requestOptions)
             .then(response => response.text())
             .then(result => {
-                console.log("🚀 ~ file: AccountScreen.js ~ line 219 ~ handleSimpan ~ result", result)
+                setTimeout(() => setloading(false), 500);
                 setshowButton(false)
                 if (result.status.code === 200) {
                     getItem()
-                    setTimeout(() => {
-                        setloading(false)
-                    }, 500);
                     setTimeout(() => {
                         Alert.alert(
                             "Jaja.id",
@@ -251,43 +248,13 @@ export default function Lainnya() {
                         );
                     }, 600);
                 } else {
-                    setTimeout(() => {
-                        setloading(false)
-                    }, 200);
-                    setTimeout(() => {
-                        Alert.alert(
-                            "Jaja.id",
-                            result.status.message + " => " + result.status.code, [
-                            {
-                                text: "Ok",
-                                onPress: () => console.log("Pressed"),
-                                style: "cancel"
-                            },
-                        ],
-                            { cancelable: false }
-                        );
-                    }, 300);
+                    Utils.handleErrorResponse(result, "Error with status code: 12028")
                 }
-
             })
             .catch(error => {
+                Utils.handleError(error, "Error with status code : 12029")
                 console.log("🚀 ~ file: AccountScreen.js ~ line 259 ~ handleSimpan ~ error", error)
-                setTimeout(() => {
-                    setloading(false)
-                }, 300);
-                // setTimeout(() => {
-                //     Alert.alert(
-                //         "Jaja.id",
-                //         "Periksa koneksi anda atau coba lagi nanti", [
-                //         {
-                //             text: "Ok",
-                //             onPress: () => console.log("Pressed"),
-                //             style: "cancel"
-                //         },
-                //     ],
-                //         { cancelable: false }
-                //     );
-                // }, 400);
+                setloading(false)
             });
     }
     const confirmPassword = (e) => {
@@ -549,7 +516,7 @@ export default function Lainnya() {
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={() => handleEdit("Account Bank")}>
+                <TouchableWithoutFeedback onPress={() => navigation.navigate('AddAccount')}>
                     <View style={styles.form}>
                         <Text adjustsFontSizeToFit style={styles.formTitle}>Rekening</Text>
                         <View style={styles.formItem}>

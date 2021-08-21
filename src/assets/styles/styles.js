@@ -175,10 +175,10 @@ export const styles = StyleSheet.create({
         borderTopRightRadius: 25,
         paddingTop: 25,
     },
-    search: { flexDirection: 'row', paddingHorizontal: '3%', borderRadius: 5, flex: 1, marginHorizontal: '0.5%', marginVertical: '3%', backgroundColor: colors.Silver },
+    search: { flexDirection: 'row', paddingHorizontal: '3%', borderRadius: 5, flex: 1, marginHorizontal: '0.5%', marginVertical: '3%', backgroundColor: colors.WhiteSilver },
 
     searchBar: { flex: 0, flexDirection: 'row', backgroundColor: colors.White, borderRadius: 11, height: '77%', width: '90%', alignItems: 'center', paddingHorizontal: '4%' },
 
     FL_TouchAble: { borderBottomColor: colors.Silver, borderBottomWidth: 1, paddingVertical: '3%' },
-    FL_TouchAbleItem: { fontSize: 14, fontWeight: "bold", color: colors.BlackGrayScale },
+    FL_TouchAbleItem: { fontSize: 14, fontFamily: 'Poppins-Medium', color: colors.BlackGrayScale },
 });
