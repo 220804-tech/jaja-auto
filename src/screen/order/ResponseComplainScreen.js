@@ -54,7 +54,6 @@ export default function ResponseComplain() {
         fetch(`https://jaja.id/backend/order/komplainDetail?invoice=${reduxInvoice}`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: ResponseComplainScreen.js ~ line 51 ~ useEffect ~ result", result)
                 if (result.status.code === 200) {
                     let res = result.data[0];
                     let imgLength = 0
@@ -64,10 +63,10 @@ export default function ResponseComplain() {
                     if (res.gambar3) imgLength += 1
                     setImageLength(imgLength)
                 } else {
-                    Utils.handleResponse(result)
+                    Utils.handleErrorResponse(result, "Error with status code : 12032")
                 }
             })
-            .catch(error => Utils.handleError(error, "Error get detail complain"));
+            .catch(error => Utils.handleError(error, "Error with status code : 12033"));
     }
 
     const onRefresh = useCallback(() => {
@@ -94,10 +93,10 @@ export default function ResponseComplain() {
                 if (result.status.code == 200) {
                     getItem()
                 } else {
-                    Utils.handleResponse(result)
+                    Utils.handleErrorResponse(result, "Error with status code : 12034")
                 }
             })
-            .catch(error => Utils.handleError(error, "Error input receipt number"));
+            .catch(error => Utils.handleError(error, "Error with status codde : 12035"));
     }
 
     const handleAccept = () => {
@@ -133,10 +132,10 @@ export default function ResponseComplain() {
                                 if (result.status.code === 200) {
                                     navigation.navigate('Pesanan')
                                 } else {
-                                    Utils.handleResponse(result)
+                                    Utils.handleErrorResponse(result, "Error with status code : 12036")
                                 }
                             })
-                            .catch(error => Utils.handleError(error, "Error order confirm"));
+                            .catch(error => Utils.handleError(error, "Error with staus code : 12037"));
                     }
                 }
             ],

@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { View, Text, FlatList, Image, TouchableOpacity, RefreshControl, ToastAndroid } from 'react-native'
+import { View, Text, FlatList, Image, RefreshControl, ToastAndroid } from 'react-native'
 import { colors, styles, Wp, ServiceOrder, useNavigation, Os, DefaultNotFound } from '../../export';
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { Button } from 'react-native-paper'
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default function OrdersSent() {
     const navigation = useNavigation()
@@ -85,7 +86,7 @@ export default function OrdersSent() {
                             <TouchableOpacity style={Os.card} onPress={() => handleOrderDetails(item)}>
                                 <View style={[styles.row_between_center, styles.px_2, styles.mb_3, { width: '100%' }]}>
                                     <View style={[styles.row_start_center, { width: '45%' }]}>
-                                        <Image style={{ width: Wp('8%'), height: Wp('8%'), borderRadius: 100, marginRight: '5%', resizeMode: 'contain' }} source={{ uri: item.store.image }} />
+                                        <Image style={{ width: Wp('8%'), height: Wp('8%'), borderRadius: 100, marginRight: '5%', resizeMode: 'contain' }} source={{ uri: item.store.image ? item.store.image : null }} />
                                         <Text numberOfLines={1} style={[styles.font_12, {}]}>{item.store.name}</Text>
                                     </View>
                                     <View style={[styles.row_end_center, { width: '40%', }]}>
@@ -97,7 +98,7 @@ export default function OrdersSent() {
                                     <Image style={Os.image}
                                         resizeMethod={"scale"}
                                         resizeMode="cover"
-                                        source={{ uri: item.products[0].image }}
+                                        source={{ uri: item.products[0].image ? item.products[0].image : null }}
                                     />
                                     <View style={[styles.column_between_center, styles.px_2, { alignItems: 'flex-start', height: Wp('17%'), width: '83%' }]}>
                                         <View style={[styles.column, { width: '100%' }]}>

@@ -70,12 +70,12 @@ export async function deleteCart(auth, idCart) {
             if (result.status.code === 200) {
                 return 200;
             } else {
-                Utils.handleResponse(result)
+                Utils.handleErrorResponse(result, "Error with status code : 12040")
                 return null
             }
         })
         .catch(error => {
-            Utils.handleError(error, "Error delete cart")
+            Utils.handleError(error, "Error with status code : 12041")
             return null
         });
 }

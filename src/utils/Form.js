@@ -39,54 +39,29 @@ export async function CheckSignal() {
     return signalInfo
 }
 
-export function handleResponse(error) {
-    if (error && Object.keys(error).length && error.status.code !== 200 && error.status.code !== 204) {
-        Alert.alert(
-            "Error with status 21001",
-            String(error.status.message) + " => " + String(error.status.code),
-            [
-                {
-                    text: "TUTUP",
-                    onPress: () => console.log("Cancel Pressed"),
-                    style: "cancel"
-                }
-            ],
-            { cancelable: false }
-        );
-    } else {
-        Alert.alert(
-            "Error with status 21002",
-            String(error),
-            [
-                {
-                    text: "TUTUP",
-                    onPress: () => console.log("Cancel Pressed"),
-                    style: "cancel"
-                }
-            ],
-            { cancelable: false }
-        );
-    }
-}
 
 export function handleErrorResponse(error, errorCode) {
     if (error && Object.keys(error).length && error.status.code !== 200 && error.status.code !== 204) {
-        Alert.alert(
-            errorCode,
-            String(error.status.message) + " => " + String(error.status.code),
-            [
-                {
-                    text: "TUTUP",
-                    onPress: () => console.log("Cancel Pressed"),
-                    style: "cancel"
-                }
-            ],
-            { cancelable: false }
-        );
+        if (error.status.message) {
+            ToastAndroid.show(String(result.status.message), ToastAndroid.LONG, ToastAndroid.CENTER)
+        } else {
+            Alert.alert(
+                errorCode,
+                String(error.status.message) + " => " + String(error.status.code),
+                [
+                    {
+                        text: "TUTUP",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                    }
+                ],
+                { cancelable: false }
+            );
+        }
     } else {
         Alert.alert(
             errorCode,
-            String(error),
+            "Error response:" + String(error),
             [
                 {
                     text: "TUTUP",
@@ -104,7 +79,7 @@ export function handleError(error, name) {
         ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.TOP)
     } else {
         Alert.alert(
-            `${String(error) + '=> 19001'} `,
+            `${'Error: ' + String(error)} `,
             `${name}`,
             [
                 {

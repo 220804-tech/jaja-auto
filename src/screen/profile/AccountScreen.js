@@ -418,7 +418,6 @@ export default function Lainnya() {
                     if (result.status.code === 200) {
                         setTimeout(() => {
                             setloading(false)
-                            console.log("awkaowkakwakwokawokwoawoakwo");
                             Alert.alert(
                                 "Jaja.id",
                                 "Kata sandi anda berhasil diubah!", [
@@ -433,12 +432,12 @@ export default function Lainnya() {
                         }, 100);
                     } else {
                         setloading(false)
-                        Utils.handleResponse(result)
+                        Utils.handleErrorResponse(result, 'Error with status code : 12038')
                     }
                 })
                 .catch(error => {
                     setloading(false)
-                    Utils.handleError(error, "Error change password")
+                    Utils.handleError(error, "Error with status code : 12039")
                 });
         }
     }

@@ -53,6 +53,19 @@
 # 12030, 12031 => Error add account bank
 
 
+## Komplain
+# 12032, 12033 => Error get detail komplain
+# 12034, 12035 => Error input resi customer
+# 12036, 12037 => Error terima pesanan
+
+## Profile
+# 12038, 12039 => Error change password / add
+
+## Cart 
+# 12040, 12041 => Error delete cart
+
+12040
+
 ## Category Component
 # 13001 => Error api get category 
 ## Recomended Component

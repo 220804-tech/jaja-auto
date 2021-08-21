@@ -108,7 +108,7 @@ export default function AddAccount() {
                     setacc("")
                     setcity("")
                     setbranch_office("")
-                    ToastAndroid('Rekening kamu berhasil ditambahkan', ToastAndroid.BOTTOM, ToastAndroid.SHORT)
+                    ToastAndroid('Rekening kamu berhasil ditambahkan.', ToastAndroid.BOTTOM, ToastAndroid.SHORT)
                     navigation.goBack()
                 } else if (result && Object.keys(result).length && result.status.message) {
                     setAlertRekening(result.status.message)

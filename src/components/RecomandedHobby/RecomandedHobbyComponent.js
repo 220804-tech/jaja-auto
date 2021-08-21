@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, ToastAndroid, StyleSheet, Alert } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { styles, colors, CardProduct, CheckSignal, ShimmerCardProduct } from '../../export'
+import { styles, colors, CardProduct, CheckSignal, ShimmerCardProduct, Utils } from '../../export'
 import EncryptedStorage from 'react-native-encrypted-storage';
 
 export default function RecomandedHobbyComponent(props) {
@@ -46,10 +46,9 @@ export default function RecomandedHobbyComponent(props) {
             redirect: 'follow'
         };
         let res = ""
-        fetch(`https://jaja.id/backend/product/recommendation?page=${page + 1}&limit=6`, requestOptions)
+        fetch(`https://jaja.id/backend/product/recommendation?page=${page + 1}&limit=10`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: RecomandedHobbyComponent.js ~ line 52 ~ getData ~ result", result)
                 if (result.status.code == 200) {
                     dispatch({ type: 'SET_DASHRECOMMANDED', payload: reduxdashRecommanded.concat(result.data.items) })
                     EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))
@@ -58,25 +57,10 @@ export default function RecomandedHobbyComponent(props) {
                     dispatch({ 'type': 'SET_MAX_RECOMMANDED', payload: true })
                 }
                 dispatch({ 'type': 'SET_LOADMORE', payload: false })
-
             })
             .catch(error => {
                 dispatch({ 'type': 'SET_MAX_RECOMMANDED', payload: true })
-
-                CheckSignal().then(signal => {
-                    if (signal.connect == false) {
-                        ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda", ToastAndroid.LONG, ToastAndroid.CENTER)
-                    } else {
-                        Alert.alert(
-                            "Error with status 13002",
-                            JSON.stringify(error),
-                            [
-                                { text: "OK", onPress: () => console.log("OK Pressed") }
-                            ],
-                            { cancelable: false }
-                        );
-                    }
-                })
+                Utils.handleError(error, 'Error with status code : 13002')
                 // ToastAndroid.show(String(error).slice(11, String(error).length), ToastAndroid.SHORT, ToastAndroid.TOP)
             });
         setTimeout(() => {
