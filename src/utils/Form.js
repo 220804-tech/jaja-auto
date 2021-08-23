@@ -61,7 +61,7 @@ export function handleErrorResponse(error, errorCode) {
     } else {
         Alert.alert(
             errorCode,
-            "Error response:" + String(error),
+            "Error response:" + JSON.stringify(error),
             [
                 {
                     text: "TUTUP",
@@ -79,8 +79,8 @@ export function handleError(error, name) {
         ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.TOP)
     } else {
         Alert.alert(
-            `${'Error: ' + String(error)} `,
             `${name}`,
+            `${'Error: ' + String(error)} `,
             [
                 {
                     text: "TUTUP",

@@ -11,14 +11,17 @@ import { colors, styles as style, Wp, useNavigation, Loading, Hp, Appbar, Utils 
 
 export default function Lainnya() {
     const reduxAuth = useSelector(state => state.auth.auth)
+    const reduxUser = useSelector(state => state.user.user)
+
     const dispatch = useDispatch()
     const navigation = useNavigation();
     const actionSheetRef = createRef();
     const passwordRef = createRef();
-
     const imageRef = createRef();
     const [profile, setProfile] = useState([]);
     const [accountBank, setAccountBank] = useState("");
+    const [accountShow, setAccountShow] = useState(true);
+
     const [email, setemail] = useState("");
     const [name, setname] = useState("");
     const [date, setdate] = useState("");
@@ -77,34 +80,13 @@ export default function Lainnya() {
                         setphoto(image)
                         setemail(result.data.email)
                         setview(result.data.havePassword)
-                        setAccountBank(result.data.accountBank)
                     } else {
-                        Alert.alert(
-                            "Jaja.id",
-                            result.status.message + " => " + result.status.code, [
-                            {
-                                text: "Ok",
-                                onPress: () => console.log("Pressed"),
-                                style: "cancel"
-                            },
-                        ],
-                            { cancelable: false }
-                        );
+                        Utils.handleErrorResponse(result, 'Error with status code : 12044')
                     }
 
                 })
                 .catch(error => {
-                    Alert.alert(
-                        "Jaja.id",
-                        "Periksa koneksi anda atau coba lagi nanti!", [
-                        {
-                            text: "Ok",
-                            onPress: () => console.log("Pressed"),
-                            style: "cancel"
-                        },
-                    ],
-                        { cancelable: false }
-                    );
+                    Utils.handleError(error, "Error with status code : 12045")
                 });
         } catch (error) {
         }
@@ -120,7 +102,38 @@ export default function Lainnya() {
         setloading(false)
         getItem();
         getData();
+        getAccount()
     }, []);
+
+
+    const getAccount = () => {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", reduxAuth);
+        myHeaders.append("Cookie", "ci_session=71o6pecall1g4dt83l7a6vhl4igak0ms");
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        fetch(`https://jaja.id/backend/order/ListRekening?id_customer=${reduxUser.id}`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                if (result && Object.keys(result).length && result.status.code == 200) {
+                    setAccountShow(true)
+                    setAccountBank(String(result.data.items[0].name).slice(0, 4).toLocaleUpperCase() + "-" + String(result.data.items[0].account).slice(0, 4) + "XXXXXX")
+                } else {
+                    setAccountShow(false)
+                    setAccountBank('')
+                }
+            })
+            .catch(error => {
+                setAccountBank('')
+                setAccountShow(false)
+                Utils.handleError(error, "Error with status code : 12042")
+            });
+    }
 
     const getData = async () => {
         // try {
@@ -191,7 +204,6 @@ export default function Lainnya() {
     const handleUpdate = (date, image) => {
         console.log("🚀 ~ file: AccountScreen.js ~ line 195 ~ handleUpdate ~ date", date.split("-").reverse().join("-"))
         console.log("🚀 ~ file: AccountScreen.js ~ line 195 ~ handleUpdate ~ date", date.split("-").reverse().join("-") === profile.birthDate)
-
 
         console.log("🚀 ~ file: AccountScreen.js ~ line 195 ~ handleUpdate ~ date", profile.birthDate)
 
@@ -363,32 +375,12 @@ export default function Lainnya() {
                         }
                     } else {
                         setloading(false)
-                        Alert.alert(
-                            "Jaja.id",
-                            String(result.status.message) + " :" + String(result.status.code), [
-                            {
-                                text: "Ok",
-                                onPress: () => console.log("Pressed"),
-                                style: "cancel"
-                            },
-                        ],
-                            { cancelable: false }
-                        );
+                        Utils.handleErrorResponse(result, "Error with status code : 12046")
                     }
                 })
                 .catch(error => {
                     setloading(false)
-                    Alert.alert(
-                        "Jaja.id",
-                        String(error), [
-                        {
-                            text: "Ok",
-                            onPress: () => console.log("Pressed"),
-                            style: "cancel"
-                        },
-                    ],
-                        { cancelable: false }
-                    );
+                    Utils.handleError(error, "Error with status code : 12047")
                 });
         }
     }
@@ -445,7 +437,7 @@ export default function Lainnya() {
         <SafeAreaView style={style.container}>
             {loading ? <Loading /> : null}
             {/* <View style={styles.header}> */}
-            <Appbar back={true} title="Akun Profile" />
+            <Appbar back={true} title="Pengaturan Akun" />
             {/* <Image style={styles.imageHeader} source={require('../../icon/head2.png')} /> */}
             {/* </View> */}
             {/* </View> */}
@@ -459,7 +451,6 @@ export default function Lainnya() {
                         </TouchableOpacity>
                     </View>
                 </View>
-
                 <TouchableWithoutFeedback onPress={() => handleEdit("Nama Lengkap")}>
                     <View style={styles.form}>
                         <Text adjustsFontSizeToFit style={styles.formTitle}>Nama Lengkap</Text>
@@ -515,20 +506,17 @@ export default function Lainnya() {
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={() => navigation.navigate('AddAccount')}>
+                <TouchableWithoutFeedback onPress={() => accountShow ? null : navigation.navigate('AddAccount')}>
                     <View style={styles.form}>
                         <Text adjustsFontSizeToFit style={styles.formTitle}>Rekening</Text>
                         <View style={styles.formItem}>
-                            <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{accountBank ? accountBank : 'Tambah Rekening'}</Text>
-                            <Text adjustsFontSizeToFit style={styles.ubah}>{accountBank ? "Ubah" : "Tambah"}</Text>
+                            <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{accountShow ? accountBank : 'Tambah Rekening'}</Text>
+                            {!accountShow ? <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text> : null}
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
                 {showButton ? <Button onPress={handleSimpan} color={colors.BlueJaja} mode="contained" labelStyle={{ color: colors.White }}>Simpan</Button> : null}
             </View>
-
-
-
 
             <ActionSheet onClose={() => handleUpdate(date, photo)} footerHeight={80} containerStyle={{ paddingHorizontal: '4%', paddingTop: '1%' }}
                 ref={actionSheetRef}>
@@ -585,7 +573,6 @@ export default function Lainnya() {
                                             },
                                         }}
                                     />
-                                    {/* <Image /> */}
                                 </View>
                             </View>
                             : open === "Jenis Kelamin" ?
@@ -613,30 +600,8 @@ export default function Lainnya() {
                                         <Text adjustsFontSizeToFit style={style.font14}>Perempuan</Text>
                                     </View>
                                 </View>
-                                : open === "Account Bank" ?
-                                    <View style={styles.form}>
-                                        <Text adjustsFontSizeToFit style={styles.formTitle}>{open}</Text>
-                                        <View style={[styles.formItem, { paddingBottom: '1%', borderBottomColor: textInputColor, borderBottomWidth: 1 }]}>
-                                            {/* <Text adjustsFontSizeToFit style={styles.formPlaceholder}>Testing toko</Text> */}
-                                            <TextInput
-                                                style={styles.inputbox}
-                                                placeholder="Masukkan nomor akun"
-                                                value={accountBank}
-                                                onFocus={() => settextInputColor(colors.BlueJaja)}
-                                                onBlur={() => settextInputColor('#C0C0C0')}
-                                                keyboardType="numeric"
-                                                maxLength={13}
-                                                onChangeText={(text) => setAccountBank(text)}
-                                                theme={{
-                                                    colors: {
-                                                        primary: colors.BlueJaja,
-                                                    },
-                                                }}
-                                            />
-                                            {/* <Image /> */}
-                                        </View>
-                                    </View>
-                                    : null}
+                                : null
+                    }
                 </View>
             </ActionSheet >
             <ActionSheet onClose={() => handleUpdate(date, photo)} footerHeight={80} containerStyle={{ paddingHorizontal: '4%', paddingTop: '1%' }}

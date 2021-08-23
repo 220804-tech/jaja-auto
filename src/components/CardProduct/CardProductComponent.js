@@ -61,9 +61,13 @@ export default function CardProductComponent(props) {
                                         }}
                                         resizeMode={FastImage.resizeMode.contain}
                                     />
-                                    <View style={[styles.font_14, styles.px_5, styles.py, { position: 'absolute', bottom: 0, backgroundColor: colors.BlueJaja, borderTopRightRadius: 11, justifyContent: 'center', alignItems: 'center' }]}>
-                                        <Text style={[styles.font_9, { marginBottom: '-2%', marginLeft: '-1.5%', color: colors.White }]}>Gratis Ongkir</Text>
-                                    </View>
+                                    {item.freeOngkir == 'Y' ?
+                                        <View style={[styles.font_14, styles.px_5, styles.py, { position: 'absolute', bottom: 0, backgroundColor: colors.RedFlashsale, borderTopRightRadius: 11, justifyContent: 'center', alignItems: 'center' }]}>
+                                            <Text style={[styles.font_10, styles.T_medium, { marginBottom: '-2%', marginLeft: '-1.5%', color: colors.White }]}>Gratis Ongkir</Text>
+                                        </View>
+                                        : null
+                                    }
+                                    
                                 </View>
                                 <View style={Ps.bottomCard}>
                                     <Text
@@ -88,11 +92,11 @@ export default function CardProductComponent(props) {
                                         <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
                                         <Text style={[Ps.locarionName]}>{item.location}</Text>
                                     </View>
-                                    {item.freeOngkir == 'Y' ?
-                                        <View style={{ width: Wp('7%'), height: Wp('7%'), justifyContent: 'center' }}>
+                                    {/* {item.freeOngkir == 'Y' ?
+                                        <View style={{ width: Wp('6%'), height: Wp('6%'), justifyContent: 'center' }}>
                                             <Image style={[{ width: '100%', height: '100%', margin: 0 }]} source={require('../../assets/icons/free-delivery.png')} />
                                         </View>
-                                        : null}
+                                        : null} */}
 
                                 </View>
                             </TouchableOpacity>

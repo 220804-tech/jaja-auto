@@ -14,31 +14,28 @@ export default function ProfileScreen(props) {
   const navigation = useNavigation();
   const dispatch = useDispatch()
   const reduxAuth = useSelector(state => state.auth.auth)
+  const reduxUser = useSelector(state => state.user.user)
   const location = useSelector(state => state.user.user.location)
 
-  const [auth, setAuth] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [account, setAccount] = useState(false)
+
   const reduxProfile = useSelector(state => state.user.user)
-  console.log("🚀 ~ file: ProfileScreen.js ~ line 23 ~ ProfileScreen ~ reduxProfile", reduxProfile.refund)
 
 
   const [navigate, setNavigate] = useState("Akun")
 
 
   useEffect(() => {
-    if (Object.keys(reduxProfile).length === 0) {
+
+    if (reduxProfile && Object.keys(reduxProfile).length == 0) {
       EncryptedStorage.getItem('user').then(res => {
         if (res) {
-          console.log("🚀 ~ file: ProfileScreen.js ~ line 33 ~ EncryptedStorage.getItem ~ res", res)
           dispatch({ type: 'SET_USER', payload: JSON.parse(res) })
         }
       })
     }
-    EncryptedStorage.getItem('token').then(res => {
-      if (res) {
-        setAuth(JSON.stringify(res))
-      }
-    })
+    getAccount()
     getItem()
     // if (!reduxAuth) {
     //   handleAuth('Login')
@@ -50,13 +47,38 @@ export default function ProfileScreen(props) {
     }, []),
   );
 
+  const getAccount = () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", reduxAuth);
+    myHeaders.append("Cookie", "ci_session=71o6pecall1g4dt83l7a6vhl4igak0ms");
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+    fetch(`https://jaja.id/backend/order/ListRekening?id_customer=${reduxUser.id}`, requestOptions)
+
+      .then(response => response.json())
+      .then(result => {
+        console.log("🚀 ~ file: ProfileScreen.js ~ line 64 ~ getAccount ~ result", result)
+        if (result && Object.keys(result).length && result.status.code == 200) {
+          setAccount(true)
+        } else {
+          setAccount(false)
+        }
+      })
+      .catch(error => {
+        setAccount(false)
+        Utils.handleError(error, "Error with status code : 12043")
+      });
+  }
 
   const getItem = () => {
 
     // navigation.navigate("VerifikasiEmail", { email: user.email })
 
     console.log("🚀 ~ file: ProfileScreen.js ~ line 69 ~ getItem ~ reduxAuth", reduxAuth)
-    setAuth(reduxAuth)
   }
 
   const handleLogout = async () => {
@@ -104,14 +126,7 @@ export default function ProfileScreen(props) {
 
   }
 
-  const handleCart = () => {
-    ServiceCart.getCart(auth).then(res => {
-      if (res) {
-        dispatch({ type: 'SET_CART', payload: res })
-      }
-    })
-    navigation.navigate("Trolley")
-  }
+
   const handleAuth = name => {
     navigation.navigate(name, { navigate: name })
   }
@@ -188,33 +203,33 @@ export default function ProfileScreen(props) {
           </View>
         </View>
         <View style={{ flex: 0, flexDirection: 'column', zIndex: 998, backgroundColor: colors.White, height: Hp('85%'), marginTop: Hp('-1%'), borderTopRightRadius: 21, borderTopLeftRadius: 21, paddingHorizontal: '4%', paddingTop: '2%' }}>
-          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate(reduxAuth ? 'Account' : 'Login')}>
-            <Image style={{ width: 27, height: 27, marginRight: '3%' }} source={require(`../../assets/icons/customer.png`)} />
-            <Text style={style.title}>Pengaturan Akun</Text>
-            {reduxProfile.refund ? null : <Text style={[styles.ml_2, { color: colors.RedNotif, fontStyle: 'italic', fontSize: 13 }]}>( Masukkan rekening )</Text>}
+          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Account' : 'Login')}>
+            <Image style={[styles.icon_27, styles.mr_3]} source={require(`../../assets/icons/customer.png`)} />
+            <Text style={[styles.font_14, styles.T_medium, styles.my_4,]}>Pengaturan Akun</Text>
+            {account === true ? null : <Text style={[styles.font_12, styles.T_italic, styles.ml_2, { color: colors.RedNotif }]}>( Masukkan rekening )</Text>}
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate(reduxAuth ? 'Address' : 'Login')}>
-            <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/google-maps.png`)} />
-            <Text style={style.title}>Alamat</Text>
+          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Address' : 'Login')}>
+            <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/google-maps.png`)} />
+            <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Alamat</Text>
             {location && location.length ? null : <Text style={[styles.ml_2, { color: colors.RedNotif, fontStyle: 'italic', fontSize: 13 }]}>( Alamat belum lengkap )</Text>}
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate(reduxAuth ? 'Wishlist' : 'Login')}>
-            <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/love.png`)} />
-            <Text style={style.title}>Favorit</Text>
+          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Wishlist' : 'Login')}>
+            <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/love.png`)} />
+            <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Favorit</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate(reduxAuth ? 'HistoryProduct' : 'Login')}>
-            <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/history.png`)} />
-            <Text style={style.title}>Terakhir Dilihat</Text>
+          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'HistoryProduct' : 'Login')}>
+            <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/history.png`)} />
+            <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Terakhir Dilihat</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate(reduxAuth ? 'Vouchers' : 'Login')}>
-            <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/coupon.png`)} />
-            <Text style={style.title}>Voucher</Text>
+          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Vouchers' : 'Login')}>
+            <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/coupon.png`)} />
+            <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Voucher</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => navigation.navigate(reduxAuth ? 'Reward' : 'Login')}>
-            <Image style={{ width: 27, height: 27, marginRight: '3%', tintColor: colors.BlueJaja }} source={require(`../../assets/icons/star.png`)} />
-            <Text style={style.title}>Reward</Text>
+          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Reward' : 'Login')}>
+            <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/star.png`)} />
+            <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Reward</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={() => {
+          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => {
             Linking.canOpenURL('https://jaja.id/bantuan/').then(supported => {
               console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 82 ~ Linking.canOpenURL ~ supported", supported)
               if (supported) {
@@ -225,14 +240,14 @@ export default function ProfileScreen(props) {
               }
             })
           }}>
-            <Image style={{ width: 27, height: 27, marginRight: '3%' }} source={require(`../../assets/icons/service.png`)} />
-            <Text style={style.title}>Pusat Bantuan</Text>
+            <Image style={[styles.icon_27, styles.mr_3]} source={require(`../../assets/icons/service.png`)} />
+            <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Pusat Bantuan</Text>
 
           </TouchableOpacity>
           {reduxAuth ?
-            <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3 }]} onPress={handleLogout}>
-              <Image style={{ width: 27, height: 27, marginRight: '3%' }} source={require(`../../assets/icons/logout.png`)} />
-              <Text style={style.title}>Keluar</Text>
+            <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={handleLogout}>
+              <Image style={[styles.icon_27, styles.mr_3]} source={require(`../../assets/icons/logout.png`)} />
+              <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Keluar</Text>
 
             </TouchableOpacity>
             : null

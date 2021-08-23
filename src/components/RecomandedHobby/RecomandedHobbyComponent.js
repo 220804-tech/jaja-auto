@@ -46,7 +46,7 @@ export default function RecomandedHobbyComponent(props) {
             redirect: 'follow'
         };
         let res = ""
-        fetch(`https://jaja.id/backend/product/recommendation?page=${page + 1}&limit=10`, requestOptions)
+        fetch(`https://jaja.id/backend/product/recommendation?page=${page + 1}&limit=20`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.status.code == 200) {

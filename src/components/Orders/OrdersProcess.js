@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { View, Text, FlatList, Image, RefreshControl, ToastAndroid, ScrollView } from 'react-native'
+import { View, Text, FlatList, Image, RefreshControl, ToastAndroid, ScrollView, TouchableOpacity } from 'react-native'
 import { colors, styles, Wp, ServiceOrder, useNavigation, Os, DefaultNotFound } from '../../export';
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default function OrdersProcess() {
     const navigation = useNavigation()

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, createRef } from 'react'
 import { View, Text, TouchableOpacity, TextInput, SafeAreaView, Image, TouchableNativeFeedback, ScrollView, FlatList, ToastAndroid } from 'react-native'
-import { styles, colors, useNavigation, Hp, Wp, Appbar, Utils } from '../../export'
+import { styles, colors, useNavigation, Hp, Wp, Appbar, Utils, Loading } from '../../export'
 import ActionSheet from "react-native-actions-sheet";
 import { Button } from 'react-native-paper';
 import { useSelector } from 'react-redux';
@@ -10,8 +10,6 @@ export default function AddAccount() {
     const navigation = useNavigation();
     const reduxAccount = useSelector(state => state.user.seller)
     const reduxAuth = useSelector(state => state.auth.auth)
-
-    console.log("🚀 ~ file: AddAccount.js ~ line 12 ~ AddAccount ~ reduxAccount", reduxAccount)
     const state = useSelector(state => state.state)
     const actionSheetAdd = createRef();
     const actionSheetList = createRef();
@@ -108,7 +106,7 @@ export default function AddAccount() {
                     setacc("")
                     setcity("")
                     setbranch_office("")
-                    ToastAndroid('Rekening kamu berhasil ditambahkan.', ToastAndroid.BOTTOM, ToastAndroid.SHORT)
+                    ToastAndroid.show('Rekening kamu berhasil ditambahkan.', ToastAndroid.LONG, ToastAndroid.CENTER)
                     navigation.goBack()
                 } else if (result && Object.keys(result).length && result.status.message) {
                     setAlertRekening(result.status.message)

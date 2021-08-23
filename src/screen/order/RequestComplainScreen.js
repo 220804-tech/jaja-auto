@@ -242,11 +242,12 @@ export default function Complain() {
                                                     <TextInput
                                                         value={textComplain}
                                                         onChangeText={(text) => settextComplain(text)}
+
                                                         style={{ borderBottomWidth: 0.5, borderBottomColor: colors.Silver, width: Wp('80%'), marginBottom: '3%' }}
                                                         numberOfLines={5}
                                                         multiline={true}
                                                         placeholder="Masukkan alasan komplain"
-
+                                                        placeholderTextColor={colors.BlackGrey}
                                                         textAlignVertical='top'
                                                     />
                                                 </View>
@@ -269,6 +270,7 @@ export default function Complain() {
                                                         style={{ borderBottomWidth: 0.5, width: Wp('80%'), minHeight: Wp('15%'), maxHeight: Wp('100%') }}
                                                         numberOfLines={11}
                                                         multiline={true}
+                                                        placeholderTextColor={colors.BlackGrey} 
                                                         placeholder="Masukkan alasan komplain"
                                                         textAlignVertical='top'
                                                     />

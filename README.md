@@ -64,7 +64,14 @@
 ## Cart 
 # 12040, 12041 => Error delete cart
 
-12040
+## Profile/Account
+# 12041, 12042, 12043 => Error get account (rekening)
+# 12044, 12045 => Error get profile
+
+## Profile/Account
+# 12041, 12042, 12043 => Error get account (rekening)
+# 12046, 12047 => Error reset or new password
+
 
 ## Category Component
 # 13001 => Error api get category 

@@ -130,6 +130,7 @@ export const styles = StyleSheet.create({
     T_thin: { fontFamily: 'Poppins-Thin' },
 
 
+    icon_27: { width: 27, height: 27 },
     icon_25: { width: 25, height: 25 },
     icon_24: { width: 24, height: 24 },
     icon_23: { width: 23, height: 23 },

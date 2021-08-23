@@ -10,7 +10,8 @@ const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
 const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 const { height: hg } = Dimensions.get('screen')
-
+import Share from 'react-native-share';
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 import { useDispatch, useSelector } from "react-redux";
 import StarRating from 'react-native-star-rating';
 LogBox.ignoreAllLogs()
@@ -108,7 +109,7 @@ export default function ProductScreen(props) {
                 setTimeout(() => {
                     setLoading(false)
                     setRefreshing(false)
-                }, 1000);
+                }, 100);
             } else {
                 setLoading(false)
                 setRefreshing(false)
@@ -184,7 +185,6 @@ export default function ProductScreen(props) {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Content-Type", "application/json");
-        console.log("🚀 ~ file: ProductScreen.js ~ line 215 ~ handleApiCart ~ flashsaleData", flashsaleData.id_flashsale)
         var raw = JSON.stringify({
             "productId": idProduct,
             "flashSaleId": flashsale ? flashsaleData.id_flashsale : "",
@@ -257,7 +257,6 @@ export default function ProductScreen(props) {
     }
 
     const handleWishlist = () => {
-        console.log("file: ProductScreen.js ~ line 252 ~ handleWishlist ~ reduxAuth", reduxAuth)
         if (reduxAuth) {
             var myHeaders = new Headers();
             myHeaders.append("Authorization", reduxAuth);
@@ -278,7 +277,6 @@ export default function ProductScreen(props) {
             fetch("https://jaja.id/backend/user/addWishlist", requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    console.log("file: ProductScreen.js ~ line 271 ~ handleWishlist ~ result", result)
                     if (result.status.code === 200) {
                         setLike(!like)
                     }
@@ -354,6 +352,67 @@ export default function ProductScreen(props) {
             dispatch({ 'type': 'SET_LOADMORE', payload: true })
         }
     }
+
+    const handleShare = (slug) => {
+        try {
+            console.log("file: ReferralScreen.js ~ line 32 ~ handleShare ~ image", image)
+            let string = String(reduxUser).toLocaleUpperCase()
+            const shareOptions = {
+                title: 'Jaja',
+                message: `Pakai kode referral saya *${string}* dan dapatkan 10.000 koin, untuk belanja di Jaja.id, instal sekarang https://play.google.com/store/apps/details?id=com.seller.jaja`, // Note that according to the documentation at least one of "message" or "url" fields is required
+                url: image,
+            };
+            console.log("file: ReferralScreen.js ~ line 33 ~ handleShare ~ shareOptions", shareOptions)
+
+            Share.open(shareOptions)
+                .then((res) => {
+                    console.log(res);
+                })
+                .catch((err) => {
+                    err && console.log(err);
+                });
+
+            // console.log("🚀 ~ file: ProductScreen.js ~ line 357 ~ handleShare ~ slug", slug)
+            // try {
+            //     const shareOptions = {
+            //         title: 'Jaja',
+            //         message: `Pakai kode referral saya  dan dapatkan 10.000 koin, untuk belanja di Jaja.id, instal sekarang https://play.google.com/store/apps/details?id=com.seller.jaja`, // Note that according to the documentation at least one of "message" or "url" fields is required
+            //         url: image,
+            //     };
+            //     console.log("file: ReferralScreen.js ~ line 33 ~ handleShare ~ shareOptions", shareOptions)
+
+            //     Share.open(shareOptions)
+            //         .then((res) => {
+            //             console.log(res);
+            //         })
+            //         .catch((err) => {
+            //             err && console.log(err);
+            //         });
+
+            //     // let link = await buildLink(slug);
+            //     // console.log("file: ReferralScreen.js ~ line 33 ~ handleShare ~ shareOptions", shareOptions)
+
+
+        } catch (error) {
+
+        }
+
+    }
+
+    const buildLink = async (slug) => {
+        const link = await dynamicLinks().buildLink({
+            link: `https://jaja.id/customer/b-product${slug}`,
+            // domainUriPrefix is created in your Firebase console
+            domainUriPrefix: 'https://jaja.id/customer',
+            // optional setup which updates Firebase analytics campaign
+            // "banner". This also needs setting up before hand
+            analytics: {
+                campaign: 'banner',
+            },
+        });
+
+        return link;
+    }
     const renderContent = () => {
         return (
             <View style={[styles.column, { backgroundColor: '#e8e8e8', paddingBottom: Hp('6%') }]}>
@@ -395,35 +454,52 @@ export default function ProductScreen(props) {
                                     <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{variasiSelected.price}</Text>
                                 :
                                 flashsale ?
-                                    <View style={styles.row}>
-                                        <View style={[styles.row_center, { width: Wp('11%'), height: Wp('11%'), backgroundColor: colors.RedFlashsale, padding: '1.5%', borderRadius: 5, marginRight: '2%' }]}>
-                                            <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{flashsaleData.discountFlash}%</Text>
-                                        </View>
-                                        <View style={styles.column}>
-                                            <Text style={Ps.priceBefore}>{reduxSearch.productDetail.price}</Text>
-                                            <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{reduxSearch.productDetail.priceDiscount}</Text>
-                                        </View>
-                                    </View>
-                                    :
-                                    reduxSearch.productDetail.isDiscount ?
-                                        <View style={styles.row}>
+                                    <View style={[styles.row_start_center,]}>
+
+                                        <View style={[styles.row_center, { width: '13%', height: '100%' }]}>
                                             <View style={[styles.row_center, { width: Wp('11%'), height: Wp('11%'), backgroundColor: colors.RedFlashsale, padding: '1.5%', borderRadius: 5, marginRight: '2%' }]}>
-                                                <Text style={{ fontSize: 14, color: colors.White, fontWeight: 'bold' }}>{reduxSearch.productDetail.discount}%</Text>
+                                                <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{flashsaleData.discountFlash}%</Text>
                                             </View>
                                             <View style={styles.column}>
                                                 <Text style={Ps.priceBefore}>{reduxSearch.productDetail.price}</Text>
                                                 <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{reduxSearch.productDetail.priceDiscount}</Text>
                                             </View>
                                         </View>
+                                        <View style={[styles.row_center, { width: '13%', height: '100%' }]}>
+                                            <TouchableOpacity onPress={() => handleShare(reduxSearch.productDetail.slug)}>
+                                                <Image source={require('../../assets/icons/share.png')} style={{ width: Wp('6%'), height: Wp('6%'), marginRight: '3%', tintColor: like ? flashsale ? colors.RedFlashsale : colors.RedMaroon : colors.Silver }} />
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                    :
+                                    reduxSearch.productDetail.isDiscount ?
+                                        <View style={[styles.row_start_center,]}>
+                                            <View style={[styles.row_start_center, { width: '87%', }]}>
+                                                <View style={[styles.row_center, { width: Wp('11%'), height: Wp('11%'), backgroundColor: colors.RedFlashsale, padding: '1.5%', borderRadius: 5, marginRight: '2%' }]}>
+                                                    <Text style={{ fontSize: 14, color: colors.White, fontWeight: 'bold' }}>{reduxSearch.productDetail.discount}%</Text>
+                                                </View>
+                                                <View style={[styles.column]}>
+                                                    <Text style={Ps.priceBefore}>{reduxSearch.productDetail.price}</Text>
+                                                    <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{reduxSearch.productDetail.priceDiscount}</Text>
+                                                </View>
+                                            </View>
+                                            <View style={[styles.row_center, { width: '13%', height: '100%' }]}>
+                                                <TouchableOpacity onPress={handleShare}>
+                                                    <Image source={require('../../assets/icons/share.png')} style={{ width: Wp('6%'), height: Wp('6%'), marginRight: '3%', tintColor: like ? flashsale ? colors.RedFlashsale : colors.RedMaroon : colors.Silver }} />
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
                                         :
-                                        <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{reduxSearch.productDetail.price}</Text>
+                                        <View style={[styles.row_between_center, { width: '100%' }]}>
+                                            <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja, backgroundColor: 'silver' }]}>{reduxSearch.productDetail.price}</Text>
+                                        </View>
                             }
 
                             <View style={[styles.row_between_center, styles.mt_3]}>
-                                <Text style={styles.font_14}>{reduxSearch.productDetail.amountSold ? reduxSearch.productDetail.amountSold + " Terjual" : ""}</Text>
-                                <View style={styles.row_around_center}>
+                                <Text style={[styles.font_14, { width: '87%' }]}>{reduxSearch.productDetail.amountSold ? reduxSearch.productDetail.amountSold + " Terjual" : ""}</Text>
+                                <View style={[styles.row_center, { width: '13%', height: '100%' }]}>
                                     <TouchableOpacity onPress={handleWishlist}>
-                                        <Image source={require('../../assets/icons/love.png')} style={{ width: 25, height: 25, marginRight: '3%', tintColor: like ? flashsale ? colors.RedFlashsale : colors.RedMaroon : colors.Silver }} />
+                                        <Image source={require('../../assets/icons/love.png')} style={{ width: Wp('6%'), height: Wp('6%'), marginRight: '3%', tintColor: like ? flashsale ? colors.RedFlashsale : colors.RedMaroon : colors.Silver }} />
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -475,8 +551,8 @@ export default function ProductScreen(props) {
                                             : null}
                                     </View>
                                 </View>
-                                <TouchableOpacity style={[styles.row_center, { padding: '2%', borderWidth: 1, borderColor: flashsale ? colors.RedFlashsale : colors.BlueJaja, borderRadius: 100 }]} onPress={handleStore}>
-                                    <Text style={[styles.font_12, { color: flashsale ? colors.RedFlashsale : colors.BlueJaja, fontWeight: 'bold' }]}>Kunjungi Toko</Text>
+                                <TouchableOpacity style={[styles.row_center, styles.py_2, styles.px_3, { borderWidth: 1, borderColor: flashsale ? colors.RedFlashsale : colors.BlueJaja, borderRadius: 100 }]} onPress={handleStore}>
+                                    <Text style={[styles.font_10, styles.T_semi_bold, { color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>Kunjungi Toko</Text>
                                 </TouchableOpacity>
                             </View>
                             : null}

@@ -69,7 +69,6 @@ export default function MainPage() {
     return (
         <View style={[styles.column_start, styles.p_2, { width: Wp('100%') }]}>
             <ScrollView contentContainerStyle={{ alignItems: 'flex-start' }}>
-
                 {vouchers && vouchers.length !== 0 ?
                     <View style={{ height: Wp('18%') }}>
                         <ScrollView horizontal contentContainerStyle={{ height: Wp('18%') }}>
