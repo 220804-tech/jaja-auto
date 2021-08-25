@@ -1,4 +1,5 @@
 import { ToastAndroid, Alert } from 'react-native'
+import { Utils } from '../export';
 export async function productDetail(auth, slug) {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);
@@ -13,28 +14,16 @@ export async function productDetail(auth, slug) {
     return await fetch(`https://jaja.id/backend/product/${slug}`, requestOptions)
         .then(response => response.json())
         .then(result => {
-            if (result && result.status.code == 200) {
+            if (result && Object.keys(result).length && result.status.code == 200) {
                 return result.data;
             } else {
-                Alert.alert(
-                    "Error get product ",
-                    String(result.status.message) + " => " + String(result.status.code),
-                    [
-                        {
-                            text: "TUTUP",
-                            onPress: () => console.log("Cancel Pressed"),
-                            style: "cancel"
-                        },
-                    ]
-                );
+                Utils.handleErrorResponse(result, "Error with status code : 12046")
                 return null
             }
         })
         .catch(error => {
-            console.log("file: Product.js ~ line 35 ~ productDetail ~ error", error)
-            if (String(error).slice(11, String(error).length).replace(" ", "") === "Network request failed") {
-                ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.CENTER)
-            }
+            Utils.handleError(error, "Error with status code : 12047")
+            return null
         });
 
 }

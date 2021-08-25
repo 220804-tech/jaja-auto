@@ -202,6 +202,7 @@ export default function Complain() {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar
+                translucent={false}
                 animated={true}
                 backgroundColor={colors.YellowJaja}
                 barStyle='default'
@@ -270,7 +271,7 @@ export default function Complain() {
                                                         style={{ borderBottomWidth: 0.5, width: Wp('80%'), minHeight: Wp('15%'), maxHeight: Wp('100%') }}
                                                         numberOfLines={11}
                                                         multiline={true}
-                                                        placeholderTextColor={colors.BlackGrey} 
+                                                        placeholderTextColor={colors.BlackGrey}
                                                         placeholder="Masukkan alasan komplain"
                                                         textAlignVertical='top'
                                                     />

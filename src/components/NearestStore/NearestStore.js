@@ -47,8 +47,10 @@ export default function NearestStore() {
                     showsHorizontalScrollIndicator={false}
                     data={reduxdashNearestStore.slice(0, 20)}
                     horizontal={true}
-                    keyExtractor={(item, index) => String(index)}
+                    keyExtractor={(item, index) => String(index)}   
                     renderItem={({ item, index }) => {
+                        console.log("🚀 ~ file: NearestStore.js ~ line 144 ~ NearestStore ~ item", item)
+
                         return (
                             <TouchableOpacity
                                 style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('57%'), alignItems: 'center', elevation: 2 }]}
@@ -69,17 +71,16 @@ export default function NearestStore() {
                                 </View>
                                 <View style={[Ps.bottomCard, { alignSelf: 'flex-start', width: '100%', height: Wp('18%'), justifyContent: 'flex-start', alignItems: 'flex-start' }]}>
                                     <Text numberOfLines={1} style={[Ps.nameProduct, { fontSize: 13 }]}>{item.name}</Text>
-
                                     {item.isDiscount ?
                                         <>
                                             <View style={styles.row}>
                                                 <Text style={[Ps.priceBefore, styles.mr_3,]}>{item.price}</Text>
-                                                <Text style={{ fontSize: 10, zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '1%', paddingHorizontal: '5%', borderRadius: 2 }}>{item.discount}%</Text>
+                                                <Text style={[styles.font_10, styles.T_medium, { zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '1%', paddingHorizontal: '3%', borderRadius: 3 }]}>{item.discount}%</Text>
                                             </View>
-                                            <Text style={Ps.priceAfter}>{item.price}</Text>
+                                            <Text style={Ps.priceAfter}>{item.priceDiscount}</Text>
                                         </>
                                         :
-                                        <Text style={[Ps.price, { fontWeight: 'bold', color: colors.BlueJaja }]}>{item.price}</Text>
+                                        <Text style={[Ps.price, { color: colors.BlueJaja }]}>{item.price}</Text>
                                     }
                                 </View>
                                 <View style={[Ps.location, { width: '94%' }]}>

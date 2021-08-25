@@ -189,7 +189,7 @@ class RegisterScreen extends Component {
         return (
             <SafeAreaView style={styles.container}>
                 <Appbar back={true} title="Kembali" Bg={colors.YellowJaja} />
-                <StatusBar backgroundColor={colors.YellowJaja} barStyle="light-content" />
+                <StatusBar translucent={false} backgroundColor={colors.YellowJaja} barStyle="light-content" />
                 {this.state.loading ? <Loading /> : null}
                 <ScrollView style={styles.scrollView} contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>
                     <View style={styles.viewImage}>

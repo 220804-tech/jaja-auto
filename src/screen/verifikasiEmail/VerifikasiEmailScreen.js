@@ -273,7 +273,7 @@ export default class VerifikasiEmail extends Component {
 
         return (
             <SafeAreaView style={[styles.container, { backgroundColor: colors.White }]}>
-                <StatusBar backgroundColor={colors.BlueJaja} barStyle="light-content" />
+                <StatusBar translucent={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
                 {this.state.loading ?
                     <Loading /> : null
                 }

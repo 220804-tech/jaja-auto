@@ -9,7 +9,7 @@ export default function OrderNotFound() {
     }
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar hidden={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
+            <StatusBar translucent={false} hidden={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
             <Image style={styles.ilustration} source={require('../../assets/ilustrations/notfound.jpg')} />
             <Paragraph style={styles.textHead}>Ups.. <Text style={styles.textBody}>tampaknya pesanan kamu masih kosong..</Text></Paragraph>
             {/* <Button labelStyle={{ color: 'white' }} onPress={() => handleOpen()} mode="contained" color={colors.BlueJaja} style={styles.button}>Kembali</Button> */}

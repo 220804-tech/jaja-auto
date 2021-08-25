@@ -9,7 +9,7 @@ export default function OrderNotFound(props) {
     }
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar hidden={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
+            <StatusBar translucent={false} hidden={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
             <Image style={styles.ilustration} source={props.ilustration} />
             <Paragraph style={styles.textHead}>{props.textHead} <Text style={styles.textBody}>{props.textBody}</Text></Paragraph>
             {/* <Button labelStyle={{ color: 'white' }} onPress={() => handleOpen()} mode="contained" color={colors.BlueJaja} style={styles.button}>Kembali</Button> */}

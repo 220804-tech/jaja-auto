@@ -72,6 +72,8 @@
 # 12041, 12042, 12043 => Error get account (rekening)
 # 12046, 12047 => Error reset or new password
 
+## Product/Detail
+# 12048, 12049, 12043 => Error get product detail
 
 ## Category Component
 # 13001 => Error api get category 

@@ -323,6 +323,7 @@ export default function SplashScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar
+                translucent={false}
                 animated={true}
                 backgroundColor={colors.BlueJaja}
                 barStyle='default'

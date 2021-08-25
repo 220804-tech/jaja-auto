@@ -39,6 +39,7 @@ export default function ZoomScreen(props) {
     return (
         <View style={[{ flex: 1, backgroundColor: colors.Black }]}>
             <StatusBar
+                translucent={false}
                 animated={true}
                 backgroundColor={colors.Black}
                 barStyle='default'

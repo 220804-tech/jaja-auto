@@ -41,6 +41,7 @@ export default function ReviewScreen(props) {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar
+                translucent={false}
                 animated={true}
                 backgroundColor={colors.BlueJaja}
                 barStyle='default'

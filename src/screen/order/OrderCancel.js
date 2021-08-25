@@ -104,6 +104,7 @@ export default function OrderComplain(props) {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar
+                translucent={false}
                 animated={true}
                 backgroundColor={colors.YellowJaja}
                 barStyle='default'

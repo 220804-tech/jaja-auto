@@ -91,14 +91,6 @@
           }
         },
         {
-          "client_id": "284366139562-mqgkup3lq9ptke90o0fmb5qa0g12nha5.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.jajaidbuyer",
-            "certificate_hash": "9330dd5bcfa769ffbadd800de5dea84fe155faab"
-          }
-        },
-        {
           "client_id": "284366139562-nq5lrauu6io7dv1vkkbhvfbkuccfvrs5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

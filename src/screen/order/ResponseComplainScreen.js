@@ -146,6 +146,7 @@ export default function ResponseComplain() {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar
+                translucent={false}
                 animated={true}
                 backgroundColor={colors.YellowJaja}
                 barStyle='default'

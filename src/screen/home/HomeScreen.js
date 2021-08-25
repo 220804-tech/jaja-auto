@@ -73,6 +73,7 @@ export default function HomeScreen() {
             color: "#68b0c8"
         }
     ]
+    
     const handleDynamicLink = link => {
         console.log("🚀 ~ file: SplashScreen.js ~ line 36 ~ SplashScreen ~ link", link)
         // Handle dynamic link inside your own application

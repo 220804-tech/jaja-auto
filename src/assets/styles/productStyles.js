@@ -39,11 +39,11 @@ export const style = StyleSheet.create({
     },
     priceBefore: { fontSize: 12, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale, textDecorationLine: 'line-through', },
     priceAfter: { fontSize: 16, fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja },
-    price: { fontSize: 16 , fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale },
+    price: { fontSize: 16, fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale },
 
     cardBottom: { flex: 0, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', position: 'absolute', bottom: 3, width: '97%', paddingHorizontal: '3%' },
     location: { flex: 0, flexDirection: 'row', width: '75%', alignItems: 'center' },
-    locarionName: { fontSize: 10, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale, marginRight: '2%' },
+    locarionName: { fontSize: 11, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale, marginRight: '2%' },
     locationIcon: {
         width: 14,
         height: 14,

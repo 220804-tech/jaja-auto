@@ -368,6 +368,7 @@ export default function LoginScreen(props) {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar
+                translucent={false}
                 animated={true}
                 backgroundColor={colors.BlueJaja}
                 barStyle='default'
