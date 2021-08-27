@@ -322,7 +322,6 @@ export default function Lainnya() {
             fetch("https://jaja.id/backend/user/change_password/new", requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    console.log("🚀 ~ file: AccountScreen.js ~ line 334 ~ handleReset ~ result", result)
                     if (result.status.code === 200) {
                         setTimeout(() => {
                             setloading(false)

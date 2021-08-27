@@ -47,10 +47,8 @@ export default function NearestStore() {
                     showsHorizontalScrollIndicator={false}
                     data={reduxdashNearestStore.slice(0, 20)}
                     horizontal={true}
-                    keyExtractor={(item, index) => String(index)}   
+                    keyExtractor={(item, index) => String(index)}
                     renderItem={({ item, index }) => {
-                        console.log("🚀 ~ file: NearestStore.js ~ line 144 ~ NearestStore ~ item", item)
-
                         return (
                             <TouchableOpacity
                                 style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('57%'), alignItems: 'center', elevation: 2 }]}
@@ -65,9 +63,6 @@ export default function NearestStore() {
                                         }}
                                         resizeMode={FastImage.resizeMode.contain}
                                     />
-                                    <View style={[styles.font_14, styles.px_5, styles.py, { position: 'absolute', bottom: 0, backgroundColor: colors.BlueJaja, borderTopRightRadius: 11, alignItems: 'center', justifyContent: 'center' }]}>
-                                        <Text style={[styles.font_8, { marginBottom: '-2%', color: colors.White }]}>Seller Terdekat</Text>
-                                    </View>
                                 </View>
                                 <View style={[Ps.bottomCard, { alignSelf: 'flex-start', width: '100%', height: Wp('18%'), justifyContent: 'flex-start', alignItems: 'flex-start' }]}>
                                     <Text numberOfLines={1} style={[Ps.nameProduct, { fontSize: 13 }]}>{item.name}</Text>

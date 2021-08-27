@@ -4,7 +4,7 @@
 
 import React, { useEffect, useState, createRef, useRef, useCallback } from 'react'
 import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, Alert, StatusBar, FlatList, ToastAndroid, TextInput, RefreshControl } from 'react-native'
-import { Appbar, colors, styles, Wp, Hp, useNavigation, ServiceCheckout, Loading } from '../../export'
+import { Appbar, colors, styles, Wp, Hp, useNavigation, ServiceCheckout, Loading, Utils } from '../../export'
 import { Button } from 'react-native-paper'
 import ActionSheet from "react-native-actions-sheet";
 import CheckBox from '@react-native-community/checkbox';
@@ -506,30 +506,28 @@ export default function checkoutScreen() {
                             };
 
                             fetch("https://jaja.id/backend/checkout", requestOptions)
-                                .then(response => response.json())
+                                .then(response => response.text())
                                 .then(result => {
-                                    if (result.status.code === 200) {
-                                        dispatch({ type: 'SET_ORDERID', payload: result.data })
-                                        navigation.navigate("Midtrans", { data: result.data })
-                                    } else {
-                                        Alert.alert(
-                                            "Jaja.id",
-                                            result.status.message + " " + result.status.code,
-                                            [
-                                                {
-                                                    text: "TUTUP",
-                                                    onPress: () => console.log("Cancel Pressed"),
-                                                    style: "cancel"
-                                                }
-                                            ]
-                                        )
+                                    try {
+                                        let data = JSON.parse(result)
+                                        if (data && Object.keys(data).length && data.status.code == 200) {
+                                            dispatch({ type: 'SET_ORDERID', payload: data.data })
+                                            navigation.navigate("Midtrans", { data: result.data })
+                                        } else {
+                                            Utils.handleErrorResponse(data, "Error with status code : 12046")
+                                            return null
+                                        }
+                                    } catch (error) {
+                                        Utils.handleError(result, "Error with status code : 12047")
                                     }
                                     setTimeout(() => {
                                         setLoad(false)
                                     }, 2000);
                                 })
                                 .catch(error => {
-                                    ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER) & setLoad(false)
+                                    console.log("🚀 ~ file: Product.js ~ line 32 ~ productDetail ~ error", error)
+                                    setLoad(false)
+                                    Utils.handleError(error, "Error with status code : 120477")
                                 })
                         }, 250);
 
@@ -790,12 +788,12 @@ export default function checkoutScreen() {
                     </View>
                 </View>
             </ScrollView>
-            <View style={{ position: 'absolute', bottom: 0, zIndex: 100, elevation: 1, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
-                <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '3%', paddingLeft: '5%', paddingVertical: '1%' }}>
-                    <Text style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja, }]}>Total pembayaran :</Text>
+            <View style={{ position: 'absolute', bottom: 0, zIndex: 100, elevation: 3, height: Hp('7%'), width: Wp('100%'), backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
+                <View style={{ width: '50%', height: '100%', justifyContent: 'center', paddingHorizontal: '2%', paddingLeft: '4%', paddingVertical: '1%' }}>
+                    <Text style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja, marginBottom: '-2%' }]}>Total pembayaran :</Text>
                     <Text numberOfLines={1} style={[styles.font_18, styles.T_semi_bold, { color: colors.BlueJaja }]}>{reduxCheckout.totalCurrencyFormat}</Text>
                 </View>
-                <Button onPress={handleCheckout} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained" >
+                <Button onPress={handleCheckout} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_14, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                     Pilih pembayaran
                 </Button>
             </View>

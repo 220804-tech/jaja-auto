@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView, View, Text, Image, TouchableOpacity, TextInput, FlatList, ToastAndroid } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
-import { useNavigation, colors, styles, Wp, CheckSignal, ServiceStore, useFocusEffect } from '../../export'
+import { useNavigation, colors, styles, Wp, CheckSignal, ServiceStore, useFocusEffect, Utils } from '../../export'
 import { useDispatch, useSelector } from 'react-redux'
 export default function SearchScreen() {
     const navigation = useNavigation();
@@ -12,7 +12,7 @@ export default function SearchScreen() {
     const [historySearch, sethistorySearch] = useState([])
     const [storeSearch, setstoreSearch] = useState([])
     const [productSearch, setproductSearch] = useState([])
-    const [slug] = useState(['Badminton', 'Basketball', 'Cooking', 'Cycling', 'Fishing', 'Football', 'Photography', 'Reading',])
+    const [slug, setSlug] = useState(['Badminton', 'Basketball', 'Cooking', 'Cycling', 'Fishing', 'Football', 'Photography', 'Reading'])
 
 
     useEffect(() => {
@@ -41,6 +41,7 @@ export default function SearchScreen() {
     }
 
     const handleSearch = (text) => {
+        console.log(`https://jaja.id/backend/product/search?limit=10&keyword=${text}`)
         if (text) {
             var myHeaders = new Headers();
             myHeaders.append("Cookie", "ci_session=bk461otlv7le6rfqes5eim0h9cf99n3u");
@@ -51,24 +52,25 @@ export default function SearchScreen() {
                 redirect: 'follow'
             };
 
-            fetch(`https://jaja.id/backend/product/search?limit=20&keyword=${text}`, requestOptions)
+            fetch(`https://jaja.id/backend/product/search?limit=10&keyword=${text}`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     console.log("🚀 ~ file: SearchScreen.js ~ line 49 ~ handleSearch ~ result", result.data.store)
-                    if (result.status.code == 200) {
-                        setCount(count + 1)
+                    if (result.status.code == 200 || result.status.code == 204) {
+                        setstoreSearch(result.data.store)
                         if (result.data.product.length) {
                             setproductSearch(result.data.product)
                         } else {
-                            setproductSearch([{}])
+                            setproductSearch([])
                         }
-                        setstoreSearch(result.data.store)
+                        setCount(count + 1)
                     }
                 }).catch(error => console.log('error', error));
         } else {
             console.log("test")
             setproductSearch([])
             setstoreSearch([])
+            setCount(0)
         }
     }
 
@@ -76,10 +78,13 @@ export default function SearchScreen() {
         let data = []
         EncryptedStorage.setItem('historySearching', JSON.stringify(data))
         sethistorySearch(data)
+        setCount(count + 1)
     }
 
     const handleSelected = (res) => {
-        handleFetch(res.name)
+        console.log("🚀 ~ file: SearchScreen.js ~ line 85 ~ handleSelected ~ res", res)
+        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+        navigation.navigate("Product", { slug: res.slug, image: null })
         handleSaveKeyword(res.name)
     }
 
@@ -98,16 +103,22 @@ export default function SearchScreen() {
         sethistorySearch(newArr)
     }
     const handleSearchInput = (text) => {
-        if (text) {
+        console.log("🚀 ~ file: SearchScreen.js ~ line 102 ~ handleSearchInput ~ text", text)
+        if (text && String(text).length >= 1) {
             handleFetch(text)
             handleSaveKeyword(text)
+        } else {
+            console.log('handleSearchInputt', text.length)
+            setproductSearch([])
+            setstoreSearch([])
+            setCount(0)
+            setSlug(['Badminton', 'Basketball', 'Cooking', 'Cycling', 'Fishing', 'Football', 'Photography', 'Reading'])
         }
 
     }
 
     const handleFetch = (keyword) => {
         let text = String(keyword).toLocaleLowerCase();
-        // if (text) {
         var myHeaders = new Headers();
         myHeaders.append("Cookie", "ci_session=bk461otlv7le6rfqes5eim0h9cf99n3u");
 
@@ -116,29 +127,58 @@ export default function SearchScreen() {
             headers: myHeaders,
             redirect: 'follow'
         };
-
+        dispatch({ type: 'SET_SEARCH', payload: [] })
+        dispatch({ type: 'SET_FILTERS', payload: [] })
+        dispatch({ type: 'SET_SORTS', payload: [] })
+        dispatch({ type: 'SET_KEYWORD', payload: '' })
         fetch(`https://jaja.id/backend/product/search/result?page=1&limit=20&keyword=${text}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: SearchScreen.js ~ line 127 ~ handleFetch ~ result", result.data)
                 dispatch({ type: 'SET_SEARCH', payload: result.data.items })
                 dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
                 dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
                 dispatch({ type: 'SET_KEYWORD', payload: text })
             })
             .catch(error => {
-                CheckSignal().then(res => {
-                    if (res.connect == false) {
-                        ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda", ToastAndroid.LONG, ToastAndroid.CENTER)
-                    } else {
-                        ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)
-                    }
-                })
+                Utils.handleError(error, "Error with status code : 12050")
             });
         dispatch({ type: 'SET_SLUG', payload: String(text).toLocaleLowerCase() })
-
         navigation.navigate('ProductSearch')
-        // } 
+        setTimeout(() => {
+            CheckSignal().then(resp => {
+                handleLoopSignal(resp, text)
+                if (resp.connect === false) {
+                    setTimeout(() => {
+                        CheckSignal().then(respo => {
+                            handleLoopSignal(respo, text)
+                        })
+                    }, 7000);
+                }
+            })
+        }, 7000);
     }
+
+    const handleLoopSignal = (signal, text) => {
+        if (signal.connect === true) {
+            fetch(`https://jaja.id/backend/product/search/result?page=1&limit=20&keyword=${text}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    console.log("🚀 ~ file: SearchScreen.js ~ line 127 ~ handleFetch ~ result", result.data)
+                    dispatch({ type: 'SET_SEARCH', payload: result.data.items })
+                    dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
+                    dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
+                    dispatch({ type: 'SET_KEYWORD', payload: text })
+                })
+                .catch(error => {
+                    Utils.handleError(error, "Error with status code : 12050")
+                });
+        } else {
+            ToastAndroid.show("Periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.CENTER)
+        }
+    }
+
+
     const handleSelectedToko = (item) => {
         if (item.slug !== reduxSlug) {
             dispatch({ "type": 'SET_STORE', payload: {} })
@@ -178,40 +218,44 @@ export default function SearchScreen() {
                     {productSearch && productSearch.length || storeSearch.length ?
                         <View style={styles.column}>
                             <Text style={[styles.font_14, { color: colors.BlueJaja, marginBottom: '2%' }]} adjustsFontSizeToFit>Berdasarkan pencarian</Text>
-                            <FlatList
-                                data={productSearch}
-                                showsHorizontalScrollIndicator={false}
-                                keyExtractor={(item) => item.id + 'SX'}
-                                extraData={productSearch}
-                                renderItem={({ item }) => {
-                                    console.log("🚀 ~ file: SearchScreen.js ~ line 178 ~ SearchScreen ~ item", item)
-                                    return (
-                                        <>
-                                            {Object.keys(item).length ?
-                                                <TouchableOpacity onPress={() => handleSelected(item)} style={{ paddingVertical: '2.5%', marginBottom: '2%', backgroundColor: colors.White, borderBottomWidth: 0.5, borderColor: colors.Silver }}>
-                                                    <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlackGrey }]}>{item.name}</Text>
-                                                </TouchableOpacity>
-                                                : null}
-                                        </>
-                                    )
-                                }} />
-                            <View style={[styles.column, styles.py_3]}>
-                                <Text style={[styles.font_14, { color: colors.BlueJaja, marginBottom: '2%' }]} adjustsFontSizeToFit>Toko</Text>
+                            {productSearch && productSearch.length > 0 ?
                                 <FlatList
-                                    data={storeSearch}
+                                    data={productSearch}
                                     showsHorizontalScrollIndicator={false}
-                                    keyExtractor={(item) => item.id + 'FD'}
-                                    extraData={count}
+                                    keyExtractor={(item, index) => String(index + 3) + 'SX'}
+                                    extraData={productSearch}
                                     renderItem={({ item }) => {
-                                        console.log("🚀 ~ file: SearchScreen.js ~ line 213 ~ SearchScreen ~ item", item)
+                                        console.log("sasasa", productSearch)
                                         return (
-                                            <TouchableOpacity onPress={() => handleSelectedToko(item)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', paddingVertical: '2%', marginBottom: '2%', backgroundColor: colors.White, borderBottomWidth: 0.5, borderColor: colors.Silver }}>
-                                                <Image style={[styles.mr_2, { height: Wp('9%'), width: Wp('9%'), borderRadius: 100 }]} source={{ uri: item.image }} />
-
-                                                <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlackGrey }]}>{item.name}</Text>
-                                            </TouchableOpacity>
+                                            <>
+                                                {Object.keys(item).length ?
+                                                    <TouchableOpacity onPress={() => handleSelected(item)} style={{ paddingVertical: '2.5%', marginBottom: '2%', backgroundColor: colors.White, borderBottomWidth: 0.5, borderColor: colors.Silver }}>
+                                                        <Text numberOfLines={1} style={[styles.font_13, { color: colors.BlackGrey }]}>{item.name}</Text>
+                                                    </TouchableOpacity>
+                                                    : null}
+                                            </>
                                         )
                                     }} />
+                                : <Text numberOfLines={1} style={[styles.font_13, { color: colors.BlackGrey }]}>- Produk tidak ditemukan</Text>
+                            }
+                            <View style={[styles.column, styles.py_3]}>
+                                <Text style={[styles.font_14, { color: colors.BlueJaja, marginBottom: '2%' }]} adjustsFontSizeToFit>Toko</Text>
+                                {storeSearch && storeSearch.length > 0 ?
+                                    <FlatList
+                                        data={storeSearch}
+                                        showsHorizontalScrollIndicator={false}
+                                        keyExtractor={(item, index) => String(index + 4) + 'XA'}
+                                        extraData={count}
+                                        renderItem={({ item }) => {
+                                            return (
+                                                <TouchableOpacity onPress={() => handleSelectedToko(item)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', paddingVertical: '2%', marginBottom: '2%', backgroundColor: colors.White, borderBottomWidth: 0.5, borderColor: colors.Silver }}>
+                                                    <Image style={[styles.mr_2, { height: Wp('9%'), width: Wp('9%'), borderRadius: 100 }]} source={{ uri: item.image }} />
+                                                    <Text numberOfLines={1} style={[styles.font_13, { color: colors.BlackGrey }]}>{item.name}</Text>
+                                                </TouchableOpacity>
+                                            )
+                                        }} />
+                                    : <Text numberOfLines={1} style={[styles.font_13, { color: colors.BlackGrey }]}>- Toko tidak ditemukan</Text>
+                                }
                             </View>
                         </View>
                         :
@@ -226,8 +270,8 @@ export default function SearchScreen() {
                                 <FlatList
                                     data={historySearch}
                                     showsHorizontalScrollIndicator={false}
-                                    keyExtractor={(item, index) => String(index) + "SA"}
-                                    renderItem={({ item, index }) => {
+                                    keyExtractor={(item, index) => String(index + 1) + "SA"}
+                                    renderItem={({ item }) => {
                                         return (
                                             <TouchableOpacity onPress={() => handleSearchInput(item)} style={styles.row}>
                                                 <Image style={[styles.icon_24, styles.mr_3, styles.mb_4, { tintColor: colors.BlackGrey }]} source={require('../../assets/icons/history.png')} />
@@ -244,9 +288,8 @@ export default function SearchScreen() {
                                 <FlatList
                                     data={slug}
                                     showsHorizontalScrollIndicator={false}
-                                    keyExtractor={(item, index) => String(item) + 'LK'}
+                                    keyExtractor={(item, index) => String(index + 2) + 'LK'}
                                     renderItem={({ item, index }) => {
-                                        console.log("🚀 ~ file: SearchScreen.js ~ line 249 ~ SearchScreen ~ item", item)
                                         return (
                                             <TouchableOpacity onPress={() => handleSearchInput(item)} style={[styles.row_start_center, styles.mb_5]}>
                                                 <Image style={[styles.icon_23, styles.mr_3, { tintColor: colors.BlackGrey }]} source={require('../../assets/icons/star.png')} />

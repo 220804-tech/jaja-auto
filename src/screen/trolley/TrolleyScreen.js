@@ -366,9 +366,9 @@ export default function TrolleyScreen() {
                 />
                 : <DefaultNotFound textHead="Ups.." textBody="Tampaknya keranjang anda masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
             }
-            <View style={{ position: 'absolute', bottom: 0, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row', elevation: 1 }}>
-                <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '3%', paddingLeft: '5%', paddingVertical: '1%' }}>
-                    <Text style={[styles.font_16, styles.T_medium, { color: colors.BlueJaja }]}>Subtotal :</Text>
+            <View style={{ position: 'absolute', bottom: 0, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row', elevation: 3 }}>
+                <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '2%', paddingLeft: '4%', paddingVertical: '1%' }}>
+                    <Text style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja, marginBottom: '-2%' }]}>Subtotal :</Text>
                     <Text numberOfLines={1} style={[styles.font_18, styles.T_semi_bold, { color: colors.BlueJaja }]}>{reduxCart.cart.totalCartCurrencyFormat ? reduxCart.cart.totalCartCurrencyFormat : 'Rp0'}</Text>
                 </View>
                 <Button disabled={disableCheckout} onPress={handleCheckout} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_14, styles.T_semi_bold, { color: colors.White }]} mode="contained" >

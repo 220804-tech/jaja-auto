@@ -30,7 +30,6 @@ export default function ListChat() {
     const loadList = () => {
         if (reduxUser && Object.keys(reduxUser).length) {
             database().ref("/friend/" + reduxUser.uid).on("value", function (snapshot) {
-                console.log("file: ListChatScreen.js ~ line 33 ~ reduxUser.uid", reduxUser.uid)
                 var returnArray = [];
                 snapshot.forEach(function (snap) {
                     var item = snap.val();
@@ -58,7 +57,6 @@ export default function ListChat() {
     }, []);
 
     const renderItem = ({ item }) => {
-        console.log("file: ListChatScreen.js ~ line 90 ~ renderItem ~ item", item)
         return (
             <>
                 {item.message.text ?

@@ -10,19 +10,24 @@ export async function productDetail(auth, slug) {
         headers: auth ? myHeaders : "",
         redirect: 'follow'
     };
-
     return await fetch(`https://jaja.id/backend/product/${slug}`, requestOptions)
-        .then(response => response.json())
+        .then(response => response.text())
         .then(result => {
-            if (result && Object.keys(result).length && result.status.code == 200) {
-                return result.data;
-            } else {
-                Utils.handleErrorResponse(result, "Error with status code : 12046")
-                return null
+            try {
+                let data = JSON.parse(result)
+                if (data && Object.keys(data).length && data.status.code == 200) {
+                    return data.data;
+                } else {
+                    Utils.handleErrorResponse(data, "Error with status code : 12051")
+                    return null
+                }
+            } catch (error) {
+                Utils.handleError(result, "Error with status code : 12052")
             }
         })
         .catch(error => {
-            Utils.handleError(error, "Error with status code : 12047")
+            console.log("🚀 ~ file: Product.js ~ line 32 ~ productDetail ~ error", error)
+            Utils.handleError(error, "Error with status code : 120477")
             return null
         });
 

@@ -67,7 +67,7 @@ export default function CardProductComponent(props) {
                                         </View>
                                         : null
                                     }
-                                    
+
                                 </View>
                                 <View style={Ps.bottomCard}>
                                     <Text

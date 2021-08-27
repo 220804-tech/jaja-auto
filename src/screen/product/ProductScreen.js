@@ -4,7 +4,7 @@ import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { Button } from 'react-native-paper'
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-import { FilterLocation, CheckSignal, styles, colors, useNavigation, Hp, Wp, Ps, Loading, ServiceCart, ServiceUser, useFocusEffect, ServiceStore, ServiceProduct, FastImage, RecomandedHobby, Countdown, Utils } from '../../export'
+import { FilterLocation, styles, colors, useNavigation, Hp, Wp, Ps, Loading, ServiceCart, ServiceUser, useFocusEffect, ServiceStore, ServiceProduct, FastImage, RecomandedHobby, Countdown, Utils } from '../../export'
 const IS_IPHONE_X = SCREEN_HEIGHT === 812 || SCREEN_HEIGHT === 896;
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
@@ -68,22 +68,22 @@ export default function ProductScreen(props) {
 
     useEffect(() => {
         setLoading(true)
-        if (props.route.params) {
-            if (props.route.params.slug) {
-                getItem(props.route.params.slug)
-                // setFlashsale(false)
-            } else if (props.route.params.flashsale) {
-                // setFlashsale(true)
-            }
+        if (props.route.params && props.route.params.slug) {
+            getItem(props.route.params.slug)
         }
+
     }, [props.route.params])
 
     const getItem = (slug) => {
         let response;
         ServiceProduct.productDetail(reduxAuth, slug).then(res => {
+            console.log("🚀 ~ file: ProductScreen.js ~ line 81 ~ ServiceProduct.productDetail ~ res", res.statusProduk)
             response = "clear"
             if (res) {
-                if (reduxAuth && res.sellerTerdekat.length && reduxUser.user && Object.keys(reduxUser.user).length && Object.keys(res.category).length && res.category.slug) {
+                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res })
+                setLoading(false)
+
+                if (reduxAuth && res.sellerTerdekat.length && Object.keys(reduxUser.user).length && Object.keys(res.category).length && res.category.slug) {
                     FilterLocation(res.sellerTerdekat, reduxUser.user.location, res.category.slug, reduxAuth)
                 }
                 if (res.flashsale && Object.keys(res.flashsale).length) {
@@ -94,29 +94,27 @@ export default function ProductScreen(props) {
                     } else {
                         setdisableCart(false)
                     }
-                } else {
+                } else if (res.statusProduk != 'live') {
                     setFlashsale(false)
+                    setdisableCart(true)
                 }
                 setLike(res.isWishlist)
                 setidProduct(res.id)
                 if (res.stock == '0') {
                     setdisableCart(true)
                 }
-                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res })
                 let dataSeller = res.store
                 dataSeller.chat = reduxUser.user.uid + dataSeller.uid
                 dataSeller.id = dataSeller.uid
                 setSeller(dataSeller)
-                setLike(res.productDetail.isWishlist)
-                setTimeout(() => {
-                    setLoading(false)
-                    setRefreshing(false)
-                }, 100);
+                setLike(res.isWishlist)
+                setRefreshing(false)
             } else {
                 setLoading(false)
                 setRefreshing(false)
             }
         }).catch(err => {
+            console.log("🚀 ~ file: ProductScreen.js ~ line 127 ~ ServiceProduct.productDetail ~ err", err)
             setLoading(false)
             setRefreshing(false)
             response = "clear"
@@ -126,21 +124,19 @@ export default function ProductScreen(props) {
             if (response !== 'clear') {
                 return ToastAndroid.show("Sedang memuat, koneksi anda lambat!", ToastAndroid.LONG, ToastAndroid.CENTER)
             }
-        }, 7000);
+        }, 10000);
         setTimeout(() => {
             if (response !== 'clear') {
                 setRefreshing(false)
                 setLoading(false)
                 return ToastAndroid.show("Tidak dapat terhubung, periksa koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.CENTER)
             }
-        }, 15000);
+        }, 17000);
     }
 
     useFocusEffect(
         useCallback(() => {
             try {
-                console.log('tolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllazzzzzzzzzzzzzzzzzzzz')
-                console.log("🚀 ~ file: ProductScreen.js ~ line 144", reduxSearch.productDetail.image[0])
                 ImgToBase64.getBase64String(reduxSearch.productDetail.image[0])
                     .then(async base64String => {
                         let urlString = 'data:image/jpeg;base64,' + base64String;
@@ -222,7 +218,6 @@ export default function ProductScreen(props) {
                     }
                 } else if (result.status.code === 400 && result.status.message == 'quantity cannot more than stock') {
                     ToastAndroid.show("Stok produk tidak tersedia", ToastAndroid.LONG, ToastAndroid.CENTER)
-
                 } else {
                     Utils.handleErrorResponse(result, 'Error with status code : 12023')
                 }
@@ -594,34 +589,46 @@ export default function ProductScreen(props) {
                             <Text style={{ textDecorationLine: 'underline', fontSize: 16, fontWeight: 'bold', color: colors.BlackGrayScale, marginBottom: '3%' }}>Informasi Produk</Text>
                             <View style={[styles.row_around_center, styles.mb_5, { alignSelf: 'flex-start' }]}>
                                 <View style={[styles.column, { width: '40%' }]}>
-                                    <Text style={[styles.font_14, styles.mb_3]}>Kondisi</Text>
                                     <Text style={[styles.font_14, styles.mb_3]}>Berat</Text>
-                                    <Text style={[styles.font_14, styles.mb_3]}>Stok</Text>
+                                    <Text style={[styles.font_14, styles.mb_3]}>Brand</Text>
+                                    <Text style={[styles.font_14, styles.mb_3]}>Kondisi</Text>
                                     <Text style={[styles.font_14, styles.mb_3]}>Kategori</Text>
+                                    {reduxSearch.productDetail.preOrder ?
+                                        <Text style={[styles.font_14, styles.mb_3]}>Pre Order</Text>
+                                        : null
+                                    }
+                                    <Text style={[styles.font_14, styles.mb_3]}>Stok</Text>
                                 </View>
                                 <View style={styles.column}>
-                                    <Text style={[styles.font_14, styles.mb_3]}>{reduxSearch.productDetail.condition}</Text>
                                     <Text style={[styles.font_14, styles.mb_3]}>{reduxSearch.productDetail.weight} gram</Text>
-                                    <Text style={[styles.font_14, styles.mb_3]}>{reduxSearch.productDetail.stock}</Text>
+                                    <Text style={[styles.font_14, styles.mb_3]}>{reduxSearch.productDetail.brand ? reduxSearch.productDetail.brand : ""}</Text>
+                                    <Text style={[styles.font_14, styles.mb_3]}>{reduxSearch.productDetail.condition}</Text>
                                     <Text style={[styles.font_14, styles.mb_3]}>{reduxSearch.productDetail.category && Object.keys(reduxSearch.productDetail.category).length ? reduxSearch.productDetail.category.name : ""}</Text>
-
+                                    {reduxSearch.productDetail.preOrder ?
+                                        <Text style={[styles.font_14, styles.mb_3]}>{reduxSearch.productDetail.masaPengemasan} Hari</Text>
+                                        : null
+                                    }
+                                    <Text style={[styles.font_14, styles.mb_3]}>{reduxSearch.productDetail.stock}</Text>
                                 </View>
                             </View>
                             <Text style={{ textDecorationLine: 'underline', fontSize: 16, fontWeight: 'bold', color: colors.BlackGrayScale, marginBottom: '3%' }}>Deskripsi Produk</Text>
                             <View style={[styles.row_around_center, styles.mb_3, { alignSelf: 'flex-start' }]}>
                                 {reduxSearch.productDetail.description ?
-                                    <View style={[styles.column, { width: '100%' }]}>
-                                        <Text numberOfLines={deskripsiLenght == 200 ? 4 : 25} style={[styles.font_14]}>{reduxSearch.productDetail.description.slice(0, deskripsiLenght)}</Text>
-                                        {deskripsiLenght == 200 && reduxSearch.productDetail.description.length >= 200 ?
-                                            <TouchableOpacity onPress={() => setdeskripsiLenght(reduxSearch.productDetail.description.length + 50)}>
-                                                <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Baca selengkapnya..</Text>
-                                            </TouchableOpacity>
-                                            : reduxSearch.productDetail.description.length <= 200 ? null :
-                                                <TouchableOpacity onPress={() => setdeskripsiLenght(200)}>
-                                                    <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Baca lebih sedikit</Text>
-                                                </TouchableOpacity>
-                                        }
-                                    </View> : null}
+                                    <Text style={[styles.font_14]}>{reduxSearch.productDetail.description.slice(0, deskripsiLenght)}</Text>
+
+                                    // <View style={[styles.column, { width: '100%' }]}>
+                                    //     <Text numberOfLines={deskripsiLenght == 200 ? 10 : 25} style={[styles.font_14]}>{reduxSearch.productDetail.description.slice(0, deskripsiLenght)}</Text>
+                                    //     {deskripsiLenght == 200 && reduxSearch.productDetail.description.length >= 200 ?
+                                    //         <TouchableOpacity onPress={() => setdeskripsiLenght(reduxSearch.productDetail.description.length + 50)}>
+                                    //             <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Baca selengkapnya..</Text>
+                                    //         </TouchableOpacity>
+                                    //         : reduxSearch.productDetail.description.length <= 200 ? null :
+                                    //             <TouchableOpacity onPress={() => setdeskripsiLenght(200)}>
+                                    //                 <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Baca lebih sedikit</Text>
+                                    //             </TouchableOpacity>
+                                    //     }
+                                    // </View> 
+                                    : null}
                             </View>
                         </View>
 
@@ -694,34 +701,70 @@ export default function ProductScreen(props) {
                                     showsHorizontalScrollIndicator={false}
                                     renderItem={({ item, index }) => {
                                         return (
+                                            // <TouchableOpacity
+                                            //     onPress={() => handleShowDetail(item)}
+                                            //     style={[Ps.cardProduct, { marginRight: 12, width: Wp('33%'), height: Wp('55%') }]}
+                                            //     key={index}>
+                                            //     {item.isDiscount ? <Text style={Ps.textDiscount}>{item.discount}%</Text> : null}
+                                            //     <FastImage
+                                            //         style={[Ps.imageProduct, { height: Wp('33%'), width: '100%' }]}
+                                            //         source={{
+                                            //             uri: item.image,
+                                            //             headers: { Authorization: 'someAuthToken' },
+                                            //             priority: FastImage.priority.normal,
+                                            //         }}
+                                            //         resizeMode={FastImage.resizeMode.cover}
+                                            //     />
+                                            //     <View style={Ps.bottomCard}>
+                                            //         <Text
+                                            //             numberOfLines={2}
+                                            //             style={[Ps.nameProduct, { fontSize: 12 }]}>
+                                            //             {item.name}
+                                            //         </Text>
+                                            //         {item.isDiscount ?
+                                            //             <>
+                                            //                 <Text style={[Ps.priceBefore, { fontSize: 10 }]}>{item.price}</Text>
+                                            //                 <Text style={[Ps.priceAfter, { fontSize: 14 }]}>{item.priceDiscount}</Text>
+                                            //             </>
+                                            //             :
+                                            //             <Text style={Ps.price}>{item.price}</Text>
+                                            //         }
+                                            //     </View>
+                                            // </TouchableOpacity>
                                             <TouchableOpacity
-                                                onPress={() => handleShowDetail(item)}
-                                                style={[Ps.cardProduct, { marginRight: 12, width: Wp('33%'), height: Wp('55%') }]}
-                                                key={index}>
-                                                {item.isDiscount ? <Text style={Ps.textDiscount}>{item.discount}%</Text> : null}
-                                                <FastImage
-                                                    style={[Ps.imageProduct, { height: Wp('33%'), width: '100%' }]}
-                                                    source={{
-                                                        uri: item.image,
-                                                        headers: { Authorization: 'someAuthToken' },
-                                                        priority: FastImage.priority.normal,
-                                                    }}
-                                                    resizeMode={FastImage.resizeMode.cover}
-                                                />
-                                                <View style={Ps.bottomCard}>
-                                                    <Text
-                                                        numberOfLines={2}
-                                                        style={Ps.nameProduct}>
-                                                        {item.name}
-                                                    </Text>
+                                                style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('57%'), alignItems: 'center', elevation: 2 }]}
+                                                onPress={() => handleShowDetail(item)} >
+                                                <View style={[styles.column, { height: Wp('33%'), width: '100%' }]}>
+                                                    <FastImage
+                                                        style={[Ps.imageProduct, { height: '100%', width: '100%' }]}
+                                                        source={{
+                                                            uri: item.image,
+                                                            headers: { Authorization: 'someAuthToken' },
+                                                            priority: FastImage.priority.normal,
+                                                        }}
+                                                        resizeMode={FastImage.resizeMode.contain}
+                                                    />
+                                                    <View style={[styles.font_14, styles.px_5, styles.py, { position: 'absolute', bottom: 0, backgroundColor: colors.BlueJaja, borderTopRightRadius: 11, alignItems: 'center', justifyContent: 'center' }]}>
+                                                        <Text style={[styles.font_8, { marginBottom: '-2%', color: colors.White }]}>Seller Terdekat</Text>
+                                                    </View>
+                                                </View>
+                                                <View style={[Ps.bottomCard, { alignSelf: 'flex-start', width: '100%', height: Wp('18%'), justifyContent: 'flex-start', alignItems: 'flex-start' }]}>
+                                                    <Text numberOfLines={1} style={[Ps.nameProduct, { fontSize: 13 }]}>{item.name}</Text>
                                                     {item.isDiscount ?
                                                         <>
-                                                            <Text style={Ps.priceBefore}>{item.price}</Text>
+                                                            <View style={styles.row}>
+                                                                <Text style={[Ps.priceBefore, styles.mr_3,]}>{item.price}</Text>
+                                                                <Text style={[styles.font_10, styles.T_medium, { zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '1%', paddingHorizontal: '3%', borderRadius: 3 }]}>{item.discount}%</Text>
+                                                            </View>
                                                             <Text style={Ps.priceAfter}>{item.priceDiscount}</Text>
                                                         </>
                                                         :
-                                                        <Text style={Ps.price}>{item.price}</Text>
+                                                        <Text style={[Ps.price, { color: colors.BlueJaja }]}>{item.price}</Text>
                                                     }
+                                                </View>
+                                                <View style={[Ps.location, { width: '94%' }]}>
+                                                    <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
+                                                    <Text numberOfLines={1} style={[Ps.locarionName, { fontSize: 10, width: '85%' }]}>{item.location}</Text>
                                                 </View>
                                             </TouchableOpacity>
                                         )
@@ -775,6 +818,7 @@ export default function ProductScreen(props) {
                         [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                         Platform.OS === "android" ?
                             {
+                                useNativeDriver: false,
                                 listener: event => {
                                     if (isCloseToBottom(event.nativeEvent)) {
                                         console.log("oNSCROLL ");
@@ -792,15 +836,15 @@ export default function ProductScreen(props) {
                 }}
             />
 
-            <View style={{ position: 'absolute', bottom: 0, height: Hp('6%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
+            <View style={{ position: 'absolute', bottom: 0, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row', elevation: 3 }}>
                 <TouchableOpacity onPress={handleChat} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
                     <Image source={require('../../assets/icons/chats.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: flashsale ? colors.RedFlashsale : colors.BlueJaja }} />
                 </TouchableOpacity>
                 <TouchableOpacity disabled={disableCart} onPress={() => handleAddCart("trolley")} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
                     <Image source={require('../../assets/icons/cart.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: flashsale ? colors.RedFlashsale : colors.BlueJaja }} />
                 </TouchableOpacity>
-                <Button disabled={disableCart} onPress={() => handleAddCart("buyNow")} style={{ width: '50%', height: '100%', backgroundColor: disableCart ? colors.BlackGrayScale : flashsale ? colors.RedFlashsale : colors.BlueJaja }} contentStyle={{ width: '100%', height: '100%' }} color={disableCart ? colors.BlackGrayScale : flashsale ? colors.RedFlashsale : colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained">
-                    {reduxSearch.productDetail.stock == '0' ? 'Stok Habis' : 'Beli Sekarang'}
+                <Button disabled={disableCart} onPress={() => handleAddCart("buyNow")} style={{ width: '50%', height: '100%', backgroundColor: disableCart ? colors.BlackGrey : flashsale ? colors.RedFlashsale : colors.BlueJaja }} contentStyle={{ width: '100%', height: '100%' }} color={disableCart ? colors.BlackGrayScale : flashsale ? colors.RedFlashsale : colors.BlueJaja} labelStyle={[styles.font_14, styles.T_semi_bold, { color: colors.White }]} mode="contained">
+                    {reduxSearch.productDetail.stock == '0' ? 'Stok Habis' : reduxSearch.productDetail.statusProduk != 'live' ? 'Diarsipkan' : 'Beli Sekarang'}
                 </Button>
             </View>
         </SafeAreaView >

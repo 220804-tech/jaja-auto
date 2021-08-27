@@ -73,7 +73,13 @@
 # 12046, 12047 => Error reset or new password
 
 ## Product/Detail
-# 12048, 12049, 12043 => Error get product detail
+# 12048, 12049 => Error get product detail
+
+## Product Search
+# 12050, 12051 => Error search produk
+
+## Product Detail
+# 12051, 12052, 12053=> Error get product detail
 
 ## Category Component
 # 13001 => Error api get category 
@@ -89,8 +95,6 @@
 ## Trolley
 # 16001 => Error edit qty
 
-## Product Detail
-# 17002 => Error add cart
 
 ## Terakhir Dilihat
 # 18001 => Error api get terakhir dilihat

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Dimensions, Image, SafeAreaView, ScrollView, StatusBar, Text, View } from 'react-native'
-import { Button, Paragraph } from 'react-native-paper'
+import { Button } from 'react-native-paper'
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view'
 import { useDispatch, useSelector } from 'react-redux'
 import Products from '../../components/Store/AllProducts'
@@ -37,9 +37,9 @@ export default function StoreScreen() {
     }, [reduxStoreProduct, reduxStore])
 
     const [routes] = useState([
-        { key: 'first', title: 'Halaman Utama' },
-        // { key: 'second', title: 'Semua Produk' },
-        // { key: 'third', title: 'Postingan' },
+        { key: 'first', title: 'Halaman Toko' },
+        { key: 'second', title: 'Produk' },
+        { key: 'third', title: 'Kategori' },
 
     ]);
 
@@ -50,7 +50,7 @@ export default function StoreScreen() {
     });
 
     const handleSearch = (text) => {
-        if (text !== " " && text !== "  " && text !== "   " && text !== "    " && text !== "     ") {
+        if (text && text !== " " && text !== "  " && text !== "   " && text !== "    " && text !== "     ") {
             setLoading(true)
             ServiceStore.getStoreProduct(reduxStore.slug, text, "", "", "", "", "").then(res => {
                 setTimeout(() => setLoading(false), 1000);
@@ -93,9 +93,9 @@ export default function StoreScreen() {
                 showHideTransition="fade"
             />
             <AppbarSecond handleSearch={handleSearch} title={reduxStore && Object.keys(reduxStore).length && reduxStore.name ? `Cari di ${reduxStore.name}..` : 'Cari di toko..'} />
-            <View style={{ flex: 1 }}>
+            <View style={styles.container}>
                 {loading ? <Loading /> : null}
-                <View style={[styles.column, styles.p_4, { backgroundColor: colors.White, elevation: 3, width: Wp('100%') }]}>
+                <View style={[styles.column, styles.p_4, { backgroundColor: colors.White, width: Wp('100%') }]}>
                     <View style={styles.row_between_center}>
                         {Object.keys(reduxStore).length !== 0 ?
                             <View style={styles.row_start_center}>
@@ -121,15 +121,36 @@ export default function StoreScreen() {
                             Chat
                         </Button>
                     </View>
-                    {reduxStore.greeting ?
-                        <View style={[styles.pt_2]}>
-                            <Paragraph style={styles.font_13}>{reduxStore.greeting}</Paragraph>
-                        </View>
-                        : null}
-
                 </View>
-                <View style={[{ flex: 1, backgroundColor: colors.White }]}>
-                    <MainPage />
+                <View style={[styles.container, { backgroundColor: colors.White, width: Wp('100%') }]}>
+                    <TabView
+                        tabBarPosition="top"
+                        indicatorStyle={{ backgroundColor: 'white' }}
+                        navigationState={{ index, routes }}
+                        renderScene={renderScene}
+                        onIndexChange={setIndex}
+                        initialLayout={initialLayout}
+                        style={{ width: '100%', height: '100%' }}
+                        renderTabBar={props => (
+                            <TabBar
+                                {...props}
+                                indicatorStyle={{ backgroundColor: colors.BlueJaja }}
+                                // bounces={true}
+                                scrollEnabled={true}
+                                contentContainerStyle={{ padding: 0, height: '100%' }}
+                                style={{ backgroundColor: colors.White, width: Wp('100%') }}
+                                tabStyle={{ width: Wp('33.33%'), height: '100%', padding: 0 }} // here
+                                renderLabel={({ route, focused, color }) => {
+                                    return (
+                                        <View style={[styles.row_center, { width: Wp('33.3%'), minHeight: Wp('11%') }]}>
+                                            {/* <Image style={[styles.icon_25, { tintColor: focused ? colors.BlueJaja : colors.BlackSilver }]} source={route.title == 'Halaman Toko' ? require('../../assets/icons/store.png') : route.title == 'Produk' ? require('../../assets/icons/goods.png') : require('../../assets/icons/store.png')} /> */}
+                                            <Text style={[styles.font_12, styles.medium, { textAlign: 'center', color: focused ? colors.BlueJaja : colors.BlackGrayScale }]}>{route.title}</Text>
+                                        </View>
+                                    )
+                                }}
+                            />
+                        )}
+                    />
                 </View>
             </View>
         </SafeAreaView >

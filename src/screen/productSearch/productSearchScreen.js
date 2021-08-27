@@ -34,13 +34,24 @@ export default function ProductSearchScreen() {
 
 
     useEffect(() => {
+        setLoading(true)
         EncryptedStorage.getItem("token").then(res => {
             if (res) {
                 setAuth(JSON.parse(auth))
             }
         }).catch(err => console.log("Token null : ", err))
         setLoadmore(false)
-    }, [])
+        // setTimeout(() => {
+        //     setLoading(false)
+        // }, 500);
+        if (data && data.length) {
+            setLoading(false)
+        } else {
+            setLoading(false)
+            console.log("jsahfdhjkjhgfdfghjk")
+        }
+
+    }, [data])
 
 
 
@@ -305,7 +316,7 @@ export default function ProductSearchScreen() {
                         >
                             <CardProduct data={data} />
 
-                            {reduxmaxProduct ? <Text style={[styles.font_14, styles.my_5, { alignSelf: 'center', color: colors.BlueJaja, width: Wp('100%'), textAlign: 'center' }]}>Semua produk berhasil ditampilkan</Text> : <ShimmerCardProduct />}
+                            {reduxmaxProduct || data.length < 2 ? <Text style={[styles.font_14, styles.my_5, { alignSelf: 'center', color: colors.BlueJaja, width: Wp('100%'), textAlign: 'center' }]}>Semua produk berhasil ditampilkan</Text> : <ShimmerCardProduct />}
                         </ScrollView>
 
                     </View>
@@ -331,7 +342,7 @@ export default function ProductSearchScreen() {
                     <View style={[styles.row, { flexWrap: 'wrap', marginBottom: '4%' }]}>
                         {selectedFilter.map((item, i) => {
                             return (
-                                <TouchableOpacity key={String(i) + "m"} onPress={() => console.log("nais")} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: colors.BlueJaja, backgroundColor: colors.BlueJaja, borderRadius: 11, paddingHorizontal: '3%', paddingVertical: '1.5%', marginRight: '3%', marginTop: '3%' }}>
+                                <TouchableOpacity key={String(i) + "AW"} onPress={() => console.log("nais")} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: colors.BlueJaja, backgroundColor: colors.BlueJaja, borderRadius: 11, paddingHorizontal: '3%', paddingVertical: '1.5%', marginRight: '3%', marginTop: '3%' }}>
                                     <Text adjustsFontSizeToFit style={[styles.font_14, { color: colors.White }]}>{item.name}</Text>
                                 </TouchableOpacity>
                             )
@@ -343,12 +354,12 @@ export default function ProductSearchScreen() {
                     {reduxFilters && reduxFilters.length ?
                         reduxFilters.map((item, index) => {
                             return (
-                                <View key={String(index) + "s"} style={[styles.mb_4]}>
+                                <View key={String(index) + "XP"} style={[styles.mb_4]}>
                                     <Text adjustsFontSizeToFit style={[styles.font_16, { fontWeight: 'bold', color: colors.BlackGrayScale }]}>{item.name}</Text>
                                     <View style={{ flex: 0, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                                         {item.items.map((child, idx) => {
                                             return (
-                                                <TouchableOpacity onPress={() => handleSelected('filter', index, idx)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: child.value === location || child.value === condition || child.value === stock ? colors.BlueJaja : colors.BlackGrey, backgroundColor: child.value === location || child.value === condition || child.value === stock ? colors.BlueJaja : colors.White, borderRadius: 11, paddingHorizontal: '3%', paddingVertical: '2%', marginRight: '3%', marginTop: '3%' }}>
+                                                <TouchableOpacity key={String(index) + 'LJ'} onPress={() => handleSelected('filter', index, idx)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: child.value === location || child.value === condition || child.value === stock ? colors.BlueJaja : colors.BlackGrey, backgroundColor: child.value === location || child.value === condition || child.value === stock ? colors.BlueJaja : colors.White, borderRadius: 11, paddingHorizontal: '3%', paddingVertical: '2%', marginRight: '3%', marginTop: '3%' }}>
                                                     <Text adjustsFontSizeToFit style={[styles.font_14, { color: child.value === location || child.value === condition || child.value === stock ? colors.White : colors.BlackGrayScale }]}>{child.name}</Text>
                                                 </TouchableOpacity>
                                             )
@@ -366,7 +377,7 @@ export default function ProductSearchScreen() {
                             <View style={{ flex: 0, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                                 {reduxSorts.map((child, idx) => {
                                     return (
-                                        <TouchableOpacity key={String(idx) + "C"} onPress={() => handleSelected('sort', null, idx)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: child.value === sort ? colors.BlueJaja : colors.BlackGrey, backgroundColor: child.value === sort ? colors.BlueJaja : colors.White, borderRadius: 11, paddingHorizontal: '3%', paddingVertical: '2%', marginRight: '3%', marginTop: '3%' }}>
+                                        <TouchableOpacity key={String(idx) + "CH"} onPress={() => handleSelected('sort', null, idx)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: child.value === sort ? colors.BlueJaja : colors.BlackGrey, backgroundColor: child.value === sort ? colors.BlueJaja : colors.White, borderRadius: 11, paddingHorizontal: '3%', paddingVertical: '2%', marginRight: '3%', marginTop: '3%' }}>
                                             <Text adjustsFontSizeToFit style={[styles.font_14, { color: child.value === sort ? colors.White : colors.BlackGrayScale }]}>{child.name}</Text>
                                         </TouchableOpacity>
                                     )

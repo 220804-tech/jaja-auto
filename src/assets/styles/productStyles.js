@@ -33,6 +33,7 @@ export const style = StyleSheet.create({
     },
     nameProduct: {
         fontSize: 14,
+        fontFamily: 'Poppins-Regular',
         alignSelf: 'flex-start',
         marginBottom: '2%',
         color: colors.BlackGrayScale

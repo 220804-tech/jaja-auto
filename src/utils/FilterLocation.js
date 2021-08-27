@@ -4,6 +4,10 @@ import { getDistance, getPreciseDistance } from 'geolib';
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { Utils } from '../export';
 export default async function FilterLocation(locations, user, category, auth) {
+    console.log("🚀 ~ file: FilterLocation.js ~ line 7 ~ FilterLocation ~ auth", auth)
+    console.log("🚀 ~ file: FilterLocation.js ~ line 7 ~ FilterLocation ~ category", category)
+    console.log("🚀 ~ file: FilterLocation.js ~ line 7 ~ FilterLocation ~ user", user)
+    console.log("🚀 ~ file: FilterLocation.js ~ line 7 ~ FilterLocation ~ locations", locations)
     let json = Citys.data;
     let newArr = []
     if (user && user.length) {
