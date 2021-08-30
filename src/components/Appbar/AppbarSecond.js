@@ -23,7 +23,7 @@ export default function AppbarSecond(props) {
     }
 
     return (
-        <View style={[styles.appBar, { flex: 0, height: Hp('6.5%'), backgroundColor: colors.BlueJaja }]}>
+        <View style={[styles.appBar, { flex: 0, height: Hp('6.5%'), backgroundColor: props.backgroundColor ? props.backgroundColor : colors.BlueJaja }]}>
             <TouchableOpacity style={styles.row_start_center} onPress={() => navigation.goBack()}>
                 <Image style={[styles.appBarButton, { tintColor: colors.White }]} source={require('../../assets/icons/arrow.png')} />
             </TouchableOpacity>

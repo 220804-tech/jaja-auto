@@ -4,7 +4,7 @@ import { colors, styles, Wp, ServiceOrder, useNavigation, Os, DefaultNotFound } 
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { Button } from 'react-native-paper'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
 export default function OrdersSent() {
     const navigation = useNavigation()
@@ -129,7 +129,17 @@ export default function OrdersSent() {
                         )
                     }}
                 />
-                : <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
+                :
+                <ScrollView
+                    contentContainerStyle={{ flex: 1 }}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    }>
+                    <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
+                </ScrollView>
             }
         </View>
     )

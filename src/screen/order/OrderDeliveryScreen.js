@@ -42,6 +42,7 @@ export default function OrderDeliveryScreen() {
         fetch(`https://jaja.id/backend/order/${reduxInvoice}`, requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: OrderDeliveryScreen.js ~ line 45 ~ getItem ~ result", result.data)
                 if (result.status.code === 200 || result.status.code === 204) {
                     dispatch({ type: 'SET_TRACKING', payload: result.data.tracking })
                 } else {
