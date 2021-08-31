@@ -21,7 +21,7 @@ export async function getStore(slug) {
         .catch(error => Utils.handleError(error, 'Error with status code : 12019'));
 }
 
-export async function getStoreProduct(slug, keyword, price, condition, preorder, brand, sort) {
+export async function getStoreProduct(data) {
     var myHeaders = new Headers();
     myHeaders.append("Cookie", "ci_session=l1pjct5fi76ke1irrounf7lc3c5g81iv");
 
@@ -31,7 +31,7 @@ export async function getStoreProduct(slug, keyword, price, condition, preorder,
         redirect: 'follow'
     };
 
-    return await fetch(`https://jaja.id/backend/product/store/${slug ? slug : ""}?page=1&limit=100&keyword=${keyword ? keyword : ""}&filter_price=&filter_location=${price ? price : ""}&filter_condition=${condition ? condition : ""}&filter_preorder=${preorder ? preorder : ""}&filter_brand=${brand ? brand : ""}&sort=${sort ? sort : ""}`, requestOptions)
+    return await fetch(`https://jaja.id/backend/product/store/${data.slug ? data.slug : ""}?page=${data.page}&limit=${data.limit}&keyword=${data.keyword ? data.keyword : ""}&filter_price=&filter_location=${data.price ? data.price : ""}&filter_condition=${data.condition ? data.condition : ""}&filter_preorder=${data.preorder ? data.preorder : ""}&filter_brand=${data.brand ? data.brand : ""}&sort=${data.sort ? data.sort : ""}`, requestOptions)
         .then(response => response.json())
         .then(result => {
             if (result.status.code === 200 || result.status.code === 204) {

@@ -19,11 +19,11 @@ export default function RecomandedHobbyComponent(props) {
 
     useEffect(() => {
         getStorage()
-        EncryptedStorage.getItem('token').then(res => {
-            if (res) {
-                setAuth(JSON.stringify(res))
-            }
-        })
+        // EncryptedStorage.getItem('token').then(res => {
+        //     if (res) {
+        //         setAuth(JSON.stringify(res))
+        //     }
+        // })
         if (reduxLoadmore) {
             handleLoadMore()
             setLoading(true)
@@ -45,43 +45,41 @@ export default function RecomandedHobbyComponent(props) {
             method: 'GET',
             redirect: 'follow'
         };
-        let res = ""
+        let loadingFetch = true
         fetch(`https://jaja.id/backend/product/recommendation?page=${page + 1}&limit=20`, requestOptions)
             .then(response => response.json())
             .then(result => {
+                loadingFetch = false
                 if (result.status.code == 200) {
                     dispatch({ type: 'SET_DASHRECOMMANDED', payload: reduxdashRecommanded.concat(result.data.items) })
-                    EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))
                     dispatch({ 'type': 'SET_MAX_RECOMMANDED', payload: false })
+                    EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))
                 } else if (result.status.code === 204) {
                     dispatch({ 'type': 'SET_MAX_RECOMMANDED', payload: true })
                 }
-                dispatch({ 'type': 'SET_LOADMORE', payload: false })
             })
             .catch(error => {
+                loadingFetch = false
                 dispatch({ 'type': 'SET_MAX_RECOMMANDED', payload: true })
+                dispatch({ 'type': 'SET_LOADMORE', payload: false })
                 Utils.handleError(error, 'Error with status code : 13002')
-                // ToastAndroid.show(String(error).slice(11, String(error).length), ToastAndroid.SHORT, ToastAndroid.TOP)
             });
         setTimeout(() => {
-            if (res === 'network') {
-                dispatch({ 'type': 'SET_LOADMORE', payload: false })
-                return ToastAndroid.show("Koneksi terputus, periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.TOP)
+            if (loadingFetch) {
+                ToastAndroid.show("Sedang memuat..", ToastAndroid.SHORT, ToastAndroid.TOP)
+                setTimeout(() => {
+                    Utils.CheckSignal().then(res => {
+                        if (!res.connect) {
+                            ToastAndroid.show("Koneksi terputus, periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.TOP)
+                            dispatch({ 'type': 'SET_LOADMORE', payload: false })
+                        }
+                    })
+                }, 7000);
             } else {
-                res = "loading"
-                if (!loading && reduxLoadmore) {
-                    ToastAndroid.show("Sedang memuat..", ToastAndroid.SHORT, ToastAndroid.TOP)
-                }
+                dispatch({ 'type': 'SET_LOADMORE', payload: false })
             }
         }, 5000);
-        setTimeout(() => {
-            if (res === 'loading') {
-                ToastAndroid.show("Koneksi lambat, periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.TOP)
-            } else {
 
-            }
-            dispatch({ 'type': 'SET_LOADMORE', payload: false })
-        }, 1000);
     }
 
     const handleLoadMore = () => {
@@ -105,7 +103,7 @@ export default function RecomandedHobbyComponent(props) {
                 :
                 <ShimmerCardProduct />
             }
-            {reduxmaxRecommanded ? <Text style={[styles.font_14, styles.mt_5, { alignSelf: 'center', color: colors.BlueJaja }]}>Semua produk berhasil ditampilkan</Text> : <ShimmerCardProduct />}
+            {reduxmaxRecommanded ? <Text style={[styles.font_14, styles.mt_5, { alignSelf: 'center', color: colors.BlueJaja }]}>Semua produk berhasil ditampilkan.</Text> : <ShimmerCardProduct />}
             {/* {reduxLoadmore ?
                 loading ?
                     <View style={style.content}>

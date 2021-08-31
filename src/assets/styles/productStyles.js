@@ -1,19 +1,19 @@
 import { StyleSheet } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Wp } from '../../export';
+import { Wp, Hp } from '../../export';
 import colors from '../colors';
 
 export const style = StyleSheet.create({
     cardProduct: {
         borderRadius: 3,
-        width: wp("45%"),
+        width: Wp("45%"),
         // minHeight: wp('70%'),
-        height: wp("75%"),
+        height: Hp("40.5%"),
         marginLeft: 1,
         marginTop: 5,
         marginBottom: 5,
         justifyContent: "flex-start",
-        elevation: 1,
+        elevation: 2,
         backgroundColor: colors.White,
         flexDirection: 'column',
         alignItems: 'flex-start',
@@ -42,7 +42,7 @@ export const style = StyleSheet.create({
     priceAfter: { fontSize: 16, fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja },
     price: { fontSize: 16, fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale },
 
-    cardBottom: { flex: 0, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', position: 'absolute', bottom: 3, width: '97%', paddingHorizontal: '3%' },
+    cardBottom: { flex: 0, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', position: 'absolute', bottom: 3, width: '97%', paddingHorizontal: '3%' },
     location: { flex: 0, flexDirection: 'row', width: '75%', alignItems: 'center' },
     locarionName: { fontSize: 11, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale, marginRight: '2%' },
     locationIcon: {

@@ -3,8 +3,8 @@ import { Dimensions, Image, SafeAreaView, ScrollView, StatusBar, Text, View, Ima
 import { Button, Paragraph } from 'react-native-paper'
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view'
 import { useDispatch, useSelector } from 'react-redux'
-import Products from '../../components/Store/AllProducts'
-import MainPage from '../../components/Store/MainPage'
+import Products from '../../components/Store/StoreProducts/StoreProducts'
+import MainPage from '../../components/Store/MainPage/MainPage'
 import Posts from '../../components/Store/Posts'
 import { colors, Loading, ServiceCart, ServiceStore, styles, useNavigation, Wp, AppbarSecond } from '../../export'
 const initialLayout = { width: Dimensions.get('window').width };
@@ -54,7 +54,18 @@ export default function StoreScreen() {
     const handleSearch = (text) => {
         if (text && text !== " " && text !== "  " && text !== "   " && text !== "    " && text !== "     ") {
             setLoading(true)
-            ServiceStore.getStoreProduct(reduxStore.slug, text, "", "", "", "", "").then(res => {
+            let obj = {
+                slug: reduxStore.slug,
+                page: 1,
+                limit: 10,
+                keyword: text,
+                price: '',
+                condition: '',
+                preorder: '',
+                brand: '',
+                sort: '',
+            }
+            ServiceStore.getStoreProduct(obj).then(res => {
                 setTimeout(() => setLoading(false), 1000);
                 if (res) {
                     dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
@@ -143,7 +154,7 @@ export default function StoreScreen() {
                         onIndexChange={setIndex}
                         initialLayout={initialLayout}
                         style={{ width: '100%', height: '100%' }}
-                        
+
                         renderTabBar={props => (
                             <TabBar
                                 {...props}

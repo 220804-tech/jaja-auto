@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView, View, Text, Image, TouchableOpacity, TextInput, FlatList, ToastAndroid } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
-import { useNavigation, colors, styles, Wp, CheckSignal, ServiceStore, useFocusEffect, Utils } from '../../export'
+import { useNavigation, colors, styles, Wp, CheckSignal, ServiceStore, useFocusEffect, Utils, } from '../../export'
 import { useDispatch, useSelector } from 'react-redux'
 export default function SearchScreen() {
     const navigation = useNavigation();
@@ -13,6 +13,7 @@ export default function SearchScreen() {
     const [storeSearch, setstoreSearch] = useState([])
     const [productSearch, setproductSearch] = useState([])
     const [slug, setSlug] = useState(['Badminton', 'Basketball', 'Cooking', 'Cycling', 'Fishing', 'Football', 'Photography', 'Reading'])
+    const [focus, setFocus] = useState(true)
 
 
     useEffect(() => {
@@ -22,6 +23,7 @@ export default function SearchScreen() {
     useFocusEffect(
         useCallback(() => {
             dispatch({ type: 'SET_MAX_SEARCH', payload: false })
+            setFocus(true)
         }, []),
     );
     const getItem = () => {
@@ -55,7 +57,7 @@ export default function SearchScreen() {
             fetch(`https://jaja.id/backend/product/search?limit=10&keyword=${text}`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    console.log("🚀 ~ file: SearchScreen.js ~ line 49 ~ handleSearch ~ result", result.data.store)
+                    setproductSearch([])
                     if (result.status.code == 200 || result.status.code == 204) {
                         setstoreSearch(result.data.store)
                         if (result.data.product.length) {
@@ -84,7 +86,7 @@ export default function SearchScreen() {
     const handleSelected = (res) => {
         console.log("🚀 ~ file: SearchScreen.js ~ line 85 ~ handleSelected ~ res", res)
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        navigation.navigate("Product", { slug: res.slug, image: null })
+        navigation.push("Product", { slug: res.slug, image: null })
         handleSaveKeyword(res.name)
     }
 
@@ -161,6 +163,14 @@ export default function SearchScreen() {
 
     const handleLoopSignal = (signal, text) => {
         if (signal.connect === true) {
+            var myHeaders = new Headers();
+            myHeaders.append("Cookie", "ci_session=bk461otlv7le6rfqes5eim0h9cf99n3u");
+
+            var requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
             fetch(`https://jaja.id/backend/product/search/result?page=1&limit=20&keyword=${text}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
@@ -180,17 +190,54 @@ export default function SearchScreen() {
 
 
     const handleSelectedToko = (item) => {
+        // if (item.slug !== reduxSlug) {
+        //     dispatch({ "type": 'SET_STORE', payload: {} })
+        //     dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
+        // }
+        // dispatch({ type: 'SET_SLUG', payload: item.slug })
+        // ServiceStore.getStore(item.slug).then(res => {
+        //     if (res) {
+        //         dispatch({ "type": 'SET_STORE', payload: res })
+        //     }
+        // })
+        // let obj = {
+        //     slug: slug,
+        //     page: 1,
+        //     limit: 10,
+        //     keyword: '',
+        //     price: '',
+        //     condition: '',
+        //     preorder: '',
+        //     brand: '',
+        //     sort: '',
+        // }
+        // ServiceStore.getStoreProduct(obj).then(res => {
+        //     if (res) {
+        //         dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
+        //     }
+        // })
         if (item.slug !== reduxSlug) {
             dispatch({ "type": 'SET_STORE', payload: {} })
             dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
+            dispatch({ type: 'SET_SLUG', payload: item.slug })
         }
-        dispatch({ type: 'SET_SLUG', payload: item.slug })
         ServiceStore.getStore(item.slug).then(res => {
             if (res) {
                 dispatch({ "type": 'SET_STORE', payload: res })
             }
         })
-        ServiceStore.getStoreProduct(item.slug, "", "", "", "", "", "").then(res => {
+        let obj = {
+            slug: item.slug,
+            page: 1,
+            limit: 10,
+            keyword: '',
+            price: '',
+            condition: '',
+            preorder: '',
+            brand: '',
+            sort: '',
+        }
+        ServiceStore.getStoreProduct(obj).then(res => {
             if (res) {
                 dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
             }
@@ -225,7 +272,6 @@ export default function SearchScreen() {
                                     keyExtractor={(item, index) => String(index + 3) + 'SX'}
                                     extraData={productSearch}
                                     renderItem={({ item }) => {
-                                        console.log("sasasa", productSearch)
                                         return (
                                             <>
                                                 {Object.keys(item).length ?

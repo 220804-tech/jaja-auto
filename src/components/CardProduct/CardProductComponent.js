@@ -6,14 +6,14 @@ import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 import LinearGradient from 'react-native-linear-gradient';
 import { Item } from 'react-native-paper/lib/typescript/components/List/List'
 
-export default function CardProductComponent(props) {
+export default function     CardProductComponent(props) {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const [img, setImg] = useState(require('../../assets/images/JajaId.png'))
 
     const handleShowDetail = item => {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        navigation.navigate("Product", { slug: item.slug, image: item.image })
+        navigation.push("Product", { slug: item.slug, image: item.image })
     }
     useEffect(() => {
         // dispatch({ type: 'SET_DASHRECOMMANDED', payload: [] })
@@ -88,6 +88,11 @@ export default function CardProductComponent(props) {
                                     }
                                 </View>
                                 <View style={[Ps.cardBottom, styles.py]}>
+                                    {item.amountSold && item.amountSold > 0 ?
+                                        <View style={[Ps.location]}>
+                                            <Text style={[Ps.locarionName]}>Terjual {item.amountSold}</Text>
+                                        </View> : null
+                                    }
                                     <View style={[Ps.location]}>
                                         <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
                                         <Text style={[Ps.locarionName]}>{item.location}</Text>

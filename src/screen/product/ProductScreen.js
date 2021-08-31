@@ -72,7 +72,7 @@ export default function ProductScreen(props) {
             getItem(props.route.params.slug)
         }
 
-    }, [props.route.params])
+    }, [])
 
     const getItem = (slug) => {
         let response;
@@ -152,7 +152,7 @@ export default function ProductScreen(props) {
 
             }
 
-        }, [reduxSearch]),
+        }, []),
     );
 
     const getBadges = () => {
@@ -250,12 +250,25 @@ export default function ProductScreen(props) {
                 dispatch({ "type": 'SET_STORE', payload: res })
             }
         })
-        ServiceStore.getStoreProduct(slug, "", "", "", "", "", "").then(res => {
+        let obj = {
+            slug: slug,
+            page: 1,
+            limit: 10,
+            keyword: '',
+            price: '',
+            condition: '',
+            preorder: '',
+            brand: '',
+            sort: 'produk.id_produk-desc',
+        }
+
+        ServiceStore.getStoreProduct(obj).then(res => {
             if (res) {
-                dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
+                console.log('cari new product')
+                dispatch({ "type": 'SET_NEW_PRODUCT', payload: res.items })
             }
         })
-        navigation.navigate('Store')
+        navigation.push('Store')
     }
 
     const handleTrolley = () => {
@@ -348,12 +361,12 @@ export default function ProductScreen(props) {
 
     const handleShowDetail = item => {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        navigation.navigate("Product", { slug: item.slug, image: item.image })
+        navigation.push("Product", { slug: item.slug, image: item.image })
     }
 
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
         return layoutMeasurement.height + contentOffset.y >=
-            contentSize.height - (hg * 0.80) || layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 0.05)
+            contentSize.height - (hg * 1.1) || layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 0.05)
     }
 
     const loadMoreData = () => {

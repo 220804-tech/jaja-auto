@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, FlatList, TouchableOpacity, Image, ScrollView, ToastAndroid } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { styles, Wp, Hp, colors, useNavigation, CardProduct, NearestStore } from '../../export'
+import { styles, Wp, Hp, colors, useNavigation, CardProduct, NearestStore } from '../../../export'
 import Swiper from 'react-native-swiper'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { Paragraph } from 'react-native-paper'
+import NewProduct from './NewProduct'
 
 export default function MainPage() {
     const navigation = useNavigation();
@@ -14,7 +15,6 @@ export default function MainPage() {
     const products = useSelector(state => state.store.storeProduct)
     const [auth, setAuth] = useState("")
     const image = useSelector(state => state.store.store.image)
-    console.log("🚀 ~ file: MainPage.js ~ line 14 ~ MainPage ~ vouchers", vouchers)
 
     useEffect(() => {
         EncryptedStorage.getItem('token').then(res => {
@@ -26,7 +26,7 @@ export default function MainPage() {
 
     const handleShowDetail = item => {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        navigation.navigate("Product", { slug: item.slug, image: item.image })
+        navigation.push("Product", { slug: item.slug, image: item.image })
     }
 
     // const handleLoadMore = () => {
@@ -40,7 +40,6 @@ export default function MainPage() {
     // }
 
     const handleVoucher = (val) => {
-        console.log("🚀 ~ file: MainPage.js ~ line 59 ~ handleVoucher ~ val", val)
         var myHeaders = new Headers();
         myHeaders.append("Authorization", auth);
         myHeaders.append("Content-Type", "application/json");
@@ -72,48 +71,45 @@ export default function MainPage() {
     return (
         <View style={[styles.column_start, { width: Wp('100%'), backgroundColor: colors.White }]}>
             <ScrollView contentContainerStyle={{ alignItems: 'flex-start' }}>
-
-                {vouchers && vouchers.length !== 0 ?
-                    <View style={[styles.row_center, { height: Wp('20%'), paddingHorizontal: '1%' }]}>
-                        <ScrollView horizontal contentContainerStyle={{ height: Wp('20%') }}>
-                            <FlatList
-                                contentContainerStyle={{ alignSelf: 'flex-start' }}
-                                horizontal
-                                keyExtractor={(item) => item.id}
-                                data={vouchers}
-                                renderItem={({ item }) => {
-                                    return (
-                                        <View style={[styles.row_start_center, styles.my_3, { width: Wp('45%'), height: Wp('17%'), marginRight: 10 }]}>
-                                            <View style={[styles.row_between_center, styles.pr_2, { width: '100%', height: '100%', backgroundColor: colors.BlueJaja }]}>
-                                                <View style={[styles.column, { width: '70%', height: '100%' }]}>
-                                                    <View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: colors.BlueJaja, flexDirection: 'column', paddingVertical: '1%', justifyContent: 'center' }}>
-                                                        <View style={{ height: '18%', width: '8%', backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                                        <View style={{ height: '18%', width: '8%', backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                                        <View style={{ height: '18%', width: '8%', backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                                        <View style={{ height: '18%', width: '8%', backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                                        <View style={{ height: '18%', width: '8%', backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                                    </View>
-
-                                                    <View style={[styles.column_center_start, { height: '100%', width: '100%', paddingLeft: '15%' }]}>
-                                                        <Text style={[styles.font_14, styles.mb_2, { color: colors.White, fontWeight: 'bold' }]}>{item.name}</Text>
-                                                        <Text numberOfLines={2} style={[styles.font_8, { color: colors.White, fontWeight: 'bold', width: '80%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
-                                                    </View>
-                                                </View>
-                                                <TouchableOpacity onPress={() => handleVoucher(item.id)} style={{ width: '30%', backgroundColor: item.isClaimed ? colors.White : colors.RedFlashsale, padding: '1%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.RedFlashsale, borderRadius: 3 }}>
-                                                    <Text style={[styles.font_12, { color: item.isClaimed ? colors.RedFlashsale : colors.White }]}>{"Klaim"}</Text>
-                                                </TouchableOpacity>
-                                            </View>
-                                        </View>
-                                    )
-                                }}
-                            />
-                        </ScrollView>
-                    </View>
-                    : null
-                }
-
                 <View style={[styles.column, { width: Wp('100%') }]}>
+                    {vouchers && vouchers.length !== 0 ?
+                        <View style={[styles.row_center, styles.my_2, { height: Wp('20%'), paddingHorizontal: '1%' }]}>
+                            <ScrollView horizontal contentContainerStyle={{ height: Wp('20%') }}>
+                                <FlatList
+                                    contentContainerStyle={{ alignSelf: 'flex-start' }}
+                                    horizontal
+                                    keyExtractor={(item) => item.id}
+                                    data={vouchers}
+                                    renderItem={({ item }) => {
+                                        return (
+                                            <View style={[styles.row_start_center, styles.my_3, { width: Wp('45%'), height: Wp('17%'), marginRight: 10 }]}>
+                                                <View style={[styles.row_between_center, styles.pr_2, { width: '100%', height: '100%', backgroundColor: colors.BlueJaja }]}>
+                                                    <View style={[styles.column, { width: '70%', height: '100%' }]}>
+                                                        <View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: colors.BlueJaja, flexDirection: 'column', paddingVertical: '1%', justifyContent: 'center' }}>
+                                                            <View style={{ height: '18%', width: '6%', backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                            <View style={{ height: '18%', width: '6%', backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                            <View style={{ height: '18%', width: '6%', backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                            <View style={{ height: '18%', width: '6%', backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                            <View style={{ height: '18%', width: '6%', backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                        </View>
 
+                                                        <View style={[styles.column_center_start, { height: '100%', width: '100%', paddingLeft: '15%' }]}>
+                                                            <Text style={[styles.font_14, styles.mb_2, { color: colors.White, fontWeight: 'bold' }]}>{item.name}</Text>
+                                                            <Text numberOfLines={2} style={[styles.font_8, { color: colors.White, fontWeight: 'bold', width: '80%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
+                                                        </View>
+                                                    </View>
+                                                    <TouchableOpacity onPress={() => handleVoucher(item.id)} style={{ width: '30%', backgroundColor: item.isClaimed ? colors.White : colors.RedFlashsale, padding: '1%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.RedFlashsale, borderRadius: 3 }}>
+                                                        <Text style={[styles.font_11, { color: item.isClaimed ? colors.RedFlashsale : colors.White }]}>Klaim</Text>
+                                                    </TouchableOpacity>
+                                                </View>
+                                            </View>
+                                        )
+                                    }}
+                                />
+                            </ScrollView>
+                        </View>
+                        : null
+                    }
                     {image && image.promoBanner && image.promoBanner.length ?
                         <View style={[styles.column_center_start, { width: Wp('100%'), height: Wp('50%'), backgroundColor: 'white' }]}>
                             <Swiper
@@ -127,8 +123,6 @@ export default function MainPage() {
                                 autoplay={true}
                                 loop={true}>
                                 {image.promoBanner.map((item, key) => {
-                                    console.log("🚀 ~ file: MainPage.js", item)
-
                                     return (
                                         <View style={{ width: Wp('100%'), height: Wp('50%') }}>
                                             {item ?
@@ -137,7 +131,7 @@ export default function MainPage() {
                                                 />
                                                 :
                                                 <Image key={String(key) + 'z'} style={{ width: Wp('100%'), height: Wp('50%'), resizeMode: 'center', tintColor: colors.Silver }}
-                                                    source={require('../../assets/images/JajaId.png')}
+                                                    source={require('../../../assets/images/JajaId.png')}
                                                 />}
                                         </View>
                                     );
@@ -146,15 +140,24 @@ export default function MainPage() {
                         </View>
                         : null
                     }
+
                     {image && image.mainBanner ?
-                        <View style={[styles.column_center_start, { width: Wp('100%'), height: Wp('50%') }]}>
-                            <Image style={{ width: Wp('100%'), height: Wp('100%'), resizeMode: 'contain' }} source={{ uri: image.mainBanner }} />
-                        </View>
+                        // <View style={[styles.column_center_start, { width: Wp('100%'), height: Wp('30%'), backgroundColor: 'grey' }]}>
+                        <Image style={{ width: Wp('100%'), height: Wp('50%'), resizeMode: 'cover' }} source={{ uri: image.mainBanner }} />
+                        // </View>
                         : null
                     }
                     {image && image.promoBanner && image.promoBanner.length ?
                         <>
-                            <View style={[styles.row, { width: Wp('100%'), height: Wp('33.3%') }]}>
+                            <View style={[styles.row, { width: Wp('100%'), height: Wp('50%') }]}>
+                                <View style={{ width: Wp('50%'), height: '100%' }}>
+                                    <Image style={{ width: Wp('50%'), height: '100%', resizeMode: 'cover' }} source={{ uri: image.promoBanner[3] ? image.promoBanner[3] : null }} />
+                                </View>
+                                <View style={{ width: Wp('50%'), height: Wp('50%') }}>
+                                    <Image style={{ width: Wp('50%'), height: Wp('50%'), resizeMode: 'cover' }} source={{ uri: image.promoBanner[5] ? image.promoBanner[4] : null }} />
+                                </View>
+                            </View>
+                            <View style={[styles.row, styles.mb_2, { width: Wp('100%'), height: Wp('33.3%') }]}>
                                 <View style={{ width: Wp('33.3%'), height: Wp('33.3%') }}>
                                     <Image style={{ width: Wp('33.3%'), height: Wp('33.3%'), resizeMode: 'cover' }} source={{ uri: image.promoBanner[2] ? image.promoBanner[2] : null }} />
                                 </View>
@@ -165,14 +168,7 @@ export default function MainPage() {
                                     <Image style={{ width: Wp('33.3%'), height: Wp('33.3%'), resizeMode: 'cover' }} source={{ uri: image.promoBanner[4] ? image.promoBanner[4] : null }} />
                                 </View>
                             </View>
-                            <View style={[styles.row, styles.mb_2, { width: Wp('100%'), height: Wp('50%') }]}>
-                                <View style={{ width: Wp('50%'), height: '100%' }}>
-                                    <Image style={{ width: Wp('50%'), height: '100%', resizeMode: 'cover' }} source={{ uri: image.promoBanner[3] ? image.promoBanner[3] : null }} />
-                                </View>
-                                <View style={{ width: Wp('50%'), height: Wp('50%') }}>
-                                    <Image style={{ width: Wp('50%'), height: Wp('50%'), resizeMode: 'cover' }} source={{ uri: image.promoBanner[5] ? image.promoBanner[4] : null }} />
-                                </View>
-                            </View>
+
                         </>
 
                         : null}
@@ -182,16 +178,15 @@ export default function MainPage() {
                     {products && products.length ?
                         <View style={styles.column}>
                             {/* <Text style={[styles.font_16, styles.T_semi_bold, { color: colors.BlackGrayScale }]}>Produk terbaru</Text> */}
-                            <NearestStore />
-                            <NearestStore />
-                            <NearestStore />
+                            <NewProduct />
 
                             {/* <CardProduct data={products} /> */}
                         </View>
                         :
-                        <View style={{ justifyContent: 'center', width: Wp('100%'), height: Hp('20%') }}>
-                            <Text style={[styles.font_14, { alignSelf: 'center', color: colors.BlackGrayScale }]}>Produk tidak ditemukan</Text>
-                        </View>
+                        null
+                        // <View style={{ justifyContent: 'center', width: Wp('100%'), height: Hp('20%') }}>
+                        //     <Text style={[styles.font_14, { alignSelf: 'center', color: colors.BlackGrayScale }]}>Produk tidak ditemukan</Text>
+                        // </View>
                     }
                     {/* <FlatList
                         removeClippedSubviews={true} // Unmount components when outside of window 

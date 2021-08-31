@@ -10,7 +10,7 @@ export default function TrendingComponent() {
     const dispatch = useDispatch()
 
     const handleShowDetail = async item => {
-        navigation.navigate("Product")
+        navigation.push("Product")
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
         setTimeout(() => {
             productDetail(item.slug).then(res => {

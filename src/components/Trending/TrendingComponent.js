@@ -24,7 +24,7 @@ export default function TrendingComponent() {
     }, [])
     const handleShowDetail = async item => {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        navigation.navigate("Product", { slug: item.slug, image: item.image })
+        navigation.push("Product", { slug: item.slug, image: item.image })
     }
 
 

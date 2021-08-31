@@ -1,16 +1,16 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { View, Text, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native'
-import { styles, Ps, useNavigation, FastImage, colors, Wp, useFocusEffect, } from '../../export'
+import { styles, Ps, useNavigation, FastImage, colors, Wp, useFocusEffect, } from '../../../export'
 import { useSelector, useDispatch } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 import TextTicker from 'react-native-text-ticker'
 
-export default function NearestStore() {
+export default function NewProduct() {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const reduxdashNearestStore = useSelector(state => state.dashboard.nearestStore)
-
+    const products = useSelector(state => state.store.newProduct)
 
     useEffect(() => {
     }, [])
@@ -34,7 +34,7 @@ export default function NearestStore() {
         <View style={[styles.column, styles.px_3, styles.py_4, { backgroundColor: colors.White }]}>
             <View style={[styles.row_between_center, styles.mb_3]}>
                 <Text style={styles.titleDashboard}>
-                    Berdasarkan Toko Terdekat
+                    Produk terbaru
                 </Text>
                 {/* <TouchableOpacity onPress={() => handleCategory('Art Shop')}>
                     <Text style={[{ fontSize: 13, fontWeight: 'bold', color: colors.BlueJaja }]}>
@@ -42,10 +42,10 @@ export default function NearestStore() {
                     </Text>
                 </TouchableOpacity> */}
             </View>
-            {reduxdashNearestStore && reduxdashNearestStore.length ?
+            {products && products.length ?
                 <FlatList
                     showsHorizontalScrollIndicator={false}
-                    data={reduxdashNearestStore.slice(0, 20)}
+                    data={products.slice(0, 20)}
                     horizontal={true}
                     keyExtractor={(item, index) => String(index)}
                     renderItem={({ item, index }) => {
@@ -79,7 +79,7 @@ export default function NearestStore() {
                                     }
                                 </View>
                                 <View style={[Ps.location, { width: '94%' }]}>
-                                    <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
+                                    <Image style={Ps.locationIcon} source={require('../../../assets/icons/google-maps.png')} />
                                     <Text numberOfLines={1} style={[Ps.locarionName, { fontSize: 10, width: '85%' }]}>{item.location}</Text>
                                 </View>
                             </TouchableOpacity>
@@ -95,7 +95,7 @@ export default function NearestStore() {
                                 style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('57%'), alignItems: 'center' }]}>
                                 <FastImage
                                     style={[Ps.imageProduct, { height: Wp('33%'), width: '100%', backgroundColor: colors.Silver, borderTopRightRadius: 3, borderTopLeftRadius: 3 }]}
-                                    source={require('../../assets/images/JajaId.png')}
+                                    source={require('../../../assets/images/JajaId.png')}
                                     tintColor={colors.White}
                                     resizeMode={FastImage.resizeMode.center}
                                 />

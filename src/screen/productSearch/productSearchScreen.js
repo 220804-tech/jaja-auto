@@ -35,23 +35,14 @@ export default function ProductSearchScreen() {
 
     useEffect(() => {
         setLoading(true)
+        setTimeout(() => setLoading(false), 1500);
+
         EncryptedStorage.getItem("token").then(res => {
             if (res) {
                 setAuth(JSON.parse(auth))
             }
         }).catch(err => console.log("Token null : ", err))
-        setLoadmore(false)
-        // setTimeout(() => {
-        //     setLoading(false)
-        // }, 500);
-        if (data && data.length) {
-            setLoading(false)
-        } else {
-            setLoading(false)
-            console.log("jsahfdhjkjhgfdfghjk")
-        }
-
-    }, [data])
+    }, [])
 
 
 
@@ -163,7 +154,7 @@ export default function ProductSearchScreen() {
 
     const handleShowDetail = item => {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        navigation.navigate("Product", { slug: item.slug, image: item.image })
+        navigation.push("Product", { slug: item.slug, image: item.image })
     }
 
     const handleSelected = (name, indexParent, indexChild) => {
@@ -301,6 +292,8 @@ export default function ProductSearchScreen() {
                             onScroll={Animated.event(
                                 [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                                 {
+                                    useNativeDriver: false,
+
                                     listener: event => {
                                         if (isCloseToBottom(event.nativeEvent)) {
                                             handleLoadMore()

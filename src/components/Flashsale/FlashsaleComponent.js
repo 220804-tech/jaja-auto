@@ -70,7 +70,7 @@ export default function FlashsaleComponent() {
 
     const handleShowDetail = item => {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        navigation.navigate("Product", { slug: item.slug, image: item.image, flashsale: true })
+        navigation.push("Product", { slug: item.slug, image: item.image, flashsale: true })
     }
 
     const [shimmerData] = useState(['1X', '2X', '3X'])
