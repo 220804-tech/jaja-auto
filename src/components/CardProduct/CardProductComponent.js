@@ -6,7 +6,7 @@ import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 import LinearGradient from 'react-native-linear-gradient';
 import { Item } from 'react-native-paper/lib/typescript/components/List/List'
 
-export default function     CardProductComponent(props) {
+export default function CardProductComponent(props) {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const [img, setImg] = useState(require('../../assets/images/JajaId.png'))
@@ -48,9 +48,9 @@ export default function     CardProductComponent(props) {
                         {!item.loading ?
                             <TouchableOpacity
                                 onPress={() => handleShowDetail(item)}
-                                style={[Ps.cardProduct, { marginRight: '3.5%' }]}
+                                style={[Ps.cardProduct, { marginRight: '3.5%' }]}   
                                 key={index}>
-                                {item.isDiscount ? <Text style={Ps.textDiscount}>{item.discount}%</Text> : null}
+                                {item.isDiscount ? <Text adjustsFontSizeToFit style={Ps.textDiscount}>{item.discount}%</Text> : null}
                                 <View style={[styles.column, { height: Wp('44%'), width: Wp('44%'), borderTopLeftRadius: 3, borderTopRightRadius: 3 }]}>
                                     <FastImage
                                         style={Ps.imageProduct}
@@ -63,39 +63,39 @@ export default function     CardProductComponent(props) {
                                     />
                                     {item.freeOngkir == 'Y' ?
                                         <View style={[styles.font_14, styles.px_5, styles.py, { position: 'absolute', bottom: 0, backgroundColor: colors.RedFlashsale, borderTopRightRadius: 11, justifyContent: 'center', alignItems: 'center' }]}>
-                                            <Text style={[styles.font_10, styles.T_medium, { marginBottom: '-2%', marginLeft: '-1.5%', color: colors.White }]}>Gratis Ongkir</Text>
+                                            <Text adjustsFontSizeToFit style={[styles.font_10, styles.T_medium, { marginBottom: '-2%', marginLeft: '-1.5%', color: colors.White }]}>Gratis Ongkir</Text>
                                         </View>
                                         : null
                                     }
 
                                 </View>
                                 <View style={Ps.bottomCard}>
-                                    <Text
+                                    <Text adjustsFontSizeToFit
                                         numberOfLines={2}
                                         style={Ps.nameProduct}>
                                         {item.name}
                                     </Text>
                                     {item.isDiscount ?
                                         <>
-                                            <Text style={Ps.priceBefore}>{item.price}</Text>
+                                            <Text adjustsFontSizeToFit style={Ps.priceBefore}>{item.price}</Text>
                                             <View style={styles.row_start_center}>
-                                                <Text style={Ps.priceAfter}>{item.priceDiscount}</Text>
+                                                <Text adjustsFontSizeToFit style={Ps.priceAfter}>{item.priceDiscount}</Text>
                                                 {item.isFlashsale ? <Image style={[styles.icon_16, { tintColor: colors.RedFlashsale, marginTop: '-1.5%', marginLeft: '2%' }]} source={require('../../assets/icons/flash.png')} /> : null}
                                             </View>
                                         </>
                                         :
-                                        <Text style={[Ps.price, { color: colors.BlueJaja }]}>{item.price}</Text>
+                                        <Text adjustsFontSizeToFit style={[Ps.price, { color: colors.BlueJaja }]}>{item.price}</Text>
                                     }
                                 </View>
                                 <View style={[Ps.cardBottom, styles.py]}>
                                     {item.amountSold && item.amountSold > 0 ?
                                         <View style={[Ps.location]}>
-                                            <Text style={[Ps.locarionName]}>Terjual {item.amountSold}</Text>
+                                            <Text adjustsFontSizeToFit style={[Ps.locarionName]}>Terjual {item.amountSold}</Text>
                                         </View> : null
                                     }
                                     <View style={[Ps.location]}>
                                         <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
-                                        <Text style={[Ps.locarionName]}>{item.location}</Text>
+                                        <Text adjustsFontSizeToFit style={[Ps.locarionName]}>{item.location}</Text>
                                     </View>
                                     {/* {item.freeOngkir == 'Y' ?
                                         <View style={{ width: Wp('6%'), height: Wp('6%'), justifyContent: 'center' }}>

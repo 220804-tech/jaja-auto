@@ -157,7 +157,7 @@ export default function MainPage() {
                                     <Image style={{ width: Wp('50%'), height: Wp('50%'), resizeMode: 'cover' }} source={{ uri: image.promoBanner[5] ? image.promoBanner[4] : null }} />
                                 </View>
                             </View>
-                            <View style={[styles.row, styles.mb_2, { width: Wp('100%'), height: Wp('33.3%') }]}>
+                            {/* <View style={[styles.row, styles.mb_2, { width: Wp('100%'), height: Wp('33.3%') }]}>
                                 <View style={{ width: Wp('33.3%'), height: Wp('33.3%') }}>
                                     <Image style={{ width: Wp('33.3%'), height: Wp('33.3%'), resizeMode: 'cover' }} source={{ uri: image.promoBanner[2] ? image.promoBanner[2] : null }} />
                                 </View>
@@ -167,7 +167,7 @@ export default function MainPage() {
                                 <View style={{ width: Wp('33.3%'), height: Wp('33.3%') }}>
                                     <Image style={{ width: Wp('33.3%'), height: Wp('33.3%'), resizeMode: 'cover' }} source={{ uri: image.promoBanner[4] ? image.promoBanner[4] : null }} />
                                 </View>
-                            </View>
+                            </View> */}
 
                         </>
 

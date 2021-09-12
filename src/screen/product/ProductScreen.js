@@ -124,14 +124,15 @@ export default function ProductScreen(props) {
             if (response !== 'clear') {
                 return ToastAndroid.show("Sedang memuat, koneksi anda lambat!", ToastAndroid.LONG, ToastAndroid.CENTER)
             }
-        }, 10000);
+        }, 7000);
         setTimeout(() => {
             if (response !== 'clear') {
                 setRefreshing(false)
-                setLoading(false)
                 return ToastAndroid.show("Tidak dapat terhubung, periksa koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.CENTER)
             }
-        }, 17000);
+            setRefreshing(false)
+            setLoading(false)
+        }, 5000);
     }
 
     useFocusEffect(

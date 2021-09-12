@@ -6,6 +6,8 @@ import Process from '../../components/Orders/OrdersProcess'
 import Sent from '../../components/Orders/OrdersSent'
 import Completed from '../../components/Orders/OrdersCompleted'
 import Failed from '../../components/Orders/OrdersFailed'
+import Return from '../../components/Orders/OrdersComplain'
+
 import { colors, styles, Appbar } from '../../export';
 const initialLayout = { width: Dimensions.get('window').width };
 import { useSelector } from 'react-redux'
@@ -22,11 +24,11 @@ export default function OrderScreen() {
 
     const [routes] = useState([
         { key: 'first', title: 'Belum dibayar' },
-        // { key: 'sixth', title: 'Menunggu Konfirmasi' },
         { key: 'second', title: 'Diproses' },
         { key: 'third', title: 'Dikirim' },
         { key: 'fourth', title: 'Selesai' },
         { key: 'fifth', title: 'Dibatalkan' },
+        { key: 'sixth', title: 'Pengembalian' },
     ]);
 
     const renderScene = SceneMap({
@@ -35,7 +37,7 @@ export default function OrderScreen() {
         third: Sent,
         fourth: Completed,
         fifth: Failed,
-        // sixth: Failed,
+        sixth: Return,
     });
 
     useEffect(() => {

@@ -11,6 +11,7 @@ import category from './storeCategory'
 import store from './storeStore'
 import auth from './storeAuth'
 import profile from './storeProfile'
+import complain from './complainStore'
 
 export default combineReducers({
     notification,
@@ -24,5 +25,6 @@ export default combineReducers({
     category,
     store,
     auth,
-    profile
+    profile,
+    complain
 })

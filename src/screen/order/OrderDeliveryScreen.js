@@ -108,24 +108,28 @@ export default function OrderDeliveryScreen() {
                     {reduxTracking && reduxTracking.length ?
                         <FlatList
                             data={reduxTracking}
-                            renderItem={({ item, index }) => (
-                                <>
-                                    <View style={{ felx: 1, flexDirection: 'row', width: '100%' }}>
-                                        <View style={[style.column, { paddingVertical: '3%', paddingHorizontal: '2%', width: '25%' }]}>
-                                            <Text style={styles.textDate}>{item.time}</Text>
-                                            <Text style={styles.textDate}>{item.date}</Text>
+                            renderItem={({ item, index }) => {
+                                return (
+                                    <>
+                                        <View style={{ felx: 1, flexDirection: 'row', width: '100%' }}>
+                                            <View style={[style.column, { paddingVertical: '3%', paddingHorizontal: '2%', width: '25%' }]}>
+                                                <Text style={styles.textDate}>{item.time}</Text>
+                                                <Text style={styles.textDate}>{item.date}</Text>
+                                            </View>
+                                            <View style={{ felx: 1, flexDirection: 'row', paddingVertical: '3%', width: '75%', height: '100%', paddingHorizontal: '2%', }}>
+                                                <Text numberOfLines={2} style={[styles.textInfo, { color: index === 0 ? colors.BlueJaja : colors.BlackGrayScale }]}>{item.description}</Text>
+                                            </View>
                                         </View>
-                                        <View style={{ felx: 1, flexDirection: 'row', paddingVertical: '3%', width: '75%', height: '100%', paddingHorizontal: '2%', }}>
-                                            <Text numberOfLines={2} style={[styles.textInfo, { color: index === 0 ? colors.BlueJaja : colors.BlackGrayScale }]}>{item.description}</Text>
-                                        </View>
-                                    </View>
-                                    <Divider />
-                                </>
-                            )}
+                                        <Divider />
+                                    </>
+
+                                )
+                            }
+                            }
                         /> : null}
                 </DataTable>
             </ScrollView>
-        </SafeAreaView>
+        </SafeAreaView >
     )
 }
 

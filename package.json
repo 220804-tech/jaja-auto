@@ -59,6 +59,7 @@
     "react-native-share": "^6.5.0",
     "react-native-shimmer-placeholder": "^2.0.7",
     "react-native-star-rating": "^1.1.0",
+    "react-native-step-indicator": "^1.0.2",
     "react-native-svg": "^12.1.1",
     "react-native-swipeable": "^0.6.0",
     "react-native-swiper": "^1.6.0",

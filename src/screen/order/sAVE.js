@@ -148,11 +148,11 @@ export default function ResponseComplain() {
             <StatusBar
                 translucent={false}
                 animated={true}
-                backgroundColor={colors.YellowJaja}
+                backgroundColor={colors.BlueJaja}
                 barStyle='default'
                 showHideTransition="fade"
             />
-            <Appbar back={true} title="Komplain Pesanan" Bg={colors.YellowJaja} />
+            <Appbar back={true} title="Komplain Pesanan" Bg={colors.BlueJaja} />
             <ScrollView style={{ marginBottom: Hp('8%') }}
                 refreshControl={
                     <RefreshControl
@@ -162,13 +162,13 @@ export default function ResponseComplain() {
                 }>
                 <View style={[styles.column_center, styles.p_3]}>
                     <View style={[styles.column, styles.py_2, styles.px_4, styles.mb_2, styles.T_medium, { width: '100%', backgroundColor: colors.White, borderBottomRightRadius: 10, borderBottomLeftRadius: 10, borderTopRightRadius: 10 }]}>
-                        <Text style={[styles.font_12]}>Komplain anda telah diajukan, akan di proses paling lambat 4X24 Jam</Text>
+                        <Text style={[styles.font_12]}>Komplain anda telah diajukan, akan di proses paling lambat 3X24 Jam</Text>
                     </View>
                     {details ?
                         <View style={[styles.column, styles.p_4, { width: '100%', backgroundColor: colors.White, borderBottomRightRadius: 10, borderBottomLeftRadius: 10, borderTopLeftRadius: 10 }]}>
                             <Text style={[styles.font_13, styles.T_semi_bold, styles.my]}>Detail komplain</Text>
                             <View style={[styles.column, styles.px_2]}>
-                                <Text numberOfLines={1} style={[styles.font_13, styles.mt]}>Status Komplain : <Text style={{ color: details.status === "request" ? colors.YellowJaja : colors.BlueJaja }}>{details.status === "request" ? "Menunggu Konfirmasi" : details.status === "confirmed" ? "Komplain dikonfirmasi" : details.status === "sendback" ? "Kirim Kembali" : details.status === "completed" ? "Selesai" : ""}</Text></Text>
+                                <Text numberOfLines={1} style={[styles.font_13, styles.mt]}>Status Komplain : <Text style={{ color: colors.BlueJaja }}>{details.status === "request" ? "Menunggu Konfirmasi" : details.status === "confirmed" ? "Komplain dikonfirmasi" : details.status === "sendback" ? "Kirim Kembali" : details.status === "completed" ? "Selesai" : ""}</Text></Text>
                                 <Text numberOfLines={3} style={[styles.font_13, styles.mt]}>Jenis Komplain : {details.jenis_komplain} - {details.judul_komplain}</Text>
                                 <Text numberOfLines={25} style={[styles.font_13, styles.mt]}>Alasan Komplain : {details.komplain}</Text>
                             </View>

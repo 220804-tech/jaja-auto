@@ -13,6 +13,7 @@ export default function OrdersSent() {
     const reduxAuth = useSelector(state => state.auth.auth)
     const [refreshing, setRefreshing] = useState(false);
     const [auth, setAuth] = useState("")
+    const [complain, setComplain] = useState(false)
 
     useEffect(() => {
         EncryptedStorage.getItem('token').then(res => {
@@ -61,7 +62,7 @@ export default function OrdersSent() {
         dispatch({ type: 'SET_INVOICE', payload: item.invoice })
         dispatch({ type: 'SET_RECEIPT', payload: item.trackingId })
         dispatch({ type: 'SET_ORDER_STATUS', payload: 'Pengiriman' })
-        navigation.navigate('OrderDetails', { data: item.invoice, status: "Pengiriman" })
+        navigation.navigate('DetailComplain')
     }
 
     const handleTracking = (item) => {
@@ -82,8 +83,8 @@ export default function OrdersSent() {
                     }
                     keyExtractor={item => item.invoice}
                     renderItem={({ item }) => {
-                        if (!item.complain) {
-
+                        if (item.complain) {
+                            setComplain(true)
                             return (
                                 <TouchableOpacity style={Os.card} onPress={() => handleOrderDetails(item)}>
                                     <View style={[styles.row_between_center, styles.px_2, styles.mb_3, { width: '100%' }]}>
@@ -132,18 +133,19 @@ export default function OrdersSent() {
                         }
                     }}
                 />
-                :
-                <ScrollView
-                    contentContainerStyle={{ flex: 1 }}
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={refreshing}
-                            onRefresh={onRefresh}
-                        />
-                    }>
-                    <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
-                </ScrollView>
+                : complain === false ?
+                    < ScrollView
+                        contentContainerStyle={{ flex: 1 }}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                            />
+                        }>
+                        <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
+                    </ScrollView>
+                    : null
             }
-        </View>
+        </View >
     )
 }

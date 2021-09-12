@@ -240,7 +240,7 @@ export default function Lainnya() {
         };
 
         fetch("https://jaja.id/backend/user/profile", requestOptions)
-            .then(response => response.text())
+            .then(response => response.json())
             .then(result => {
                 setTimeout(() => setloading(false), 500);
                 setshowButton(false)
@@ -249,7 +249,7 @@ export default function Lainnya() {
                     setTimeout(() => {
                         Alert.alert(
                             "Jaja.id",
-                            "Profile anda berhasil diubah!", [
+                            "P  rofile anda berhasil diubah!", [
                             {
                                 text: "Ok",
                                 onPress: () => console.log("Pressed"),
