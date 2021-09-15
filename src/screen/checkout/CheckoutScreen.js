@@ -673,7 +673,7 @@ export default function checkoutScreen() {
                                                     setvoucherOpen('store')
                                                     setVouchers(item.voucherStore)
                                                     setindexStore(idxStore)
-                                                }} icon="arrow-right" color={colors.RedFlashsale} uppercase={false} labelStyle={{ fontFamily: 'Roboto', color: colors.RedFlashsale }} style={{ borderColor: colors.RedFlashsale, borderWidth: 1, borderRadius: 10 }} contentStyle={{ borderColor: colors.BlueJaja }} mode="outlined">
+                                                }} icon="arrow-right" color={colors.RedFlashsale} uppercase={false} labelStyle={{ fontFamily: 'Poppins-Regular', color: colors.RedFlashsale }} style={{ borderColor: colors.RedFlashsale, borderWidth: 1, borderRadius: 10 }} contentStyle={{ borderColor: colors.BlueJaja }} mode="outlined">
                                                     Pakai voucher toko
                                                 </Button>
                                             </View>
@@ -760,7 +760,7 @@ export default function checkoutScreen() {
                             <Button onPress={() => {
                                 setVouchers(reduxCheckout.voucherJaja)
                                 setvoucherOpen('jaja')
-                            }} icon="arrow-right" color={colors.RedFlashsale} uppercase={false} labelStyle={{ fontFamily: 'Roboto', color: colors.RedFlashsale }} style={{ borderColor: colors.RedFlashsale, borderWidth: 1, borderRadius: 10 }} contentStyle={{ borderColor: colors.BlueJaja }} mode="outlined">
+                            }} icon="arrow-right" color={colors.RedFlashsale} uppercase={false} labelStyle={{ fontFamily: 'Poppins-Regular', color: colors.RedFlashsale }} style={{ borderColor: colors.RedFlashsale, borderWidth: 1, borderRadius: 10 }} contentStyle={{ borderColor: colors.BlueJaja }} mode="outlined">
                                 Makin hemat pakai promo
                             </Button>
                         </View>
@@ -861,7 +861,7 @@ export default function checkoutScreen() {
 
                     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ width: '100%' }}>
                         <View style={[styles.column, { width: '100%' }]}>
-                            {/* <Text style={[styles.font_14, styles.mb_3, { color: colors.BlueJaja, fontWeight: 'bold', borderBottomWidth: 0.5, borderBottomColor: colors.BlueJaja }]}>{item.title}</Text> */}
+                            {/* <Text style={[styles.font_14, styles.mb_3, { color: colors.BlueJaja, fontFamily: 'Poppins-SemiBold', borderBottomWidth: 0.5, borderBottomColor: colors.BlueJaja }]}>{item.title}</Text> */}
                             {reduxShipping && reduxShipping.length ?
                                 <View style={styles.column}>
                                     <FlatList
@@ -874,7 +874,7 @@ export default function checkoutScreen() {
 
                                             return (
                                                 <View style={[styles.column_center_start, styles.mb_2, styles.py_2, styles.px_4, { borderBottomWidth: 1, borderBottomColor: colors.Silver, width: '100%' }]}>
-                                                    {/* <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}>{item.name}</Text> */}
+                                                    {/* <Text style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>{item.name}</Text> */}
                                                     <FlatList
                                                         data={item.type}
                                                         keyExtractor={(item, index) => String(index) + "a"}

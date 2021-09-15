@@ -320,14 +320,14 @@ export default function ProductSearchScreen() {
 
             <ActionSheet ref={actionSheetRef} delayActionSheetDraw={false} containerStyle={{ height: Hp('60%'), padding: '4%' }}>
                 <View style={styles.row_between_center}>
-                    <Text adjustsFontSizeToFit style={[styles.font_16, styles.my_3, { fontWeight: 'bold', color: colors.BlueJaja, }]}>Filter</Text>
+                    <Text adjustsFontSizeToFit style={[styles.font_16, styles.my_3, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja, }]}>Filter</Text>
                     <View style={styles.row_around_center}>
                         <TouchableOpacity onPress={handleReset} style={{ paddingLeft: '3%', justifyContent: 'center' }}>
-                            <Text adjustsFontSizeToFit style={[styles.font_16, styles.my_3, { fontWeight: 'bold', color: colors.YellowJaja, alignSelf: 'flex-start', textAlign: 'right' }]}>Reset</Text>
+                            <Text adjustsFontSizeToFit style={[styles.font_16, styles.my_3, { fontFamily: 'Poppins-SemiBold', color: colors.YellowJaja, alignSelf: 'flex-start', textAlign: 'right' }]}>Reset</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity onPress={handleFetch} style={{ paddingLeft: '3%', justifyContent: 'center' }}>
-                            <Text adjustsFontSizeToFit style={[styles.font_16, styles.my_3, { fontWeight: 'bold', color: colors.BlueJaja, alignSelf: 'flex-start', textAlign: 'right' }]}>Simpan</Text>
+                            <Text adjustsFontSizeToFit style={[styles.font_16, styles.my_3, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja, alignSelf: 'flex-start', textAlign: 'right' }]}>Simpan</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -348,7 +348,7 @@ export default function ProductSearchScreen() {
                         reduxFilters.map((item, index) => {
                             return (
                                 <View key={String(index) + "XP"} style={[styles.mb_4]}>
-                                    <Text adjustsFontSizeToFit style={[styles.font_16, { fontWeight: 'bold', color: colors.BlackGrayScale }]}>{item.name}</Text>
+                                    <Text adjustsFontSizeToFit style={[styles.font_16, { fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale }]}>{item.name}</Text>
                                     <View style={{ flex: 0, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                                         {item.items.map((child, idx) => {
                                             return (
@@ -366,7 +366,7 @@ export default function ProductSearchScreen() {
                     {reduxSorts && reduxSorts.length ?
 
                         <View style={[styles.mb_4]}>
-                            <Text adjustsFontSizeToFit style={[styles.font_16, { fontWeight: 'bold', color: colors.BlackGrayScale }]}>Urutkan</Text>
+                            <Text adjustsFontSizeToFit style={[styles.font_16, { fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale }]}>Urutkan</Text>
                             <View style={{ flex: 0, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                                 {reduxSorts.map((child, idx) => {
                                     return (

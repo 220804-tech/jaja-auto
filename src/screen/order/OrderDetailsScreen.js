@@ -231,7 +231,7 @@ export default function OrderDetailsScreen(props) {
                                             </View>
                                             <View style={[styles.row_end_center, styles.px_2]}>
                                                 {/* <Text style={[styles.font_14, { fontStyle: 'italic' }]}>Subtotal </Text> */}
-                                                <Text numberOfLines={1} style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}> {child.subTotalCurrencyFormat}</Text>
+                                                <Text numberOfLines={1} style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}> {child.subTotalCurrencyFormat}</Text>
                                             </View>
                                         </View>
                                     )
@@ -249,7 +249,7 @@ export default function OrderDetailsScreen(props) {
                                         </View>
                                         <View style={[styles.row_end_center, styles.px_2]}>
                                             <Text style={[styles.font_14, { fontStyle: 'italic' }]}>Subtotal </Text>
-                                            <Text numberOfLines={1} style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}> {item.totalDiscountCurrencyFormat}</Text>
+                                            <Text numberOfLines={1} style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}> {item.totalDiscountCurrencyFormat}</Text>
                                         </View>
                                     </View>
                                     : null
@@ -344,8 +344,8 @@ export default function OrderDetailsScreen(props) {
             {props.route.params && props.route.params.status === "Menunggu Pembayaran" ?
                 <View style={{ position: 'absolute', bottom: 0, zIndex: 100, elevation: 1, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
                     <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '3%' }}>
-                        <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}>Total pembayaran :</Text>
-                        <Text numberOfLines={1} style={[styles.font_20, { fontWeight: 'bold', color: colors.BlueJaja }]}>{details ? details.totalCurrencyFormat : "Rp.0"}</Text>
+                        <Text style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>Total pembayaran :</Text>
+                        <Text numberOfLines={1} style={[styles.font_20, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>{details ? details.totalCurrencyFormat : "Rp.0"}</Text>
                     </View>
                     <Button onPress={handlePayment} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained" >
                         Pilih pembayaran

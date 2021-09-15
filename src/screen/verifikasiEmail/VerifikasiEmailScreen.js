@@ -535,7 +535,7 @@ const styles1 = StyleSheet.create({
         color: colors.BlackGrayScale,
         alignSelf: 'center',
         fontSize: 14,
-        fontWeight: '500',
+
         fontStyle: 'italic'
     },
     borderStyleBase: {
@@ -585,7 +585,7 @@ const styles1 = StyleSheet.create({
     appBarText: {
         color: 'white',
         fontSize: 20,
-        fontWeight: "bold",
+        fontFamily: 'Poppins-SemiBold',
     },
     backIcon: {
         tintColor: 'white',
@@ -611,13 +611,13 @@ const styles1 = StyleSheet.create({
         color: 'black',
         alignSelf: 'center',
         fontSize: 14,
-        fontWeight: '500',
+
         fontStyle: 'italic',
         backgroundColor: 'pink'
     },
     containerVerfified: { flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' },
     iconMarket: { alignSelf: "center", width: Wp('80%'), height: Hp('40%') },
-    textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 18, fontWeight: 'bold', color: colors.BlackGrayScale, fontFamily: 'serif', marginVertical: Hp("2%") },
-    textCenter: { fontSize: 18, fontWeight: '900', color: colors.BlackGrayScale, fontFamily: 'serif' },
+    textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 18, fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale, fontFamily: 'Poppins-Regular', marginVertical: Hp("2%") },
+    textCenter: { fontSize: 18, color: colors.BlackGrayScale, fontFamily: 'Poppins-Regular' },
 
 });

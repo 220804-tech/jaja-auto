@@ -157,11 +157,11 @@ export const styles = StyleSheet.create({
     cardProduct: { flex: 0, flexDirection: 'column', marginRight: 11, width: Wp('33%'), height: Wp('53%'), borderRadius: 4, backgroundColor: colors.White, alignItems: 'center' },
     flashsale: {
         fontSize: 16,
-        fontWeight: "bold",
+        fontFamily: 'Poppins-SemiBold',
         letterSpacing: 0,
         color: colors.White,
         marginBottom: '3%',
-        // fontFamily: 'Roboto'
+        // fontFamily: 'Poppins-Regular'
     },
     titleDashboard: {
         fontSize: 16,

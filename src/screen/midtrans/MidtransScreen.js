@@ -89,7 +89,7 @@ export default function MidtransScreen() {
                         resizeMethod={"scale"}
                         source={require("../../assets/gifs/gif_payment.gif")}
                     />
-                    <Text style={{ fontWeight: "bold" }}>{text}</Text>
+                    <Text style={{ fontFamily: 'Poppins-SemiBold' }}>{text}</Text>
                 </View>
                 :
                 view === "404 Not Found" || !view ?
@@ -148,8 +148,8 @@ export default function MidtransScreen() {
                         </View> */}
                         <View style={{ position: 'relative', bottom: 0, height: Hp('7.5%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
                             {/* <View style={{ width: '50%', justifyContent: 'flex-end', paddingHorizontal: '3%', paddingLeft: '5%', paddingVertical: '1%' }}>
-                                <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlueJaja }]}>Subtotal :</Text>
-                                <Text numberOfLines={1} style={[styles.font_20, { fontWeight: 'bold', color: colors.BlueJaja }]}>ASA</Text>
+                                <Text style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>Subtotal :</Text>
+                                <Text numberOfLines={1} style={[styles.font_20, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>ASA</Text>
                             </View> */}
                             <Button onPress={handleCheck} style={{ width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained">
                                 Cek Pembayaran
@@ -161,6 +161,6 @@ export default function MidtransScreen() {
     )
 }
 const style = StyleSheet.create({
-    textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 18, fontWeight: 'bold', color: colors.BlueJaja, fontFamily: 'notoserif', marginVertical: Hp('2%') },
+    textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 18, fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja, fontFamily: 'Poppins-Regular', marginVertical: Hp('2%') },
     iconMarket: { alignSelf: "center", width: Wp('80%'), height: Hp('40%') },
 })

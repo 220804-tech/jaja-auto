@@ -298,7 +298,6 @@ const style = StyleSheet.create({
   touchIcon: { width: '14%', justifyContent: 'center', alignItems: 'center' },
   header: {
     fontSize: 22,
-    fontWeight: '600',
     color: 'black',
     textAlign: 'center',
     paddingVertical: 20,

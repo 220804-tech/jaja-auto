@@ -21,7 +21,7 @@ export default function RewardScreen() {
             <View style={[styles.column, styles.p_3, { flex: 1, backgroundColor: colors.White }]}>
                 <View style={[styles.column, style.card]}>
                     <View style={[style.banner, styles.px_4, styles.py_5]}>
-                        <Text style={[styles.font_14, { color: colors.White, fontWeight: 'bold' }]}>Undang teman kamu untuk install Jaja.id dan dapatkan koin belanja hingga 100.000</Text>
+                        <Text style={[styles.font_14, { color: colors.White, fontFamily: 'Poppins-SemiBold' }]}>Undang teman kamu untuk install Jaja.id dan dapatkan koin belanja hingga 100.000</Text>
                     </View>
                     <View style={[styles.row_center_start, styles.p_4]}>
                         <View style={[styles.column_start, { width: '58%' }]}>
@@ -39,7 +39,7 @@ export default function RewardScreen() {
                     </View>
                     <View style={[styles.column_center_start, styles.px_4, styles.pt, styles.pb_5]}>
                         <Text numberOfLines={2} style={[styles.font_13, styles.mb_5, { fontStyle: 'italic', color: colors.RedFlashsale }]}>* Promo ini hanya berlaku selama event berlangsung</Text>
-                        <Button onPress={() => navigation.navigate('Referral')} color={colors.BlueJaja} labelStyle={{ color: colors.White, fontWeight: 'bold', fontSize: 12 }} mode="contained" style={{ borderRadius: 100 }}>Pelajari</Button>
+                        <Button onPress={() => navigation.navigate('Referral')} color={colors.BlueJaja} labelStyle={{ color: colors.White, fontFamily: 'Poppins-SemiBold', fontSize: 12 }} mode="contained" style={{ borderRadius: 100 }}>Pelajari</Button>
                     </View>
                 </View>
             </View>

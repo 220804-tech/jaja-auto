@@ -37,7 +37,7 @@ export default function NewProduct() {
                     Produk terbaru
                 </Text>
                 {/* <TouchableOpacity onPress={() => handleCategory('Art Shop')}>
-                    <Text style={[{ fontSize: 13, fontWeight: 'bold', color: colors.BlueJaja }]}>
+                    <Text style={[{ fontSize: 13, fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>
                         Lihat Semua <Image source={require('../../assets/icons/play.png')} style={[styles.icon_10, { tintColor: colors.BlueJaja }]} />
                     </Text>
                 </TouchableOpacity> */}

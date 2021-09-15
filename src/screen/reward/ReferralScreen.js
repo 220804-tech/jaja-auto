@@ -64,41 +64,41 @@ export default function ReferralScreen() {
             <View style={[styles.column, styles.p_3, { flex: 1, backgroundColor: colors.White }]}>
                 <View style={[styles.row_between_center, style.card, styles.p_4, styles.mb_4]}>
                     <View style={styles.column}>
-                        <Text style={[styles.font_14, { fontWeight: 'bold', color: colors.BlackSilver }]}>
+                        <Text style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlackSilver }]}>
                             KODE REFERRAL KAMU
                         </Text>
                         <Text style={[styles.font_18, { color: colors.BlueJaja }]}>
                             {String(reduxUser.pin).toLocaleUpperCase()}
                         </Text>
                     </View>
-                    <Button onPress={handleShare} color={colors.BlueJaja} labelStyle={{ color: colors.White, fontWeight: 'bold', fontSize: 10 }} mode="contained" style={{ borderRadius: 100 }}>Bagikan Kode</Button>
+                    <Button onPress={handleShare} color={colors.BlueJaja} labelStyle={{ color: colors.White, fontFamily: 'Poppins-SemiBold', fontSize: 10 }} mode="contained" style={{ borderRadius: 100 }}>Bagikan Kode</Button>
                 </View>
                 <View style={[styles.column, { flex: 1 }]}>
                     <View style={[style.banner, styles.px_4, styles.py_5, { width: '100%' }]}>
-                        <Text style={[styles.font_16, { color: colors.White, fontWeight: 'bold', alignSelf: 'center' }]}>Cara mendapatkan koin jaja</Text>
+                        <Text style={[styles.font_16, { color: colors.White, fontFamily: 'Poppins-SemiBold', alignSelf: 'center' }]}>Cara mendapatkan koin jaja</Text>
                     </View>
                     <View style={[styles.column_center_start, styles.px_3, styles.py_5, [{ width: '100%' }]]}>
                         <View style={[styles.row_start_center, styles.mb_5, { width: '100%' }]}>
                             <View style={[styles.row_center, { backgroundColor: colors.BlueJaja, width: Wp('8%'), height: Wp('8%'), borderRadius: 100 }]}>
-                                <Text numberOfLines={1} style={[styles.font_18, { color: colors.White, fontWeight: 'bold' }]}>1</Text>
+                                <Text numberOfLines={1} style={[styles.font_18, { color: colors.White, fontFamily: 'Poppins-SemiBold' }]}>1</Text>
                             </View>
                             <Text numberOfLines={4} style={[styles.font_16, styles.ml_4, { width: '80%' }]}>Bagikan kode referral kamu dengan cara tap BAGIKAN KODE</Text>
                         </View>
                         <View style={[styles.row_start_center, styles.mb_5, styles.mt_5, { width: '100%' }]}>
                             <View style={[styles.row_center, { backgroundColor: colors.BlueJaja, width: Wp('8%'), height: Wp('8%'), borderRadius: 100 }]}>
-                                <Text numberOfLines={1} style={[styles.font_18, { color: colors.White, fontWeight: 'bold' }]}>2</Text>
+                                <Text numberOfLines={1} style={[styles.font_18, { color: colors.White, fontFamily: 'Poppins-SemiBold' }]}>2</Text>
                             </View>
                             <Text numberOfLines={4} style={[styles.font_16, styles.ml_4, { width: '80%' }]}>Ajak teman instal Jaja.id, dan pastikan teman kamu menggunakan kodemu</Text>
                         </View>
                         <View style={[styles.row_start_center, styles.mb_5, styles.mt_5, { width: '100%' }]}>
                             <View style={[styles.row_center, { backgroundColor: colors.BlueJaja, width: Wp('8%'), height: Wp('8%'), borderRadius: 100 }]}>
-                                <Text numberOfLines={1} style={[styles.font_18, { color: colors.White, fontWeight: 'bold' }]}>3</Text>
+                                <Text numberOfLines={1} style={[styles.font_18, { color: colors.White, fontFamily: 'Poppins-SemiBold' }]}>3</Text>
                             </View>
                             <Text numberOfLines={4} style={[styles.font_16, styles.ml_4, { width: '80%' }]}>Saat teman kamu belanja di Jaja.id, kamu akan mendapatkan 5.000 Koin</Text>
                         </View>
                         <View style={[styles.row_start_center, styles.mb_5, styles.mt_5, { width: '100%' }]}>
                             <View style={[styles.row_center, { backgroundColor: colors.BlueJaja, width: Wp('8%'), height: Wp('8%'), borderRadius: 100 }]}>
-                                <Text numberOfLines={1} style={[styles.font_18, { color: colors.White, fontWeight: 'bold' }]}>4</Text>
+                                <Text numberOfLines={1} style={[styles.font_18, { color: colors.White, fontFamily: 'Poppins-SemiBold' }]}>4</Text>
                             </View>
                             <Text numberOfLines={6} style={[styles.font_16, styles.ml_4, { width: '80%' }]}>Tidak sampai disitu, kamu juga akan mendapatkan 2.000 Koin, ketika teman kamu berhasil mengundang teman lainnya.<Text style={[styles.font_12, { fontStyle: 'italic' }]}> ( Hanya berlaku 1 hirarki ke undangan selanjutnya )</Text></Text>
                         </View>

@@ -34,7 +34,7 @@ export default function FlashsaleFirstComponent() {
                                 <View style={styles.column}>
                                     <View style={styles.row}>
                                         <View style={[styles.row_center, styles.mr_3, { width: Wp('9.5%'), height: Wp('9.5%'), backgroundColor: colors.RedFlashsale, padding: '2%', borderRadius: 5 }]}>
-                                            <Text style={{ fontSize: 12, color: colors.White, fontWeight: 'bold', backgroundColor: colors.RedFlashsale }}>{item.discountFlash}%</Text>
+                                            <Text style={{ fontSize: 12, color: colors.White, fontFamily: 'Poppins-SemiBold', backgroundColor: colors.RedFlashsale }}>{item.discountFlash}%</Text>
                                         </View>
                                         <View style={styles.column}>
                                             <Text style={Ps.priceBefore}>{item.price}</Text>
@@ -73,7 +73,7 @@ export default function FlashsaleFirstComponent() {
                                                     color: "white",
                                                     marginTop: -1,
                                                     fontSize: 10,
-                                                    fontWeight: 'bold'
+                                                    fontFamily: 'Poppins-SemiBold'
                                                 }}
                                                 >{item.amountSold} Terjual</Text>
                                             </View>

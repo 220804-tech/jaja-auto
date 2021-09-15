@@ -166,7 +166,7 @@ export default function map(props) {
 
                 </View>
                 <TouchableOpacity onPress={() => actionSheetRef.current?.setModalVisible(true)} style={styles.search}>
-                    <Text onPress={() => actionSheetRef.current?.setModalVisible(true)} style={{ color: colors.White, fontWeight: '900' }}>Cari lokasi...</Text>
+                    <Text onPress={() => actionSheetRef.current?.setModalVisible(true)} style={{ color: colors.White, fontFamily: 'Poppins-Regular' }}>Cari lokasi...</Text>
                     <TouchableOpacity onPress={() => actionSheetRef.current?.setModalVisible(true)}>
                         <Image style={styles.iconSearch} source={require('../../assets/icons/loupe.png')} />
                     </TouchableOpacity>
@@ -202,7 +202,7 @@ export default function map(props) {
                     <View style={styles.markerFixed}>
                         <TouchableOpacity onPress={handleCheckLokasi}>
                             {/* <View style={{ backgroundColor: "red", padding: 10, borderRadius: 10, marginLeft: -30 }}> */}
-                            <Text style={{ fontSize: 18, fontWeight: "bold", color: "white", alignItems: "center", backgroundColor: colors.BlueJaja, alignSelf: 'center', padding: '2%', borderRadius: 10, marginBottom: '1%' }}>Cek Lokasi</Text>
+                            <Text style={{ fontSize: 18, fontFamily: 'Poppins-SemiBold', color: "white", alignItems: "center", backgroundColor: colors.BlueJaja, alignSelf: 'center', padding: '2%', borderRadius: 10, marginBottom: '1%' }}>Cek Lokasi</Text>
                             {/* </View> */}
                             <Image style={styles.marker} source={require('../../assets/icons/google-maps.png')} />
                         </TouchableOpacity>
@@ -267,7 +267,7 @@ export default function map(props) {
                                     <Text numberOfLines={1} style={{
                                         color: colors.BlackGrayScale,
                                         fontSize: Hp("2%"),
-                                        fontWeight: "bold",
+                                        fontFamily: 'Poppins-SemiBold',
                                         textAlign: "left",
                                         marginRight: '2%'
                                     }}>
@@ -289,7 +289,7 @@ export default function map(props) {
 
             </ActionSheet>
 
-        </SafeAreaView>
+        </SafeAreaView >
     )
 }
 const styles = StyleSheet.create({
@@ -328,27 +328,27 @@ const styles = StyleSheet.create({
     },
     alamatTitle: {
         fontSize: 18,
-        fontWeight: '900',
-        fontFamily: 'serif',
-        color: colors.BlackGrayScale
-    },
+        ,
+    fontFamily: 'Poppins-Regular',
+    color: colors.BlackGrayScale
+},
     alamatContent: {
-        fontSize: 14,
-        fontWeight: '900',
-        fontFamily: 'serif',
-        color: colors.BlackGrayScale
+    fontSize: 14,
+        ,
+    fontFamily: 'Poppins-Regular',
+    color: colors.BlackGrayScale
     },
-    search: { flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.White, opacity: 0.3, paddingVertical: '2%', paddingHorizontal: '5%' },
-    iconSearch: {
-        width: 16, height: 16, tintColor: colors.White
-    },
-    iconMaps: {
-        width: 22, height: 22, marginRight: '2%'
-    },
-    bodySearch: {
-        width: Wp("100%"),
+search: { flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.White, opacity: 0.3, paddingVertical: '2%', paddingHorizontal: '5%' },
+iconSearch: {
+    width: 16, height: 16, tintColor: colors.White
+},
+iconMaps: {
+    width: 22, height: 22, marginRight: '2%'
+},
+bodySearch: {
+    width: Wp("100%"),
         height: Hp("100%"),
-        backgroundColor: colors.BlueJaja,
+            backgroundColor: colors.BlueJaja,
         // elevation: 2,
         // flex: 0,
         // flexDirection: 'column',
@@ -356,30 +356,30 @@ const styles = StyleSheet.create({
         // paddingHorizontal: '3%',
         // justifyContent: 'space-between'
     },
-    searchInput: {
-        width: '100%',
+searchInput: {
+    width: '100%',
         height: 48,
-        borderWidth: 1,
-        borderColor: colors.BlueJaja,
+            borderWidth: 1,
+                borderColor: colors.BlueJaja,
 
-        borderRadius: 10,
-        paddingHorizontal: '3%',
-        flex: 0,
-        flexDirection: 'row'
-    },
-    markerFixed: {
-        flex: 0,
+                    borderRadius: 10,
+                        paddingHorizontal: '3%',
+                            flex: 0,
+                                flexDirection: 'row'
+},
+markerFixed: {
+    flex: 0,
         justifyContent: 'center',
-        alignContent: 'center',
-        left: '50%',
-        marginLeft: -50,
-        marginTop: -91,
-        position: 'absolute',
-        top: '50%',
+            alignContent: 'center',
+                left: '50%',
+                    marginLeft: -50,
+                        marginTop: -91,
+                            position: 'absolute',
+                                top: '50%',
     },
-    marker: {
-        alignSelf: 'center',
+marker: {
+    alignSelf: 'center',
         height: 48,
-        width: 48
-    },
+            width: 48
+},
 })

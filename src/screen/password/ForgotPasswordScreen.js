@@ -606,7 +606,7 @@ const styles = StyleSheet.create({
         color: 'black',
         alignSelf: 'center',
         fontSize: 14,
-        fontWeight: '500',
+
         fontStyle: 'italic'
     },
     borderStyleBase: {
@@ -656,7 +656,7 @@ const styles = StyleSheet.create({
     appBarText: {
         color: 'white',
         fontSize: 20,
-        fontWeight: "bold",
+        fontFamily: 'Poppins-SemiBold',
     },
     backIcon: {
         tintColor: 'white',
@@ -682,7 +682,7 @@ const styles = StyleSheet.create({
         color: 'black',
         alignSelf: 'center',
         fontSize: 14,
-        fontWeight: '500',
+
         fontStyle: 'italic',
         // backgroundColor: 'pink'
     }

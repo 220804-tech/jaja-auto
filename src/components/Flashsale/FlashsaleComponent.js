@@ -93,7 +93,7 @@ export default function FlashsaleComponent() {
                             <Countdown size={11} wrap={6} home={true} />
                         </View>
                         <TouchableOpacity onPress={() => navigation.navigate('Flashsale')}>
-                            <Text style={[{ fontSize: 13, fontWeight: 'bold', color: colors.White }]}>
+                            <Text style={[{ fontSize: 13, fontFamily: 'Poppins-SemiBold', color: colors.White }]}>
                                 Lihat Semua <Image source={require('../../assets/icons/play.png')} style={[styles.icon_10, { tintColor: colors.White }]} />
                             </Text>
                         </TouchableOpacity>
@@ -164,7 +164,7 @@ export default function FlashsaleComponent() {
                                                     color: "white",
                                                     marginTop: -1,
                                                     fontSize: 10,
-                                                    fontWeight: 'bold'
+                                                    fontFamily: 'Poppins-SemiBold'
                                                 }}
                                                 >{item.amountSold} Terjual</Text>
                                             </View>

@@ -247,7 +247,7 @@ export default function index(props) {
                                 <Text style={style.font_14}>{item.label}</Text>
                                 :
                                 <View style={[style.row_end_center, { width: '40%' }]}>
-                                    <Text adjustsFontSizeToFit numberOfLines={1} style={[style.font_12, { fontWeight: 'bold', color: item.is_primary ? colors.BlueJaja : colors.Silver }]}>Alamat utama</Text>
+                                    <Text adjustsFontSizeToFit numberOfLines={1} style={[style.font_12, { fontFamily: 'Poppins-SemiBold', color: item.is_primary ? colors.BlueJaja : colors.Silver }]}>Alamat utama</Text>
                                     {reduxUser && reduxUser.length > 1 ?
                                         <Switch
                                             trackColor={{ false: "#767577", true: "#99e6ff" }}
@@ -263,9 +263,9 @@ export default function index(props) {
                         <Text adjustsFontSizeToFit style={styles.textNum}>{item.no_telepon ? item.no_telepon : ""}</Text>
                         <Paragraph numberOfLines={3} style={styles.textAlamat}>{item.provinsi + ", " + item.kota_kabupaten + ", " + item.kecamatan + ", " + item.kelurahan + ", " + item.kode_pos + ", " + item.alamat_lengkap}</Paragraph>
                         <View style={[style.row_between_center, style.mt_3]}>
-                            <Text style={[style.font_12, { color: colors.BlueJaja, fontFamily: 'serif' }]}>{item.label}</Text>
+                            <Text style={[style.font_12, { color: colors.BlueJaja, fontFamily: 'Poppins-Regular' }]}>{item.label}</Text>
                             <View style={{ flex: 0, justifyContent: 'flex-end', flexDirection: 'row' }}>
-                                <Text adjustsFontSizeToFit style={[styles.textAlamat, { fontSize: 12, textAlignVertical: "bottom", marginRight: '1%', fontFamily: 'serif', color: item.latitude ? colors.BlueJaja : colors.RedDanger }]}> {item.alamat_google ? "Lokasi sudah dipin" : "Lokasi belum dipin"}</Text>
+                                <Text adjustsFontSizeToFit style={[styles.textAlamat, { fontSize: 12, textAlignVertical: "bottom", marginRight: '1%', fontFamily: 'Poppins-Regular', color: item.latitude ? colors.BlueJaja : colors.RedDanger }]}> {item.alamat_google ? "Lokasi sudah dipin" : "Lokasi belum dipin"}</Text>
                                 <Image style={styles.map} source={require('../../assets/icons/google-maps.png')} />
                             </View>
                         </View>
@@ -318,8 +318,8 @@ const styles = StyleSheet.create({
     buttonMaps: { flex: 0, borderRadius: 20 },
     body: { width: "100%", flex: 1, justifyContent: 'flex-start', backgroundColor: colors.White, paddingVertical: '4%', paddingHorizontal: '3%', },
     form: { flex: 0, flexDirection: 'column', paddingVertical: '1%', marginBottom: '3%' },
-    textAlamat: { fontSize: 14, fontWeight: '500', color: colors.BlackGrayScale, margin: 0, fontFamily: 'notoserif' },
-    textName: { fontSize: 14, color: colors.BlueJaja, fontWeight: 'bold' },
-    textNum: { fontSize: 13, color: colors.BlueJaja, fontWeight: '900' },
+    textAlamat: { fontSize: 14, color: colors.BlackGrayScale, margin: 0, fontFamily: 'Poppins-Regular' },
+    textName: { fontSize: 14, color: colors.BlueJaja, fontFamily: 'Poppins-SemiBold' },
+    textNum: { fontSize: 13, color: colors.BlueJaja, fontFamily: 'Poppins-Regular' },
 
 })

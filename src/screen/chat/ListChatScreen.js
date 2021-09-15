@@ -120,6 +120,6 @@ export default function ListChat() {
 }
 
 const styles = StyleSheet.create({
-    textJajakan: { alignSelf: 'center', textAlign: 'center', width: wp('80%'), fontSize: 18, fontWeight: 'bold', color: colors.BlueJaja, fontFamily: 'notoserif', marginVertical: hp('2%') },
+    textJajakan: { alignSelf: 'center', textAlign: 'center', width: wp('80%'), fontSize: 18, fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja, fontFamily: 'Poppins-Regular', marginVertical: hp('2%') },
     iconMarket: { alignSelf: "center", width: wp('80%'), height: hp('40%') },
 })

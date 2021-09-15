@@ -143,7 +143,7 @@ export default function StoreScreen() {
                                     <Image source={{ uri: reduxStore.image.profile ? reduxStore.image.profile : null }} style={{ width: '100%', height: '100%', resizeMode: 'contain', borderRadius: 5 }} />
                                 </View>
                                 <View style={[styles.column_around_center, { height: Wp('14.5%'), alignItems: 'flex-start' }]}>
-                                    <Text style={[styles.font_13, { color: colors.BlackGrayScale, fontWeight: 'bold', marginBottom: '3%' }]}>{reduxStore.name}</Text>
+                                    <Text style={[styles.font_13, { color: colors.BlackGrayScale, fontFamily: 'Poppins-SemiBold', marginBottom: '3%' }]}>{reduxStore.name}</Text>
                                     <Text style={[styles.font_11, { color: colors.BlackGrayScale, marginBottom: '3%' }]}>{reduxStore.location.city}</Text>
                                     {reduxStore.rating !== "0.0" ?
                                         <View style={styles.row_center}>

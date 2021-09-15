@@ -94,8 +94,8 @@ export default function MainPage() {
                                                         </View>
 
                                                         <View style={[styles.column_center_start, { height: '100%', width: '100%', paddingLeft: '15%' }]}>
-                                                            <Text style={[styles.font_14, styles.mb_2, { color: colors.White, fontWeight: 'bold' }]}>{item.name}</Text>
-                                                            <Text numberOfLines={2} style={[styles.font_8, { color: colors.White, fontWeight: 'bold', width: '80%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
+                                                            <Text style={[styles.font_14, styles.mb_2, { color: colors.White, fontFamily: 'Poppins-SemiBold' }]}>{item.name}</Text>
+                                                            <Text numberOfLines={2} style={[styles.font_8, { color: colors.White, fontFamily: 'Poppins-SemiBold', width: '80%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
                                                         </View>
                                                     </View>
                                                     <TouchableOpacity onPress={() => handleVoucher(item.id)} style={{ width: '30%', backgroundColor: item.isClaimed ? colors.White : colors.RedFlashsale, padding: '1%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.RedFlashsale, borderRadius: 3 }}>

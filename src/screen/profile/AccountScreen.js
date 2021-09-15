@@ -730,17 +730,17 @@ export default function Lainnya() {
             <ActionSheetCamera containerStyle={{ flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.White }} ref={imageRef}>
                 <View style={[styles.column, { backgroundColor: '#ededed' }]}>
                     <TouchableOpacity onPress={goToPicFromCameras} style={{ borderBottomWidth: 0.5, borderBottomColor: colors.Silver, alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%' }}>
-                        <Text style={[styles.font_16, { fontWeight: '900', alignSelf: 'center' }]}>Ambil Foto</Text>
+                        <Text style={[styles.font_16, { alignSelf: 'center' }]}>Ambil Foto</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity onPress={goToPickImage} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%', marginBottom: '1%' }}>
-                        <Text style={[styles.font_16, { fontWeight: '900', alignSelf: 'center' }]}>Buka Galeri</Text>
+                        <Text style={[styles.font_16, { alignSelf: 'center' }]}>Buka Galeri</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => galeryRef.current?.setModalVisible(false)} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '2%' }}>
-                        <Text style={[styles.font_16, { fontWeight: '900', alignSelf: 'center', color: colors.RedNotif }]}>Batal</Text>
+                        <Text style={[styles.font_16, { alignSelf: 'center', color: colors.RedNotif }]}>Batal</Text>
                     </TouchableOpacity>
-                </View>
-            </ActionSheetCamera>
+                </View >
+            </ActionSheetCamera >
             <DateTimePickerModal
                 isVisible={isDatePickerVisible}
                 mode="date"
@@ -771,7 +771,7 @@ const styles = StyleSheet.create({
         flex: 0, flexDirection: 'row', justifyContent: 'space-between', width: '100%', borderBottomColor: '#C0C0C0', borderBottomWidth: 0.5, paddingBottom: '2%', paddingTop: '1%'
     },
     formTitle: {
-        fontSize: 14, fontWeight: '900', color: 'grey'
+        fontSize: 14, color: 'grey', fontFamily: 'Poppins-Regular'
     },
     avatar: {
         width: 130,
@@ -801,7 +801,7 @@ const styles = StyleSheet.create({
     },
     ubah: {
         color: colors.BlueJaja,
-        fontWeight: 'bold',
+        fontFamily: 'Poppins-SemiBold',
         width: '15%',
         textAlign: 'right'
     },
@@ -810,7 +810,7 @@ const styles = StyleSheet.create({
     banner: { width: Wp('50%'), height: '100%', borderRadius: 7 },
     bannerPromo: { width: Wp('25%'), height: '100%', borderRadius: 7 },
     formPlaceholder: {
-        flex: 0, fontSize: 14, fontWeight: '900', color: colors.BlackGrayScale
+        flex: 0, fontSize: 14, color: colors.BlackGrayScale
     },
     formItemImage: {
         flex: 1, width: Wp('50%'), height: Wp('50%'), borderRadius: 7
@@ -846,7 +846,7 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 14,
-        fontWeight: 'bold',
+        fontFamily: 'Poppins-SemiBold',
         marginTop: '3%',
         color: colors.BlackGrayScale,
     },

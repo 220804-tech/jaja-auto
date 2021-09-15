@@ -288,17 +288,17 @@ export default function AddReview(props) {
             <ActionSheet containerStyle={{ flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.White }} ref={galeryRef}>
                 <View style={[styles.column, { backgroundColor: '#ededed' }]}>
                     <TouchableOpacity onPress={handleOpenCamera} style={{ borderBottomWidth: 0.5, borderBottomColor: colors.Silver, alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%' }}>
-                        <Text style={[styles.font_16, { fontWeight: '900', alignSelf: 'center' }]}>Ambil Foto</Text>
+                        <Text style={[styles.font_16, { alignSelf: 'center' }]}>Ambil Foto</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity onPress={handlePickImage} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%', marginBottom: '1%' }}>
-                        <Text style={[styles.font_16, { fontWeight: '900', alignSelf: 'center' }]}>Buka Galeri</Text>
+                        <Text style={[styles.font_16, { alignSelf: 'center' }]}>Buka Galeri</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => galeryRef.current?.setModalVisible(false)} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '2%' }}>
-                        <Text style={[styles.font_16, { fontWeight: '900', alignSelf: 'center', color: colors.RedNotif }]}>Batal</Text>
+                        <Text style={[styles.font_16, { alignSelf: 'center', color: colors.RedNotif }]}>Batal</Text>
                     </TouchableOpacity>
-                </View>
-            </ActionSheet>
+                </View >
+            </ActionSheet >
         </SafeAreaView >
     )
 }

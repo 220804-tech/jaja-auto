@@ -543,7 +543,7 @@ const style = StyleSheet.create({
     },
     titleStyle: {
         color: 'white',
-        fontWeight: 'bold',
+        fontFamily: 'Poppins-SemiBold',
         fontSize: 18,
     },
     touchIcon: { width: '14%', justifyContent: 'center', alignItems: 'center' },

@@ -20,8 +20,8 @@ export default function CustomerServiceScreen() {
 const styles = StyleSheet.create({
     container: { flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: colors.White },
     iconMarket: { alignSelf: "center", width: Wp('80%'), height: Hp('40%') },
-    textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 16, fontWeight: 'bold', color: colors.BlackGrayScale, fontFamily: 'serif', marginVertical: Hp("2%") },
-    textCenter: { fontSize: 16, fontWeight: '900', color: colors.BlackGrayScale, fontFamily: 'serif' },
+    textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 16, fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale, fontFamily: 'Poppins-Regular', marginVertical: Hp("2%") },
+    textCenter: { fontSize: 16, color: colors.BlackGrayScale, fontFamily: 'Poppins-Regular' },
     button: {
         color: colors.BlueJaja,
         width: Wp('77%'),
@@ -49,6 +49,6 @@ const styles = StyleSheet.create({
     text: {
         color: '#fff',
         fontSize: 30,
-        fontWeight: 'bold'
+        fontFamily: 'Poppins-SemiBold'
     }
 })

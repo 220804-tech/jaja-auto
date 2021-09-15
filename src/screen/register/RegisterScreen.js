@@ -374,8 +374,8 @@ const styles = StyleSheet.create({
         height: Hp('5.7%'),
     },
     iconMarket: { alignSelf: "center", width: Wp('80%'), height: Hp('40%') },
-    textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 18, fontWeight: 'bold', color: colors.black, fontFamily: 'serif', marginVertical: Hp('2%') },
-    textCenter: { fontSize: 18, fontWeight: '900', color: colors.black, fontFamily: 'serif' },
+    textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 18, fontFamily: 'Poppins-SemiBold', color: colors.black, fontFamily: 'Poppins-Regular', marginVertical: Hp('2%') },
+    textCenter: { fontSize: 18, color: colors.black, fontFamily: 'Poppins-Regular' },
 
     button: {
         marginTop: Hp('1%'),

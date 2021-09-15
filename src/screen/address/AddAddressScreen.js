@@ -623,9 +623,9 @@ export default function AddAddressScreen(props) {
                                     </TouchableOpacity>
                                     <View style={{ flex: 1 }}>
                                         {alamatGoogle === "" ?
-                                            <Text onPress={() => setStatus("map")} style={{ fontSize: 14, color: colors.RedDanger, fontFamily: 'serif' }}>Lokasi belum dipin</Text>
+                                            <Text onPress={() => setStatus("map")} style={{ fontSize: 14, color: colors.RedDanger, fontFamily: 'Poppins-Regular' }}>Lokasi belum dipin</Text>
                                             :
-                                            <Text onPress={() => setStatus("map")} style={{ fontSize: 14, color: colors.BlackGrayScale, fontFamily: 'serif', borderBottomWidth: 0.5 }}>{alamatGoogle}</Text>
+                                            <Text onPress={() => setStatus("map")} style={{ fontSize: 14, color: colors.BlackGrayScale, fontFamily: 'Poppins-Regular', borderBottomWidth: 0.5 }}>{alamatGoogle}</Text>
                                         }
                                     </View>
                                 </View>
@@ -792,14 +792,14 @@ const styles = StyleSheet.create({
         width: '100%'
     },
     formPlaceholder: {
-        fontSize: 14, fontWeight: '900', color: colors.BlackGrayScale, flex: 1
+        fontSize: 14, color: colors.BlackGrayScale, flex: 1
     },
     // '#C7C7CD'
     formItem: {
         flex: 0, flexDirection: 'row', justifyContent: 'space-between', width: '100%', borderBottomColor: '#C0C0C0', borderBottomWidth: 0.5, paddingBottom: '2%', paddingTop: '1%'
     },
     formTitle: {
-        fontSize: 14, fontWeight: '900', color: 'grey'
+        fontSize: 14, color: 'grey', fontFamily: 'Poppins-Regular'
     },
     avatar: {
         width: 130,
@@ -833,7 +833,7 @@ const styles = StyleSheet.create({
     ubah: {
         flex: 0,
         color: colors.BlueJaja,
-        fontWeight: 'bold',
+        fontFamily: 'Poppins-SemiBold',
         elevation: 1
     },
     actionSheetBody: {

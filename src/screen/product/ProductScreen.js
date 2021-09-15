@@ -550,7 +550,7 @@ export default function ProductScreen(props) {
                             <View style={[styles.column_between_center, styles.p_3, styles.mb, { backgroundColor: colors.White, alignItems: 'flex-start' }]}>
                                 <View style={[styles.row_center, styles.mb_3]}>
                                     <Text style={[styles.font_14]}>Variasi Produk</Text>
-                                    <Text style={[styles.font_12, { marginLeft: '3%', fontStyle: 'italic', color: colors.RedNotif, fontFamily: 'serif' }]}>{alert}</Text>
+                                    <Text style={[styles.font_12, { marginLeft: '3%', fontStyle: 'italic', color: colors.RedNotif, fontFamily: 'Poppins-Regular' }]}>{alert}</Text>
                                 </View>
                                 {/* <View style={[styles.column, { width: Wp('100%') }]}> */}
                                 <FlatList
@@ -600,7 +600,7 @@ export default function ProductScreen(props) {
                             : null}
 
                         <View style={[styles.column, styles.p_4, styles.mb_2, { backgroundColor: colors.White, borderTopRightRadius: 20, borderTopLeftRadius: 20, paddingBottom: '5%' }]}>
-                            <Text style={{ textDecorationLine: 'underline', fontSize: 16, fontWeight: 'bold', color: colors.BlackGrayScale, marginBottom: '3%' }}>Informasi Produk</Text>
+                            <Text style={{ textDecorationLine: 'underline', fontSize: 16, fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale, marginBottom: '3%' }}>Informasi Produk</Text>
                             <View style={[styles.row_around_center, styles.mb_5, { alignSelf: 'flex-start' }]}>
                                 <View style={[styles.column, { width: '40%' }]}>
                                     <Text style={[styles.font_14, styles.mb_3]}>Berat</Text>
@@ -625,7 +625,7 @@ export default function ProductScreen(props) {
                                     <Text style={[styles.font_14, styles.mb_3]}>{reduxSearch.productDetail.stock}</Text>
                                 </View>
                             </View>
-                            <Text style={{ textDecorationLine: 'underline', fontSize: 16, fontWeight: 'bold', color: colors.BlackGrayScale, marginBottom: '3%' }}>Deskripsi Produk</Text>
+                            <Text style={{ textDecorationLine: 'underline', fontSize: 16, fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale, marginBottom: '3%' }}>Deskripsi Produk</Text>
                             <View style={[styles.row_around_center, styles.mb_3, { alignSelf: 'flex-start' }]}>
                                 {reduxSearch.productDetail.description ?
                                     <Text style={[styles.font_14]}>{reduxSearch.productDetail.description.slice(0, deskripsiLenght)}</Text>
@@ -648,7 +648,7 @@ export default function ProductScreen(props) {
 
                         {reduxSearch.productDetail.review && reduxSearch.productDetail.review.length ?
                             <View style={[styles.column, styles.p_4, { backgroundColor: colors.White, paddingBottom: Hp('7%') }]}>
-                                <Text style={{ textDecorationLine: 'underline', fontSize: 16, fontWeight: 'bold', color: colors.BlackGrayScale, marginBottom: '3%' }}>Penilaian Produk</Text>
+                                <Text style={{ textDecorationLine: 'underline', fontSize: 16, fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale, marginBottom: '3%' }}>Penilaian Produk</Text>
                                 {reduxSearch.productDetail.review ?
                                     reduxSearch.productDetail.review.map((item, index) => {
                                         return (
