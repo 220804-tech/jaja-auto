@@ -141,7 +141,6 @@ export default function LoginScreen(props) {
     }
 
     const handleUser = (data) => {
-        console.log("🚀 ~ file: LoginScreen.js ~ line 81 ~ handleUser ~ data", data)
         var myHeaders = new Headers();
         myHeaders.append("Authorization", data);
         myHeaders.append("Cookie", "ci_session=pjrml5k3rvvcg54esomu3vakagc10iu5");

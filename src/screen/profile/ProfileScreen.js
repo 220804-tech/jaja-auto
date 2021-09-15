@@ -61,7 +61,6 @@ export default function ProfileScreen(props) {
 
       .then(response => response.json())
       .then(result => {
-        console.log("🚀 ~ file: ProfileScreen.js ~ line 64 ~ getAccount ~ result", result)
         if (result && Object.keys(result).length && result.status.code == 200) {
           setAccount(true)
         } else {
@@ -78,7 +77,6 @@ export default function ProfileScreen(props) {
 
     // navigation.navigate("VerifikasiEmail", { email: user.email })
 
-    console.log("🚀 ~ file: ProfileScreen.js ~ line 69 ~ getItem ~ reduxAuth", reduxAuth)
   }
 
   const handleLogout = async () => {

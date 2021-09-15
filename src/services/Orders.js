@@ -78,7 +78,7 @@ export async function getProcess(auth) {
             redirect: 'follow'
         };
 
-        return await fetch("https://jaja.id/backend/order?page=1&limit=10&status=prepared", requestOptions)
+        return await fetch("https://jaja.id/backend/order?page=1&limit=50&status=prepared", requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result && Object.keys(result).length && result.status.code === 200 || result.status.code === 204) {
@@ -109,7 +109,7 @@ export async function getSent(auth) {
             redirect: 'follow'
         };
 
-        return await fetch("https://jaja.id/backend/order?page=1&limit=10&status=sent", requestOptions)
+        return await fetch("https://jaja.id/backend/order?page=1&limit=50&status=sent", requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result && Object.keys(result).length && result.status.code === 200 || result.status.code === 204) {
@@ -140,7 +140,7 @@ export async function getCompleted(auth) {
             redirect: 'follow'
         };
 
-        return await fetch("https://jaja.id/backend/order?page=1&limit=10&status=done", requestOptions)
+        return await fetch("https://jaja.id/backend/order?page=1&limit=50&status=done", requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result && Object.keys(result).length && result.status.code === 200 || result.status.code === 204) {

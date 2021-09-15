@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import {
     Splash, Product, Search, Chat, Login, Profile, Register, Trolley, ProductSearch, Checkout, Address, VerifikasiEmail, Category,
     AddAddress, Midtrans, Store, ForgotPassword, Review, ZoomReview, OrderDetails, AddReview, OrderDelivery, Account, CustomerService,
-    Notification, Vouchers, Flashsale, Wishlist, HistoryProduct, Reward, Referral, DetailComplain, OrderCancel,
+    Notification, Vouchers, Flashsale, Wishlist, HistoryProduct, Reward, Referral, DetailComplain, OrderCancel, RequestComplain,
     AddAccount
 } from "./Screen";
 
@@ -48,6 +48,7 @@ export default function Routes() {
                 <Stack.Screen name="Referral" component={Referral} />
                 <Stack.Screen name="DetailComplain" component={DetailComplain} />
                 <Stack.Screen name="OrderCancel" component={OrderCancel} />
+                <Stack.Screen name="RequestComplain" component={RequestComplain} />
 
 
                 <Stack.Screen name="IsiChat" component={Chat} />

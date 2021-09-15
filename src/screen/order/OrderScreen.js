@@ -42,7 +42,6 @@ export default function OrderScreen() {
 
     useEffect(() => {
         EncryptedStorage.getItem('token').then(res => {
-            console.log("🚀 ~ file: OrderScreen.js ~ line 44 ~ EncryptedStorage.getItem ~ res", res)
             if (res) {
                 setAuth(JSON.stringify(res))
             }

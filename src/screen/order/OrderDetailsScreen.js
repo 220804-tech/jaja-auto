@@ -53,7 +53,6 @@ export default function OrderDetailsScreen(props) {
         fetch(`https://jaja.id/backend/order/${reduxOrderInvoice}`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 57 ~ getItem ~ result", result)
                 if (result.status.code === 200 || result.status.code === 204) {
                     setDetails(result.data)
                     // dispatch({ type: 'SET_INVOICE', payload: result.data.items[0].invoice })
@@ -240,11 +239,7 @@ export default function OrderDetailsScreen(props) {
                                 {item.voucherStoreSelected && Object.keys(item.voucherStoreSelected).length ?
                                     <View style={styles.column}>
                                         <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                                            <TouchableOpacity style={[styles.row_between_center, styles.p_3]} onPress={() => {
-                                                setvoucherOpen('store')
-                                                setVouchers(item.voucherStore)
-                                                setindexStore(idxStore)
-                                            }}>
+                                            <TouchableOpacity style={[styles.row_between_center, styles.p_3]}>
                                                 {/* <Image style={[styles.icon_23, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/offer.png')} /> */}
                                                 <Text style={[styles.font_14, { color: colors.BlackGrayScale }]}>Voucher Toko</Text>
                                                 <View style={[styles.p, { backgroundColor: colors.RedFlashsale, borderRadius: 3 }]}>

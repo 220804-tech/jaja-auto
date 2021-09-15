@@ -13,7 +13,7 @@ export default function OrdersSent() {
     const reduxAuth = useSelector(state => state.auth.auth)
     const [refreshing, setRefreshing] = useState(false);
     const [auth, setAuth] = useState("")
-    const [complain, setComplain] = useState(false)
+    const [complain, setComplain] = useState(true)
 
     useEffect(() => {
         EncryptedStorage.getItem('token').then(res => {
@@ -37,10 +37,10 @@ export default function OrdersSent() {
 
 
     const getItem = () => {
-        ServiceOrder.getSent(reduxAuth).then(resUnpaid => {
-            if (resUnpaid) {
-                dispatch({ type: 'SET_SENT', payload: resUnpaid.items })
-                dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
+        ServiceOrder.getSent(reduxAuth).then(resSent => {
+            if (resSent) {
+                dispatch({ type: 'SET_SENT', payload: resSent.items })
+                dispatch({ type: 'SET_ORDER_FILTER', payload: resSent.filters })
                 setTimeout(() => ToastAndroid.show("Data berhasil diperbahrui", ToastAndroid.SHORT, ToastAndroid.CENTER), 500);
             } else {
                 handleSent()
@@ -62,6 +62,8 @@ export default function OrdersSent() {
         dispatch({ type: 'SET_INVOICE', payload: item.invoice })
         dispatch({ type: 'SET_RECEIPT', payload: item.trackingId })
         dispatch({ type: 'SET_ORDER_STATUS', payload: 'Pengiriman' })
+        dispatch({ type: 'SET_COMPLAIN_UPDATE', payload: true })
+        dispatch({ type: 'SET_ORDER_UID', payload: item.uidSeller })
         navigation.navigate('DetailComplain')
     }
 
@@ -72,7 +74,7 @@ export default function OrdersSent() {
     }
     return (
         <View style={[styles.container, styles.pt_2]}>
-            {reduxSent && reduxSent.length ?
+            {reduxSent && reduxSent.length && complain ?
                 <FlatList
                     data={reduxSent}
                     refreshControl={
@@ -83,7 +85,10 @@ export default function OrdersSent() {
                     }
                     keyExtractor={item => item.invoice}
                     renderItem={({ item }) => {
-                        if (item.complain) {
+
+                        console.log("🚀 ~ file: OrdersComplain.js ~ line 135 ~ OrdersSent ~ item", item)
+                        if (item.complain === true) {
+
                             setComplain(true)
                             return (
                                 <TouchableOpacity style={Os.card} onPress={() => handleOrderDetails(item)}>
@@ -116,35 +121,25 @@ export default function OrdersSent() {
                                             </View>
                                         </View>
                                     </View>
-                                    {/* <TouchableOpacity style={[styles.row_between_center, styles.p_2, { width: '100%' }]} onPress={() => navigation.navigate('OrderDelivery')}> */}
 
-                                    <TouchableOpacity style={[styles.row_between_center, styles.mt_5, styles.px_2]} onPress={() => handleTracking(item)}>
-                                        <View style={[styles.row, { width: Wp('60%') }]}>
-                                            <Image style={{ width: 19, height: 19, tintColor: colors.YellowJaja, marginRight: '2%' }} source={require('../../assets/icons/google-maps.png')} />
-                                            <Text numberOfLines={1} style={[styles.font_14, { color: colors.YellowJaja }]}>Paket telah dikirim</Text>
-                                        </View>
-                                        <Button color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('25%') }} style={{ width: Wp('25%'), alignSelf: 'flex-end' }} labelStyle={{ color: colors.White, fontSize: 14 }} uppercase={false} >
-                                            Lacak
-                                        </Button>
-                                    </TouchableOpacity>
-                                    {/* </TouchableOpacity> */}
                                 </TouchableOpacity>
                             )
+                        } else {
+                            setComplain(false)
                         }
                     }}
                 />
-                : complain === false ?
-                    < ScrollView
-                        contentContainerStyle={{ flex: 1 }}
-                        refreshControl={
-                            <RefreshControl
-                                refreshing={refreshing}
-                                onRefresh={onRefresh}
-                            />
-                        }>
-                        <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
-                    </ScrollView>
-                    : null
+                :
+                <ScrollView
+                    contentContainerStyle={{ flex: 1 }}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    }>
+                    <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
+                </ScrollView>
             }
         </View >
     )

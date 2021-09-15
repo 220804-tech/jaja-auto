@@ -1,19 +1,19 @@
 import React, { useState, createRef } from 'react'
 import { SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, StatusBar, Image, ScrollView, Alert, } from 'react-native'
 import { styles, Appbar, colors, Wp, Loading, useNavigation, Utils } from '../../export'
-import { Button, Checkbox } from 'react-native-paper';
+import { Button, Checkbox, RadioButton } from 'react-native-paper';
 import Collapsible from 'react-native-collapsible';
 import ImagePicker from 'react-native-image-crop-picker';
 import ActionSheet from 'react-native-actions-sheet';
 import VideoPlayer from 'react-native-video-player';
 import RNFS from 'react-native-fs';
 import FAIcon from 'react-native-vector-icons/FontAwesome5';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 export default function Complain() {
     const navigation = useNavigation()
     const galeryRef = createRef()
-
+    const dispatch = useDispatch()
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxInvoice = useSelector(state => state.order.invoice)
     const [activeSections, setactiveSections] = useState(null)
@@ -31,10 +31,11 @@ export default function Complain() {
     const [videoShow, setVideoShow] = useState('');
     const [index, setIndex] = useState(0);
 
+    // { id: '1CV', title: "A. Pengiriman Barang", content: [{ id: '1SX', title: 'Barang tidak diterima, namun status telah sampai.' }, { id: '2SX', title: 'Barang sudah melewati tanggal masksimal pengiriman.' }] },
+    // , { id: '9SX', title: 'Barang tidak diterima, namun status telah sampai' }, { id: '10SX', title: 'Barang tertukar dengan customer lainnya.' }
     const data = [
-        { id: '1CV', title: "A. Pengiriman Barang", content: [{ id: '1SX', title: 'Barang tidak diterima, namun status telah sampai.' }, { id: '2SX', title: 'Barang sudah melewati tanggal masksimal pengiriman.' }] },
-        { id: '2CV', title: "B. Barang Tidak Sesuai", content: [{ id: '3SX', title: 'Barang rusak.' }, { id: '4SX', title: 'Ukuran barang tidak sesuai.' }, { id: '5SX', title: 'Warna barang tidak sesuai.' }, { id: '6SX', title: 'Barang tidak sesuai spesifikasi.' }] },
-        { id: '3CV', title: "C. Lainnya", content: [] },
+        { id: '2CV', title: "Barang Tidak Sesuai", content: [{ id: '3SX', title: 'Barang rusak.' }, { id: '3SX', title: 'Barang tidak berfungsi.' }, { id: '4SX', title: 'Ukuran barang tidak sesuai.' }, { id: '5SX', title: 'Warna barang tidak sesuai.' }, { id: '6SX', title: 'Barang tidak sesuai deskripsi.' }, { id: '7SX', title: 'Barang tidak original' }, { id: '8SX', title: 'Barang tidak lengkap' }] },
+        { id: '3CV', title: "Lainnya", content: [] },
     ]
 
     const handleSendComplain = () => {
@@ -82,6 +83,7 @@ export default function Complain() {
                                         }
                                     ]
                                 })
+
                                 var requestOptions = {
                                     method: 'POST',
                                     headers: myHeaders,
@@ -89,23 +91,26 @@ export default function Complain() {
                                     redirect: 'follow'
                                 };
 
-
                                 fetch("https://jaja.id/backend/order/complain", requestOptions)
-                                    .then(response => response.json())
-                                    .then(result => {
-                                        if (result.status.code === 200) {
+                                    .then(response => response.text())
+                                    .then(rsl => {
+                                        try {
+                                            let result = JSON.parse(rsl)
+                                            if (result.status.code === 200) {
+                                                navigation.navigate('DetailComplain')
+                                                setLoading(false)
+                                                setTimeout(() => {
+                                                    dispatch({ type: 'SET_COMPLAIN_UPDATE', payload: false })
+                                                }, 1000);
+                                            }
                                             setTimeout(() => {
                                                 setLoading(false)
-                                            }, 2500);
+                                            }, 3000);
+                                        } catch (error) {
+                                            console.log("🚀 ~ file: RequestComplainScreen.js ~ line 109 ~ handleSendComplain ~ error", rsl)
                                         }
-                                        navigation.navigate('ResponseComplain')
-                                        setTimeout(() => {
-                                            setLoading(false)
-                                        }, 3000);
                                     })
                                     .catch(error => {
-                                        navigation.navigate('ResponseComplain')
-
                                         Utils.handleError(error, "Error request complain.");
                                         setLoading(false)
                                     });
@@ -125,8 +130,8 @@ export default function Complain() {
     const handlePickImage = () => {
         galeryRef.current?.setModalVisible(false)
         ImagePicker.openPicker({
-            width: 400,
-            height: 400,
+            // width: 400,
+            // height: 400,
             cropping: true,
             compressImageQuality: 0.8,
             includeBase64: true
@@ -146,8 +151,8 @@ export default function Complain() {
     const handleOpenCamera = () => {
         galeryRef.current?.setModalVisible(false)
         ImagePicker.openCamera({
-            width: 400,
-            height: 400,
+            // width: 400,
+            // height: 400,
             cropping: true,
             compressImageQuality: 0.8,
             includeBase64: true
@@ -204,11 +209,11 @@ export default function Complain() {
             <StatusBar
                 translucent={false}
                 animated={true}
-                backgroundColor={colors.YellowJaja}
+                backgroundColor={colors.BlueJaja}
                 barStyle='default'
                 showHideTransition="fade"
             />
-            <Appbar back={true} title="Komplain Pesanan" Bg={colors.YellowJaja} />
+            <Appbar back={true} title="Komplain Pesanan" Bg={colors.BlueJaja} />
             {loading ? <Loading /> : null}
             <ScrollView>
                 <View style={[styles.column_start, styles.p_4, { width: Wp('100%') }]}>
@@ -220,7 +225,15 @@ export default function Complain() {
                         renderItem={({ item }) => {
                             return (
                                 <View style={[styles.column_center_start, styles.mb_5, styles.p_3, { backgroundColor: colors.White, elevation: 2, width: '100%', }]}>
-                                    <TouchableOpacity onPress={() => setactiveSections(item.id) & setChecked(null) & setcategoryCompalain(item.title) & settitleComplain("") & setalertText("")}><Text style={[styles.font_14, styles.T_semi_bold]}>{item.title}</Text></TouchableOpacity>
+                                    <View style={[styles.row_between_center, { width: '100%' }]}>
+                                        <TouchableOpacity onPress={() => setactiveSections(item.id)}><Text style={[styles.font_14, styles.T_semi_bold]}>{item.title}</Text></TouchableOpacity>
+                                        <RadioButton
+                                            color={colors.BlueJaja}
+                                            value="first"
+                                            status={activeSections === item.id ? 'checked' : 'unchecked'}
+                                            onPress={() => setactiveSections(item.id)}
+                                        />
+                                    </View>
                                     <Collapsible style={{ width: '100%' }} collapsed={activeSections !== item.id ? true : false}>
                                         {
                                             item.content.length ?
@@ -230,6 +243,7 @@ export default function Complain() {
                                                         return (
                                                             <View key={String(index) + 'KZ'} style={[styles.row_start_center, styles.mb_3, { width: '100%' }]}>
                                                                 <Checkbox
+                                                                    color={colors.BlueJaja}
                                                                     status={checked == index ? 'checked' : 'unchecked'}
                                                                     onPress={() => setChecked(index) & settitleComplain(child.title) & setalertText("")}
                                                                 />
@@ -332,7 +346,7 @@ export default function Complain() {
                     }
 
                     <Text style={[styles.font_13, styles.my_5, { color: colors.RedNotif }]}>{alertText}</Text>
-                    <Button onPress={handleSendComplain} style={{ width: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained">Ajukan komplain</Button>
+                    <Button onPress={handleSendComplain} style={{ width: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained">Ajukan komplain</Button>
                 </View>
             </ScrollView>
             <ActionSheet containerStyle={{ flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.White }} ref={galeryRef}>
