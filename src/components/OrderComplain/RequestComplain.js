@@ -151,14 +151,14 @@ export default function RequestComplain() {
                                 <Text style={[styles.font_13, styles.mt_3]}>Bukti komplain :</Text>
 
                                 <View style={[styles.row]}>
-                                    {complainDetails.gambar1 && !complainDetails.gambar2 && !complainDetails.gambar3 ?
+                                    {!complainDetails.gambar1 && !complainDetails.gambar2 && !complainDetails.gambar3 && BcomplainDetails.video ?
                                         <View style={styles.column}>
                                             <Text style={[styles.font_13, styles.T_light]}>- 0 Foto dilampirkan</Text>
                                             <Text style={[styles.font_13, styles.T_light]}>- 0 Video dilampirkan</Text>
                                         </View>
                                         : null
                                     }
-                                    {!complainDetails.gambar1 ?
+                                    {complainDetails.gambar1 ?
                                         <TouchableOpacity onPress={() => setModal(true) & setStatusBar(colors.Black)} style={styles.my_2}>
                                             <Image style={{ width: Wp('15%'), height: Wp('15%'), borderRadius: 5, marginRight: 15, backgroundColor: colors.BlackGrey }} source={{ uri: complainDetails.gambar1 }} />
                                         </TouchableOpacity>
