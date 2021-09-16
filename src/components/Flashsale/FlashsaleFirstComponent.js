@@ -1,48 +1,55 @@
 import React from 'react'
 import { View, Text, FlatList, TouchableOpacity } from 'react-native'
 import { Button } from 'react-native-paper'
-import { useSelector } from 'react-redux'
-import { colors, FastImage, Ps, styles, Wp, Countdown } from '../../export'
+import { useDispatch, useSelector } from 'react-redux'
+import { colors, FastImage, Ps, styles, Wp, Countdown, Hp, useNavigation } from '../../export'
 
 export default function FlashsaleFirstComponent() {
     const reduxFlashsale = useSelector(state => state.dashboard.flashsale)
+    const dispatch = useDispatch()
+    const navigation = useNavigation()
+    const handleShowDetail = item => {
+        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: true })
+        dispatch({ type: 'SET_SLUG', payload: item.slug })
+
+        navigation.navigate("Product", { slug: item.slug, image: item.image, flashsale: true })
+    }
     return (
-        <View style={[styles.container, { backgroundColor: colors.White }]}>
-            {/* <Countdown /> */}
+        <View style={[styles.container]}>
             <FlatList
-                data={reduxFlashsale}
+                data={reduxFlashsale.concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale)}
                 keyExtractor={(item, index) => String(index) + "FZ"}
                 style={styles.my_5}
                 renderItem={({ item }) => {
-                    let load = false;
 
-                    return (
-                        <TouchableOpacity style={[styles.row_start_center, styles.mb_2, { height: Wp('30%'), width: Wp('100%'), borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}>
-                            <FastImage
-                                style={[Ps.imageProduct, { height: Wp('29%'), width: Wp('29%'), borderTopLeftRadius: 0, borderTopRightRadius: 0 }]}
-                                // onLoadStart={() => load = true}
-                                // onLoadEnd={() => load = false}
-                                source={{
-                                    uri: item.image,
-                                    headers: { Authorization: 'someAuthToken' },
-                                    priority: FastImage.priority.normal,
-                                }}
-                                resizeMode={FastImage.resizeMode.contain}
-                            />
-                            <View style={[styles.column_between_center, styles.px, styles.pb, { width: Wp('67%'), height: '100%', alignItems: 'flex-start' }]}>
-                                <Text numberOfLines={2} style={Ps.nameProduct}>{item.nama_produk}</Text>
-                                <View style={styles.column}>
-                                    <View style={styles.row}>
-                                        <View style={[styles.row_center, styles.mr_3, { width: Wp('9.5%'), height: Wp('9.5%'), backgroundColor: colors.RedFlashsale, padding: '2%', borderRadius: 5 }]}>
-                                            <Text style={{ fontSize: 12, color: colors.White, fontFamily: 'Poppins-SemiBold', backgroundColor: colors.RedFlashsale }}>{item.discountFlash}%</Text>
-                                        </View>
-                                        <View style={styles.column}>
-                                            <Text style={Ps.priceBefore}>{item.price}</Text>
-                                            <Text style={Ps.priceAfter}>{item.priceDiscountFlash}</Text>
-                                        </View>
-                                    </View>
-                                    <View style={[styles.row_start, { width: '100%' }]}>
-                                        <View style={{ flex: 0, width: '75%', alignSelf: 'center', height: Wp('4%'), justifyContent: 'center', marginTop: '1%', marginRight: '3%' }}>
+                    if (String(item.time_live) === '09:00') {
+
+                        return (
+                            <View onPress={() => handleShowDetail(item)} style={[styles.row_start_center, styles.mb_2, styles.px_2, { height: Wp('31.5%'), width: Wp('100%'), borderBottomWidth: 0.5, borderBottomColor: colors.Silver, backgroundColor: colors.White }]}>
+                                <View style={[styles.row_center, { position: 'absolute', left: 0, top: 0, zIndex: 999, width: Wp('8%'), height: Wp('6.5%'), backgroundColor: colors.RedFlashsale, padding: '2%', borderBottomRightRadius: 5 }]}>
+                                    <Text style={{ fontSize: 10, color: colors.White, fontFamily: 'Poppins-SemiBold', backgroundColor: colors.RedFlashsale }}>{item.discountFlash}%</Text>
+                                </View>
+                                {/* <View style={[styles.column, { height: Wp('25%'), width: Wp('25%'), backgroundColor: colors.White, alignItems: 'center', justifyContent: 'center' }]}> */}
+                                <FastImage
+                                    style={{ height: Wp('25%'), width: Wp('25%'), borderRadius: 3 }}
+                                    // onLoadStart={() => load = true}
+                                    // onLoadEnd={() => load = false}
+                                    source={{
+                                        uri: item.image,
+                                        headers: { Authorization: 'someAuthToken' },
+                                        priority: FastImage.priority.normal,
+                                    }}
+                                    resizeMode={FastImage.resizeMode.contain}
+                                />
+
+                                {/* </View> */}
+                                <View style={[styles.column_between_center, styles.px_2, { width: Wp('77%'), height: Wp('25%'), alignItems: 'flex-start' }]}>
+                                    <Text numberOfLines={2} style={[styles.font_13, styles.mb, { width: Wp('65%') }]}>{item.name}Et proident excepteur Lorem elit excepteur sint ad deserunt amet laborum.</Text>
+                                    <Text style={[Ps.priceBefore, { fontSize: 10 }]}>{item.price}</Text>
+                                    <Text style={[styles.font_14, styles.T_medium, { color: colors.RedFlashsale, marginTop: '-1.5%' }]}>{item.priceDiscountFlash}</Text>
+                                    <View style={[styles.row_start, { width: '100%', marginTop: '-2.5%' }]}>
+                                        <View style={{ flex: 0, width: '65%', alignSelf: 'center', height: Wp('4%'), justifyContent: 'center', marginRight: '3%' }}>
                                             <View style={{
                                                 borderRadius: 100,
                                                 borderColor: colors.RedFlashsale,
@@ -78,15 +85,15 @@ export default function FlashsaleFirstComponent() {
                                                 >{item.amountSold} Terjual</Text>
                                             </View>
                                         </View>
-                                        <Button mode="contained" color={colors.RedFlashsale} style={{ margin: 0, height: Wp('8%') }} contentStyle={{ padding: 0, height: Wp('8%') }} labelStyle={{ fontSize: 10, color: colors.White }}>
+                                        <Button onPress={() => handleShowDetail(item)} mode="contained" color={colors.RedFlashsale} style={{ width: '25%', height: Wp('9%') }} labelStyle={[styles.font_10, styles.T_semi_bold, { color: colors.White, padding: 0 }]}>
                                             Beli
                                         </Button>
                                     </View>
-                                </View>
 
+                                </View>
                             </View>
-                        </TouchableOpacity>
-                    )
+                        )
+                    }
                 }}
             />
         </View>

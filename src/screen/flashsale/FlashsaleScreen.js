@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { SafeAreaView, View, Text, TouchableOpacity, Dimensions, ToastAndroid, Alert } from 'react-native'
+import { SafeAreaView, View, Text, TouchableOpacity, Dimensions, StatusBar, Alert, ToastAndroid } from 'react-native'
 import { Button } from 'react-native-paper'
 import { styles, colors, Wp, Appbar, useFocusEffect, ServiceCore, useNavigation, Hp, Countdown } from '../../export'
 const initialLayout = { width: Dimensions.get('window').width };
@@ -29,8 +29,10 @@ export default function FlashsaleScreen() {
             console.log("testing")
             ServiceCore.getDateTime().then(res => {
                 console.log("file: FlashsaleScreen.js ~ line 30 ~ ServiceCore.getDateTime ~ res", res)
+
                 if (res) {
                     let date = new Date()
+                    handleDate(res)
                     if (date.toJSON().toString().slice(0, 10) !== res.dateNow) {
                         Alert.alert(
                             "Peringatan!",
@@ -43,6 +45,8 @@ export default function FlashsaleScreen() {
                     } else {
                         console.log("masuk sini")
                         ServiceCore.getFlashsale().then(resp => {
+
+                            console.log("🚀 ~ file: FlashsaleScreen.js ~ line 51 ~ ServiceCore.getFlashsale ~ resp.flashsale", resp.flashsale)
                             if (resp && resp.flashsale && resp.flashsale.length) {
                                 dispatch({ type: 'SET_SHOW_FLASHSALE', payload: true })
                                 dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.flashsale })
@@ -65,17 +69,21 @@ export default function FlashsaleScreen() {
             newdate[0].message = "Sedang Berlangsung"
             newdate[1].message = "Akan Datang"
         } else if (String(valDate.timeNow).replace(/:/g, "") >= "090000" && String(valDate.timeNow).replace(/:/g, "") >= "180000" && String(valDate.timeNow).replace(/:/g, "") >= "090000" && String(valDate.timeNow).replace(/:/g, "") <= "240000") {
-            newdate[9].first = "Telah Berakhir"
+            newdate[0].first = "Telah Berakhir"
             newdate[1].second = "Sedang Berlangsung"
+        } else {
+            newdate[0].first = "Akan Datang"
+            newdate[1].second = "Akan Datang"
         }
         setRoutes(newdate)
         setIndex(0)
-        console.log("file: FlashsaleScreen.js ~ line 61 ~ handleDate ~ newdate", newdate)
     }
 
     return (
         <SafeAreaView style={styles.container}>
-            <Appbar back={true} title="Flashsale" />
+            <StatusBar translucent={false} hidden={false} backgroundColor={colors.RedFlashsale} barStyle="light-content" />
+
+            <Appbar back={true} title="Flashsale" Bg={colors.RedFlashsale} />
 
             <TabView
                 navigationState={{ index, routes }}
@@ -84,7 +92,7 @@ export default function FlashsaleScreen() {
                 initialLayout={initialLayout}
                 renderTabBar={props => (
                     <TabBar
-                        indicatorStyle={{ backgroundColor: colors.BlueJaja }}
+                        indicatorStyle={{ backgroundColor: colors.RedFlashsale }}
                         {...props}
                         bounces={true}
                         scrollEnabled={true}
@@ -93,8 +101,8 @@ export default function FlashsaleScreen() {
                         renderLabel={({ route, focused, color }) => {
                             return (
                                 <View style={[styles.column_center, { width: '100%' }]}>
-                                    <Text style={[styles.font_14, { color: colors.BlueJaja }]}>{route.title}</Text>
-                                    <Text style={[styles.font_12, { color: colors.BlueJaja }]}>{route.message}</Text>
+                                    <Text style={[styles.font_14, { color: colors.RedFlashsale }]}>{route.title}</Text>
+                                    <Text style={[styles.font_12, { color: colors.RedFlashsale }]}>{route.message}</Text>
                                 </View>
                             )
                         }}

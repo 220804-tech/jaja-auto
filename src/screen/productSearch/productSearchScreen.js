@@ -154,6 +154,8 @@ export default function ProductSearchScreen() {
 
     const handleShowDetail = item => {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+        dispatch({ type: 'SET_SLUG', payload: item.slug })
         navigation.push("Product", { slug: item.slug, image: item.image })
     }
 

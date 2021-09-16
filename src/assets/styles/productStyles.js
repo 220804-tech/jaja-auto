@@ -25,8 +25,7 @@ export const style = StyleSheet.create({
         width: '100%',
         height: '100%',
         borderTopLeftRadius: 3,
-        borderTopRightRadius: 3,
-        // resizeMode: 'center'
+        borderTopRightRadius: 3
     },
     bottomCard: {
         flex: 0, flexDirection: 'column', padding: '3%'

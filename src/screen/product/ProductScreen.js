@@ -25,6 +25,8 @@ export default function ProductScreen(props) {
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxStore = useSelector(state => state.store.store)
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
+    const showFlashsale = useSelector(state => state.search.flashsale)
+    const slug = useSelector(state => state.search.slug)
 
     const dispatch = useDispatch()
 
@@ -53,25 +55,51 @@ export default function ProductScreen(props) {
 
     const onRefresh = React.useCallback(() => {
         // setLoading(true);
-        if (props.route.params) {
-            if (props.route.params.slug) {
-                getItem(props.route.params.slug)
-                ToastAndroid.show("Refreshing..", ToastAndroid.LONG, ToastAndroid.CENTER)
-
-                // setFlashsale(false)
-            } else if (props.route.params.flashsale) {
-                // setFlashsale(true)
-            }
+        if (slug) {
+            getItem(props.route.params.slug)
+            ToastAndroid.show("Refreshing..", ToastAndroid.LONG, ToastAndroid.CENTER)
         }
     }, []);
 
     useEffect(() => {
         setLoading(true)
         if (props.route.params && props.route.params.slug) {
+            if (showFlashsale) {
+                setFlashsale(true)
+            } else {
+                setFlashsale(false)
+            }
             getItem(props.route.params.slug)
         }
 
     }, [])
+
+    useFocusEffect(
+        useCallback(() => {
+            try {
+                ImgToBase64.getBase64String(reduxSearch.productDetail.image[0])
+                    .then(async base64String => {
+                        let urlString = 'data:image/jpeg;base64,' + base64String;
+                        setImage(urlString)
+                    })
+                    .catch(err => console.log("cok"));
+                if (reduxAuth) {
+                    // CheckSignal().then(res => {
+                    //     if (res.connect) {
+                    handleGetCart()
+                }
+            } catch (error) {
+
+            }
+            if (showFlashsale) {
+                getItem(props.route.params.slug)
+            }
+
+            // setvariasiPressed(res.productDetail.variant[0].id)
+            // setvariasiSelected(res.productDetail.variant[0])
+
+        }, []),
+    );
 
     const getItem = (slug) => {
         let response;
@@ -80,9 +108,12 @@ export default function ProductScreen(props) {
             response = "clear"
             if (res) {
                 dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res })
+
+                setvariasiPressed(res.variant[0].id)
+                setvariasiSelected(res.variant[0])
+
                 setLoading(false)
-
-
+                setRefreshing(false)
                 if (res.flashsale && Object.keys(res.flashsale).length) {
                     setFlashsale(true)
                     setFlashsaleData(res.flashsale)
@@ -100,12 +131,12 @@ export default function ProductScreen(props) {
                 if (res.stock == '0') {
                     setdisableCart(true)
                 }
+
                 let dataSeller = res.store
                 dataSeller.chat = reduxUser.user.uid + dataSeller.uid
                 dataSeller.id = dataSeller.uid
                 setSeller(dataSeller)
                 setLike(res.isWishlist)
-                setRefreshing(false)
                 setTimeout(() => {
                     if (reduxAuth && res.sellerTerdekat.length && Object.keys(reduxUser.user).length && Object.keys(res.category).length && res.category.slug) {
                         FilterLocation(res.sellerTerdekat, reduxUser.user.location, res.category.slug, reduxAuth)
@@ -115,6 +146,7 @@ export default function ProductScreen(props) {
                 setLoading(false)
                 setRefreshing(false)
             }
+
         }).catch(err => {
             console.log("🚀 ~ file: ProductScreen.js ~ line 127 ~ ServiceProduct.productDetail ~ err", err)
             setLoading(false)
@@ -137,26 +169,6 @@ export default function ProductScreen(props) {
         }, 5000);
     }
 
-    useFocusEffect(
-        useCallback(() => {
-            try {
-                ImgToBase64.getBase64String(reduxSearch.productDetail.image[0])
-                    .then(async base64String => {
-                        let urlString = 'data:image/jpeg;base64,' + base64String;
-                        setImage(urlString)
-                    })
-                    .catch(err => console.log("cok"));
-                if (reduxAuth) {
-                    // CheckSignal().then(res => {
-                    //     if (res.connect) {
-                    handleGetCart()
-                }
-            } catch (error) {
-
-            }
-
-        }, []),
-    );
 
     const getBadges = () => {
         ServiceUser.getBadges(reduxAuth).then(res => {
@@ -366,6 +378,8 @@ export default function ProductScreen(props) {
 
     const handleShowDetail = item => {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+        dispatch({ type: 'SET_SLUG', payload: item.slug })
         navigation.push("Product", { slug: item.slug, image: item.image })
     }
 
@@ -504,9 +518,9 @@ export default function ProductScreen(props) {
                                             <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1.5%', borderRadius: 5 }]}>
                                                 <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{flashsaleData.discountFlash}%</Text>
                                             </View>
-                                            <View style={styles.column}>
+                                            <View style={[styles.column, { height: Wp('11.5%'), }]}>
                                                 <Text style={Ps.priceBefore}>{reduxSearch.productDetail.price}</Text>
-                                                <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{reduxSearch.productDetail.priceDiscount}</Text>
+                                                <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{reduxSearch.productDetail.price}</Text>
                                             </View>
                                         </View>
                                         <View style={[styles.row_center, { width: '13%', height: '100%' }]}>
@@ -604,7 +618,7 @@ export default function ProductScreen(props) {
                             : null}
 
                         <View style={[styles.column, styles.p_4, styles.mb_2, { backgroundColor: colors.White, borderTopRightRadius: 20, borderTopLeftRadius: 20, paddingBottom: '5%' }]}>
-                            <Text style={{ textDecorationLine: 'underline', fontSize: 16, fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale, marginBottom: '3%' }}>Informasi Produk</Text>
+                            <Text style={{ textDecorationLine: 'underline', fontSize: 14, fontFamily: 'Poppins-Medium', color: colors.BlackGrayScale, marginBottom: '3%' }}>Informasi Produk</Text>
                             <View style={[styles.row_around_center, styles.mb_5, { alignSelf: 'flex-start' }]}>
                                 <View style={[styles.column, { width: '40%' }]}>
                                     <Text style={[styles.font_14, styles.mb_3]}>Berat</Text>
@@ -618,21 +632,21 @@ export default function ProductScreen(props) {
                                     <Text style={[styles.font_14, styles.mb_3]}>Stok</Text>
                                 </View>
                                 <View style={styles.column}>
-                                    <Text style={[styles.font_14, styles.mb_3]}>{reduxSearch.productDetail.weight} gram</Text>
-                                    <Text style={[styles.font_14, styles.mb_3]}>{reduxSearch.productDetail.brand ? reduxSearch.productDetail.brand : ""}</Text>
-                                    <Text style={[styles.font_14, styles.mb_3]}>{reduxSearch.productDetail.condition}</Text>
-                                    <Text style={[styles.font_14, styles.mb_3]}>{reduxSearch.productDetail.category && Object.keys(reduxSearch.productDetail.category).length ? reduxSearch.productDetail.category.name : ""}</Text>
+                                    <Text style={[styles.font_14, styles.mb_3, styles.T_light]}>{reduxSearch.productDetail.weight} gram</Text>
+                                    <Text style={[styles.font_14, styles.mb_3, styles.T_light]}>{reduxSearch.productDetail.brand ? reduxSearch.productDetail.brand : ""}</Text>
+                                    <Text style={[styles.font_14, styles.mb_3, styles.T_light]}>{reduxSearch.productDetail.condition}</Text>
+                                    <Text style={[styles.font_14, styles.mb_3, styles.T_light]}>{reduxSearch.productDetail.category && Object.keys(reduxSearch.productDetail.category).length ? reduxSearch.productDetail.category.name : ""}</Text>
                                     {reduxSearch.productDetail.preOrder ?
-                                        <Text style={[styles.font_14, styles.mb_3]}>{reduxSearch.productDetail.masaPengemasan} Hari</Text>
+                                        <Text style={[styles.font_14, styles.mb_3, styles.T_light]}>{reduxSearch.productDetail.masaPengemasan} Hari</Text>
                                         : null
                                     }
-                                    <Text style={[styles.font_14, styles.mb_3]}>{reduxSearch.productDetail.stock}</Text>
+                                    <Text style={[styles.font_14, styles.mb_3, styles.T_light]}>{reduxSearch.productDetail.stock}</Text>
                                 </View>
                             </View>
-                            <Text style={{ textDecorationLine: 'underline', fontSize: 16, fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale, marginBottom: '3%' }}>Deskripsi Produk</Text>
+                            <Text style={{ textDecorationLine: 'underline', fontSize: 14, fontFamily: 'Poppins-Medium', color: colors.BlackGrayScale, marginBottom: '3%' }}>Deskripsi Produk</Text>
                             <View style={[styles.row_around_center, styles.mb_3, { alignSelf: 'flex-start' }]}>
                                 {reduxSearch.productDetail.description ?
-                                    <Text style={[styles.font_14]}>{reduxSearch.productDetail.description.slice(0, deskripsiLenght)}</Text>
+                                    <Text style={[styles.font_14, styles.T_light]}>{reduxSearch.productDetail.description.slice(0, deskripsiLenght)}</Text>
 
                                     // <View style={[styles.column, { width: '100%' }]}>
                                     //     <Text numberOfLines={deskripsiLenght == 200 ? 10 : 25} style={[styles.font_14]}>{reduxSearch.productDetail.description.slice(0, deskripsiLenght)}</Text>
@@ -706,7 +720,7 @@ export default function ProductScreen(props) {
 
                         {reduxSearch.productDetail.otherProduct && reduxSearch.productDetail.otherProduct.length ?
                             <View style={[styles.column, styles.p_4, styles.mb_2, { backgroundColor: colors.White, paddingBottom: '5%' }]}>
-                                <Text style={[styles.font_16, styles.T_medium, { color: colors.BlueJaja }]}>Produk Lainnya Di {reduxSearch.productDetail.store.name}</Text>
+                                <Text style={[styles.font_14, styles.T_medium]}>Produk Lainnya Di {reduxSearch.productDetail.store.name}</Text>
                                 <FlatList
                                     horizontal={true}
                                     removeClippedSubviews={true} // Unmount components when outside of window 
@@ -791,7 +805,7 @@ export default function ProductScreen(props) {
                             </View>
                             : null}
                         <View style={[styles.column, { backgroundColor: colors.White }]}>
-                            <RecomandedHobby />
+                            <RecomandedHobby color={colors.BlackGrayScale} />
                         </View>
                     </View>
                     : null

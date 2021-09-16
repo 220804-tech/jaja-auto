@@ -9,19 +9,11 @@ export default function RecomandedHobbyComponent() {
     const reduxDashboard = useSelector(state => state.dashboard.hobyAverage)
     const dispatch = useDispatch()
 
-    const handleShowDetail = async item => {
+    const handleShowDetail = item => {
         navigation.navigate("Product")
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        setTimeout(() => {
-            productDetail(item.slug).then(res => {
-                if (res) {
-                    dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res })
-                } else {
-                    console.log("keluar")
-                    dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-                }
-            })
-        }, 100);
+        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+        dispatch({ type: 'SET_SLUG', payload: item.slug })
     }
     return (
         <View style={styles.p_3}>

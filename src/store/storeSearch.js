@@ -5,7 +5,9 @@ const initialState = {
     keywordSearch: "",
     productDetail: {},
     slug: "",
-    maxProduct: false
+    maxProduct: false,
+    flashsale: false
+
 }
 export default function storeSearch(state = initialState, action) {
     const { type, payload } = action;
@@ -24,6 +26,8 @@ export default function storeSearch(state = initialState, action) {
             return { ...state, productDetail: payload }
         case 'SET_SLUG':
             return { ...state, slug: payload }
+        case 'SET_SHOW_FLASHSALE':
+            return { ...state, flashsale: payload }
         default:
             return state;
     }

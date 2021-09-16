@@ -13,6 +13,8 @@ export default function CardProductComponent(props) {
 
     const handleShowDetail = item => {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+        dispatch({ type: 'SET_SLUG', payload: item.slug })
         navigation.push("Product", { slug: item.slug, image: item.image })
     }
     useEffect(() => {
@@ -48,7 +50,7 @@ export default function CardProductComponent(props) {
                         {!item.loading ?
                             <TouchableOpacity
                                 onPress={() => handleShowDetail(item)}
-                                style={[Ps.cardProduct, { marginRight: '3.5%' }]}   
+                                style={[Ps.cardProduct, { marginRight: '3.5%' }]}
                                 key={index}>
                                 {item.isDiscount ? <Text adjustsFontSizeToFit style={Ps.textDiscount}>{item.discount}%</Text> : null}
                                 <View style={[styles.column, { height: Wp('44%'), width: Wp('44%'), borderTopLeftRadius: 3, borderTopRightRadius: 3 }]}>

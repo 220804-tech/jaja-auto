@@ -12,16 +12,8 @@ export default function TrendingComponent() {
     const handleShowDetail = async item => {
         navigation.push("Product")
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        setTimeout(() => {
-            productDetail(item.slug).then(res => {
-                if (res) {
-                    dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res })
-                } else {
-                    console.log("keluar")
-                    dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-                }
-            })
-        }, 100);
+        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+        dispatch({ type: 'SET_SLUG', payload: item.slug })
     }
     return (
         <View style={styles.p_3}>
