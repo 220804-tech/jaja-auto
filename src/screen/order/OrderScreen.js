@@ -15,10 +15,13 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 
 export default function OrderScreen() {
     const reduxAuth = useSelector(state => state.auth.auth)
+    const reduxSent = useSelector(state => state.order.sent)
 
     const reduxOrder = useSelector(state => state.order.filter)
-    const [auth, setAuth] = useState('')
     const [index, setIndex] = useState(0)
+    const [count, setCount] = useState(0)
+    const [complain, setComplain] = useState(0)
+    const [sent, setSent] = useState(0)
 
     const [navigate, setNavigate] = useState("Pesanan")
 
@@ -41,12 +44,25 @@ export default function OrderScreen() {
     });
 
     useEffect(() => {
-        EncryptedStorage.getItem('token').then(res => {
-            if (res) {
-                setAuth(JSON.stringify(res))
-            }
-        })
-    }, [])
+        console.log("🚀 ~ file: OrderScreen.js ~ line 49 ~ useEffect ~ reduxOrder[3]", reduxOrder[3])
+        setCount(count + 1)
+        let sentCount = 0;
+        let complainCount = 0;
+        if (reduxSent && reduxSent.length) {
+            reduxSent.map(item => {
+                if (item.complain) {
+                    complainCount += 1
+                } else {
+                    sentCount += 1
+
+                }
+            })
+        }
+        setComplain(complainCount)
+        console.log("🚀 ~ file: OrderScreen.js ~ line 62 ~ useEffect ~ complainCount", complainCount)
+        setSent(sentCount)
+        console.log("🚀 ~ file: OrderScreen.js ~ line 64 ~ useEffect ~ sentCount", sentCount)
+    }, [reduxOrder])
 
     return (
         <SafeAreaView style={styles.container}>
@@ -75,13 +91,15 @@ export default function OrderScreen() {
                                                 <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}>({reduxOrder[0].total > 9 ? "9+" : reduxOrder[0].total})</Text>
                                                 : route.title === "Diproses" && Object.keys(reduxOrder[1]).length && Object.keys(reduxOrder[0]).length && reduxOrder[1].total || reduxOrder[2].total ?
                                                     <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({reduxOrder[1].total + reduxOrder[2].total > 9 ? "9+" : reduxOrder[1].total + reduxOrder[2].total})</Text>
-                                                    : route.title === "Dikirim" && Object.keys(reduxOrder[3]).length && reduxOrder[3].total ?
-                                                        <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({reduxOrder[3].total > 9 ? "9+" : reduxOrder[3].total})</Text>
+                                                    : route.title === "Dikirim" && sent ?
+                                                        <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({sent > 9 ? "9+" : sent})</Text>
                                                         : route.title == "Selesai" && Object.keys(reduxOrder[4]).length && reduxOrder[4].total ?
                                                             <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({reduxOrder[4].total > 9 ? "9+" : reduxOrder[4].total})</Text>
                                                             : route.title === "Dibatalkan" && Object.keys(reduxOrder[5]).length && reduxOrder[5].total ?
                                                                 <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({reduxOrder[5].total > 9 ? "9+" : reduxOrder[5].total})</Text>
-                                                                : null
+                                                                : route.title === "Pengembalian" && complain ?
+                                                                    <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({complain > 9 ? "9+" : complain})</Text>
+                                                                    : null
                                             }
                                         </View>
                                         :

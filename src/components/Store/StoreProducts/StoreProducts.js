@@ -184,7 +184,7 @@ export default function StoreProducts() {
                                 <CardProduct data={data} />
 
                                 {reduxmaxProduct || data.length < 2 ? <Text style={[styles.font_14, styles.my_5, { alignSelf: 'center', color: colors.BlueJaja, width: Wp('100%'), textAlign: 'center' }]}>Semua produk berhasil ditampilkan.</Text> : <ShimmerCardProduct />}
-                                {console.log("🚀 ~ file: StoreProducts.js ~ line 256 ~ StoreProducts ~ reduxmaxProduct", reduxmaxProduct)}
+                                {/* {console.log("🚀 ~ file: StoreProducts.js ~ line 256 ~ StoreProducts ~ reduxmaxProduct", reduxmaxProduct)} */}
                             </ScrollView>
 
                         </View>

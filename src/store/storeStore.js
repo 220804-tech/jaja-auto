@@ -3,7 +3,7 @@ const initialState = {
     storeProduct: [],
     newProduct: [],
     storeKeyword: '',
-    maxProduct: false
+    maxProduct: false,
 }
 export default function storeStore(state = initialState, action) {
     const { type, payload } = action;

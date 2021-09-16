@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Products from '../../components/Store/StoreProducts/StoreProducts'
 import MainPage from '../../components/Store/MainPage/MainPage'
 // import Posts from '../../components/Store/Posts'
-import { colors, Loading, ServiceCart, ServiceStore, styles, useNavigation, Wp, AppbarSecond } from '../../export'
+import { colors, Loading, ServiceCart, ServiceStore, styles, useNavigation, Wp, AppbarSecond, } from '../../export'
 const initialLayout = { width: Dimensions.get('window').width };
 const layout = Dimensions.get('screen').height
 

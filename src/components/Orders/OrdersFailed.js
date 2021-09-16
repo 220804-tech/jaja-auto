@@ -10,20 +10,7 @@ export default function OrdersFailed() {
     const dispatch = useDispatch()
     const reduxFailed = useSelector(state => state.order.failed)
     const [refreshing, setRefreshing] = useState(false);
-    const [auth, setAuth] = useState("")
     const reduxAuth = useSelector(state => state.auth.auth)
-
-    useEffect(() => {
-        EncryptedStorage.getItem('token').then(res => {
-            if (res) {
-                setAuth(JSON.parse(res))
-            } else {
-                navigation.navigate('Login')
-            }
-        }).catch(err => {
-            ToastAndroid.show(String(err) + 23, ToastAndroid.LONG, ToastAndroid.CENTER)
-        })
-    }, [])
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
@@ -35,10 +22,10 @@ export default function OrdersFailed() {
 
 
     const getItem = () => {
-        ServiceOrder.getFailed(reduxAuth).then(resUnpaid => {
-            if (resUnpaid) {
-                dispatch({ type: 'SET_FAILED', payload: resUnpaid.items })
-                dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
+        ServiceOrder.getFailed(reduxAuth).then(resFailed => {
+            if (resFailed && Object.keys(resFailed).length) {
+                dispatch({ type: 'SET_FAILED', payload: resFailed.items })
+                dispatch({ type: 'SET_ORDER_FILTER', payload: resFailed.filters })
                 setTimeout(() => ToastAndroid.show("Data berhasil diperbahrui", ToastAndroid.SHORT, ToastAndroid.CENTER), 500);
             } else {
                 handleFailed()
@@ -112,8 +99,15 @@ export default function OrdersFailed() {
                         )
                     }}
                 /> :
-                <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
-            }
+                <ScrollView contentContainerStyle={styles.container}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    }>
+                    <DefaultNotFound textHead="Ups..asas" textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
+                </ScrollView>}
         </View>
     )
 }

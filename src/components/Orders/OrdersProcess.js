@@ -12,35 +12,22 @@ export default function OrdersProcess() {
     const reduxAuth = useSelector(state => state.auth.auth)
 
     const [refreshing, setRefreshing] = useState(false);
-    const [auth, setAuth] = useState("")
     const [status, setstatus] = useState("Sedang disiapkan")
-
-
-    useEffect(() => {
-        EncryptedStorage.getItem('token').then(res => {
-            if (res) {
-                setAuth(JSON.parse(res))
-            } else {
-                navigation.navigate('Login')
-            }
-        }).catch(err => {
-            ToastAndroid.show(String(err) + 21, ToastAndroid.LONG, ToastAndroid.CENTER)
-        })
-    }, [])
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         getItem()
         setTimeout(() => {
             setRefreshing(false)
-        }, 3000);
+        }, 2500);
     }, []);
 
 
     const getItem = () => {
         ServiceOrder.getWaitConfirm(reduxAuth).then(reswaitConfirm => {
-            if (reswaitConfirm) {
+            if (reswaitConfirm && Object.keys(reswaitConfirm).length) {
                 dispatch({ type: 'SET_WAITCONFIRM', payload: reswaitConfirm.items })
+                dispatch({ type: 'SET_ORDER_FILTER', payload: reswaitConfirm.filters })
                 setTimeout(() => ToastAndroid.show("Data berhasil diperbahrui", ToastAndroid.SHORT, ToastAndroid.CENTER), 500);
             } else {
                 handleWaitConfirm()
@@ -51,8 +38,9 @@ export default function OrdersProcess() {
         })
 
         ServiceOrder.getProcess(reduxAuth).then(resProcess => {
-            if (resProcess) {
+            if (resProcess && Object.keys(resProcess).length) {
                 dispatch({ type: 'SET_PROCESS', payload: resProcess.items })
+                dispatch({ type: 'SET_ORDER_FILTER', payload: resProcess.filters })
             } else {
                 handleProcess()
             }

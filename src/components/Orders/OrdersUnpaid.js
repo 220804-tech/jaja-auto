@@ -25,7 +25,7 @@ export default function OrdersUnpaid() {
 
     const getItem = () => {
         ServiceOrder.getUnpaid(reduxAuth).then(resUnpaid => {
-            if (resUnpaid) {
+            if (resUnpaid && Object.keys(resUnpaid).length) {
                 dispatch({ type: 'SET_UNPAID', payload: resUnpaid.items })
                 dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
                 setTimeout(() => ToastAndroid.show("Data berhasil diperbahrui", ToastAndroid.SHORT, ToastAndroid.CENTER), 500);
@@ -152,7 +152,16 @@ export default function OrdersUnpaid() {
                         )
                     }}
                 />
-                : <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
+                :
+                <ScrollView contentContainerStyle={styles.container}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    }>
+                    <DefaultNotFound textHead="Ups..asas" textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
+                </ScrollView>
             }
         </View>
     )

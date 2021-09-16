@@ -100,8 +100,8 @@ export default function Complain() {
                                                 navigation.navigate('DetailComplain')
                                                 setLoading(false)
                                                 setTimeout(() => {
-                                                    dispatch({ type: 'SET_COMPLAIN_UPDATE', payload: false })
-                                                }, 1000);
+                                                    dispatch({ type: 'SET_COMPLAIN_UPDATE', payload: true })
+                                                }, 2000);
                                             }
                                             setTimeout(() => {
                                                 setLoading(false)

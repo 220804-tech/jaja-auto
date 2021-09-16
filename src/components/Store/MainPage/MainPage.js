@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, FlatList, TouchableOpacity, Image, ScrollView, ToastAndroid } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { styles, Wp, Hp, colors, useNavigation, CardProduct, NearestStore } from '../../../export'
+import { styles, Wp, Hp, colors, useNavigation, CardProduct, NearestStore, FlashsaleToko } from '../../../export'
 import Swiper from 'react-native-swiper'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { Paragraph } from 'react-native-paper'
@@ -12,16 +12,14 @@ export default function MainPage() {
     const dispatch = useDispatch()
     const greeting = useSelector(state => state.store.store.description)
     const vouchers = useSelector(state => state.store.store.voucher)
-    const products = useSelector(state => state.store.storeProduct)
-    const [auth, setAuth] = useState("")
+    const products = useSelector(state => state.store.newProduct)
+    const reduxStore = useSelector(state => state.store)
+    const reduxAuth = useSelector(state => state.auth.auth)
+
     const image = useSelector(state => state.store.store.image)
 
     useEffect(() => {
-        EncryptedStorage.getItem('token').then(res => {
-            if (res) {
-                setAuth(JSON.stringify(res))
-            }
-        })
+
     }, [])
 
     const handleShowDetail = item => {
@@ -41,7 +39,7 @@ export default function MainPage() {
 
     const handleVoucher = (val) => {
         var myHeaders = new Headers();
-        myHeaders.append("Authorization", auth);
+        myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("Cookie", "ci_session=3jj2gelqr7k1pgt00mekej9msvt8evts");
 
@@ -175,19 +173,12 @@ export default function MainPage() {
                 </View>
                 <View style={[styles.column, styles.mt_3, styles.pb_5]}>
 
-                    {products && products.length ?
-                        <View style={styles.column}>
-                            {/* <Text style={[styles.font_16, styles.T_semi_bold, { color: colors.BlackGrayScale }]}>Produk terbaru</Text> */}
-                            <NewProduct />
-
-                            {/* <CardProduct data={products} /> */}
+                    <View style={styles.column}>
+                        <View style={{ width: Wp('100%') }}>
+                            <FlashsaleToko data={reduxStore.store.flashSale} />
                         </View>
-                        :
-                        null
-                        // <View style={{ justifyContent: 'center', width: Wp('100%'), height: Hp('20%') }}>
-                        //     <Text style={[styles.font_14, { alignSelf: 'center', color: colors.BlackGrayScale }]}>Produk tidak ditemukan</Text>
-                        // </View>
-                    }
+                        <NewProduct />
+                    </View>
                     {/* <FlatList
                         removeClippedSubviews={true} // Unmount components when outside of window 
                         initialNumToRender={2} // Reduce initial render amount

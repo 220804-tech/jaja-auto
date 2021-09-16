@@ -3,7 +3,6 @@ import { View, Text, FlatList, Image, RefreshControl, ToastAndroid } from 'react
 import { colors, styles, Wp, ServiceOrder, useNavigation, Os, DefaultNotFound } from '../../export';
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
-import { Button } from 'react-native-paper'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
 export default function OrdersSent() {
@@ -12,33 +11,26 @@ export default function OrdersSent() {
     const reduxSent = useSelector(state => state.order.sent)
     const reduxAuth = useSelector(state => state.auth.auth)
     const [refreshing, setRefreshing] = useState(false);
-    const [auth, setAuth] = useState("")
     const [complain, setComplain] = useState(true)
 
-    useEffect(() => {
-        EncryptedStorage.getItem('token').then(res => {
-            if (res) {
-                setAuth(JSON.parse(res))
-            } else {
-                navigation.navigate('Login')
-            }
-        }).catch(err => {
-            ToastAndroid.show(String(err) + 23, ToastAndroid.LONG, ToastAndroid.CENTER)
-        })
-    }, [])
 
+    useEffect(() => {
+        if (complain) {
+            dispatch({ type: 'SET_ORDER_STATUS', payload: 'Pengiriman' })
+        }
+    }, [complain])
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         getItem()
         setTimeout(() => {
             setRefreshing(false)
         }, 3000);
-    }, []);
+    }, [complain]);
 
 
     const getItem = () => {
         ServiceOrder.getSent(reduxAuth).then(resSent => {
-            if (resSent) {
+            if (resSent && Object.keys(resSent).length) {
                 dispatch({ type: 'SET_SENT', payload: resSent.items })
                 dispatch({ type: 'SET_ORDER_FILTER', payload: resSent.filters })
                 setTimeout(() => ToastAndroid.show("Data berhasil diperbahrui", ToastAndroid.SHORT, ToastAndroid.CENTER), 500);
@@ -85,10 +77,7 @@ export default function OrdersSent() {
                     }
                     keyExtractor={item => item.invoice}
                     renderItem={({ item }) => {
-
-                        console.log("🚀 ~ file: OrdersComplain.js ~ line 135 ~ OrdersSent ~ item", item)
                         if (item.complain === true) {
-
                             setComplain(true)
                             return (
                                 <TouchableOpacity style={Os.card} onPress={() => handleOrderDetails(item)}>
@@ -130,15 +119,14 @@ export default function OrdersSent() {
                     }}
                 />
                 :
-                <ScrollView
-                    contentContainerStyle={{ flex: 1 }}
+                <ScrollView contentContainerStyle={styles.container}
                     refreshControl={
                         <RefreshControl
                             refreshing={refreshing}
                             onRefresh={onRefresh}
                         />
                     }>
-                    <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
+                    <DefaultNotFound textHead="Ups..asas" textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
                 </ScrollView>
             }
         </View >

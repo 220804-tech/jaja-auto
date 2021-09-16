@@ -31,7 +31,7 @@ export default class CountdownComponent extends React.Component {
 
     componentDidMount() {
         ServiceCore.getDateTime().then(res => {
-            console.log("🚀 ~ file: CountdownComponent.js ~ line 34 ~ CountdownComponent ~ ServiceCore.getDateTime ~ res", res)
+            console.log("🚀 ~ file: CountdownStore.js ~ line 34 ~ CountdownComponent ~ ServiceCore.getDateTime ~ res", res)
             let hours = new Date().getHours()
             let minutes = new Date().getMinutes()
             if (String(minutes).length == 1) {

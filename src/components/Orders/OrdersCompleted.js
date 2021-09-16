@@ -4,27 +4,14 @@ import { colors, styles, Wp, ServiceOrder, useNavigation, Os, DefaultNotFound } 
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { Button } from 'react-native-paper'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
 export default function OrdersUnpaid() {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const reduxCompleted = useSelector(state => state.order.completed)
     const [refreshing, setRefreshing] = useState(false);
-    const [auth, setAuth] = useState("")
     const reduxAuth = useSelector(state => state.auth.auth)
-
-    useEffect(() => {
-        EncryptedStorage.getItem('token').then(res => {
-            if (res) {
-                setAuth(JSON.parse(res))
-            } else {
-                navigation.navigate('Login')
-            }
-        }).catch(err => {
-            ToastAndroid.show(String(err) + 23, ToastAndroid.LONG, ToastAndroid.CENTER)
-        })
-    }, [])
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
@@ -36,10 +23,10 @@ export default function OrdersUnpaid() {
 
 
     const getItem = () => {
-        ServiceOrder.getCompleted(reduxAuth).then(resUnpaid => {
-            if (resUnpaid) {
-                dispatch({ type: 'SET_COMPLETED', payload: resUnpaid.items })
-                dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
+        ServiceOrder.getCompleted(reduxAuth).then(resCompleted => {
+            if (resCompleted && Object.keys(resCompleted).length) {
+                dispatch({ type: 'SET_COMPLETED', payload: resCompleted.items })
+                dispatch({ type: 'SET_ORDER_FILTER', payload: resCompleted.filters })
                 setTimeout(() => ToastAndroid.show("Data berhasil diperbahrui", ToastAndroid.SHORT, ToastAndroid.CENTER), 500);
             } else {
                 handleCompleted()
@@ -113,7 +100,15 @@ export default function OrdersUnpaid() {
                         )
                     }}
                 /> :
-                <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
+                <ScrollView contentContainerStyle={styles.container}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    }>
+                    <DefaultNotFound textHead="Ups..asas" textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
+                </ScrollView>
             }
         </View>
     )

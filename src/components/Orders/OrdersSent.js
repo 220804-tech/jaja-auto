@@ -12,19 +12,6 @@ export default function OrdersSent() {
     const reduxSent = useSelector(state => state.order.sent)
     const reduxAuth = useSelector(state => state.auth.auth)
     const [refreshing, setRefreshing] = useState(false);
-    const [auth, setAuth] = useState("")
-
-    useEffect(() => {
-        EncryptedStorage.getItem('token').then(res => {
-            if (res) {
-                setAuth(JSON.parse(res))
-            } else {
-                navigation.navigate('Login')
-            }
-        }).catch(err => {
-            ToastAndroid.show(String(err) + 23, ToastAndroid.LONG, ToastAndroid.CENTER)
-        })
-    }, [])
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
@@ -36,10 +23,10 @@ export default function OrdersSent() {
 
 
     const getItem = () => {
-        ServiceOrder.getSent(reduxAuth).then(resUnpaid => {
-            if (resUnpaid) {
-                dispatch({ type: 'SET_SENT', payload: resUnpaid.items })
-                dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
+        ServiceOrder.getSent(reduxAuth).then(resSent => {
+            if (resSent && Object.keys(resSent).length) {
+                dispatch({ type: 'SET_SENT', payload: resSent.items })
+                dispatch({ type: 'SET_ORDER_FILTER', payload: resSent.filters })
                 setTimeout(() => ToastAndroid.show("Data berhasil diperbahrui", ToastAndroid.SHORT, ToastAndroid.CENTER), 500);
             } else {
                 handleSent()
@@ -133,15 +120,14 @@ export default function OrdersSent() {
                     }}
                 />
                 :
-                <ScrollView
-                    contentContainerStyle={{ flex: 1 }}
+                <ScrollView contentContainerStyle={styles.container}
                     refreshControl={
                         <RefreshControl
                             refreshing={refreshing}
                             onRefresh={onRefresh}
                         />
                     }>
-                    <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
+                    <DefaultNotFound textHead="Ups..asas" textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
                 </ScrollView>
             }
         </View>

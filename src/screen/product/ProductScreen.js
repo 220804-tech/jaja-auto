@@ -45,7 +45,6 @@ export default function ProductScreen(props) {
     const [productId, setproductId] = useState("")
     const [flashsale, setFlashsale] = useState(false)
     const [flashsaleData, setFlashsaleData] = useState({})
-    console.log("🚀 ~ file: ProductScreen.js ~ line 44 ~ ProductScreen ~ flashsaleData", flashsaleData)
     const [variantId, setvariantId] = useState("")
     const [lelangId, setlelangId] = useState("")
     const [qty, setqty] = useState(1)
@@ -83,9 +82,7 @@ export default function ProductScreen(props) {
                 dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res })
                 setLoading(false)
 
-                if (reduxAuth && res.sellerTerdekat.length && Object.keys(reduxUser.user).length && Object.keys(res.category).length && res.category.slug) {
-                    FilterLocation(res.sellerTerdekat, reduxUser.user.location, res.category.slug, reduxAuth)
-                }
+
                 if (res.flashsale && Object.keys(res.flashsale).length) {
                     setFlashsale(true)
                     setFlashsaleData(res.flashsale)
@@ -109,6 +106,11 @@ export default function ProductScreen(props) {
                 setSeller(dataSeller)
                 setLike(res.isWishlist)
                 setRefreshing(false)
+                setTimeout(() => {
+                    if (reduxAuth && res.sellerTerdekat.length && Object.keys(reduxUser.user).length && Object.keys(res.category).length && res.category.slug) {
+                        FilterLocation(res.sellerTerdekat, reduxUser.user.location, res.category.slug, reduxAuth)
+                    }
+                }, 3000);
             } else {
                 setLoading(false)
                 setRefreshing(false)
@@ -243,12 +245,14 @@ export default function ProductScreen(props) {
             if (reduxStore.name != seller.name) {
                 dispatch({ "type": 'SET_STORE', payload: {} })
                 dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
+
             }
         }
         let slug = reduxSearch.productDetail.store.slug
         ServiceStore.getStore(slug).then(res => {
             if (res) {
                 dispatch({ "type": 'SET_STORE', payload: res })
+
             }
         })
         let obj = {
@@ -269,7 +273,7 @@ export default function ProductScreen(props) {
                 dispatch({ "type": 'SET_NEW_PRODUCT', payload: res.items })
             }
         })
-        navigation.push('Store')
+        navigation.navigate('Store')
     }
 
     const handleTrolley = () => {
