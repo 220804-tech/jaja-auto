@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux'
 import { colors, FastImage, Ps, styles, useNavigation, Wp } from '../../export'
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 import LinearGradient from 'react-native-linear-gradient';
-import { Item } from 'react-native-paper/lib/typescript/components/List/List'
 
 export default function CardProductComponent(props) {
     const navigation = useNavigation()

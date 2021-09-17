@@ -18,6 +18,7 @@ export default function checkoutScreen() {
     const reduxCheckout = useSelector(state => state.checkout.checkout)
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxShipping = useSelector(state => state.checkout.shipping)
+    console.log("🚀 ~ file: CheckoutScreen.js ~ line 21 ~ checkoutScreen ~ reduxShipping", reduxShipping[0].items)
     const [refreshControl, setRefreshControl] = useState(false)
 
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -870,7 +871,7 @@ export default function checkoutScreen() {
                                         style={{ width: '100%' }}
                                         renderItem={({ item }) => {
                                             let code = item.code;
-                                            let name = item.name;
+                                            let Ename = item.name;
 
                                             return (
                                                 <View style={[styles.column_center_start, styles.mb_2, styles.py_2, styles.px_4, { borderBottomWidth: 1, borderBottomColor: colors.Silver, width: '100%' }]}>
@@ -880,10 +881,12 @@ export default function checkoutScreen() {
                                                         keyExtractor={(item, index) => String(index) + "a"}
                                                         style={{ width: '100%' }}
                                                         renderItem={({ item }) => {
+                                                            console.log("🚀 ~ file: CheckoutScreen.js ~ line 932 ~ checkoutScreen ~ item", item)
+
                                                             return (
                                                                 <TouchableOpacity onPress={() => deliverySelected(code, item)} style={[styles.column_center_start, styles.mb_3, styles.py_2, { width: '100%' }]}>
                                                                     <View style={styles.row_between_center}>
-                                                                        <Text style={[styles.font_14, styles.T_medium, { flex: 1 }]}>{name}</Text>
+                                                                        <Text style={[styles.font_14, styles.T_medium, { flex: 1 }]}>{Ename + ' ' + item.name}</Text>
                                                                         <Text style={[styles.font_14, styles.T_medium,]}>{item.priceCurrencyFormat}</Text>
 
                                                                     </View>

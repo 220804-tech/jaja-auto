@@ -75,6 +75,7 @@ export default function FlashsaleScreen() {
             newdate[0].first = "Akan Datang"
             newdate[1].second = "Akan Datang"
         }
+        
         setRoutes(newdate)
         setIndex(0)
     }

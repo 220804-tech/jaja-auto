@@ -18,7 +18,7 @@ export default function FlashsaleFirstComponent() {
     return (
         <View style={[styles.container]}>
             <FlatList
-                data={reduxFlashsale.concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale).concat(reduxFlashsale)}
+                data={reduxFlashsale}
                 keyExtractor={(item, index) => String(index) + "FZ"}
                 style={styles.my_5}
                 renderItem={({ item }) => {

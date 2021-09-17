@@ -10,7 +10,8 @@ const initialState = {
     showNearestStore: false,
     loadmore: false,
     out: false,
-    maxRecomandded: false
+    maxRecomandded: false,
+    flashsaleLive: false
 }
 export default function storeDashboard(state = initialState, action) {
     const { type, payload } = action;
@@ -21,6 +22,8 @@ export default function storeDashboard(state = initialState, action) {
             return { ...state, flashsale: payload }
         case 'SET_SHOW_FLASHSALE':
             return { ...state, showFlashsale: payload }
+        case 'SET_LIVE_FLASHSALE':
+            return { ...state, flashsaleLive: payload }
         case 'SET_DASHNEAREST':
             return { ...state, nearestStore: payload }
         case 'SET_SHOW_NEAREST':

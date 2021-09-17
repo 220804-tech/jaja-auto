@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createRef, useCallback } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, StyleSheet, StatusBar, Animated, Platform, Dimensions, LogBox, ToastAndroid, RefreshControl, Alert, ScrollView } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
@@ -101,17 +101,18 @@ export default function ProductScreen(props) {
         }, []),
     );
 
-    const getItem = (slug) => {
+    const getItem = (slg) => {
+        console.log("🚀 ~ file: ProductScreen.js ~ line 105 ~ getItem ~ slg", slg)
         let response;
-        ServiceProduct.productDetail(reduxAuth, slug).then(res => {
-            console.log("🚀 ~ file: ProductScreen.js ~ line 81 ~ ServiceProduct.productDetail ~ res", res.statusProduk)
+        ServiceProduct.productDetail(reduxAuth, slg).then(res => {
+            console.log("🚀 ~ file: ProductScreen.js ~ line 222 ~ ServiceProduct.productDetail ~ res", res.variant.length)
             response = "clear"
             if (res) {
                 dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res })
-
-                setvariasiPressed(res.variant[0].id)
-                setvariasiSelected(res.variant[0])
-
+                if (res.variant.length) {
+                    setvariasiPressed(res.variant[0].id)
+                    setvariasiSelected(res.variant[0])
+                }
                 setLoading(false)
                 setRefreshing(false)
                 if (res.flashsale && Object.keys(res.flashsale).length) {
@@ -224,6 +225,7 @@ export default function ProductScreen(props) {
         fetch("https://jaja.id/backend/cart", requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: ProductScreen.js ~ line 227 ~ handleApiCart ~ result", result)
                 if (result.status.code === 200) {
                     ToastAndroid.show('Produk berhasil ditambahkan', ToastAndroid.LONG, ToastAndroid.TOP)
                     if (name === "buyNow") {

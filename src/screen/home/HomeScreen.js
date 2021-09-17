@@ -20,7 +20,7 @@ LogBox.ignoreAllLogs()
 export default function HomeScreen() {
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
     const reduxProfile = useSelector(state => state.user.user)
-    const reduxShowFlashsale = useSelector(state => state.dashboard.showFlashsale)
+    const reduxShowFlashsale = useSelector(state => state.dashboard.flashsaleLive)
     console.log("🚀 ~ file: HomeScreen.js ~ line 23 ~ HomeScreen ~ reduxShowFlashsale", reduxShowFlashsale)
     const reduxShowNearest = useSelector(state => state.dashboard.showNearestStore)
 
@@ -213,9 +213,9 @@ export default function HomeScreen() {
                     }
                 >
                     <Category />
+                    {reduxShowFlashsale ? <Flashsale /> : null}
                     <Trending />
                     {nearestProduct ? <NearestStore /> : null}
-                    {reduxShowFlashsale ? <Flashsale /> : null}
 
                     {/* <BasedOnSearch /> */}
                     {/* <HobbyAverage /> */}

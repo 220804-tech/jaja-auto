@@ -76,10 +76,10 @@ export default function SplashScreen() {
                 } else {
                     ServiceCore.getFlashsale().then(resp => {
                         if (resp && resp.flashsale && resp.flashsale.length) {
-                            dispatch({ type: 'SET_SHOW_FLASHSALE', payload: true })
+                            dispatch({ type: 'SET_LIVE_FLASHSALE', payload: true })
                             dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.flashsale })
                         } else {
-                            dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+                            dispatch({ type: 'SET_LIVE_FLASHSALE', payload: false })
                         }
                     })
 

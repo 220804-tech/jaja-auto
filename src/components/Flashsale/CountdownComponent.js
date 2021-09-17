@@ -6,7 +6,7 @@ import { colors, ServiceCore, styles, Wp } from '../../export';
 export default class CountdownComponent extends React.Component {
     constructor(props) {
         super();
-        this.state = { time: {}, seconds: 0 };
+        this.state = { time: {}, seconds: 0, status: 'Akan Datang' };
         this.timer = 0;
         this.startTimer = this.startTimer.bind(this);
         this.countDown = this.countDown.bind(this);
@@ -41,14 +41,21 @@ export default class CountdownComponent extends React.Component {
                 hours = '0' + hours;
             }
             if (res && hours + "" + minutes == String(res.timeNow.replace(/:/g, "").slice(0, 4))) {
-                if (String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") < "180000" && String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") <= "240000") {
+                if (String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") < "180000" && String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") <= "235959") {
                     this.timeToSeconds(res.timeNow, "first")
-                } else if (String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") >= "180000" && String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") <= "240000") {
+                } else if (String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") >= "180000" && String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") <= "235959") {
                     this.timeToSeconds(res.timeNow, "second")
                 } else {
                     this.timeToSeconds(res.timeNow, "wait")
                 }
+                if (String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") <= "235959") {
+                    this.setState({ status: 'Sedang Berlangsung' })
+                } else if (String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") >= "180000" && String(res.timeNow).replace(/:/g, "") >= "090000" && String(res.timeNow).replace(/:/g, "") <= "235959") {
+                    this.setState({ status: 'Akan Datang' })
+                }
             }
+
+
         })
     }
 
@@ -96,15 +103,19 @@ export default class CountdownComponent extends React.Component {
 
     render() {
         return (
-            <View style={[styles.row_center, styles.m, { backgroundColor: this.props.home ? colors.RedFlashsale : colors.White }]}>
+            <View style={[{ flex: 0, flexDirection: 'row', justifyContent: this.props.justify ? this.props.justify : 'center', alignItems: 'center', backgroundColor: this.props.home && !this.props.backgroundColor ? colors.RedFlashsale : this.props.backgroundColor ? 'transparent' : colors.White }]}>
+                {this.props.status ?
+                    <Text style={[[styles.font_11, styles.T_medium, { color: this.props.home ? colors.White : colors.RedFlashsale }]]}>{this.state.status}..</Text> : null
+                }
+
                 <View style={[styles.row_center, styles.mx_3, { borderRadius: 5, width: Wp(`${this.props.wrap}+"%`), height: Wp(`${this.props.wrap}+"%`), backgroundColor: this.props.home ? colors.White : colors.RedFlashsale }]}>
                     <Text style={[{ fontSize: this.props.size, color: this.props.home ? colors.RedFlashsale : colors.White }]}>{String(this.state.time.h).length === 1 ? "0" + this.state.time.h : this.state.time.h}</Text>
                 </View>
-                <Text style={[styles.font_20, { color: this.props.home ? colors.White : colors.RedFlashsale, fontFamily: 'Poppins-SemiBold' }]}>:</Text>
+                <Text style={[{ fontSize: this.props.sparator ? this.props.sparator : 20, textAlignVertical: 'center', height: '100%', color: this.props.home ? colors.White : colors.RedFlashsale, fontFamily: 'Poppins-SemiBold' }]}>:</Text>
                 <View style={[styles.row_center, styles.mx_3, { borderRadius: 5, width: Wp(`${this.props.wrap}+"%`), height: Wp(`${this.props.wrap}+"%`), backgroundColor: this.props.home ? colors.White : colors.RedFlashsale }]}>
                     <Text style={[{ fontSize: this.props.size, color: this.props.home ? colors.RedFlashsale : colors.White }]}>{String(this.state.time.m).length === 1 ? "0" + this.state.time.m : this.state.time.m}</Text>
                 </View>
-                <Text style={[styles.font_20, { color: this.props.home ? colors.White : colors.RedFlashsale, fontFamily: 'Poppins-SemiBold' }]}>:</Text>
+                <Text style={[{ fontSize: this.props.sparator ? this.props.sparator : 20, textAlignVertical: 'center', height: '100%', color: this.props.home ? colors.White : colors.RedFlashsale, fontFamily: 'Poppins-SemiBold' }]}>:</Text>
                 <View style={[styles.row_center, styles.mx_3, { borderRadius: 5, width: Wp(`${this.props.wrap}+"%`), height: Wp(`${this.props.wrap}+"%`), backgroundColor: this.props.home ? colors.White : colors.RedFlashsale }]}>
                     <Text style={[{ fontSize: this.props.size, color: this.props.home ? colors.RedFlashsale : colors.White }]}>{String(this.state.time.s).length === 1 ? "0" + this.state.time.s : this.state.time.s}</Text>
                 </View>
