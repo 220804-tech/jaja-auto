@@ -48,6 +48,7 @@ export default function OrdersSent() {
         dispatch({ type: 'SET_INVOICE', payload: item.invoice })
         dispatch({ type: 'SET_RECEIPT', payload: item.trackingId })
         dispatch({ type: 'SET_ORDER_STATUS', payload: 'Pengiriman' })
+        dispatch({ type: 'SET_ORDER_UID', payload: item.store.uid })
         navigation.navigate('OrderDetails', { data: item.invoice, status: "Pengiriman" })
     }
 

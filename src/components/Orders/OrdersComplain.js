@@ -30,7 +30,9 @@ export default function OrdersSent() {
 
     const getItem = () => {
         ServiceOrder.getSent(reduxAuth).then(resSent => {
+            console.log("🚀 ~ file: OrdersComplain.js ~ line 33 ~ ServiceOrder.getSent ~ resSent", resSent.items)
             if (resSent && Object.keys(resSent).length) {
+                console.log("masuk sini kannnn")
                 dispatch({ type: 'SET_SENT', payload: resSent.items })
                 dispatch({ type: 'SET_ORDER_FILTER', payload: resSent.filters })
                 setTimeout(() => ToastAndroid.show("Data berhasil diperbahrui", ToastAndroid.SHORT, ToastAndroid.CENTER), 500);
@@ -53,9 +55,9 @@ export default function OrdersSent() {
     const handleOrderDetails = (item) => {
         dispatch({ type: 'SET_INVOICE', payload: item.invoice })
         dispatch({ type: 'SET_RECEIPT', payload: item.trackingId })
-        dispatch({ type: 'SET_ORDER_STATUS', payload: 'Pengiriman' })
+        // dispatch({ type: 'SET_ORDER_STATUS', payload: 'Pengiriman' })
         dispatch({ type: 'SET_COMPLAIN_UPDATE', payload: true })
-        dispatch({ type: 'SET_ORDER_UID', payload: item.uidSeller })
+        dispatch({ type: 'SET_ORDER_UID', payload: item.store.uid })
         navigation.navigate('DetailComplain')
     }
 
@@ -66,7 +68,7 @@ export default function OrdersSent() {
     }
     return (
         <View style={[styles.container, styles.pt_2]}>
-            {reduxSent && reduxSent.length && complain ?
+            {reduxSent && reduxSent.length ?
                 <FlatList
                     data={reduxSent}
                     refreshControl={

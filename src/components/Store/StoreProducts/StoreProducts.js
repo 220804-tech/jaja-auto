@@ -51,6 +51,7 @@ export default function StoreProducts() {
         //     console.log("jsahfdhjkjhgfdfghjk")
         // }
         if (focus > 0) {
+            console.log("🚀 ~ file: StoreProducts.js ~ line 54 ~ useEffect ~ focus", focus)
             fetchLoadmore()
         }
     }, [focus])
@@ -86,9 +87,7 @@ export default function StoreProducts() {
                 brand: '',
                 sort: focus == 1 ? '' : focus == 2 ? 'getAmountSold-desc' : focus == 3 ? 'produk_variasi.harga_variasi-desc' : 'produk_variasi.harga_variasi-asc'
             }
-            console.log("🚀 ~ file: StoreProducts.js ~ line 87 ~ fetchLoadmore ~ focus", focus)
-            console.log("🚀 ~ file: StoreProducts.js ~ line 195 ~ fetchLoadmore ~ limit", obj.limit)
-            console.log("🚀 ~ file: StoreProducts.js ~ line 195 ~ fetchLoadmore ~ page", obj.sort)
+
 
             ServiceStore.getStoreProduct(obj).then(res => {
                 error = false

@@ -9,7 +9,6 @@ export default function ProsesComplain() {
 
     const reduxAuth = useSelector(state => state.auth.auth)
     const complainDetails = useSelector(state => state.complain.complainDetails)
-    console.log("🚀 ~ file: ProsesComplain.js ~ line 12 ~ ProsesComplain ~ complainDetails", complainDetails)
     const orderInvoice = useSelector(state => state.order.invoice)
 
     const [receipNumber, setReceipNumber] = useState('');

@@ -1,6 +1,6 @@
 import React, { useState, createRef } from 'react'
 import { SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, StatusBar, Image, ScrollView, Alert, } from 'react-native'
-import { styles, Appbar, colors, Wp, Loading, useNavigation, Utils } from '../../export'
+import { styles, Appbar, colors, Wp, Loading, useNavigation, Utils, ServiceFirebase } from '../../export'
 import { Button, Checkbox, RadioButton } from 'react-native-paper';
 import Collapsible from 'react-native-collapsible';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -16,6 +16,8 @@ export default function Complain() {
     const dispatch = useDispatch()
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxInvoice = useSelector(state => state.order.invoice)
+    const complainTarget = useSelector(state => state.complain.complainTarget)
+
     const [activeSections, setactiveSections] = useState(null)
     const [checked, setChecked] = useState(null);
     const [categoryCompalain, setcategoryCompalain] = useState('');
@@ -34,7 +36,7 @@ export default function Complain() {
     // { id: '1CV', title: "A. Pengiriman Barang", content: [{ id: '1SX', title: 'Barang tidak diterima, namun status telah sampai.' }, { id: '2SX', title: 'Barang sudah melewati tanggal masksimal pengiriman.' }] },
     // , { id: '9SX', title: 'Barang tidak diterima, namun status telah sampai' }, { id: '10SX', title: 'Barang tertukar dengan customer lainnya.' }
     const data = [
-        { id: '2CV', title: "Barang Tidak Sesuai", content: [{ id: '3SX', title: 'Barang rusak.' }, { id: '3SX', title: 'Barang tidak berfungsi.' }, { id: '4SX', title: 'Ukuran barang tidak sesuai.' }, { id: '5SX', title: 'Warna barang tidak sesuai.' }, { id: '6SX', title: 'Barang tidak sesuai deskripsi.' }, { id: '7SX', title: 'Barang tidak original' }, { id: '8SX', title: 'Barang tidak lengkap' }] },
+        { id: '2CV', title: "Barang Tidak Sesuai", content: [{ id: '3SX', title: 'Barang rusak' }, { id: '3SX', title: 'Barang tidak berfungsi' }, { id: '4SX', title: 'Ukuran barang tidak sesuai' }, { id: '5SX', title: 'Warna barang tidak sesuai' }, { id: '6SX', title: 'Barang tidak sesuai deskripsi' }, { id: '7SX', title: 'Barang tidak original' }, { id: '8SX', title: 'Barang tidak lengkap' }] },
         { id: '3CV', title: "Lainnya", content: [] },
     ]
 
@@ -97,7 +99,11 @@ export default function Complain() {
                                         try {
                                             let result = JSON.parse(rsl)
                                             if (result.status.code === 200) {
-                                                navigation.navigate('DetailComplain')
+                                                ServiceFirebase.notifChat(complainTarget, { body: 'Pembeli telah mengajukan komplain', title: 'Komplain' })
+                                                ServiceFirebase.buyerNotifications('orders', orderUid)
+                                                ToastAndroid.show('Komplain kamu berhasil diajukan!', ToastAndroid.LONG, ToastAndroid.CENTER)
+
+                                                navigation.navigate('Pesanan')
                                                 setLoading(false)
                                                 setTimeout(() => {
                                                     dispatch({ type: 'SET_COMPLAIN_UPDATE', payload: true })

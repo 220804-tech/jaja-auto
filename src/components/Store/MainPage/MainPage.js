@@ -14,6 +14,7 @@ export default function MainPage() {
     const vouchers = useSelector(state => state.store.store.voucher)
     const products = useSelector(state => state.store.newProduct)
     const reduxStore = useSelector(state => state.store)
+    console.log("🚀 ~ file: MainPage.js ~ line 17 ~ MainPage ~ reduxStore", reduxStore.store.flashSale)
     const reduxAuth = useSelector(state => state.auth.auth)
 
     const image = useSelector(state => state.store.store.image)
@@ -176,9 +177,12 @@ export default function MainPage() {
                 <View style={[styles.column, styles.mt_3, styles.pb_5]}>
 
                     <View style={styles.column}>
-                        <View style={{ width: Wp('100%') }}>
-                            <FlashsaleToko data={reduxStore.store.flashSale} />
-                        </View>
+                        {reduxStore.store.flashSale && reduxStore.store.flashSale.length ?
+                            <View style={{ width: Wp('100%') }}>
+                                <FlashsaleToko data={reduxStore.store.flashSale} />
+                            </View>
+                            : null
+                        }
                         <NewProduct />
                     </View>
                     {/* <FlatList

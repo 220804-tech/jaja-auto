@@ -18,7 +18,6 @@ export default function checkoutScreen() {
     const reduxCheckout = useSelector(state => state.checkout.checkout)
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxShipping = useSelector(state => state.checkout.shipping)
-    console.log("🚀 ~ file: CheckoutScreen.js ~ line 21 ~ checkoutScreen ~ reduxShipping", reduxShipping[0].items)
     const [refreshControl, setRefreshControl] = useState(false)
 
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -493,6 +492,8 @@ export default function checkoutScreen() {
                             }
                         }
                         setTimeout(() => {
+
+                            let error = true;
                             var myHeaders = new Headers();
                             myHeaders.append("Authorization", auth);
                             myHeaders.append("Content-Type", "application/json");
@@ -509,6 +510,7 @@ export default function checkoutScreen() {
                             fetch("https://jaja.id/backend/checkout", requestOptions)
                                 .then(response => response.text())
                                 .then(result => {
+                                    error = false
                                     try {
                                         let data = JSON.parse(result)
                                         if (data && Object.keys(data).length && data.status.code == 200) {
@@ -518,17 +520,36 @@ export default function checkoutScreen() {
                                             Utils.handleErrorResponse(data, "Error with status code : 12046")
                                             return null
                                         }
-                                    } catch (error) {
+                                    } catch (err) {
+                                        error = false
                                         Utils.handleError(result, "Error with status code : 12047")
                                     }
                                     setTimeout(() => {
                                         setLoad(false)
                                     }, 2000);
+                                    setTimeout(() => {
+                                        if (error) {
+                                            Utils.CheckSignal().then(res => {
+                                                if (res.connect) {
+                                                    ToastAndroid.show("Sedang memuat..", ToastAndroid.LONG, ToastAndroid.CENTER)
+                                                } else {
+                                                    setLoad(false)
+                                                    ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet andda!", ToastAndroid.LONG, ToastAndroid.CENTER)
+                                                }
+                                                setTimeout(() => {
+                                                    setLoad(false)
+                                                    if (error) {
+                                                        ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet andda!", ToastAndroid.LONG, ToastAndroid.CENTER)
+                                                    }
+                                                }, 5000);
+                                            })
+                                        }
+                                    }, 5000);
                                 })
-                                .catch(error => {
-                                    console.log("🚀 ~ file: Product.js ~ line 32 ~ productDetail ~ error", error)
+                                .catch(err => {
+                                    console.log("🚀 ~ file: Product.js ~ line 32 ~ productDetail ~ error", err)
                                     setLoad(false)
-                                    Utils.handleError(error, "Error with status code : 120477")
+                                    Utils.handleError(err, "Error with status code : 120477")
                                 })
                         }, 250);
 

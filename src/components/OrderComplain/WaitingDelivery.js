@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, ScrollView, TextInput, ToastAndroid } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { styles, colors, Wp, Hp, Utils, } from '../../export'
+import { styles, colors, Wp, Hp, Utils, ServiceFirebase as Firebase, } from '../../export'
 import { Button } from 'react-native-paper'
 
 export default function WaitingDelivery() {
@@ -10,6 +10,9 @@ export default function WaitingDelivery() {
     const reduxAuth = useSelector(state => state.auth.auth)
     const complainDetails = useSelector(state => state.complain.complainDetails)
     const orderInvoice = useSelector(state => state.order.invoice)
+    const complainTarget = useSelector(state => state.complain.complainTarget)
+    const orderUid = useSelector(state => state.complain.complainUid)
+
 
     const [receipNumber, setReceipNumber] = useState('');
 
@@ -18,7 +21,6 @@ export default function WaitingDelivery() {
             var myHeaders = new Headers();
             myHeaders.append("Authorization", reduxAuth);
             myHeaders.append("Cookie", "ci_session=06hsuo4cuq7thfvijjnk64ucdtu1eb99");
-
             var requestOptions = {
                 method: 'GET',
                 headers: myHeaders,
@@ -31,6 +33,8 @@ export default function WaitingDelivery() {
                     console.log("🚀 ~ file: WaitingDelivery.js ~ line 30 ~ handleReceiptNumber ~ result", result)
                     if (result.status.code == 200) {
                         dispatch({ type: 'SET_COMPLAIN_UPDATE', payload: true })
+                        Firebase.notifChat(complainTarget, { body: 'Pembeli telah mengirim kembali barang yang di komplain', title: 'Komplain' })
+                        Firebase.buyerNotifications('orders', orderUid)
                     } else {
                         Utils.handleErrorResponse(result, "Error with status code : 12034")
                     }

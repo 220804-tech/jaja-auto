@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import store from '../store/combineReducer'
 import Routes from '../routes/Routes'
 // import firebase from 'firebase'
+import database from '@react-native-firebase/database';
 
 
 export const buyerNotifications = async (params, uidBuyyer) => {
@@ -62,9 +63,9 @@ export const notifChat = async (target, data) => {
         "collapse_key": "type_a",
         "notification":
         {
-            "body": data.body,
             "title": data.title,
-            "image": "https://firebasestorage.googleapis.com/v0/b/fir-chat-apps-cb8cf.appspot.com/o/jaja-logo.png?alt=media&token=35c90d56-decd-4376-9aff-c915d08179ea"
+            "body": data.body,
+            // "image": "https://firebasestorage.googleapis.com/v0/b/fir-chat-apps-cb8cf.appspot.com/o/jaja-logo.png?alt=media&token=35c90d56-decd-4376-9aff-c915d08179ea"
         }
 
     });

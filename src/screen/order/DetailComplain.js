@@ -2,20 +2,21 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { SafeAreaView, View, Text, ToastAndroid, ScrollView, Modal, RefreshControl } from 'react-native'
 import StepIndicator from 'react-native-step-indicator';
 import { useSelector, useDispatch } from 'react-redux';
-import { Appbar, colors, styles, Utils, Loading, Wp, Hp } from '../../export';
+import { Appbar, colors, styles, Utils, Loading, Wp, Hp, ServiceFirebase as Firebase } from '../../export';
 import firebaseDatabase from '@react-native-firebase/database';
 import FinishedComplain from '../../components/OrderComplain/FinishedComplain';
 import WaitingDelivery from '../../components/OrderComplain/WaitingDelivery';
 import ProsesComplain from '../../components/OrderComplain/ProsesComplain';
 import RequestComplain from '../../components/OrderComplain/RequestComplain';
 import { Button } from 'react-native-paper'
+
 export default function DetailComplain() {
     const reduxAuth = useSelector(state => state.auth.auth)
     const orderInvoice = useSelector(state => state.order.invoice)
     const updateComplain = useSelector(state => state.complain.complainUpdate)
-    // const orderUid = useSelector(state => state.orders.orderUid)
+    const orderUid = useSelector(state => state.complain.complainUid)
     const reaUpdate = useSelector(state => state.dashboard.notifikasi)
-    // console.log("🚀 ~ file: DetailKomplain.js ~ line 16 ~ DetailKomplain ~ orderUid", orderUid)
+    const complainTarget = useSelector(state => state.complain.complainTarget)
 
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
@@ -78,22 +79,21 @@ export default function DetailComplain() {
 
         }
 
-
+        firebaseDatabase()
+            .ref(`/people/${orderUid}`)
+            .once('value')
+            .then(snapshot => {
+                let target = snapshot.val();
+                dispatch({ type: 'SET_COMPLAIN_TARGET', payload: target.token })
+            });
+        if (updateComplain) {
+            getItem()
+        }
         // firebaseDatabase()
-        //     .ref(`/people/${orderUid}/notif`)
-        //     .once('value')
-        //     .then(snapshot => {
-        //         console.log('User data: ', snapshot.val());
-        //         let target = snapshot.val();
-        //         dispatch({ type: 'HANDLE_NOTIFIKASI', valueNotifikasi: target })
-        //     });
-        // firebaseDatabase()
-        //     .ref(`/people/${orderUid}`)
-        //     .once('value')
-        //     .then(snapshot => {
-        //         let target = snapshot.val();
-        //         console.log("🚀 ~ file: DetailKomplain.js ~ line 1211212121 ~ useEffect ~ target", target)
-        //         dispatch({ type: 'SET_TARGET', payload: target })
+        //     .ref('/people/' + orderUid + '/notif/orders')
+        //     .on('value', snapshot => {
+        //         let result = snapshot.val()
+        //         console.log("🚀 ~ file: DetailComplain.js ~ line 93 ~ useEffect ~ result", result)
         //     });
     }, [updateComplain])
 
@@ -122,13 +122,11 @@ export default function DetailComplain() {
         fetch(`https://jaja.id/backend/order/komplainDetail?invoice=${orderInvoice}`, requestOptions)
             .then(response => response.text())
             .then(rsl => {
-                console.log("🚀 ~ file: DetailComplain.js ~ line 115 ~ getItem ~ rsl", rsl)
                 try {
                     let result = JSON.parse(rsl)
                     if (result.status.code === 200) {
                         if (result.data && Object.keys(result.data[0]).length) {
                             let data = result.data[0];
-                            console.log("🚀 ~ a: DetailComplain.js ~ line 120 ~ getItem ~ data", data)
                             setLoading(false)
                             dispatch({ type: 'SET_COMPLAIN_DETAILS', payload: data })
                             setComplainDetails(data)
@@ -252,32 +250,33 @@ export default function DetailComplain() {
 
     const handleAccept = () => {
         setModalConfirm(true)
+        Firebase.notifChat(complainTarget, { body: 'Pembeli telah mengirim kembali barang yang di komplain', title: 'Komplain' })
+        Firebase.buyerNotifications('orders', orderUid)
+        // setLoading(true)
+        // var myHeaders = new Headers();
+        // myHeaders.append("Authorization", reduxAuth);
+        // myHeaders.append("Cookie", "ci_session=7vgloal55kn733tsqch0v7lh1tfrcilq");
 
-        setLoading(true)
-        var myHeaders = new Headers();
-        myHeaders.append("Authorization", reduxAuth);
-        myHeaders.append("Cookie", "ci_session=7vgloal55kn733tsqch0v7lh1tfrcilq");
+        // var formdata = new FormData();
+        // formdata.append("invoice", orderInvoice);
 
-        var formdata = new FormData();
-        formdata.append("invoice", reduxInvoice);
+        // var requestOptions = {
+        //     method: 'POST',
+        //     headers: myHeaders,
+        //     body: formdata,
+        //     redirect: 'follow'
+        // };
 
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: formdata,
-            redirect: 'follow'
-        };
-
-        fetch("https://jaja.id/backend/order/pesananDiterima", requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                if (result.status.code === 200) {
-                    navigation.navigate('Pesanan')
-                } else {
-                    Utils.handleErrorResponse(result, "Error with status code : 12036")
-                }
-            })
-            .catch(error => Utils.handleError(error, "Error with staus code : 12037"));
+        // fetch("https://jaja.id/backend/order/pesananDiterima", requestOptions)
+        //     .then(response => response.json())
+        //     .then(result => {
+        //         if (result.status.code === 200) {
+        //             navigation.navigate('Pesanan')
+        //         } else {
+        //             Utils.handleErrorResponse(result, "Error with status code : 12036")
+        //         }
+        //     })
+        //     .catch(error => Utils.handleError(error, "Error with staus code : 12037"));
     }
 
 

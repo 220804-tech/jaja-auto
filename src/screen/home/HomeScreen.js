@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, StyleSheet, RefreshControl, Platform, ScrollView, Dimensions, LogBox, Animated, StatusBar } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
-import { BasedOnSearch, Trending, Category, Flashsale, Loading, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect, NearestStore, ServiceCore, } from '../../export'
+import { BasedOnSearch, Trending, Category, Flashsale, Loading, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect, NearestStore, ServiceCore, Utils } from '../../export'
 const { height: SCREEN_HEIGHT, width } = Dimensions.get('window');
 import DeviceInfo from 'react-native-device-info';
 import ParallaxScrollView from 'react-native-parallax-scrollview';
@@ -178,6 +178,7 @@ export default function HomeScreen() {
             </View>
         </View >
     );
+    
     const title = () => {
         return (
             <Swiper
@@ -210,8 +211,7 @@ export default function HomeScreen() {
                             refreshing={refreshing}
                             onRefresh={onRefresh}
                         />
-                    }
-                >
+                    }>
                     <Category />
                     {reduxShowFlashsale ? <Flashsale /> : null}
                     <Trending />
@@ -292,7 +292,13 @@ export default function HomeScreen() {
                 })
             setTimeout(() => {
                 if (hasil !== true) {
-                    return ToastAndroid.show("Tidak dapat tehubung, periksa kembali koneksi anda", ToastAndroid.LONG, ToastAndroid.TOP)
+                    Utils.CheckSignal().then(res => {
+                        if (res.connect) {
+                            ToastAndroid.show("Sedang memuat..", ToastAndroid.LONG, ToastAndroid.TOP)
+                        } else {
+                            return ToastAndroid.show("Tidak dapat tehubung, periksa kembali koneksi anda", ToastAndroid.LONG, ToastAndroid.TOP)
+                        }
+                    })
                 }
             }, 15000);
         } catch (error) {

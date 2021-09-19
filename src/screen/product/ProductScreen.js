@@ -256,21 +256,22 @@ export default function ProductScreen(props) {
 
     const handleStore = () => {
         if (reduxStore && Object.keys(reduxStore).length) {
+            console.log("🚀 ~ file: ProductScreen.js ~ line 259 ~ handleStore ~ reduxStore", reduxStore)
             if (reduxStore.name != seller.name) {
                 dispatch({ "type": 'SET_STORE', payload: {} })
                 dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
-
+                // dispatch({ "type": 'SET_NEW_PRODUCT', payload: [] })
             }
         }
-        let slug = reduxSearch.productDetail.store.slug
-        ServiceStore.getStore(slug).then(res => {
+        let slg = reduxSearch.productDetail.store.slug
+        ServiceStore.getStore(slg).then(res => {
             if (res) {
                 dispatch({ "type": 'SET_STORE', payload: res })
-
+                navigation.navigate('Store')
             }
         })
         let obj = {
-            slug: slug,
+            slug: slg,
             page: 1,
             limit: 10,
             keyword: '',
@@ -287,7 +288,15 @@ export default function ProductScreen(props) {
                 dispatch({ "type": 'SET_NEW_PRODUCT', payload: res.items })
             }
         })
-        navigation.navigate('Store')
+        obj.sort = ''
+        ServiceStore.getStoreProduct(obj).then(res => {
+            console.log("🚀 ~ file: ProductScreen.js ~ line 286 ~ ServiceStore.getStoreProduct ~ obj", obj)
+            console.log("🚀 ~ file: ProductScreen.js ~ line 286 ~ ServiceStore.getStoreProduct ~ res", res)
+            if (res) {
+                console.log('cari all product')
+                dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
+            }
+        })
     }
 
     const handleTrolley = () => {

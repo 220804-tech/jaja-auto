@@ -4,6 +4,7 @@ const initialState = {
     complainStatus: 0,
     complainUpdate: true,
     complainUid: '',
+    complainTarget: '',
 
 }
 
@@ -18,6 +19,8 @@ export default function complainStore(state = initialState, action) {
             return { ...state, complainStep: payload }
         case 'SET_ORDER_UID':
             return { ...state, complainUid: payload }
+        case 'SET_COMPLAIN_TARGET':
+            return { ...state, complainTarget: payload }
         case 'SET_COMPLAIN_UPDATE':
             return { ...state, complainUpdate: payload }
         default:
