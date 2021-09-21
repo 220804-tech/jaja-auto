@@ -30,7 +30,7 @@ export default function AppbarSecond(props) {
             <View style={[styles.searchBar, { backgroundColor: colors.BlueJaja, paddingHorizontal: '0%' }]}>
                 <View style={[styles.row, { width: '85%', marginRight: '1%', backgroundColor: colors.White, height: '100%', alignItems: 'center', borderRadius: 10, paddingHorizontal: '3%' }]}>
                     <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
-                    <TextInput keyboardType="name-phone-pad" returnKeyType="search" adjustsFontSizeToFit style={[styles.font_13, { marginBottom: '-1%', width: '90%' }]} placeholder={props.title} onSubmitEditing={(value) => props.handleSearch(value.nativeEvent.text)}></TextInput>
+                    <TextInput keyboardType="default" returnKeyType="search" adjustsFontSizeToFit style={[styles.font_13, { marginBottom: '-1%', width: '90%' }]} placeholder={props.title} onSubmitEditing={(value) => props.handleSearch(value.nativeEvent.text)}></TextInput>
                 </View>
                 <TouchableOpacity style={[styles.column, styles.mx_3]} onPress={() => handleGetCart()}>
                     <Image source={require('../../assets/icons/cart.png')} style={{ width: 25, height: 25, tintColor: colors.White }} />

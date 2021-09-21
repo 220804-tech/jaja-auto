@@ -8,5 +8,8 @@ LogBox.ignoreAllLogs()
 messaging().setBackgroundMessageHandler(async remoteMessage => {
     console.log('Message handled in the background!', remoteMessage);
 })
-
+messaging().onMessage(remoteMessage => {
+    console.log("🚀 ~ file: index.js ~ line 12 ~ firebaseMessaging ~ remoteMessage", remoteMessage)
+    ToastAndroid.show(JSON.stringify(remoteMessage.notification.body), ToastAndroid.LONG, ToastAndroid.TOP)
+});
 AppRegistry.registerComponent(appName, () => App);

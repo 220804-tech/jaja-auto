@@ -907,7 +907,7 @@ export default function checkoutScreen() {
                                                             return (
                                                                 <TouchableOpacity onPress={() => deliverySelected(code, item)} style={[styles.column_center_start, styles.mb_3, styles.py_2, { width: '100%' }]}>
                                                                     <View style={styles.row_between_center}>
-                                                                        <Text style={[styles.font_14, styles.T_medium, { flex: 1 }]}>{Ename + ' ' + item.name}</Text>
+                                                                        <Text style={[styles.font_14, styles.T_medium, { flex: 1 }]}>{item.name}</Text>
                                                                         <Text style={[styles.font_14, styles.T_medium,]}>{item.priceCurrencyFormat}</Text>
 
                                                                     </View>

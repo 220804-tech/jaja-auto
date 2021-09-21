@@ -43,7 +43,7 @@ export async function CheckSignal() {
 export function handleErrorResponse(error, errorCode) {
     if (error && Object.keys(error).length && error.status.code !== 200 && error.status.code !== 204) {
         if (error.status.message) {
-            ToastAndroid.show(String(result.status.message), ToastAndroid.LONG, ToastAndroid.CENTER)
+            ToastAndroid.show(String(error.status.message), ToastAndroid.LONG, ToastAndroid.CENTER)
         } else {
             Alert.alert(
                 errorCode,

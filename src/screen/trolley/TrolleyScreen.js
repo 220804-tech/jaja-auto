@@ -107,12 +107,11 @@ export default function TrolleyScreen() {
         setDisableCheckout(true)
         setdisableQty(true)
         let arr = reduxCart.cart;
-        console.log("file: TrolleyScreen.js ~ line 110 ~ handleQty ~ name", arr.items[indexParent].products[indexChild])
         if (name === "plus") {
             arr.items[indexParent].products[indexChild].qty = String(parseInt(arr.items[indexParent].products[indexChild].qty) + 1)
         } else {
-            if (arr.items[indexParent].products[indexChild].qty <= 1) {
-                arr.items[indexParent].products[indexChild].qty = 1
+            if (arr.items[indexParent].products[indexChild].qty < 1) {
+                arr.items[indexParent].products[indexChild].qty = 0
             } else {
                 arr.items[indexParent].products[indexChild].qty = String(parseInt(arr.items[indexParent].products[indexChild].qty) - 1)
             }
@@ -142,15 +141,19 @@ export default function TrolleyScreen() {
         fetch("https://jaja.id/backend/cart/qty?action=change", requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: TrolleyScreen.js ~ line 147 ~ handleQty ~ result", result)
                 if (result.status.code === 200) {
                 } else if (result.status.code === 400) {
                     if (result.status.message === "quantity cannot more than stock") {
                         ToastAndroid.show('Stok produk tidak cukup', ToastAndroid.LONG, ToastAndroid.TOP)
+                    } else if (result.status.message === 'quantity cannot less than 1') {
+
                     } else {
-                        ToastAndroid.show(String(result.status.message) + " => " + String(result.message.code), ToastAndroid.LONG, ToastAndroid.TOP)
+
+                        ToastAndroid.show(String(result.status.message) + " => " + String(result.status.code), ToastAndroid.LONG, ToastAndroid.TOP)
                     }
                 } else {
-                    ToastAndroid.show(String(result.status.message) + " => " + String(result.message.code), ToastAndroid.LONG, ToastAndroid.TOP)
+                    ToastAndroid.show(String(result.status.message) + " => " + String(result.status.code), ToastAndroid.LONG, ToastAndroid.TOP)
                     handleFailed(name, indexParent, indexChild)
                 }
                 handleApiCart()
@@ -180,7 +183,6 @@ export default function TrolleyScreen() {
 
     const handleApiCart = () => {
         ServiceCart.getCart(reduxAuth ? reduxAuth : auth).then(res => {
-            console.log("🚀 ~ file: TrolleyScreen.js ~ line 200 ~ ServiceCart.getCart ~ res", res)
             if (res) {
                 setTimeout(() => setLoading(false), 1000);
                 dispatch({ type: 'SET_CART', payload: res })
@@ -189,7 +191,6 @@ export default function TrolleyScreen() {
     }
 
     const handleCheckout = () => {
-        console.log("🚀 ~ file: TrolleyScreen.js ~ line 215 ~ handleCheckout ~ reduxCart.cart.totalCartCurrencyFormat", reduxCart.cart)
         if (reduxCart.cart.totalData != '0' && disableCheckout === false && reduxCart.cart.totalCart != 0) {
             navigation.navigate('Checkout')
             dispatch({ type: 'SET_CHECKOUT', payload: {} })
@@ -214,6 +215,7 @@ export default function TrolleyScreen() {
     }
 
     const handleDeleteCart = (id) => {
+
         console.log("🚀 ~ file: TrolleyScreen.js ~ line 234 ~ handleDeleteCart ~ id", id)
         setLoading(true)
         ServiceCart.deleteCart(reduxAuth ? reduxAuth : auth, id).then(res => {
@@ -229,7 +231,7 @@ export default function TrolleyScreen() {
         handleApiCart()
         setTimeout(() => {
             setRefreshing(false)
-        }, 3000);
+        }, 2000);
     }, []);
 
     const handleSelected = item => {
@@ -308,7 +310,7 @@ export default function TrolleyScreen() {
                                         return (
                                             <Swipeable ref={swipeRef[index]} onRef={(ref) => setSwipeRef(ref)} rightButtons={swipeComponent(item)} onRightActionRelease={() => {
                                                 setIndex(index)
-                                            }} >
+                                            }}>
                                                 <View onPress={() => handleSelected(item)} style={[styles.row_center, styles.mb_2, styles.p_2]}>
 
                                                     <CheckBox
@@ -342,7 +344,13 @@ export default function TrolleyScreen() {
                                                         }
                                                         <View style={[styles.row_between_center, { flex: 0 }]}>
                                                             <View style={[styles.row_around_center, { flex: 1 }]}>
-                                                                <TouchableOpacity disabled={disableQty} onPress={() => handleQty('min', indexParent, index)} style={[styles.row_center, styles.mr_5, { backgroundColor: colors.BlueJaja, borderRadius: 5, height: Wp('7%'), width: Wp('7%') }]} >
+                                                                <TouchableOpacity disabled={disableQty} onPress={() => {
+                                                                    if (item.qty == 1) {
+                                                                        handleDeleteCart(item.cartId)
+                                                                    } else {
+                                                                        handleQty('min', indexParent, index)
+                                                                    }
+                                                                }} style={[styles.row_center, styles.mr_5, { backgroundColor: colors.BlueJaja, borderRadius: 5, height: Wp('7%'), width: Wp('7%') }]} >
                                                                     <Text style={[styles.font_20, styles.T_semi_bold, { color: colors.White, marginTop: '-2.5%' }]}>-</Text>
                                                                 </TouchableOpacity>
                                                                 <Text style={[styles.font_14]}>{item.qty}</Text>

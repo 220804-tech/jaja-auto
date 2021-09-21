@@ -153,32 +153,35 @@ export default function HomeScreen() {
 
         }
     }
-    const renderNavBar = (text) => (
-        <View style={style.navContainer}>
-            <View style={style.statusBar} />
-            <View style={style.navBar}>
-                <TouchableOpacity style={style.searchBar} onPress={() => navigation.navigate("Search")}>
-                    <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
-                    <Text style={styles.font_14}>{text}..</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.column, styles.mx_3]} onPress={handleGetCart}>
-                    <Image source={require('../../assets/icons/cart.png')} style={{ width: 25, height: 25, tintColor: colors.White }} />
-                    {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
-                        <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalProductInCart >= 100 ? "99+" : reduxUser.badges.totalProductInCart}</Text></View>
-                        : null
-                    }
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.column, styles.mx_2]} onPress={() => reduxAuth || auth ? navigation.navigate('Notification') : navigation.navigate('Login')}>
-                    <Image source={require('../../assets/icons/notif.png')} style={{ width: 24, height: 24, tintColor: colors.White }} />
-                    {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
-                        <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalProductInCart >= 100 ? "99+" : reduxUser.badges.totalNotifUnread}</Text></View>
-                        : null
-                    }
-                </TouchableOpacity>
-            </View>
-        </View >
-    );
-    
+    const renderNavBar = (text) => {
+        console.log("🚀 ~ file: HomeScreen.js ~ line 168 ~ HomeScreen ~ reduxUser.badges", reduxUser.badges)
+        return (
+            < View style={style.navContainer} >
+                <View style={style.statusBar} />
+                <View style={style.navBar}>
+                    <TouchableOpacity style={style.searchBar} onPress={() => navigation.navigate("Search")}>
+                        <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
+                        <Text style={styles.font_14}>{text}..</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.column, styles.mx_3]} onPress={handleGetCart}>
+                        <Image source={require('../../assets/icons/cart.png')} style={{ width: 25, height: 25, tintColor: colors.White }} />
+                        {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
+                            <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalProductInCart >= 100 ? "99+" : reduxUser.badges.totalProductInCart}</Text></View>
+                            : null
+                        }
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.column, styles.mx_2]} onPress={() => reduxAuth || auth ? navigation.navigate('Notification') : navigation.navigate('Login')}>
+                        <Image source={require('../../assets/icons/notif.png')} style={{ width: 24, height: 24, tintColor: colors.White }} />
+                        {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
+                            <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalNotifUnread >= 100 ? "99+" : reduxUser.badges.totalNotifUnread + 'sss'}</Text></View>
+                            : null
+                        }
+                    </TouchableOpacity>
+                </View>
+            </View >
+        )
+    }
+
     const title = () => {
         return (
             <Swiper

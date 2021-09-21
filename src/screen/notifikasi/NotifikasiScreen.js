@@ -44,7 +44,7 @@ function NotifikasiScreen(props) {
         if (reduxUser && Object.keys(reduxUser).length) {
             handleNotifikasi()
         }
-        // readData()
+        readData()
         // setshimmer(true)
     }, [reduxUser])
 
@@ -77,12 +77,13 @@ function NotifikasiScreen(props) {
                     data={notifData}
                     keyExtractor={item => item.notificationId}
                     renderItem={({ item, index }) => {
+                        console.log("🚀 ~ file: NotifikasiScreen.js ~ line 80 ~ NotifikasiScreen ~ item", item)
                         return (
                             <TouchableOpacity onPress={() => handleShow(item)}>
                                 <TouchableOpacity key={index} style={styles.card} onPress={() => handleShow(item)}>
                                     <View style={[style.row_between_center, { flex: 0 }]}>
                                         <Text style={styles.textDate}>{item.invoice}</Text>
-                                        <Text style={styles.textDate}>{item.date} {item.time}</Text>
+                                        <Text style={styles.textDate}>{String(item.created_date).slice(0, 16)} {item.time}</Text>
                                     </View>
 
                                     <View style={styles.bodyCard}>

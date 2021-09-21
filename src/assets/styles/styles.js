@@ -153,7 +153,7 @@ export const styles = StyleSheet.create({
     actionSheetTitle: { flex: 1, fontFamily: 'Poppins-SemiBold', fontSize: 17, color: colors.BlueJaja },
 
     countNotif: { position: 'absolute', height: 15, width: 15, backgroundColor: colors.RedNotif, right: -3, top: 0, borderRadius: 100, alignItems: 'center', justifyContent: 'center' },
-    textNotif: { fontSize: 9, color: colors.White, fontFamily: 'Poppins-Regular' },
+    textNotif: { fontSize: 9, color: colors.White, fontFamily: 'Poppins-Regular', textAlign: 'center', textAlignVertical: 'center' },
     cardProduct: { flex: 0, flexDirection: 'column', marginRight: 11, width: Wp('33%'), height: Wp('53%'), borderRadius: 4, backgroundColor: colors.White, alignItems: 'center' },
     flashsale: {
         fontSize: 16,
