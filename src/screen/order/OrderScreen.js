@@ -44,7 +44,6 @@ export default function OrderScreen() {
     });
 
     useEffect(() => {
-        console.log("🚀 ~ file: OrderScreen.js ~ line 49 ~ useEffect ~ reduxOrder[3]", reduxOrder[3])
         setCount(count + 1)
         let sentCount = 0;
         let complainCount = 0;

@@ -8,7 +8,7 @@ export const style = StyleSheet.create({
         borderRadius: 3,
         width: Wp("45%"),
         // minHeight: wp('70%'),
-        height: Hp("41%"),
+        height: Hp("43%"),
         marginLeft: 1,
         marginTop: 5,
         marginBottom: 5,

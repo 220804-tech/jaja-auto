@@ -15,10 +15,14 @@ export async function getStore(slug) {
             if (result.status.code === 200 || result.status.code === 204) {
                 return result.data;
             } else {
+
                 return null
             }
         })
-        .catch(error => Utils.handleError(error, 'Error with status code : 12019'));
+        .catch(error => {
+            Utils.handleError(error, 'Error with status code : 12019')
+            return null
+        });
 }
 
 export async function getStoreProduct(data) {

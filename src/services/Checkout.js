@@ -72,6 +72,25 @@ export async function getShipping(auth) {
         .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
 }
 
+
+export async function getListPayment() {
+    var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+    };
+
+    return await fetch("https://masterdiskon.com/front/api/common/methodPayment/1000000", requestOptions)
+        .then(response => response.json())
+        .then(result => {
+            if (result && result.length) {
+                return result
+            } else {
+                return null
+            }
+        })
+        .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+}
+
 export async function getPayment(auth, orderId) {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);

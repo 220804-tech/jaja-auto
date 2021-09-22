@@ -8,6 +8,8 @@ export default function SearchScreen() {
 
     const dispatch = useDispatch();
     const reduxSlug = useSelector(state => state.search.slug)
+    const reduxStore = useSelector(state => state.store.store)
+
     const [count, setCount] = useState(0)
     const [historySearch, sethistorySearch] = useState([])
     const [storeSearch, setstoreSearch] = useState([])
@@ -190,6 +192,49 @@ export default function SearchScreen() {
 
 
     const handleSelectedToko = (item) => {
+        console.log("🚀 ~ file: SearchScreen.js ~ line 195 ~ handleSelectedToko ~ item", item)
+        if (reduxStore && Object.keys(reduxStore).length) {
+            console.log("🚀 ~ file: ProductScreen.js ~ line 259 ~ handleStore ~ reduxStore", reduxStore)
+            if (reduxStore.name != item.name) {
+                dispatch({ "type": 'SET_STORE', payload: {} })
+                dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
+            }
+        }
+        ServiceStore.getStore(item.slug).then(res => {
+            if (res) {
+                dispatch({ "type": 'SET_STORE', payload: res })
+                navigation.navigate('Store')
+            }
+        })
+        let obj = {
+            slug: item.slug,
+            page: 1,
+            limit: 30,
+            keyword: '',
+            price: '',
+            condition: '',
+            preorder: '',
+            brand: '',
+            sort: 'produk.id_produk-desc',
+        }
+
+        ServiceStore.getStoreProduct(obj).then(res => {
+            if (res) {
+                console.log('cari new product')
+                dispatch({ "type": 'SET_NEW_PRODUCT', payload: res.items })
+            }
+        })
+        obj.sort = ''
+        ServiceStore.getStoreProduct(obj).then(res => {
+            console.log("🚀 ~ file: ProductScreen.js ~ line 286 ~ ServiceStore.getStoreProduct ~ obj", obj)
+            console.log("🚀 ~ file: ProductScreen.js ~ line 286 ~ ServiceStore.getStoreProduct ~ res", res)
+            if (res) {
+                console.log('cari all product')
+                dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
+            }
+        })
+
+
         // if (item.slug !== reduxSlug) {
         //     dispatch({ "type": 'SET_STORE', payload: {} })
         //     dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
@@ -216,33 +261,33 @@ export default function SearchScreen() {
         //         dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
         //     }
         // })
-        if (item.slug !== reduxSlug) {
-            dispatch({ "type": 'SET_STORE', payload: {} })
-            dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
-            dispatch({ type: 'SET_SLUG', payload: item.slug })
-        }
-        ServiceStore.getStore(item.slug).then(res => {
-            if (res) {
-                dispatch({ "type": 'SET_STORE', payload: res })
-            }
-        })
-        let obj = {
-            slug: item.slug,
-            page: 1,
-            limit: 10,
-            keyword: '',
-            price: '',
-            condition: '',
-            preorder: '',
-            brand: '',
-            sort: '',
-        }
-        ServiceStore.getStoreProduct(obj).then(res => {
-            if (res) {
-                dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
-            }
-        })
-        navigation.navigate('Store')
+        // if (item.slug !== reduxSlug) {
+        //     dispatch({ "type": 'SET_STORE', payload: {} })
+        //     dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
+        //     dispatch({ type: 'SET_SLUG', payload: item.slug })
+        // }
+        // ServiceStore.getStore(item.slug).then(res => {
+        //     if (res) {
+        //         dispatch({ "type": 'SET_STORE', payload: res })
+        //     }
+        // })
+        // let obj = {
+        //     slug: item.slug,
+        //     page: 1,
+        //     limit: 10,
+        //     keyword: '',
+        //     price: '',
+        //     condition: '',
+        //     preorder: '',
+        //     brand: '',
+        //     sort: '',
+        // }
+        // ServiceStore.getStoreProduct(obj).then(res => {
+        //     if (res) {
+        //         dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
+        //     }
+        // })
+        // navigation.navigate('Store')
     }
 
     return (

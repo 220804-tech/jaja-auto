@@ -47,9 +47,10 @@ export default function OrdersUnpaid() {
             }
         })
     }
+    
 
     const handleOrderDetails = (item) => {
-        console.log("🚀 ~ file: OrdersUnpaid.js ~ line 51 ~ handleOrderDetails ~ item", item.orderId)
+        console.log("🚀 ~ file: OrdersUnpaid.js ~ line 51 ~ handleOrderDetails ~ item", item.items)
         dispatch({ type: 'SET_INVOICE', payload: item.orderId })
         dispatch({ type: 'SET_ORDER_STATUS', payload: 'Menunggu Pembayaran' })
         navigation.navigate('OrderDetails', { data: item.orderId, status: 'Menunggu Pembayaran' })

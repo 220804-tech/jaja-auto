@@ -3,9 +3,9 @@
 
 
 import React, { useEffect, useState, createRef, useRef, useCallback } from 'react'
-import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, Alert, StatusBar, FlatList, ToastAndroid, TextInput, RefreshControl } from 'react-native'
+import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, Alert, StatusBar, FlatList, ToastAndroid, TextInput, RefreshControl, Modal } from 'react-native'
 import { Appbar, colors, styles, Wp, Hp, useNavigation, ServiceCheckout, Loading, Utils } from '../../export'
-import { Button } from 'react-native-paper'
+import { Button, TouchableRipple, Checkbox } from 'react-native-paper'
 import ActionSheet from "react-native-actions-sheet";
 import CheckBox from '@react-native-community/checkbox';
 import { useDispatch, useSelector } from "react-redux";
@@ -17,24 +17,29 @@ export default function checkoutScreen() {
     const dispatch = useDispatch();
     const reduxCheckout = useSelector(state => state.checkout.checkout)
     const reduxAuth = useSelector(state => state.auth.auth)
+
     const reduxShipping = useSelector(state => state.checkout.shipping)
+    const reduxListPayment = useSelector(state => state.checkout.listPayment)
     const [refreshControl, setRefreshControl] = useState(false)
+    const [showModal, setModalShow] = useState(false);
 
-    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const actionSheetVoucher = createRef();
-
     const actionSheetDelivery = createRef();
-    const [storePressed, setstorePressed] = useState({})
+    const actionSheetPayment = createRef();
 
+    const [storePressed, setstorePressed] = useState({})
     const [loading, setLoading] = useState(false)
     const [load, setLoad] = useState(false)
     const [loadAs, setloadAs] = useState(false)
 
-    const [auth, setAuth] = useState("")
+    const [selectedPayment, setselectedPayment] = useState('')
+    const [selectedSubPayment, setselectedSubPayment] = useState('')
+    const [subPayment, setsubPayment] = useState([])
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
     const [voucherFilters, setvoucherFilters] = useState([])
     const [indexStore, setindexStore] = useState(0)
     const [sendTime, setsendTime] = useState("setiap saat")
-    const [selectedCard, setSelectedCard] = useState("")
 
     const [vouchers, setVouchers] = useState([])
     const [voucherOpen, setvoucherOpen] = useState("")
@@ -51,16 +56,11 @@ export default function checkoutScreen() {
         setRefreshControl(false)
         setLoad(false)
         setLoading(false)
-        EncryptedStorage.getItem('token').then(res => {
-            if (res) {
-                let x = JSON.parse(res);
-                setAuth(x)
-                getVouchers(x)
-            } else {
-                navigation.navigate("Login")
-            }
-        })
-
+        if (reduxAuth) {
+            getVouchers(reduxAuth)
+        } else {
+            navigation.navigate("Login")
+        }
         if (voucherOpen) {
             actionSheetVoucher.current?.setModalVisible(true)
         }
@@ -74,8 +74,14 @@ export default function checkoutScreen() {
         }
     }, [reduxCheckout, voucherOpen, vouchers])
 
+    useEffect(() => {
+        if (selectedSubPayment) {
+            setTimeout(() => actionSheetPayment.current?.setModalVisible(false), 750);
+
+        }
+    }, [selectedSubPayment])
     const getCheckout = () => {
-        ServiceCheckout.getCheckout(auth).then(res => {
+        ServiceCheckout.getCheckout(reduxAuth).then(res => {
             if (res) {
                 dispatch({ type: 'SET_CHECKOUT', payload: res })
                 actionSheetVoucher.current?.setModalVisible()
@@ -101,7 +107,7 @@ export default function checkoutScreen() {
                     setloadAs(true)
                 }, 100);
                 var myHeaders = new Headers();
-                myHeaders.append("Authorization", auth);
+                myHeaders.append("Authorization", reduxAuth);
                 myHeaders.append("Content-Type", "application/json");
                 var raw = JSON.stringify({
                     "voucherId": val.id,
@@ -159,7 +165,7 @@ export default function checkoutScreen() {
                     setLoad(true)
                 }, 250);
                 var headers = new Headers();
-                headers.append("Authorization", auth);
+                headers.append("Authorization", reduxAuth);
                 headers.append("Content-Type", "application/json");
                 headers.append("Cookie", "ci_session=h2pi6rhg4uma28jrsci9ium4tf7k8id4");
 
@@ -221,7 +227,7 @@ export default function checkoutScreen() {
         console.log("🚀 ~ file: CheckoutScreen.js ~ line 1212 ~ handleClaimVoucher ~ name", name)
         if (name === "store") {
             var myHeaders = new Headers();
-            myHeaders.append("Authorization", auth);
+            myHeaders.append("Authorization", reduxAuth);
             myHeaders.append("Content-Type", "application/json");
             myHeaders.append("Cookie", "ci_session=3jj2gelqr7k1pgt00mekej9msvt8evts");
 
@@ -279,7 +285,7 @@ export default function checkoutScreen() {
 
         } else {
             var myHeaders = new Headers();
-            myHeaders.append("Authorization", auth);
+            myHeaders.append("Authorization", reduxAuth);
             myHeaders.append("Content-Type", "application/json");
 
             var raw = JSON.stringify({
@@ -299,7 +305,7 @@ export default function checkoutScreen() {
                 .then(result => {
                     setTimeout(() => setloadAs(false), 500);
                     if (result.status.code === 200) {
-                        ServiceCheckout.getCheckout(auth).then(res => {
+                        ServiceCheckout.getCheckout(reduxAuth).then(res => {
                             if (res) {
                                 // setCount(count + 1)
                                 setvoucherOpen('jaja')
@@ -341,7 +347,7 @@ export default function checkoutScreen() {
         actionSheetDelivery.current?.setModalVisible()
         setLoad(true)
         var myHeaders = new Headers();
-        myHeaders.append("Authorization", auth);
+        myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("Cookie", "ci_session=b5p6pllgk6nasb4odeguib41hl576554");
 
@@ -495,7 +501,7 @@ export default function checkoutScreen() {
 
                             let error = true;
                             var myHeaders = new Headers();
-                            myHeaders.append("Authorization", auth);
+                            myHeaders.append("Authorization", reduxAuth);
                             myHeaders.append("Content-Type", "application/json");
 
                             var raw = JSON.stringify(notes);
@@ -560,6 +566,19 @@ export default function checkoutScreen() {
 
     }
 
+
+    const handleShowPayment = (item) => {
+        console.log("🚀 ~ file: CheckoutScreen.js ~ line 571 ~ handleShowPayment ~ item", item)
+        setselectedPayment(item)
+        if (item.payment_type_label !== 'Bank Transfer') {
+            setModalShow(true)
+            // setsubPayment('')
+        } else {
+            setsubPayment(item.subPayment)
+            actionSheetPayment.current?.setModalVisible(true)
+        }
+
+    }
     const onRefresh = useCallback(() => {
         setRefreshControl(true)
         ServiceCheckout.getCheckout(reduxAuth).then(res => {
@@ -627,7 +646,7 @@ export default function checkoutScreen() {
                             return (
                                 <View key={String(idxStore)} style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                                     <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                                        <Image style={[styles.icon_21, { marginRight: '2%' }]} source={require('../../assets/icons/store.png')} />
+                                        <Image style={[styles.icon_21, { marginRight: '2%', tintColor: colors.BlueJaja }]} source={require('../../assets/icons/store.png')} />
                                         <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.store.name}</Text>
                                     </View>
                                     {item.products.map((child, idx) => {
@@ -641,7 +660,7 @@ export default function checkoutScreen() {
                                                     />
                                                     <View style={[styles.column_between_center, { alignItems: 'flex-start', height: '90%', width: Wp('82%'), paddingHorizontal: '3%' }]}>
                                                         <View style={[styles.column, { width: '100%' }]}>
-                                                            <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}>{child.name}</Text>
+                                                            <Text numberOfLines={1} style={[styles.font_14, styles.T_medium]}>{child.name}</Text>
                                                             <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlackGrayScale }]}>{child.variant ? child.variant : ""}</Text>
                                                         </View>
                                                         <View style={{ flexDirection: 'column', width: '100%', alignItems: 'flex-end', paddingHorizontal: '2%' }}>
@@ -650,20 +669,20 @@ export default function checkoutScreen() {
                                                                     <Text numberOfLines={1} style={[styles.priceBefore, styles.T_italic]}>{child.priceCurrencyFormat}</Text>
                                                                     <View style={styles.row}>
                                                                         <Text numberOfLines={1} style={[styles.font_14]}>{child.qty} x</Text>
-                                                                        <Text numberOfLines={1} style={[styles.priceAfter, { color: colors.BlueJaja }]}> {child.priceDiscountCurrencyFormat}</Text>
+                                                                        <Text numberOfLines={1} style={[styles.priceAfter, { color: colors.BlackGrayScale }]}> {child.priceDiscountCurrencyFormat}</Text>
                                                                     </View>
                                                                 </>
                                                                 :
                                                                 <View style={styles.row}>
                                                                     <Text numberOfLines={1} style={[styles.font_14]}>{child.qty} x</Text>
-                                                                    <Text numberOfLines={1} style={[styles.priceAfter, { color: colors.BlueJaja }]}> {child.priceCurrencyFormat}</Text>
+                                                                    <Text numberOfLines={1} style={[styles.priceAfter, { color: colors.BlackGrayScale }]}> {child.priceCurrencyFormat}</Text>
                                                                 </View>
                                                             }
                                                         </View>
                                                     </View>
                                                 </View>
                                                 <View style={[styles.row_end_center, styles.px_2]}>
-                                                    <Text numberOfLines={1} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}> {child.subTotalCurrencyFormat}</Text>
+                                                    <Text numberOfLines={1} style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja }]}> {child.subTotalCurrencyFormat}</Text>
                                                 </View>
                                             </View>
                                         )
@@ -671,20 +690,20 @@ export default function checkoutScreen() {
                                     {item.voucherDiscount ?
                                         <View style={styles.column}>
                                             <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                                                <TouchableOpacity style={[styles.row_between_center, styles.p_3]} onPress={() => {
+                                                <TouchableOpacity style={[styles.row_between_center, styles.pr_2, styles.pl_3, styles.py_2]} onPress={() => {
                                                     setvoucherOpen('store')
                                                     setVouchers(item.voucherStore)
                                                     setindexStore(idxStore)
                                                 }}>
                                                     {/* <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/offer.png')} /> */}
-                                                    <Text style={[styles.font_14, { color: colors.BlackGrayScale }]}>Voucher Toko</Text>
+                                                    <Text style={[styles.font_14, styles.T_medium]}>Voucher Toko</Text>
                                                     <View style={[styles.p, { backgroundColor: colors.RedFlashsale, borderRadius: 3 }]}>
                                                         <Text numberOfLines={1} style={[styles.font_12, { color: colors.White }]}>- {item.voucherStoreSelected.discountText}</Text>
                                                     </View>
                                                 </TouchableOpacity>
                                             </View>
                                             <View style={[styles.row_end_center, styles.px_2]}>
-                                                <Text style={[styles.font_14, styles.T_italic]}>Subtotal </Text>
+                                                <Text style={[styles.font_13,]}>Subtotal </Text>
                                                 <Text numberOfLines={1} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}> {item.totalDiscountCurrencyFormat}</Text>
                                             </View>
                                         </View>
@@ -724,11 +743,13 @@ export default function checkoutScreen() {
                                                         </View>
                                                         <View style={[styles.column_between_center, { alignItems: 'flex-end' }]}>
                                                             <Text numberOfLines={1} style={[styles.font_12, styles.mb_2, { color: colors.BlueJaja }]}>Ubah</Text>
+
                                                             {item.shippingSelected.priceNormal ?
                                                                 <Text numberOfLines={1} style={[styles.priceBefore, styles.T_italic]}>{item.shippingSelected.priceCurrencyFormatNormal}</Text>
-                                                                : null
+                                                                : <Text></Text>
                                                             }
-                                                            <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}>{item.shippingSelected.priceCurrencyFormat}</Text>
+
+                                                            <Text numberOfLines={1} style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja, }]}>{item.shippingSelected.priceCurrencyFormat}</Text>
                                                         </View>
                                                     </View>
                                                     <View style={[styles.column, styles.mb_3]}>
@@ -777,7 +798,8 @@ export default function checkoutScreen() {
                                     </View>
                                 </View>
                             </View>
-                        </View> :
+                        </View>
+                        :
                         <View style={[styles.p_2, styles.mb_2]}>
                             <Button onPress={() => {
                                 setVouchers(reduxCheckout.voucherJaja)
@@ -809,6 +831,31 @@ export default function checkoutScreen() {
                         </View>
                     </View>
                 </View>
+                <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                    <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
+                        <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
+                        <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pembayaran</Text>
+                    </View>
+                    {reduxListPayment.map(item => {
+                        return (
+                            <TouchableRipple onPressIn={() => handleShowPayment(item)} style={[styles.px_3, styles.py_3, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]} onPress={() => handleShowPayment(item)} rippleColor={colors.BlueJaja} >
+                                <View style={styles.row_between_center}>
+                                    <Text style={styles.font_13}>{item.payment_type_label === 'Card' ? 'Kartu Kredit' : item.payment_type_label == 'eWallet' ? item.payment_type_label + ' - ' + item.subPayment[0].payment_sub_label : item.payment_type_label}</Text>
+                                    {item.id_payment_method_category !== selectedPayment.id_payment_method_category ?
+                                        <Image fadeDuration={300} source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackGrey }]} />
+                                        :
+                                        <Image fadeDuration={300} source={require('../../assets/icons/check.png')} style={[styles.icon_14, { tintColor: colors.BlueJaja }]} />
+
+                                        // <Checkbox
+                                        //     color={colors.BlueJaja}
+                                        //     status={item.id_payment_method_category === selectedPayment ? 'checked' : 'unchecked'}
+                                        // />
+                                    }
+                                </View>
+                            </TouchableRipple>
+                        )
+                    })}
+                </View>
             </ScrollView>
             <View style={{ position: 'absolute', bottom: 0, zIndex: 100, elevation: 3, height: Hp('7%'), width: Wp('100%'), backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
                 <View style={{ width: '50%', height: '100%', justifyContent: 'center', paddingHorizontal: '2%', paddingLeft: '4%', paddingVertical: '1%' }}>
@@ -819,7 +866,7 @@ export default function checkoutScreen() {
                     Pilih pembayaran
                 </Button>
             </View>
-            <ActionSheet ref={actionSheetVoucher} onOpen={() => setloadAs(false)} onClose={() => setvoucherOpen("")} delayActionSheetDraw={false} containerStyle={{ padding: '4%', }}>
+            <ActionSheet closeOnPressBack={false} closeOnTouchBackdrop={false} ref={actionSheetVoucher} onOpen={() => setloadAs(false)} onClose={() => setvoucherOpen("")} delayActionSheetDraw={false} containerStyle={{ padding: '4%', }}>
                 <View style={[styles.row_between_center, styles.py_2, styles.mb_5]}>
                     <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja, width: '60%' }]}>Pilih Voucher</Text>
                     <TouchableOpacity onPressIn={() => actionSheetVoucher.current?.setModalVisible()}>
@@ -871,7 +918,7 @@ export default function checkoutScreen() {
                     </ScrollView>
                 </View>
             </ActionSheet>
-            <ActionSheet ref={actionSheetDelivery} delayActionSheetDraw={false} containerStyle={{ width: Wp('100%') }} containerStyle={{ padding: '2%' }}>
+            <ActionSheet closeOnPressBack={false} closeOnTouchBackdrop={false} ref={actionSheetDelivery} delayActionSheetDraw={false} containerStyle={{ width: Wp('100%') }} containerStyle={{ padding: '2%' }}>
                 <View style={[styles.row_between_center, styles.py_2, styles.px_4, styles.mb_3]}>
                     <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.BlueJaja }]}>Pilih Ekspedisi</Text>
                     <TouchableOpacity style={{ backgroundColor: 'transparent', paddingVertical: '2%', paddingHorizontal: '3%' }} onPressIn={() => actionSheetDelivery.current?.setModalVisible()}>
@@ -975,6 +1022,77 @@ export default function checkoutScreen() {
                     </ScrollView>
                 </View>
             </ActionSheet>
+            <ActionSheet closeOnPressBack={false} ref={actionSheetPayment} onOpen={() => setloadAs(false)} onClose={() => {
+                if (!selectedSubPayment && selectedSubPayment == '') {
+                    setselectedPayment('')
+                }
+            }} delayActionSheetDraw={false} containerStyle={{ padding: '4%', }}>
+                <View style={[styles.row_between_center, styles.py_2, styles.mb_5]}>
+                    <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja, width: '60%' }]}>Pilih Metode Pembayaran</Text>
+                    <TouchableOpacity onPressIn={() => actionSheetPayment.current?.setModalVisible()}>
+                        <Image style={[styles.icon_14, { tintColor: colors.BlueJaja }]} source={require('../../assets/icons/close.png')} />
+                    </TouchableOpacity>
+                </View>
+                {loadAs ? <Loading /> : null}
+                <View style={[styles.column, { minHeight: Hp('20%'), maxHeight: Hp('80%') }]}>
+                    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 80 }}>
+                        <FlatList
+                            data={subPayment}
+                            keyExtractor={(item) => item.id}
+                            renderItem={({ item, index }) => {
+                                console.log("🚀 ~ file: CheckoutScreen.js ~ line 1057 ~ checkoutScreen ~ item", item)
+                                return (
+                                    <TouchableRipple onPressIn={() => setselectedSubPayment(item)} style={[styles.py_4, styles.px_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]} onPress={() => console.log('Pressed')} rippleColor={colors.BlueJaja} >
+                                        <View style={styles.row_between_center}>
+                                            <Text style={styles.font_13}>{item.payment_sub_label}</Text>
+                                            <Checkbox
+                                                color={colors.BlueJaja}
+                                                status={item.payment_sub_label === selectedSubPayment.payment_sub_label ? 'checked' : 'unchecked'}
+                                            />
+                                            {/* {item.payment_sub_label === selectedSubPayment.payment_sub_label ?
+                                                <Image source={require('../../assets/icons/check.png')} style={[styles.icon_14, { tintColor: colors.BlueJaja }]} />
+                                                :
+                                                <Image source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackTitle }]} />
+                                            } */}
+                                        </View>
+                                    </TouchableRipple>
+                                )
+                            }}
+                        />
+                    </ScrollView>
+                </View>
+            </ActionSheet>
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={showModal}
+                onRequestClose={() => {
+                    setModalShow(!showModal);
+                }}>
+                <View style={{ flex: 1, width: Wp('100%'), height: Hp('100%'), backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={[styles.column_start, styles.pt_3s, { width: Wp('95%'), height: Wp('70%'), backgroundColor: colors.White, elevation: 11, zIndex: 999 }]}>
+                        {selectedPayment.payment_type_label === 'Card' ?
+                            <View style={[styles.column_center_start, styles.px_4, styles.pt_5, { height: '60%' }]}>
+                                <Text style={[styles.font_14, styles.T_semi_bold, styles.mb_5, { color: colors.BlueJaja, height: '30%' }]}>Kartu Kredit</Text>
+                                <Text style={[styles.font_14, { height: '65%' }]}>Metode pembayaran ini berlaku untuk semua jenis kartu kredit</Text>
+                            </View>
+                            :
+                            <View style={[styles.column_center_start, styles.px_4, styles.pt_5, { height: '60%' }]}>
+                                <Text style={[styles.font_14, styles.T_semi_bold, styles.mb_5, { color: colors.BlueJaja, height: '30%' }]}>eWallet - Qris</Text>
+                                <Text style={[styles.font_14, { height: '65%' }]}>Metode pembayaran ini berlaku untuk semua jenis dompet elektronik seperti DANA, GOPAY, OVO, dll</Text>
+                            </View>
+                        }
+                        <View style={[styles.row_start, styles.px_4, { height: '20%' }]}>
+                            <Text style={[styles.font_12, styles.T_italic]}>Note : kamu masih bisa mengganti metode pembayaran setelah pesanan ini dibuat</Text>
+                        </View>
+                        <View style={[styles.row_end, styles.p_2, { width: '100%' }]}>
+                            <Button mode="contained" onPress={() => setModalShow(false)} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} style={{ height: '100%', width: '30%' }} color={colors.BlueJaja}>
+                                OK
+                            </Button>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
             <DateTimePickerModal
                 isVisible={isDatePickerVisible}
                 mode="date"

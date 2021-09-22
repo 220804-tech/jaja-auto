@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, SafeAreaView, Image, StyleSheet, Alert, Animated, BackHandler } from 'react-native'
-import { styles, Wp, Hp, colors, useNavigation, ServiceCheckout, Appbar } from '../../export'
+import { styles, Wp, Hp, colors, useNavigation, ServiceCheckout, Appbar, ServiceOrder } from '../../export'
 import { WebView } from 'react-native-webview';
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { Button, Paragraph } from 'react-native-paper';
 
@@ -15,24 +15,42 @@ export default function MidtransScreen() {
     const [view, setView] = useState("")
     const [text, setText] = useState("Sedang Menghubungkan..")
     const [spinValue, setspinValue] = useState(new Animated.Value(0))
-
+    const dispatch = useDispatch()
     useEffect(() => {
         setText("Sedang Menghubungkan..")
         setloading(true)
-        EncryptedStorage.getItem('token').then(res => {
-            if (res) {
-                getItem()
-            } else {
-                navigation.navigate('Login')
-            }
-        })
+        if (reduxAuth) {
+            getItem()
+        } else {
+            navigation.navigate('Login')
+        }
 
         const backAction = () => {
             Alert.alert(
                 "Jaja.id",
                 "Pesanan ini dapat kamu lihat di halaman pesanan",
                 [
-                    { text: "OK", onPress: () => navigation.navigate("Pesanan") }
+                    {
+                        text: "OK", onPress: () => {
+
+                            ServiceOrder.getUnpaid(reduxAuth).then(resUnpaid => {
+                                if (resUnpaid) {
+                                    dispatch({ type: 'SET_UNPAID', payload: resUnpaid.items })
+                                    dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
+                                } else {
+                                    handleUnpaid()
+                                }
+                            })
+                            ServiceOrder.getWaitConfirm(reduxAuth).then(reswaitConfirm => {
+                                if (reswaitConfirm) {
+                                    dispatch({ type: 'SET_WAITCONFIRM', payload: reswaitConfirm.items })
+                                } else {
+                                    handleWaitConfirm()
+                                }
+                            })
+                            navigation.navigate("Pesanan")
+                        }
+                    }
                 ]);
             return true;
         }
@@ -43,6 +61,21 @@ export default function MidtransScreen() {
 
         return () => backHandler.remove();
     }, [])
+
+    const handleUnpaid = () => {
+        EncryptedStorage.getItem('unpaid').then(store => {
+            if (store) {
+                dispatch({ type: 'SET_UNPAID', payload: JSON.parse(store) })
+            }
+        })
+    }
+    const handleWaitConfirm = () => {
+        EncryptedStorage.getItem('waitConfirm').then(store => {
+            if (store) {
+                dispatch({ type: 'SET_WAITCONFIRM', payload: JSON.parse(store) })
+            }
+        })
+    }
 
     const getItem = () => {
         if (reduxOrderId) {

@@ -141,7 +141,6 @@ export default function TrolleyScreen() {
         fetch("https://jaja.id/backend/cart/qty?action=change", requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: TrolleyScreen.js ~ line 147 ~ handleQty ~ result", result)
                 if (result.status.code === 200) {
                 } else if (result.status.code === 400) {
                     if (result.status.message === "quantity cannot more than stock") {
@@ -200,9 +199,13 @@ export default function TrolleyScreen() {
                 }
             })
             ServiceCheckout.getShipping(reduxAuth ? reduxAuth : auth).then(res => {
-                console.log("🚀 ~ file: TrolleyScreen.js ~ line 161 ~ ServiceCheckout.getShipping ~ res", res)
                 if (res) {
                     dispatch({ type: 'SET_SHIPPING', payload: res })
+                }
+            })
+            ServiceCheckout.getListPayment().then(res => {
+                if (res) {
+                    dispatch({ type: 'SET_LIST_PAYMENT', payload: res })
                 }
             })
         } else if (reduxCart.cart.totalCart == 0) {
@@ -215,8 +218,6 @@ export default function TrolleyScreen() {
     }
 
     const handleDeleteCart = (id) => {
-
-        console.log("🚀 ~ file: TrolleyScreen.js ~ line 234 ~ handleDeleteCart ~ id", id)
         setLoading(true)
         ServiceCart.deleteCart(reduxAuth ? reduxAuth : auth, id).then(res => {
             if (res == 200) {
@@ -235,7 +236,6 @@ export default function TrolleyScreen() {
     }, []);
 
     const handleSelected = item => {
-        console.log("🚀 ~ file: TrolleyScreen.js ~ line 251 ~ TrolleyScreen ~ item", item)
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
         navigation.navigate("Product", { slug: item.slug, image: item.image })
     }
@@ -306,7 +306,6 @@ export default function TrolleyScreen() {
                                     contentContainerStyle={{ flex: 0, width: '100%', }}
                                     style={[styles.py_2, { width: '100%' }]}
                                     renderItem={({ item, index }) => {
-                                        console.log("🚀 ~ file: TrolleyScreen.js ~ line 335 ~ TrolleyScreen ~ index", index)
                                         return (
                                             <Swipeable ref={swipeRef[index]} onRef={(ref) => setSwipeRef(ref)} rightButtons={swipeComponent(item)} onRightActionRelease={() => {
                                                 setIndex(index)

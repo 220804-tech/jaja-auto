@@ -1,26 +1,38 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Linking, ToastAndroid, Alert, RefreshControl } from 'react-native'
-import { Appbar, colors, styles, Wp, Hp, useNavigation, useFocusEffect, Loading, Utils } from '../../export'
+import { Appbar, colors, styles, Wp, Hp, useNavigation, useFocusEffect, Loading, Utils, ServiceStore } from '../../export'
 import Clipboard from '@react-native-community/clipboard';
 import { useDispatch, useSelector } from "react-redux";
-import { Button } from 'react-native-paper'
+import { Button, TouchableRipple } from 'react-native-paper'
 export default function OrderDetailsScreen(props) {
     const navigation = useNavigation();
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
     const [details, setDetails] = useState(null)
     const [refreshing, setRefreshing] = useState(null)
+    const reduxStore = useSelector(state => state.store.store)
 
     const reduxCheckout = useSelector(state => state.checkout.checkout)
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxOrderStatus = useSelector(state => state.order.orderStatus)
     const reduxOrderInvoice = useSelector(state => state.order.invoice)
+    const reduxUser = useSelector(state => state.user)
 
 
     const { status } = props.route.params;
 
     useEffect(() => {
         // getItem();
+        // let dataSeller = res.store
+        // dataSeller.chat = reduxUser.user.uid + dataSeller.uid
+        // dataSeller.id = dataSeller.uid
+        // setSeller(dataSeller)
+        // setLike(res.isWishlist)
+        // setTimeout(() => {
+        //     if (reduxAuth && res.sellerTerdekat.length && Object.keys(reduxUser.user).length && Object.keys(res.category).length && res.category.slug) {
+        //         FilterLocation(res.sellerTerdekat, reduxUser.user.location, res.category.slug, reduxAuth)
+        //     }
+        // }, 3000);
     }, [])
 
     useFocusEffect(
@@ -49,10 +61,10 @@ export default function OrderDetailsScreen(props) {
             redirect: 'follow'
         };
 
-        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 57 ~ getItem ~ reduxOrderInvoice", reduxOrderInvoice)
         fetch(`https://jaja.id/backend/order/${reduxOrderInvoice}`, requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 68 ~ getItem ~ result", result.data.items[0].store)
                 if (result.status.code === 200 || result.status.code === 204) {
                     setDetails(result.data)
                     // dispatch({ type: 'SET_INVOICE', payload: result.data.items[0].invoice })
@@ -122,6 +134,63 @@ export default function OrderDetailsScreen(props) {
         );
     }
 
+    const handleShowDetail = item => {
+        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+        dispatch({ type: 'SET_SLUG', payload: item.slug })
+        navigation.push("Product", { slug: item.slug, image: item.image })
+    }
+    const handleStore = (item) => {
+        if (reduxStore && Object.keys(reduxStore).length) {
+            console.log("🚀 ~ file: ProductScreen.js ~ line 259 ~ handleStore ~ reduxStore", reduxStore)
+            if (reduxStore.name != item.name) {
+                dispatch({ "type": 'SET_STORE', payload: {} })
+                dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
+            }
+        }
+        ServiceStore.getStore(item.slug).then(res => {
+            if (res) {
+                dispatch({ "type": 'SET_STORE', payload: res })
+                navigation.navigate('Store')
+            }
+        })
+        let obj = {
+            slug: item.slug,
+            page: 1,
+            limit: 30,
+            keyword: '',
+            price: '',
+            condition: '',
+            preorder: '',
+            brand: '',
+            sort: 'produk.id_produk-desc',
+        }
+
+        ServiceStore.getStoreProduct(obj).then(res => {
+            if (res) {
+                dispatch({ "type": 'SET_NEW_PRODUCT', payload: res.items })
+            }
+        })
+        obj.sort = ''
+        ServiceStore.getStoreProduct(obj).then(res => {
+            if (res) {
+                dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
+            }
+        })
+
+
+    }
+    const handleChat = (store) => {
+        let dataSeller = store
+        dataSeller.chat = reduxUser.user.uid + dataSeller.uid
+        dataSeller.id = dataSeller.uid
+        if (reduxAuth) {
+            navigation.navigate("IsiChat", { data: dataSeller })
+        } else {
+            navigation.navigate('Login', { navigate: "OrderDetails" })
+        }
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <Appbar title="Detail Pesanan" back={true} />
@@ -153,7 +222,6 @@ export default function OrderDetailsScreen(props) {
                                 </View>
                                 <TouchableOpacity onPress={() => {
                                     Linking.canOpenURL(details.downloadOrderPdf).then(supported => {
-                                        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 82 ~ Linking.canOpenURL ~ supported", supported)
                                         if (supported) {
                                             Linking.openURL(details.downloadOrderPdf)
                                         } else {
@@ -193,22 +261,33 @@ export default function OrderDetailsScreen(props) {
                     details.items.map((item, idxStore) => {
                         return (
                             <View key={String(idxStore)} style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                                <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                                    <Image style={[styles.icon_19, { marginRight: '2%' }]} source={require('../../assets/icons/store.png')} />
-                                    <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.store.name}</Text>
+                                <View style={[styles.row_between_center, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
+                                    <View style={[styles.row]}>
+                                        <Image style={[styles.icon_19, { marginRight: '2%', tintColor: colors.BlueJaja }]} source={require('../../assets/icons/store.png')} />
+                                        <Text onPress={() => handleStore(item.store)} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.store.name}</Text>
+                                    </View>
+                                    <TouchableRipple onPress={() => handleChat(item.store)} style={[styles.row_center, styles.px_3, styles.py_2, { backgroundColor: colors.BlueJaja, borderRadius: 5 }]}>
+                                        <View style={styles.row}>
+                                            <Text style={[styles.font_11, styles.T_semi_bold, { color: colors.White }]}>
+                                                Chat Penjual
+                                            </Text>
+                                        </View>
+                                    </TouchableRipple>
                                 </View>
                                 {item.products.map((child, idx) => {
                                     return (
                                         <View key={String(idx) + "s"} style={[styles.column, styles.py_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}>
                                             <View style={[styles.row_start_center, styles.p_2, { width: '100%', height: Wp('25%') }]}>
-                                                <Image style={{ width: Wp('18%'), height: '90%', borderRadius: 5, backgroundColor: colors.BlackGrey }}
-                                                    resizeMethod={"scale"}
-                                                    resizeMode="cover"
-                                                    source={{ uri: child.image }}
-                                                />
+                                                <TouchableOpacity onPress={() => handleShowDetail(child)}>
+                                                    <Image style={{ width: Wp('18%'), height: '90%', borderRadius: 5, backgroundColor: colors.BlackGrey }}
+                                                        resizeMethod={"scale"}
+                                                        resizeMode="cover"
+                                                        source={{ uri: child.image }}
+                                                    />
+                                                </TouchableOpacity>
                                                 <View style={[styles.column_between_center, { alignItems: 'flex-start', height: '90%', width: Wp('82%'), paddingHorizontal: '3%' }]}>
                                                     <View style={[styles.column, { width: '100%' }]}>
-                                                        <Text numberOfLines={1} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>{child.name}</Text>
+                                                        <Text onPress={() => handleShowDetail(child)} numberOfLines={1} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>{child.name}</Text>
                                                         <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlackGrayScale }]}>{child.variant ? child.variant : ""}</Text>
                                                     </View>
                                                     <View style={{ flexDirection: 'column', width: '100%', alignItems: 'flex-end', paddingHorizontal: '2%' }}>
@@ -309,31 +388,30 @@ export default function OrderDetailsScreen(props) {
                             </View>
                             : null
                         }
-
                     </View>
                 </View>
+
                 {details && Object.keys(details).length ?
                     props.route.params.status === "Pengiriman" ?
                         <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'column', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
-                            <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%', marginBottom: '2%' }} contentStyle={{ width: '100%', height: '95%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained" >
+                            <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%', marginBottom: '2%' }} contentStyle={{ width: '100%', height: '95%' }} color={colors.BlueJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                                 Terima Pesanan
                             </Button>
                             <Button onPress={() => {
-                                console.log(details.complain)
                                 navigation.navigate(details.complain ? 'ResponseComplain' : 'RequestComplain', { invoice: details.items[0].invoice })
-                            }} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
+                            }} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                                 {details.complain ? "Sedang Dikomplain" : "Komplain"}
                             </Button>
                         </View>
                         : props.route.params.status === "Pesanan Selesai" ?
                             <View style={{ position: 'absolute', bottom: 0, zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center', marginBottom: '3%' }}>
-                                <Button icon="star" onPress={() => navigation.navigate('AddReview', { data: details.items[0].products })} style={{ alignSelf: 'center', width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
+                                <Button icon="star" onPress={() => navigation.navigate('AddReview', { data: details.items[0].products })} style={{ alignSelf: 'center', width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                                     Beri Penilaian
                                 </Button>
                             </View>
                             : props.route.params.status === "Menunggu Pembayaran" || props.route.params.status === "Menunggu Konfirmasi" ?
                                 <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'column', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
-                                    <Button onPress={() => navigation.navigate('OrderCancel')} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={{ color: colors.White }} mode="contained" >
+                                    <Button onPress={() => navigation.navigate('OrderCancel')} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                                         Batalkan Pesanan
                                     </Button>
                                 </View>
@@ -347,8 +425,8 @@ export default function OrderDetailsScreen(props) {
                         <Text style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>Total pembayaran :</Text>
                         <Text numberOfLines={1} style={[styles.font_20, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>{details ? details.totalCurrencyFormat : "Rp.0"}</Text>
                     </View>
-                    <Button onPress={handlePayment} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained" >
-                        Pilih pembayaran
+                    <Button onPress={handlePayment} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
+                        Bayar Sekarang
                     </Button>
                 </View>
                 : null
