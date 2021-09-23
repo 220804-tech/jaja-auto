@@ -1,7 +1,10 @@
 import { ToastAndroid, Alert } from 'react-native'
 import { Utils } from '../export';
-export async function getStore(slug) {
+export async function getStore(slug, auth) {
     var myHeaders = new Headers();
+    if (auth) {
+        myHeaders.append("Authorization", auth);
+    }
     myHeaders.append("Cookie", "ci_session=99epvnp1f3qv3bc9ed9hnkf32j11devb");
     var requestOptions = {
         method: 'GET',

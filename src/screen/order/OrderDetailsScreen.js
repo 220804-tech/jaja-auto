@@ -148,7 +148,7 @@ export default function OrderDetailsScreen(props) {
                 dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
             }
         }
-        ServiceStore.getStore(item.slug).then(res => {
+        ServiceStore.getStore(item.slug, reduxAuth).then(res => {
             if (res) {
                 dispatch({ "type": 'SET_STORE', payload: res })
                 navigation.navigate('Store')

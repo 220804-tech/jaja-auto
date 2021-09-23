@@ -133,7 +133,7 @@ export default function StoreScreen() {
                 {/* <ImageBackground source={image && image.mainBanner ? { uri: image.mainBanner } : null} style={{ width: '100%', height: '100%' }}> */}
                 <AppbarSecond handleSearch={handleSearch} title={reduxStore && Object.keys(reduxStore).length && reduxStore.name ? `Cari di ${reduxStore.name}..` : 'Cari di toko..'} />
 
-
+                {/* stickyHeaderIndices={[0]} */}
                 {loading ? <Loading /> : null}
                 <View style={[styles.column, styles.px_4, styles.pt_4, styles.pb, { width: Wp('100%'), backgroundColor: colors.White }]}>
                     <View style={styles.row_between_center}>

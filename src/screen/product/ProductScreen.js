@@ -264,7 +264,7 @@ export default function ProductScreen(props) {
             }
         }
         let slg = reduxSearch.productDetail.store.slug
-        ServiceStore.getStore(slg).then(res => {
+        ServiceStore.getStore(slg, reduxAuth).then(res => {
             if (res) {
                 dispatch({ "type": 'SET_STORE', payload: res })
                 navigation.navigate('Store')

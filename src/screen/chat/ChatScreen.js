@@ -1,10 +1,10 @@
 import React, { useState, useEffect, createRef } from "react";
-import { View, Text, SafeAreaView, TextInput, TouchableOpacity, Image, FlatList, StyleSheet, ImageBackground } from "react-native";
+import { View, Text, SafeAreaView, TextInput, TouchableOpacity, Image, FlatList, StyleSheet, ImageBackground, StatusBar } from "react-native";
 import { IconButton } from 'react-native-paper'
 import ImagePicker from "react-native-image-crop-picker";
 import firebaseDatabase from '@react-native-firebase/database';
 import ActionSheet from 'react-native-actions-sheet';
-import { colors, Hp, Wp, Appbar, ServiceFirebase as Firebase, styles as style } from "../../export";
+import { colors, Hp, Wp, Appbar, ServiceFirebase as Firebase, styles as style, Loading } from "../../export";
 import { useSelector } from 'react-redux'
 
 export default function ChatScreen({ route }) {
@@ -14,6 +14,8 @@ export default function ChatScreen({ route }) {
 
     const pictureRef = createRef();
     const flatlist = createRef();
+    const [loading, setLoading] = useState(false)
+
     const [isiChat, setIsiChat] = useState("");
     const [Phone, setPhone] = useState("");
     const [uid, setUid] = useState("");
@@ -24,9 +26,9 @@ export default function ChatScreen({ route }) {
 
     const [nameChat, setnameChat] = useState("")
     const [dataFriend, setdataFriend] = useState("")
-    const [messageList, setMessageList] = useState([]);
+    const [messageList, setMessageList] = useState('');
     const [gambar, setGambar] = useState("");
-    const [token, setToken] = useState("")
+    const [selectedProduct, setSelectedProduct] = useState('')
     const { data, product } = route.params;
 
     useEffect(() => {
@@ -47,10 +49,23 @@ export default function ChatScreen({ route }) {
                     }
                 })
 
+
             }
         })
         return () => firebaseDatabase().ref('/messages/' + data.chat).off('value', onValueChange);
-    }, [data, product]);
+    }, [data]);
+
+    useEffect(() => {
+        if (product && Object.keys(product).length) {
+            setSelectedProduct(product)
+        }
+    }, [])
+    useEffect(() => {
+        setLoading(true)
+        if (messageList) {
+            setLoading(false)
+        }
+    }, [messageList])
 
     const handleSend = (image) => {
         console.log("file: ChatScreen.js ~ line 56 ~ handleSend ~ image", image)
@@ -66,18 +81,23 @@ export default function ChatScreen({ route }) {
             if (data && reduxAuth) {
                 console.log("🚀 ~ file: ChatScreen.js ~ line 72 ~ handleSend ~ firebaseDatabase.ServerValue.increment", firebaseDatabase.ServerValue.increment)
                 try {
-                    var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
-                    console.log("🚀 ~ file: ChatScreen.js ~ line 135 ~ handleSendProduct ~ msgId", msgId)
-                    firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
-                    firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: chat, time: new Date().toString() } });
-                    firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: { text: chat, time: new Date().toString() }, amount: 1, time: new Date().toString() });
-                    let fire = firebaseDatabase().ref("/people/" + data.id).limitToLast(20).on("value", async function (snapshot) {
-                        let item = await snapshot.val();
-                        if (item.token) {
-                            await Firebase.notifChat(item.token, { body: chat, title: reduxUser.name })
-                        }
-                        firebaseDatabase().ref(`/people/${data.id}`).off('value', fire)
-                    })
+                    if (selectedProduct && Object.keys(selectedProduct).length) {
+                        handleSendProduct()
+                    }
+                    setTimeout(() => {
+                        var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
+                        console.log("🚀 ~ file: ChatScreen.js ~ line 135 ~ handleSendProduct ~ msgId", msgId)
+                        firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
+                        firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: chat, time: new Date().toString() } });
+                        firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: { text: chat, time: new Date().toString() }, amount: 1, time: new Date().toString() });
+                        let fire = firebaseDatabase().ref("/people/" + data.id).limitToLast(20).on("value", async function (snapshot) {
+                            let item = await snapshot.val();
+                            if (item.token) {
+                                await Firebase.notifChat(item.token, { body: chat, title: reduxUser.name })
+                            }
+                            firebaseDatabase().ref(`/people/${data.id}`).off('value', fire)
+                        })
+                    }, selectedProduct && Object.keys(selectedProduct).length ? 10 : 0);
                 } catch (error) {
                     console.log("data error", error)
                 }
@@ -87,16 +107,16 @@ export default function ChatScreen({ route }) {
         }
     }
     const handleSendProduct = () => {
-        if (product && Object.keys(product).length) {
+        if (selectedProduct && Object.keys(selectedProduct).length) {
             var message = {
                 message: "",
                 time: firebaseDatabase.ServerValue.TIMESTAMP,
                 from: reduxUser.uid,
-                priceDiscount: product.discount,
-                priceFirst: product.price,
-                priceLast: product.isDiscount ? product.priceDiscount : product.price,
-                productImage: product.image[0],
-                productTitle: product.name,
+                priceDiscount: selectedProduct.discount,
+                priceFirst: selectedProduct.price,
+                priceLast: selectedProduct.isDiscount ? selectedProduct.priceDiscount : selectedProduct.price,
+                productImage: selectedProduct.image[0],
+                productTitle: selectedProduct.name,
             }
             if (data) {
                 console.log("🚀 ~ file: ChatScreen.js ~ line 132 ~ handleSendProduct ~ data", data)
@@ -104,12 +124,13 @@ export default function ChatScreen({ route }) {
                     var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
                     console.log("🚀 ~ file: ChatScreen.js ~ line 135 ~ handleSendProduct ~ msgId", msgId)
                     firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
-                    firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: product.name, time: new Date().toString() } });
-                    firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: { text: product.name, time: new Date().toString() }, amount: 1 });
+                    firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: selectedProduct.name, time: new Date().toString() } });
+                    firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: { text: selectedProduct.name, time: new Date().toString() }, amount: 1 });
                     let fire = firebaseDatabase().ref("/people/" + data.id).limitToLast(20).on("value", async function (snapshot) {
                         let item = await snapshot.val();
                         if (item.token) {
-                            await Firebase.notifChat(item.token, { body: product.name, title: reduxUser.name })
+                            await Firebase.notifChat(item.token, { body: selectedProduct.name, title: reduxUser.name })
+                            setSelectedProduct('')
                         }
                         firebaseDatabase().ref(`/people/${data.id}`).off('value', fire)
                     })
@@ -124,7 +145,6 @@ export default function ChatScreen({ route }) {
 
 
     const renderRow = ({ item, index }) => {
-        console.log("file: ChatScreen.js ~ line 126 ~ renderRow ~ item", item.image)
         return (
             <View style={{ width: Wp("100%"), paddingTop: "2%" }}>
                 {item.date && index && String(messageList[index].date) !== "undefined" > 0 && !item.productTitle ?
@@ -208,12 +228,12 @@ export default function ChatScreen({ route }) {
                                 flex: 1,
                                 width: '100%',
                                 padding: '3%',
-                                borderRadius: 7,
+                                borderRadius: 3,
                                 borderTopRightRadius: 0,
                                 flexDirection: "row",
                                 alignSelf: 'center',
                                 backgroundColor: colors.White,
-                                elevation: 1,
+                                elevation: 0,
                                 marginBottom: '2%'
                             }}
                             >
@@ -232,13 +252,13 @@ export default function ChatScreen({ route }) {
                                 </View>
 
                                 <View style={{ flex: 1 }}>
-                                    <Text numberOfLines={1} style={{ fontSize: 14, fontFamily: 'Poppins-SemiBold', color: 'black' }}>{item.productTitle}</Text>
+                                    <Text numberOfLines={1} style={[style.font_13, { width: '90%' }]}>{item.productTitle}</Text>
                                     {item.priceDiscount > 0 ?
                                         <View style={{ flex: 0, flexDirection: 'column' }}>
                                             <View style={{ flexDirection: 'row' }}>
                                                 <Text adjustsFontSizeToFit style={{ textDecorationLine: 'line-through', marginRight: '3%', fontSize: 12 }}>{item.priceFirst}</Text>
-                                                <View style={{ backgroundColor: colors.RedFlashsale, justifyContent: 'center', alignItems: 'center', borderRadius: 3, paddingHorizontal: '1%' }}>
-                                                    <Text adjustsFontSizeToFit style={{ color: 'white', fontFamily: 'Poppins-SemiBold', fontSize: 12, }}>{item.priceDiscount + "%"}</Text>
+                                                <View style={{ backgroundColor: colors.RedFlashsale, justifyContent: 'center', alignItems: 'center', borderRadius: 3, paddingHorizontal: '2%' }}>
+                                                    <Text adjustsFontSizeToFit style={[style.font_10, style.T_medium, { color: 'white' }]}>{item.priceDiscount + "%"}</Text>
                                                 </View>
                                             </View>
                                             <Text adjustsFontSizeToFit style={{ marginRight: '3%', fontSize: 12 }}>{item.priceLast}</Text>
@@ -286,11 +306,11 @@ export default function ChatScreen({ route }) {
                                         maxWidth: "80%",
                                         borderWidth: 0.2,
                                         borderRadius: 15,
-                                        borderColor: colors.BlueJaja,
+                                        borderColor: colors.BlackSilver,
                                         borderTopRightRadius: 0,
                                         marginVertical: 5,
                                         marginHorizontal: 10,
-                                        backgroundColor: colors.BlueJaja,
+                                        backgroundColor: colors.BlackSilver,
                                         padding: 10,
                                     }}
                                 >
@@ -391,10 +411,11 @@ export default function ChatScreen({ route }) {
 
     return (
 
-        <SafeAreaView style={{ flex: 1, height: Hp('100%') }}>
+        <SafeAreaView style={{ flex: 1, height: Hp('100%'), backgroundColor: colors.BlueJaja }}>
+            {loading ? <Loading /> : null}
             <Appbar back={true} title={data && data.name ? data.name : ''} />
-            <ImageBackground source={require('../../assets/images/bgChat.jpg')} style={{ width: '100%', height: '100%' }}>
-                {product && Object.keys(product).length ?
+            <ImageBackground source={require('../../assets/images/bgChat3.jpg')} style={{ width: '100%', height: '100%' }}>
+                {selectedProduct && Object.keys(selectedProduct).length ?
                     <View style={{
                         flex: 0,
                         position: 'relative',
@@ -419,25 +440,25 @@ export default function ChatScreen({ route }) {
                                 }}
                                 resizeMethod={"scale"}
                                 resizeMode={"cover"}
-                                source={{ uri: product.image[0] ? product.image[0] : null }}
+                                source={{ uri: selectedProduct.image[0] ? selectedProduct.image[0] : null }}
                             />
                         </View>
 
                         <View style={{ flex: 1, flexDirection: 'column', height: Hp('7.5%') }}>
-                            <Text numberOfLines={1} style={{ fontSize: 14, fontFamily: 'Poppins-SemiBold', color: 'black' }}>{product.name}</Text>
-                            {product.isDiscount ?
+                            <Text numberOfLines={1} style={{ fontSize: 14, fontFamily: 'Poppins-SemiBold', color: 'black' }}>{selectedProduct.name}</Text>
+                            {selectedProduct.isDiscount ?
                                 <View style={{ flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                                    <Text adjustsFontSizeToFit style={{ textDecorationLine: 'line-through', marginRight: '3%', fontSize: 12 }}>{product.price}</Text>
-                                    <Text adjustsFontSizeToFit style={{ color: colors.RedFlashsale, fontFamily: 'Poppins-SemiBold', fontSize: 14 }}>{product.priceDiscount}</Text>
+                                    <Text adjustsFontSizeToFit style={{ textDecorationLine: 'line-through', marginRight: '3%', fontSize: 12 }}>{selectedProduct.price}</Text>
+                                    <Text adjustsFontSizeToFit style={{ color: colors.RedFlashsale, fontFamily: 'Poppins-SemiBold', fontSize: 14 }}>{selectedProduct.priceDiscount}</Text>
                                 </View>
                                 :
-                                <Text adjustsFontSizeToFit style={{ color: colors.RedFlashsale, fontFamily: 'Poppins-SemiBold', fontSize: 14 }}>{product.price}</Text>
+                                <Text adjustsFontSizeToFit style={{ color: colors.RedFlashsale, fontFamily: 'Poppins-SemiBold', fontSize: 14 }}>{selectedProduct.price}</Text>
                             }
                         </View>
 
-                        <TouchableOpacity onPress={handleSendProduct} style={{ paddingVertical: '1%', paddingHorizontal: '2%', borderColor: colors.RedFlashsale, borderWidth: 1, borderRadius: 4 }}>
+                        {/* <TouchableOpacity onPress={handleSendProduct} style={{ paddingVertical: '1%', paddingHorizontal: '2%', borderColor: colors.RedFlashsale, borderWidth: 1, borderRadius: 4 }}>
                             <Text style={{ color: colors.RedFlashsale, fontSize: 12 }}>Kirim</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
 
                     </View> : null
                 }

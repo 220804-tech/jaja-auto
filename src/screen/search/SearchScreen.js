@@ -9,6 +9,7 @@ export default function SearchScreen() {
     const dispatch = useDispatch();
     const reduxSlug = useSelector(state => state.search.slug)
     const reduxStore = useSelector(state => state.store.store)
+    const reduxAuth = useSelector(state => state.auth.auth)
 
     const [count, setCount] = useState(0)
     const [historySearch, sethistorySearch] = useState([])
@@ -200,7 +201,7 @@ export default function SearchScreen() {
                 dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
             }
         }
-        ServiceStore.getStore(item.slug).then(res => {
+        ServiceStore.getStore(item.slug, reduxAuth).then(res => {
             if (res) {
                 dispatch({ "type": 'SET_STORE', payload: res })
                 navigation.navigate('Store')

@@ -90,6 +90,11 @@ export default function HomeScreen() {
     useFocusEffect(
         useCallback(() => {
             try {
+                if (Platform.OS == 'ios') {
+                    StatusBar.setBarStyle('light-content', true);	//<<--- add this
+                    StatusBar.setBackgroundColor(colors.BlueJaja, true)
+
+                }
                 setOut(false)
                 if (reduxAuth) {
                     getBadges()
@@ -156,27 +161,31 @@ export default function HomeScreen() {
     const renderNavBar = (text) => {
         console.log("🚀 ~ file: HomeScreen.js ~ line 168 ~ HomeScreen ~ reduxUser.badges", reduxUser.badges)
         return (
-            < View style={style.navContainer} >
+            <View style={style.navContainer} >
                 <View style={style.statusBar} />
                 <View style={style.navBar}>
+
                     <TouchableOpacity style={style.searchBar} onPress={() => navigation.navigate("Search")}>
                         <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
                         <Text style={styles.font_14}>{text}..</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.column, styles.mx_3]} onPress={handleGetCart}>
-                        <Image source={require('../../assets/icons/cart.png')} style={{ width: 25, height: 25, tintColor: colors.White }} />
-                        {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
-                            <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalProductInCart >= 100 ? "99+" : reduxUser.badges.totalProductInCart}</Text></View>
-                            : null
-                        }
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.column, styles.mx_2]} onPress={() => reduxAuth || auth ? navigation.navigate('Notification') : navigation.navigate('Login')}>
-                        <Image source={require('../../assets/icons/notif.png')} style={{ width: 24, height: 24, tintColor: colors.White }} />
-                        {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
-                            <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalNotifUnread >= 100 ? "99+" : reduxUser.badges.totalNotifUnread + 'sss'}</Text></View>
-                            : null
-                        }
-                    </TouchableOpacity>
+                    <View style={[styles.row_between_center]}>
+
+                        <TouchableOpacity style={[styles.column, styles.mx]} onPress={handleGetCart}>
+                            <Image source={require('../../assets/icons/cart.png')} style={{ width: 25, height: 25, tintColor: colors.White }} />
+                            {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
+                                <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalProductInCart >= 100 ? "99+" : reduxUser.badges.totalProductInCart}</Text></View>
+                                : null
+                            }
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.column, styles.mx_2]} onPress={() => reduxAuth || auth ? navigation.navigate('Notification') : navigation.navigate('Login')}>
+                            <Image source={require('../../assets/icons/notif.png')} style={{ width: 24, height: 24, tintColor: colors.White }} />
+                            {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
+                                <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalNotifUnread >= 100 ? "99+" : reduxUser.badges.totalNotifUnread + 'sss'}</Text></View>
+                                : null
+                            }
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View >
         )
@@ -405,7 +414,7 @@ export default function HomeScreen() {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: colors.BlueJaja }]}>
             {loading ? <Loading /> : null}
             {/* <ScrollView
                 refreshControl={
@@ -426,9 +435,9 @@ export default function HomeScreen() {
                     }
                 )}
             > */}
-            {/* <StatusBar translucent backgroundColor="transparent" /> */}
+            <StatusBar translucent backgroundColor="transparent" />
             <ReactNativeParallaxHeader
-                headerMinHeight={Hp('8%')}
+                headerMinHeight={Hp('11%')}
                 headerMaxHeight={Hp('30%')}
                 extraScrollHeight={20}
                 navbarColor={colors.BlueJaja}
@@ -438,7 +447,7 @@ export default function HomeScreen() {
 
                 renderNavBar={() => renderNavBar('Cari hobimu sekarang')}
                 renderContent={renderContent}
-                containerStyle={style.container}
+                containerStyle={styles.container}
                 contentContainerStyle={style.contentContainer}
                 innerContainerStyle={style.container}
                 headerFixedBackgroundColor='transparent'
@@ -530,11 +539,11 @@ const style = StyleSheet.create({
 
     },
     navContainer: {
-        height: HEADER_HEIGHT,
-        justifyContent: 'center',
-        // alignItems: 'center',
-        paddingHorizontal: '2%',
-        paddingVertical: '2%',
+        height: Hp('11%'),
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        paddingHorizontal: '4%',
+        paddingBottom: '2.5%',
         // paddingTop: '3.5%',
         backgroundColor: 'transparent',
     },
@@ -543,12 +552,12 @@ const style = StyleSheet.create({
         backgroundColor: 'transparent',
     },
     navBar: {
-        height: NAV_BAR_HEIGHT,
+        // height: NAV_BAR_HEIGHT,
         justifyContent: 'space-between',
         alignItems: 'center',
         flexDirection: 'row',
         backgroundColor: 'transparent',
-        paddingHorizontal: '1%'
+        // paddingHorizontal: '1%'
     },
     titleStyle: {
         color: 'white',
@@ -557,5 +566,5 @@ const style = StyleSheet.create({
     },
     touchIcon: { width: '14%', justifyContent: 'center', alignItems: 'center' },
     swiperBanner: { width: "100%", height: Hp('30%'), resizeMode: 'contain', backgroundColor: colors.BlueJaja },
-    searchBar: { flexDirection: 'row', backgroundColor: colors.White, borderRadius: 11, height: NAV_BAR_HEIGHT / 1.8, width: '70%', alignItems: 'center', paddingHorizontal: '4%' }
+    searchBar: { flex: 0, width: '77%', flexDirection: 'row', backgroundColor: colors.White, borderRadius: 11, height: NAV_BAR_HEIGHT / 1.8, alignItems: 'center', paddingHorizontal: '4.5%', marginRight: '3%' }
 });

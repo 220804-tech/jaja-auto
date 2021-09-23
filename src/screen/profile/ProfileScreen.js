@@ -171,9 +171,9 @@ export default function ProfileScreen(props) {
 
     <SafeAreaView style={(styles.container, { backgroundColor: colors.BlueJaja })}>
       {loading ? <Loading /> : null}
+      <Appbar title="Akun Saya" trolley={true} notif={true} />
       <View style={styles.column}>
-        <View style={[styles.column, { height: Hp('22%') }]}>
-          <Appbar title="Akun Saya" trolley={true} notif={true} />
+        <View style={[styles.column, { height: Hp('15%') }]}>
           <View style={[styles.column, styles.px_2]}>
             <View style={[styles.row_start, styles.p_2, styles.mb_4]}>
               <View style={{ height: Wp('17%'), width: Wp('17%'), backgroundColor: colors.White, borderRadius: 100, marginRight: '2%' }}>

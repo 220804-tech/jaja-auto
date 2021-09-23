@@ -275,7 +275,7 @@ export default function index(props) {
         )
     }
     return (
-        <SafeAreaView style={[style.container]}>
+        <SafeAreaView style={[style.container, { backgroundColor: colors.BlueJaja }]}>
             {loading ? <Loading /> : null}
             <Appbar.Header style={style.appBar}>
                 <View style={style.row_start_center}>
@@ -292,6 +292,7 @@ export default function index(props) {
                 refreshControl={
                     <RefreshControl refreshing={refreshControl} onRefresh={onRefresh} />
                 }
+                style={{ backgroundColor: colors.White }}
                 contentContainerStyle={{ paddingBottom: '15%' }}>
                 {reduxUser && reduxUser.length ?
                     <FlatList
@@ -316,7 +317,7 @@ const styles = StyleSheet.create({
     options: { width: 19, height: 19, marginRight: '0%', tintColor: colors.BlackGrey },
 
     buttonMaps: { flex: 0, borderRadius: 20 },
-    body: { width: "100%", flex: 1, justifyContent: 'flex-start', backgroundColor: colors.White, paddingVertical: '4%', paddingHorizontal: '3%', },
+    body: { width: "100%", flex: 1, justifyContent: 'flex-start', backgroundColor: colors.White, paddingVertical: '4%', paddingHorizontal: '3%', marginBottom: '2%', elevation: 1 },
     form: { flex: 0, flexDirection: 'column', paddingVertical: '1%', marginBottom: '3%' },
     textAlamat: { fontSize: 14, color: colors.BlackGrayScale, margin: 0, fontFamily: 'Poppins-Regular' },
     textName: { fontSize: 14, color: colors.BlueJaja, fontFamily: 'Poppins-SemiBold' },

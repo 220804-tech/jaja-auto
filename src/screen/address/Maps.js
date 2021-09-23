@@ -1,7 +1,7 @@
 import React, { useState, createRef, useEffect } from 'react'
-import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, TextInput, FlatList, Alert, Dimensions } from 'react-native'
+import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, TextInput, FlatList, Alert, Dimensions, Modal } from 'react-native'
 import MapView from 'react-native-maps';
-import { Appbar, Button } from 'react-native-paper';
+import { Appbar, Button, TouchableRipple } from 'react-native-paper';
 import ActionSheet from 'react-native-actions-sheet';
 import { colors, styles as style, Wp, Hp } from '../../export';
 const { width, height } = Dimensions.get('screen')
@@ -17,6 +17,7 @@ export default function map(props) {
     const [dataGoogle, setdataGoogle] = useState('')
     const [address_components, setaddress_components] = useState('')
     const [dataSearch, setdataSearch] = useState([])
+    const [modal, setModal] = useState(false)
 
     const [region, setRegion] = useState({})
     const ASPECT_RATIO = width / height;
@@ -37,6 +38,7 @@ export default function map(props) {
     }, [])
 
     const onRegionChange = region => {
+        console.log("🚀 ~ file: Maps.js ~ line 41 ~ map ~ region", region)
         let data = region;
         data.latitude = region.latitude;
         data.longitude = region.longitude;
@@ -44,9 +46,12 @@ export default function map(props) {
     }
 
     const handleCheckLokasi = () => {
+        console.log("🚀 ~ file: Maps.js ~ line 49 ~ handleCheckLokasi ~ region.latitude", region.latitude)
+        console.log("🚀 ~ file: Maps.js ~ line 50 ~ handleCheckLokasi ~ region.longitude", region.longitude)
         fetch("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + region.latitude + "," + region.longitude + "&sensor=false&key=AIzaSyB4C8a6rkM6BKu1W0owWvStPzGHoc4ZBXI")
             .then((response) => response.json())
             .then((responseJson) => {
+                console.log("🚀 ~ file: Maps.js ~ line 53 ~ .then ~ responseJson", responseJson)
                 setalamatGoogle(responseJson.results[0].address_components[1].long_name + ' , ' + responseJson.results[0].address_components[0].short_name)
                 setalamatGoogleDetail(responseJson.results[0].formatted_address)
                 setdataGoogle(responseJson.results[0])
@@ -123,7 +128,6 @@ export default function map(props) {
             fetch("https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" + text + "&key=AIzaSyC_O0-LKyAboQn0O5_clZnePHSpQQ5slQU")
                 .then((response) => response.json())
                 .then((responseJson) => {
-                    console.log("file: Maps.js ~ line 120 ~ .then ~ responseJson", responseJson.predictions[0].place_id)
                     setdataSearch(responseJson.predictions)
                     cariLatlon(responseJson.predictions[0])
                 })
@@ -158,21 +162,22 @@ export default function map(props) {
     }
     return (
         <SafeAreaView style={style.container}>
-            <Appbar.Header style={[style.appBar]}>
+            <View style={style.appBar}>
                 <View style={[style.row_start_center, { flex: 1 }]}>
                     <TouchableOpacity onPress={() => props.status("edit")}>
                         <Image style={style.appBarButton} source={require('../../assets/icons/arrow.png')} />
                     </TouchableOpacity>
-
                 </View>
-                <TouchableOpacity onPress={() => actionSheetRef.current?.setModalVisible(true)} style={styles.search}>
-                    <Text onPress={() => actionSheetRef.current?.setModalVisible(true)} style={{ color: colors.White, fontFamily: 'Poppins-Regular' }}>Cari lokasi...</Text>
-                    <TouchableOpacity onPress={() => actionSheetRef.current?.setModalVisible(true)}>
-                        <Image style={styles.iconSearch} source={require('../../assets/icons/loupe.png')} />
-                    </TouchableOpacity>
-                </TouchableOpacity>
+                <TouchableRipple onPressIn={() => setModal(true)} onPress={() => actionSheetRef.current?.setModalVisible(true)} style={styles.search}>
+                    <>
+                        <Text onPress={() => actionSheetRef.current?.setModalVisible(true) & setModal(true)} style={{ color: colors.White, fontFamily: 'Poppins-Regular' }}>Cari lokasi...</Text>
+                        <TouchableOpacity onPress={() => actionSheetRef.current?.setModalVisible(true)}>
+                            <Image style={styles.iconSearch} source={require('../../assets/icons/loupe.png')} />
+                        </TouchableOpacity>
+                    </>
+                </TouchableRipple>
 
-            </Appbar.Header>
+            </View>
             {/* <ScrollView> */}
             <View style={styles.body}>
                 <View style={styles.bodyMaps}>
@@ -202,7 +207,7 @@ export default function map(props) {
                     <View style={styles.markerFixed}>
                         <TouchableOpacity onPress={handleCheckLokasi}>
                             {/* <View style={{ backgroundColor: "red", padding: 10, borderRadius: 10, marginLeft: -30 }}> */}
-                            <Text style={{ fontSize: 18, fontFamily: 'Poppins-SemiBold', color: "white", alignItems: "center", backgroundColor: colors.BlueJaja, alignSelf: 'center', padding: '2%', borderRadius: 10, marginBottom: '1%' }}>Cek Lokasi</Text>
+                            <Text style={[style.row_center, style.font_14, style.T_semi_bold, style.px_3, style.py_2, { color: "white", alignItems: "center", backgroundColor: colors.BlueJaja, alignSelf: 'center', borderRadius: 10 }]}>Cek Lokasi</Text>
                             {/* </View> */}
                             <Image style={styles.marker} source={require('../../assets/icons/google-maps.png')} />
                         </TouchableOpacity>
@@ -221,73 +226,73 @@ export default function map(props) {
                 }
             </View>
             {/* </ScrollView> */}
-            <ActionSheet ref={actionSheetRef}
-                containerStyle={[styles.bodySearch, { padding: 0 }]}
+            {/* <ActionSheet ref={actionSheetRef} containerStyle={{ flex: 1, backgroundColor: colors.BlueJaja }}> */}
+            <Modal animationType="slide" transparent={true} visible={modal} onRequestClose={() => setModal(!modal)}>
+                <View style={{ flex: 1, height: Hp('100%'), width: Wp('100%'), backgroundColor: colors.White, opacity: 0.95, zIndex: 999 }}>
+                    <View style={[style.row_between_center, style.py_2, style.px_4, { height: Hp('9%'), backgroundColor: colors.BlueJaja }]}>
 
-            >
+                        <TouchableOpacity style={[style.searchBar, { width: '87%' }]}>
+                            <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
+                            <TextInput keyboardType="name-phone-pad" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={[style.font_13, { width: '91%', marginBottom: '-1%' }]} placeholder='Nama Jalan/Perumahan/Gedung' onChangeText={text => handleSearch(text)} onSubmitEditing={(value) => handleSearch(value.nativeEvent.text)}></TextInput>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[style.row_center, { width: "11%" }]} onPress={() => actionSheetRef.current?.setModalVisible() & setModal(false)}>
+                            <Image style={[style.appBarButton, { transform: [{ rotate: '270deg' }] }]} source={require('../../assets/icons/arrow.png')} />
+                        </TouchableOpacity>
 
-                <View style={[style.appBar, { marginTop: '-3%', paddingBottom: '1%' }]}>
+                    </View>
+                    <ScrollView style={{ flex: 0, paddingHorizontal: '4%', height: Hp('93%') }}>
+                        <FlatList
+                            data={dataSearch}
+                            showsHorizontalScrollIndicator={false}
+                            keyExtractor={(item, index) => String(index) + "AC"}
+                            renderItem={({ item, index }) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    onPress={() => {
+                                        setalamatGoogle(item["structured_formatting"]["main_text"])
+                                        setalamatGoogleDetail(item["description"])
+                                        setplace_id(item["place_id"])
+                                        actionSheetRef.current?.setModalVisible(false);
+                                        cariLatlon(item);
+                                        setModal(false)
 
-                    <TouchableOpacity style={style.searchBar}>
-                        <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
-                        <TextInput keyboardType="name-phone-pad" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={[style.font_13, { width: '91%', marginBottom: '-1%' }]} placeholder='Nama Jalan/Perumahan/Gedung' onChangeText={text => handleSearch(text)} onSubmitEditing={(value) => handleSearch(value.nativeEvent.text)}></TextInput>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={style.row_start_center} onPress={() => actionSheetRef.current?.setModalVisible()}>
-                        <Image style={[style.appBarButton, { transform: [{ rotate: '270deg' }] }]} source={require('../../assets/icons/arrow.png')} />
-                    </TouchableOpacity>
-
+                                    }}
+                                    style={{
+                                        borderBottomWidth: 0.5,
+                                        marginVertical: 0,
+                                        paddingVertical: '3%',
+                                        flex: 0,
+                                        flexDirection: 'row',
+                                        alignItems: 'center'
+                                    }}
+                                >
+                                    <Image style={styles.iconMaps} source={require('../../assets/icons/google-maps.png')} />
+                                    <View style={{ flexDirection: "column", marginVertical: 15 }}>
+                                        <Text numberOfLines={1} style={{
+                                            color: colors.BlackGrayScale,
+                                            fontSize: Hp("2%"),
+                                            fontFamily: 'Poppins-SemiBold',
+                                            textAlign: "left",
+                                            marginRight: '2%'
+                                        }}>
+                                            {item["structured_formatting"]["main_text"]}
+                                        </Text>
+                                        <Text numberOfLines={2} style={{
+                                            width: Wp("75%"),
+                                            fontSize: Hp("1.6%"),
+                                            textAlign: "left",
+                                            color: 'grey'
+                                        }}>
+                                            {item["structured_formatting"]["secondary_text"]}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            )}
+                        />
+                    </ScrollView>
                 </View>
-                <ScrollView style={{ flex: 0, backgroundColor: colors.White, paddingHorizontal: '4%', height: Hp('93%') }}>
-                    <FlatList
-                        data={dataSearch}
-                        showsHorizontalScrollIndicator={false}
-                        keyExtractor={(item, index) => String(index) + "AC"}
-                        renderItem={({ item, index }) => (
-                            <TouchableOpacity
-                                key={index}
-                                onPress={() => {
-                                    setalamatGoogle(item["structured_formatting"]["main_text"])
-                                    setalamatGoogleDetail(item["description"])
-                                    setplace_id(item["place_id"])
-                                    actionSheetRef.current?.setModalVisible(false);
-                                    cariLatlon(item);
-
-                                }}
-                                style={{
-                                    borderBottomWidth: 0.5,
-                                    marginVertical: 0,
-                                    paddingVertical: '3%',
-                                    flex: 0,
-                                    flexDirection: 'row',
-                                    alignItems: 'center'
-                                }}
-                            >
-                                <Image style={styles.iconMaps} source={require('../../assets/icons/google-maps.png')} />
-                                <View style={{ flexDirection: "column", marginVertical: 15 }}>
-                                    <Text numberOfLines={1} style={{
-                                        color: colors.BlackGrayScale,
-                                        fontSize: Hp("2%"),
-                                        fontFamily: 'Poppins-SemiBold',
-                                        textAlign: "left",
-                                        marginRight: '2%'
-                                    }}>
-                                        {item["structured_formatting"]["main_text"]}
-                                    </Text>
-                                    <Text numberOfLines={2} style={{
-                                        width: Wp("75%"),
-                                        fontSize: Hp("1.6%"),
-                                        textAlign: "left",
-                                        color: 'grey'
-                                    }}>
-                                        {item["structured_formatting"]["secondary_text"]}
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
-                        )}
-                    />
-                </ScrollView>
-
-            </ActionSheet>
+            </Modal>
+            {/* </ActionSheet> */}
 
         </SafeAreaView >
     )
@@ -336,7 +341,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular',
         color: colors.BlackGrayScale
     },
-    search: { flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.White, opacity: 0.3, paddingVertical: '2%', paddingHorizontal: '5%' },
+    search: { flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.White, opacity: 0.3, paddingVertical: '2%', paddingHorizontal: '5%', marginBottom: '-1.9%' },
     iconSearch: {
         width: 16, height: 16, tintColor: colors.White
     },
@@ -344,8 +349,8 @@ const styles = StyleSheet.create({
         width: 22, height: 22, marginRight: '2%'
     },
     bodySearch: {
-        width: Wp("100%"),
-        height: Hp("100%"),
+        // width: Wp("100%"),
+        // height: Hp("100%"),
         backgroundColor: colors.BlueJaja,
         // elevation: 2,
         // flex: 0,
@@ -370,8 +375,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignContent: 'center',
         left: '50%',
-        marginLeft: -50,
-        marginTop: -91,
+        marginLeft: -51,
+        marginTop: -92,
         position: 'absolute',
         top: '50%',
     },

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, FlatList, TouchableOpacity, Image, ScrollView, ToastAndroid } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { styles, Wp, Hp, colors, useNavigation, CardProduct, NearestStore, FlashsaleToko } from '../../../export'
+import { styles, Wp, Hp, colors, useNavigation, CardProduct, NearestStore, FlashsaleToko, ServiceStore } from '../../../export'
 import Swiper from 'react-native-swiper'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { Paragraph } from 'react-native-paper'
@@ -14,14 +14,14 @@ export default function MainPage() {
     const vouchers = useSelector(state => state.store.store.voucher)
     const products = useSelector(state => state.store.newProduct)
     const reduxStore = useSelector(state => state.store)
-    console.log("🚀 ~ file: MainPage.js ~ line 17 ~ MainPage ~ reduxStore", reduxStore.store.flashSale)
+    const [count, setCount] = useState(0)
     const reduxAuth = useSelector(state => state.auth.auth)
 
     const image = useSelector(state => state.store.store.image)
 
     useEffect(() => {
 
-    }, [])
+    }, [vouchers, reduxAuth, reduxStore])
 
     const handleShowDetail = item => {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
@@ -41,33 +41,43 @@ export default function MainPage() {
     // }
 
     const handleVoucher = (val) => {
-        var myHeaders = new Headers();
-        myHeaders.append("Authorization", reduxAuth);
-        myHeaders.append("Content-Type", "application/json");
-        myHeaders.append("Cookie", "ci_session=3jj2gelqr7k1pgt00mekej9msvt8evts");
+        if (!reduxAuth) {
+            navigation.navigate('Login', { navigate: "Store" })
+        } else {
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", reduxAuth);
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("Cookie", "ci_session=3jj2gelqr7k1pgt00mekej9msvt8evts");
 
-        var raw = JSON.stringify({
-            "voucherId": val
-        });
+            var raw = JSON.stringify({
+                "voucherId": val
+            });
 
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
-        };
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
 
-        fetch("https://jaja.id/backend/voucher/claimVoucherStore", requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                if (result.status.code === 200) {
-                    ToastAndroid.show("Voucher berhasil diklaim", ToastAndroid.LONG, ToastAndroid.CENTER)
-                } else if (result.status.code === 409) {
-                    ToastAndroid.show("Voucher sudah pernah diklaim", ToastAndroid.LONG, ToastAndroid.CENTER)
+            fetch("https://jaja.id/backend/voucher/claimVoucherStore", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status.code === 200) {
+                        ToastAndroid.show("Voucher berhasil diklaim", ToastAndroid.LONG, ToastAndroid.CENTER)
+                        ServiceStore.getStore(reduxStore.store.slug, reduxAuth).then(res => {
+                            if (res) {
+                                dispatch({ "type": 'SET_STORE', payload: res })
+                                setCount(count + 1)
+                            }
+                        })
+                    } else if (result.status.code === 409) {
+                        ToastAndroid.show("Voucher sudah pernah diklaim", ToastAndroid.LONG, ToastAndroid.CENTER)
 
-                }
-            })
-            .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+                    }
+                })
+                .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+        }
     }
     return (
         <View style={[styles.column_start, { width: Wp('100%'), backgroundColor: colors.White }]}>
@@ -75,10 +85,11 @@ export default function MainPage() {
                 <View style={[styles.column, { width: Wp('100%') }]}>
                     {vouchers && vouchers.length !== 0 ?
                         <View style={[styles.row_center, styles.my_2, { height: Wp('20%'), paddingHorizontal: '1%' }]}>
-                            <ScrollView horizontal contentContainerStyle={{ height: Wp('20%') }}>
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ height: Wp('20%') }}>
                                 <FlatList
                                     contentContainerStyle={{ alignSelf: 'flex-start' }}
                                     horizontal
+                                    showsHorizontalScrollIndicator={false}
                                     keyExtractor={(item) => item.id}
                                     data={vouchers}
                                     renderItem={({ item }) => {
@@ -99,12 +110,13 @@ export default function MainPage() {
                                                             <Text numberOfLines={2} style={[styles.font_8, { color: colors.White, fontFamily: 'Poppins-SemiBold', width: '80%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
                                                         </View>
                                                     </View>
-                                                    <TouchableOpacity onPress={() => handleVoucher(item.id)} style={{ width: '30%', backgroundColor: item.isClaimed ? colors.White : colors.RedFlashsale, padding: '1%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.RedFlashsale, borderRadius: 3 }}>
-                                                        <Text style={[styles.font_11, { color: item.isClaimed ? colors.RedFlashsale : colors.White }]}>Klaim</Text>
+                                                    <TouchableOpacity onPress={() => handleVoucher(item.id)} style={{ width: '30%', backgroundColor: item.isClaimed ? colors.White : colors.RedFlashsale, padding: '1%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: item.isClaimed ? colors.White : colors.RedFlashsale, borderRadius: 3 }}>
+                                                        <Text style={[styles.font_11, { color: item.isClaimed ? colors.RedFlashsale : colors.White }]}>{item.isClaimed ? 'Pakai' : 'Klaim'}</Text>
                                                     </TouchableOpacity>
                                                 </View>
                                             </View>
                                         )
+
                                     }}
                                 />
                             </ScrollView>
