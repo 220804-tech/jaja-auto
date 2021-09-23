@@ -443,7 +443,7 @@ export default function Lainnya() {
             {/* <Image loadingIndicatorSource={<ActivityIndicator />} style={styles.avatar} source={{ uri: photo.path === null ? 'https://bootdey.com/img/Content/avatar/avatar6.png' : photo.path }} /> */}
             <View style={styles.card}>
                 <View style={{ flex: 0, justifyContent: 'center', alignItems: 'center', marginBottom: '11%' }}>
-                    <View style={{ width: Wp('35%'), height: Wp('35%'), borderRadius: 100, backgroundColor: colors.Silver, borderWidth: 0.5, borderColor: colors.White }}>
+                    <View style={{ width: Wp('32%'), height: Wp('32%'), borderRadius: 100, backgroundColor: colors.Silver, borderWidth: 0.5, borderColor: colors.White }}>
                         <Image style={{ width: '100%', height: '100%', borderRadius: 100 }} source={{ uri: photo && photo.path ? photo.path : null }} />
                         <TouchableOpacity onPress={() => imageRef.current?.setModalVisible()} style={{ position: 'absolute', bottom: 10, right: 0, backgroundColor: colors.BlueJaja, height: Wp('8%'), width: Wp('8%'), borderRadius: 100, justifyContent: 'center', alignItems: 'center' }}>
                             <Image style={{ width: '50%', height: '50%', tintColor: colors.White }} source={require('../../assets/icons/camera.png')} />
@@ -514,7 +514,7 @@ export default function Lainnya() {
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
-                {showButton ? <Button onPress={handleSimpan} color={colors.BlueJaja} mode="contained" labelStyle={{ color: colors.White }}>Simpan</Button> : null}
+                {showButton ? <Button onPress={handleSimpan} color={colors.BlueJaja} mode="contained" labelStyle={[style.font_13, style.T_semi_bold, { color: colors.White }]} style={style.mb_5}>Simpan</Button> : null}
             </View>
 
             <ActionSheet onClose={() => handleUpdate(date, photo)} footerHeight={80} containerStyle={{ paddingHorizontal: '4%', paddingTop: '1%' }}
@@ -764,7 +764,7 @@ const styles = StyleSheet.create({
         flex: 0,
         flexDirection: 'column',
         paddingVertical: '1%',
-        marginBottom: '3%'
+        marginBottom: '2%'
     },
     // '#C7C7CD'
     formItem: {
@@ -802,7 +802,7 @@ const styles = StyleSheet.create({
     ubah: {
         color: colors.BlueJaja,
         fontFamily: 'Poppins-SemiBold',
-        width: '15%',
+        width: '25%',
         textAlign: 'right'
     },
 

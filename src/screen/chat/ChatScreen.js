@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createRef } from "react";
-import { View, Text, SafeAreaView, TextInput, TouchableOpacity, Image, FlatList, StyleSheet, ImageBackground, StatusBar } from "react-native";
+import { View, Text, SafeAreaView, TextInput, TouchableOpacity, Image, FlatList, StyleSheet, ImageBackground, Platform, KeyboardAvoidingView } from "react-native";
 import { IconButton } from 'react-native-paper'
 import ImagePicker from "react-native-image-crop-picker";
 import firebaseDatabase from '@react-native-firebase/database';
@@ -411,14 +411,78 @@ export default function ChatScreen({ route }) {
 
     return (
 
-        <SafeAreaView style={{ flex: 1, height: Hp('100%'), backgroundColor: colors.BlueJaja }}>
+        <SafeAreaView style={style.container}>
             {loading ? <Loading /> : null}
             <Appbar back={true} title={data && data.name ? data.name : ''} />
-            <ImageBackground source={require('../../assets/images/bgChat3.jpg')} style={{ width: '100%', height: '100%' }}>
-                {selectedProduct && Object.keys(selectedProduct).length ?
+            <ImageBackground source={require('../../assets/images/bgChat3.jpg')} style={{ width: Wp('100%'), height: Hp('100%') }}>
+                {/* <View style={{ width: Wp('100%'), height: Hp('100%') }}> */}
+
+                <View style={{ flex: 1, backgroundColor: 'transparent', marginBottom: Hp('8%') }}>
+                    {messageList && messageList.length ?
+                        <FlatList
+                            inverted={-1}
+                            ref={flatlist}
+                            style={{ paddingHorizontal: 10, paddingTop: '0.2%' }}
+                            data={messageList}
+                            renderItem={renderRow}
+                            keyExtractor={(item, index) => String(index)}
+                        /> : null
+                    }
+                </View>
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === "ios" ? "padding" : null}
+                    style={styles.container}
+                >
+                    <View
+                        style={{
+                            position: 'absolute',
+                            bottom: 15,
+                            flex: 0,
+                            width: Wp("100%"),
+                            height: Hp('6%'),
+                            // marginBottom: Hp('7.7%'),
+                            paddingHorizontal: '2%',
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: 'space-around',
+                            backgroundColor: 'red',
+                        }}>
+                        <View style={[style.row_start_center, { width: "80%", height: Hp('5.5%'), borderRadius: 100, backgroundColor: colors.White, opacity: 0.8 }]}>
+                            <TextInput
+                                style={{
+                                    width: "85%",
+                                    fontSize: Wp("4%"),
+                                    borderColor: "gray",
+                                    borderBottomLeftRadius: 100,
+                                    borderTopLeftRadius: 100,
+                                    paddingHorizontal: 20,
+                                }}
+                                underlineColorAndroid="transparent"
+                                onChangeText={(text) => setChat(text)} onSubmitEditing={() => handleSend(null)}
+                                value={isiChat}
+                            />
+                            {!isiChat.length ?
+                                <IconButton
+                                    icon={require('../../assets/icons/camera.png')}
+                                    style={{ margin: 0, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100 }}
+                                    color={colors.BlueJaja}
+                                    onPress={() => galeryRef.current?.setModalVisible(true)}
+                                /> : null}
+                        </View>
+
+                        <IconButton
+                            icon={require('../../assets/icons/send.png')}
+                            style={{ margin: 0, backgroundColor: colors.BlueJaja, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100 }}
+                            color={colors.White}
+                            onPress={() => handleSend(null)}
+                        />
+                    </View>
+                </KeyboardAvoidingView>
+
+                {/* {selectedProduct && Object.keys(selectedProduct).length ?
                     <View style={{
                         flex: 0,
-                        position: 'relative',
+                        position: 'absolute',
                         width: Wp("100%"),
                         height: Hp('11%'),
                         paddingHorizontal: '3%',
@@ -456,68 +520,11 @@ export default function ChatScreen({ route }) {
                             }
                         </View>
 
-                        {/* <TouchableOpacity onPress={handleSendProduct} style={{ paddingVertical: '1%', paddingHorizontal: '2%', borderColor: colors.RedFlashsale, borderWidth: 1, borderRadius: 4 }}>
-                            <Text style={{ color: colors.RedFlashsale, fontSize: 12 }}>Kirim</Text>
-                        </TouchableOpacity> */}
 
                     </View> : null
-                }
-                <View style={{ flex: 1, backgroundColor: 'transparent', marginBottom: Hp('13.7%') }}>
-                    {messageList && messageList.length ?
-                        <FlatList
-                            inverted={-1}
-                            ref={flatlist}
-                            style={{ paddingHorizontal: 10, paddingTop: '0.2%' }}
-                            data={messageList}
-                            renderItem={renderRow}
-                            keyExtractor={(item, index) => String(index)}
-                        /> : null
-                    }
-                </View>
-                <View
-                    style={{
-                        position: 'absolute',
-                        bottom: 0,
-                        flex: 0,
-                        width: Wp("100%"),
-                        height: Hp('6%'),
-                        marginBottom: Hp('7.7%'),
-                        paddingHorizontal: '2%',
-                        flexDirection: "row",
-                        alignItems: "flex-start",
-                        justifyContent: 'space-around',
-                        backgroundColor: 'transparent',
-                    }}>
-                    <View style={[style.row_start_center, { width: "80%", height: Hp('5.5%'), borderRadius: 100, backgroundColor: colors.White, opacity: 0.8 }]}>
-                        <TextInput
-                            style={{
-                                width: "85%",
-                                fontSize: Wp("4%"),
-                                borderColor: "gray",
-                                borderBottomLeftRadius: 100,
-                                borderTopLeftRadius: 100,
-                                paddingHorizontal: 20,
-                            }}
-                            underlineColorAndroid="transparent"
-                            onChangeText={(text) => setChat(text)} onSubmitEditing={() => handleSend(null)}
-                            value={isiChat}
-                        />
-                        {!isiChat.length ?
-                            <IconButton
-                                icon={require('../../assets/icons/camera.png')}
-                                style={{ margin: 0, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100 }}
-                                color={colors.BlueJaja}
-                                onPress={() => galeryRef.current?.setModalVisible(true)}
-                            /> : null}
-                    </View>
+                } */}
 
-                    <IconButton
-                        icon={require('../../assets/icons/send.png')}
-                        style={{ margin: 0, backgroundColor: colors.BlueJaja, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100 }}
-                        color={colors.White}
-                        onPress={() => handleSend(null)}
-                    />
-                </View>
+                {/* </View> */}
 
             </ImageBackground>
 
