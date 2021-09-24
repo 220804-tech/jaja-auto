@@ -106,11 +106,11 @@ export default function OrderComplain(props) {
             <StatusBar
                 translucent={false}
                 animated={true}
-                backgroundColor={colors.YellowJaja}
+                backgroundColor={colors.BlueJaja}
                 barStyle='default'
                 showHideTransition="fade"
             />
-            <Appbar back={true} title="Batalkan Pesanan" Bg={colors.YellowJaja} />
+            <Appbar back={true} title="Batalkan Pesanan" Bg={colors.BlueJaja} />
             {loading ? <Loading /> : null}
             <ScrollView>
                 <View style={[styles.column_start, styles.p_4, { width: Wp('100%') }]}>
@@ -144,7 +144,7 @@ export default function OrderComplain(props) {
                         }}
                     />
                     <Text style={[styles.font_13, styles.my_5, { color: colors.RedNotif }]}>{alertText}</Text>
-                    <Button onPress={handleSendCancel} style={{ width: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained">Batalkan Pesanan</Button>
+                    <Button onPress={handleSendCancel} style={{ width: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained">Batalkan Pesanan</Button>
                 </View>
             </ScrollView>
         </SafeAreaView >

@@ -249,7 +249,7 @@ export default function Lainnya() {
                     setTimeout(() => {
                         Alert.alert(
                             "Jaja.id",
-                            "P  rofile anda berhasil diubah!", [
+                            "Profile anda berhasil diubah!", [
                             {
                                 text: "Ok",
                                 onPress: () => console.log("Pressed"),

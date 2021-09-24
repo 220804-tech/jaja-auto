@@ -150,7 +150,7 @@ export default function ChatScreen({ route }) {
                 {item.date && index && String(messageList[index].date) !== "undefined" > 0 && !item.productTitle ?
                     String(messageList[index].date).slice(6, 10) !== String(messageList[index - 1].date).slice(6, 10) ?
                         <View style={{ alignSelf: 'center', marginVertical: '3%' }}>
-                            <Text style={{ fontSize: 18, color: colors.White, fontFamily: 'Poppins-Regular' }}>{String(messageList[index].date).slice(0, 10)}</Text>
+                            <Text style={{ fontSize: 18, color: colors.BlackGrey, fontFamily: 'Poppins-Regular' }}>{String(messageList[index].date).slice(0, 10)}</Text>
                         </View> : null
                     : null
                 }
@@ -431,7 +431,7 @@ export default function ChatScreen({ route }) {
                 </View>
                 <KeyboardAvoidingView
                     behavior={Platform.OS === "ios" ? "padding" : null}
-                    style={styles.container}
+                // style={styles.container}
                 >
                     <View
                         style={{

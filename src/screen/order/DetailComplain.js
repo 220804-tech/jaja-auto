@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { SafeAreaView, View, Text, ToastAndroid, ScrollView, Modal, RefreshControl } from 'react-native'
 import StepIndicator from 'react-native-step-indicator';
 import { useSelector, useDispatch } from 'react-redux';
-import { Appbar, colors, styles, Utils, Loading, Wp, Hp, ServiceFirebase as Firebase } from '../../export';
+import { Appbar, colors, styles, Utils, Loading, Wp, Hp, ServiceFirebase as Firebase, ServiceCheckout } from '../../export';
 import firebaseDatabase from '@react-native-firebase/database';
 import FinishedComplain from '../../components/OrderComplain/FinishedComplain';
 import WaitingDelivery from '../../components/OrderComplain/WaitingDelivery';
@@ -89,12 +89,7 @@ export default function DetailComplain() {
         if (updateComplain) {
             getItem()
         }
-        // firebaseDatabase()
-        //     .ref('/people/' + orderUid + '/notif/orders')
-        //     .on('value', snapshot => {
-        //         let result = snapshot.val()
-        //         console.log("🚀 ~ file: DetailComplain.js ~ line 93 ~ useEffect ~ result", result)
-        //     });
+
     }, [updateComplain])
 
 

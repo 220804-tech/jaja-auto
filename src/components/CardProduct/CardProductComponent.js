@@ -71,7 +71,7 @@ export default function CardProductComponent(props) {
 
                                 </View>
                                 <View style={Ps.bottomCard}>
-                                    <Text adjustsFontSizeToFit
+                                    <Text
                                         numberOfLines={2}
                                         style={Ps.nameProduct}>
                                         {item.name}

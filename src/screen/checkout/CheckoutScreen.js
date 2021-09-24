@@ -80,6 +80,7 @@ export default function checkoutScreen() {
 
         }
     }, [selectedSubPayment])
+
     const getCheckout = () => {
         ServiceCheckout.getCheckout(reduxAuth).then(res => {
             if (res) {
@@ -577,7 +578,6 @@ export default function checkoutScreen() {
             setsubPayment(item.subPayment)
             actionSheetPayment.current?.setModalVisible(true)
         }
-
     }
     const onRefresh = useCallback(() => {
         setRefreshControl(true)

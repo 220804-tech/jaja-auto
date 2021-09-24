@@ -75,6 +75,7 @@ function NotifikasiScreen(props) {
             {notifData && notifData.length ?
                 <FlatList
                     data={notifData}
+                    // inverted={-1}
                     keyExtractor={item => item.notificationId}
                     renderItem={({ item, index }) => {
                         console.log("🚀 ~ file: NotifikasiScreen.js ~ line 80 ~ NotifikasiScreen ~ item", item)
@@ -119,9 +120,9 @@ const styles = StyleSheet.create({
     },
     textTitle: {
         fontSize: 14,
-        fontFamily: 'Poppins-Medium',
+        fontFamily: 'Poppins-SemiBold',
         paddingHorizontal: '3%',
-        color: '#454545',
+        color: colors.BlueJaja,
         marginBottom: '2%'
 
     },
