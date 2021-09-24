@@ -445,7 +445,7 @@ export default function ChatScreen({ route }) {
                             flexDirection: "row",
                             alignItems: "center",
                             justifyContent: 'space-around',
-                            backgroundColor: 'red',
+                            // backgroundColor: 'red',
                         }}>
                         <View style={[style.row_start_center, { width: "80%", height: Hp('5.5%'), borderRadius: 100, backgroundColor: colors.White, opacity: 0.8 }]}>
                             <TextInput
