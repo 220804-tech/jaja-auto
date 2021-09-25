@@ -37,7 +37,7 @@ export const style = StyleSheet.create({
         marginBottom: '2%',
         color: colors.BlackGrayScale,
         // backgroundColor: 'red',
-        width: Wp("41%"),
+        width: Wp("30%"),
     },
     priceBefore: { fontSize: 11, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale, textDecorationLine: 'line-through', },
     priceAfter: { fontSize: 15, fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja },

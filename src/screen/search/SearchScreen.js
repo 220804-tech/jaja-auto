@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView, View, Text, Image, TouchableOpacity, TextInput, FlatList, ToastAndroid } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
-import { useNavigation, colors, styles, Wp, CheckSignal, ServiceStore, useFocusEffect, Utils, } from '../../export'
+import { useNavigation, colors, styles, Wp, CheckSignal, ServiceStore, useFocusEffect, Utils, AppbarSecond, } from '../../export'
 import { useDispatch, useSelector } from 'react-redux'
 export default function SearchScreen() {
     const navigation = useNavigation();
@@ -293,7 +293,7 @@ export default function SearchScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.appBar}>
+            {/* <View style={styles.appBar}>
                 <TouchableOpacity style={styles.row_start_center} onPress={() => navigation.goBack()}>
                     <Image style={styles.appBarButton} source={require('../../assets/icons/arrow.png')} />
                 </TouchableOpacity>
@@ -301,11 +301,9 @@ export default function SearchScreen() {
                     <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
                     <TextInput keyboardType="name-phone-pad" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={[styles.font_13, { width: '90%', marginBottom: '-1%' }]} placeholder='Cari hobimu disini..' onChangeText={(text) => handleSearch(text)} onSubmitEditing={(value) => handleSearchInput(value.nativeEvent.text)}></TextInput>
                 </View>
-                {/* <TouchableOpacity style={style.searchBar} onPress={() => navigation.navigate("Search")}>
-                    <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
-                    <Text style={styles.font_14}>{text}..</Text>
-                </TouchableOpacity> */}
-            </View>
+            </View> */}
+            <AppbarSecond autofocus={true} handleSearch={handleSearch} title='Cari hobimu disini..' />
+
             <View style={[styles.column, { flex: 1, backgroundColor: colors.White }, styles.p_3]}>
                 <View style={{ flex: 0, minHeight: '35%', maxHeight: '80%' }}>
                     {productSearch && productSearch.length || storeSearch.length ?
