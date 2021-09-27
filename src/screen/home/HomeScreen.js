@@ -216,7 +216,7 @@ export default function HomeScreen() {
     };
     const renderContent = () => {
         return (
-            <View style={styles.column}>
+            <View style={[styles.column, { backgroundColor: colors.White }]}>
                 <ScrollView
                     refreshControl={
                         <RefreshControl

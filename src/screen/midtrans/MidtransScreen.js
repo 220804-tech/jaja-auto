@@ -48,7 +48,7 @@ export default function MidtransScreen() {
                                     handleWaitConfirm()
                                 }
                             })
-                            navigation.navigate("Pesanan")
+                            navigation.goBack()
                         }
                     }
                 ]);
@@ -108,7 +108,7 @@ export default function MidtransScreen() {
     }
     return (
         <SafeAreaView style={styles.container}>
-            <Appbar back={true} title="Pilih Pembayaran" route="Pesanan" />
+            <Appbar back={true} title="Pilih Pembayaran" />
             {loading ?
                 <View style={{
                     justifyContent: "center",

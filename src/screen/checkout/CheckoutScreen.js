@@ -4,7 +4,7 @@
 
 import React, { useEffect, useState, createRef, useRef, useCallback } from 'react'
 import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, Alert, StatusBar, FlatList, ToastAndroid, TextInput, RefreshControl, Modal } from 'react-native'
-import { Appbar, colors, styles, Wp, Hp, useNavigation, ServiceCheckout, Loading, Utils } from '../../export'
+import { Appbar, colors, styles, Wp, Hp, useNavigation, ServiceCheckout, Loading, Utils, ServiceCart, ServiceUser } from '../../export'
 import { Button, TouchableRipple, Checkbox } from 'react-native-paper'
 import ActionSheet from "react-native-actions-sheet";
 import CheckBox from '@react-native-community/checkbox';
@@ -72,7 +72,6 @@ export default function checkoutScreen() {
         } else {
             setLoading(true)
         }
-        console.log("🚀 ~ file: CheckoutScreen.js ~ line 22 ~ checkoutScreen ~ reduxShipping", reduxShipping[0])
 
     }, [reduxCheckout, voucherOpen, vouchers, reduxShipping])
 
@@ -519,13 +518,26 @@ export default function checkoutScreen() {
                             fetch("https://jaja.id/backend/checkout", requestOptions)
                                 .then(response => response.text())
                                 .then(result => {
-                                    console.log("🚀 ~ file: CheckoutScreen.js ~ line 520 ~ setTimeout ~ result", result)
                                     error = false
                                     try {
                                         let data = JSON.parse(result)
                                         if (data && Object.keys(data).length && data.status.code == 200) {
-                                            dispatch({ type: 'SET_ORDERID', payload: data.data })
-                                            navigation.navigate("Midtrans", { data: result.data })
+                                            dispatch({ type: 'SET_INVOICE', payload: data.data })
+                                            dispatch({ type: 'SET_ORDER_STATUS', payload: 'Menunggu Pembayaran' })
+                                            navigation.replace('OrderDetails')
+                                            ServiceCart.getCart(reduxAuth).then(res => {
+                                                if (res) {
+                                                    dispatch({ type: 'SET_CART', payload: res })
+                                                }
+                                            })
+                                            ServiceUser.getBadges(reduxAuth).then(res => {
+                                                if (res) {
+                                                    dispatch({ type: "SET_BADGES", payload: res })
+                                                } else {
+                                                    dispatch({ type: "SET_BADGES", payload: {} })
+                                                }
+                                            })
+                                            // navigation.navigate("Midtrans", { data: result.data })
                                         } else {
                                             Utils.handleErrorResponse(data, "Error with status code : 12046")
                                             return null
@@ -537,30 +549,36 @@ export default function checkoutScreen() {
                                     setTimeout(() => {
                                         setLoad(false)
                                     }, 2000);
-                                    setTimeout(() => {
-                                        if (error) {
-                                            Utils.CheckSignal().then(res => {
-                                                if (res.connect) {
-                                                    ToastAndroid.show("Sedang memuat..", ToastAndroid.LONG, ToastAndroid.CENTER)
-                                                } else {
-                                                    setLoad(false)
-                                                    ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet andda!", ToastAndroid.LONG, ToastAndroid.CENTER)
-                                                }
-                                                setTimeout(() => {
-                                                    setLoad(false)
-                                                    if (error) {
-                                                        ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet andda!", ToastAndroid.LONG, ToastAndroid.CENTER)
-                                                    }
-                                                }, 5000);
-                                            })
-                                        }
-                                    }, 5000);
+
                                 })
                                 .catch(err => {
                                     console.log("🚀 ~ file: Product.js ~ line 32 ~ productDetail ~ error", err)
                                     setLoad(false)
                                     Utils.handleError(err, "Error with status code : 120477")
                                 })
+
+                            setTimeout(() => {
+                                let text = "Tidak dapat terhubung, periksa kembali koneksi internet anda!"
+                                if (error) {
+                                    Utils.CheckSignal().then(res => {
+                                        if (res.connect) {
+                                            ToastAndroid.show("Sedang memuat..", ToastAndroid.LONG, ToastAndroid.CENTER)
+                                            AlertIOS.alert("Sedang memuat..");
+
+                                        } else {
+                                            setLoad(false)
+                                            ToastAndroid.show(text, ToastAndroid.LONG, ToastAndroid.CENTER)
+                                            AlertIOS.alert(text);
+                                        }
+                                        setTimeout(() => {
+                                            setLoad(false)
+                                            if (error) {
+                                                ToastAndroid.show(text, ToastAndroid.LONG, ToastAndroid.CENTER)
+                                            }
+                                        }, 5000);
+                                    })
+                                }
+                            }, 5000);
                         }, 250);
 
                     }
@@ -834,7 +852,7 @@ export default function checkoutScreen() {
                         </View>
                     </View>
                 </View>
-                <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                {/* <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                     <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
                         <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
                         <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pembayaran</Text>
@@ -848,17 +866,12 @@ export default function checkoutScreen() {
                                         <Image fadeDuration={300} source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackGrey }]} />
                                         :
                                         <Image fadeDuration={300} source={require('../../assets/icons/check.png')} style={[styles.icon_14, { tintColor: colors.BlueJaja }]} />
-
-                                        // <Checkbox
-                                        //     color={colors.BlueJaja}
-                                        //     status={item.id_payment_method_category === selectedPayment ? 'checked' : 'unchecked'}
-                                        // />
                                     }
                                 </View>
                             </TouchableRipple>
                         )
                     })}
-                </View>
+                </View> */}
             </ScrollView>
             <View style={{ position: 'absolute', bottom: 0, zIndex: 100, elevation: 3, height: Hp('7%'), width: Wp('100%'), backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
                 <View style={{ width: '50%', height: '100%', justifyContent: 'center', paddingHorizontal: '2%', paddingLeft: '4%', paddingVertical: '1%' }}>

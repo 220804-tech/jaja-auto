@@ -1,12 +1,13 @@
 import React, { useState, useEffect, createRef } from "react";
-import { View, Text, SafeAreaView, TextInput, TouchableOpacity, Image, FlatList, StyleSheet, ImageBackground, Platform, KeyboardAvoidingView, ScrollView, Touchable } from "react-native";
+import { View, Text, SafeAreaView, TextInput, TouchableOpacity, Image, FlatList, StyleSheet, ImageBackground, Platform, ScrollView, AlertIOS, ToastAndroid } from "react-native";
 import { IconButton, TouchableRipple } from 'react-native-paper'
 import ImagePicker from "react-native-image-crop-picker";
 import firebaseDatabase from '@react-native-firebase/database';
 import ActionSheet from 'react-native-actions-sheet';
-import { colors, Hp, Wp, Appbar, ServiceFirebase as Firebase, styles as style, Loading } from "../../export";
+import { colors, Hp, Wp, Appbar, ServiceFirebase as Firebase, styles as style, Loading, Utils } from "../../export";
 import { useSelector } from 'react-redux'
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { CheckSignal } from "../../utils/Form";
 
 export default function ChatScreen({ route }) {
     const reduxUser = useSelector(state => state.user.user)
@@ -37,6 +38,8 @@ export default function ChatScreen({ route }) {
     const listChat = [{ id: '1SX', text: 'Halo, apakah barang ini ready?' }, { id: '2SX', text: 'Halo, apakah bisa dikirim hari ini?' }, { id: '3SX', text: 'Terima kasih!' }, { id: '4SX', text: 'Sama-sama!' },]
     useEffect(() => {
         setnameChat(data.name);
+        let error = true
+        let refresh = true
         const onValueChange = firebaseDatabase().ref('/messages/' + data.chat).on('value', function (snapshoot) {
             if (snapshoot.val() !== null) {
                 const values = Object.values(snapshoot.val());
@@ -45,9 +48,11 @@ export default function ChatScreen({ route }) {
                     arr.push(key)
                 }
                 setMessageList(arr.sort((a, b) => (a.time > b.time ? 1 : -1)).reverse())
-
+                error = false
                 firebaseDatabase().ref("/people/" + data.id).once("value", function (snap) {
                     var item = snap.val();
+                    error = false
+
                     if (item != null && item.photo != null) {
                         setesellerImage(item.photo)
                     }
@@ -56,6 +61,37 @@ export default function ChatScreen({ route }) {
 
             }
         })
+        setTimeout(() => {
+            if (error) {
+                Utils.CheckSignal().then(res => {
+                    let string = 'Tidak dapat terhubung, periksa kembali koneksi internet anda!'
+                    if (res.connet) {
+                        if (Platform.OS === 'android') {
+                            ToastAndroid.show('Sedang memuat..', ToastAndroid.LONG, ToastAndroid.TOP)
+                        } else {
+                            AlertIOS.alert('Sedang memuat..');
+                        }
+                        setTimeout(() => {
+                            if (error) {
+                                if (Platform.OS === 'android') {
+                                    ToastAndroid.show(string, ToastAndroid.LONG, ToastAndroid.TOP)
+                                } else {
+                                    AlertIOS.alert(string);
+                                }
+                            }
+                        }, 5000);
+                    } else {
+                        setLoading(false)
+                        if (Platform.OS === 'android') {
+                            ToastAndroid.show(string, ToastAndroid.LONG, ToastAndroid.TOP)
+                        } else {
+                            AlertIOS.alert(string);
+                        }
+                    }
+                })
+
+            }
+        }, 5000);
         return () => firebaseDatabase().ref('/messages/' + data.chat).off('value', onValueChange);
     }, [data]);
 
@@ -69,6 +105,7 @@ export default function ChatScreen({ route }) {
         if (messageList) {
             setLoading(false)
         }
+
     }, [messageList])
 
     const handleSend = (image) => {
@@ -436,7 +473,7 @@ export default function ChatScreen({ route }) {
                     style={styles.container}
                     behavior={Platform.OS === "ios" ? "padding" : null}
                 > */}
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ overflow: 'scroll', width: '100%' }} contentContainerStyle={{ width: '170%', paddingHorizontal: '4%' }}>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ width: '170%', height: '7%', paddingHorizontal: '4%' }}>
                         {listChat.map(item => {
                             return (
                                 <TouchableRipple borderless={true} rippleColor={colors.BlueJaja} key={item.id} onPress={() => setChat(item.text)} style={[style.px_2, style.py, { backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.BlueJaja, borderRadius: 11, marginRight: 5 }]}>

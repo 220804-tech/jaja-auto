@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useCallback, createRef } from 'react'
-import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Linking, ToastAndroid, Alert, RefreshControl, Modal } from 'react-native'
+import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Linking, ToastAndroid, Alert, RefreshControl, Modal, FlatList } from 'react-native'
 import { Appbar, colors, styles, Wp, Hp, useNavigation, useFocusEffect, Loading, Utils, ServiceStore, ServiceCheckout } from '../../export'
 import Clipboard from '@react-native-community/clipboard';
 import { useDispatch, useSelector } from "react-redux";
-import { Button, TouchableRipple } from 'react-native-paper'
+import { Button, TouchableRipple, Checkbox } from 'react-native-paper'
 import ActionSheet from "react-native-actions-sheet";
 
-export default function OrderDetailsScreen(props) {
+export default function OrderDetailsScreen() {
     const navigation = useNavigation();
     const actionSheetPayment = createRef();
 
@@ -15,6 +15,8 @@ export default function OrderDetailsScreen(props) {
     const [details, setDetails] = useState(null)
     const [refreshing, setRefreshing] = useState(null)
     const [selectedPayment, setselectedPayment] = useState('')
+    const [selectedSubPayment, setselectedSubPayment] = useState('')
+
     const reduxStore = useSelector(state => state.store.store)
     const reduxListPayment = useSelector(state => state.checkout.listPayment)
 
@@ -28,7 +30,6 @@ export default function OrderDetailsScreen(props) {
 
     const [showModal, setModalShow] = useState(false);
 
-    const { status } = props.route.params;
 
     useEffect(() => {
         // getItem();
@@ -233,16 +234,16 @@ export default function OrderDetailsScreen(props) {
                 }
                 contentContainerStyle={{ flex: 0, flexDirection: 'column', paddingBottom: Hp('7%') }}>
                 <View style={[styles.column, styles.p_3, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                    <View style={[styles.row_between_center, { marginBottom: props.route.params.status !== "Menunggu Pembayaran" ? '4%' : "0%" }]}>
+                    <View style={[styles.row_between_center, { marginBottom: reduxOrderStatus !== "Menunggu Pembayaran" ? '4%' : "0%" }]}>
                         <View style={[styles.row]}>
                             <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/process.png')} />
                             <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}> Status Pesanan</Text>
                         </View>
                         <View style={[styles.px, styles.px_3, { backgroundColor: colors.YellowJaja, borderRadius: 3 }]}>
-                            <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>{status}</Text>
+                            <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>{reduxOrderStatus}</Text>
                         </View>
                     </View>
-                    {props.route.params.status !== "Menunggu Pembayaran" ?
+                    {reduxOrderStatus !== "Menunggu Pembayaran" ?
                         details ?
                             <View style={styles.row_between_center}>
                                 <View style={[styles.row]}>
@@ -381,7 +382,7 @@ export default function OrderDetailsScreen(props) {
                                         <View style={[styles.column_between_center, { alignItems: 'flex-end' }]}>
                                             <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}>{item.shippingSelected.priceCurrencyFormat}</Text>
                                             <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}></Text>
-                                            {props.route.params.status === "Pengiriman" ?
+                                            {reduxOrderStatus === "Pengiriman" ?
                                                 <TouchableOpacity onPress={handleTracking} style={{ backgroundColor: colors.YellowJaja, borderRadius: 5, paddingHorizontal: '10%', paddingVertical: '3%' }}>
                                                     <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}> Lacak </Text>
                                                 </TouchableOpacity>
@@ -425,49 +426,9 @@ export default function OrderDetailsScreen(props) {
                         }
 
                     </View>
-                    {props.route.params.status === "Menunggu Pembayaran" || props.route.params.status === "Menunggu Konfirmasi" ?
-                        <View style={[styles.row_center, styles.mb_2, { width: '95%', alignSelf: 'center' }]}>
-                            {/* <TouchableRipple onPress={() => console.log("change")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.YellowJaja }]}>
-                            <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                Ganti
-                            </Text>
-                        </TouchableRipple>
-                        <TouchableRipple onPress={() => console.log("change")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.BlueJaja }]}>
-                            <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                Cek Bayar
-                            </Text>
-                        </TouchableRipple> */}
-                            <TouchableRipple onPress={() => navigation.navigate('OrderCancel')} style={[styles.row_center, styles.py_2, { width: 100 / 2 + '%', backgroundColor: colors.Silver }]}>
-                                <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                    Batalkan Pesanan
-                                </Text>
-                            </TouchableRipple>
-                            {
-                                props.route.params.status === "Menunggu Pembayaran" ?
 
-                                    <>
-
-                                        <TouchableRipple onPress={handlePayment} style={[styles.row_center, styles.py_2, { width: 100 / 2 + '%', backgroundColor: colors.BlueJaja }]}>
-                                            <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                                Bayar Sekarang
-                                            </Text>
-                                        </TouchableRipple>
-                                    </>
-                                    : null
-                            }
-
-                        </View>
-                        : null
-                    }
-                    {/* <View style={[styles.row_center, styles.mb_2, { width: '95%', alignSelf: 'center' }]}>
-                        <TouchableRipple onPress={() => navigation.navigate('OrderCancel')} style={[styles.row_center, styles.py_2, { width: '100%', backgroundColor: colors.Silver, alignSelf: 'center' }]}>
-                            <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                Batalkan Pesanan
-                            </Text>
-                        </TouchableRipple>
-                    </View> */}
                 </View>
-                {/* <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                     <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
                         <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
                         <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pembayaran</Text>
@@ -486,10 +447,45 @@ export default function OrderDetailsScreen(props) {
                             </TouchableRipple>
                         )
                     })}
+                    {reduxOrderStatus === "Menunggu Pembayaran" || reduxOrderStatus === "Menunggu Konfirmasi" ?
+                        <View style={[styles.row_center, styles.my_2, { width: '95%', alignSelf: 'center' }]}>
+                            <TouchableRipple onPress={() => console.log("change")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.YellowJaja }]}>
+                                <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                    Ganti
+                                </Text>
+                            </TouchableRipple>
+                            <TouchableRipple onPress={() => console.log("refresh")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.GreenSuccess }]}>
+                                <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                    Cek Bayar
+                                </Text>
+                            </TouchableRipple>
+                            {
+                                reduxOrderStatus === "Menunggu Pembayaran" ?
 
-                </View> */}
+                                    <>
+                                        <TouchableRipple onPress={handlePayment} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.BlueJaja }]}>
+                                            <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                                Bayar Sekarang
+                                            </Text>
+                                        </TouchableRipple>
+                                    </>
+                                    : null
+                            }
+
+                        </View>
+                        : null
+                    }
+                    <View style={[styles.row_center, styles.mb_2, { width: '95%', alignSelf: 'center' }]}>
+                        <TouchableRipple onPress={() => navigation.navigate('OrderCancel')} style={[styles.row_center, styles.py_2, { width: '100%', backgroundColor: colors.Silver, alignSelf: 'center' }]}>
+                            <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                Batalkan Pesanan
+                            </Text>
+                        </TouchableRipple>
+                    </View>
+
+                </View>
                 {details && Object.keys(details).length ?
-                    props.route.params.status === "Pengiriman" ?
+                    reduxOrderStatus === "Pengiriman" ?
                         <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'column', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
                             <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%', marginBottom: '2%' }} contentStyle={{ width: '100%', height: '95%' }} color={colors.BlueJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                                 Terima Pesanan
@@ -500,45 +496,21 @@ export default function OrderDetailsScreen(props) {
                                 {details.complain ? "Sedang Dikomplain" : "Komplain"}
                             </Button>
                         </View>
-                        : props.route.params.status === "Pesanan Selesai" ?
+                        : reduxOrderStatus === "Pesanan Selesai" ?
                             <View style={{ position: 'absolute', bottom: 0, zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center', marginBottom: '3%' }}>
                                 <Button icon="star" onPress={() => navigation.navigate('AddReview', { data: details.items[0].products })} style={{ alignSelf: 'center', width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                                     Beri Penilaian
                                 </Button>
                             </View>
-                            : props.route.params.status === "Menunggu Pembayaran" || props.route.params.status === "Menunggu Konfirmasi" ?
-                                // <View style={{ zIndex: 100, width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'column', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
-                                //     <View style={[styles.row_center, styles.mb_2, { width: '100%' }]}>
-                                //         <TouchableRipple onPress={() => console.log("change")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.YellowJaja }]}>
-                                //             <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                //                 Ganti
-                                //             </Text>
-                                //         </TouchableRipple>
+                            : reduxOrderStatus === "Menunggu Pembayaran" || reduxOrderStatus === "Menunggu Konfirmasi" ?
 
-                                //         <TouchableRipple onPress={() => console.log("change")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.BlueJaja }]}>
-                                //             <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                //                 Cek Bayar
-                                //             </Text>
-                                //         </TouchableRipple>
-                                //         <TouchableRipple onPress={handlePayment} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.GreenSuccess }]}>
-                                //             <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                //                 Bayar Sekarang
-                                //             </Text>
-                                //         </TouchableRipple>
-                                //     </View>
-                                //     <TouchableRipple onPress={() => console.log("change")} style={[styles.row_center, styles.py_2, { width: '100%', backgroundColor: colors.Silver }]}>
-                                //         <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                //             Batalkan Pesanan
-                                //         </Text>
-                                //     </TouchableRipple>
-                                // </View>
                                 null
                                 : null
                     : null
                 }
             </ScrollView>
             {/* {
-                props.route.params && props.route.params.status === "Menunggu Pembayaran" ?
+                props.route.params && reduxOrderStatus === "Menunggu Pembayaran" ?
                     <View style={{ position: 'absolute', bottom: 0, zIndex: 100, elevation: 1, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
                         <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '3%' }}>
                             <Text style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>Total pembayaran :</Text>
@@ -550,6 +522,45 @@ export default function OrderDetailsScreen(props) {
                     </View>
                     : null
             } */}
+            <ActionSheet closeOnPressBack={false} ref={actionSheetPayment} onClose={() => {
+                if (!selectedSubPayment && selectedSubPayment == '') {
+                    setselectedPayment('')
+                }
+            }} delayActionSheetDraw={false} containerStyle={{ padding: '4%', }}>
+                <View style={[styles.row_between_center, styles.py_2, styles.mb_5]}>
+                    <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja, width: '60%' }]}>Pilih Metode Pembayaran</Text>
+                    <TouchableOpacity onPressIn={() => actionSheetPayment.current?.setModalVisible()}>
+                        <Image style={[styles.icon_14, { tintColor: colors.BlueJaja }]} source={require('../../assets/icons/close.png')} />
+                    </TouchableOpacity>
+                </View>
+                <View style={[styles.column, { minHeight: Hp('20%'), maxHeight: Hp('80%') }]}>
+                    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 80 }}>
+                        <FlatList
+                            data={subPayment}
+                            keyExtractor={(item) => item.id}
+                            renderItem={({ item, index }) => {
+                                console.log("🚀 ~ file: CheckoutScreen.js ~ line 1057 ~ checkoutScreen ~ item", item)
+                                return (
+                                    <TouchableRipple onPressIn={() => setselectedSubPayment(item)} style={[styles.py_4, styles.px_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]} onPress={() => console.log('Pressed')} rippleColor={colors.BlueJaja} >
+                                        <View style={styles.row_between_center}>
+                                            <Text style={styles.font_13}>{item.payment_sub_label}</Text>
+                                            <Checkbox
+                                                color={colors.BlueJaja}
+                                                status={item.payment_sub_label === selectedSubPayment.payment_sub_label ? 'checked' : 'unchecked'}
+                                            />
+                                            {/* {item.payment_sub_label === selectedSubPayment.payment_sub_label ?
+                                                <Image source={require('../../assets/icons/check.png')} style={[styles.icon_14, { tintColor: colors.BlueJaja }]} />
+                                                :
+                                                <Image source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackTitle }]} />
+                                            } */}
+                                        </View>
+                                    </TouchableRipple>
+                                )
+                            }}
+                        />
+                    </ScrollView>
+                </View>
+            </ActionSheet>
             <Modal
                 animationType="fade"
                 transparent={true}
@@ -558,7 +569,7 @@ export default function OrderDetailsScreen(props) {
                     setModalShow(!showModal);
                 }}>
                 <View style={{ flex: 1, width: Wp('100%'), height: Hp('100%'), backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center' }}>
-                    <View style={[styles.column_start, styles.pt_3s, { width: Wp('95%'), height: Wp('70%'), backgroundColor: colors.White, elevation: 11, zIndex: 999 }]}>
+                    <View style={[styles.column_start, styles.pt_3s, { width: Wp('95%'), height: Wp('50%'), backgroundColor: colors.White, elevation: 11, zIndex: 999 }]}>
                         {selectedPayment.payment_type_label === 'Card' ?
                             <View style={[styles.column_center_start, styles.px_4, styles.pt_5, { height: '60%' }]}>
                                 <Text style={[styles.font_14, styles.T_semi_bold, styles.mb_5, { color: colors.BlueJaja, height: '30%' }]}>Kartu Kredit</Text>
@@ -570,9 +581,6 @@ export default function OrderDetailsScreen(props) {
                                 <Text style={[styles.font_14, { height: '65%' }]}>Metode pembayaran ini berlaku untuk semua jenis dompet elektronik seperti DANA, GOPAY, OVO, dll</Text>
                             </View>
                         }
-                        <View style={[styles.row_start, styles.px_4, { height: '20%' }]}>
-                            <Text style={[styles.font_12, styles.T_italic]}>Note : kamu masih bisa mengganti metode pembayaran setelah pesanan ini dibuat</Text>
-                        </View>
                         <View style={[styles.row_end, styles.p_2, { width: '100%' }]}>
                             <Button mode="contained" onPress={() => setModalShow(false)} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} style={{ height: '100%', width: '30%' }} color={colors.BlueJaja}>
                                 OK
