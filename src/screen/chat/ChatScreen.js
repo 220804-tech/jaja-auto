@@ -1,16 +1,18 @@
 import React, { useState, useEffect, createRef } from "react";
-import { View, Text, SafeAreaView, TextInput, TouchableOpacity, Image, FlatList, StyleSheet, ImageBackground, Platform, KeyboardAvoidingView } from "react-native";
-import { IconButton } from 'react-native-paper'
+import { View, Text, SafeAreaView, TextInput, TouchableOpacity, Image, FlatList, StyleSheet, ImageBackground, Platform, KeyboardAvoidingView, ScrollView, Touchable } from "react-native";
+import { IconButton, TouchableRipple } from 'react-native-paper'
 import ImagePicker from "react-native-image-crop-picker";
 import firebaseDatabase from '@react-native-firebase/database';
 import ActionSheet from 'react-native-actions-sheet';
 import { colors, Hp, Wp, Appbar, ServiceFirebase as Firebase, styles as style, Loading } from "../../export";
 import { useSelector } from 'react-redux'
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ChatScreen({ route }) {
     const reduxUser = useSelector(state => state.user.user)
     const reduxAuth = useSelector(state => state.auth.auth)
     const galeryRef = createRef()
+    const insets = useSafeAreaInsets();
 
     const pictureRef = createRef();
     const flatlist = createRef();
@@ -31,6 +33,8 @@ export default function ChatScreen({ route }) {
     const [selectedProduct, setSelectedProduct] = useState('')
     const { data, product } = route.params;
 
+
+    const listChat = [{ id: '1SX', text: 'Halo, apakah barang ini ready?' }, { id: '2SX', text: 'Halo, apakah bisa dikirim hari ini?' }, { id: '3SX', text: 'Terima kasih!' }, { id: '4SX', text: 'Sama-sama!' },]
     useEffect(() => {
         setnameChat(data.name);
         const onValueChange = firebaseDatabase().ref('/messages/' + data.chat).on('value', function (snapshoot) {
@@ -410,53 +414,42 @@ export default function ChatScreen({ route }) {
     }
 
     return (
-
         <SafeAreaView style={style.container}>
-            {loading ? <Loading /> : null}
-            <Appbar back={true} title={data && data.name ? data.name : ''} />
-            <ImageBackground source={require('../../assets/images/bgChat3.jpg')} style={{ width: Wp('100%'), height: Hp('100%') }}>
-                {/* <View style={{ width: Wp('100%'), height: Hp('100%') }}> */}
+            <View style={{ position: 'absolute' }}>
+                <Appbar back={true} title={data && data.name ? data.name : ''} />
 
-                <View style={{ flex: 1, backgroundColor: 'transparent', marginBottom: Hp('8%') }}>
+            </View>
+            <SafeAreaProvider style={style.container}>
+                {loading ? <Loading /> : null}
+                <ImageBackground source={require('../../assets/images/bgChat3.jpg')} style={{ width: '100%', height: '100%', paddingBottom: Math.max(insets.bottom, 0) }}>
                     {messageList && messageList.length ?
                         <FlatList
                             inverted={-1}
                             ref={flatlist}
-                            style={{ paddingHorizontal: 10, paddingTop: '0.2%' }}
+                            style={[style.pt_2, style.px_3, { height: '92%', }]}
                             data={messageList}
                             renderItem={renderRow}
                             keyExtractor={(item, index) => String(index)}
                         /> : null
                     }
-                </View>
-                <KeyboardAvoidingView
+                    {/* <KeyboardAvoidingView
+                    style={styles.container}
                     behavior={Platform.OS === "ios" ? "padding" : null}
-                // style={styles.container}
-                >
-                    <View
-                        style={{
-                            position: 'absolute',
-                            bottom: 15,
-                            flex: 0,
-                            width: Wp("100%"),
-                            height: Hp('6%'),
-                            // marginBottom: Hp('7.7%'),
-                            paddingHorizontal: '2%',
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: 'space-around',
-                            // backgroundColor: 'red',
-                        }}>
-                        <View style={[style.row_start_center, { width: "80%", height: Hp('5.5%'), borderRadius: 100, backgroundColor: colors.White, opacity: 0.8 }]}>
+                > */}
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ overflow: 'scroll', width: '100%' }} contentContainerStyle={{ width: '170%', paddingHorizontal: '4%' }}>
+                        {listChat.map(item => {
+                            return (
+                                <TouchableRipple borderless={true} rippleColor={colors.BlueJaja} key={item.id} onPress={() => setChat(item.text)} style={[style.px_2, style.py, { backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.BlueJaja, borderRadius: 11, marginRight: 5 }]}>
+                                    <Text style={[style.font_11, { color: colors.BlueJaja }]}>{item.text}</Text>
+                                </TouchableRipple>
+                            )
+                        })}
+                    </ScrollView>
+                    <View style={[style.row_around_center, style.px_2, style.mb_2, { height: '7%', backgroundColor: 'transparent', }]}>
+
+                        <View style={[style.row_start_center, { width: "80%", height: '77%', borderRadius: 100, backgroundColor: colors.White, opacity: 0.9, elevation: 1 }]}>
                             <TextInput
-                                style={{
-                                    width: "85%",
-                                    fontSize: Wp("4%"),
-                                    borderColor: "gray",
-                                    borderBottomLeftRadius: 100,
-                                    borderTopLeftRadius: 100,
-                                    paddingHorizontal: 20,
-                                }}
+                                style={[style.font_14, { width: isiChat.length ? '90%' : '82%', borderColor: "gray", borderBottomLeftRadius: 100, borderTopLeftRadius: 100, paddingHorizontal: 20, marginBottom: '-1%' }]}
                                 underlineColorAndroid="transparent"
                                 onChangeText={(text) => setChat(text)} onSubmitEditing={() => handleSend(null)}
                                 value={isiChat}
@@ -476,76 +469,30 @@ export default function ChatScreen({ route }) {
                             color={colors.White}
                             onPress={() => handleSend(null)}
                         />
+
                     </View>
-                </KeyboardAvoidingView>
-
-                {/* {selectedProduct && Object.keys(selectedProduct).length ?
-                    <View style={{
-                        flex: 0,
-                        position: 'absolute',
-                        width: Wp("100%"),
-                        height: Hp('11%'),
-                        paddingHorizontal: '3%',
-                        justifyContent: "center",
-                        alignItems: 'center',
-                        alignSelf: "center",
-                        flexDirection: "row",
-                        backgroundColor: colors.White,
-                        // top: 0
-                    }}>
-                        <View style={{ flex: 0 }}>
-                            <Image
-                                style={{
-                                    alignSelf: "center",
-                                    width: Wp("15%"),
-                                    height: Hp("7.5%"),
-                                    marginRight: 10,
-                                    borderRadius: 2
-                                }}
-                                resizeMethod={"scale"}
-                                resizeMode={"cover"}
-                                source={{ uri: selectedProduct.image[0] ? selectedProduct.image[0] : null }}
-                            />
-                        </View>
-
-                        <View style={{ flex: 1, flexDirection: 'column', height: Hp('7.5%') }}>
-                            <Text numberOfLines={1} style={{ fontSize: 14, fontFamily: 'Poppins-SemiBold', color: 'black' }}>{selectedProduct.name}</Text>
-                            {selectedProduct.isDiscount ?
-                                <View style={{ flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                                    <Text adjustsFontSizeToFit style={{ textDecorationLine: 'line-through', marginRight: '3%', fontSize: 12 }}>{selectedProduct.price}</Text>
-                                    <Text adjustsFontSizeToFit style={{ color: colors.RedFlashsale, fontFamily: 'Poppins-SemiBold', fontSize: 14 }}>{selectedProduct.priceDiscount}</Text>
-                                </View>
-                                :
-                                <Text adjustsFontSizeToFit style={{ color: colors.RedFlashsale, fontFamily: 'Poppins-SemiBold', fontSize: 14 }}>{selectedProduct.price}</Text>
-                            }
-                        </View>
+                    {/* </KeyboardAvoidingView> */}
+                </ImageBackground>
 
 
-                    </View> : null
-                } */}
+                <ActionSheet containerStyle={{ flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.White }} ref={galeryRef}>
+                    <View style={[style.column, style.pb, { backgroundColor: '#ededed' }]}>
+                        <TouchableOpacity onPress={handleOpenCamera} style={{ borderBottomWidth: 0.5, borderBottomColor: colors.Silver, alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%' }}>
+                            <Text style={[styles.font_16, { alignSelf: 'center' }]}>Ambil Foto</Text>
+                        </TouchableOpacity>
 
-                {/* </View> */}
-
-            </ImageBackground>
-
-
-            <ActionSheet containerStyle={{ flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.White }} ref={galeryRef}>
-                <View style={[style.column, style.pb, { backgroundColor: '#ededed' }]}>
-                    <TouchableOpacity onPress={handleOpenCamera} style={{ borderBottomWidth: 0.5, borderBottomColor: colors.Silver, alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%' }}>
-                        <Text style={[styles.font_16, { alignSelf: 'center' }]}>Ambil Foto</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={handlePickImage} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%', marginBottom: '1%' }}>
-                        <Text style={[styles.font_16, { alignSelf: 'center' }]}>Buka Galeri</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => galeryRef.current?.setModalVisible(false)} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '2%' }}>
-                        <Text style={[styles.font_16, { alignSelf: 'center', color: colors.RedNotif }]}>Batal</Text>
-                    </TouchableOpacity>
-                </View >
-            </ActionSheet >
+                        <TouchableOpacity onPress={handlePickImage} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%', marginBottom: '1%' }}>
+                            <Text style={[styles.font_16, { alignSelf: 'center' }]}>Buka Galeri</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => galeryRef.current?.setModalVisible(false)} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '2%' }}>
+                            <Text style={[styles.font_16, { alignSelf: 'center', color: colors.RedNotif }]}>Batal</Text>
+                        </TouchableOpacity>
+                    </View >
+                </ActionSheet >
 
 
-        </SafeAreaView >
+            </SafeAreaProvider >
+        </SafeAreaView>
     );
 }
 

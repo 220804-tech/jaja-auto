@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { View, Text, FlatList, Image, RefreshControl, ToastAndroid } from 'react-native'
+import { View, Text, FlatList, Image, RefreshControl, ToastAndroid, ScrollView } from 'react-native'
 import { colors, styles, Wp, ServiceOrder, useNavigation, Os, DefaultNotFound } from '../../export';
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -106,7 +106,7 @@ export default function OrdersFailed() {
                             onRefresh={onRefresh}
                         />
                     }>
-                    <DefaultNotFound textHead="Ups..asas" textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
+                    <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
                 </ScrollView>}
         </View>
     )

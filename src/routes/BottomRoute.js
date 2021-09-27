@@ -199,22 +199,23 @@ export default function BottomRoute() {
                     }
                 }}
             />
-            {reduxAuth ?
-                <Tab.Screen name="Pesanan" component={Orders}
-                    options={{
-                        tabBarLabel: ({ size, focused }) => (
-                            <Text style={{ fontSize: 12, color: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '3%' }}>{Language("Pesanan")}</Text>
-                        ),
-                        tabBarIcon: ({ size, focused }) => (
-                            <View style={style.column}>
-                                <Image style={{ width: size, height: size, tintColor: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '-2%' }} source={require(`../assets/icons/traffic-blue.png`)} />
-                                {reduxnotifCount && reduxnotifCount.orders ?
-                                    <View style={style.countNotif}><Text style={style.textNotif}>{parseInt(reduxnotifCount.orders) > 99 ? "99+" : reduxnotifCount.orders}</Text></View> : null
-                                }
-                            </View>
-                        )
-                    }}
-                /> : null}
+            {/* {reduxAuth ? */}
+            <Tab.Screen name="Pesanan" component={Orders}
+                options={{
+                    tabBarLabel: ({ size, focused }) => (
+                        <Text style={{ fontSize: 12, color: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '3%' }}>{Language("Pesanan")}</Text>
+                    ),
+                    tabBarIcon: ({ size, focused }) => (
+                        <View style={style.column}>
+                            <Image style={{ width: size, height: size, tintColor: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '-2%' }} source={require(`../assets/icons/traffic-blue.png`)} />
+                            {reduxnotifCount && reduxnotifCount.orders ?
+                                <View style={style.countNotif}><Text style={style.textNotif}>{parseInt(reduxnotifCount.orders) > 99 ? "99+" : reduxnotifCount.orders}</Text></View> : null
+                            }
+                        </View>
+                    )
+                }}
+            />
+            {/* : null} */}
             <Tab.Screen name="Akun" component={Profile}
                 options={{
                     tabBarLabel: ({ size, focused }) => (

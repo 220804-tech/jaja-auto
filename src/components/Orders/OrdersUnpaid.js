@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { View, Text, FlatList, Image, RefreshControl, ToastAndroid } from 'react-native'
+import { View, Text, FlatList, Image, RefreshControl, ToastAndroid, ScrollView } from 'react-native'
 import { colors, styles, Wp, ServiceOrder, useNavigation, Os, DefaultNotFound } from '../../export';
 import { Button } from 'react-native-paper'
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -47,7 +47,7 @@ export default function OrdersUnpaid() {
             }
         })
     }
-    
+
 
     const handleOrderDetails = (item) => {
         console.log("🚀 ~ file: OrdersUnpaid.js ~ line 51 ~ handleOrderDetails ~ item", item.items)
@@ -161,7 +161,7 @@ export default function OrdersUnpaid() {
                             onRefresh={onRefresh}
                         />
                     }>
-                    <DefaultNotFound textHead="Ups..asas" textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
+                    <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
                 </ScrollView>
             }
         </View>

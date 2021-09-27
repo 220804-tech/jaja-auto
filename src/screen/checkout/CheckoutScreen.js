@@ -72,7 +72,9 @@ export default function checkoutScreen() {
         } else {
             setLoading(true)
         }
-    }, [reduxCheckout, voucherOpen, vouchers])
+        console.log("🚀 ~ file: CheckoutScreen.js ~ line 22 ~ checkoutScreen ~ reduxShipping", reduxShipping[0])
+
+    }, [reduxCheckout, voucherOpen, vouchers, reduxShipping])
 
     useEffect(() => {
         if (selectedSubPayment) {
@@ -517,6 +519,7 @@ export default function checkoutScreen() {
                             fetch("https://jaja.id/backend/checkout", requestOptions)
                                 .then(response => response.text())
                                 .then(result => {
+                                    console.log("🚀 ~ file: CheckoutScreen.js ~ line 520 ~ setTimeout ~ result", result)
                                     error = false
                                     try {
                                         let data = JSON.parse(result)
@@ -949,8 +952,6 @@ export default function checkoutScreen() {
                                                         keyExtractor={(item, index) => String(index) + "a"}
                                                         style={{ width: '100%' }}
                                                         renderItem={({ item }) => {
-                                                            console.log("🚀 ~ file: CheckoutScreen.js ~ line 932 ~ checkoutScreen ~ item", item)
-
                                                             return (
                                                                 <TouchableOpacity onPress={() => deliverySelected(code, item)} style={[styles.column_center_start, styles.mb_3, styles.py_2, { width: '100%' }]}>
                                                                     <View style={styles.row_between_center}>

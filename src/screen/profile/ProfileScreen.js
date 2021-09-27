@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { SafeAreaView, View, Text, TouchableOpacity, Linking, StyleSheet, Platform, Dimensions, Image, Alert, TouchableHighlight } from 'react-native';
 import { styles, Hp, Wp, colors, useNavigation, useFocusEffect, Loading, Appbar, ServiceCart } from '../../export'
-import { Button } from 'react-native-paper'
+import { Button, TouchableRipple } from 'react-native-paper'
 import EncryptedStorage from 'react-native-encrypted-storage';
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const IS_IPHONE_X = SCREEN_HEIGHT === 812 || SCREEN_HEIGHT === 896;
@@ -183,8 +183,10 @@ export default function ProfileScreen(props) {
                 <View style={[styles.column_around_center, { height: Wp('17%'), width: Wp('60%'), alignItems: 'flex-start' }]}>
                   <Text numberOfLines={1} style={[styles.font_14, { color: colors.White, width: '100%' }]}>{reduxProfile.name}</Text>
                   <View style={[styles.row_start_center, { width: '100%' }]}>
-                    <Text numberOfLines={1} style={[styles.font_14, styles.mr_3, { color: colors.White }]}>{reduxProfile.coin}</Text>
-                    <Image source={require('../../assets/icons/coin.png')} style={styles.icon_14} />
+                    <Text onPress={() => navigation.navigate('CoinPage')} numberOfLines={1} style={[styles.font_14, styles.mr_3, { color: colors.White }]}>{reduxProfile.coin}</Text>
+                    <TouchableRipple style={[styles.row_center, { marginTop: '-1.5%' }]}>
+                      <Image source={require('../../assets/icons/coin.png')} style={styles.icon_14} />
+                    </TouchableRipple>
                   </View>
                 </View>
                 :
@@ -225,7 +227,7 @@ export default function ProfileScreen(props) {
           </TouchableOpacity>
           <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Reward' : 'Login')}>
             <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/star.png`)} />
-            <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Reward</Text>
+            <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Koin Jaja</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => {
             Linking.canOpenURL('https://jaja.id/bantuan/').then(supported => {

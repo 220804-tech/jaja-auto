@@ -294,9 +294,9 @@ export default function OrderDetailsScreen(props) {
                                         <Image style={[styles.icon_19, { marginRight: '3%', tintColor: colors.BlueJaja }]} source={require('../../assets/icons/store.png')} />
                                         <Text onPress={() => handleStore(item.store)} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.store.name}</Text>
                                     </View>
-                                    <TouchableRipple onPress={() => handleChat(item.store)} style={[styles.row_center, styles.px_3, styles.py_2, { backgroundColor: colors.BlueJaja, borderRadius: 5 }]}>
+                                    <TouchableRipple onPress={() => handleChat(item.store)} style={[styles.row_center, styles.px_2, { backgroundColor: colors.BlueJaja, paddingVertical: '1.5%' }]}>
                                         <View style={styles.row}>
-                                            <Text style={[styles.font_11, styles.T_semi_bold, { color: colors.White }]}>
+                                            <Text style={[styles.font_11, styles.T_medium, { color: colors.White }]}>
                                                 Chat Penjual
                                             </Text>
                                         </View>
@@ -315,7 +315,7 @@ export default function OrderDetailsScreen(props) {
                                                         />
                                                     </TouchableOpacity>
                                                     <View style={[styles.column, styles.ml_2, { height: Wp('15%'), width: Wp('85%') }]}>
-                                                        <Text onPress={() => handleShowDetail(child)} numberOfLines={1} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja, width: '95%' }]}>{child.name}asasas</Text>
+                                                        <Text onPress={() => handleShowDetail(child)} numberOfLines={1} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja, width: '95%' }]}>{child.name}</Text>
                                                         <View style={[styles.row_between_center, styles.pr_2, { width: '95%', alignItems: 'flex-start' }]}>
                                                             <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlackGrayScale, }]}>{child.variant ? child.variant : ""}sasa</Text>
                                                             <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
@@ -425,9 +425,9 @@ export default function OrderDetailsScreen(props) {
                         }
 
                     </View>
-
-                    <View style={[styles.row_center, styles.mb_2, { width: '95%', alignSelf: 'center' }]}>
-                        <TouchableRipple onPress={() => console.log("change")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.YellowJaja }]}>
+                    {props.route.params.status === "Menunggu Pembayaran" || props.route.params.status === "Menunggu Konfirmasi" ?
+                        <View style={[styles.row_center, styles.mb_2, { width: '95%', alignSelf: 'center' }]}>
+                            {/* <TouchableRipple onPress={() => console.log("change")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.YellowJaja }]}>
                             <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
                                 Ganti
                             </Text>
@@ -436,20 +436,36 @@ export default function OrderDetailsScreen(props) {
                             <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
                                 Cek Bayar
                             </Text>
-                        </TouchableRipple>
-                        <TouchableRipple onPress={handlePayment} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.GreenSuccess }]}>
-                            <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                Bayar Sekarang
-                            </Text>
-                        </TouchableRipple>
-                    </View>
-                    <View style={[styles.row_center, styles.mb_2, { width: '95%', alignSelf: 'center' }]}>
+                        </TouchableRipple> */}
+                            <TouchableRipple onPress={() => navigation.navigate('OrderCancel')} style={[styles.row_center, styles.py_2, { width: 100 / 2 + '%', backgroundColor: colors.Silver }]}>
+                                <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                    Batalkan Pesanan
+                                </Text>
+                            </TouchableRipple>
+                            {
+                                props.route.params.status === "Menunggu Pembayaran" ?
+
+                                    <>
+
+                                        <TouchableRipple onPress={handlePayment} style={[styles.row_center, styles.py_2, { width: 100 / 2 + '%', backgroundColor: colors.BlueJaja }]}>
+                                            <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                                Bayar Sekarang
+                                            </Text>
+                                        </TouchableRipple>
+                                    </>
+                                    : null
+                            }
+
+                        </View>
+                        : null
+                    }
+                    {/* <View style={[styles.row_center, styles.mb_2, { width: '95%', alignSelf: 'center' }]}>
                         <TouchableRipple onPress={() => navigation.navigate('OrderCancel')} style={[styles.row_center, styles.py_2, { width: '100%', backgroundColor: colors.Silver, alignSelf: 'center' }]}>
                             <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
                                 Batalkan Pesanan
                             </Text>
                         </TouchableRipple>
-                    </View>
+                    </View> */}
                 </View>
                 {/* <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                     <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>

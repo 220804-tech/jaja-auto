@@ -139,6 +139,7 @@ export const styles = StyleSheet.create({
     icon_18: { width: 18, height: 18 },
     icon_16: { width: 16, height: 16, tintColor: colors.BlackGrayScale },
     icon_14: { width: 14, height: 14 },
+    icon_13: { width: 13, height: 13 },
     icon_12: { width: 12, height: 12 },
     icon_10: { width: 10, height: 10 },
 
@@ -147,7 +148,7 @@ export const styles = StyleSheet.create({
     priceAfter: { fontSize: 14, fontFamily: 'Poppins-Regular', color: colors.RedFlashsale },
 
     appBar: { zIndex: 1000, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', backgroundColor: '#64B0C9', height: Hp('11%'), width: Wp('100%'), color: colors.siplahDefault, paddingHorizontal: '4%', paddingBottom: '4%' },
-    appBarText: { color: 'white', fontSize: 16, fontFamily: 'Poppins-SemiBold', },      
+    appBarText: { color: 'white', fontSize: 16, fontFamily: 'Poppins-SemiBold', },
     appBarButton: { tintColor: colors.White, height: 25, width: 25 },
 
     actionSheetTitle: { flex: 1, fontFamily: 'Poppins-SemiBold', fontSize: 17, color: colors.BlueJaja },

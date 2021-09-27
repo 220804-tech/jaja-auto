@@ -4,6 +4,8 @@ const initialState = {
     newProduct: [],
     storeKeyword: '',
     maxProduct: false,
+    positionIndex: 1,
+
 }
 export default function storeStore(state = initialState, action) {
     const { type, payload } = action;
@@ -18,6 +20,8 @@ export default function storeStore(state = initialState, action) {
             return { ...state, storeKeyword: payload }
         case 'SET_MAX_STORE':
             return { ...state, maxProduct: payload }
+        case 'SET_STORE_INDEX':
+            return { ...state, positionIndex: payload }
         default:
             return state;
     }

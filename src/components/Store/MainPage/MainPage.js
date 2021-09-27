@@ -37,20 +37,25 @@ export default function MainPage() {
     //     setTimeout(() => {
     //         dispatch({ 'type': 'SET_LOADMORE', payload: false })
     //     }, 5000);
-
     // }
 
     const handleVoucher = (val) => {
+        console.log("🚀 ~ file: MainPage.js ~ line 44 ~ handleVoucher ~ val",)
         if (!reduxAuth) {
             navigation.navigate('Login', { navigate: "Store" })
-        } else {
+        } else if (val.isClaimed) {
+
+            dispatch({ "type": 'SET_STORE_INDEX', payload: 1 })
+
+        }
+        else {
             var myHeaders = new Headers();
             myHeaders.append("Authorization", reduxAuth);
             myHeaders.append("Content-Type", "application/json");
             myHeaders.append("Cookie", "ci_session=3jj2gelqr7k1pgt00mekej9msvt8evts");
 
             var raw = JSON.stringify({
-                "voucherId": val
+                "voucherId": val.id
             });
 
             var requestOptions = {
@@ -110,8 +115,8 @@ export default function MainPage() {
                                                             <Text numberOfLines={2} style={[styles.font_8, { color: colors.White, fontFamily: 'Poppins-SemiBold', width: '80%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
                                                         </View>
                                                     </View>
-                                                    <TouchableOpacity onPress={() => handleVoucher(item.id)} style={{ width: '30%', backgroundColor: item.isClaimed ? colors.White : colors.RedFlashsale, padding: '1%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: item.isClaimed ? colors.White : colors.RedFlashsale, borderRadius: 3 }}>
-                                                        <Text style={[styles.font_11, { color: item.isClaimed ? colors.RedFlashsale : colors.White }]}>{item.isClaimed ? 'Pakai' : 'Klaim'}</Text>
+                                                    <TouchableOpacity onPress={() => handleVoucher(item)} style={{ width: '30%', backgroundColor: item.isClaimed ? colors.Silver : colors.RedFlashsale, padding: '1%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: item.isClaimed ? colors.Silver : colors.RedFlashsale, borderRadius: 3 }}>
+                                                        <Text style={[styles.font_11, { color: item.isClaimed ? colors.BlackGrayScale : colors.White }]}>{item.isClaimed ? 'Pakai' : 'Klaim'}</Text>
                                                     </TouchableOpacity>
                                                 </View>
                                             </View>

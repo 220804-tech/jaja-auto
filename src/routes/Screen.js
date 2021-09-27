@@ -38,10 +38,12 @@ import RequestComplain from "../screen/order/RequestComplainScreen";
 import DetailComplain from "../screen/order/DetailComplain";
 import OrderCancel from "../screen/order/OrderCancel";
 import AddAccount from "../screen/profile/AddAccount";
+import CoinPage from "../screen/profile/KoinJaja";
 
 
 export {
     Home, Product, ListChat, Chat, Orders, Profile, Login, Register, Splash, Search, Trolley, ProductSearch, Checkout, VerifikasiEmail, Account,
     Address, Category, AddAddress, Store, Midtrans, ForgotPassword, Feed, Review, ZoomReview, OrderDetails, AddReview, OrderDelivery, AddAccount,
-    CustomerService, Notification, Vouchers, Flashsale, Wishlist, HistoryProduct, Reward, Referral, RequestComplain, DetailComplain, OrderCancel
+    CustomerService, Notification, Vouchers, Flashsale, Wishlist, HistoryProduct, Reward, Referral, RequestComplain, DetailComplain, OrderCancel,
+    CoinPage
 };
