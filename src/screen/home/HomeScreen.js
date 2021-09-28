@@ -21,7 +21,6 @@ export default function HomeScreen() {
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
     const reduxProfile = useSelector(state => state.user.user)
     const reduxShowFlashsale = useSelector(state => state.dashboard.flashsaleLive)
-    console.log("🚀 ~ file: HomeScreen.js ~ line 23 ~ HomeScreen ~ reduxShowFlashsale", reduxShowFlashsale)
     const reduxShowNearest = useSelector(state => state.dashboard.showNearestStore)
 
     useAndroidBackHandler(() => {
@@ -75,7 +74,6 @@ export default function HomeScreen() {
     ]
 
     const handleDynamicLink = link => {
-        console.log("🚀 ~ file: SplashScreen.js ~ line 36 ~ SplashScreen ~ link", link)
         // Handle dynamic link inside your own application
         if (link.url === 'https://jajaidbuyer.page.link/Splash') {
             setLoading(true)
@@ -83,7 +81,6 @@ export default function HomeScreen() {
                 setLoading(false)
                 navigation.navigate('Pesanan')
             }, 500);
-            console.log("masuk sini")
         }
     };
 
@@ -159,7 +156,6 @@ export default function HomeScreen() {
         }
     }
     const renderNavBar = (text) => {
-        console.log("🚀 ~ file: HomeScreen.js ~ line 168 ~ HomeScreen ~ reduxUser.badges", reduxUser.badges)
         return (
             <View style={style.navContainer} >
                 <View style={style.statusBar} />
@@ -244,12 +240,10 @@ export default function HomeScreen() {
     }
     const loadMoreData = () => {
         if (reduxLoadmore === false) {
-            // console.log("masuk as")
             dispatch({ 'type': 'SET_LOADMORE', payload: true })
         }
     }
     const onRefresh = useCallback(() => {
-        console.log('refreshing')
         setRefreshing(true);
         getItem()
         getData()
@@ -257,7 +251,6 @@ export default function HomeScreen() {
         getBadges()
         setTimeout(() => {
             setRefreshing(false)
-            console.log('refreshed')
         }, 2000);
     }, []);
 
@@ -281,7 +274,6 @@ export default function HomeScreen() {
                 .then(resp => {
                     hasil = true;
                     if (resp.status.code == 200 || resp.status.code == 204) {
-                        console.log('get item succes')
                         if (resp.data.categoryChoice) {
                             dispatch({ type: 'SET_DASHCATEGORY', payload: resp.data.categoryChoice })
                             EncryptedStorage.setItem('dashcategory', JSON.stringify(resp.data.categoryChoice))
@@ -327,7 +319,6 @@ export default function HomeScreen() {
             .then(response => response.json())
             .then(result => {
                 if (result.status.code == 200 || result.status.code == 204) {
-                    console.log('get data succes')
                     dispatch({ type: 'SET_DASHRECOMMANDED', payload: result.data.items })
                     EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))
                 } else {
@@ -365,11 +356,9 @@ export default function HomeScreen() {
                 } else {
                     ServiceCore.getFlashsale().then(resp => {
                         if (resp && resp.flashsale && resp.flashsale.length) {
-                            console.log('get flashsale succes')
                             dispatch({ type: 'SET_SHOW_FLASHSALE', payload: true })
                             dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.flashsale })
                         } else {
-                            console.log('get flashsale succes')
                             dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
                         }
                     })
@@ -462,7 +451,6 @@ export default function HomeScreen() {
                                 useNativeDriver: false,
                                 listener: event => {
                                     if (isCloseToBottom(event.nativeEvent)) {
-                                        console.log("oNSCROLL ");
                                         loadMoreData()
                                     }
                                 }

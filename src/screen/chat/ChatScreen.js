@@ -32,7 +32,9 @@ export default function ChatScreen({ route }) {
     const [messageList, setMessageList] = useState('');
     const [gambar, setGambar] = useState("");
     const [selectedProduct, setSelectedProduct] = useState('')
-    const { data, product } = route.params;
+    const [selectedOrder, setselectedOrder] = useState('')
+
+    const { data, product, order } = route.params;
 
 
     const listChat = [{ id: '1SX', text: 'Halo, apakah barang ini ready?' }, { id: '2SX', text: 'Halo, apakah bisa dikirim hari ini?' }, { id: '3SX', text: 'Terima kasih!' }, { id: '4SX', text: 'Sama-sama!' },]
@@ -40,13 +42,16 @@ export default function ChatScreen({ route }) {
         setnameChat(data.name);
         let error = true
         let refresh = true
+        console.log("🚀 ~ file: ChatScreen.js ~ line 44 ~ onValueChange ~  data.chat", data.chat)
         const onValueChange = firebaseDatabase().ref('/messages/' + data.chat).on('value', function (snapshoot) {
             if (snapshoot.val() !== null) {
                 const values = Object.values(snapshoot.val());
+                console.log("🚀 ~ file: ChatScreen.js ~ line 46 ~ onValueChange ~ values", values)
                 let arr = [];
                 for (const key of values) {
                     arr.push(key)
                 }
+                setLoading(false)
                 setMessageList(arr.sort((a, b) => (a.time > b.time ? 1 : -1)).reverse())
                 error = false
                 firebaseDatabase().ref("/people/" + data.id).once("value", function (snap) {
@@ -61,49 +66,53 @@ export default function ChatScreen({ route }) {
 
             }
         })
-        setTimeout(() => {
-            if (error) {
-                Utils.CheckSignal().then(res => {
-                    let string = 'Tidak dapat terhubung, periksa kembali koneksi internet anda!'
-                    if (res.connet) {
-                        if (Platform.OS === 'android') {
-                            ToastAndroid.show('Sedang memuat..', ToastAndroid.LONG, ToastAndroid.TOP)
-                        } else {
-                            AlertIOS.alert('Sedang memuat..');
-                        }
-                        setTimeout(() => {
-                            if (error) {
-                                if (Platform.OS === 'android') {
-                                    ToastAndroid.show(string, ToastAndroid.LONG, ToastAndroid.TOP)
-                                } else {
-                                    AlertIOS.alert(string);
-                                }
-                            }
-                        }, 5000);
-                    } else {
-                        setLoading(false)
-                        if (Platform.OS === 'android') {
-                            ToastAndroid.show(string, ToastAndroid.LONG, ToastAndroid.TOP)
-                        } else {
-                            AlertIOS.alert(string);
-                        }
-                    }
-                })
+        // setTimeout(() => {
+        //     if (error) {
+        //         Utils.CheckSignal().then(res => {
+        //             let string = 'Tidak dapat terhubung, periksa kembali koneksi internet anda!'
+        //             if (res.connet) {
+        //                 if (Platform.OS === 'android') {
+        //                     ToastAndroid.show('Sedang memuat..', ToastAndroid.LONG, ToastAndroid.TOP)
+        //                 } else {
+        //                     AlertIOS.alert('Sedang memuat..');
+        //                 }
+        //                 setTimeout(() => {
+        //                     if (error) {
+        //                         if (Platform.OS === 'android') {
+        //                             ToastAndroid.show(string, ToastAndroid.LONG, ToastAndroid.TOP)
+        //                         } else {
+        //                             AlertIOS.alert(string);
+        //                         }
+        //                     }
+        //                 }, 5000);
+        //             } else {
+        //                 setLoading(false)
+        //                 if (Platform.OS === 'android') {
+        //                     ToastAndroid.show(string, ToastAndroid.LONG, ToastAndroid.TOP)
+        //                 } else {
+        //                     AlertIOS.alert(string);
+        //                 }
+        //             }
+        //         })
 
-            }
-        }, 5000);
+        //     }
+        // }, 5000);
         return () => firebaseDatabase().ref('/messages/' + data.chat).off('value', onValueChange);
     }, [data]);
 
     useEffect(() => {
-        if (product && Object.keys(product).length) {
+        if (product && Object.keys(product).length && selectedProduct !== null) {
             setSelectedProduct(product)
         }
-    }, [])
+        if (order && Object.keys(order).length && selectedOrder !== null) {
+            setselectedOrder(order)
+        }
+
+    }, [selectedProduct, selectedOrder])
     useEffect(() => {
-        setLoading(true)
+        // setLoading(true)
         if (messageList) {
-            setLoading(false)
+            // setLoading(false)
         }
 
     }, [messageList])
@@ -125,6 +134,10 @@ export default function ChatScreen({ route }) {
                     if (selectedProduct && Object.keys(selectedProduct).length) {
                         handleSendProduct()
                     }
+                    if (selectedOrder) {
+                        let text = 'No. ' + selectedOrder.invoice + '\n' + selectedOrder.status + '\n\n' + message.message
+                        message.message = text
+                    }
                     setTimeout(() => {
                         var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
                         console.log("🚀 ~ file: ChatScreen.js ~ line 135 ~ handleSendProduct ~ msgId", msgId)
@@ -138,7 +151,7 @@ export default function ChatScreen({ route }) {
                             }
                             firebaseDatabase().ref(`/people/${data.id}`).off('value', fire)
                         })
-                    }, selectedProduct && Object.keys(selectedProduct).length ? 10 : 0);
+                    }, selectedProduct && Object.keys(selectedProduct).length ? 100 : 0);
                 } catch (error) {
                     console.log("data error", error)
                 }
@@ -171,7 +184,7 @@ export default function ChatScreen({ route }) {
                         let item = await snapshot.val();
                         if (item.token) {
                             await Firebase.notifChat(item.token, { body: selectedProduct.name, title: reduxUser.name })
-                            setSelectedProduct('')
+                            setSelectedProduct(null)
                         }
                         firebaseDatabase().ref(`/people/${data.id}`).off('value', fire)
                     })
@@ -459,21 +472,20 @@ export default function ChatScreen({ route }) {
             <SafeAreaProvider style={style.container}>
                 {loading ? <Loading /> : null}
                 <ImageBackground source={require('../../assets/images/bgChat3.jpg')} style={{ width: '100%', height: '100%', paddingBottom: Math.max(insets.bottom, 0) }}>
-                    {messageList && messageList.length ?
-                        <FlatList
-                            inverted={-1}
-                            ref={flatlist}
-                            style={[style.pt_2, style.px_3, { height: '92%', }]}
-                            data={messageList}
-                            renderItem={renderRow}
-                            keyExtractor={(item, index) => String(index)}
-                        /> : null
-                    }
+                    <FlatList
+                        inverted={-1}
+                        ref={flatlist}
+                        style={[style.pt_2, style.px_3, { height: '92%', }]}
+                        data={messageList}
+                        renderItem={renderRow}
+                        keyExtractor={(item, index) => String(index)}
+                    />
+
                     {/* <KeyboardAvoidingView
                     style={styles.container}
                     behavior={Platform.OS === "ios" ? "padding" : null}
                 > */}
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ width: '170%', height: '7%', paddingHorizontal: '4%' }}>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ width: '170%', paddingHorizontal: '4%' }}>
                         {listChat.map(item => {
                             return (
                                 <TouchableRipple borderless={true} rippleColor={colors.BlueJaja} key={item.id} onPress={() => setChat(item.text)} style={[style.px_2, style.py, { backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.BlueJaja, borderRadius: 11, marginRight: 5 }]}>

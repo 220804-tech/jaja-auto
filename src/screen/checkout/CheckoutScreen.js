@@ -499,6 +499,7 @@ export default function checkoutScreen() {
                                 newArr[index] = { "note": "" }
                             }
                         }
+
                         setTimeout(() => {
 
                             let error = true;
@@ -506,7 +507,7 @@ export default function checkoutScreen() {
                             myHeaders.append("Authorization", reduxAuth);
                             myHeaders.append("Content-Type", "application/json");
 
-                            var raw = JSON.stringify(notes);
+                            var raw = JSON.stringify({ 'cart': newArr });
 
                             var requestOptions = {
                                 method: 'POST',
@@ -956,15 +957,18 @@ export default function checkoutScreen() {
                                         renderItem={({ item }) => {
                                             let code = item.code;
                                             let Ename = item.name;
+                                            console.log("🚀 ~ file: CheckoutScreen.js ~ line 959 ~ checkoutScreen ~ Ename", Ename)
 
                                             return (
                                                 <View style={[styles.column_center_start, styles.mb_2, styles.py_2, styles.px_4, { borderBottomWidth: 1, borderBottomColor: colors.Silver, width: '100%' }]}>
-                                                    {/* <Text style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>{item.name}</Text> */}
+                                                    <Text style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>{Ename}</Text>
                                                     <FlatList
                                                         data={item.type}
                                                         keyExtractor={(item, index) => String(index) + "a"}
                                                         style={{ width: '100%' }}
                                                         renderItem={({ item }) => {
+                                                            console.log("🚀 ~ file: CheckoutScreen.js ~ line 980 ~ checkoutScreen ~ item", item)
+
                                                             return (
                                                                 <TouchableOpacity onPress={() => deliverySelected(code, item)} style={[styles.column_center_start, styles.mb_3, styles.py_2, { width: '100%' }]}>
                                                                     <View style={styles.row_between_center}>

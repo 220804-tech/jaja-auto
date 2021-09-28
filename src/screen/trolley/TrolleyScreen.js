@@ -253,13 +253,13 @@ export default function TrolleyScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar
+            {/* <StatusBar
                 animated={true}
                 translucent={false}
                 backgroundColor={colors.BlueJaja}
                 barStyle='light-content'
                 showHideTransition="fade"
-            />
+            /> */}
             <Appbar back={true} title="Keranjang" />
             {loading ? <Loading /> : null}
             {reduxCart.cart.items && reduxCart.cart.items.length ?

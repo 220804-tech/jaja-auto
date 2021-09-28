@@ -13,7 +13,7 @@ export default function RewardScreen() {
 
     }, [])
     const handleRefund = () => {
-        let string = 'Ajukan penarikan masih dalam proses pengembangan!'
+        let string = 'Tarik saldo masih dalam proses pengembangan!'
         if (Platform.OS === 'android') {
             ToastAndroid.show(string, ToastAndroid.LONG, ToastAndroid.TOP)
         } else {
@@ -40,7 +40,7 @@ export default function RewardScreen() {
                         <View style={[styles.row_center, styles.mb_2, { width: '95%', alignSelf: 'center' }]}>
                             <TouchableRipple disabled={reduxUser.coin && reduxUser.coin !== '0' ? false : true} onPress={handleRefund} style={[styles.row_center, styles.py_2, { width: '100%', backgroundColor: reduxUser.coin && reduxUser.coin !== '0' ? colors.BlueJaja : colors.Silver }]}>
                                 <Text style={[styles.font_13, styles.T_medium, { color: colors.White }]}>
-                                    Ajukan Penarikan
+                                    Ajukan Tarik Saldo
                                 </Text>
                             </TouchableRipple>
                         </View>

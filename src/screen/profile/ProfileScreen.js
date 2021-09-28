@@ -183,7 +183,7 @@ export default function ProfileScreen(props) {
                 <View style={[styles.column_around_center, { height: Wp('17%'), width: Wp('60%'), alignItems: 'flex-start' }]}>
                   <Text numberOfLines={1} style={[styles.font_14, { color: colors.White, width: '100%' }]}>{reduxProfile.name}</Text>
                   <View style={[styles.row_start_center, { width: '100%' }]}>
-                    <Text onPress={() => navigation.navigate('CoinPage')} numberOfLines={1} style={[styles.font_14, styles.mr_3, { color: colors.White }]}>{reduxProfile.coin}</Text>
+                    <Text onPress={() => navigation.navigate(reduxAuth ? 'Reward' : 'Login')} numberOfLines={1} style={[styles.font_14, styles.mr_3, { color: colors.White }]}>{reduxProfile.coin}</Text>
                     <TouchableRipple style={[styles.row_center, { marginTop: '-1.5%' }]}>
                       <Image source={require('../../assets/icons/coin.png')} style={styles.icon_14} />
                     </TouchableRipple>

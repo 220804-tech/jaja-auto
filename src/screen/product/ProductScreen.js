@@ -290,8 +290,6 @@ export default function ProductScreen(props) {
         })
         obj.sort = ''
         ServiceStore.getStoreProduct(obj).then(res => {
-            console.log("🚀 ~ file: ProductScreen.js ~ line 286 ~ ServiceStore.getStoreProduct ~ obj", obj)
-            console.log("🚀 ~ file: ProductScreen.js ~ line 286 ~ ServiceStore.getStoreProduct ~ res", res)
             if (res) {
                 console.log('cari all product')
                 dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })

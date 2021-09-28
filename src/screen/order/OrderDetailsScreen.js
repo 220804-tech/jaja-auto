@@ -32,25 +32,14 @@ export default function OrderDetailsScreen() {
 
 
     useEffect(() => {
-        // getItem();
-        // let dataSeller = res.store
-        // dataSeller.chat = reduxUser.user.uid + dataSeller.uid
-        // dataSeller.id = dataSeller.uid
-        // setSeller(dataSeller)
-        // setLike(res.isWishlist)
-        // setTimeout(() => {
-        //     if (reduxAuth && res.sellerTerdekat.length && Object.keys(reduxUser.user).length && Object.keys(res.category).length && res.category.slug) {
-        //         FilterLocation(res.sellerTerdekat, reduxUser.user.location, res.category.slug, reduxAuth)
-        //     }
-        // }, 3000);
+        if (reduxOrderStatus == 'Menunggu Pembayaran') {
+            ServiceCheckout.getListPayment().then(res => {
+                if (res) {
+                    dispatch({ type: 'SET_LIST_PAYMENT', payload: res })
+                }
+            })
 
-        ServiceCheckout.getListPayment().then(res => {
-            console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 40 ~ ServiceCheckout.getListPayment ~ res", res)
-            if (res) {
-                dispatch({ type: 'SET_LIST_PAYMENT', payload: res })
-            }
-        })
-
+        }
     }, [])
 
     useFocusEffect(
@@ -93,7 +82,8 @@ export default function OrderDetailsScreen() {
         fetch(`https://jaja.id/backend/order/${reduxOrderInvoice}`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 68 ~ getItem ~ result", result.data.items[0].store)
+                setRefreshing(false)
+                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 85 ~ getItem ~ result", result)
                 if (result.status.code === 200 || result.status.code === 204) {
                     setDetails(result.data)
                     // dispatch({ type: 'SET_INVOICE', payload: result.data.items[0].invoice })
@@ -102,8 +92,13 @@ export default function OrderDetailsScreen() {
                 }
             })
             .catch(error => {
+                setRefreshing(false)
+
                 Utils.handleError(error, "Error with status code : 22004")
             });
+        setTimeout(() => {
+            setRefreshing(false)
+        }, 5000);
     }
 
     const handlePayment = () => {
@@ -214,9 +209,22 @@ export default function OrderDetailsScreen() {
         dataSeller.chat = reduxUser.user.uid + dataSeller.uid
         dataSeller.id = dataSeller.uid
         if (reduxAuth) {
-            navigation.navigate("IsiChat", { data: dataSeller })
+            navigation.navigate("IsiChat", { data: dataSeller, order: { invoice: reduxOrderInvoice, status: reduxOrderStatus } })
         } else {
             navigation.navigate('Login', { navigate: "OrderDetails" })
+        }
+    }
+
+    const handleOpenLink = async (url) => {
+        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 219 ~ handleOpenLink ~ url", url)
+        const supported = await Linking.canOpenURL(url);
+
+        if (supported) {
+            // Opening the link with some app, if the URL scheme is "http" the web link should be opened
+            // by some browser in the mobile
+            await Linking.openURL(url);
+        } else {
+            Alert.alert(`Don't know how to open this URL: ${url}`);
         }
     }
 
@@ -245,28 +253,26 @@ export default function OrderDetailsScreen() {
                     </View>
                     {reduxOrderStatus !== "Menunggu Pembayaran" ?
                         details ?
-                            <View style={styles.row_between_center}>
-                                <View style={[styles.row]}>
-                                    <Text style={[styles.font_13]}>#{details.items[0].invoice}</Text>
+                            <>
+                                <View style={styles.row_between_center}>
+                                    <View style={[styles.row]}>
+                                        <Text style={[styles.font_13]}>#{details.items[0].invoice}</Text>
+                                    </View>
+                                    <TouchableOpacity onPress={() => handleOpenLink(details.downloadOrderPdf)}
+                                        onLongPress={() => {
+                                            Clipboard.setString(details.downloadOrderPdf)
+                                            ToastAndroid.show("salin to clipboard", ToastAndroid.LONG, ToastAndroid.TOP)
+                                        }}
+                                        style={[styles.p, { backgroundColor: colors.White, borderRadius: 3 }]}>
+                                        <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlueJaja }]}>DOWNLOAD INVOICE</Text>
+                                    </TouchableOpacity>
                                 </View>
-                                <TouchableOpacity onPress={() => {
-                                    Linking.canOpenURL(details.downloadOrderPdf).then(supported => {
-                                        if (supported) {
-                                            Linking.openURL(details.downloadOrderPdf)
-                                        } else {
-                                            ToastAndroid.show("Sepertinya ada masalah, coba lagi nanti.", ToastAndroid.LONG, ToastAndroid.TOP)
-
-                                        }
-                                    })
-                                }}
-                                    onLongPress={() => {
-                                        Clipboard.setString(details.downloadOrderPdf)
-                                        ToastAndroid.show("salin to clipboard", ToastAndroid.LONG, ToastAndroid.TOP)
-                                    }}
-                                    style={[styles.p, { backgroundColor: colors.White, borderRadius: 3 }]}>
-                                    <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlueJaja }]}>DOWNLOAD INVOICE</Text>
-                                </TouchableOpacity>
-                            </View>
+                                {reduxOrderStatus == 'Pesanan Dibatalkan' ?
+                                    <View style={styles.row_between_center}>
+                                        <Text style={[styles.font_13]}>Alasan pembatalan : <Text numberOfLines={5} style={{ color: colors.RedNotif }}>{details.reasonCancel}</Text></Text>
+                                    </View> : null
+                                }
+                            </>
                             : null
                         : null
                     }
@@ -295,7 +301,7 @@ export default function OrderDetailsScreen() {
                                         <Image style={[styles.icon_19, { marginRight: '3%', tintColor: colors.BlueJaja }]} source={require('../../assets/icons/store.png')} />
                                         <Text onPress={() => handleStore(item.store)} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.store.name}</Text>
                                     </View>
-                                    <TouchableRipple onPress={() => handleChat(item.store)} style={[styles.row_center, styles.px_2, { backgroundColor: colors.BlueJaja, paddingVertical: '1.5%' }]}>
+                                    <TouchableRipple onPress={() => handleChat(item.store)} style={[styles.row_center, styles.px_2, { backgroundColor: colors.BlueJaja, paddingVertical: '1.5%', borderRadius: 3 }]}>
                                         <View style={styles.row}>
                                             <Text style={[styles.font_11, styles.T_medium, { color: colors.White }]}>
                                                 Chat Penjual
@@ -428,62 +434,62 @@ export default function OrderDetailsScreen() {
                     </View>
 
                 </View>
-                <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                    <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                        <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
-                        <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pembayaran</Text>
-                    </View>
-                    {reduxListPayment.map(item => {
-                        return (
-                            <TouchableRipple onPressIn={() => handleShowPayment(item)} style={[styles.px_3, styles.py_3, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]} onPress={() => handleShowPayment(item)} rippleColor={colors.BlueJaja} >
-                                <View style={styles.row_between_center}>
-                                    <Text style={styles.font_13}>{item.payment_type_label === 'Card' ? 'Kartu Kredit' : item.payment_type_label == 'eWallet' ? item.payment_type_label + ' - ' + item.subPayment[0].payment_sub_label : item.payment_type_label}</Text>
-                                    {item.id_payment_method_category !== selectedPayment.id_payment_method_category ?
-                                        <Image fadeDuration={300} source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackGrey }]} />
-                                        :
-                                        <Image fadeDuration={300} source={require('../../assets/icons/check.png')} style={[styles.icon_14, { tintColor: colors.BlueJaja }]} />
-                                    }
-                                </View>
-                            </TouchableRipple>
-                        )
-                    })}
-                    {reduxOrderStatus === "Menunggu Pembayaran" || reduxOrderStatus === "Menunggu Konfirmasi" ?
+                {reduxOrderStatus == 'Menunggu Pembayaran' || reduxOrderStatus == 'Menunggu Konfirmasi' ?
+                    <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                        <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
+                            <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
+                            <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pembayaran</Text>
+                        </View>
+                        {reduxListPayment.map(item => {
+                            return (
+                                <TouchableRipple onPressIn={() => handleShowPayment(item)} style={[styles.px_3, styles.py_3, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]} onPress={() => handleShowPayment(item)} rippleColor={colors.BlueJaja} >
+                                    <View style={styles.row_between_center}>
+                                        <Text style={styles.font_13}>{item.payment_type_label === 'Card' ? 'Kartu Kredit' : item.payment_type_label == 'eWallet' ? item.payment_type_label + ' - ' + item.subPayment[0].payment_sub_label : item.payment_type_label}</Text>
+                                        {item.id_payment_method_category !== selectedPayment.id_payment_method_category ?
+                                            <Image fadeDuration={300} source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackGrey }]} />
+                                            :
+                                            <Image fadeDuration={300} source={require('../../assets/icons/check.png')} style={[styles.icon_14, { tintColor: colors.BlueJaja }]} />
+                                        }
+                                    </View>
+                                </TouchableRipple>
+                            )
+                        })}
                         <View style={[styles.row_center, styles.my_2, { width: '95%', alignSelf: 'center' }]}>
-                            <TouchableRipple onPress={() => console.log("change")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.YellowJaja }]}>
-                                <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                    Ganti
-                                </Text>
-                            </TouchableRipple>
-                            <TouchableRipple onPress={() => console.log("refresh")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.GreenSuccess }]}>
-                                <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                    Cek Bayar
-                                </Text>
-                            </TouchableRipple>
                             {
                                 reduxOrderStatus === "Menunggu Pembayaran" ?
 
                                     <>
+                                        <TouchableRipple onPress={() => console.log("change")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.YellowJaja }]}>
+                                            <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                                Ganti
+                                            </Text>
+                                        </TouchableRipple>
+                                        <TouchableRipple onPress={() => console.log("refresh")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.GreenSuccess }]}>
+                                            <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                                Cek Bayar
+                                            </Text>
+                                        </TouchableRipple>
                                         <TouchableRipple onPress={handlePayment} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.BlueJaja }]}>
                                             <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
                                                 Bayar Sekarang
                                             </Text>
                                         </TouchableRipple>
                                     </>
+
                                     : null
                             }
-
                         </View>
-                        : null
-                    }
-                    <View style={[styles.row_center, styles.mb_2, { width: '95%', alignSelf: 'center' }]}>
-                        <TouchableRipple onPress={() => navigation.navigate('OrderCancel')} style={[styles.row_center, styles.py_2, { width: '100%', backgroundColor: colors.Silver, alignSelf: 'center' }]}>
-                            <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                Batalkan Pesanan
-                            </Text>
-                        </TouchableRipple>
-                    </View>
 
-                </View>
+                        <View style={[styles.row_center, styles.mb_2, { width: '95%', alignSelf: 'center' }]}>
+                            <TouchableRipple onPress={() => navigation.navigate('OrderCancel')} style={[styles.row_center, styles.py_2, { width: '100%', backgroundColor: colors.Silver, alignSelf: 'center' }]}>
+                                <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                    Batalkan Pesanan
+                                </Text>
+                            </TouchableRipple>
+                        </View>
+
+                    </View>
+                    : null}
                 {details && Object.keys(details).length ?
                     reduxOrderStatus === "Pengiriman" ?
                         <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'column', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
