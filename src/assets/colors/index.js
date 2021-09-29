@@ -31,12 +31,10 @@ export default {
     YellowNotif: '#f0e68c',
 
     BlueJaja: "#64B0C9",
+    BlueLight: '#e1f4fa',
     Blue: '#0000ff',
     BluePrimary: '#556ee6',
     BlueInfo: '#2CA8FF',
     Cyan: '#00ffff',
     BlueLink: '#6495ED',
-
-
-
 };

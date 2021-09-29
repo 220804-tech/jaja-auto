@@ -1,31 +1,157 @@
 import React, { useState, useEffect } from 'react'
-import { SafeAreaView, View, Text, StyleSheet, Image, AlertIOS, ToastAndroid, Platform } from 'react-native'
+import { SafeAreaView, View, Text, StyleSheet, Image, AlertIOS, ToastAndroid, Platform, Modal, TextInput, ScrollView } from 'react-native'
 import { Button, TouchableRipple } from 'react-native-paper'
-import { colors, styles, Wp, Hp, Appbar, useNavigation, } from '../../export'
+import { colors, styles, Wp, Hp, Appbar, useNavigation, Utils, Loading } from '../../export'
 import { useSelector } from 'react-redux';
 
 export default function RewardScreen() {
     const reduxUser = useSelector(state => state.user.user)
+    const reduxAuth = useSelector(state => state.auth.auth)
     const navigation = useNavigation();
-    const [status, setStatus] = useState('false');
+    const [nominal, setNominal] = useState(0);
+    const [deskripsi, setDeskripsi] = useState('');
+
+    const [showModal, setShowModal] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [historyCoin, setHistoryCoin] = useState([])
 
     useEffect(() => {
-
+        getItem()
     }, [])
+
+    const getItem = () => {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", reduxAuth);
+        myHeaders.append("Cookie", "ci_session=4an0u670mohqnot9kjg6vm2s9klamrdq");
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        fetch("https://jaja.id/backend/user/historyKoin", requestOptions)
+            .then(response => response.text())
+            .then(result => {
+                // console.log("🚀 ~ file: RewardScreen.js ~ line 36 ~ getItem ~ result", result.data)
+
+                try {
+                    let data = JSON.parse(result)
+                    if (data.status.code == 200) {
+                        setHistoryCoin(data.data.history)
+                    }
+                } catch (error) {
+                    console.log("🚀 ~ file: RewardScreen.js ~ line 45 ~ getItem ~ error", error)
+                    // alert(result)
+                }
+            })
+            .catch(error => Utils.handleError(error, "Error with status code : 12052"));
+    }
+    const getPending = () => {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", reduxAuth);
+        myHeaders.append("Cookie", "ci_session=4an0u670mohqnot9kjg6vm2s9klamrdq");
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        fetch("https://jaja.id/backend/user/ListCustomerPayouts", requestOptions)
+            .then(response => response.text())
+            .then(result => {
+                console.log("🚀 ~ file: RewardScreen.js ~ line 36 ~ getItem ~ result", result)
+                try {
+                    let data = JSON.parse(result)
+                    if (data.status.code == 200) {
+                        // setHistoryCoin(data.data)
+                    }
+                } catch (error) {
+                    alert(result)
+                }
+            })
+            .catch(error => Utils.handleError(error, "Error with status code : 12052"));
+    }
+
     const handleRefund = () => {
-        let string = 'Tarik saldo masih dalam proses pengembangan!'
-        if (Platform.OS === 'android') {
-            ToastAndroid.show(string, ToastAndroid.LONG, ToastAndroid.TOP)
+        setShowModal(false)
+        if (nominal >= 20000) {
+            setLoading(true)
+            let error = true
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", reduxAuth);
+            myHeaders.append("Cookie", "ci_session=4an0u670mohqnot9kjg6vm2s9klamrdq");
+
+            var requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
+
+            fetch(`https://jaja.id/backend/user/addCustomerPayouts?amount=${nominal}&noted=${deskripsi}`, requestOptions)
+                .then(response => response.text())
+                .then(result => {
+                    error = false
+                    setLoading(false)
+                    try {
+                        setNominal('')
+                        setDeskripsi('')
+                        let data = JSON.parse(result)
+                        console.log("🚀 ~ file: RewardScreen.js ~ line 69 ~ handleRefund ~ data", data)
+                        if (data.status.code == 200) {
+                            Utils.alertPopUp('Pengajuanmu berhasil dikirim!')
+                        } else if (data.status.message === 'rekening empty') {
+                            Utils.alertPopUp('Rekening anda masih kosong!')
+                        } else if (data.status.message === 'nominal tidak sesuai') {
+                            Utils.alertPopUp('Koin tidak cukup!')
+                        } else {
+                            Utils.handleErrorResponse(data, 'Error with status code : 12050')
+                        }
+                    } catch (err) {
+                        Utils.alertPopUp(result)
+                    }
+                })
+                .catch(err => {
+                    setLoading(false)
+                    error = false
+                    Utils.handleError(err, 'Error with status code : 12051')
+                });
+
+            setTimeout(() => {
+                Utils.CheckSignal().then(res => {
+                    if (error) {
+                        if (res.connect) {
+                            Utils.alertPopUp('Sedang memuat..')
+                            setTimeout(() => {
+                                if (error) {
+                                    Utils.alertPopUp('Tidak dapat terhubung, periksa kembali koneksi internet anda!')
+                                    setLoading(false)
+                                }
+                            }, 5000);
+                        } else {
+                            setLoading(false)
+                            Utils.alertPopUp('Tidak dapat terhubung, periksa kembali koneksi internet anda!')
+                        }
+                    }
+                })
+            }, 5000);
         } else {
-            AlertIOS.alert(string);
+            Utils.alertPopUp("Minimal penarika 20.000 koin")
         }
+    }
+
+    const handleChange = (text) => {
+        let result = Utils.regex('number', text)
+        setNominal(result)
     }
 
     return (
         <SafeAreaView style={styles.container}>
             <Appbar back={true} title="Koin Jaja" />
+            {loading ? <Loading /> : null}
             <View style={[styles.column, styles.p, { flex: 1 }]}>
-                <View style={[styles.column, { backgroundColor: colors.White, borderRadius: 5, height: Hp('50%') }]}>
+                <View style={[styles.column, { flex: 1, backgroundColor: colors.White, borderRadius: 5, }]}>
                     <View style={[styles.column, styles.pt_2,]}>
                         <View style={[styles.row_between_center, styles.p_2, styles.mb_5]}>
                             <View style={[styles.column]}>
@@ -38,7 +164,7 @@ export default function RewardScreen() {
                             </View>
                         </View>
                         <View style={[styles.row_center, styles.mb_2, { width: '95%', alignSelf: 'center' }]}>
-                            <TouchableRipple disabled={reduxUser.coin && reduxUser.coin !== '0' ? false : true} onPress={handleRefund} style={[styles.row_center, styles.py_2, { width: '100%', backgroundColor: reduxUser.coin && reduxUser.coin !== '0' ? colors.BlueJaja : colors.Silver }]}>
+                            <TouchableRipple disabled={reduxUser.coin && reduxUser.coin !== '0' ? false : true} onPress={() => setShowModal(true)} style={[styles.row_center, styles.py_2, { width: '100%', backgroundColor: reduxUser.coin && reduxUser.coin !== '0' ? colors.BlueJaja : colors.Silver }]}>
                                 <Text style={[styles.font_13, styles.T_medium, { color: colors.White }]}>
                                     Ajukan Tarik Saldo
                                 </Text>
@@ -46,15 +172,39 @@ export default function RewardScreen() {
                         </View>
                     </View>
                     <View style={[styles.column, styles.mt_2, styles.p_2, { backgroundColor: colors.White, flex: 1 }]}>
-                        <View style={[styles.column_center, { borderWidth: 0.5, width: '100%', height: '100%' }]}>
-                            <View style={[styles.row_center, styles.p_2, { borderBottomWidth: 0.5 }]}>
-                                <Text style={[styles.font_12, { width: 100 / 3 + '%', borderRightWidth: 0.5, textAlign: 'center' }]}>No.</Text>
-                                <Text style={[styles.font_12, { width: 100 / 3 + '%', borderRightWidth: 0.5, textAlign: 'center' }]}>Jumlah</Text>
-                                <Text style={[styles.font_12, { width: 100 / 3 + '%', textAlign: 'center' }]}>Status</Text>
+                        <View style={[styles.column, { borderWidth: 1, borderColor: colors.BlueJaja, width: '100%', height: '100%' }]}>
+                            <View style={[styles.row_center, styles.px_2, { borderBottomWidth: 1, borderColor: colors.BlueJaja }]}>
+                                <Text style={[styles.font_12, styles.py, { width: '20%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>No.</Text>
+                                <Text style={[styles.font_12, styles.py, { width: '40%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>Jumlah</Text>
+                                <Text style={[styles.font_12, styles.py, { width: '40%', textAlign: 'center' }]}>Note</Text>
                             </View>
-                            <View style={[styles.row_center, styles.p_5, { flex: 1 }]}>
-                                <Text style={[styles.font_13, { textAlign: 'center' }]}>Tidak ada data</Text>
-                            </View>
+                            {historyCoin.length ?
+                                <ScrollView>
+                                    {historyCoin.concat(historyCoin).map((item, index) => {
+                                        console.log("🚀 ~ file: RewardScreen.js ~ line 125 ~ RewardScreen ~ item", item)
+                                        return (
+                                            <View style={[styles.row_center, styles.px_2, { borderBottomWidth: 0.5 }]}>
+                                                <View style={[styles.row_center, styles.p, { borderRightWidth: 0.5, width: '20%' }]}>
+                                                    <Text style={[styles.font_12, { textAlign: 'center' }]}>{index + 1}.</Text>
+                                                </View>
+                                                <View style={[styles.row_center, styles.p, { borderRightWidth: 0.5, width: '40%', }]}>
+                                                    {item.tipe_koin === 'plus' ?
+                                                        <Text style={[styles.font_12, { color: colors.GreenSuccess, textAlign: 'center' }]}>+ {item.koin}</Text>
+                                                        :
+                                                        <Text style={[styles.font_12, { color: colors.RedNotif, textAlign: 'center' }]}>- {item.koin}</Text>
+                                                    }
+                                                </View>
+                                                <View style={[styles.row_center, styles.p, { width: '40%', }]}>
+                                                    <Text style={[styles.font_10, { textAlign: 'center' }]}>{item.note}</Text>
+                                                </View>
+                                            </View>
+                                        )
+                                    })}
+                                </ScrollView>
+                                :
+                                <View style={[styles.row_center, styles.p_5]}>
+                                    <Text style={[styles.font_13, { textAlign: 'center' }]}>Tidak ada data</Text>
+                                </View>}
                         </View>
                     </View>
                 </View>
@@ -100,6 +250,36 @@ export default function RewardScreen() {
                     </View> */}
                 </View>
             </View>
+            <Modal visible={showModal} animationType="fade" transparent={true} onRequestClose={() => setShowModal(!showModal)}>
+                <View style={[styles.row_center, { flex: 1, width: Wp('100%'), height: Hp('100%'), backgroundColor: 'transparent', zIndex: 999, }]}>
+                    <View style={[styles.column, styles.p_3, {
+                        width: Wp('90%'), height: Wp('50%'), backgroundColor: colors.White, shadowColor: "#000",
+                        shadowOffset: {
+                            width: 0,
+                            height: 5,
+                        },
+                        shadowOpacity: 0.36,
+                        shadowRadius: 6.68,
+                        elevation: 11,
+                    }]}>
+                        <Text style={[styles.font_14, styles.T_semi_bold, styles.mb_5, { color: colors.BlueJaja }]}>Tarik Saldo</Text>
+
+                        <Text style={styles.font_13}>Masukkan Nominal</Text>
+                        <TextInput keyboardType="numeric" style={[styles.font_13, styles.mb_5, { borderBottomWidth: 0.2 }]} value={nominal} placeholder="20000" onChangeText={(text) => handleChange(text)} />
+                        <View style={styles.row_end}>
+                            <Button onPress={() => setShowModal(false)} mode="contained" color={colors.Silver} labelStyle={[styles.font_12, styles.T_medium, { color: colors.White }]} style={styles.mr_5}>
+                                Tutup
+                            </Button>
+                            <Button onPress={handleRefund} mode="contained" color={colors.BlueJaja} labelStyle={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                Ajukan
+                            </Button>
+                        </View>
+                    </View>
+
+
+
+                </View>
+            </Modal>
         </SafeAreaView >
     )
 }

@@ -17,6 +17,8 @@ export default function checkoutScreen() {
     const dispatch = useDispatch();
     const reduxCheckout = useSelector(state => state.checkout.checkout)
     const reduxAuth = useSelector(state => state.auth.auth)
+    const reduxCoin = useSelector(state => state.user.user.coinFormat)
+
 
     const reduxShipping = useSelector(state => state.checkout.shipping)
     const reduxListPayment = useSelector(state => state.checkout.listPayment)
@@ -52,6 +54,9 @@ export default function checkoutScreen() {
 
     const [rangeDate, setrangeDate] = useState([])
     const [listMonth, setlistMonth] = useState(["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "September", "Desember"])
+    const [useCoin, setUseCoin] = useState(false)
+
+
     useEffect(() => {
         setRefreshControl(false)
         setLoad(false)
@@ -138,9 +143,7 @@ export default function checkoutScreen() {
                             );
                             console.log("Voucher toko " + result.status.message + " " + result.status.code)
                         }
-                        setTimeout(() => {
-                            setloadAs(false)
-                        }, 3000);
+                        setloadAs(false)
                     })
                     .catch(error => {
                         setloadAs(false)
@@ -622,6 +625,12 @@ export default function checkoutScreen() {
         }, 5000);
     }, []);
 
+
+    const handleUseCoin = () => {
+        setUseCoin(!useCoin)
+        getCheckout()
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar
@@ -817,6 +826,7 @@ export default function checkoutScreen() {
                                     <Text numberOfLines={1} style={[styles.font_12, styles.mt_2]}>Berakhir dalam {reduxCheckout.voucherJajaSelected.endDate}</Text>
                                     <View style={[styles.p, { backgroundColor: colors.RedFlashsale, borderRadius: 3 }]}>
                                         <Text numberOfLines={1} style={[styles.font_12, { color: colors.White }]}>- {reduxCheckout.voucherJajaSelected.discountText}</Text>
+                                        {console.log("🚀 ~ file: CheckoutScreen.js ~ line 823 ~ checkoutScreen ~ reduxCheckout.voucherJajaSelected.discountText", reduxCheckout.voucherJajaSelected)}
                                     </View>
                                 </View>
                             </View>
@@ -836,13 +846,24 @@ export default function checkoutScreen() {
                         <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
                         <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Ringkasan Belanja</Text>
                     </View>
+
                     <View style={[styles.row_between_center, styles.p_3]}>
-                        <View style={styles.column}>
+                        <View style={styles.column_center_start}>
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>Total Belanja</Text>
                             {reduxCheckout.voucherJajaType === "diskon" ? <Text style={[styles.font_13, { marginBottom: '2%' }]}>Diskon Belanja</Text> : null}
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>Biaya Pengiriman</Text>
                             {reduxCheckout.voucherJajaType === "ongkir" ? <Text style={[styles.font_13, { marginBottom: '2%' }]}>Diskon Pengiriman</Text> : null}
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>Biaya penanganan</Text>
+                            <View style={[styles.row_start_center, { width: Wp('50%'), marginLeft: '-6.5%', paddingLeft: '-2%', opacity: reduxCoin == 0 ? 0.4 : 1 }]}>
+                                <Checkbox
+                                    disabled={reduxCoin == 0 ? true : false}
+                                    theme={{ mode: 'adaptive' }}
+                                    color={colors.BlueJaja}
+                                    status={useCoin ? 'checked' : 'unchecked'}
+                                    onPress={handleUseCoin}
+                                />
+                                <Text numberOfLines={1} style={[styles.font_13, styles.T_medium, { textAlignVertical: 'center', marginBottom: '-1%' }]}>Koin dimiliki</Text>
+                            </View>
                         </View>
                         <View style={styles.column_center_end}>
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>{reduxCheckout.subTotalCurrencyFormat}</Text>
@@ -850,6 +871,7 @@ export default function checkoutScreen() {
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>{reduxCheckout.shippingCostCurrencyFormat}</Text>
                             {reduxCheckout.voucherJajaType === "ongkir" ? <Text style={[styles.font_13, { marginBottom: '2%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountJajaCurrencyFormat}</Text> : null}
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>Rp0</Text>
+                            <Text numberOfLines={1} style={[styles.font_13, styles.T_medium, styles.py_2, { textAlignVertical: 'center', marginBottom: "-2%", opacity: reduxCoin == 0 ? 0.4 : 1, backgroundColor: colors.White }]}>-{reduxCoin}</Text>
                         </View>
                     </View>
                 </View>

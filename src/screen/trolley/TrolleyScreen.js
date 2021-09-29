@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef, createRef } from 'react'
-import CheckBox from '@react-native-community/checkbox';
-import { View, Text, SafeAreaView, Image, TouchableOpacity, ToastAndroid, FlatList, StatusBar, RefreshControl, TouchableWithoutFeedback, Alert } from 'react-native'
+import { View, Text, SafeAreaView, Image, TouchableOpacity, FlatList, StatusBar, RefreshControl, TouchableWithoutFeedback, Alert } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { styles, Hp, Wp, colors, useNavigation, Appbar, ServiceCart, Loading, ServiceCheckout, useFocusEffect, DefaultNotFound, Utils, } from '../../export'
-import { Button } from 'react-native-paper'
+import { Button, Checkbox } from 'react-native-paper'
 import { useDispatch, useSelector } from "react-redux";
 import Swipeable from 'react-native-swipeable';
 
@@ -11,6 +10,7 @@ export default function TrolleyScreen() {
     let navigation = useNavigation()
     const dispatch = useDispatch()
     const [swipeRef, setSwipeRef] = useState(Object.create(null));
+    const reduxUser = useSelector(state => state.user.user)
 
     const reduxCart = useSelector(state => state.cart)
     const reduxAuth = useSelector(state => state.auth.auth)
@@ -21,6 +21,8 @@ export default function TrolleyScreen() {
     const [disableCheckout, setDisableCheckout] = useState(false);
     const [cartSelected, setSelectedCard] = useState('')
     const [idx, setIndex] = useState(0)
+    const [useCoin, setUseCoin] = useState(false)
+
     if (swipeRef && !Object.keys(swipeRef).length) swipeRef[idx] = createRef();
 
     useEffect(() => {
@@ -90,7 +92,7 @@ export default function TrolleyScreen() {
                 if (result.status.code === 200) {
                     handleApiCart()
                 } else {
-                    ToastAndroid.show(result.status.message, ToastAndroid.LONG, ToastAndroid.CENTER)
+                    Utils.alertPopUp(String(result.status.message))
                 }
                 setTimeout(() => {
                     setDisableCheckout(false)
@@ -144,15 +146,15 @@ export default function TrolleyScreen() {
                 if (result.status.code === 200) {
                 } else if (result.status.code === 400) {
                     if (result.status.message === "quantity cannot more than stock") {
-                        ToastAndroid.show('Stok produk tidak cukup', ToastAndroid.LONG, ToastAndroid.TOP)
+                        Utils.alertPopUp('Stok produk tidak cukup')
                     } else if (result.status.message === 'quantity cannot less than 1') {
 
                     } else {
-
-                        ToastAndroid.show(String(result.status.message) + " => " + String(result.status.code), ToastAndroid.LONG, ToastAndroid.TOP)
+                        Utils.alertPopUp(String(result.status.message) + " => " + String(result.status.code))
                     }
                 } else {
-                    ToastAndroid.show(String(result.status.message) + " => " + String(result.status.code), ToastAndroid.LONG, ToastAndroid.TOP)
+                    Utils.alertPopUp(String(result.status.message) + " => " + String(result.status.code))
+
                     handleFailed(name, indexParent, indexChild)
                 }
                 handleApiCart()
@@ -209,7 +211,7 @@ export default function TrolleyScreen() {
                 }
             })
         } else if (reduxCart.cart.totalCart == 0) {
-            ToastAndroid.show("Pilih salah satu produk yang ingin dibeli!", ToastAndroid.LONG, ToastAndroid.TOP)
+            Utils.alertPopUp("Pilih salah satu produk yang ingin dibeli!")
 
         } else {
             setDisableCheckout(true)
@@ -278,10 +280,10 @@ export default function TrolleyScreen() {
                         return (
                             <View onPress={() => handleSelected(item)} style={[styles.column_center, styles.mb_2, { backgroundColor: colors.White }]}>
                                 <View style={[styles.row_start_center, styles.p_2, { width: '100%', borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}>
-                                    <CheckBox
-                                        disabled={false}
-                                        value={item.isSelected}
-                                        onValueChange={() => handleCheckbox("store", indexParent, "")}
+                                    <Checkbox
+                                        color={colors.BlueJaja}
+                                        status={item.isSelected ? 'checked' : 'unchecked'}
+                                        onPress={() => handleCheckbox("store", indexParent, "")}
                                     />
                                     <Image style={{
                                         width: Hp('5%'),
@@ -312,10 +314,11 @@ export default function TrolleyScreen() {
                                             }}>
                                                 <View onPress={() => handleSelected(item)} style={[styles.row_center, styles.mb_2, styles.p_2]}>
 
-                                                    <CheckBox
-                                                        disabled={false}
-                                                        value={item.isSelected}
-                                                        onValueChange={() => handleCheckbox("cart", indexParent, index)}
+                                                    <Checkbox
+                                                        color={colors.BlueJaja}
+                                                        status={item.isSelected ? 'checked' : 'unchecked'}
+                                                        onPress={() => handleCheckbox("cart", indexParent, index)}
+
                                                     />
                                                     <TouchableWithoutFeedback onPress={() => handleSelected(item)}>
                                                         <Image style={{
@@ -373,14 +376,36 @@ export default function TrolleyScreen() {
                 />
                 : <DefaultNotFound textHead="Ups.." textBody="Tampaknya keranjang anda masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
             }
-            <View style={{ position: 'absolute', bottom: 0, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row', elevation: 3 }}>
-                <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '2%', paddingLeft: '4%', paddingVertical: '1%' }}>
-                    <Text style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja, marginBottom: '-2%' }]}>Subtotal :</Text>
-                    <Text numberOfLines={1} style={[styles.font_18, styles.T_semi_bold, { color: colors.BlueJaja }]}>{reduxCart.cart.totalCartCurrencyFormat ? reduxCart.cart.totalCartCurrencyFormat : 'Rp0'}</Text>
+            <View style={{ position: 'absolute', bottom: 0, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'column', elevation: 3 }}>
+                {/* <View style={[styles.row_between_center, styles.px_3, { height: Hp('6%'), backgroundColor: reduxCart.cart.totalCart > 0 ? colors.White : colors.WhiteGrey }]}>
+                    <View style={[styles.row_start_center]}>
+                        <Image source={require('../../assets/icons/coin.png')} style={[styles.icon_14, styles.mr_5]} />
+                        <Text numberOfLines={1} style={[styles.font_13, { textAlignVertical: 'center', marginBottom: "-2%" }]}>Koin dimiliki {reduxUser.coinFormat}</Text>
+                    </View>
+
+                    <Checkbox
+                        color={colors.BlueJaja}
+                        status={useCoin ? 'checked' : 'unchecked'}
+                        disabled={reduxCart.cart.totalCart > 0 ? false : true}
+                        onPress={() => {
+                            if (reduxCart.cart.totalCart > 0) {
+                                setUseCoin(!useCoin)
+                            } else {
+                                Utils.alertPopUp('Pilih salah satu produk yang ingin dibeli!')
+                                setUseCoin(false)
+                            }
+                        }}
+                    />
+                </View> */}
+                <View style={[styles.row, { height: Hp('7%') }]}>
+                    <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '2%', paddingLeft: '4%', paddingVertical: '1%' }}>
+                        <Text style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja, marginBottom: '-2%' }]}>Subtotal :</Text>
+                        <Text numberOfLines={1} style={[styles.font_18, styles.T_semi_bold, { color: colors.BlueJaja }]}>{reduxCart.cart.totalCartCurrencyFormat ? reduxCart.cart.totalCartCurrencyFormat : 'Rp0'}</Text>
+                    </View>
+                    <Button disabled={disableCheckout} onPress={handleCheckout} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_14, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
+                        Checkout
+                    </Button>
                 </View>
-                <Button disabled={disableCheckout} onPress={handleCheckout} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_14, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
-                    Checkout
-                </Button>
             </View>
         </SafeAreaView >
     )

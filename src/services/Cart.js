@@ -1,4 +1,4 @@
-import { ToastAndroid, Alert } from 'react-native'
+import { Alert } from 'react-native'
 import { Utils } from '../export';
 export async function getCart(auth) {
     var myHeaders = new Headers();
@@ -34,7 +34,7 @@ export async function getCart(auth) {
         })
         .catch(error => {
             if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
-                ToastAndroid("Tidak dapat hahaha, periksa kembali koneksi anda!")
+                Utils.alertPopUp('Tidak dapat terhubung, periksa kembali koneksi internet anda!')
             } else {
                 Alert.alert(
                     "Error",

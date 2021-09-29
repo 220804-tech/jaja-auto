@@ -62,6 +62,7 @@ export default function OrdersFailed() {
                     keyExtractor={item => item.invoice}
 
                     renderItem={({ item }) => {
+                        console.log("🚀 ~ file: OrdersFailed.js ~ line 63 ~ OrdersFailed ~ item", item)
                         return (
                             <TouchableOpacity style={Os.card} onPress={() => handleOrderDetails(item)}>
                                 <View style={[styles.row_between_center, styles.px_2, styles.mb_3, { width: '100%' }]}>
@@ -72,7 +73,7 @@ export default function OrdersFailed() {
                                         </View>
                                         : null}
                                     <View style={[styles.row_end_center, { width: '40%', }]}>
-                                        <Text style={[styles.font_11, { color: colors.RedNotif }]}>Dibatalkan {item.cancelBy}</Text>
+                                        <Text style={[styles.font_11, styles.T_medium, { color: colors.RedNotif }]}>{String('Dibatalkan  ' + item.cancelBy).toUpperCase()}</Text>
                                     </View>
                                 </View>
 

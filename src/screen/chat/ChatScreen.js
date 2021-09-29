@@ -119,14 +119,15 @@ export default function ChatScreen({ route }) {
 
     const handleSend = (image) => {
         console.log("file: ChatScreen.js ~ line 56 ~ handleSend ~ image", image)
-        if (isiChat.length > 0 || image) {
-            let chat = isiChat.length > 0 ? isiChat : 'Mengirim gambar'
+        if (isiChat.length > 0 || image || selectedOrder || selectedProduct) {
+            let chat = isiChat.length > 0 ? isiChat : image ? 'Mengirim gambar' : selectedOrder && Object.keys(selectedOrder).length ? 'Pesanan No. ' + selectedOrder.invoice : selectedProduct.name
             var message = {
                 message: isiChat,
                 time: firebaseDatabase.ServerValue.TIMESTAMP,
                 date: new Date().toString(),
                 from: reduxUser.uid,
-                image: image
+                image: image,
+                order: null
             }
             if (data && reduxAuth) {
                 console.log("🚀 ~ file: ChatScreen.js ~ line 72 ~ handleSend ~ firebaseDatabase.ServerValue.increment", firebaseDatabase.ServerValue.increment)
@@ -135,8 +136,7 @@ export default function ChatScreen({ route }) {
                         handleSendProduct()
                     }
                     if (selectedOrder) {
-                        let text = 'No. ' + selectedOrder.invoice + '\n' + selectedOrder.status + '\n\n' + message.message
-                        message.message = text
+                        message.order = selectedOrder
                     }
                     setTimeout(() => {
                         var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
@@ -146,6 +146,7 @@ export default function ChatScreen({ route }) {
                         firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: { text: chat, time: new Date().toString() }, amount: 1, time: new Date().toString() });
                         let fire = firebaseDatabase().ref("/people/" + data.id).limitToLast(20).on("value", async function (snapshot) {
                             let item = await snapshot.val();
+                            setselectedOrder(null)
                             if (item.token) {
                                 await Firebase.notifChat(item.token, { body: chat, title: reduxUser.name })
                             }
@@ -199,12 +200,14 @@ export default function ChatScreen({ route }) {
 
 
     const renderRow = ({ item, index }) => {
+        let dateNow = String(item.date).slice(0, 3);
+        let dateRight = String(item.date).slice(4, 15)
         return (
             <View style={{ width: Wp("100%"), paddingTop: "2%" }}>
                 {item.date && index && String(messageList[index].date) !== "undefined" > 0 && !item.productTitle ?
                     String(messageList[index].date).slice(6, 10) !== String(messageList[index - 1].date).slice(6, 10) ?
                         <View style={{ alignSelf: 'center', marginVertical: '3%' }}>
-                            <Text style={{ fontSize: 18, color: colors.BlackGrey, fontFamily: 'Poppins-Regular' }}>{String(messageList[index].date).slice(0, 10)}</Text>
+                            <Text style={[style.font_16, { color: colors.BlackGrey }]}>{dateNow === 'Mon' ? "Senin " + dateRight : dateNow == 'Tue' ? 'Selasa ' + dateRight : dateNow == 'Wed' ? 'Rabu ' + dateRight : dateNow == 'Thu' ? 'Kamis ' + dateRight : dateNow === 'Fri' ? 'Jumat ' + dateRight : dateNow == 'Sat' ? 'Sabtu ' + dateRight : 'Minggu ' + dateRight}</Text>
                         </View> : null
                     : null
                 }
@@ -235,20 +238,31 @@ export default function ChatScreen({ route }) {
                                             backgroundColor: colors.BlueJaja,
                                             padding: 10,
                                         }}>
-                                        <Text
-                                            adjustsFontSizeToFit
-                                            style={{
-                                                fontSize: 14,
-                                                color: "#FFF", textAlign: "right"
-                                            }}>
-                                            {item.message}
-                                        </Text>
-                                        {item.date ?
+                                        {item.order && Object.keys(item.order).length ?
+                                            <>
+                                                <Text style={[style.font_13, { textAlign: "right", color: colors.White }]}>
+                                                    No. {item.order.invoice}
+                                                </Text>
+                                                <Text style={[style.font_11, style.mb_5, { textAlign: "right", color: colors.White }]}>
+                                                    {item.order.status}
+                                                </Text>
+                                                <View style={[style.column_end_center, { width: Wp('25%'), height: Wp('25%'), alignSelf: 'flex-end', backgroundColor: colors.BlueLight }]}>
+                                                    <Image source={{ uri: item.order.imageOrder }} style={{ width: '100%', height: '100%', resizeMode: 'contain' }} />
+                                                </View>
+                                            </>
+                                            : null}
+                                        {item.message ?
                                             <Text
                                                 style={{
-                                                    fontSize: Hp("1.1"),
+                                                    fontSize: 14,
                                                     color: "#FFF", textAlign: "right"
                                                 }}>
+                                                {item.message}
+                                            </Text>
+                                            : null}
+
+                                        {item.date ?
+                                            <Text style={[style.font_11, style.mt_2, { color: colors.White, alignSelf: 'flex-end' }]}>
                                                 {item.date.slice(16, 21)}
                                             </Text>
                                             : null
@@ -337,6 +351,7 @@ export default function ChatScreen({ route }) {
                             }}>
                                 <View style={{
                                     borderRadius: 50,
+
                                     width: Hp("6%"),
                                     height: Hp("6%"),
                                     backgroundColor: colors.BlueJaja,
@@ -465,17 +480,14 @@ export default function ChatScreen({ route }) {
 
     return (
         <SafeAreaView style={style.container}>
-            <View style={{ position: 'absolute' }}>
-                <Appbar back={true} title={data && data.name ? data.name : ''} />
-
-            </View>
-            <SafeAreaProvider style={style.container}>
+            <Appbar back={true} title={data && data.name ? data.name : ''} />
+            <SafeAreaProvider style={[style.container]}>
                 {loading ? <Loading /> : null}
                 <ImageBackground source={require('../../assets/images/bgChat3.jpg')} style={{ width: '100%', height: '100%', paddingBottom: Math.max(insets.bottom, 0) }}>
                     <FlatList
                         inverted={-1}
                         ref={flatlist}
-                        style={[style.pt_2, style.px_3, { height: '92%', }]}
+                        style={[style.pt_2, style.px_2, { height: '92%', }]}
                         data={messageList}
                         renderItem={renderRow}
                         keyExtractor={(item, index) => String(index)}
@@ -485,6 +497,17 @@ export default function ChatScreen({ route }) {
                     style={styles.container}
                     behavior={Platform.OS === "ios" ? "padding" : null}
                 > */}
+
+                    {selectedOrder && Object.keys(selectedOrder).length ?
+                        <View style={[style.row_around_center, style.mr_5, style.mb_2, style.p, { borderRadius: 7, backgroundColor: colors.White, width: '55%', alignSelf: 'flex-end' }]}>
+                            <Text style={[style.font_13, { marginBottom: '-1%', alignSelf: 'center', textAlignVertical: 'center', color: colors.BlueJaja }]}>
+                                No. {selectedOrder.invoice}
+                            </Text>
+                            <TouchableRipple style={[style.p_3]} onPress={() => setselectedOrder(null)}>
+                                <Image source={require('../../assets/icons/close.png')} style={[style.icon_13, { tintColor: colors.BlackGrey }]} />
+                            </TouchableRipple>
+                        </View>
+                        : null}
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ width: '170%', paddingHorizontal: '4%' }}>
                         {listChat.map(item => {
                             return (
@@ -494,9 +517,12 @@ export default function ChatScreen({ route }) {
                             )
                         })}
                     </ScrollView>
-                    <View style={[style.row_around_center, style.px_2, style.mb_2, { height: '7%', backgroundColor: 'transparent', }]}>
+                    <View style={[style.row_around_center, style.px_2, style.mb_2, { height: Hp('7%'), backgroundColor: 'transparent', }]}>
 
-                        <View style={[style.row_start_center, { width: "80%", height: '77%', borderRadius: 100, backgroundColor: colors.White, opacity: 0.9, elevation: 1 }]}>
+                        <View style={[style.row_start_center, {
+                            width: "80%", height: '77%', borderRadius: 100, backgroundColor: colors.White, opacity: 0.9, borderWidth: 0.2,
+                            borderColor: colors.BlueJaja,
+                        }]}>
                             <TextInput
                                 style={[style.font_14, { width: isiChat.length ? '90%' : '82%', borderColor: "gray", borderBottomLeftRadius: 100, borderTopLeftRadius: 100, paddingHorizontal: 20, marginBottom: '-1%' }]}
                                 underlineColorAndroid="transparent"
@@ -541,7 +567,7 @@ export default function ChatScreen({ route }) {
 
 
             </SafeAreaProvider >
-        </SafeAreaView>
+        </SafeAreaView >
     );
 }
 

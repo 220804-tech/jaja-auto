@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, FlatList, Alert, Touchable } from 'react-native';
+import { TouchableRipple } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-import { Appbar, styles as style, colors, Wp, Hp, Utils, DefaultNotFound } from '../../export';
+import { Appbar, styles as style, colors, Wp, Hp, Utils, DefaultNotFound, useNavigation } from '../../export';
 function NotifikasiScreen(props) {
     const [notifData, setnotifData] = useState([]);
     const [shimmer, setshimmer] = useState(Boolean);
     const reduxUser = useSelector(state => state.user.user)
+    const reduxAuth = useSelector(state => state.auth.auth)
+
+    const navigation = useNavigation()
     const dispatch = useDispatch()
 
     const handleNotifikasi = () => {
@@ -13,26 +17,30 @@ function NotifikasiScreen(props) {
             method: 'GET',
             redirect: 'follow'
         };
-
-        console.log("file: NotifikasiScreen.js ~ line 20 ~ handleNotifikasi ~ reduxUser.id", reduxUser.id)
         fetch(`https://jaja.id/backend/notifikasi/${reduxUser ? reduxUser.id : ''}`, requestOptions)
-            .then(response => response.json())
+            .then(response => response.text())
             .then(result => {
-                if (result.status.code === 200 || result.status.code === 204) {
-                    setnotifData(result.data.notifikasi)
-                } else {
-                    Alert.alert(
-                        "Error with status code : 15001",
-                        String(result.status.message) + " => " + String(result.status.code),
-                        [
-                            {
-                                text: "TUTUP",
-                                onPress: () => console.log("Cancel Pressed"),
-                                style: "cancel"
-                            },
-                        ]
-                    );
-                    return null
+                try {
+                    let data = JSON.parse(result)
+                    if (data.status.code === 200 || data.status.code === 204) {
+                        setnotifData(data.data.notifikasi)
+                    } else {
+                        Alert.alert(
+                            "Error with status code : 15001",
+                            String(data.status.message) + " => " + String(data.status.code),
+                            [
+                                {
+                                    text: "TUTUP",
+                                    onPress: () => console.log("Cancel Pressed"),
+                                    style: "cancel"
+                                },
+                            ]
+                        );
+                        return null
+                    }
+                    return data
+                } catch (error) {
+                    alert("saaffytguhijokl " + result)
                 }
             })
             .catch(error => {
@@ -65,8 +73,48 @@ function NotifikasiScreen(props) {
         }
     }
 
-    const handleShow = (item) => {
-        console.log("🚀 ~ file: NotifikasiScreen.js ~ line 96 ~ handleShow ~ item", item)
+    const handleRead = (item) => {
+        handleOrderDetails(item)
+
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", reduxAuth);
+        myHeaders.append("Cookie", "ci_session=7vgloal55kn733tsqch0v7lh1tfrcilq");
+
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        fetch(`https://jaja.id/backend/notifikasi/updateNotif?id_notif=${item.id_notif}`, requestOptions)
+            .then(response => response.text())
+            .then(result => {
+                try {
+                    let data = JSON.parse(result)
+                    if (data.status.code == 200) {
+                        handleNotifikasi()
+                    } else {
+
+                    }
+                    return data
+                } catch (error) {
+                    alert('jaja', result)
+                }
+            })
+            .catch(error => {
+                Utils.handleError(error, 'Error with status code : 12002')
+            });
+    }
+
+    const handleOrderDetails = (item) => {
+        console.log("🚀 ~ file: NotifikasiScreen.js ~ line 110 ~ handleOrderDetails ~ item", item.order_id)
+        console.log("🚀 ~ file: NotifikasiScreen.js ~ line 110 ~ handleOrderDetails ~ item", item.invoice)
+
+        dispatch({ type: 'SET_INVOICE', payload: item.invoice })
+        dispatch({ type: 'SET_ORDER_STATUS', payload: null })
+
+        navigation.navigate('OrderDetails')
     }
 
     return (
@@ -78,21 +126,19 @@ function NotifikasiScreen(props) {
                     // inverted={-1}
                     keyExtractor={item => item.notificationId}
                     renderItem={({ item, index }) => {
-                        console.log("🚀 ~ file: NotifikasiScreen.js ~ line 80 ~ NotifikasiScreen ~ item", item)
                         return (
-                            <TouchableOpacity onPress={() => handleShow(item)}>
-                                <TouchableOpacity key={index} style={styles.card} onPress={() => handleShow(item)}>
+                            <TouchableRipple key={index} style={[styles.card, { backgroundColor: item.read == 'T' ? colors.BlueLight : colors.White, }]} onPress={() => handleRead(item)}>
+                                <>
                                     <View style={[style.row_between_center, { flex: 0 }]}>
                                         <Text style={styles.textDate}>{item.invoice}</Text>
                                         <Text style={styles.textDate}>{String(item.created_date).slice(0, 16)} {item.time}</Text>
                                     </View>
-
                                     <View style={styles.bodyCard}>
                                         <Text style={styles.textTitle}>{item.title}</Text>
                                         <Text style={styles.textBody}>{item.text}</Text>
                                     </View>
-                                </TouchableOpacity>
-                            </TouchableOpacity>
+                                </>
+                            </TouchableRipple>
                         )
                     }}
                 />
@@ -108,7 +154,6 @@ const styles = StyleSheet.create({
     card: {
         flex: 0,
         backgroundColor: 'white',
-        marginBottom: '2%',
         flexDirection: 'column',
         paddingTop: '2%',
         paddingBottom: '5%',

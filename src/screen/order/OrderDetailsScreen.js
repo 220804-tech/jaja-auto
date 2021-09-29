@@ -80,15 +80,25 @@ export default function OrderDetailsScreen() {
         };
 
         fetch(`https://jaja.id/backend/order/${reduxOrderInvoice}`, requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                setRefreshing(false)
-                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 85 ~ getItem ~ result", result)
-                if (result.status.code === 200 || result.status.code === 204) {
-                    setDetails(result.data)
-                    // dispatch({ type: 'SET_INVOICE', payload: result.data.items[0].invoice })
-                } else {
-                    Utils.handleErrorResponse(result, "Error with status code : 22003");
+            .then(response => response.text())
+            .then(data => {
+                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 85 ~ getItem ~ data", data)
+                try {
+                    let result = JSON.parse(data)
+                    setRefreshing(false)
+                    if (result.status.code === 200 || result.status.code === 204) {
+                        setDetails(result.data)
+                        if (!reduxOrderStatus) {
+                            let status = result.data.status;
+                            dispatch({ type: 'SET_ORDER_STATUS', payload: status === 'notPaid' ? "Menunggu Pembayaran" : status === 'waitConfirm' ? 'Menunggu Konfirmasi' : status === 'prepared' ? 'Sedang Disiapkan' : status === 'canceled' ? 'Pesanan Dibatalkan' : status === 'done' ? 'Pesanan Selesai' : null })
+
+                        }
+                        // dispatch({ type: 'SET_INVOICE', payload: result.data.items[0].invoice })
+                    } else {
+                        Utils.handleErrorResponse(result, "Error with status code : 22003");
+                    }
+                } catch (error) {
+                    Alert(data)
                 }
             })
             .catch(error => {
@@ -204,12 +214,12 @@ export default function OrderDetailsScreen() {
 
 
     }
-    const handleChat = (store) => {
-        let dataSeller = store
+    const handleChat = (item) => {
+        let dataSeller = item.store
         dataSeller.chat = reduxUser.user.uid + dataSeller.uid
         dataSeller.id = dataSeller.uid
         if (reduxAuth) {
-            navigation.navigate("IsiChat", { data: dataSeller, order: { invoice: reduxOrderInvoice, status: reduxOrderStatus } })
+            navigation.navigate("IsiChat", { data: dataSeller, order: { invoice: reduxOrderInvoice, status: reduxOrderStatus, imageOrder: item.products[0].image } })
         } else {
             navigation.navigate('Login', { navigate: "OrderDetails" })
         }
@@ -217,15 +227,15 @@ export default function OrderDetailsScreen() {
 
     const handleOpenLink = async (url) => {
         console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 219 ~ handleOpenLink ~ url", url)
-        const supported = await Linking.canOpenURL(url);
+        // const supported = await Linking.canOpenURL(url);
 
-        if (supported) {
-            // Opening the link with some app, if the URL scheme is "http" the web link should be opened
-            // by some browser in the mobile
-            await Linking.openURL(url);
-        } else {
-            Alert.alert(`Don't know how to open this URL: ${url}`);
-        }
+        // if (supported) {
+        // Opening the link with some app, if the URL scheme is "http" the web link should be opened
+        // by some browser in the mobile
+        Linking.openURL(url);
+        // } else {
+        //     Alert.alert(`Don't know how to open this URL: ${url}`);
+        // }
     }
 
     return (
@@ -301,7 +311,7 @@ export default function OrderDetailsScreen() {
                                         <Image style={[styles.icon_19, { marginRight: '3%', tintColor: colors.BlueJaja }]} source={require('../../assets/icons/store.png')} />
                                         <Text onPress={() => handleStore(item.store)} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.store.name}</Text>
                                     </View>
-                                    <TouchableRipple onPress={() => handleChat(item.store)} style={[styles.row_center, styles.px_2, { backgroundColor: colors.BlueJaja, paddingVertical: '1.5%', borderRadius: 3 }]}>
+                                    <TouchableRipple onPress={() => handleChat(item)} style={[styles.row_center, styles.px_2, { backgroundColor: colors.BlueJaja, paddingVertical: '1.5%', borderRadius: 3 }]}>
                                         <View style={styles.row}>
                                             <Text style={[styles.font_11, styles.T_medium, { color: colors.White }]}>
                                                 Chat Penjual
