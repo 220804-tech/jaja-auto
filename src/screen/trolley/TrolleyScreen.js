@@ -195,7 +195,7 @@ export default function TrolleyScreen() {
         if (reduxCart.cart.totalData != '0' && disableCheckout === false && reduxCart.cart.totalCart != 0) {
             navigation.navigate('Checkout')
             dispatch({ type: 'SET_CHECKOUT', payload: {} })
-            ServiceCheckout.getCheckout(reduxAuth ? reduxAuth : auth).then(res => {
+            ServiceCheckout.getCheckout(reduxAuth ? reduxAuth : auth, 0).then(res => {
                 if (res) {
                     dispatch({ type: 'SET_CHECKOUT', payload: res })
                 }

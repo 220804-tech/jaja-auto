@@ -60,7 +60,6 @@ export default function ProfileScreen(props) {
 
       .then(response => response.json())
       .then(result => {
-        console.log("🚀 ~ file: ProfileScreen.js ~ line 65 ~ getAccount ~ result", result.data.items)
         if (result && Object.keys(result).length && result.status.code == 200) {
           setAccount(true)
         } else {

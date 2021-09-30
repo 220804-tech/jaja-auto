@@ -38,18 +38,18 @@ export default function StoreScreen() {
         }
     }, [reduxStoreProduct, reduxStore])
 
-    const [routes] = useState([
-        { key: 'first', title: 'Halaman Toko' },
-        { key: 'second', title: 'Produk' },
-        { key: 'third', title: 'Kategori' },
+        const [routes] = useState([
+            { key: 'first', title: 'Halaman Toko' },
+            { key: 'second', title: 'Produk' },
+            { key: 'third', title: 'Kategori' },
 
-    ]);
+        ]);
 
-    const renderScene = SceneMap({
-        first: MainPage,
-        second: Products,
-        third: Posts,
-    });
+        const renderScene = SceneMap({
+            first: MainPage,
+            second: Products,
+            third: Posts,
+        });
 
     const handleSearch = (text) => {
         if (text && text !== " " && text !== "  " && text !== "   " && text !== "    " && text !== "     ") {

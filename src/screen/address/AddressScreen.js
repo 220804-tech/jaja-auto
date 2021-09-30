@@ -152,7 +152,7 @@ export default function index(props) {
                             dispatch({ type: 'SET_USER', payload: res })
 
                             if (props.route.params) {
-                                ServiceCheckout.getCheckout(auth).then(reps => {
+                                ServiceCheckout.getCheckout(auth, null).then(reps => {
                                     if (reps) {
                                         dispatch({ type: 'SET_CHECKOUT', payload: reps })
                                         // setTimeout(() => {

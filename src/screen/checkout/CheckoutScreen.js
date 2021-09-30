@@ -69,16 +69,13 @@ export default function checkoutScreen() {
         if (voucherOpen) {
             actionSheetVoucher.current?.setModalVisible(true)
         }
-        if (vouchers) {
-            console.log("🚀 ~ file: CheckoutScreen.js ~ line 79 ~ useEffect ~ vouchers")
-        }
         if (Object.keys(reduxCheckout).length) {
             setLoading(false)
         } else {
             setLoading(true)
         }
 
-    }, [reduxCheckout, voucherOpen, vouchers, reduxShipping])
+    }, [reduxCheckout, voucherOpen, reduxShipping, useCoin])
 
     useEffect(() => {
         if (selectedSubPayment) {
@@ -88,10 +85,10 @@ export default function checkoutScreen() {
     }, [selectedSubPayment])
 
     const getCheckout = () => {
-        ServiceCheckout.getCheckout(reduxAuth).then(res => {
+        ServiceCheckout.getCheckout(reduxAuth, useCoin ? 0 : 1).then(res => {
             if (res) {
                 dispatch({ type: 'SET_CHECKOUT', payload: res })
-                actionSheetVoucher.current?.setModalVisible()
+                actionSheetVoucher.current?.setModalVisible(false)
             }
         })
         // dispatch({ type: 'SET_ACTION_SHEET', payload: true })
@@ -130,6 +127,9 @@ export default function checkoutScreen() {
                 fetch("https://jaja.id/backend/checkout/selectedVoucherStore", requestOptions)
                     .then(response => response.json())
                     .then(result => {
+                        setTimeout(() => {
+                            setloadAs(false)
+                        }, 200);
                         if (result.status.code === 200) {
                             getCheckout();
                         } else {
@@ -143,7 +143,7 @@ export default function checkoutScreen() {
                             );
                             console.log("Voucher toko " + result.status.message + " " + result.status.code)
                         }
-                        setloadAs(false)
+
                     })
                     .catch(error => {
                         setloadAs(false)
@@ -252,7 +252,7 @@ export default function checkoutScreen() {
                 .then(result => {
                     console.log("🚀 ~ file: CheckoutScreen.js ~ line 207 ~ handleClaimVoucher ~ result", result.status)
                     if (result.status.code === 200) {
-                        ServiceCheckout.getCheckout(reduxAuth).then(res => {
+                        ServiceCheckout.getCheckout(reduxAuth, null).then(res => {
                             setTimeout(() => setloadAs(false), 500);
                             if (res) {
                                 // setCount(count + 1)
@@ -310,7 +310,7 @@ export default function checkoutScreen() {
                 .then(result => {
                     setTimeout(() => setloadAs(false), 500);
                     if (result.status.code === 200) {
-                        ServiceCheckout.getCheckout(reduxAuth).then(res => {
+                        ServiceCheckout.getCheckout(reduxAuth, null).then(res => {
                             if (res) {
                                 // setCount(count + 1)
                                 setvoucherOpen('jaja')
@@ -502,6 +502,10 @@ export default function checkoutScreen() {
                                 newArr[index] = { "note": "" }
                             }
                         }
+                        let raaw = {
+                            newArr,
+                            koin: true
+                        }
 
                         setTimeout(() => {
 
@@ -606,8 +610,9 @@ export default function checkoutScreen() {
     }
     const onRefresh = useCallback(() => {
         setRefreshControl(true)
-        ServiceCheckout.getCheckout(reduxAuth).then(res => {
+        ServiceCheckout.getCheckout(reduxAuth, null).then(res => {
             if (res) {
+                console.log("🚀 ~ file: CheckoutScreen.js ~ line 616 ~ ServiceCheckout.getCheckout ~ res", res)
                 dispatch({ type: 'SET_CHECKOUT', payload: res })
                 ToastAndroid.show("Updated", ToastAndroid.LONG, ToastAndroid.CENTER)
                 setTimeout(() => {
@@ -626,7 +631,8 @@ export default function checkoutScreen() {
     }, []);
 
 
-    const handleUseCoin = () => {
+    const handleUseCoin = async () => {
+        await ServiceCheckout.useCoin(reduxAuth, !useCoin)
         setUseCoin(!useCoin)
         getCheckout()
     }
@@ -921,7 +927,6 @@ export default function checkoutScreen() {
                                 keyExtractor={(item) => item.id}
                                 extraData={voucherOpen === "store" ? vouchers : reduxCheckout.voucherJaja}
                                 renderItem={({ item, index }) => {
-                                    console.log("file: CheckoutScreen.js ~ line 984 ~ checkoutScreen ~ item", item)
                                     return (
                                         <View style={[styles.row_center, styles.mb_3]}>
                                             <View style={[styles.row, { width: '100%', height: Wp('25%'), backgroundColor: colors.White, borderTopWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, borderColor: colors.BlueJaja }]}>

@@ -1,5 +1,7 @@
 import { ToastAndroid, Alert } from 'react-native'
-export async function getCheckout(auth) {
+import { Utils } from '../export';
+export async function getCheckout(auth, coin) {
+    console.log("🚀 ~ file: Checkout.js ~ line 4 ~ getCheckout ~ coin", coin)
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);
     myHeaders.append("Cookie", "ci_session=r59c24ad1race70f8lc0h1v5lniiuhei");
@@ -11,28 +13,17 @@ export async function getCheckout(auth) {
         redirect: 'follow'
     };
 
-    return await fetch("https://jaja.id/backend/checkout", requestOptions)
+    return await fetch(`https://jaja.id/backend/checkout?isCoin=${coin}`, requestOptions)
         .then(response => response.json())
         .then(result => {
             if (result.status.code === 200) {
-                console.log("🚀 ~ file: Checkout.js ~ line 18 ~ getCheckout ~ result.status.code", result.status.code)
                 return result.data;
             } else {
-                Alert.alert(
-                    "Jaja.id",
-                    String(result.status.message) + " => " + result.status.code,
-                    [
-                        {
-                            text: "TUTUP",
-                            onPress: () => console.log("Cancel Pressed"),
-                            style: "cancel"
-                        },
-                    ]
-                );
+                Utils.handleErrorResponse(result, 'Error with status code : 12056')
                 return null
             }
         })
-        .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+        .catch(error => Utils.handleError(error, 'Error with status code : 12057'));
 }
 
 export async function getShipping(auth) {
@@ -108,4 +99,41 @@ export async function getPayment(auth, orderId) {
             return result;
         })
         .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+}
+
+
+export async function useCoin(auth, status) {
+    console.log("🚀 ~ file: Checkout.js ~ line 106 ~ useCoin ~ status", status)
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", auth);
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Cookie", "ci_session=3duhmnjf8b13ub5905n38nm57kmfnfkv");
+
+    var raw = JSON.stringify({
+        "koin": status
+    });
+
+    var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        redirect: 'follow',
+        body: raw,
+    };
+
+    return await fetch("https://jaja.id/backend/checkout/hitungPakeKoin", requestOptions)
+        .then(response => response.json())
+        .then(result => {
+            console.log("🚀 ~ file: Checkout.js ~ line 122 ~ useCoin ~ result", result)
+            if (result.status.code === 200) {
+                return result.data.data
+            } else {
+                Utils.handleErrorResponse(result, 'Error with status code : 12054')
+                return false
+            }
+        })
+        .catch(error => {
+            console.log("🚀 ~ file: Checkout.js ~ line 131 ~ useCoin ~ error", error)
+            Utils.handleError(error, 'Error with status code : 12055')
+            return false
+        });
 }
