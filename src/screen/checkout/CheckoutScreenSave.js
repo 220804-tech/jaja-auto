@@ -523,7 +523,7 @@ export default function checkoutScreen() {
                                 redirect: 'follow'
                             };
 
-                            fetch("https://jaja.id/backend/checkout/test", requestOptions)
+                            fetch("https://jaja.id/backend/checkout", requestOptions)
                                 .then(response => response.text())
                                 .then(result => {
                                     error = false
