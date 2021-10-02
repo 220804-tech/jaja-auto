@@ -2,11 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { SafeAreaView, Text, View, TouchableOpacity, ScrollView, StyleSheet, FlatList, Image, RefreshControl, Alert, ToastAndroid, TouchableHighlight, TouchableWithoutFeedback } from "react-native";
 import { Paragraph, Switch, Appbar } from "react-native-paper";
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
-import { colors, styles as style, ServiceUser, ServiceCheckout, Loading } from '../../export'
+import { colors, styles as style, ServiceUser, ServiceCheckout, Loading, Hp } from '../../export'
 import * as Service from '../../services/Address';
 import { useDispatch, useSelector } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import Swipeable from 'react-native-swipeable';
+import { StatusBar } from 'native-base';
 
 export default function index(props) {
     const dispatch = useDispatch()
@@ -276,8 +277,10 @@ export default function index(props) {
     }
     return (
         <SafeAreaView style={[style.container, { backgroundColor: colors.BlueJaja }]}>
+            <StatusBar translucent={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
+
             {loading ? <Loading /> : null}
-            <Appbar.Header style={style.appBar}>
+            <Appbar.Header style={[style.appBar, { height: Hp('7%') }]}>
                 <View style={style.row_start_center}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Image style={style.appBarButton} source={require('../../assets/icons/arrow.png')} />
@@ -288,21 +291,23 @@ export default function index(props) {
                     <Image style={style.appBarButton} source={require('../../assets/icons/more.png')} />
                 </TouchableOpacity>
             </Appbar.Header>
-            <ScrollView
-                refreshControl={
-                    <RefreshControl refreshing={refreshControl} onRefresh={onRefresh} />
-                }
-                style={{ backgroundColor: colors.White }}
-                contentContainerStyle={{ paddingBottom: '15%' }}>
-                {reduxUser && reduxUser.length ?
-                    <FlatList
-                        data={reduxUser}
-                        keyExtractor={(item, idx) => String(idx)}
-                        renderItem={renderItem}
-                    /> :
-                    <Text style={[style.font_14, style.my_5, style.py_5, { alignSelf: 'center' }]}>Alamat kamu masih kosong!</Text>
-                }
-            </ScrollView>
+            <View style={style.container}>
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl refreshing={refreshControl} onRefresh={onRefresh} />
+                    }
+                    style={{ backgroundColor: colors.White }}
+                    contentContainerStyle={{ paddingBottom: '15%' }}>
+                    {reduxUser && reduxUser.length ?
+                        <FlatList
+                            data={reduxUser}
+                            keyExtractor={(item, idx) => String(idx)}
+                            renderItem={renderItem}
+                        /> :
+                        <Text style={[style.font_14, style.my_5, style.py_5, { alignSelf: 'center' }]}>Alamat kamu masih kosong!</Text>
+                    }
+                </ScrollView>
+            </View>
         </SafeAreaView>
     )
 }

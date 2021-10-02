@@ -162,7 +162,7 @@ export default function map(props) {
     }
     return (
         <SafeAreaView style={style.container}>
-            <View style={style.appBar}>
+            <View style={style.appBar2}>
                 <View style={[style.row_start_center, { flex: 1 }]}>
                     <TouchableOpacity onPress={() => props.status("edit")}>
                         <Image style={style.appBarButton} source={require('../../assets/icons/arrow.png')} />

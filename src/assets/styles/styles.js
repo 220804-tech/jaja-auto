@@ -148,6 +148,8 @@ export const styles = StyleSheet.create({
     priceAfter: { fontSize: 14, fontFamily: 'Poppins-Regular', color: colors.RedFlashsale },
 
     appBar: { zIndex: 1000, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', backgroundColor: '#64B0C9', height: Hp('11%'), width: Wp('100%'), color: colors.siplahDefault, paddingHorizontal: '4%', paddingBottom: '4%' },
+    appBar2: { zIndex: 1000, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#64B0C9', height: Hp('7%'), width: Wp('100%'), color: colors.siplahDefault, paddingHorizontal: '4%' },
+
     appBarText: { color: 'white', fontSize: 16, fontFamily: 'Poppins-SemiBold', },
     appBarButton: { tintColor: colors.White, height: 25, width: 25 },
 

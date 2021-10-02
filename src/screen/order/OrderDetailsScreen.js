@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, createRef } from 'react'
-import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Linking, ToastAndroid, Alert, RefreshControl, Modal, FlatList,ActivityIndicator } from 'react-native'
+import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Linking, ToastAndroid, Alert, RefreshControl, Modal, FlatList, ActivityIndicator } from 'react-native'
 import { Appbar, colors, styles, Wp, Hp, useNavigation, useFocusEffect, Loading, Utils, ServiceStore, ServiceCheckout } from '../../export'
 import Clipboard from '@react-native-community/clipboard';
 import { useDispatch, useSelector } from "react-redux";
@@ -16,7 +16,7 @@ export default function OrderDetailsScreen() {
     const [refreshing, setRefreshing] = useState(null)
     const [selectedPayment, setselectedPayment] = useState('')
     const [selectedSubPayment, setselectedSubPayment] = useState('')
-    const [orderPaymentRecent,setOrderPaymentRecent]=useState({
+    const [orderPaymentRecent, setOrderPaymentRecent] = useState({
         "id_token": "",
         "order_id": "",
         "billing_id": "",
@@ -31,9 +31,9 @@ export default function OrderDetailsScreen() {
         "payment_form": "",
         "created_date": ""
     });
-    const [midtrans,setMidtrans]=useState();
-    const [loadingOrderPaymentRecent,setLoadingOrderPaymentRecent]=useState(true);
-    const [listPayment,setListPayment]=useState([
+    const [midtrans, setMidtrans] = useState();
+    const [loadingOrderPaymentRecent, setLoadingOrderPaymentRecent] = useState(true);
+    const [listPayment, setListPayment] = useState([
         {
             "id_payment_method_category": "1",
             "payment_type_label": "Card",
@@ -161,392 +161,392 @@ export default function OrderDetailsScreen() {
         getItem()
     }, []);
 
-    const gotoPaymentDetail= (item) => {
+    const gotoPaymentDetail = (item) => {
         //const { navigation} = this.props;
         //const {id_order,config} =this.state;
 
         //console.log(config.midtransMethod);
-        var dataPayment={
-            payment_type:item.payment_type,
-            payment_qris:item.qris,
-            
-            payment_type_label:item.payment_type_label,
-            payment_sub:item.subPayment[0].payment_sub,
-            payment_sub_label:item.subPayment[0].payment_sub_label,
-            payment_fee:item.subPayment[0].fee,
-            payment_form:item.subPayment[0].payment_form,
-        }
-        
-        var param={
-            id_order:orderPaymentRecent.order_id,
-            dataPayment:dataPayment
-        }
-        console.log('paramNosSub',JSON.stringify(param));
+        var dataPayment = {
+            payment_type: item.payment_type,
+            payment_qris: item.qris,
 
-       
-        if(dataPayment.payment_form == "screenOther"){
-            if(dataPayment.payment_type == "gopay"){
+            payment_type_label: item.payment_type_label,
+            payment_sub: item.subPayment[0].payment_sub,
+            payment_sub_label: item.subPayment[0].payment_sub_label,
+            payment_fee: item.subPayment[0].fee,
+            payment_form: item.subPayment[0].payment_form,
+        }
+
+        var param = {
+            id_order: orderPaymentRecent.order_id,
+            dataPayment: dataPayment
+        }
+        console.log('paramNosSub', JSON.stringify(param));
+
+
+        if (dataPayment.payment_form == "screenOther") {
+            if (dataPayment.payment_type == "gopay") {
                 tokenMidtransUpdateCore(param);
-            }else{
+            } else {
                 tokenMidtransUpdate(param);
             }
-            
-        }else{
+
+        } else {
             tokenMidtransUpdateCore(param);
         }
 
     }
 
 
-    const gotoPaymentDetailSub=(item)=>{
+    const gotoPaymentDetailSub = (item) => {
         // this.setState({modalVisible:false});
         // const { navigation} = this.props;
         // const {id_order,paymentChooseTemp,config} =this.state;
         // console.log(config.midtransMethod);
         setModalShow(false);
-        var dataPayment={
-            payment_type:item.payment_type,
-            param_qris:item.qris,
-            payment_type_label:selectedPayment.payment_type_label,
-            payment_sub:item.payment_sub,
-            payment_sub_label:item.payment_sub_label,
-            payment_fee:item.fee,
-            payment_form:item.payment_form
+        var dataPayment = {
+            payment_type: item.payment_type,
+            param_qris: item.qris,
+            payment_type_label: selectedPayment.payment_type_label,
+            payment_sub: item.payment_sub,
+            payment_sub_label: item.payment_sub_label,
+            payment_fee: item.fee,
+            payment_form: item.payment_form
             //payment_form:'screenOther'
         }
-        console.log('dataPayment',JSON.stringify(dataPayment));
-        
-        var param={
-            id_order:orderPaymentRecent.order_id,
-            dataPayment:dataPayment
+        console.log('dataPayment', JSON.stringify(dataPayment));
+
+        var param = {
+            id_order: orderPaymentRecent.order_id,
+            dataPayment: dataPayment
         }
 
 
-        if(dataPayment.payment_form == "screenOther"){
-            if(dataPayment.payment_type == "gopay"){
+        if (dataPayment.payment_form == "screenOther") {
+            if (dataPayment.payment_type == "gopay") {
                 tokenMidtransUpdateCore(param);
-            }else{
+            } else {
                 tokenMidtransUpdate(param);
             }
-            
-        }else{
+
+        } else {
             tokenMidtransUpdateCore(param);
         }
 
 
 
 
-        
 
-    
+
+
     }
 
 
-    const tokenMidtransUpdate =(param)=>{
-        var dataPayment=param.dataPayment;
-        var fee=dataPayment.payment_fee;
-        var totalPembayaran=parseInt(orderPaymentRecent.grand_total)+parseInt(fee);
-        var authBasicHeader=midtrans.authBasicHeader;
+    const tokenMidtransUpdate = (param) => {
+        var dataPayment = param.dataPayment;
+        var fee = dataPayment.payment_fee;
+        var totalPembayaran = parseInt(orderPaymentRecent.grand_total) + parseInt(fee);
+        var authBasicHeader = midtrans.authBasicHeader;
 
-        var payment_type=dataPayment.payment_type;
-        var payment_sub=dataPayment.payment_sub;
-        
-        var transaction_details={
+        var payment_type = dataPayment.payment_type;
+        var payment_sub = dataPayment.payment_sub;
+
+        var transaction_details = {
             gross_amount: totalPembayaran,
             order_id: orderPaymentRecent.payment_id
         }
-        var customer_details={
+        var customer_details = {
             email: reduxUser.user.email,
             first_name: reduxUser.user.name,
             last_name: '',
             phone: reduxUser.user.phoneNumber,
         }
 
-        var enabled_payments=[payment_sub];
-        
-        var credit_card="";
+        var enabled_payments = [payment_sub];
 
-        
-        if(dataPayment.payment_type=="credit_card"){
-            credit_card={
-            "secure": true,
-            "save_card": true
-          };
+        var credit_card = "";
+
+
+        if (dataPayment.payment_type == "credit_card") {
+            credit_card = {
+                "secure": true,
+                "save_card": true
+            };
         }
 
 
-        
-        var paramPay={
+
+        var paramPay = {
             transaction_details: transaction_details,
             customer_details: customer_details,
             enabled_payments,
             credit_card
         }
-        
-    
-        var url=midtrans.url_snap+"snap/v1/transactions";
-        console.log('url',url);
-        console.log('paramPay',JSON.stringify(paramPay));
-        console.log('midtrans',JSON.stringify(midtrans));
-        
+
+
+        var url = midtrans.url_snap + "snap/v1/transactions";
+        console.log('url', url);
+        console.log('paramPay', JSON.stringify(paramPay));
+        console.log('midtrans', JSON.stringify(midtrans));
+
 
 
 
         var myHeaders = new Headers();
-        myHeaders.append("Authorization", "Basic "+authBasicHeader);
+        myHeaders.append("Authorization", "Basic " + authBasicHeader);
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("Cookie", "ci_session=6mmg253sca0no2e0gqas59up68f6ljlo");
 
         var raw = JSON.stringify(paramPay);
 
         var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow'
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
         };
 
         fetch(url, requestOptions)
-        .then(response => response.json())
-        .then(result => {
-            actionSheetPayment.current?.setModalVisible()
+            .then(response => response.json())
+            .then(result => {
+                actionSheetPayment.current?.setModalVisible()
 
-            console.log('dataToken',JSON.stringify(result));
-            
-            var paramPayMD={
-                "total_pembayaran":totalPembayaran,
-                "fee":fee,
-                "payment_id":orderPaymentRecent.payment_id,
-                "dataPayment":dataPayment,
-                "token":result.token,
-                "order_id":orderPaymentRecent.order_id,
-                "va_or_code_or_link":result.redirect_url
+                console.log('dataToken', JSON.stringify(result));
+
+                var paramPayMD = {
+                    "total_pembayaran": totalPembayaran,
+                    "fee": fee,
+                    "payment_id": orderPaymentRecent.payment_id,
+                    "dataPayment": dataPayment,
+                    "token": result.token,
+                    "order_id": orderPaymentRecent.order_id,
+                    "va_or_code_or_link": result.redirect_url
                 }
-                console.log('paramPayMD',JSON.stringify(paramPayMD));
+                console.log('paramPayMD', JSON.stringify(paramPayMD));
 
-                if(dataPayment.payment_type=="gopay"){
-                    var qr_code_url=snapCharge(result.token);
-                    param.qr_code_url=qr_code_url;
+                if (dataPayment.payment_type == "gopay") {
+                    var qr_code_url = snapCharge(result.token);
+                    param.qr_code_url = qr_code_url;
                     snapTokenUpdate(paramPayMD);
-                }else{
+                } else {
                     snapTokenUpdate(paramPayMD);
                 }
 
-        })
-        .catch(error => { alert('Kegagalan Respon Server');});
+            })
+            .catch(error => { alert('Kegagalan Respon Server'); });
 
-    
+
     }
 
-    const snapCharge=(token)=>{
+    const snapCharge = (token) => {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", "Basic U0ItTWlkLXNlcnZlci1rYUg3VlctakNpVjAyOGtWcmJmbjZITGY6");
         myHeaders.append("Content-Type", "application/json");
 
-        var raw = JSON.stringify({"payment_type":"gopay"});
+        var raw = JSON.stringify({ "payment_type": "gopay" });
 
         var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow'
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
         };
 
-        fetch(midtrans.url_snap+"snap/v2/transactions/"+token+"/charge", requestOptions)
-        .then(response => response.json())
-        .then(result => {
-            return result.qr_code_url;
+        fetch(midtrans.url_snap + "snap/v2/transactions/" + token + "/charge", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                return result.qr_code_url;
 
-        })
-        .catch(error => { alert('Kegagalan Respon Server');});
+            })
+            .catch(error => { alert('Kegagalan Respon Server'); });
     }
 
 
     const tokenMidtransUpdateCore = (params) => {
-        var dataPayment=params.dataPayment;
-        var fee=dataPayment.payment_fee;
-        
-        var totalPembayaran=parseInt(orderPaymentRecent.grand_total)+parseInt(fee);
-        var authBasicHeader=midtrans.authBasicHeader;
-    
-        var payment_type=dataPayment.payment_type;
-        var payment_sub=dataPayment.payment_sub;
-    
-        var transaction_details={
+        var dataPayment = params.dataPayment;
+        var fee = dataPayment.payment_fee;
+
+        var totalPembayaran = parseInt(orderPaymentRecent.grand_total) + parseInt(fee);
+        var authBasicHeader = midtrans.authBasicHeader;
+
+        var payment_type = dataPayment.payment_type;
+        var payment_sub = dataPayment.payment_sub;
+
+        var transaction_details = {
             gross_amount: totalPembayaran,
             order_id: orderPaymentRecent.payment_id
         }
-        var customer_details={
+        var customer_details = {
             email: reduxUser.user.email,
             first_name: reduxUser.user.name,
             last_name: '',
             phone: reduxUser.user.phoneNumber,
         }
-        
-        var bank_transfer={
+
+        var bank_transfer = {
             "bank": dataPayment.payment_sub,
             "va_number": "1234567890"
         }
-    
-    if(dataPayment.payment_type=="gopay"){
-            var gopay={
-            "secure": true,
-            "save_card": true
-          };
-    
-          var paramPay={
-            payment_type:dataPayment.payment_type,
-            transaction_details: transaction_details,
-            gopay,
-            customer_details: customer_details,
-            
-        }
-          
-    }else{
-        var paramPay={
-            payment_type:dataPayment.payment_type,
-            transaction_details: transaction_details,
-            customer_details: customer_details,
-            
-        }
-    
-    }
-    
-    
-    
-    
-    
-    if(dataPayment.payment_type=="bank_transfer"){
-        paramPay.bank_transfer=bank_transfer;
-    }else if(dataPayment.payment_type=="echannel"){
-        paramPay.echannel={
-            "bill_info1" : "Payment For:",
-            "bill_info2" : "Masterdiskon"
-        }
-    }
-    console.log('parampay',JSON.stringify(paramPay));
-    console.log('midtrans',JSON.stringify(midtrans));
-    
-    
-    var url=midtrans.url+"v2/charge";
-    
-    var myHeaders = new Headers();
-    myHeaders.append("Accept", "application/json");
-    myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("Authorization", "Basic "+authBasicHeader);
-    myHeaders.append("Cookie", "__cfduid=d4ff313b0fa4bdbbb74a64dd1f5a4ccb51616649753");
-    
-    var raw = JSON.stringify(paramPay);
-    
-    var requestOptions = {
-    method: 'POST',
-    headers: myHeaders,
-    body: raw,
-    redirect: 'follow'
-    };
-    
-    fetch(url, requestOptions)
-    .then(response => response.json())
-     .then(result => {
-        actionSheetPayment.current?.setModalVisible()
-        console.log('charge',JSON.stringify(result));
-    
-        console.log('dataToken',JSON.stringify(result));
-        console.log('dataPayment',JSON.stringify(dataPayment));
-    
-        var va_or_code_or_link="";
-        var token="";
-        if(dataPayment.payment_type=="bank_transfer"){
-            if(dataPayment.payment_sub=="bni"){
-                va_or_code_or_link=result.va_numbers[0].va_number;
-            }else if(dataPayment.payment_sub=="permata"){
-                va_or_code_or_link=result.permata_va_number;
+
+        if (dataPayment.payment_type == "gopay") {
+            var gopay = {
+                "secure": true,
+                "save_card": true
+            };
+
+            var paramPay = {
+                payment_type: dataPayment.payment_type,
+                transaction_details: transaction_details,
+                gopay,
+                customer_details: customer_details,
+
             }
-        }else if(dataPayment.payment_type=="echannel"){
-            if(dataPayment.payment_sub=="echannel"){
-                va_or_code_or_link=result.bill_key;
+
+        } else {
+            var paramPay = {
+                payment_type: dataPayment.payment_type,
+                transaction_details: transaction_details,
+                customer_details: customer_details,
+
             }
-        }else if(dataPayment.payment_type=="gopay"){
-            va_or_code_or_link=result.actions[0].url;
-            token=result.transaction_id;
-          
+
         }
-    
-        var paramPayMD={
-            "total_pembayaran":totalPembayaran,
-            "fee":fee,
-            "payment_id":orderPaymentRecent.payment_id,
-            "dataPayment":dataPayment,
-            "token":result.token,
-            "order_id":orderPaymentRecent.order_id,
-            "va_or_code_or_link":va_or_code_or_link,
+
+
+
+
+
+        if (dataPayment.payment_type == "bank_transfer") {
+            paramPay.bank_transfer = bank_transfer;
+        } else if (dataPayment.payment_type == "echannel") {
+            paramPay.echannel = {
+                "bill_info1": "Payment For:",
+                "bill_info2": "Masterdiskon"
             }
-            console.log('paramPayMD',JSON.stringify(paramPayMD));
-    
-            snapTokenUpdate(paramPayMD);
-       
-    })
-    .catch(error => { alert('Kegagalan Respon Server');});
-    
+        }
+        console.log('parampay', JSON.stringify(paramPay));
+        console.log('midtrans', JSON.stringify(midtrans));
+
+
+        var url = midtrans.url + "v2/charge";
+
+        var myHeaders = new Headers();
+        myHeaders.append("Accept", "application/json");
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Authorization", "Basic " + authBasicHeader);
+        myHeaders.append("Cookie", "__cfduid=d4ff313b0fa4bdbbb74a64dd1f5a4ccb51616649753");
+
+        var raw = JSON.stringify(paramPay);
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+        fetch(url, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                actionSheetPayment.current?.setModalVisible()
+                console.log('charge', JSON.stringify(result));
+
+                console.log('dataToken', JSON.stringify(result));
+                console.log('dataPayment', JSON.stringify(dataPayment));
+
+                var va_or_code_or_link = "";
+                var token = "";
+                if (dataPayment.payment_type == "bank_transfer") {
+                    if (dataPayment.payment_sub == "bni") {
+                        va_or_code_or_link = result.va_numbers[0].va_number;
+                    } else if (dataPayment.payment_sub == "permata") {
+                        va_or_code_or_link = result.permata_va_number;
+                    }
+                } else if (dataPayment.payment_type == "echannel") {
+                    if (dataPayment.payment_sub == "echannel") {
+                        va_or_code_or_link = result.bill_key;
+                    }
+                } else if (dataPayment.payment_type == "gopay") {
+                    va_or_code_or_link = result.actions[0].url;
+                    token = result.transaction_id;
+
+                }
+
+                var paramPayMD = {
+                    "total_pembayaran": totalPembayaran,
+                    "fee": fee,
+                    "payment_id": orderPaymentRecent.payment_id,
+                    "dataPayment": dataPayment,
+                    "token": result.token,
+                    "order_id": orderPaymentRecent.order_id,
+                    "va_or_code_or_link": va_or_code_or_link,
+                }
+                console.log('paramPayMD', JSON.stringify(paramPayMD));
+
+                snapTokenUpdate(paramPayMD);
+
+            })
+            .catch(error => { alert('Kegagalan Respon Server'); });
+
     }
-    
-    const snapTokenUpdate = (paramPayMD) =>{
-         var url=midtrans.url_base+'payment/snap_token_update';
+
+    const snapTokenUpdate = (paramPayMD) => {
+        var url = midtrans.url_base + 'payment/snap_token_update';
 
 
-        console.log('urlss',url,JSON.stringify(paramPayMD));
-              var myHeaders = new Headers();
-              myHeaders.append("Content-Type", "application/json");
-              myHeaders.append("Cookie", "ci_session=6mmg253sca0no2e0gqas59up68f6ljlo");
-      
-              var raw = JSON.stringify(paramPayMD);
-      
-              var requestOptions = {
-              method: 'POST',
-              headers: myHeaders,
-              body: raw,
-              redirect: 'follow'
-              };
-      
-              fetch(url, requestOptions)
-              .then(response => response.json())
-              .then(result => {
-                console.log('snapTokenUpdate',JSON.stringify(result));
+        console.log('urlss', url, JSON.stringify(paramPayMD));
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Cookie", "ci_session=6mmg253sca0no2e0gqas59up68f6ljlo");
+
+        var raw = JSON.stringify(paramPayMD);
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+        fetch(url, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                console.log('snapTokenUpdate', JSON.stringify(result));
 
 
-                if(paramPayMD.dataPayment.payment_form=="screenOther"){
+                if (paramPayMD.dataPayment.payment_form == "screenOther") {
                     handlePayment();
                     // navigation.navigate("PembayaranDetail",{
                     //     param:params,
                     // });
-                    
-                }else if(paramPayMD.dataPayment.payment_form=="screenSelf"){
-                        // var param={
-                        //     id_order:.id_order,
-                        //     dataPayment:{},
-                        // }
-                        //navigation.navigate("Loading",{redirect:'Pembayaran',param:param});
-                }else if(paramPayMD.dataPayment.payment_form=="screenLink"){
-                    
-                    var param={
-                        id_order:dataBooking[0].id_order,
-                        dataPayment:{},
-                    }
-                    navigation.navigate("Loading",{redirect:'Pembayaran',param:param});
 
-                    var link=paramPayMD.va_or_code_or_link;
+                } else if (paramPayMD.dataPayment.payment_form == "screenSelf") {
+                    // var param={
+                    //     id_order:.id_order,
+                    //     dataPayment:{},
+                    // }
+                    //navigation.navigate("Loading",{redirect:'Pembayaran',param:param});
+                } else if (paramPayMD.dataPayment.payment_form == "screenLink") {
+
+                    var param = {
+                        id_order: dataBooking[0].id_order,
+                        dataPayment: {},
+                    }
+                    navigation.navigate("Loading", { redirect: 'Pembayaran', param: param });
+
+                    var link = paramPayMD.va_or_code_or_link;
                     Linking.openURL(link);
                 }
 
 
-               
-      
-              })
-              .catch(error => { alert('Kegagalan Respon Server');});
-      
-       
-              
-         
+
+
+            })
+            .catch(error => { alert('Kegagalan Respon Server'); });
+
+
+
+
     }
 
 
@@ -560,31 +560,31 @@ export default function OrderDetailsScreen() {
             console.log('pilih');
         } else {
             //alert('sd');
-            console.log('selectedPayment',JSON.stringify(selectedPayment));
+            console.log('selectedPayment', JSON.stringify(selectedPayment));
             setsubPayment(item.subPayment)
             actionSheetPayment.current?.setModalVisible(true)
         }
     }
 
-    const getListPayment=(total)=>{
+    const getListPayment = (total) => {
         var myHeaders = new Headers();
         myHeaders.append("Cookie", "ci_session=mo3huphq5niakt3grmetuf4djpvcd76q");
 
         var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        redirect: 'follow'
+            method: 'POST',
+            headers: myHeaders,
+            redirect: 'follow'
         };
 
-        fetch("https://jaja.id/backend/payment/methodPayment/"+total, requestOptions)
-        .then(response => response.json())
-        .then(result => {
-            setListPayment(result);
-        })
-        .catch(error => {
-            Utils.handleError(error, "Error with status code : 22004")
-        });
-        
+        fetch("https://jaja.id/backend/payment/methodPayment/" + total, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                setListPayment(result);
+            })
+            .catch(error => {
+                Utils.handleError(error, "Error with status code : 22004")
+            });
+
     }
     const getItem = () => {
         var myHeaders = new Headers();
@@ -599,8 +599,8 @@ export default function OrderDetailsScreen() {
             body: raw,
             redirect: 'follow'
         };
-        var url=`https://jaja.id/backend/order/${reduxOrderInvoice}`;
-        console.log('urlDetailPesanan',url);
+        var url = `https://jaja.id/backend/order/${reduxOrderInvoice}`;
+        console.log('urlDetailPesanan', url);
 
         fetch(`https://jaja.id/backend/order/${reduxOrderInvoice}`, requestOptions)
             .then(response => response.json())
@@ -621,38 +621,38 @@ export default function OrderDetailsScreen() {
             });
     }
 
-   const submitChange = ()=>{
-        var paramPayMD={
-            "order_id":orderPaymentRecent.order_id,
-            "id_token":orderPaymentRecent.id_token,
-            }
-        
-            var myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
-            myHeaders.append("Cookie", "ci_session=7glbt8ufb9pgaiv13v6fm7bbbr33k91d");
-            
-            var raw = JSON.stringify(paramPayMD);
-            
-            var requestOptions = {
-              method: 'POST',
-              headers: myHeaders,
-              body: raw,
-              redirect: 'follow'
-            };
-            
-            fetch("https://jaja.id/backend/payment/new_invoice", requestOptions)
-              .then(response => response.json())
-              .then(result => {
+    const submitChange = () => {
+        var paramPayMD = {
+            "order_id": orderPaymentRecent.order_id,
+            "id_token": orderPaymentRecent.id_token,
+        }
+
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Cookie", "ci_session=7glbt8ufb9pgaiv13v6fm7bbbr33k91d");
+
+        var raw = JSON.stringify(paramPayMD);
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+        fetch("https://jaja.id/backend/payment/new_invoice", requestOptions)
+            .then(response => response.json())
+            .then(result => {
                 setLoadingOrderPaymentRecent(false);
                 setTimeout(() => {
                     getPayment(orderPaymentRecent.order_id);
                 }, 50);
-              })
-              .catch(error => {
+            })
+            .catch(error => {
                 Utils.handleError(error, "Error with status code : 22004")
             });
 
-        
+
     }
 
 
@@ -662,15 +662,15 @@ export default function OrderDetailsScreen() {
         myHeaders.append("Cookie", "ci_session=nvha2jep6gogidt9rmcle1par0j8ul4f");
 
         var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        redirect: 'follow'
+            method: 'POST',
+            headers: myHeaders,
+            redirect: 'follow'
         };
-        
-        var url="https://jaja.id/backend/payment/getPayment/"+orderId;
-        console.log('getPaymentUrl',url);
+
+        var url = "https://jaja.id/backend/payment/getPayment/" + orderId;
+        console.log('getPaymentUrl', url);
         fetch(url, requestOptions)
-        .then(response => response.json())
+            .then(response => response.json())
             .then(result => {
                 getListPayment(result.orderPaymentRecent.grand_total);
 
@@ -679,7 +679,7 @@ export default function OrderDetailsScreen() {
                 setLoadingOrderPaymentRecent(false);
                 console.log("resultGetPayment", result.orderPaymentRecent);
                 console.log("resultMidtrans", result.midtrans);
-                
+
             })
             .catch(error => {
                 Utils.handleError(error, "Error with status code : 22004")
@@ -789,17 +789,17 @@ export default function OrderDetailsScreen() {
 
 
     }
-    const handleChat = (store) => {
-        let dataSeller = store
+    const handleChat = (item) => {
+        let dataSeller = item.store
         dataSeller.chat = reduxUser.user.uid + dataSeller.uid
         dataSeller.id = dataSeller.uid
         if (reduxAuth) {
-            navigation.navigate("IsiChat", { data: dataSeller })
+            navigation.navigate("IsiChat", { data: dataSeller, order: { invoice: item.invoice, status: reduxOrderStatus, imageOrder: item.products[0].image } })
         } else {
             navigation.navigate('Login', { navigate: "OrderDetails" })
         }
     }
-    var contentPaymentRecent=<View />
+    var contentPaymentRecent = <View />
     const priceSplitter = (number) => (number && number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'));
 
     return (
@@ -877,7 +877,7 @@ export default function OrderDetailsScreen() {
                                         <Image style={[styles.icon_19, { marginRight: '3%', tintColor: colors.BlueJaja }]} source={require('../../assets/icons/store.png')} />
                                         <Text onPress={() => handleStore(item.store)} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.store.name}</Text>
                                     </View>
-                                    <TouchableRipple onPress={() => handleChat(item.store)} style={[styles.row_center, styles.px_2, { backgroundColor: colors.BlueJaja, paddingVertical: '1.5%' }]}>
+                                    <TouchableRipple onPress={() => handleChat(item)} style={[styles.row_center, styles.px_2, { backgroundColor: colors.BlueJaja, paddingVertical: '1.5%' }]}>
                                         <View style={styles.row}>
                                             <Text style={[styles.font_11, styles.T_medium, { color: colors.White }]}>
                                                 Chat Penjual
@@ -991,7 +991,7 @@ export default function OrderDetailsScreen() {
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>Biaya penanganan</Text>
                             {/* <Text style={[styles.font_13 { marginBottom: '2%' }]}>Voucher Toko</Text> */}
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>Voucher Jaja.id</Text>
-                            
+
                             {/* <Text style={[styles.font_13, styles.T_medium, { marginBottom: '2%' }]}>Fee</Text> */}
                             <Text style={[styles.font_13, styles.T_medium, { marginBottom: '2%' }]}>Total pembayaran</Text>
 
@@ -1023,60 +1023,60 @@ export default function OrderDetailsScreen() {
                     </View>
                     {
                         loadingOrderPaymentRecent ?
-                        <ActivityIndicator size="large" />
-                        :
-                        orderPaymentRecent.payment_type=="" ?
+                            <ActivityIndicator size="large" />
+                            :
+                            orderPaymentRecent.payment_type == "" ?
 
-                        listPayment.map(item => {
-                            return (
-                                <TouchableRipple 
-                                //onPressIn={() => handleShowPayment(item)} 
-                                style={[styles.px_3, styles.py_3, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]} 
-                                onPress={() => handleShowPayment(item)} 
-                                rippleColor={colors.BlueJaja} >
-                                    <View style={styles.row_between_center}>
-                                        <Text style={styles.font_13}>{item.payment_type_label === 'Card' ? 'Kartu Kredit' : item.payment_type_label == 'eWallet' ? item.payment_type_label + ' - ' + item.subPayment[0].payment_sub_label : item.payment_type_label}</Text>
-                                        <Image fadeDuration={300} source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackGrey }]} />
-                                           
-                                    </View>
-                                </TouchableRipple>
-                            )
-                        })               
-                        :
-                        <View style={[styles.row_center, styles.my_2, { width: '95%', alignSelf: 'center' }]}>
-                            <TouchableRipple 
-                            //onPress={() => console.log("change")} 
-                            onPress={() => { 
-                                Alert.alert(
-                                    'Confirm',
-                                    'Ingin mengganti metode pembayaran ?',
-                                    [
-                                    {text: 'NO', onPress: () => console.warn('NO Pressed'), style: 'cancel'},
-                                    {text: 'YES', onPress: () => submitChange()},
-                                    ]
-                                );
-                                
-                            }}   
-                            style={[styles.row_center, styles.py_2, { width: 100 / 2 + '%', backgroundColor: colors.YellowJaja }]}>
-                                <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                    Ganti
-                                </Text>
-                            </TouchableRipple>
-                            {/* <TouchableRipple onPress={() => console.log("refresh")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.GreenSuccess }]}>
+                                listPayment.map(item => {
+                                    return (
+                                        <TouchableRipple
+                                            //onPressIn={() => handleShowPayment(item)} 
+                                            style={[styles.px_3, styles.py_3, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}
+                                            onPress={() => handleShowPayment(item)}
+                                            rippleColor={colors.BlueJaja} >
+                                            <View style={styles.row_between_center}>
+                                                <Text style={styles.font_13}>{item.payment_type_label === 'Card' ? 'Kartu Kredit' : item.payment_type_label == 'eWallet' ? item.payment_type_label + ' - ' + item.subPayment[0].payment_sub_label : item.payment_type_label}</Text>
+                                                <Image fadeDuration={300} source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackGrey }]} />
+
+                                            </View>
+                                        </TouchableRipple>
+                                    )
+                                })
+                                :
+                                <View style={[styles.row_center, styles.my_2, { width: '95%', alignSelf: 'center' }]}>
+                                    <TouchableRipple
+                                        //onPress={() => console.log("change")} 
+                                        onPress={() => {
+                                            Alert.alert(
+                                                'Confirm',
+                                                'Ingin mengganti metode pembayaran ?',
+                                                [
+                                                    { text: 'NO', onPress: () => console.warn('NO Pressed'), style: 'cancel' },
+                                                    { text: 'YES', onPress: () => submitChange() },
+                                                ]
+                                            );
+
+                                        }}
+                                        style={[styles.row_center, styles.py_2, { width: 100 / 2 + '%', backgroundColor: colors.YellowJaja }]}>
+                                        <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                            Ganti
+                                        </Text>
+                                    </TouchableRipple>
+                                    {/* <TouchableRipple onPress={() => console.log("refresh")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.GreenSuccess }]}>
                                 <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
                                     Cek Bayar
                                 </Text>
                             </TouchableRipple> */}
-                        
-                                        <TouchableRipple onPress={handlePayment} style={[styles.row_center, styles.py_2, { width: 100 / 2 + '%', backgroundColor: colors.BlueJaja }]}>
-                                            <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                                Bayar Sekarang
-                                            </Text>
-                                        </TouchableRipple>
-                                    
 
-                        </View>
-                        
+                                    <TouchableRipple onPress={handlePayment} style={[styles.row_center, styles.py_2, { width: 100 / 2 + '%', backgroundColor: colors.BlueJaja }]}>
+                                        <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                            Bayar Sekarang
+                                        </Text>
+                                    </TouchableRipple>
+
+
+                                </View>
+
                     }
                     <View style={[styles.row_center, styles.mb_2, { width: '95%', alignSelf: 'center' }]}>
                         <TouchableRipple onPress={() => navigation.navigate('OrderCancel')} style={[styles.row_center, styles.py_2, { width: '100%', backgroundColor: colors.Silver, alignSelf: 'center' }]}>
@@ -1144,15 +1144,15 @@ export default function OrderDetailsScreen() {
                             renderItem={({ item, index }) => {
                                 console.log("🚀 ~ file: CheckoutScreen.js ~ line 1057 ~ checkoutScreen ~ item", item)
                                 return (
-                                    <TouchableRipple 
-                                    //onPressIn={() => gotoPaymentDetailSub(item)} 
-                                    style={[styles.py_4, styles.px_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]} 
-                                    onPress={() => {
-                                        //actionSheetPayment.current?.setModalVisible()
-                                        gotoPaymentDetailSub(item)
-                                    
-                                    }} 
-                                    rippleColor={colors.BlueJaja} >
+                                    <TouchableRipple
+                                        //onPressIn={() => gotoPaymentDetailSub(item)} 
+                                        style={[styles.py_4, styles.px_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}
+                                        onPress={() => {
+                                            //actionSheetPayment.current?.setModalVisible()
+                                            gotoPaymentDetailSub(item)
+
+                                        }}
+                                        rippleColor={colors.BlueJaja} >
                                         <View style={styles.row_between_center}>
                                             <Text style={styles.font_13}>{item.payment_sub_label}</Text>
                                             <Image fadeDuration={300} source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackGrey }]} />

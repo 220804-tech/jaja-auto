@@ -1,5 +1,5 @@
 import React, { useEffect, useState, createRef } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Image, TextInput, ScrollView, FlatList, SafeAreaView, Alert, ToastAndroid, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Image, TextInput, ScrollView, FlatList, SafeAreaView, Alert, ToastAndroid, Dimensions, KeyboardAvoidingView, Platform } from 'react-native'
 import { styles as style, Wp, Hp, colors, useNavigation, Loading, ServiceUser } from '../../export'
 import { useAndroidBackHandler } from "react-navigation-backhandler";
 const { width, height } = Dimensions.get('screen')
@@ -430,22 +430,27 @@ export default function AddAddressScreen(props) {
     return (
         <SafeAreaView style={style.container}>
             {loading ? <Loading /> : null}
-            {status === "edit" ?
-                <>
-                    <Appbar.Header style={style.appBar}>
-                        <View style={style.row_start_center}>
-                            <TouchableOpacity onPress={() => navigation.goBack()}>
-                                <Image style={style.appBarButton} source={require('../../assets/icons/arrow.png')} />
-                            </TouchableOpacity>
-                            <Text style={style.appBarText}>{props.route.params && props.route.params.edit ? "Ubah Alamat" : "Tambah Alamat"}</Text>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                style={style.container}
+            >
+                {status === "edit" ?
+
+                    <ScrollView stickyHeaderIndices={[0]}>
+                        <View style={[style.appBar2, { justifyContent: 'flex-start', backgroundColor: colors.BlueJaja }]}>
+                            <View style={style.row_start_center}>
+                                <TouchableOpacity onPress={() => navigation.goBack()}>
+                                    <Image style={style.appBarButton} source={require('../../assets/icons/arrow.png')} />
+                                </TouchableOpacity>
+                                <Text style={style.appBarText}>{props.route.params && props.route.params.edit ? "Ubah Alamat" : "Tambah Alamat"}</Text>
+                            </View>
+                            {kcValue ? <Button mode="text" color={colors.White} onPress={handleSave}>Simpan</Button> : null}
                         </View>
-                        {kcValue ? <Button mode="text" color={colors.White} onPress={handleSave}>Simpan</Button> : null}
-                    </Appbar.Header>
-                    <ScrollView>
-                        <View style={[style.column_start_center, { padding: '4%', backgroundColor: colors.White }]}>
+
+                        <View style={[style.column_start_center, style.p_4, { backgroundColor: colors.White }]}>
                             {/* <TouchableWithoutFeedback onPress={() => handleEdit("Nama Lengkap")}> */}
                             <TouchableWithoutFeedback>
-                                <View style={[styles.form, { marginBottom: '0%' }]}>
+                                <View style={[styles.form, style.mb_5]}>
                                     <Text style={styles.formTitle}>Nama penerima <Text style={{ color: colors.RedDanger }}>*</Text></Text>
                                     <View style={[styles.formItem, { padding: '0%' }]}>
                                         <TextInput
@@ -467,7 +472,7 @@ export default function AddAddressScreen(props) {
                                 </View>
                             </TouchableWithoutFeedback>
                             <TouchableWithoutFeedback>
-                                <View style={[styles.form, { marginBottom: '0%' }]}>
+                                <View style={[styles.form, style.mb_5]}>
                                     <Text style={styles.formTitle}>Nomor Telephone <Text style={{ color: colors.RedDanger }}>*</Text></Text>
                                     <View style={[styles.formItem, { padding: '0%' }]}>
                                         <TextInput
@@ -491,7 +496,7 @@ export default function AddAddressScreen(props) {
                             {kcValue ?
                                 <>
                                     <TouchableWithoutFeedback>
-                                        <View style={styles.form}>
+                                        <View style={[styles.form, style.mb_5]}>
                                             <Text style={[styles.formTitle, { color: kcValue ? colors.BlackGrayScale : colors.Silver }]}>Provinsi</Text>
                                             <View style={[styles.formItem, { borderBottomColor: colors.Silver }]}>
                                                 <Text style={[styles.formPlaceholder, { color: kcValue ? colors.BlackGrayScale : colors.Silver }]}>{provValue ? provValue : "Provinsi"}</Text>
@@ -499,7 +504,7 @@ export default function AddAddressScreen(props) {
                                         </View>
                                     </TouchableWithoutFeedback>
                                     <TouchableWithoutFeedback onPress={() => console.log("Pressed")}>
-                                        <View style={styles.form}>
+                                        <View style={[styles.form, style.mb_5]}>
                                             <Text style={[styles.formTitle, { color: kcValue ? colors.BlackGrayScale : colors.Silver }]}>Kabupaten/Kota</Text>
                                             <View style={[styles.formItem, { borderBottomColor: colors.Silver }]}>
                                                 <Text style={[styles.formPlaceholder, { color: kcValue ? colors.BlackGrayScale : colors.Silver }]}>{kabkotaValue ? kabkotaValue : "Kabupaten/kota"}</Text>
@@ -509,7 +514,7 @@ export default function AddAddressScreen(props) {
                                 </>
                                 : null}
                             <TouchableWithoutFeedback onPress={() => actionSheetKecamatan.current?.setModalVisible(true)}>
-                                <View style={styles.form}>
+                                <View style={[styles.form, style.mb_5]}>
                                     <Text style={styles.formTitle}>Kecamatan <Text style={{ color: colors.RedDanger }}>*</Text></Text>
                                     <View style={styles.formItem}>
                                         <Text style={styles.formPlaceholder}>{kcValue === "" ? "Pilih kecamatan" : kcValue}</Text>
@@ -518,7 +523,7 @@ export default function AddAddressScreen(props) {
                                 </View>
                             </TouchableWithoutFeedback>
                             <TouchableWithoutFeedback onPress={() => actionSheetKelurahan.current?.setModalVisible(true)} disabled={kcValue ? false : true}>
-                                <View style={styles.form}>
+                                <View style={[styles.form, style.mb_5]}>
                                     <Text style={[styles.formTitle, { color: kcValue ? colors.BlackGrayScale : colors.Silver }]}>Kelurahan <Text style={{ color: colors.RedDanger }}>*</Text></Text>
                                     <View style={[styles.formItem, { borderBottomColor: colors.Silver }]}>
                                         <Text style={[styles.formPlaceholder]}>{klValue === "" ? "Pilih kelurahan" : klValue}</Text>
@@ -527,7 +532,7 @@ export default function AddAddressScreen(props) {
                                 </View>
                             </TouchableWithoutFeedback>
                             <TouchableWithoutFeedback>
-                                <View style={styles.form}>
+                                <View style={[styles.form, style.mb_5]}>
                                     <Text style={styles.formTitle}>Kode Pos <Text style={{ color: colors.RedDanger }}>*</Text></Text>
                                     <View style={styles.formItem}>
                                         {/* <Text style={styles.formPlaceholder}>{kodePos ? kodePos : "Input kode pos"}</Text> */}
@@ -550,7 +555,7 @@ export default function AddAddressScreen(props) {
                                 </View>
                             </TouchableWithoutFeedback>
                             <TouchableWithoutFeedback>
-                                <View style={[styles.form, { marginBottom: '0%' }]}>
+                                <View style={[styles.form, style.mb_5]}>
                                     <Text style={styles.formTitle}>Label <Text style={{ color: colors.RedDanger }}>*</Text></Text>
                                     <View style={[styles.formItem, { padding: '0%' }]}>
                                         <View style={style.row_around_center}>
@@ -594,9 +599,10 @@ export default function AddAddressScreen(props) {
                                 </View>
                             </TouchableWithoutFeedback>
                             <TouchableWithoutFeedback>
-                                <View style={[styles.form, { marginBottom: '0%' }]}>
+                                <View style={[styles.form, style.mb_5]}>
                                     <Text style={styles.formTitle}>Alamat Lengkap <Text style={{ color: colors.RedDanger }}>*</Text></Text>
                                     <View style={[styles.formItem, { padding: '0%' }]}>
+
                                         <TextInput
                                             style={styles.inputbox}
                                             placeholder="Input Alamat"
@@ -633,11 +639,12 @@ export default function AddAddressScreen(props) {
                             </View>
                             {view === 'edit' ? <Button onPress={handleDelete} mode='contained' color={colors.RedDanger} style={{ width: '100%', marginVertical: '5%' }} contentStyle={{ width: '100%' }} labelStyle={{ color: colors.White }}>Hapus Alamat</Button> : null}
                         </View>
+
                     </ScrollView>
-                </>
-                :
-                <Maps data={address} handleAlamat={handleAlamat} status={handleStatus} region={region} />
-            }
+                    :
+                    <Maps data={address} handleAlamat={handleAlamat} status={handleStatus} region={region} />
+                }
+            </KeyboardAvoidingView>
 
             <ActionSheet containerStyle={{ paddingHorizontal: '4%', flexDirection: 'column' }} ref={actionSheetKecamatan}>
                 <View style={[style.row_between_center, { paddingVertical: '4%' }]}>
@@ -722,7 +729,7 @@ export default function AddAddressScreen(props) {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.actionSheetBody}>
-                    <View style={styles.form}>
+                    <View style={[styles.form, style.mb_5]}>
                         <Text style={styles.formTitle}>{openActionsheet}</Text>
                         <View style={[styles.formItem, { paddingBottom: '1%', borderBottomColor: textInputColor, borderBottomWidth: 1 }]}>
                             {openActionsheet === "Kode Pos" ?
