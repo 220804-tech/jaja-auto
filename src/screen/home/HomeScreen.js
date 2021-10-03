@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, StyleSheet, RefreshControl, Platform, ScrollView, Dimensions, LogBox, Animated, StatusBar } from 'react-native'
+import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, StyleSheet, RefreshControl, Platform, ScrollView, Dimensions, LogBox, Animated, StatusBar, Alert } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { BasedOnSearch, Trending, Category, Flashsale, Loading, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect, NearestStore, ServiceCore, Utils } from '../../export'
@@ -424,9 +424,9 @@ export default function HomeScreen() {
                     }
                 )}
             > */}
-            <StatusBar translucent backgroundColor="transparent" />
+            <StatusBar translucent={false} backgroundColor="transparent" />
             <ReactNativeParallaxHeader
-                headerMinHeight={Hp('11%')}
+                headerMinHeight={Hp('7%')}
                 headerMaxHeight={Hp('30%')}
                 extraScrollHeight={20}
                 navbarColor={colors.BlueJaja}
@@ -527,7 +527,7 @@ const style = StyleSheet.create({
 
     },
     navContainer: {
-        height: Hp('11%'),
+        height: Hp('7%'),
         justifyContent: 'flex-end',
         alignItems: 'center',
         paddingHorizontal: '4%',

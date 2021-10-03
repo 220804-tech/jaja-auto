@@ -188,17 +188,17 @@ class RegisterScreen extends Component {
     render() {
         return (
             <SafeAreaView style={styles.container}>
-                <Appbar back={true} title="Kembali" Bg={colors.YellowJaja} />
-                <StatusBar translucent={false} backgroundColor={colors.YellowJaja} barStyle="light-content" />
+                <Appbar back={true} title="Kembali" Bg={colors.BlueJaja} />
+                <StatusBar translucent={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
                 {this.state.loading ? <Loading /> : null}
                 <ScrollView style={styles.scrollView} contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>
-                    <View style={styles.viewImage}>
+                    {/* <View style={styles.viewImage}>
                         <Image
                             source={require('../../assets/images/JajaId.png')}
                             style={styles.logoJaja}
                         />
-                    </View>
-                    <View style={[style.column, { width: Wp('92%') }]}>
+                    </View> */}
+                    <View style={[style.column, style.pt_5, { width: Wp('92%') }]}>
                         <View style={[style.row_between_center]}>
                             <View style={[styles.viewInput, style.mr_2, { width: Wp('45%') }]}>
                                 <TextInput
@@ -208,11 +208,11 @@ class RegisterScreen extends Component {
                                     onChange={this.handleFirstName}
                                     outlineColor={colors.WhiteSilver}
                                     placeholderTextColor={colors.WhiteSilver}
-                                    selectionColor={colors.YellowJaja}
+                                    selectionColor={colors.BlueJaja}
                                     label="Nama Depan"
                                     keyboardType="default"
                                     mode="outlined"
-                                    theme={{ colors: { primary: colors.YellowJaja } }}
+                                    theme={{ colors: { primary: colors.BlueJaja } }}
                                 />
                             </View>
                             <View style={[styles.viewInput, { width: Wp('45%') }]}>
@@ -223,11 +223,11 @@ class RegisterScreen extends Component {
                                     onChange={this.handleLastName}
                                     outlineColor={colors.WhiteSilver}
                                     placeholderTextColor={colors.WhiteSilver}
-                                    selectionColor={colors.YellowJaja}
+                                    selectionColor={colors.BlueJaja}
                                     label="Nama Belakang"
                                     keyboardType="default"
                                     mode="outlined"
-                                    theme={{ colors: { primary: colors.YellowJaja } }}
+                                    theme={{ colors: { primary: colors.BlueJaja } }}
                                 />
                             </View>
                         </View>
@@ -236,7 +236,7 @@ class RegisterScreen extends Component {
 
                     <View style={styles.viewInput}>
                         <TextInput
-                            selectionColor={colors.YellowJaja}
+                            selectionColor={colors.BlueJaja}
                             label="Email"
                             type="text"
                             style={styles.inputBox}
@@ -245,13 +245,13 @@ class RegisterScreen extends Component {
                             onChange={this.handleEmail}
                             keyboardType="email-address"
                             mode="outlined"
-                            theme={{ colors: { primary: colors.YellowJaja } }}
+                            theme={{ colors: { primary: colors.BlueJaja } }}
                         />
                         <Text style={[style.font_13, { color: colors.RedNotif }]}>{this.state.alertTextEmail}</Text>
                     </View>
                     <View style={styles.viewInput}>
                         <TextInput
-                            selectionColor={colors.YellowJaja}
+                            selectionColor={colors.BlueJaja}
                             label="Nomor Telephone"
                             style={styles.inputBox}
                             outlineColor={colors.WhiteSilver}
@@ -261,21 +261,21 @@ class RegisterScreen extends Component {
                             maxLength={14}
                             keyboardType="numeric"
                             mode="outlined"
-                            theme={{ colors: { primary: colors.YellowJaja } }}
+                            theme={{ colors: { primary: colors.BlueJaja } }}
                         />
                         <Text style={[style.font_13, { color: colors.RedNotif }]}>{this.state.alertTextTelephone}</Text>
                     </View>
                     <View style={styles.viewInput}>
                         <TextInput
-                            selectionColor={colors.YellowJaja}
+                            selectionColor={colors.BlueJaja}
                             label="Kode Undangan (Optional)"
                             style={styles.inputBox}
                             outlineColor={colors.WhiteSilver}
                             placeholderTextColor={colors.WhiteSilver}
                             onChange={text => this.setState({ referral: text.nativeEvent.text.toLocaleUpperCase() })}
-                            keyboardType="ascii-capable"
+                            keyboardType="default"
                             mode="outlined"
-                            theme={{ colors: { primary: colors.YellowJaja } }}
+                            theme={{ colors: { primary: colors.BlueJaja } }}
                         />
                         <Text style={[style.font_13, { color: colors.RedNotif }]}>{this.state.alertTextReferral}</Text>
                     </View>
@@ -288,10 +288,10 @@ class RegisterScreen extends Component {
                             placeholderTextColor={colors.WhiteSilver}
                             onChange={this.handlePassword}
                             mode="outlined"
-                            selectionColor={colors.YellowJaja}
+                            selectionColor={colors.BlueJaja}
                             label="Password"
                             secureTextEntry={true}
-                            theme={{ colors: { primary: colors.YellowJaja } }}
+                            theme={{ colors: { primary: colors.BlueJaja } }}
                         />
                         <Text style={[style.font_13, { color: colors.RedNotif }]}>{this.state.alertTextPssword1}</Text>
                     </View>
@@ -304,11 +304,11 @@ class RegisterScreen extends Component {
                             placeholderTextColor={colors.WhiteSilver}
                             onChange={this.confirmPassword}
                             mode="outlined"
-                            selectionColor={colors.YellowJaja}
+                            selectionColor={colors.BlueJaja}
                             label="Konfirmasi Password"
                             secureTextEntry
                             on
-                            theme={{ colors: { primary: colors.YellowJaja } }}
+                            theme={{ colors: { primary: colors.BlueJaja } }}
                         />
                         <Text style={[style.font_13, { color: colors.RedNotif }]}>{this.state.alertTextPssword}</Text>
                     </View>
@@ -318,7 +318,7 @@ class RegisterScreen extends Component {
                             onPress={this.onRegistrasi}
                             mode="contained"
                             contentStyle={styles.contentButton}
-                            color={colors.YellowJaja}
+                            color={colors.BlueJaja}
                             style={styles.button}>
                             Daftar
                         </Button>

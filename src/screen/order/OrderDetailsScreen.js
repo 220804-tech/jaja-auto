@@ -610,7 +610,14 @@ export default function OrderDetailsScreen() {
                 if (result.status.code === 200 || result.status.code === 204) {
 
                     setDetails(result.data)
-                    getPayment(result.data.orderId);
+                    let status = result.data.status;
+                    if (!reduxOrderStatus) {
+                        dispatch({ type: 'SET_ORDER_STATUS', payload: status === 'notPaid' ? "Menunggu Pembayaran" : status === 'waitConfirm' ? 'Menunggu Konfirmasi' : status === 'prepared' ? 'Sedang Disiapkan' : status === 'canceled' ? 'Pesanan Dibatalkan' : status === 'done' ? 'Pesanan Selesai' : null })
+
+                    }
+                    if (status === 'notPaid') {
+                        getPayment(result.data.orderId);
+                    }
                     // dispatch({ type: 'SET_INVOICE', payload: result.data.items[0].invoice })
                 } else {
                     Utils.handleErrorResponse(result, "Error with status code : 22003");
@@ -900,7 +907,7 @@ export default function OrderDetailsScreen() {
                                                     <View style={[styles.column, styles.ml_2, { height: Wp('15%'), width: Wp('85%') }]}>
                                                         <Text onPress={() => handleShowDetail(child)} numberOfLines={1} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja, width: '95%' }]}>{child.name}</Text>
                                                         <View style={[styles.row_between_center, styles.pr_2, { width: '95%', alignItems: 'flex-start' }]}>
-                                                            <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlackGrayScale, }]}>{child.variant ? child.variant : ""}sasa</Text>
+                                                            <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlackGrayScale, }]}>{child.variant ? child.variant : ""}</Text>
                                                             <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
                                                                 {child.isDiscount ?
                                                                     <>
@@ -979,7 +986,7 @@ export default function OrderDetailsScreen() {
                     })
                     :
                     null}
-                <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '5%' }]}>
+                <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                     <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
                         <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
                         <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Ringkasan Belanja</Text>
@@ -998,6 +1005,7 @@ export default function OrderDetailsScreen() {
 
                         </View>
 
+                        {console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 1009 ~ OrderDetailsScreen ~ details", details)}
                         {details ?
                             <View style={styles.column_center_end}>
                                 <Text style={[styles.font_13, { marginBottom: '2%' }]}>{details.subTotalCurrencyFormat}</Text>
@@ -1007,7 +1015,7 @@ export default function OrderDetailsScreen() {
                                 <Text style={[styles.font_13, { marginBottom: '2%', color: details.voucherDiscountJaja ? colors.RedFlashsale : colors.BlackGrayScale }]}>{details.voucherDiscountJajaCurrencyFormat}</Text>
                                 {/* <Text style={[styles.font_13, { marginBottom: '2%', color: details.voucherDiscountJaja ? colors.RedFlashsale : colors.BlackGrayScale }]}>Rp {priceSplitter(orderPaymentRecent.fee)}</Text> */}
                                 {/* <Text style={[styles.font_13, styles.T_semi_bold, { marginBottom: '2%', color: colors.BlueJaja, }]}>{details ? details.totalCurrencyFormat : "Rp.0"}</Text> */}
-                                <Text style={[styles.font_13, styles.T_semi_bold, { marginBottom: '2%', color: colors.BlueJaja, }]}>Rp {priceSplitter(orderPaymentRecent.grand_total)}</Text>
+                                <Text style={[styles.font_13, styles.T_semi_bold, { marginBottom: '2%', color: colors.BlueJaja, }]}>{reduxOrderStatus !== 'Menunggu Pembayaran' ? details.totalCurrencyFormat : 'Rp' + priceSplitter(orderPaymentRecent.grand_total)}</Text>
 
                             </View>
                             : null
@@ -1016,77 +1024,79 @@ export default function OrderDetailsScreen() {
                     </View>
 
                 </View>
-                <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                    <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                        <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
-                        <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pembayaran</Text>
-                    </View>
-                    {
-                        loadingOrderPaymentRecent ?
-                            <ActivityIndicator size="large" />
-                            :
-                            orderPaymentRecent.payment_type == "" ?
-
-                                listPayment.map(item => {
-                                    return (
-                                        <TouchableRipple
-                                            //onPressIn={() => handleShowPayment(item)} 
-                                            style={[styles.px_3, styles.py_3, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}
-                                            onPress={() => handleShowPayment(item)}
-                                            rippleColor={colors.BlueJaja} >
-                                            <View style={styles.row_between_center}>
-                                                <Text style={styles.font_13}>{item.payment_type_label === 'Card' ? 'Kartu Kredit' : item.payment_type_label == 'eWallet' ? item.payment_type_label + ' - ' + item.subPayment[0].payment_sub_label : item.payment_type_label}</Text>
-                                                <Image fadeDuration={300} source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackGrey }]} />
-
-                                            </View>
-                                        </TouchableRipple>
-                                    )
-                                })
+                {reduxOrderStatus == 'Menunggu Pembayaran' ?
+                    <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                        <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
+                            <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
+                            <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pembayaran</Text>
+                        </View>
+                        {
+                            loadingOrderPaymentRecent ?
+                                <ActivityIndicator size="large" />
                                 :
-                                <View style={[styles.row_center, styles.my_2, { width: '95%', alignSelf: 'center' }]}>
-                                    <TouchableRipple
-                                        //onPress={() => console.log("change")} 
-                                        onPress={() => {
-                                            Alert.alert(
-                                                'Confirm',
-                                                'Ingin mengganti metode pembayaran ?',
-                                                [
-                                                    { text: 'NO', onPress: () => console.warn('NO Pressed'), style: 'cancel' },
-                                                    { text: 'YES', onPress: () => submitChange() },
-                                                ]
-                                            );
+                                orderPaymentRecent.payment_type == "" ?
 
-                                        }}
-                                        style={[styles.row_center, styles.py_2, { width: 100 / 2 + '%', backgroundColor: colors.YellowJaja }]}>
-                                        <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                            Ganti
-                                        </Text>
-                                    </TouchableRipple>
-                                    {/* <TouchableRipple onPress={() => console.log("refresh")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.GreenSuccess }]}>
+                                    listPayment.map(item => {
+                                        return (
+                                            <TouchableRipple
+                                                //onPressIn={() => handleShowPayment(item)} 
+                                                style={[styles.px_3, styles.py_3, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}
+                                                onPress={() => handleShowPayment(item)}
+                                                rippleColor={colors.BlueJaja} >
+                                                <View style={styles.row_between_center}>
+                                                    <Text style={styles.font_13}>{item.payment_type_label === 'Card' ? 'Kartu Kredit' : item.payment_type_label == 'eWallet' ? item.payment_type_label + ' - ' + item.subPayment[0].payment_sub_label : item.payment_type_label}</Text>
+                                                    <Image fadeDuration={300} source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackGrey }]} />
+
+                                                </View>
+                                            </TouchableRipple>
+                                        )
+                                    })
+                                    :
+                                    <View style={[styles.row_center, styles.my_2, { width: '95%', alignSelf: 'center' }]}>
+                                        <TouchableRipple
+                                            //onPress={() => console.log("change")} 
+                                            onPress={() => {
+                                                Alert.alert(
+                                                    'Confirm',
+                                                    'Ingin mengganti metode pembayaran ?',
+                                                    [
+                                                        { text: 'NO', onPress: () => console.warn('NO Pressed'), style: 'cancel' },
+                                                        { text: 'YES', onPress: () => submitChange() },
+                                                    ]
+                                                );
+
+                                            }}
+                                            style={[styles.row_center, styles.py_2, { width: 100 / 2 + '%', backgroundColor: colors.YellowJaja }]}>
+                                            <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                                Ganti
+                                            </Text>
+                                        </TouchableRipple>
+                                        {/* <TouchableRipple onPress={() => console.log("refresh")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.GreenSuccess }]}>
                                 <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
                                     Cek Bayar
                                 </Text>
                             </TouchableRipple> */}
 
-                                    <TouchableRipple onPress={handlePayment} style={[styles.row_center, styles.py_2, { width: 100 / 2 + '%', backgroundColor: colors.BlueJaja }]}>
-                                        <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                            Bayar Sekarang
-                                        </Text>
-                                    </TouchableRipple>
+                                        <TouchableRipple onPress={handlePayment} style={[styles.row_center, styles.py_2, { width: 100 / 2 + '%', backgroundColor: colors.BlueJaja }]}>
+                                            <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                                Bayar Sekarang
+                                            </Text>
+                                        </TouchableRipple>
 
 
-                                </View>
+                                    </View>
 
-                    }
-                    <View style={[styles.row_center, styles.mb_2, { width: '95%', alignSelf: 'center' }]}>
-                        <TouchableRipple onPress={() => navigation.navigate('OrderCancel')} style={[styles.row_center, styles.py_2, { width: '100%', backgroundColor: colors.Silver, alignSelf: 'center' }]}>
-                            <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                Batalkan Pesanan
-                            </Text>
-                        </TouchableRipple>
+                        }
+                        <View style={[styles.row_center, styles.mb_2, { width: '95%', alignSelf: 'center' }]}>
+                            <TouchableRipple onPress={() => navigation.navigate('OrderCancel')} style={[styles.row_center, styles.py_2, { width: '100%', backgroundColor: colors.Silver, alignSelf: 'center' }]}>
+                                <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                    Batalkan Pesanan
+                                </Text>
+                            </TouchableRipple>
+                        </View>
+
                     </View>
-
-                </View>
+                    : null}
                 {details && Object.keys(details).length ?
                     reduxOrderStatus === "Pengiriman" ?
                         <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'column', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>

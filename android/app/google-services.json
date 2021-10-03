@@ -8,74 +8,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:284366139562:android:b76341098730454be1a0d3",
-        "android_client_info": {
-          "package_name": "com.jajaid"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "284366139562-3lpg93ur1r77alnq0gqd3okjifm3hief.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.jajaid",
-            "certificate_hash": "23eab090ae9519f3a2a12d7474312ef2f56bcf14"
-          }
-        },
-        {
-          "client_id": "284366139562-5hrcnf6irbjov0r23ncq35hlp1cj85pu.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.jajaid",
-            "certificate_hash": "fe6aa21b0411be44ad5967cd5ba016213ed1a13f"
-          }
-        },
-        {
-          "client_id": "284366139562-hpdjk9fe7qbhint0vsog1uv61v0a066j.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.jajaid",
-            "certificate_hash": "6212eb174ba57f772f44af0fbfe9699e3df9033e"
-          }
-        },
-        {
-          "client_id": "284366139562-veqqrs3macqbi2osuf2p8tvj43i4eh0o.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.jajaid",
-            "certificate_hash": "a262a369b46632de0ae3fd5c9cbeeaa682f938ef"
-          }
-        },
-        {
-          "client_id": "284366139562-tnj3641sdb4ia9om7bcp25vh3qn5vvo8.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBZOcKNXvDumSqi4LPt0YKJ5sgLEY-lAu0"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "284366139562-tnj3641sdb4ia9om7bcp25vh3qn5vvo8.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "284366139562-38kk2k0vfqh9g3b29mc3kabufk04026c.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.jaja.customer"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:284366139562:android:9e8c5931ad5fca7be1a0d3",
         "android_client_info": {
           "package_name": "com.jajaidbuyer"
@@ -83,27 +15,19 @@
       },
       "oauth_client": [
         {
+          "client_id": "284366139562-0lhgbrffns3hrff0nmtko575pkiuakh6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jajaidbuyer",
+            "certificate_hash": "9330dd5bcfa769ffbadd800de5dea84fe155faab"
+          }
+        },
+        {
           "client_id": "284366139562-141o9p7jpgpcnomjiu5ph34rilpt8vko.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.jajaidbuyer",
             "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
-          }
-        },
-        {
-          "client_id": "284366139562-cd17c5r7gk58naur4tsj8vgsp8r41vdh.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.jajaidbuyer",
-            "certificate_hash": "23eab090ae9519f3a2a1d27474312ef2f56bcf14"
-          }
-        },
-        {
-          "client_id": "284366139562-mqgkup3lq9ptke90o0fmb5qa0g12nha5.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.jajaidbuyer",
-            "certificate_hash": "9330dd5bcfa769ffbadd800de5dea84fe155faab"
           }
         },
         {

@@ -4,7 +4,11 @@ import { TouchableRipple } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { Appbar, styles as style, colors, Wp, Hp, Utils, DefaultNotFound, useNavigation } from '../../export';
 function NotifikasiScreen(props) {
+    const [arrOrders, setarrOrder] = useState([]);
+    const [arrChats, setarrChat] = useState([]);
+    const [arrEvents, setarrEvent] = useState([]);
     const [notifData, setnotifData] = useState([]);
+
     const [shimmer, setshimmer] = useState(Boolean);
     const reduxUser = useSelector(state => state.user.user)
     const reduxAuth = useSelector(state => state.auth.auth)
@@ -20,27 +24,36 @@ function NotifikasiScreen(props) {
         fetch(`https://jaja.id/backend/notifikasi/${reduxUser ? reduxUser.id : ''}`, requestOptions)
             .then(response => response.text())
             .then(result => {
+                console.log("🚀 ~ file: NotifikasiScreen.js ~ line 27 ~ handleNotifikasi ~ result", result)
                 try {
                     let data = JSON.parse(result)
                     if (data.status.code === 200 || data.status.code === 204) {
-                        setnotifData(data.data.notifikasi)
+                        let arrChat = []
+                        let arrOrder = []
+                        let arrEvent = []
+                        let arrCoin = []
+
+                        if (data.data.notifikasi && data.data.notifikasi.length) {
+                            data.data.notifikasi.map(item => {
+                                if (item.tipe_notif === 'transaksi') {
+                                    arrOrder.push(item)
+                                } else if (item.tipe_notif === 'chat') {
+                                    arrChat.push(item)
+                                } else if (item.tipe_notif === 'event') {
+                                    arrEvent.push(item)
+                                } else if (item.tipe_notif === 'koin') {
+                                    arrCoin.push(item)
+                                }
+                            })
+                        }
+                        setnotifData([arrOrder, arrChats, arrCoin, arrEvent])
                     } else {
-                        Alert.alert(
-                            "Error with status code : 15001",
-                            String(data.status.message) + " => " + String(data.status.code),
-                            [
-                                {
-                                    text: "TUTUP",
-                                    onPress: () => console.log("Cancel Pressed"),
-                                    style: "cancel"
-                                },
-                            ]
-                        );
+                        Utils.alertPopUp('Error ', result)
                         return null
                     }
                     return data
                 } catch (error) {
-                    alert("saaffytguhijokl " + result)
+                    alert(error + "\n\n" + result)
                 }
             })
             .catch(error => {
@@ -124,24 +137,30 @@ function NotifikasiScreen(props) {
                 <FlatList
                     data={notifData}
                     // inverted={-1}
-                    keyExtractor={item => item.notificationId}
+                    keyExtractor={(item, index) => index + 'JH'}
                     renderItem={({ item, index }) => {
                         console.log("🚀 ~ file: NotifikasiScreen.js ~ line 144 ~ NotifikasiScreen ~ item", item)
+                        if (item && item.length) {
 
-                        return (
-                            <TouchableRipple key={index} style={[styles.card, { backgroundColor: item.read == 'T' ? colors.BlueLight : colors.White, }]} onPress={() => handleRead(item)}>
-                                <>
-                                    <View style={[style.row_between_center, { flex: 0 }]}>
-                                        <Text style={styles.textDate}>{item.invoice}</Text>
-                                        <Text style={styles.textDate}>{String(item.created_date).slice(0, 16)} {item.time}</Text>
-                                    </View>
-                                    <View style={styles.bodyCard}>
-                                        <Text style={styles.textTitle}>{item.title}</Text>
-                                        <Text style={styles.textBody}>{item.text}</Text>
-                                    </View>
-                                </>
-                            </TouchableRipple>
-                        )
+                            return (
+                                <View style={[style.column, style.pt_2, { backgroundColor: colors.White }]}>
+                                    <Text style={[styles.textTitle, { color: colors.BlackGrayScale }]}>{String(item[0].tipe_notif).slice(0, 1).toUpperCase() + String(item[0].tipe_notif).slice(1, String(item[0].tipe_notif).length)}</Text>
+
+                                    <TouchableRipple key={index} style={[styles.card, { backgroundColor: item[0].read == 'T' ? colors.BlueLight : colors.White, }]} onPress={() => handleRead(item[0])}>
+                                        <>
+                                            {/* <View style={[style.row_between_center, { flex: 0 }]}>
+                                                <Text style={styles.textDate}>{item[0].invoice}</Text>
+                                                <Text style={styles.textDate}>{String(item[0].created_date).slice(0, 16)} {item[0].time}</Text>
+                                            </View> */}
+                                            <View style={styles.bodyCard}>
+                                                {/* <Text style={styles.textTitle}>{item[0].title}</Text> */}
+                                                <Text style={styles.textBody}>{item[0].text}</Text>
+                                            </View>
+                                        </>
+                                    </TouchableRipple>
+                                </View>
+                            )
+                        }
                     }}
                 />
                 : <DefaultNotFound textHead="Ups.." textBody="Tampaknya belum ada informasi untukmu.." ilustration={require('../../assets/ilustrations/empty.png')} />
@@ -157,7 +176,6 @@ const styles = StyleSheet.create({
         flex: 0,
         backgroundColor: 'white',
         flexDirection: 'column',
-        paddingTop: '2%',
         paddingBottom: '5%',
 
     },
@@ -166,7 +184,7 @@ const styles = StyleSheet.create({
         flexDirection: "column"
     },
     textTitle: {
-        fontSize: 14,
+        fontSize: 13,
         fontFamily: 'Poppins-SemiBold',
         paddingHorizontal: '3%',
         color: colors.BlueJaja,
@@ -187,7 +205,7 @@ const styles = StyleSheet.create({
         color: 'grey',
         fontSize: 12,
         textAlign: 'left',
-        fontFamily: 'Poppins-SemiBold',
+        fontFamily: 'Poppins-Medium',
         paddingHorizontal: '3%',
 
     }

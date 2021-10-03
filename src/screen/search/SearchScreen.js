@@ -233,75 +233,11 @@ export default function SearchScreen() {
             }
         })
 
-
-        // if (item.slug !== reduxSlug) {
-        //     dispatch({ "type": 'SET_STORE', payload: {} })
-        //     dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
-        // }
-        // dispatch({ type: 'SET_SLUG', payload: item.slug })
-        // ServiceStore.getStore(item.slug).then(res => {
-        //     if (res) {
-        //         dispatch({ "type": 'SET_STORE', payload: res })
-        //     }
-        // })
-        // let obj = {
-        //     slug: slug,
-        //     page: 1,
-        //     limit: 10,
-        //     keyword: '',
-        //     price: '',
-        //     condition: '',
-        //     preorder: '',
-        //     brand: '',
-        //     sort: '',
-        // }
-        // ServiceStore.getStoreProduct(obj).then(res => {
-        //     if (res) {
-        //         dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
-        //     }
-        // })
-        // if (item.slug !== reduxSlug) {
-        //     dispatch({ "type": 'SET_STORE', payload: {} })
-        //     dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
-        //     dispatch({ type: 'SET_SLUG', payload: item.slug })
-        // }
-        // ServiceStore.getStore(item.slug).then(res => {
-        //     if (res) {
-        //         dispatch({ "type": 'SET_STORE', payload: res })
-        //     }
-        // })
-        // let obj = {
-        //     slug: item.slug,
-        //     page: 1,
-        //     limit: 10,
-        //     keyword: '',
-        //     price: '',
-        //     condition: '',
-        //     preorder: '',
-        //     brand: '',
-        //     sort: '',
-        // }
-        // ServiceStore.getStoreProduct(obj).then(res => {
-        //     if (res) {
-        //         dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
-        //     }
-        // })
-        // navigation.navigate('Store')
     }
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* <View style={styles.appBar}>
-                <TouchableOpacity style={styles.row_start_center} onPress={() => navigation.goBack()}>
-                    <Image style={styles.appBarButton} source={require('../../assets/icons/arrow.png')} />
-                </TouchableOpacity>
-                <View style={styles.searchBar}>
-                    <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
-                    <TextInput keyboardType="name-phone-pad" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={[styles.font_13, { width: '90%', marginBottom: '-1%' }]} placeholder='Cari hobimu disini..' onChangeText={(text) => handleSearch(text)} onSubmitEditing={(value) => handleSearchInput(value.nativeEvent.text)}></TextInput>
-                </View>
-            </View> */}
             <AppbarSecond autofocus={true} handleSearch={handleSearch} title='Cari hobimu disini..' />
-
             <View style={[styles.column, { flex: 1, backgroundColor: colors.White }, styles.p_3]}>
                 <View style={{ flex: 0, minHeight: '35%', maxHeight: '80%' }}>
                     {productSearch && productSearch.length || storeSearch.length ?

@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux'
 import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
 import database from '@react-native-firebase/database';
 
-export default function LoginScreen(props) {
+export default function LoginOrderScreen(props) {
     let navigation = useNavigation()
     const dispatch = useDispatch()
 
@@ -373,7 +373,7 @@ export default function LoginScreen(props) {
                 barStyle='default'
                 showHideTransition="fade"
             />
-            <Appbar back={true} title="Kembali" />
+            {/* <Appbar back={true} title="Kembali" /> */}
             {loading ? <Loading /> : null}
 
             <View style={[styles.column_around_center, { flex: 1 }]}>
@@ -386,11 +386,10 @@ export default function LoginScreen(props) {
                             <Text style={[styles.alertText, styles.mb_3, { alignSelf: 'center', width: Wp('85%') }]}>{alertText}</Text>
                             <TextInput
                                 ref={emailRef}
-                                returnKeyType="next"
+                                returnKeyType="go"
                                 selectionColor={colors.BlueJaja}
                                 style={{ width: Wp('85%'), marginBottom: '2%' }}
                                 label="Alamat Email"
-
                                 keyboardType="email-address"
                                 onChangeText={(text) => handleChange('email', text)}
                                 // onSubmitEditing={() => passwordRef.current.show()}
@@ -406,7 +405,7 @@ export default function LoginScreen(props) {
                                 <TextInput
                                     ref={passwordRef}
                                     // onSubmitEditing={() => this.login()}
-                                    returnKeyType="done"
+                                    returnKeyType="go"
                                     style={{ width: Wp('85%') }}
                                     mode="outlined"
                                     selectionColor={colors.BlueJaja}

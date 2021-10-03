@@ -12,6 +12,7 @@ import { colors, styles, Appbar, DefaultNotFound } from '../../export';
 const initialLayout = { width: Dimensions.get('window').width };
 import { useSelector } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
+import LoginOrderScreen from '../login/LoginOrderScreen';
 
 export default function OrderScreen() {
     const reduxAuth = useSelector(state => state.auth.auth)
@@ -112,7 +113,8 @@ export default function OrderScreen() {
                     )}
                 />
                 :
-                <DefaultNotFound textHead="Ups.." textBody="sepertinya kamu belum login.." ilustration={require('../../assets/ilustrations/empty.png')} />
+                <LoginOrderScreen />
+                // <DefaultNotFound textHead="Ups.." textBody="sepertinya kamu belum login.." ilustration={require('../../assets/ilustrations/empty.png')} />
             }
         </SafeAreaView>
     )

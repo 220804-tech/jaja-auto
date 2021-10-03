@@ -51,7 +51,7 @@ export default function AppbarComponent(props) {
     return (
         <>
 
-            <StatusBar translucent backgroundColor={colors.BlueJaja} barStyle="light-content" />
+            <StatusBar translucent={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
             <View style={[styles.appBar, { justifyContent: 'flex-start', backgroundColor: props.Bg ? props.Bg : colors.BlueJaja }]}>
                 <View style={[styles.row_start_center, { flex: 1 }]}>
                     {props.back ?

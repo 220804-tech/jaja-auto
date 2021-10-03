@@ -1,13 +1,13 @@
 import React, { useEffect, useState, createRef } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Image, TextInput, ScrollView, FlatList, SafeAreaView, Alert, ToastAndroid, Dimensions, KeyboardAvoidingView, Platform } from 'react-native'
-import { styles as style, Wp, Hp, colors, useNavigation, Loading, ServiceUser } from '../../export'
+import { styles as style, Wp, Hp, colors, useNavigation, Loading, ServiceUser, Appbar } from '../../export'
 import { useAndroidBackHandler } from "react-navigation-backhandler";
 const { width, height } = Dimensions.get('screen')
 import ActionSheet from 'react-native-actions-sheet';
 import * as Service from '../../services/Address';
 import Maps from './Maps'
 import { useDispatch } from 'react-redux'
-import { Appbar, Button, Checkbox } from 'react-native-paper';
+import { Button, Checkbox } from 'react-native-paper';
 import EncryptedStorage from 'react-native-encrypted-storage';
 export default function AddAddressScreen(props) {
     const navigation = useNavigation();
@@ -113,6 +113,7 @@ export default function AddAddressScreen(props) {
     useEffect(() => {
         if (props.route.params && props.route.params.edit) {
             let value = props.route.params.data;
+            console.log("🚀 ~ file: AddAddressScreen.js ~ line 116 ~ useEffect ~ value", value)
             setnamaPenerima(value.nama_penerima)
             setphoneNumber(value.no_telepon)
             setprovValue(value.provinsi)
@@ -121,7 +122,8 @@ export default function AddAddressScreen(props) {
             setkabkotaId(value.kota_kabupaten_id)
             setkcValue(value.kecamatan)
             setkecamatanId(value.kecamatan_id)
-            setklValue(value.kelurahan_id)
+            setklValue(value.kelurahan)
+
             setkelurahanId(value.kelurahan_id)
             setkodePos(value.kode_pos)
             setlabel(value.label)
@@ -437,16 +439,9 @@ export default function AddAddressScreen(props) {
                 {status === "edit" ?
 
                     <ScrollView stickyHeaderIndices={[0]}>
-                        <View style={[style.appBar2, { justifyContent: 'flex-start', backgroundColor: colors.BlueJaja }]}>
-                            <View style={style.row_start_center}>
-                                <TouchableOpacity onPress={() => navigation.goBack()}>
-                                    <Image style={style.appBarButton} source={require('../../assets/icons/arrow.png')} />
-                                </TouchableOpacity>
-                                <Text style={style.appBarText}>{props.route.params && props.route.params.edit ? "Ubah Alamat" : "Tambah Alamat"}</Text>
-                            </View>
-                            {kcValue ? <Button mode="text" color={colors.White} onPress={handleSave}>Simpan</Button> : null}
-                        </View>
 
+
+                        <Appbar back={true} title={props.route.params && props.route.params.edit ? "Ubah Alamat" : "Tambah Alamat"} />
                         <View style={[style.column_start_center, style.p_4, { backgroundColor: colors.White }]}>
                             {/* <TouchableWithoutFeedback onPress={() => handleEdit("Nama Lengkap")}> */}
                             <TouchableWithoutFeedback>
@@ -638,6 +633,8 @@ export default function AddAddressScreen(props) {
 
                             </View>
                             {view === 'edit' ? <Button onPress={handleDelete} mode='contained' color={colors.RedDanger} style={{ width: '100%', marginVertical: '5%' }} contentStyle={{ width: '100%' }} labelStyle={{ color: colors.White }}>Hapus Alamat</Button> : null}
+
+                            {view === 'edit' ? <Button onPress={handleDelete} mode='contained' color={colors.RedDanger} style={{ width: '100%', marginVertical: '5%' }} contentStyle={{ width: '100%' }} labelStyle={{ color: colors.White }}>Hapus Alamat</Button> : null}
                         </View>
 
                     </ScrollView>
@@ -739,7 +736,7 @@ export default function AddAddressScreen(props) {
                                     value={kodePos}
                                     onFocus={() => settextInputColor(colors.BlueJaja)}
                                     onBlur={() => settextInputColor('#C0C0C0')}
-                                    keyboardType="number-pad"
+                                    keyboardType="numeric"
                                     maxLength={6}
                                     onChangeText={(text) => setkodePos(text)}
                                     theme={{

@@ -274,7 +274,7 @@ export default class ForgotPasswordScreen extends Component {
                         label="Email"
                         autoFocus
                         onChangeText={(text) => this.onChangeMail(text)}
-                        keyboardType="name-phone-pad"
+                        keyboardType="email-address"
                         mode="outlined"
                         theme={{
                             colors: {
