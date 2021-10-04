@@ -19,6 +19,7 @@ export default function OrdersSent() {
             dispatch({ type: 'SET_ORDER_STATUS', payload: 'Pengiriman' })
         }
     }, [complain])
+    
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         getItem()

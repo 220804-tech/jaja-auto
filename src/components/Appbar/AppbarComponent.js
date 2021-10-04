@@ -15,7 +15,7 @@ export default function AppbarComponent(props) {
             StatusBar.setBarStyle('light-content', true);	//<<--- add this
             StatusBar.setBackgroundColor(colors.BlueJaja, true)
         }
-    }, [])
+    }, [reduxUser])
     const handleGetCart = () => {
         if (reduxAuth) {
             ServiceCart.getCart(reduxAuth).then(res => {

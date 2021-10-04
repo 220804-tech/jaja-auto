@@ -51,6 +51,8 @@ export default function BottomRoute() {
                 if (resUnpaid) {
                     dispatch({ type: 'SET_UNPAID', payload: resUnpaid.items })
                     dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
+                    dispatch({ type: 'SET_ORDER_REFRESH', payload: true })
+
                 } else {
                     handleUnpaid()
                 }

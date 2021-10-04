@@ -18,6 +18,8 @@ export default function ListChat() {
 
     useEffect(() => {
         loadList()
+        setRefreshing(false)
+        readChat()
     }, [reduxUser]);
 
 
@@ -50,11 +52,24 @@ export default function ListChat() {
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         loadList()
+        readChat()
         setTimeout(() => {
             setRefreshing(false)
         }, 2000);
 
     }, []);
+
+
+    const readChat = () => {
+        database().ref(`/people/${reduxUser.uid}/notif/`).update({ chat: 0 }).then("value", function (snap) {
+            var item = snap.val();
+            error = false
+
+            if (item != null && item.photo != null) {
+                setesellerImage(item.photo)
+            }
+        })
+    }
 
     const renderItem = ({ item }) => {
         return (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, SafeAreaView, Dimensions } from 'react-native'
+import { View, Text, SafeAreaView, Dimensions, ToastAndroid } from 'react-native'
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import Unpaid from '../../components/Orders/OrdersUnpaid'
 import Process from '../../components/Orders/OrdersProcess'
@@ -8,17 +8,21 @@ import Completed from '../../components/Orders/OrdersCompleted'
 import Failed from '../../components/Orders/OrdersFailed'
 import Return from '../../components/Orders/OrdersComplain'
 
-import { colors, styles, Appbar, DefaultNotFound } from '../../export';
+import { colors, styles, Appbar, DefaultNotFound, ServiceOrder } from '../../export';
 const initialLayout = { width: Dimensions.get('window').width };
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import LoginOrderScreen from '../login/LoginOrderScreen';
 
 export default function OrderScreen() {
+    const dispatch = useDispatch()
+
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxSent = useSelector(state => state.order.sent)
 
     const reduxOrder = useSelector(state => state.order.filter)
+    const reduxRefresh = useSelector(state => state.order.refresh)
+
     const [index, setIndex] = useState(0)
     const [count, setCount] = useState(0)
     const [complain, setComplain] = useState(0)
@@ -59,16 +63,67 @@ export default function OrderScreen() {
             })
         }
         setComplain(complainCount)
-        console.log("🚀 ~ file: OrderScreen.js ~ line 62 ~ useEffect ~ complainCount", complainCount)
         setSent(sentCount)
-        console.log("🚀 ~ file: OrderScreen.js ~ line 64 ~ useEffect ~ sentCount", sentCount)
-    }, [reduxOrder])
+        if (reduxRefresh) {
+            dispatch({ type: 'SET_ORDER_REFRESH', payload: false })
+        }
+    }, [reduxOrder, reduxRefresh])
+
+
+    useEffect(() => {
+        if (reduxAuth) {
+            ServiceOrder.getUnpaid(reduxAuth).then(resUnpaid => {
+                if (resUnpaid) {
+                    dispatch({ type: 'SET_UNPAID', payload: resUnpaid.items })
+                    dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
+                }
+            }).catch(err => {
+                // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+            })
+            ServiceOrder.getWaitConfirm(reduxAuth).then(reswaitConfirm => {
+                if (reswaitConfirm) {
+                    dispatch({ type: 'SET_WAITCONFIRM', payload: reswaitConfirm.items })
+                }
+            }).catch(err => {
+                // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+            })
+            ServiceOrder.getProcess(reduxAuth).then(resProcess => {
+                if (resProcess) {
+                    dispatch({ type: 'SET_PROCESS', payload: resProcess.items })
+                }
+            }).catch(err => {
+                // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+            })
+            ServiceOrder.getSent(reduxAuth).then(resSent => {
+                if (resSent) {
+                    dispatch({ type: 'SET_SENT', payload: resSent.items })
+                }
+            }).catch(err => {
+                // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+            })
+            ServiceOrder.getCompleted(reduxAuth).then(resCompleted => {
+                if (resCompleted) {
+                    dispatch({ type: 'SET_COMPLETED', payload: resCompleted.items })
+                }
+            }).catch(err => {
+                // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+            })
+            ServiceOrder.getFailed(reduxAuth).then(resFailed => {
+                if (resFailed) {
+                    dispatch({ type: 'SET_FAILED', payload: resFailed.items })
+                }
+            }).catch(err => {
+                // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+            })
+        }
+    }, [])
 
     return (
         <SafeAreaView style={styles.container}>
             <Appbar title="Pesanan" trolley={true} notif={true} />
             {reduxAuth ?
                 <TabView
+
                     indicatorStyle={{ backgroundColor: 'white' }}
                     navigationState={{ index, routes }}
                     renderScene={renderScene}
@@ -77,6 +132,7 @@ export default function OrderScreen() {
                     renderTabBar={props => (
                         <TabBar
                             {...props}
+                            pressColor={colors.BlueJaja}
                             indicatorStyle={{ backgroundColor: colors.BlueJaja }}
                             bounces={true}
                             scrollEnabled={true}

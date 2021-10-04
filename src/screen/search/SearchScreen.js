@@ -77,6 +77,9 @@ export default function SearchScreen() {
             setstoreSearch([])
             setCount(0)
         }
+
+
+
     }
 
     const handleClear = () => {
@@ -237,7 +240,7 @@ export default function SearchScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <AppbarSecond autofocus={true} handleSearch={handleSearch} title='Cari hobimu disini..' />
+            <AppbarSecond autofocus={true} handleSearch={handleSearch} title='Cari hobimu disini..' handleSubmit={handleFetch} />
             <View style={[styles.column, { flex: 1, backgroundColor: colors.White }, styles.p_3]}>
                 <View style={{ flex: 0, minHeight: '35%', maxHeight: '80%' }}>
                     {productSearch && productSearch.length || storeSearch.length ?

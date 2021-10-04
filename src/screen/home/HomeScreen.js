@@ -177,7 +177,7 @@ export default function HomeScreen() {
                         <TouchableOpacity style={[styles.column, styles.mx_2]} onPress={() => reduxAuth || auth ? navigation.navigate('Notification') : navigation.navigate('Login')}>
                             <Image source={require('../../assets/icons/notif.png')} style={{ width: 24, height: 24, tintColor: colors.White }} />
                             {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
-                                <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalNotifUnread >= 100 ? "99+" : reduxUser.badges.totalNotifUnread + 'sss'}</Text></View>
+                                <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalNotifUnread >= 100 ? "99+" : reduxUser.badges.totalNotifUnread + ''}</Text></View>
                                 : null
                             }
                         </TouchableOpacity>

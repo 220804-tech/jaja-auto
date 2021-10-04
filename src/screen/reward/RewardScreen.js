@@ -371,7 +371,7 @@ export default function RewardScreen() {
                 <View style={[styles.row_center, { borderBottomWidth: 1, borderColor: colors.BlueJaja }]}>
                     <Text style={[styles.font_12, styles.py, { width: '20%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>Account</Text>
                     <Text style={[styles.font_12, styles.py, { width: '30%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>Jumlah</Text>
-                    <Text style={[styles.font_12, styles.py, { width: '30%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>Jumlah</Text>
+                    {/* <Text style={[styles.font_12, styles.py, { width: '30%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>Jumlah</Text> */}
 
                     <Text style={[styles.font_12, styles.py, { width: '20%', textAlign: 'center' }]}>Status</Text>
 
@@ -388,9 +388,9 @@ export default function RewardScreen() {
                                     <View style={[styles.row_center, styles.p_2, { borderRightWidth: 0.5, width: '30%', }]}>
                                         <Text style={[styles.font_12, { textAlign: 'center' }]}>{item.amount}</Text>
                                     </View>
-                                    <View style={[styles.row_center, styles.p_2, { borderRightWidth: 0.5, width: '30%', }]}>
+                                    {/* <View style={[styles.row_center, styles.p_2, { borderRightWidth: 0.5, width: '30%', }]}>
                                         <Text style={[styles.font_12, { textAlign: 'center' }]}>{item.noted}Lorem id pariatur anim fugiat</Text>
-                                    </View>
+                                    </View> */}
                                     <View style={[styles.row_center, styles.p_2, { width: '20%', }]}>
                                         <Text style={[styles.font_10, { textAlign: 'center', color: item.status === 'queued' ? colors.RedNotif : colors.GreenSuccess }]}>{item.status === 'queued' ? 'Pending' : 'Success'}</Text>
                                     </View>

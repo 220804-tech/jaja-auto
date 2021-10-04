@@ -118,7 +118,6 @@ export default function ChatScreen({ route }) {
     }, [messageList])
 
     const handleSend = (image) => {
-        console.log("file: ChatScreen.js ~ line 56 ~ handleSend ~ image", image)
         if (isiChat.length > 0 || image || selectedOrder || selectedProduct) {
             let chat = isiChat.length > 0 ? isiChat : image ? 'Mengirim gambar' : selectedOrder && Object.keys(selectedOrder).length ? 'Pesanan No. ' + selectedOrder.invoice : selectedProduct.name
             var message = {
@@ -130,7 +129,6 @@ export default function ChatScreen({ route }) {
                 order: null
             }
             if (data && reduxAuth) {
-                console.log("🚀 ~ file: ChatScreen.js ~ line 72 ~ handleSend ~ firebaseDatabase.ServerValue.increment", firebaseDatabase.ServerValue.increment)
                 try {
                     if (selectedProduct && Object.keys(selectedProduct).length) {
                         handleSendProduct()
@@ -142,19 +140,22 @@ export default function ChatScreen({ route }) {
                         var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
                         console.log("🚀 ~ file: ChatScreen.js ~ line 135 ~ handleSendProduct ~ msgId", msgId)
                         firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
+                        firebaseDatabase().ref('people/' + data.id + '/notif').set(message); //pengirimnya
+
                         firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: chat, time: new Date().toString() } });
                         firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: { text: chat, time: new Date().toString() }, amount: 1, time: new Date().toString() });
                         let fire = firebaseDatabase().ref("/people/" + data.id).limitToLast(20).on("value", async function (snapshot) {
                             let item = await snapshot.val();
                             setselectedOrder(null)
                             if (item.token) {
-                                await Firebase.notifChat(item.token, { body: chat, title: reduxUser.name })
+                                await Firebase.buyerNotifications('chat', data.id)
+                                Firebase.notifChat(item.token, { body: chat, title: reduxUser.name })
                             }
                             firebaseDatabase().ref(`/people/${data.id}`).off('value', fire)
                         })
                     }, selectedProduct && Object.keys(selectedProduct).length ? 100 : 0);
                 } catch (error) {
-                    console.log("data error", error)
+
                 }
             }
             setIsiChat('')
@@ -252,21 +253,25 @@ export default function ChatScreen({ route }) {
                                             </>
                                             : null}
                                         {item.message ?
-                                            <Text
-                                                style={{
-                                                    fontSize: 14,
-                                                    color: "#FFF", textAlign: "right"
-                                                }}>
-                                                {item.message}
-                                            </Text>
+                                            <>
+                                                <Text
+                                                    style={{
+                                                        fontSize: 14,
+                                                        color: "#FFF", textAlign: "right"
+                                                    }}>
+                                                    {item.message}
+                                                </Text>
+                                                {item.date ?
+                                                    <Text style={[style.font_11, style.mt_2, { color: colors.White, alignSelf: 'flex-end' }]}>
+                                                        {item.date.slice(16, 21)}
+                                                    </Text>
+                                                    : null
+                                                }
+                                            </>
+
                                             : null}
 
-                                        {item.date ?
-                                            <Text style={[style.font_11, style.mt_2, { color: colors.White, alignSelf: 'flex-end' }]}>
-                                                {item.date.slice(16, 21)}
-                                            </Text>
-                                            : null
-                                        }
+
                                     </View>
                                     <View style={{
                                         borderRadius: 50,
@@ -383,25 +388,30 @@ export default function ChatScreen({ route }) {
                                         padding: 10,
                                     }}
                                 >
-                                    <Text
-                                        style={{
-                                            fontSize: Hp("2%"),
-                                            color: "#FFF"
-                                        }}
-                                    >
-                                        {item.message}
-                                    </Text>
-                                    {item.date ?
-                                        <Text
-                                            style={{
-                                                fontSize: Hp("1.2%"),
-                                                color: "#FFF"
-                                            }}
-                                        >
-                                            {item.date.slice(16, 20)}
-                                        </Text>
-                                        : null
-                                    }
+                                    {item.message ?
+                                        <>
+                                            <Text
+                                                style={{
+                                                    fontSize: Hp("2%"),
+                                                    color: "#FFF"
+                                                }}
+                                            >
+                                                {item.message}
+                                            </Text>
+                                            {item.date ?
+                                                <Text
+                                                    style={{
+                                                        fontSize: Hp("1.2%"),
+                                                        color: "#FFF"
+                                                    }}
+                                                >
+                                                    {item.date.slice(16, 20)}
+                                                </Text>
+                                                : null
+                                            }
+                                        </>
+                                        : null}
+
                                 </View>
                             </View>
                         </View>
@@ -529,13 +539,13 @@ export default function ChatScreen({ route }) {
                                 onChangeText={(text) => setChat(text)} onSubmitEditing={() => handleSend(null)}
                                 value={isiChat}
                             />
-                            {!isiChat.length ?
+                            {/* {!isiChat.length ?
                                 <IconButton
                                     icon={require('../../assets/icons/camera.png')}
                                     style={{ margin: 0, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100 }}
                                     color={colors.BlueJaja}
                                     onPress={() => galeryRef.current?.setModalVisible(true)}
-                                /> : null}
+                                /> : null} */}
                         </View>
 
                         <IconButton

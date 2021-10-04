@@ -37,7 +37,10 @@ export default function AppbarSecond(props) {
                                 props.handleSearch(text)
                             }
                         }}
-                            onSubmitEditing={(value) => props.handleSearch(value.nativeEvent.text)}></TextInput>
+                            onSubmitEditing={(value) => {
+                                console.log("🚀 ~ file: AppbarSecond.js ~ line 41 ~ AppbarSecond ~ value", value)
+                                props.handleSubmit(value.nativeEvent.text)
+                            }}></TextInput>
                     </View>
                     <TouchableOpacity style={[styles.column, styles.mx_3]} onPress={() => handleGetCart()}>
                         <Image source={require('../../assets/icons/cart.png')} style={{ width: 25, height: 25, tintColor: colors.White }} />

@@ -129,7 +129,7 @@ export default function OrderComplain(props) {
                                             <TextInput
                                                 value={textComplain}
                                                 onChangeText={(text) => settextComplain(text)}
-                                                style={{ borderBottomWidth: 0.5, width: Wp('80%'), minHeight: Wp('15%'), maxHeight: Wp('100%') }}
+                                                style={[styles.font_13, { borderBottomWidth: 0.5, width: Wp('80%'), minHeight: Wp('15%'), maxHeight: Wp('100%') }]}
                                                 numberOfLines={5}
                                                 multiline={true}
                                                 maxLength={500}

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, FlatList, Alert, Touchable } from 'react-native';
 import { TouchableRipple } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-import { Appbar, styles as style, colors, Wp, Hp, Utils, DefaultNotFound, useNavigation } from '../../export';
+import { Appbar, styles as style, colors, Wp, Hp, Utils, DefaultNotFound, useNavigation, useFocusEffect } from '../../export';
 function NotifikasiScreen(props) {
     const [notifData, setnotifData] = useState([]);
     const [shimmer, setshimmer] = useState(Boolean);
@@ -40,7 +40,7 @@ function NotifikasiScreen(props) {
                     }
                     return data
                 } catch (error) {
-                    alert("saaffytguhijokl " + result)
+                    alert("Error : " + result)
                 }
             })
             .catch(error => {
@@ -49,13 +49,18 @@ function NotifikasiScreen(props) {
     }
 
     useEffect(() => {
-        if (reduxUser && Object.keys(reduxUser).length) {
-            handleNotifikasi()
-        }
-        readData()
+
         // setshimmer(true)
     }, [reduxUser])
 
+    useFocusEffect(
+        useCallback(() => {
+            if (reduxUser && Object.keys(reduxUser).length) {
+                handleNotifikasi()
+            }
+            readData()
+        }, []),
+    );
     const readData = async () => {
         try {
             var raw = "";

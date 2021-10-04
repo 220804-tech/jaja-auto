@@ -1,5 +1,5 @@
 import React, { useEffect, useState, createRef, useCallback } from 'react'
-import { SafeAreaView, View, Text, Image, TouchableOpacity, ToastAndroid, StyleSheet, ScrollView, Animated, RefreshControl, Dimensions } from 'react-native'
+import { SafeAreaView, View, Text, Image, TouchableOpacity, ToastAndroid, StyleSheet, ScrollView, Animated, RefreshControl, Dimensions, StatusBar } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import ActionSheet from "react-native-actions-sheet";
 import { useNavigation, colors, styles, Wp, Loading, Hp, CardProduct, ShimmerCardProduct, Utils } from '../../export'
@@ -243,7 +243,9 @@ export default function ProductSearchScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.appBar}>
+            <StatusBar translucent={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
+
+            <View style={[styles.appBar2]}>
                 <TouchableOpacity style={styles.row_start_center} onPress={() => navigation.goBack()}>
                     <Image style={styles.appBarButton} source={require('../../assets/icons/arrow.png')} />
                 </TouchableOpacity>

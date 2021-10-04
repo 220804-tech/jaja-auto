@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, Linking, StyleSheet, Platform, Dimensions, Image, Alert, TouchableHighlight } from 'react-native';
+import { SafeAreaView, View, Text, TouchableOpacity, Linking, StyleSheet, Platform, Dimensions, Image, Alert, ScrollView, RefreshControl } from 'react-native';
 import { styles, Hp, Wp, colors, useNavigation, useFocusEffect, Loading, Appbar, ServiceCart, Utils } from '../../export'
 import { Button, TouchableRipple } from 'react-native-paper'
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -16,6 +16,7 @@ export default function ProfileScreen(props) {
   const reduxAuth = useSelector(state => state.auth.auth)
   const reduxUser = useSelector(state => state.user.user)
   const location = useSelector(state => state.user.user.location)
+  const [refreshing, setRefreshing] = useState(false);
 
   const [loading, setLoading] = useState(false)
   const [account, setAccount] = useState(false)
@@ -26,7 +27,6 @@ export default function ProfileScreen(props) {
 
 
   useEffect(() => {
-
     if (reduxProfile && Object.keys(reduxProfile).length == 0) {
       EncryptedStorage.getItem('user').then(res => {
         if (res) {
@@ -36,15 +36,28 @@ export default function ProfileScreen(props) {
     }
     getAccount()
     getItem()
-    // if (!reduxAuth) {
-    //   handleAuth('Login')
   }, [props, reduxAuth])
 
   useFocusEffect(
     useCallback(() => {
       getItem()
+
     }, []),
   );
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getItem().then(res => {
+      setRefreshing(false)
+      if (res) {
+        Utils.alertPopUp('Data berhasil diupdate!')
+      }
+
+    })
+    setTimeout(() => {
+      setRefreshing(false)
+    }, 3000);
+  }, []);
 
   const getAccount = () => {
     var myHeaders = new Headers();
@@ -72,10 +85,50 @@ export default function ProfileScreen(props) {
       });
   }
 
-  const getItem = () => {
+  // const getItem = () => {
+  // navigation.navigate("VerifikasiEmail", { email: user.email })
+  // }
 
-    // navigation.navigate("VerifikasiEmail", { email: user.email })
+  const getItem = async () => {
+    try {
+      if (reduxAuth) {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", reduxAuth);
+        myHeaders.append("Cookie", "ci_session=6jh2d2a8uvcvitvneaa2t81phf3lrs3c");
+        var requestOptions = {
+          method: 'GET',
+          headers: myHeaders,
+          redirect: 'follow'
+        };
+        return await fetch("https://jaja.id/backend/user/profile", requestOptions)
+          .then(response => response.text())
+          .then(data => {
+            try {
+              let result = JSON.parse(data)
+              if (result.status.code === 200) {
+                EncryptedStorage.setItem('user', JSON.stringify(result.data))
+                dispatch({ type: 'SET_USER', payload: result.data })
+                dispatch({ type: 'SET_VERIFIKASI', payload: result.data.isVerified })
+                return true
+              } else {
+                Utils.handleErrorResponse(result, 'Error with status code : 12044')
+                return false
+              }
+            } catch (error) {
+              Utils.alertPopUp(String(error) + "\n\n" + data)
+              return false
+            }
 
+          })
+          .catch(error => {
+            return false
+            Utils.handleError(error, "Error with status code : 12045")
+          });
+      }
+    } catch (error) {
+      Utils.handleError(error, "Error with status code : 12046")
+
+    }
   }
 
   const handleLogout = async () => {
@@ -171,120 +224,96 @@ export default function ProfileScreen(props) {
       {loading ? <Loading /> : null}
       <Appbar title="Akun Saya" trolley={true} notif={true} />
       <View style={styles.column}>
-        <View style={[styles.column, { height: Hp('15%') }]}>
-          <View style={[styles.column, styles.px_2]}>
-            <View style={[styles.row_start, styles.p_2, styles.mb_4]}>
-              <View style={{ height: Wp('17%'), width: Wp('17%'), backgroundColor: colors.White, borderRadius: 100, marginRight: '2%' }}>
-                <Image source={reduxAuth ? { uri: reduxProfile.image } : require('../../assets/images/JajaId.png')} style={{ resizeMode: 'contain', width: '100%', height: '100%', borderRadius: 100 }} />
-              </View>
-              {reduxAuth ?
-                <View style={[styles.column_around_center, { height: Wp('17%'), width: Wp('60%'), alignItems: 'flex-start' }]}>
-                  <Text numberOfLines={1} style={[styles.font_14, { color: colors.White, width: '100%' }]}>{reduxProfile.name}</Text>
-                  <View style={[styles.row_start_center, { width: '100%' }]}>
-                    <TouchableRipple style={[styles.row_center, styles.mr_2, { marginTop: '-1.5%' }]}>
-                      <Image source={require('../../assets/icons/coin.png')} style={styles.icon_14} />
-                    </TouchableRipple>
-                    <Text onPress={() => navigation.navigate(reduxAuth ? 'Reward' : 'Login')} numberOfLines={1} style={[styles.font_14, styles.mr_3, { color: colors.White }]}>{reduxProfile.coinFormat}</Text>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+        >
+          <View style={[styles.column, { height: Hp('15%') }]}>
+            <View style={[styles.column, styles.px_2]}>
+              <View style={[styles.row_start, styles.p_2, styles.mb_4]}>
+                <View style={{ height: Wp('17%'), width: Wp('17%'), backgroundColor: colors.White, borderRadius: 100, marginRight: '2%' }}>
+                  <Image source={reduxAuth ? { uri: reduxProfile.image } : require('../../assets/images/JajaId.png')} style={{ resizeMode: 'contain', width: '100%', height: '100%', borderRadius: 100 }} />
+                </View>
+                {reduxAuth ?
+                  <View style={[styles.column_around_center, { height: Wp('17%'), width: Wp('60%'), alignItems: 'flex-start' }]}>
+                    <Text numberOfLines={1} style={[styles.font_14, { color: colors.White, width: '100%' }]}>{reduxProfile.name}</Text>
+                    <View style={[styles.row_start_center, { width: '100%' }]}>
+                      <TouchableRipple style={[styles.row_center, styles.mr_2, { marginTop: '-1.5%' }]}>
+                        <Image source={require('../../assets/icons/coin.png')} style={styles.icon_14} />
+                      </TouchableRipple>
+                      <Text onPress={() => navigation.navigate(reduxAuth ? 'Reward' : 'Login')} numberOfLines={1} style={[styles.font_14, styles.mr_3, { color: colors.White }]}>{reduxProfile.coinFormat}</Text>
+                    </View>
                   </View>
-                </View>
-                :
-                <View style={[styles.row_start, styles.mt_5, { height: Wp('17%'), width: '80%', justifyContent: 'flex-end' }]}>
-                  <Button onPress={() => handleAuth('Login')} color={colors.White} mode="contained" contentStyle={{ width: Wp('25%'), height: Wp('9%') }} style={{ width: Wp('25%'), height: Wp('9%') }} labelStyle={{ color: colors.YellowJaja, fontSize: 13 }} uppercase={false} >
-                    Login
-                  </Button>
-                  <Button onPress={() => handleAuth('Register')} color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('25%'), height: Wp('9%') }} style={{ marginLeft: '3%', width: Wp('25%'), height: Wp('9%') }} labelStyle={{ color: colors.White, fontSize: 13 }} uppercase={false} >
-                    Daftar
-                  </Button>
-                </View>
-              }
+                  :
+                  <View style={[styles.row_start, styles.mt_5, { height: Wp('17%'), width: '80%', justifyContent: 'flex-end' }]}>
+                    <Button onPress={() => handleAuth('Login')} color={colors.White} mode="contained" contentStyle={{ width: Wp('30%'), height: Wp('10%') }} style={{ width: Wp('30%'), height: Wp('10%') }} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.YellowJaja }]} uppercase={false} >
+                      Login
+                    </Button>
+                    <Button onPress={() => handleAuth('Register')} color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('30%'), height: Wp('10%') }} style={{ marginLeft: '3%', width: Wp('30%'), height: Wp('10%') }} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
+                      Daftar
+                    </Button>
+                  </View>
+                }
+              </View>
             </View>
           </View>
-        </View>
-        <View style={{ flex: 0, flexDirection: 'column', zIndex: 998, backgroundColor: colors.White, height: Hp('85%'), marginTop: Hp('-1%'), borderTopRightRadius: 21, borderTopLeftRadius: 21, paddingHorizontal: '4%', paddingTop: '2%' }}>
-          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Account' : 'Login')}>
-            <Image style={[styles.icon_27, styles.mr_3]} source={require(`../../assets/icons/customer.png`)} />
-            <Text style={[styles.font_14, styles.T_medium, styles.my_4,]}>Pengaturan Akun</Text>
-            {!account === true ? null : <Text style={[styles.font_10, styles.T_italic, styles.ml_2, { color: colors.RedNotif }]}>( Masukkan rekening )</Text>}
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Address' : 'Login')}>
-            <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/google-maps.png`)} />
-            <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Alamat</Text>
-            {location && location.length ? null : <Text style={[styles.ml_2, { color: colors.RedNotif, fontStyle: 'italic', fontSize: 13 }]}>( Alamat belum lengkap )</Text>}
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Wishlist' : 'Login')}>
-            <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/love.png`)} />
-            <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Favorit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'HistoryProduct' : 'Login')}>
-            <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/history.png`)} />
-            <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Terakhir Dilihat</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Vouchers' : 'Login')}>
-            <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/coupon.png`)} />
-            <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Voucher</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Reward' : 'Login')}>
-            <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/star.png`)} />
-            <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Koin Jaja</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => {
-            Linking.canOpenURL('https://jaja.id/bantuan/').then(supported => {
-              console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 82 ~ Linking.canOpenURL ~ supported", supported)
-              if (supported) {
-                Linking.openURL('https://jaja.id/bantuan/')
-              } else {
-                ToastAndroid.show("Sepertinya ada masalah, coba lagi nanti.", ToastAndroid.LONG, ToastAndroid.TOP)
+          <View style={{ flex: 0, flexDirection: 'column', zIndex: 998, backgroundColor: colors.White, height: Hp('85%'), marginTop: Hp('-1%'), borderTopRightRadius: 21, borderTopLeftRadius: 21, paddingHorizontal: '4%', paddingTop: '2%' }}>
+            <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Account' : 'Login')}>
+              <Image style={[styles.icon_27, styles.mr_3]} source={require(`../../assets/icons/customer.png`)} />
+              <Text style={[styles.font_14, styles.T_medium, styles.my_4,]}>Pengaturan Akun</Text>
+              {!account === true ? null : <Text style={[styles.font_10, styles.T_italic, styles.ml_2, { color: colors.RedNotif }]}>( Masukkan rekening )</Text>}
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Address' : 'Login')}>
+              <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/google-maps.png`)} />
+              <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Alamat</Text>
+              {location && location.length ? null : <Text style={[styles.ml_2, { color: colors.RedNotif, fontStyle: 'italic', fontSize: 13 }]}>( Alamat belum lengkap )</Text>}
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Wishlist' : 'Login')}>
+              <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/love.png`)} />
+              <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Favorit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'HistoryProduct' : 'Login')}>
+              <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/history.png`)} />
+              <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Terakhir Dilihat</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Vouchers' : 'Login')}>
+              <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/coupon.png`)} />
+              <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Voucher</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Reward' : 'Login')}>
+              <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/star.png`)} />
+              <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Koin Jaja</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => {
+              Linking.canOpenURL('https://jaja.id/bantuan/').then(supported => {
+                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 82 ~ Linking.canOpenURL ~ supported", supported)
+                if (supported) {
+                  Linking.openURL('https://jaja.id/bantuan/')
+                } else {
+                  ToastAndroid.show("Sepertinya ada masalah, coba lagi nanti.", ToastAndroid.LONG, ToastAndroid.TOP)
 
-              }
-            })
-          }}>
-            <Image style={[styles.icon_27, styles.mr_3]} source={require(`../../assets/icons/service.png`)} />
-            <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Pusat Bantuan</Text>
-
-          </TouchableOpacity>
-          {reduxAuth ?
-            <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={handleLogout}>
-              <Image style={[styles.icon_27, styles.mr_3]} source={require(`../../assets/icons/logout.png`)} />
-              <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Keluar</Text>
+                }
+              })
+            }}>
+              <Image style={[styles.icon_27, styles.mr_3]} source={require(`../../assets/icons/service.png`)} />
+              <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Pusat Bantuan</Text>
 
             </TouchableOpacity>
-            : null
-          }
-        </View>
+            {reduxAuth ?
+              <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={handleLogout}>
+                <Image style={[styles.icon_27, styles.mr_3]} source={require(`../../assets/icons/logout.png`)} />
+                <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Keluar</Text>
+
+              </TouchableOpacity>
+              : null
+            }
+          </View>
+        </ScrollView>
       </View>
-      {/* <View style={style.container}>
-        <View style={style.container}>
-          <Text style={style.header}>
-            Example to Calculate Distance Between Two Locations
-          </Text>
-          <Text style={style.textStyle}>
-            Distance between
-            {'\n'}
-            Jakarta Ciracas(-6.323116, 106.870941)
-            and,
-            Bekasi Tarumajaya (-6.168069464610844, 107.00333140704073)
-          </Text>
-          <TouchableHighlight
-            style={style.buttonStyle}
-            onPress={calculateDistance}>
-            <Text>Get Distance</Text>
-          </TouchableHighlight>
-          <Text style={style.textStyle}>
-            Precise Distance between
-            {'\n'}
-            India(20.0504188, 64.4139099)
-            and
-            UK (51.528308, -0.3817765)
-          </Text>
-          <TouchableHighlight
-            style={style.buttonStyle}
-            onPress={calculatePreciseDistance}>
-            <Text>
-              Get Precise Distance
-            </Text>
-          </TouchableHighlight>
-        </View>
-      </View> */}
     </SafeAreaView >
   );
 }

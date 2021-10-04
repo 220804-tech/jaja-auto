@@ -8,7 +8,6 @@ import database from '@react-native-firebase/database';
 
 
 export const buyerNotifications = async (params, uidBuyyer) => {
-
     database()
         .ref("/people/" + uidBuyyer)
         .once('value')
