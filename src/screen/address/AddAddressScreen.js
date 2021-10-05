@@ -446,11 +446,11 @@ export default function AddAddressScreen(props) {
                                 <TouchableOpacity onPress={() => navigation.goBack()}>
                                     <Image style={style.appBarButton} source={require('../../assets/icons/arrow.png')} />
                                 </TouchableOpacity>
-                                <Text style={style.appBarText}>{props.route.params && props.route.params.edit ? "Ubah Alamat" : "Tambah Alamat"}</Text>
+                                <Text style={style.appBarText}>{props.route.params && props.route.params.edit ? " Ubah Alamat" : " Tambah Alamat"}</Text>
                             </View>
                             {kcValue ?
-                                <View style={{ flex: 1, backgroundColor: colors.YellowJaja, borderRadius: 12, width: Wp('20%') }}>
-                                    <Button mode="text" color={colors.White} labelStyle={[style.font_12, style.T_semi_bold, { color: colors.White }]} style={{}} onPress={handleSave}>Simpan</Button>
+                                <View style={{ flex: 1, backgroundColor: colors.YellowJaja, borderRadius: 7, width: Wp('20%'), marginTop: '1%' }}>
+                                    <Button mode="contained" color={colors.YellowJaja} labelStyle={[style.font_12, style.T_semi_bold, { color: colors.White }]} style={{}} onPress={handleSave}>Simpan</Button>
                                 </View>
                                 : null}
                         </View>
@@ -646,7 +646,7 @@ export default function AddAddressScreen(props) {
                                 </View>
 
                             </View>
-                            {view === 'edit' ? <Button onPress={handleDelete} mode='contained' color={colors.RedDanger} style={{ width: '100%', marginVertical: '5%' }} contentStyle={{ width: '100%' }} labelStyle={{ color: colors.White }}>Hapus Alamat</Button> : null}
+                            {/* {view === 'edit' ? <Button onPress={handleDelete} mode='contained' color={colors.RedDanger} style={{ width: '100%', marginVertical: '5%' }} contentStyle={{ width: '100%' }} labelStyle={{ color: colors.White }}>Hapus Alamat</Button> : null} */}
 
                             {view === 'edit' ? <Button onPress={handleDelete} mode='contained' color={colors.RedDanger} style={{ width: '100%', marginVertical: '5%' }} contentStyle={{ width: '100%' }} labelStyle={{ color: colors.White }}>Hapus Alamat</Button> : null}
                         </View>

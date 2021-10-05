@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { SafeAreaView, Text, View, TouchableOpacity, ScrollView, StyleSheet, FlatList, Image, RefreshControl, Alert, ToastAndroid, TouchableHighlight, TouchableWithoutFeedback } from "react-native";
-import { Paragraph, Switch, Appbar } from "react-native-paper";
+import { Paragraph, Switch, Appbar, Button } from "react-native-paper";
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { colors, styles as style, ServiceUser, ServiceCheckout, Loading, Hp } from '../../export'
 import * as Service from '../../services/Address';
@@ -240,13 +240,14 @@ export default function index(props) {
     const renderItem = ({ item, index }) => {
         return (
             <Swipeable rightButtons={rightButtons} onRightActionRelease={() => setSelectedItem(item)}>
-                <TouchableWithoutFeedback onPress={() => status === "checkout" ? handleChangePrimary(item.id) : navigation.navigate("AddAddress", { data: item, edit: true })} style={[style.column_start_center, styles.card]}>
+                <TouchableWithoutFeedback onPress={() => navigation.navigate("AddAddress", { data: item, edit: true })} style={[style.column_start_center, styles.card]}>
                     <View style={styles.body}>
                         <View style={style.row_between_center}>
                             <Text numberOfLines={1} style={[styles.textName, { width: '55%' }]}>{item.nama_penerima ? item.nama_penerima : ""}</Text>
                             {status === "checkout" ?
-                                <Text style={style.font_14}>{item.label}</Text>
-                                :
+                                <Button mode='contained' color={colors.BlueJaja} labelStyle={[style.font_10, style.T_semi_bold, { color: colors.White }]} onPress={() => handleChangePrimary(item.id)}>
+                                    Pilih Alamat
+                                </Button> :
                                 <View style={[style.row_end_center, { width: '40%' }]}>
                                     <Text adjustsFontSizeToFit numberOfLines={1} style={[style.font_12, { fontFamily: 'Poppins-SemiBold', color: item.is_primary ? colors.BlueJaja : colors.Silver }]}>Alamat utama</Text>
                                     {reduxUser && reduxUser.length > 1 ?
