@@ -101,101 +101,115 @@ export default function ChatScreen({ route }) {
     }, [data]);
 
     useEffect(() => {
-        if (product && Object.keys(product).length && selectedProduct !== null) {
-            setSelectedProduct(product)
-        }
-        if (order && Object.keys(order).length && selectedOrder !== null) {
-            setselectedOrder(order)
+        try {
+            if (product && Object.keys(product).length && selectedProduct !== null) {
+                setSelectedProduct(product)
+            }
+            if (order && Object.keys(order).length && selectedOrder !== null) {
+                setselectedOrder(order)
+            }
+        } catch (error) {
+
         }
 
     }, [selectedProduct, selectedOrder])
     useEffect(() => {
-        // setLoading(true)
-        if (messageList) {
-            // setLoading(false)
-        }
+
 
     }, [messageList])
 
     const handleSend = (image) => {
-        if (isiChat.length > 0 || image || selectedOrder || selectedProduct) {
-            let chat = isiChat.length > 0 ? isiChat : image ? 'Mengirim gambar' : selectedOrder && Object.keys(selectedOrder).length ? 'Pesanan No. ' + selectedOrder.invoice : selectedProduct.name
-            var message = {
-                message: isiChat,
-                time: firebaseDatabase.ServerValue.TIMESTAMP,
-                date: new Date().toString(),
-                from: reduxUser.uid,
-                image: image,
-                order: null
-            }
-            if (data && reduxAuth) {
-                try {
-                    if (selectedProduct && Object.keys(selectedProduct).length) {
-                        handleSendProduct()
-                    }
-                    if (selectedOrder) {
-                        message.order = selectedOrder
-                    }
-                    setTimeout(() => {
-                        var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
-                        console.log("🚀 ~ file: ChatScreen.js ~ line 135 ~ handleSendProduct ~ msgId", msgId)
-                        firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
-                        firebaseDatabase().ref('people/' + data.id + '/notif').set(message); //pengirimnya
-
-                        firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: chat, time: new Date().toString() } });
-                        firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: { text: chat, time: new Date().toString() }, amount: 1, time: new Date().toString() });
-                        let fire = firebaseDatabase().ref("/people/" + data.id).limitToLast(20).on("value", async function (snapshot) {
-                            let item = await snapshot.val();
-                            setselectedOrder(null)
-                            if (item.token) {
-                                await Firebase.buyerNotifications('chat', data.id)
-                                Firebase.notifChat(item.token, { body: chat, title: reduxUser.name })
-                            }
-                            firebaseDatabase().ref(`/people/${data.id}`).off('value', fire)
-                        })
-                    }, selectedProduct && Object.keys(selectedProduct).length ? 100 : 0);
-                } catch (error) {
-
+        try {
+            if (isiChat.length > 0 || image || selectedOrder || selectedProduct) {
+                let chat = isiChat.length > 0 ? isiChat : image ? 'Mengirim gambar' : selectedOrder && Object.keys(selectedOrder).length ? 'Pesanan No. ' + selectedOrder.invoice : selectedProduct.name
+                var message = {
+                    message: isiChat,
+                    time: firebaseDatabase.ServerValue.TIMESTAMP,
+                    date: new Date().toString(),
+                    from: reduxUser.uid,
+                    image: image,
+                    order: null
                 }
+                if (data && reduxAuth) {
+                    try {
+                        if (selectedProduct && Object.keys(selectedProduct).length) {
+                            handleSendProduct()
+                        }
+                        if (selectedOrder) {
+                            message.order = selectedOrder
+                        }
+                        setTimeout(() => {
+                            var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
+                            console.log("🚀 ~ file: ChatScreen.js ~ line 135 ~ handleSendProduct ~ msgId", msgId)
+                            firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
+                            firebaseDatabase().ref('people/' + data.id + '/notif').set(message); //pengirimnya
+
+                            firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: chat, time: new Date().toString() } });
+                            firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: { text: chat, time: new Date().toString() }, amount: 1, time: new Date().toString() });
+                            let fire = firebaseDatabase().ref("/people/" + data.id).limitToLast(20).on("value", async function (snapshot) {
+                                let item = await snapshot.val();
+                                setselectedOrder(null)
+                                if (item.token) {
+                                    console.log("🚀 ~ file: ChatScreen.js ~ line 155 ~ fire ~ data.id", data.id)
+                                    try {
+                                        await Firebase.notifChat(item.token, { body: chat, title: reduxUser.name })
+                                        // await Firebase.buyerNotifications('chat', data.id)
+                                    } catch (error) {
+                                    }
+                                }
+                                firebaseDatabase().ref(`/people/${data.id}`).off('value', fire)
+                            })
+                        }, selectedProduct && Object.keys(selectedProduct).length ? 100 : 0);
+                    } catch (error) {
+                        // alert(error)
+
+                    }
+                }
+                setIsiChat('')
+                setGambar("")
             }
-            setIsiChat('')
-            setGambar("")
+        } catch (error) {
+
         }
     }
     const handleSendProduct = () => {
-        if (selectedProduct && Object.keys(selectedProduct).length) {
-            var message = {
-                message: "",
-                time: firebaseDatabase.ServerValue.TIMESTAMP,
-                from: reduxUser.uid,
-                priceDiscount: selectedProduct.discount,
-                priceFirst: selectedProduct.price,
-                priceLast: selectedProduct.isDiscount ? selectedProduct.priceDiscount : selectedProduct.price,
-                productImage: selectedProduct.image[0],
-                productTitle: selectedProduct.name,
-            }
-            if (data) {
-                console.log("🚀 ~ file: ChatScreen.js ~ line 132 ~ handleSendProduct ~ data", data)
-                try {
-                    var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
-                    console.log("🚀 ~ file: ChatScreen.js ~ line 135 ~ handleSendProduct ~ msgId", msgId)
-                    firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
-                    firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: selectedProduct.name, time: new Date().toString() } });
-                    firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: { text: selectedProduct.name, time: new Date().toString() }, amount: 1 });
-                    let fire = firebaseDatabase().ref("/people/" + data.id).limitToLast(20).on("value", async function (snapshot) {
-                        let item = await snapshot.val();
-                        if (item.token) {
-                            await Firebase.notifChat(item.token, { body: selectedProduct.name, title: reduxUser.name })
-                            setSelectedProduct(null)
-                        }
-                        firebaseDatabase().ref(`/people/${data.id}`).off('value', fire)
-                    })
-                } catch (error) {
-                    console.log("data error", error)
+        try {
+            if (selectedProduct && Object.keys(selectedProduct).length) {
+                var message = {
+                    message: "",
+                    time: firebaseDatabase.ServerValue.TIMESTAMP,
+                    from: reduxUser.uid,
+                    priceDiscount: selectedProduct.discount,
+                    priceFirst: selectedProduct.price,
+                    priceLast: selectedProduct.isDiscount ? selectedProduct.priceDiscount : selectedProduct.price,
+                    productImage: selectedProduct.image[0],
+                    productTitle: selectedProduct.name,
                 }
+                if (data) {
+                    console.log("🚀 ~ file: ChatScreen.js ~ line 132 ~ handleSendProduct ~ data", data)
+                    try {
+                        var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
+                        console.log("🚀 ~ file: ChatScreen.js ~ line 135 ~ handleSendProduct ~ msgId", msgId)
+                        firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
+                        firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: selectedProduct.name, time: new Date().toString() } });
+                        firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: { text: selectedProduct.name, time: new Date().toString() }, amount: 1 });
+                        let fire = firebaseDatabase().ref("/people/" + data.id).limitToLast(20).on("value", async function (snapshot) {
+                            let item = await snapshot.val();
+                            if (item.token) {
+                                await Firebase.notifChat(item.token, { body: selectedProduct.name, title: reduxUser.name })
+                                setSelectedProduct(null)
+                            }
+                            firebaseDatabase().ref(`/people/${data.id}`).off('value', fire)
+                        })
+                    } catch (error) {
+                        console.log("data error", error)
+                    }
+                }
+                setIsiChat('')
+                setGambar("")
             }
-            setIsiChat('')
-            setGambar("")
+        } catch (error) {
+
         }
     }
 
