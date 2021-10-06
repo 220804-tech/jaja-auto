@@ -261,7 +261,7 @@ export default function ProfileScreen(props) {
               </View>
             </View>
           </View>
-          <View style={{ flex: 0, flexDirection: 'column', zIndex: 998, backgroundColor: colors.White, height: Hp('85%'), marginTop: Hp('-1%'), borderTopRightRadius: 21, borderTopLeftRadius: 21, paddingHorizontal: '4%', paddingTop: '2%' }}>
+          <View style={{ flex: 0, flexDirection: 'column', zIndex: 998, backgroundColor: colors.White, height: Hp('90%'), marginTop: Hp('-1%'), borderTopRightRadius: 21, borderTopLeftRadius: 21, paddingHorizontal: '4%', paddingTop: '2%' }}>
             <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Account' : 'Login')}>
               <Image style={[styles.icon_27, styles.mr_3]} source={require(`../../assets/icons/customer.png`)} />
               <Text style={[styles.font_14, styles.T_medium, styles.my_4,]}>Pengaturan Akun</Text>
@@ -276,6 +276,7 @@ export default function ProfileScreen(props) {
               <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/love.png`)} />
               <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Favorit</Text>
             </TouchableOpacity>
+
             <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'HistoryProduct' : 'Login')}>
               <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/history.png`)} />
               <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Terakhir Dilihat</Text>
@@ -303,18 +304,25 @@ export default function ProfileScreen(props) {
               <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Pusat Bantuan</Text>
 
             </TouchableOpacity>
+
+
+
             {reduxAuth ?
-              <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={handleLogout}>
+              <TouchableOpacity style={[styles.row_start_center, styles.mb_5, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={handleLogout}>
                 <Image style={[styles.icon_27, styles.mr_3]} source={require(`../../assets/icons/logout.png`)} />
                 <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Keluar</Text>
 
               </TouchableOpacity>
               : null
             }
+
+            <TouchableWithoutFeedback style={styles.my_5} onPress={() => Linking.openURL("market://details?id=com.seller.jaja")}>
+              <Text adjustsFontSizeToFit style={[style.font_14, style.my_5, { alignSelf: 'center', color: colors.BlueJaja }]}>Mulai Berjualan?</Text>
+            </TouchableWithoutFeedback>
           </View>
-          <TouchableWithoutFeedback onPress={() => Linking.openURL("market://details?id=com.seller.jaja")}>
-            <Text adjustsFontSizeToFit style={[style.font_14, style.my_5, { alignSelf: 'center', color: colors.BlueJaja, backgroundColor: 'red' }]}>Mulai Berjualan?</Text>
-          </TouchableWithoutFeedback>
+
+          {/* <TouchableWithoutFeedback onPress={() => Linking.openURL("market://details?id=com.seller.jaja")}>
+          </TouchableWithoutFeedback> */}
         </ScrollView>
       </View>
     </SafeAreaView >
