@@ -2,13 +2,16 @@ const initialState = {
     checkout: {},
     shipping: [],
     orderId: "",
-    listPayment: []
+    listPayment: [],
+    useCoin: false
 }
 export default function storeCheckout(state = initialState, action) {
     const { type, payload } = action;
     switch (type) {
         case 'SET_CHECKOUT':
             return { ...state, checkout: payload }
+        case 'SET_USECOIN':
+            return { ...state, useCoin: payload }
         case 'SET_SHIPPING':
             return { ...state, shipping: payload }
         case 'SET_LIST_PAYMENT':

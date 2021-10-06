@@ -10,16 +10,16 @@ export default function ProductSearchScreen() {
     const navigation = useNavigation();
     const actionSheetRef = createRef();
     const data = useSelector(state => state.search.searchProduct)
+    console.log("🚀 ~ file: productSearchScreen.js ~ line 13 ~ ProductSearchScreen ~ data", data)
     const keyword = useSelector(state => state.search.keywordSearch)
     const reduxFilters = useSelector(state => state.search.filters)
     const reduxSorts = useSelector(state => state.search.sorts)
     const reduxmaxProduct = useSelector(state => state.search.maxProduct)
+    const reduxSearch = useSelector(state => state.search)
+    console.log("🚀 ~ file: productSearchScreen.js ~ line 14 ~ ProductSearchScreen ~ keyword", keyword)
 
     const dispatch = useDispatch()
     const [scrollY, setscrollY] = useState(new Animated.Value(0))
-
-    const [auth, setAuth] = useState("")
-
     const [count, setcount] = useState(0)
     const [selectedFilter, setselectedFilter] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -36,12 +36,6 @@ export default function ProductSearchScreen() {
     useEffect(() => {
         setLoading(true)
         setTimeout(() => setLoading(false), 1500);
-
-        EncryptedStorage.getItem("token").then(res => {
-            if (res) {
-                setAuth(JSON.parse(auth))
-            }
-        }).catch(err => console.log("Token null : ", err))
     }, [])
 
 
@@ -217,7 +211,7 @@ export default function ProductSearchScreen() {
             redirect: 'follow'
         };
 
-        fetch(`https://jaja.id/backend/product/search/result?page=${page + 1}&limit=10&keyword=${keyword}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
+        fetch(`https://jaja.id/backend/product/search/result?page=${page + 1}&limit=26&keyword=${keyword}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.status.code === 200) {
@@ -252,7 +246,9 @@ export default function ProductSearchScreen() {
                 <View style={[styles.searchBar, { backgroundColor: colors.BlueJaja, paddingHorizontal: '0%' }]}>
                     <TouchableOpacity style={[styles.row, { width: '85%', marginRight: '1%', backgroundColor: colors.White, height: '100%', alignItems: 'center', borderRadius: 10, paddingHorizontal: '3%' }]} onPress={() => navigation.navigate('Search')}>
                         <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
-                        <Text numberOfLines={1} style={[styles.font_14, { width: '93%' }]}>{keyword ? keyword : ""}</Text>
+                        {keyword ?
+                            <Text numberOfLines={1} style={[styles.font_14, { width: '93%' }]}>{keyword}</Text>
+                            : null}
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => actionSheetRef.current?.setModalVisible()} style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: '1%', backgroundColor: colors.BlueJaja, height: '100%', width: '15%', borderTopRightRadius: 10, borderBottomRightRadius: 10 }}>
                         <Image source={require('../../assets/icons/filter.png')} style={[styles.icon_25, { tintColor: colors.White }]} />
@@ -312,6 +308,9 @@ export default function ProductSearchScreen() {
                             }}
                         >
                             <CardProduct data={data} />
+                            {/* {data & data.length ?
+                                : null
+                            } */}
 
                             {reduxmaxProduct || data.length < 2 ? <Text style={[styles.font_14, styles.my_5, { alignSelf: 'center', color: colors.BlueJaja, width: Wp('100%'), textAlign: 'center' }]}>Semua produk berhasil ditampilkan</Text> : <ShimmerCardProduct />}
                         </ScrollView>

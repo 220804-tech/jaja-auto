@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { SafeAreaView, View, Text, Image, TouchableOpacity, TextInput, FlatList, ToastAndroid } from 'react-native'
+import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, FlatList, ToastAndroid } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { useNavigation, colors, styles, Wp, CheckSignal, ServiceStore, useFocusEffect, Utils, AppbarSecond, } from '../../export'
 import { useDispatch, useSelector } from 'react-redux'
@@ -15,6 +15,8 @@ export default function SearchScreen() {
     const [historySearch, sethistorySearch] = useState([])
     const [storeSearch, setstoreSearch] = useState([])
     const [productSearch, setproductSearch] = useState([])
+    const [categorySearch, setcategorySearch] = useState([])
+
     const [slug, setSlug] = useState(['Badminton', 'Basketball', 'Cooking', 'Cycling', 'Fishing', 'Football', 'Photography', 'Reading'])
     const [focus, setFocus] = useState(true)
 
@@ -57,7 +59,7 @@ export default function SearchScreen() {
                 redirect: 'follow'
             };
 
-            fetch(`https://jaja.id/backend/product/search?limit=10&keyword=${text}`, requestOptions)
+            fetch(`https://jaja.id/backend/product/search?limit=5&keyword=${text}`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     setproductSearch([])
@@ -67,6 +69,12 @@ export default function SearchScreen() {
                             setproductSearch(result.data.product)
                         } else {
                             setproductSearch([])
+                        }
+
+                        if (result.data.category.length) {
+                            setcategorySearch(result.data.category)
+                        } else {
+                            setcategorySearch([])
                         }
                         setCount(count + 1)
                     }
@@ -142,7 +150,6 @@ export default function SearchScreen() {
         fetch(`https://jaja.id/backend/product/search/result?page=1&limit=20&keyword=${text}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: SearchScreen.js ~ line 127 ~ handleFetch ~ result", result.data)
                 dispatch({ type: 'SET_SEARCH', payload: result.data.items })
                 dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
                 dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
@@ -238,13 +245,72 @@ export default function SearchScreen() {
 
     }
 
+    const handleSelectedCategory = (item) => {
+        console.log("🚀 ~ file: SearchScreen.js ~ line 249 ~ handleSelectedCategory ~ item", item)
+        if (item) {
+            dispatch({ type: 'SET_KEYWORD', payload: item.name })
+            var myHeaders = new Headers();
+            myHeaders.append("Cookie", "ci_session=akeeif474rkhuhqgj7ah24ksdljm0248");
+            var requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
+
+            fetch(`https://jaja.id/backend/product/category/${item.slug}?page=1&limit=100&keyword=&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    console.log("🚀 ~ file: CategoryComponent.js ~ line 83 ~ handleFetch ~ result", result)
+                    if (result && Object.keys(result).length && result.status.code == 200) {
+                        dispatch({ type: 'SET_SEARCH', payload: result.data.items })
+                        dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
+                        dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
+                        dispatch({ type: 'SET_KEYWORD', payload: item.name })
+                    } else {
+                        dispatch({ type: 'SET_SEARCH', payload: [] })
+                        dispatch({ type: 'SET_FILTERS', payload: [] })
+                        dispatch({ type: 'SET_SORTS', payload: [] })
+                        // Utils.handleErrorResponse(result, 'Error with status 130012')
+                    }
+                })
+                .catch(error => {
+                    dispatch({ type: 'SET_SEARCH', payload: [] })
+                    dispatch({ type: 'SET_FILTERS', payload: [] })
+                    dispatch({ type: 'SET_SORTS', payload: [] })
+                    Utils.handleError(error, 'Error with status 13001')
+                });
+            dispatch({ type: 'SET_SLUG', payload: String(item).toLocaleLowerCase() })
+
+            setTimeout(() => {
+                navigation.navigate('ProductSearch')
+            }, 500);
+        }
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <AppbarSecond autofocus={true} handleSearch={handleSearch} title='Cari hobimu disini..' handleSubmit={handleFetch} />
             <View style={[styles.column, { flex: 1, backgroundColor: colors.White }, styles.p_3]}>
-                <View style={{ flex: 0, minHeight: '35%', maxHeight: '80%' }}>
-                    {productSearch && productSearch.length || storeSearch.length ?
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    {productSearch && productSearch.length || storeSearch.length || categorySearch.length ?
                         <View style={styles.column}>
+                            <Text style={[styles.font_14, { color: colors.BlueJaja, marginBottom: '2%' }]} adjustsFontSizeToFit>Berdasarkan KategoriSport</Text>
+                            {categorySearch && categorySearch.length > 0 ?
+                                <FlatList
+                                    data={categorySearch}
+                                    showsHorizontalScrollIndicator={false}
+                                    keyExtractor={(item, index) => String(index + 4) + 'XA'}
+                                    extraData={count}
+                                    renderItem={({ item }) => {
+                                        return (
+                                            <TouchableOpacity onPress={() => handleSelectedCategory(item)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', paddingVertical: '2%', marginBottom: '2%', backgroundColor: colors.White, borderBottomWidth: 0.5, borderColor: colors.Silver }}>
+                                                <Image style={[styles.mr_2, { height: Wp('9%'), width: Wp('9%'), borderRadius: 100 }]} source={{ uri: item.icon }} />
+                                                <Text numberOfLines={1} style={[styles.font_13, { color: colors.BlackGrey }]}>{item.name}</Text>
+                                            </TouchableOpacity>
+                                        )
+                                    }} />
+                                : <Text numberOfLines={1} style={[styles.font_13, { color: colors.BlackGrey }]}>- Toko tidak ditemukan</Text>
+                            }
                             <Text style={[styles.font_14, { color: colors.BlueJaja, marginBottom: '2%' }]} adjustsFontSizeToFit>Berdasarkan pencarian</Text>
                             {productSearch && productSearch.length > 0 ?
                                 <FlatList
@@ -326,7 +392,7 @@ export default function SearchScreen() {
                                     }} />
                             </View>
                     }
-                </View>
+                </ScrollView>
                 {/* <View style={{ flex: 1, width: '100%', height: '50%' }}>
 
                 </View> */}

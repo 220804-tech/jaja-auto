@@ -193,10 +193,17 @@ export default function TrolleyScreen() {
 
     const handleCheckout = () => {
         if (reduxCart.cart.totalData != '0' && disableCheckout === false && reduxCart.cart.totalCart != 0) {
-            navigation.navigate('Checkout')
             dispatch({ type: 'SET_CHECKOUT', payload: {} })
+            navigation.navigate('Checkout')
+
             ServiceCheckout.getCheckout(reduxAuth ? reduxAuth : auth, 0).then(res => {
                 if (res) {
+                    if (res == 'Alamat') {
+                        navigation.navigate('Address', { data: "checkout" })
+                    } else {
+                        navigation.navigate('Checkout')
+                    }
+                    console.log("🚀 ~ file: TrolleyScreen.js ~ line 200 ~ ServiceCheckout.getCheckout ~ res", res)
                     dispatch({ type: 'SET_CHECKOUT', payload: res })
                 }
             })

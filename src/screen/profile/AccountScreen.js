@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, createRef } from "react";
-import { View, Text, SafeAreaView, Image, TouchableOpacity, TouchableWithoutFeedback, TextInput, Alert, StyleSheet, Linking } from "react-native";
+import { View, Text, SafeAreaView, Image, TouchableOpacity, TouchableWithoutFeedback, TextInput, Alert, StyleSheet, Linking, ScrollView } from "react-native";
 import { RadioButton, Button } from "react-native-paper";
 import ImagePicker from 'react-native-image-crop-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -78,7 +78,6 @@ export default function Lainnya() {
                         settelephone(result.data.phoneNumber)
                         setname(result.data.name)
                         setdate(result.data.birthDate)
-                        setChecked(result.data.gender ? result.data.gender === "pria" ? "first" : 'second' : "")
                         setgender(result.data.gender ? result.data.gender : null)
                         setphoto(image)
                         setemail(result.data.email)
@@ -450,86 +449,112 @@ export default function Lainnya() {
                     // onLoadEnd={() => { setIsLoading(false) }}
                     style={{ flex: 1 }}
                 /> :
-                <View style={styles.card}>
-                    <View style={{ flex: 0, justifyContent: 'center', alignItems: 'center', marginBottom: '11%' }}>
-                        <View style={{ width: Wp('32%'), height: Wp('32%'), borderRadius: 100, backgroundColor: colors.Silver, borderWidth: 0.5, borderColor: colors.White }}>
-                            <Image style={{ width: '100%', height: '100%', borderRadius: 100 }} source={{ uri: photo && photo.path ? photo.path : null }} />
-                            <TouchableOpacity onPress={() => imageRef.current?.setModalVisible()} style={{ position: 'absolute', bottom: 10, right: 0, backgroundColor: colors.BlueJaja, height: Wp('8%'), width: Wp('8%'), borderRadius: 100, justifyContent: 'center', alignItems: 'center' }}>
-                                <Image style={{ width: '50%', height: '50%', tintColor: colors.White }} source={require('../../assets/icons/camera.png')} />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <TouchableWithoutFeedback onPress={() => handleEdit("Nama Lengkap")}>
-                        <View style={styles.form}>
-                            <Text adjustsFontSizeToFit style={[style.font_14]}>Nama Lengkap</Text>
-                            <View style={styles.formItem}>
-                                <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{name ? name : ""}</Text>
-                                <Text adjustsFontSizeToFit style={styles.ubah}>{name ? "Ubah" : "Tambah"}</Text>
+                <ScrollView>
+                    <View style={styles.card}>
+                        <View style={{ flex: 0, justifyContent: 'center', alignItems: 'center', marginBottom: '11%' }}>
+                            <View style={{ width: Wp('32%'), height: Wp('32%'), borderRadius: 100, backgroundColor: colors.Silver, borderWidth: 0.5, borderColor: colors.White }}>
+                                <Image style={{ width: '100%', height: '100%', borderRadius: 100 }} source={{ uri: photo && photo.path ? photo.path : null }} />
+                                <TouchableOpacity onPress={() => imageRef.current?.setModalVisible()} style={{ position: 'absolute', bottom: 10, right: 0, backgroundColor: colors.BlueJaja, height: Wp('8%'), width: Wp('8%'), borderRadius: 100, justifyContent: 'center', alignItems: 'center' }}>
+                                    <Image style={{ width: '50%', height: '50%', tintColor: colors.White }} source={require('../../assets/icons/camera.png')} />
+                                </TouchableOpacity>
                             </View>
                         </View>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback>
-                        <View style={styles.form}>
-                            <Text adjustsFontSizeToFit style={[style.font_14]}>Email</Text>
-                            <View style={styles.formItem}>
-                                <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{email ? email : ""}</Text>
+                        <TouchableWithoutFeedback onPress={() => handleEdit("Nama Lengkap")}>
+                            <View style={styles.form}>
+                                <Text adjustsFontSizeToFit style={[style.font_14]}>Nama Lengkap</Text>
+                                <View style={styles.formItem}>
+                                    <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{name ? name : ""}</Text>
+                                    <Text adjustsFontSizeToFit style={styles.ubah}>{name ? "Ubah" : "Tambah"}</Text>
+                                </View>
                             </View>
-                        </View>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => profile.birthDate ? showDatePicker('start') : null}>
-                        <View style={styles.form}>
-                            <Text adjustsFontSizeToFit style={[style.font_14]}>Tanggal Lahir</Text>
-                            <View style={styles.formItem}>
-                                <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{date ? date : "Pilih Tanggal Lahir"}</Text>
-                                {!date ?
-                                    <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text>
-                                    : null}
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback>
+                            <View style={styles.form}>
+                                <Text adjustsFontSizeToFit style={[style.font_14]}>Email</Text>
+                                <View style={styles.formItem}>
+                                    <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{email ? email : ""}</Text>
+                                </View>
                             </View>
-                        </View>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => profile.gender ? handleEdit("Jenis Kelamin") : null}>
-                        <View style={styles.form}>
-                            <Text adjustsFontSizeToFit style={[style.font_14]}>Jenis Kelamin</Text>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => profile.birthDate ? showDatePicker('start') : null}>
+                            <View style={styles.form}>
+                                <Text adjustsFontSizeToFit style={[style.font_14]}>Tanggal Lahir</Text>
+                                <View style={styles.formItem}>
+                                    <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{date ? date : "Pilih Tanggal Lahir"}</Text>
+                                    {!date ?
+                                        <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text>
+                                        : null}
+                                </View>
+                            </View>
+                        </TouchableWithoutFeedback>
+                        <View style={[styles.form, { flexDirection: 'column' }]}>
+                            <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{gender ? gender == "pria" ? "Laki - Laki" : "Perempuan" : "Pilih Jenis Kelamin"}</Text>
+                            <View style={[style.row_between_center, style.mt]}>
+                                <View style={{ flex: 0, alignItems: 'center', flexDirection: 'row', marginLeft: '-2.5%' }}>
+                                    <RadioButton
+                                        color={colors.BlueJaja}
+                                        value="first"
+                                        status={gender == "pria" ? 'checked' : 'unchecked'}
+                                        onPress={() => {
+                                            setgender("pria")
+                                            setshowButton(true)
+                                        }}
+                                    />
+                                    <Text adjustsFontSizeToFit style={style.font14}>Laki - Laki</Text>
+                                </View>
+                                <View style={{ flex: 0, alignItems: 'center', flexDirection: 'row' }}>
+                                    <RadioButton
+                                        color={colors.BlueJaja}
+                                        value="second"
+                                        status={gender == "wanita" ? 'checked' : 'unchecked'}
+                                        onPress={() => {
+                                            setgender("wanita")
+                                            setshowButton(true)
+
+                                        }}
+                                    />
+                                    <Text adjustsFontSizeToFit style={style.font14}>Perempuan</Text>
+                                </View>
+                            </View>
+                            {/* <Text adjustsFontSizeToFit style={[style.font_14]}>Jenis Kelamin</Text>
                             <View style={styles.formItem}>
                                 <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{gender ? gender == "pria" ? "Laki - Laki" : "Perempuan" : "Pilih Jenis Kelamin"}</Text>
                                 {!gender ? <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text> : null}
-                            </View>
+                            </View> */}
                         </View>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => handleEdit("Nomor Telephone")}>
-                        <View style={styles.form}>
-                            <Text adjustsFontSizeToFit style={[style.font_14]}>Telephone</Text>
-                            <View style={styles.formItem}>
-                                <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{telephone ? telephone : 'Input Telephone'}</Text>
-                                <Text adjustsFontSizeToFit style={styles.ubah}>{telephone ? "Ubah" : "Tambah"}</Text>
+                        <TouchableWithoutFeedback onPress={() => handleEdit("Nomor Telephone")}>
+                            <View style={styles.form}>
+                                <Text adjustsFontSizeToFit style={[style.font_14]}>Telephone</Text>
+                                <View style={styles.formItem}>
+                                    <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{telephone ? telephone : 'Input Telephone'}</Text>
+                                    <Text adjustsFontSizeToFit style={styles.ubah}>{telephone ? "Ubah" : "Tambah"}</Text>
+                                </View>
                             </View>
-                        </View>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => handleEdit("Password")}>
-                        <View style={styles.form}>
-                            <Text adjustsFontSizeToFit style={[style.font_14]}>Password</Text>
-                            <View style={styles.formItem}>
-                                <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{view ? "********" : "-"}</Text>
-                                <Text adjustsFontSizeToFit style={styles.ubah}>{view ? "Ubah" : "Tambah"}</Text>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => handleEdit("Password")}>
+                            <View style={styles.form}>
+                                <Text adjustsFontSizeToFit style={[style.font_14]}>Password</Text>
+                                <View style={styles.formItem}>
+                                    <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{view ? "********" : "-"}</Text>
+                                    <Text adjustsFontSizeToFit style={styles.ubah}>{view ? "Ubah" : "Tambah"}</Text>
+                                </View>
                             </View>
-                        </View>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => accountShow ? null : navigation.navigate('AddAccount')}>
-                        <View style={styles.form}>
-                            <Text adjustsFontSizeToFit style={[style.font_14]}>Rekening</Text>
-                            <View style={styles.formItem}>
-                                <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{accountShow ? accountBank : 'Tambah Rekening'}</Text>
-                                {!accountShow ? <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text> : null}
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => accountShow ? null : navigation.navigate('AddAccount')}>
+                            <View style={styles.form}>
+                                <Text adjustsFontSizeToFit style={[style.font_14]}>Rekening</Text>
+                                <View style={styles.formItem}>
+                                    <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{accountShow ? accountBank : 'Tambah Rekening'}</Text>
+                                    {!accountShow ? <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text> : null}
+                                </View>
                             </View>
-                        </View>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => Linking.openURL("market://details?id=com.seller.jaja")}>
-                        <Text adjustsFontSizeToFit style={[style.font_14, style.my_5, { alignSelf: 'center', color: colors.BlueJaja }]}>Mulai Berjualan?</Text>
-                    </TouchableWithoutFeedback>
-                    {showButton ? <Button onPress={handleSimpan} color={colors.BlueJaja} mode="contained" labelStyle={[style.font_13, style.T_semi_bold, { color: colors.White }]} style={style.mb_5}>Simpan</Button> : null}
+                        </TouchableWithoutFeedback>
+
+                        {showButton ? <Button onPress={handleSimpan} color={colors.BlueJaja} mode="contained" labelStyle={[style.font_13, style.T_semi_bold, { color: colors.White }]} style={style.mb_5}>Simpan</Button> : null}
 
 
-                </View>
+                    </View>
+                </ScrollView>
             }
             <ActionSheet onClose={() => handleUpdate(date, photo)} footerHeight={80} containerStyle={{ paddingHorizontal: '4%', paddingTop: '1%' }}
                 ref={actionSheetRef}>
@@ -593,9 +618,8 @@ export default function Lainnya() {
                                     < View style={{ flex: 0, alignItems: 'center', flexDirection: 'row' }}>
                                         <RadioButton
                                             value="first"
-                                            status={checked === 'first' ? 'checked' : 'unchecked'}
+                                            status={checked === 'pria' ? 'checked' : 'unchecked'}
                                             onPress={() => {
-                                                setChecked('first')
                                                 setgender("pria")
                                             }}
                                         />
@@ -604,9 +628,8 @@ export default function Lainnya() {
                                     <View style={{ flex: 0, alignItems: 'center', flexDirection: 'row' }}>
                                         <RadioButton
                                             value="second"
-                                            status={checked === 'second' ? 'checked' : 'unchecked'}
+                                            status={gender === 'wanita' ? 'checked' : 'unchecked'}
                                             onPress={() => {
-                                                setChecked('second')
                                                 setgender("wanita")
                                             }}
                                         />

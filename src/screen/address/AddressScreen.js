@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, createRef, useRef } from 'react'
 import { SafeAreaView, Text, View, TouchableOpacity, ScrollView, StyleSheet, FlatList, Image, RefreshControl, Alert, ToastAndroid, TouchableHighlight, TouchableWithoutFeedback } from "react-native";
-import { Paragraph, Switch, Appbar, Button } from "react-native-paper";
+import { Paragraph, Switch, Appbar, Button, TouchableRipple } from "react-native-paper";
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { colors, styles as style, ServiceUser, ServiceCheckout, Loading, Hp } from '../../export'
 import * as Service from '../../services/Address';
@@ -16,10 +16,12 @@ export default function index(props) {
     const navigation = useNavigation();
     const [refreshControl, setRefreshControl] = useState(false)
     const [count, setcount] = useState(0)
+    const [count2, setcount2] = useState(0)
     const [auth, setAuth] = useState(0)
     const [status, setStatus] = useState("Profile")
-    const [itemSelected, setSelectedItem] = useState('')
+    const [itemSelected, setSelectedItem] = useState({})
     const [loading, setLoading] = useState(false)
+
     useEffect(() => {
         setRefreshControl(false)
         getLocation()
@@ -46,11 +48,12 @@ export default function index(props) {
             }
             getItem()
             getData()
-        }, []),
+        }, [count]),
     );
     const onRefresh = useCallback(() => {
         setRefreshControl(false)
-        getData()
+        navigation.navigate('Address')
+        setcount(count + 1)
     }, []);
 
 
@@ -70,7 +73,7 @@ export default function index(props) {
                 if (res) {
                     EncryptedStorage.setItem('user', JSON.stringify(res))
                     dispatch({ type: 'SET_USER', payload: res })
-
+                    setcount2(count2 + 1)
                 } else {
                     let resp = await EncryptedStorage.getItem('user')
                     if (resp) {
@@ -96,7 +99,7 @@ export default function index(props) {
         });
         setTimeout(() => {
             setLoading(false)
-        }, 2000);
+        }, 3500);
     }
 
     const toggleSwitch = (idx) => {
@@ -144,21 +147,15 @@ export default function index(props) {
             .then(result => {
                 setRefreshControl(false)
                 if (result.status.code === 200) {
-                    setTimeout(() => {
-                        navigation.goBack()
-                    }, 2000);
                     ServiceUser.getProfile(auth).then(res => {
                         if (res) {
                             EncryptedStorage.setItem('user', JSON.stringify(res))
                             dispatch({ type: 'SET_USER', payload: res })
-
                             if (props.route.params) {
+                                navigation.goBack()
                                 ServiceCheckout.getCheckout(auth, null).then(reps => {
                                     if (reps) {
                                         dispatch({ type: 'SET_CHECKOUT', payload: reps })
-                                        // setTimeout(() => {
-                                        //     navigation.goBack()
-                                        // }, 1000);
                                     }
                                 })
                                 ServiceCheckout.getShipping(auth).then(res => {
@@ -201,6 +198,8 @@ export default function index(props) {
     }
 
     const handleDelete = item => {
+        swipeRef.recenter();
+
         Alert.alert(
             "Peringatan!",
             "Anda ingin menghapus alamat?",
@@ -214,6 +213,7 @@ export default function index(props) {
                     text: "Hapus", onPress: () => {
                         setLoading(true)
                         ServiceUser.deleteAddress(reduxAuth, itemSelected.id).then(res => {
+                            console.log("🚀 ~ file: AddressScreen.js ~ line 224 ~ ServiceUser.deleteAddress ~ res", res)
                             if (res && res.status && res.status === 200) {
                                 ToastAndroid.show("Alamat berhasil dihapus.", ToastAndroid.LONG, ToastAndroid.CENTER)
                             }
@@ -227,54 +227,65 @@ export default function index(props) {
             { cancelable: false }
         );
     }
-    // const leftContent = <Text>Pull to activate</Text>;
+
 
     const rightButtons = [
         <TouchableOpacity onPress={() => status === "checkout" ? handleChangePrimary(item.id) : navigation.navigate("AddAddress", { data: itemSelected, edit: true })} style={[styles.card, style.column_center, { height: '100%', width: '20%', backgroundColor: colors.BlueJaja }]}>
             <Image style={[style.icon_25, { tintColor: colors.White }]} source={require('../../assets/icons/edit_pen.png')} />
         </TouchableOpacity>,
-        <TouchableOpacity onPress={handleDelete} style={[styles.card, style.column_center, { height: '100%', width: '20%', backgroundColor: colors.RedDanger }]}>
-            <Image style={[style.icon_25, { tintColor: colors.White }]} source={require('../../assets/icons/delete.png')} />
-        </TouchableOpacity>
+        // <TouchableOpacity onPress={handleDelete} style={[styles.card, style.column_center, { height: '100%', width: '20%', backgroundColor: colors.RedDanger }]}>
+        //     <Image style={[style.icon_25, { tintColor: colors.White }]} source={require('../../assets/icons/delete.png')} />
+        // </TouchableOpacity>
     ]
     const renderItem = ({ item, index }) => {
         return (
-            <Swipeable rightButtons={rightButtons} onRightActionRelease={() => setSelectedItem(item)}>
-                <TouchableWithoutFeedback onPress={() => navigation.navigate("AddAddress", { data: item, edit: true })} style={[style.column_start_center, styles.card]}>
-                    <View style={styles.body}>
-                        <View style={style.row_between_center}>
-                            <Text numberOfLines={1} style={[styles.textName, { width: '55%' }]}>{item.nama_penerima ? item.nama_penerima : ""}</Text>
-                            {status === "checkout" ?
-                                <Button mode='contained' color={colors.BlueJaja} labelStyle={[style.font_10, style.T_semi_bold, { color: colors.White }]} onPress={() => handleChangePrimary(item.id)}>
-                                    Pilih Alamat
-                                </Button> :
-                                <View style={[style.row_end_center, { width: '40%' }]}>
-                                    <Text adjustsFontSizeToFit numberOfLines={1} style={[style.font_12, { fontFamily: 'Poppins-SemiBold', color: item.is_primary ? colors.BlueJaja : colors.Silver }]}>Alamat utama</Text>
-                                    {reduxUser && reduxUser.length > 1 ?
-                                        <Switch
-                                            trackColor={{ false: "#767577", true: "#99e6ff" }}
-                                            thumbColor={item.is_primary ? colors.BlueJaja : "#f4f3f4"}
-                                            ios_backgroundColor="#3e3e3e"
-                                            onValueChange={() => toggleSwitch(index)}
-                                            value={item.is_primary} />
-                                        : null
-                                    }
-                                </View>
-                            }
-                        </View>
-                        <Text adjustsFontSizeToFit style={styles.textNum}>{item.no_telepon ? item.no_telepon : ""}</Text>
-                        <Paragraph numberOfLines={3} style={styles.textAlamat}>{item.provinsi + ", " + item.kota_kabupaten + ", " + item.kecamatan + ", " + item.kelurahan + ", " + item.kode_pos + ", " + item.alamat_lengkap}</Paragraph>
-                        <View style={[style.row_between_center, style.mt_3]}>
-                            <Text style={[style.font_12, { color: colors.BlueJaja, fontFamily: 'Poppins-Regular' }]}>{item.label}</Text>
-                            <View style={{ flex: 0, justifyContent: 'flex-end', flexDirection: 'row' }}>
-                                <Text adjustsFontSizeToFit style={[styles.textAlamat, { fontSize: 12, textAlignVertical: "bottom", marginRight: '1%', fontFamily: 'Poppins-Regular', color: item.latitude ? colors.BlueJaja : colors.RedDanger }]}> {item.alamat_google ? "Lokasi sudah dipin" : "Lokasi belum dipin"}</Text>
-                                <Image style={styles.map} source={require('../../assets/icons/google-maps.png')} />
+            // <Swipeable
+            //     rightButtons={rightButtons}
+            //     onRightActionRelease={() => {
+            //         setSelectedItem(item)
+            //     }}
+            // >
+            <TouchableRipple rippleColor={colors.BlueJaja} onPress={() => navigation.navigate("AddAddress", { data: item, edit: true })} style={[style.column_start_center, styles.card]}>
+                <View style={styles.body}>
+                    <View style={style.row_between_center}>
+                        <Text numberOfLines={1} style={[styles.textName, { width: '55%' }]}>{item.nama_penerima ? item.nama_penerima : ""}</Text>
+                        {status === "checkout" ?
+                            <Button mode='contained' color={colors.BlueJaja} labelStyle={[style.font_10, style.T_semi_bold, { color: colors.White }]} onPress={() => handleChangePrimary(item.id)}>
+                                Pilih Alamat
+                            </Button> :
+                            <View style={[style.row_end_center, { width: '40%' }]}>
+                                <Text adjustsFontSizeToFit numberOfLines={1} style={[style.font_12, { fontFamily: 'Poppins-SemiBold', color: item.is_primary ? colors.BlueJaja : colors.Silver }]}>Alamat utama</Text>
+                                {reduxUser && reduxUser.length > 1 ?
+                                    <Switch
+                                        trackColor={{ false: "#767577", true: "#99e6ff" }}
+                                        thumbColor={item.is_primary ? colors.BlueJaja : "#f4f3f4"}
+                                        ios_backgroundColor="#3e3e3e"
+                                        onValueChange={() => toggleSwitch(index)}
+                                        value={item.is_primary} />
+                                    : null
+                                }
                             </View>
+                        }
+                    </View>
+                    <Text adjustsFontSizeToFit style={styles.textNum}>{item.no_telepon ? item.no_telepon : ""}</Text>
+                    <Paragraph numberOfLines={3} style={styles.textAlamat}>{item.provinsi + ", " + item.kota_kabupaten + ", " + item.kecamatan + ", " + item.kelurahan + ", " + item.kode_pos + ", " + item.alamat_lengkap}</Paragraph>
+                    <View style={[style.row_between_center, style.mt_3]}>
+                        <Text style={[style.font_12, { color: colors.BlueJaja, fontFamily: 'Poppins-Regular' }]}>{item.label}</Text>
+                        <View style={{ flex: 0, justifyContent: 'flex-end', flexDirection: 'row' }}>
+                            <Text adjustsFontSizeToFit style={[styles.textAlamat, { fontSize: 12, textAlignVertical: "bottom", marginRight: '1%', fontFamily: 'Poppins-Regular', color: item.latitude ? colors.BlueJaja : colors.RedDanger }]}> {item.alamat_google ? "Lokasi sudah dipin" : "Lokasi belum dipin"}</Text>
+                            <Image style={styles.map} source={require('../../assets/icons/google-maps.png')} />
                         </View>
                     </View>
-                </TouchableWithoutFeedback>
-            </Swipeable>
+                </View>
+            </TouchableRipple>
+            // </Swipeable >
         )
+    }
+    const closeRow = (index) => {
+        if (prevOpenedRow && prevOpenedRow !== row[index]) {
+            prevOpenedRow.close();
+        }
+        prevOpenedRow = row[index];
     }
     return (
         <SafeAreaView style={[style.container, { backgroundColor: colors.BlueJaja }]}>
@@ -323,7 +334,7 @@ const styles = StyleSheet.create({
     options: { width: 19, height: 19, marginRight: '0%', tintColor: colors.BlackGrey },
 
     buttonMaps: { flex: 0, borderRadius: 20 },
-    body: { width: "100%", flex: 1, justifyContent: 'flex-start', backgroundColor: colors.White, paddingVertical: '4%', paddingHorizontal: '3%', marginBottom: '2%', elevation: 1 },
+    body: { width: "100%", flex: 1, justifyContent: 'flex-start', paddingVertical: '4%', paddingHorizontal: '3%', marginBottom: '2%' },
     form: { flex: 0, flexDirection: 'column', paddingVertical: '1%', marginBottom: '3%' },
     textAlamat: { fontSize: 14, color: colors.BlackGrayScale, margin: 0, fontFamily: 'Poppins-Regular' },
     textName: { fontSize: 14, color: colors.BlueJaja, fontFamily: 'Poppins-SemiBold' },

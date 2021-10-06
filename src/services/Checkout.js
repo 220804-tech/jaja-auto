@@ -1,7 +1,6 @@
 import { ToastAndroid, Alert } from 'react-native'
 import { Utils } from '../export';
 export async function getCheckout(auth, coin) {
-    console.log("🚀 ~ file: Checkout.js ~ line 4 ~ getCheckout ~ coin", coin)
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);
     myHeaders.append("Cookie", "ci_session=r59c24ad1race70f8lc0h1v5lniiuhei");
@@ -18,6 +17,9 @@ export async function getCheckout(auth, coin) {
         .then(result => {
             if (result.status.code === 200) {
                 return result.data;
+            } else if (result.status.code == 404 && result.status.message == 'alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu') {
+                Utils.alertPopUp('Silahkan tambah alamat terlebih dahulu!')
+                return 'Alamat'
             } else {
                 Utils.handleErrorResponse(result, 'Error with status code : 12056')
                 return null
@@ -45,18 +47,11 @@ export async function getShipping(auth) {
         .then(result => {
             if (result.status.code === 200) {
                 return result.data;
+            } else if (result.status.code == 404 && result.status.message == 'alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu') {
+                // Utils.alertPopUp('Silahkan tambah alamat terlebih dahuluuuuuuuuuuuuuuuuuuu!')
+                return null
             } else {
-                Alert.alert(
-                    "Jaja.id",
-                    String(result.status.message) + " => " + result.status.code,
-                    [
-                        {
-                            text: "TUTUP",
-                            onPress: () => console.log("Cancel Pressed"),
-                            style: "cancel"
-                        },
-                    ]
-                );
+                Utils.handleErrorResponse(result, 'Error with status code : 12056')
                 return null
             }
         })
@@ -120,7 +115,7 @@ export async function useCoin(auth, status) {
         body: raw,
     };
 
-    return await fetch("https://jaja.id/backend/checkout/hitungPakeKoin", requestOptions)
+    return await fetch("https://jaja.id/backend/checkout?isCoin=1", requestOptions)
         .then(response => response.json())
         .then(result => {
             console.log("🚀 ~ file: Checkout.js ~ line 122 ~ useCoin ~ result", result)

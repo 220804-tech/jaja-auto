@@ -1,17 +1,18 @@
 import React, { useEffect, useState, createRef } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Image, TextInput, ScrollView, FlatList, SafeAreaView, Alert, ToastAndroid, Dimensions, KeyboardAvoidingView, Platform } from 'react-native'
-import { styles as style, Wp, Hp, colors, useNavigation, Loading, ServiceUser, Appbar } from '../../export'
+import { styles as style, Wp, Hp, colors, useNavigation, Loading, ServiceUser, Appbar, Utils } from '../../export'
 import { useAndroidBackHandler } from "react-navigation-backhandler";
 const { width, height } = Dimensions.get('screen')
 import ActionSheet from 'react-native-actions-sheet';
 import * as Service from '../../services/Address';
 import Maps from './Maps'
-import { useDispatch } from 'react-redux'
-import { Button, Checkbox } from 'react-native-paper';
+import { useDispatch, useSelector } from 'react-redux'
+import { Button, Checkbox, TouchableRipple } from 'react-native-paper';
 import EncryptedStorage from 'react-native-encrypted-storage';
 export default function AddAddressScreen(props) {
     const navigation = useNavigation();
     const dispatch = useDispatch()
+    const reduxAuth = useSelector(state => state.auth.auth)
 
     const actionSheetKecamatan = createRef();
     const actionSheetKelurahan = createRef();
@@ -113,7 +114,6 @@ export default function AddAddressScreen(props) {
     useEffect(() => {
         if (props.route.params && props.route.params.edit) {
             let value = props.route.params.data;
-            console.log("🚀 ~ file: AddAddressScreen.js ~ line 116 ~ useEffect ~ value", value)
             setnamaPenerima(value.nama_penerima)
             setphoneNumber(value.no_telepon)
             setprovValue(value.provinsi)
@@ -419,11 +419,27 @@ export default function AddAddressScreen(props) {
                 {
                     text: "Hapus", onPress: () => {
                         setLoading(true)
+                        ServiceUser.deleteAddress(reduxAuth, props.route.params.data.id).then(res => {
+                            setTimeout(() => setLoading(false), 1500);
+                            if (res && res.status && res.status === 200) {
+                                Utils.alertPopUp("Alamat berhasil dihapus!")
+                                ServiceUser.getProfile(auth).then(result => {
+                                    if (result) {
+                                        EncryptedStorage.setItem('user', JSON.stringify(result))
+                                        dispatch({ type: 'SET_USER', payload: result })
+                                    }
+                                })
+                            }
+
+                        })
+                        setTimeout(() => {
+                            navigation.goBack()
+                        }, 2000);
                         setTimeout(() => {
                             setLoading(false)
-                            ToastAndroid.show("Alamat berhasil dihapus.", ToastAndroid.LONG, ToastAndroid.CENTER)
-                            navigation.goBack()
-                        }, 1000);
+                        }, 3000);
+                        // ToastAndroid.show("Alamat berhasil dihapus.", ToastAndroid.LONG, ToastAndroid.CENTER)
+
                     }
                 }],
             { cancelable: false }
@@ -441,17 +457,19 @@ export default function AddAddressScreen(props) {
                     <ScrollView stickyHeaderIndices={[0]}>
                         <View style={{ flexDirection: 'row' }}>
                         </View>
-                        <View style={[style.appBar, { flex: 2, flexDirection: 'row', backgroundColor: colors.BlueJaja, width: '100%' }]}>
-                            <View style={[style.row_start_center, { flex: 2, width: 100 }]}>
+                        <View style={[style.appBar, { flex: 2, flexDirection: 'row', backgroundColor: colors.BlueJaja, width: '100%', paddingBottom: '3%' }]}>
+                            <View style={[style.row_start_center, style.pb, { flex: 2, width: 100 }]}>
                                 <TouchableOpacity onPress={() => navigation.goBack()}>
                                     <Image style={style.appBarButton} source={require('../../assets/icons/arrow.png')} />
                                 </TouchableOpacity>
                                 <Text style={style.appBarText}>{props.route.params && props.route.params.edit ? " Ubah Alamat" : " Tambah Alamat"}</Text>
                             </View>
                             {kcValue ?
-                                <View style={{ flex: 1, backgroundColor: colors.YellowJaja, borderRadius: 7, width: Wp('20%'), marginTop: '1%' }}>
-                                    <Button mode="contained" color={colors.YellowJaja} labelStyle={[style.font_12, style.T_semi_bold, { color: colors.White }]} style={{}} onPress={handleSave}>Simpan</Button>
-                                </View>
+                                <TouchableRipple background={colors.jaja} onPress={handleSave} rippleColor={colors.White} style={[style.row_center, style.px_2, style.py_2, style.mt_1, { flex: 1, backgroundColor: colors.YellowJaja, borderRadius: 7, width: Wp('20%') }]}>
+
+                                    <Text style={[style.font_12, style.T_semi_bold, { color: colors.White }]}>Simpan</Text>
+                                    {/* <Button mode="contained" color={colors.YellowJaja} labelStyle={[style.font_12, style.T_semi_bold, { color: colors.White }]} style={{}} onPress={handleSave}>Simpan</Button> */}
+                                </TouchableRipple>
                                 : null}
                         </View>
 
@@ -648,7 +666,7 @@ export default function AddAddressScreen(props) {
                             </View>
                             {/* {view === 'edit' ? <Button onPress={handleDelete} mode='contained' color={colors.RedDanger} style={{ width: '100%', marginVertical: '5%' }} contentStyle={{ width: '100%' }} labelStyle={{ color: colors.White }}>Hapus Alamat</Button> : null} */}
 
-                            {view === 'edit' ? <Button onPress={handleDelete} mode='contained' color={colors.RedDanger} style={{ width: '100%', marginVertical: '5%' }} contentStyle={{ width: '100%' }} labelStyle={{ color: colors.White }}>Hapus Alamat</Button> : null}
+                            {view === 'edit' ? <Button onPress={handleDelete} mode='contained' color={colors.RedDanger} style={{ width: '100%', marginVertical: '5%' }} contentStyle={{ width: '100%' }} labelStyle={[style.font_12, style.T_semi_bold, { color: colors.White }]}>Hapus Alamat</Button> : null}
                         </View>
 
                     </ScrollView>
@@ -657,7 +675,7 @@ export default function AddAddressScreen(props) {
                 }
             </KeyboardAvoidingView>
 
-            <ActionSheet containerStyle={{ paddingHorizontal: '4%', flexDirection: 'column' }} ref={actionSheetKecamatan}>
+            <ActionSheet containerStyle={{ paddingHorizontal: '3%' }} ref={actionSheetKecamatan}>
                 <View style={[style.row_between_center, { paddingVertical: '4%' }]}>
                     <Text style={style.actionSheetTitle}>Kecamatan</Text>
                     <TouchableOpacity onPress={() => actionSheetKecamatan.current?.setModalVisible(false)}>
@@ -669,7 +687,7 @@ export default function AddAddressScreen(props) {
                 </View>
                 <View style={[style.searchBar, { height: Hp('6%]'), width: Wp('92%'), backgroundColor: "#D3D3D3" }]}>
                     <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%', tintColor: colors.BlackGrey }} />
-                    <TextInput maxLength={30} keyboardType="name-phone-pad" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={[style.font_14, { width: '90%', marginBottom: '-1%' }]} placeholder='Cari kecamatan..' onChangeText={(value) => handleSearch(value, "kecamatan")}></TextInput>
+                    <TextInput maxLength={30} keyboardType="name-phone-pad" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={[style.font_14, { width: '93%', marginBottom: '-1%' }]} placeholder='Cari kecamatan..' onChangeText={(value) => handleSearch(value, "kecamatan")}></TextInput>
                 </View>
                 {/* <View style={style.search}>
                     <View style={{ height: '100%', width: '6%', marginRight: '1%' }}>
@@ -701,7 +719,7 @@ export default function AddAddressScreen(props) {
                     </ScrollView>
                 </View>
             </ActionSheet>
-            <ActionSheet containerStyle={{ padding: '4%' }} ref={actionSheetKelurahan}>
+            <ActionSheet containerStyle={{ paddingHorizontal: '3%' }} ref={actionSheetKelurahan}>
                 <View style={[style.row_between_center, { paddingVertical: '4%' }]}>
                     <Text style={style.actionSheetTitle}>Kelurahan</Text>
                     <TouchableOpacity onPress={() => actionSheetKecamatan.current?.setModalVisible(false)}>
@@ -713,8 +731,7 @@ export default function AddAddressScreen(props) {
                 </View>
                 <View style={[style.searchBar, { height: Hp('6%]'), width: Wp('92%'), backgroundColor: "#D3D3D3" }]}>
                     <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%', tintColor: colors.BlackGrey }} />
-                    <TextInput keyboardType="name-phone-pad" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={style.font_14} placeholder='Cari kelurahan..' onChangeText={(text) => handleSearch(text, "kelurahan")}>
-                    </TextInput>
+                    <TextInput keyboardType="name-phone-pad" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={[style.font_14, { width: '93%', marginBottom: '-1%' }]} placeholder='Cari kelurahan..' onChangeText={(text) => handleSearch(text, "kelurahan")} />
                 </View>
                 <View style={{ height: Hp('50%'), paddingHorizontal: Wp('2%') }}>
                     <ScrollView style={{ flex: 1 }}>

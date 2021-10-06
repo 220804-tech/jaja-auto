@@ -61,14 +61,12 @@ export default function CategoryComponent() {
     const handleSelected = (res) => {
         console.log("🚀 ~ file: CategoryComponent.js ~ line 65 ~ handleSelected ~ handleSelected", res)
         handleFetch(res)
-        handleSaveKeyword(res)
+        handleSaveKeyword(res.name)
     }
 
-    const handleFetch = (text) => {
-        console.log("🚀 ~ file: CategoryComponent.js ~ line 98 ~ handleFetch ~ handleFetch", text)
+    const handleFetch = (item) => {
 
-        if (text) {
-            dispatch({ type: 'SET_KEYWORD', payload: text })
+        if (item) {
             var myHeaders = new Headers();
             myHeaders.append("Cookie", "ci_session=akeeif474rkhuhqgj7ah24ksdljm0248");
             var requestOptions = {
@@ -77,7 +75,7 @@ export default function CategoryComponent() {
                 redirect: 'follow'
             };
 
-            fetch(`https://jaja.id/backend/product/category/${text}?page=1&limit=100&keyword=&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
+            fetch(`https://jaja.id/backend/product/category/${item.slug}?page=1&limit=100&keyword=&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     console.log("🚀 ~ file: CategoryComponent.js ~ line 83 ~ handleFetch ~ result", result)
@@ -85,6 +83,8 @@ export default function CategoryComponent() {
                         dispatch({ type: 'SET_SEARCH', payload: result.data.items })
                         dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
                         dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
+                        dispatch({ type: 'SET_KEYWORD', payload: item.name })
+
                     } else {
                         dispatch({ type: 'SET_SEARCH', payload: [] })
                         dispatch({ type: 'SET_FILTERS', payload: [] })
@@ -149,7 +149,7 @@ export default function CategoryComponent() {
                                     elevation: 2,
                                     backgroundColor: colors.White
                                 }}
-                                onPress={() => handleSelected(item.name)}
+                                onPress={() => handleSelected(item)}
                                 key={index}
                             >
                                 <FastImage

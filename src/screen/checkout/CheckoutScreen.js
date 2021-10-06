@@ -18,6 +18,7 @@ export default function checkoutScreen() {
     const reduxCheckout = useSelector(state => state.checkout.checkout)
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxCoin = useSelector(state => state.user.user.coinFormat)
+    const reduxUseCoin = useSelector(state => state.user.user.useCoin)
 
 
     const reduxShipping = useSelector(state => state.checkout.shipping)
@@ -84,12 +85,23 @@ export default function checkoutScreen() {
         }
     }, [selectedSubPayment])
 
-    const getCheckout = () => {
-        ServiceCheckout.getCheckout(reduxAuth, useCoin ? 0 : 1).then(res => {
+    const getCheckout = (coin) => {
+        if (coin) {
+            dispatch({ type: 'SET_USECOIN', payload: true })
+        } else {
+            dispatch({ type: 'SET_USECOIN', payload: false })
+
+        }
+        ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then(res => {
             if (res) {
                 dispatch({ type: 'SET_CHECKOUT', payload: res })
                 actionSheetVoucher.current?.setModalVisible(false)
+                return res
+            } else {
+                return false
             }
+        }).catch(res => {
+            return false
         })
         // dispatch({ type: 'SET_ACTION_SHEET', payload: true })
     }
@@ -131,7 +143,7 @@ export default function checkoutScreen() {
                             setloadAs(false)
                         }, 200);
                         if (result.status.code === 200) {
-                            getCheckout();
+                            getCheckout(reduxUseCoin);
                         } else {
                             Alert.alert(
                                 "Jaja.id",
@@ -192,7 +204,7 @@ export default function checkoutScreen() {
                         setLoad(false)
                         if (result.status.code === 200) {
                             ToastAndroid.show("Voucher berhasil digunakan.", ToastAndroid.LONG, ToastAndroid.CENTER)
-                            getCheckout()
+                            getCheckout(reduxUseCoin)
                         } else {
                             Alert.alert(
                                 "Jaja.id",
@@ -252,7 +264,7 @@ export default function checkoutScreen() {
                 .then(result => {
                     console.log("🚀 ~ file: CheckoutScreen.js ~ line 207 ~ handleClaimVoucher ~ result", result.status)
                     if (result.status.code === 200) {
-                        ServiceCheckout.getCheckout(reduxAuth, null).then(res => {
+                        ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then(res => {
                             setTimeout(() => setloadAs(false), 500);
                             if (res) {
                                 // setCount(count + 1)
@@ -310,7 +322,7 @@ export default function checkoutScreen() {
                 .then(result => {
                     setTimeout(() => setloadAs(false), 500);
                     if (result.status.code === 200) {
-                        ServiceCheckout.getCheckout(reduxAuth, null).then(res => {
+                        ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then(res => {
                             if (res) {
                                 // setCount(count + 1)
                                 setvoucherOpen('jaja')
@@ -378,7 +390,7 @@ export default function checkoutScreen() {
             .then(result => {
                 if (result.status.code === 200) {
                     // dispatch({ type: 'SET_CHECKOUT', payload: {} })
-                    getCheckout()
+                    getCheckout(reduxUseCoin)
                 } else {
                     ToastAndroid.show(result.status.message + " " + result.status.code, ToastAndroid.LONG, ToastAndroid.CENTER)
                 }
@@ -502,10 +514,6 @@ export default function checkoutScreen() {
                                 newArr[index] = { "note": "" }
                             }
                         }
-                        let raaw = {
-                            newArr,
-                            koin: true
-                        }
 
                         setTimeout(() => {
 
@@ -514,7 +522,10 @@ export default function checkoutScreen() {
                             myHeaders.append("Authorization", reduxAuth);
                             myHeaders.append("Content-Type", "application/json");
 
-                            var raw = JSON.stringify({ 'cart': newArr });
+                            var raw = JSON.stringify({
+                                'cart': newArr,
+                                'koin': reduxUseCoin
+                            });
 
                             var requestOptions = {
                                 method: 'POST',
@@ -523,7 +534,7 @@ export default function checkoutScreen() {
                                 redirect: 'follow'
                             };
 
-                            fetch("https://jaja.id/backend/checkout/test", requestOptions)
+                            fetch("https://jaja.id/backend/checkout", requestOptions)
                                 .then(response => response.text())
                                 .then(result => {
                                     error = false
@@ -610,7 +621,7 @@ export default function checkoutScreen() {
     }
     const onRefresh = useCallback(() => {
         setRefreshControl(true)
-        ServiceCheckout.getCheckout(reduxAuth, null).then(res => {
+        ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then(res => {
             if (res) {
                 console.log("🚀 ~ file: CheckoutScreen.js ~ line 616 ~ ServiceCheckout.getCheckout ~ res", res)
                 dispatch({ type: 'SET_CHECKOUT', payload: res })
@@ -631,10 +642,19 @@ export default function checkoutScreen() {
     }, []);
 
 
-    const handleUseCoin = async () => {
-        await ServiceCheckout.useCoin(reduxAuth, !useCoin)
-        setUseCoin(!useCoin)
-        getCheckout()
+    const handleUseCoin = (coin) => {
+        setUseCoin(coin)
+        ServiceCheckout.getCheckout(reduxAuth, coin).then(res => {
+            if (res) {
+                dispatch({ type: 'SET_CHECKOUT', payload: res })
+                actionSheetVoucher.current?.setModalVisible(false)
+                return res
+            } else {
+                return false
+            }
+        }).catch(res => {
+            return false
+        })
     }
 
     return (
@@ -866,7 +886,7 @@ export default function checkoutScreen() {
                                     theme={{ mode: 'adaptive' }}
                                     color={colors.BlueJaja}
                                     status={useCoin ? 'checked' : 'unchecked'}
-                                    onPress={handleUseCoin}
+                                    onPress={() => handleUseCoin(!useCoin)}
                                 />
                                 <Text numberOfLines={1} style={[styles.font_13, styles.T_medium, { textAlignVertical: 'center', marginBottom: '-1%' }]}>Koin dimiliki</Text>
                             </View>
@@ -877,7 +897,7 @@ export default function checkoutScreen() {
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>{reduxCheckout.shippingCostCurrencyFormat}</Text>
                             {reduxCheckout.voucherJajaType === "ongkir" ? <Text style={[styles.font_13, { marginBottom: '2%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountJajaCurrencyFormat}</Text> : null}
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>Rp0</Text>
-                            <Text numberOfLines={1} style={[styles.font_13, styles.T_medium, styles.py_2, { textAlignVertical: 'center', marginBottom: "-2%", opacity: reduxCoin == 0 ? 0.4 : 1, backgroundColor: colors.White }]}>-{reduxCoin}</Text>
+                            <Text numberOfLines={1} style={[styles.font_13, styles.T_medium, styles.py_2, { textAlignVertical: 'center', marginBottom: "-2%", opacity: reduxCoin == 0 ? 0.4 : 1, backgroundColor: colors.White }]}>(-{reduxCoin})</Text>
                         </View>
                     </View>
                 </View>

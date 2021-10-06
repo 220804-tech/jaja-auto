@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, Linking, StyleSheet, Platform, Dimensions, Image, Alert, ScrollView, RefreshControl } from 'react-native';
+import { SafeAreaView, View, Text, TouchableOpacity, Linking, StyleSheet, Platform, Dimensions, Image, Alert, ScrollView, RefreshControl, TouchableWithoutFeedback } from 'react-native';
 import { styles, Hp, Wp, colors, useNavigation, useFocusEffect, Loading, Appbar, ServiceCart, Utils } from '../../export'
 import { Button, TouchableRipple } from 'react-native-paper'
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -312,6 +312,9 @@ export default function ProfileScreen(props) {
               : null
             }
           </View>
+          <TouchableWithoutFeedback onPress={() => Linking.openURL("market://details?id=com.seller.jaja")}>
+            <Text adjustsFontSizeToFit style={[style.font_14, style.my_5, { alignSelf: 'center', color: colors.BlueJaja, backgroundColor: 'red' }]}>Mulai Berjualan?</Text>
+          </TouchableWithoutFeedback>
         </ScrollView>
       </View>
     </SafeAreaView >
