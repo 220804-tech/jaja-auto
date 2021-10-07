@@ -824,7 +824,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         marginTop: 95
     },
-    card: { flex: 1, flexDirection: 'column', padding: '4%', marginBottom: '2%' },
+    card: { flex: 1, flexDirection: 'column', padding: '4%', marginBottom: '2%', backgroundColor: colors.White },
     imageHeader: {
         height: '30%',
         width: '100%',

@@ -103,17 +103,12 @@ export default function LoginScreen(props) {
                             navigation.navigate('VerifikasiEmail', { email: email })
                         } else if (result.status.message === "data not found") {
                             setAlertText('Email atau password anda salah!')
-                        } else {
-                            Alert.alert(
-                                "Jaja.id",
-                                String(result.status.message) + " => " + result.status.code,
-                                [
-                                    { text: "TUTUP", onPress: () => console.log("OK Pressed") }
-                                ]
-                            )
-                            setLoading(false)
+                        } else if (result.status.message === "incorrect email or password") {
                             setAlertText('Email atau password anda salah!')
+                        } else {
+                            setAlertText(String(result.status.message) + ' ' + String(result.status.code))
                         }
+                        setLoading(false)
                     }
                 })
                 .catch(error => {
@@ -376,9 +371,9 @@ export default function LoginScreen(props) {
             <Appbar back={true} title="Kembali" />
             {loading ? <Loading /> : null}
 
-            <View style={[styles.column_around_center, { flex: 1 }]}>
+            <View style={[styles.column_around_center, { flex: 1, backgroundColor: colors.White }]}>
                 <ScrollView>
-                    <View style={{ flex: 1, height: Hp('100%'), width: Wp('100%'), justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={{ flex: 1, height: Hp('100%'), width: Wp('100%'), justifyContent: 'center', alignItems: 'center', backgroundColor: colors.White }}>
                         <View style={[styles.row_center, { width: '100%', height: Hp('30%') }]}>
                             <Image style={{ flex: 0, height: Wp('35%'), width: Wp('70%'), resizeMode: 'center' }} source={require('../../assets/images/JajaId.png')} />
                         </View>
@@ -398,6 +393,7 @@ export default function LoginScreen(props) {
                                 theme={{
                                     colors: {
                                         primary: colors.BlueJaja,
+                                        background: colors.White
                                     },
                                 }}
 
@@ -417,6 +413,8 @@ export default function LoginScreen(props) {
                                     theme={{
                                         colors: {
                                             primary: colors.BlueJaja,
+                                            background: colors.White
+
                                         },
                                     }}
                                 />

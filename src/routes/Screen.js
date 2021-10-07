@@ -17,6 +17,7 @@ import AddAddress from '../screen/address/AddAddressScreen'
 import Midtrans from '../screen/midtrans/MidtransScreen'
 import Notification from '../screen/notifikasi/NotifikasiScreen'
 import Vouchers from '../screen/voucher/VoucherScreen'
+import DownloadInvoice from '../screen/order/DownloadInvoice'
 
 import VerifikasiEmail from '../screen/verifikasiEmail/VerifikasiEmailScreen'
 import Category from '../screen/category/CategoryScreen'
@@ -45,5 +46,5 @@ export {
     Home, Product, ListChat, Chat, Orders, Profile, Login, Register, Splash, Search, Trolley, ProductSearch, Checkout, VerifikasiEmail, Account,
     Address, Category, AddAddress, Store, Midtrans, ForgotPassword, Feed, Review, ZoomReview, OrderDetails, AddReview, OrderDelivery, AddAccount,
     CustomerService, Notification, Vouchers, Flashsale, Wishlist, HistoryProduct, Reward, Referral, RequestComplain, DetailComplain, OrderCancel,
-    CoinPage
+    CoinPage, DownloadInvoice
 };

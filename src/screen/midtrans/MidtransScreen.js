@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { View, Text, SafeAreaView, Image, StyleSheet, Alert, Animated, BackHandler } from 'react-native'
 import { styles, Wp, Hp, colors, useNavigation, ServiceCheckout, Appbar, ServiceOrder } from '../../export'
 import { WebView } from 'react-native-webview';
@@ -9,6 +9,7 @@ import { Button, Paragraph } from 'react-native-paper';
 
 export default function MidtransScreen() {
     const navigation = useNavigation()
+    const ref = useRef()
     const reduxAuth = useSelector(state => state.auth.auth)
     const [loading, setloading] = useState(false)
     const reduxOrderId = useSelector(state => state.checkout.orderId)
@@ -82,20 +83,20 @@ export default function MidtransScreen() {
         myHeaders.append("Cookie", "ci_session=nvha2jep6gogidt9rmcle1par0j8ul4f");
 
         var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        redirect: 'follow'
+            method: 'POST',
+            headers: myHeaders,
+            redirect: 'follow'
         };
-        
-        var url="https://jaja.id/backend/payment/getPayment/"+orderId;
-        console.log('getPaymentUrl',url);
+
+        var url = "https://jaja.id/backend/payment/getPayment/" + orderId;
+        console.log('getPaymentUrl', url);
         fetch(url, requestOptions)
-        .then(response => response.json())
+            .then(response => response.json())
             .then(result => {
                 setTimeout(() => setloading(false), 3000);
-                console.log('payment_va_or_code_or_link',result.orderPaymentRecent.payment_va_or_code_or_link);
+                console.log('payment_va_or_code_or_link', result.orderPaymentRecent.payment_va_or_code_or_link);
                 setView(result.orderPaymentRecent.payment_va_or_code_or_link);
-                
+
             })
             .catch(error => {
                 Utils.handleError(error, "Error with status code : 22004")
@@ -131,6 +132,11 @@ export default function MidtransScreen() {
 
     const handleCheck = () => {
         getItem()
+    }
+    const onMessage = (m) => {
+        console.log("🚀 ~ file: MidtransScreen.js ~ line 136 ~ onMessage ~ data", data)
+        //Prints out data that was passed.
+        alert(m.nativeEvent.data);
     }
     return (
         <SafeAreaView style={styles.container}>
@@ -169,6 +175,8 @@ export default function MidtransScreen() {
                             allowsFullscreenVideo={true}
                             scalesPageToFit={true}
                             originWhitelist={['*']}
+                            onLoad={(e) => console.log('asasasasas', e)}
+                            onMessage={(event) => onMessage(event)}
                             source={{ uri: view }}
                         />
                         {/* <View style={{ position: 'absolute', width: Wp('100%'), height: Hp('100%'), justifyContent: 'flex-end', alignItems: 'center', paddingBottom: Hp('10%') }}>
@@ -205,7 +213,7 @@ export default function MidtransScreen() {
                                     source={require('../../assets/icons/refresh.png')} />
                             </TouchableOpacity>
                         </View> */}
-                         {/* <View style={{ width: '50%', justifyContent: 'flex-end', paddingHorizontal: '3%', paddingLeft: '5%', paddingVertical: '1%' }}>
+                        {/* <View style={{ width: '50%', justifyContent: 'flex-end', paddingHorizontal: '3%', paddingLeft: '5%', paddingVertical: '1%' }}>
                                 <Text style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>Subtotal :</Text>
                                 <Text numberOfLines={1} style={[styles.font_20, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>ASA</Text>
                             </View> */}

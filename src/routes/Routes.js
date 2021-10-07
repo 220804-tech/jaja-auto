@@ -5,7 +5,7 @@ import {
     Splash, Product, Search, Chat, Login, Profile, Register, Trolley, ProductSearch, Checkout, Address, VerifikasiEmail, Category,
     AddAddress, Midtrans, Store, ForgotPassword, Review, ZoomReview, OrderDetails, AddReview, OrderDelivery, Account, CustomerService,
     Notification, Vouchers, Flashsale, Wishlist, HistoryProduct, Reward, Referral, DetailComplain, OrderCancel, RequestComplain,
-    AddAccount, CoinPage
+    AddAccount, CoinPage, DownloadInvoice
 } from "./Screen";
 
 import BottomRoutes from './BottomRoute'
@@ -30,6 +30,8 @@ export default function Routes() {
                 <Stack.Screen name="Review" component={Review} />
                 <Stack.Screen name="ZoomReview" component={ZoomReview} />
                 <Stack.Screen name="OrderDetails" component={OrderDetails} />
+                <Stack.Screen name="DownloadInvoice" component={DownloadInvoice} />
+
                 <Stack.Screen name="AddReview" component={AddReview} />
                 <Stack.Screen name="OrderDelivery" component={OrderDelivery} />
                 <Stack.Screen name="VerifikasiEmail" component={VerifikasiEmail} />

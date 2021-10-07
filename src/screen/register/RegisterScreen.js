@@ -198,7 +198,7 @@ class RegisterScreen extends Component {
                             style={styles.logoJaja}
                         />
                     </View> */}
-                    <View style={[style.column, style.pt_5, { width: Wp('92%') }]}>
+                    <View style={[style.column, style.pt_5, { width: Wp('92%'), backgroundColor: colors.White }]}>
                         <View style={[style.row_between_center]}>
                             <View style={[styles.viewInput, style.mr_2, { width: Wp('45%') }]}>
                                 <TextInput
@@ -372,6 +372,7 @@ const styles = StyleSheet.create({
     },
     inputBox: {
         height: Hp('5.7%'),
+        backgroundColor: colors.White
     },
     iconMarket: { alignSelf: "center", width: Wp('80%'), height: Hp('40%') },
     textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 18, fontFamily: 'Poppins-SemiBold', color: colors.black, fontFamily: 'Poppins-Regular', marginVertical: Hp('2%') },

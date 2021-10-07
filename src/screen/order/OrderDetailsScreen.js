@@ -5,6 +5,7 @@ import Clipboard from '@react-native-community/clipboard';
 import { useDispatch, useSelector } from "react-redux";
 import { Button, TouchableRipple, Checkbox } from 'react-native-paper'
 import ActionSheet from "react-native-actions-sheet";
+import { WebView } from 'react-native-webview';
 
 export default function OrderDetailsScreen() {
     const navigation = useNavigation();
@@ -121,6 +122,7 @@ export default function OrderDetailsScreen() {
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxOrderStatus = useSelector(state => state.order.orderStatus)
     const reduxOrderInvoice = useSelector(state => state.order.invoice)
+    const [downloadInvoice, setdownloadInvoice] = useState(false)
 
     const reduxUser = useSelector(state => state.user)
     const [subPayment, setsubPayment] = useState([])
@@ -152,6 +154,7 @@ export default function OrderDetailsScreen() {
 
     useFocusEffect(
         useCallback(() => {
+            setdownloadInvoice('')
             getItem()
         }, []),
     );
@@ -591,29 +594,20 @@ export default function OrderDetailsScreen() {
         myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Cookie", "ci_session=croc9bj799b291gjd0oqd06b3vr2ehm8");
 
-        var raw = "";
-
         var requestOptions = {
             method: 'GET',
             headers: myHeaders,
-            body: raw,
             redirect: 'follow'
         };
-        var url = `https://jaja.id/backend/order/${reduxOrderInvoice}`;
-        console.log('urlDetailPesanan', url);
 
         fetch(`https://jaja.id/backend/order/${reduxOrderInvoice}`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 68 ~ getItem ~ result", result.data)
-                //console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 68 ~ getItem ~ result", result.data.items[0].store)
                 if (result.status.code === 200 || result.status.code === 204) {
-
                     setDetails(result.data)
                     let status = result.data.status;
                     if (!reduxOrderStatus) {
                         dispatch({ type: 'SET_ORDER_STATUS', payload: status === 'notPaid' ? "Menunggu Pembayaran" : status === 'waitConfirm' ? 'Menunggu Konfirmasi' : status === 'prepared' ? 'Sedang Disiapkan' : status === 'canceled' ? 'Pesanan Dibatalkan' : status === 'done' ? 'Pesanan Selesai' : null })
-
                     }
                     if (status === 'notPaid') {
                         getPayment(result.data.orderId);
@@ -622,10 +616,35 @@ export default function OrderDetailsScreen() {
                 } else {
                     Utils.handleErrorResponse(result, "Error with status code : 22003");
                 }
+                setRefreshing(false)
+                setLoading(false)
             })
             .catch(error => {
+                setRefreshing(false)
+                setLoading(false)
                 Utils.handleError(error, "Error with status code : 22004")
             });
+
+        setTimeout(() => {
+            if (refreshing) {
+                Utils.CheckSignal(item => {
+                    if (item.connect) {
+                        setTimeout(() => {
+                            Utils.CheckSignal(res => {
+                                if (!res.connect) {
+                                    Utils.alertPopUp('Tidak dapat terhubung, periksa kembali koneksi anda!')
+                                }
+                                setRefreshing(false)
+                            })
+                        }, 2500);
+                    } else {
+                        setRefreshing(false)
+                        Utils.alertPopUp('Tidak dapat terhubung, periksa kembali koneksi anda!')
+                    }
+                })
+
+            }
+        }, 5000);
     }
 
     const submitChange = () => {
@@ -813,150 +832,152 @@ export default function OrderDetailsScreen() {
         <SafeAreaView style={styles.container}>
             <Appbar title="Detail Pesanan" back={true} />
             {loading ? <Loading /> : null}
-
-            <ScrollView
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                    />
-                }
-                contentContainerStyle={{ flex: 0, flexDirection: 'column', paddingBottom: Hp('7%') }}>
-                <View style={[styles.column, styles.p_3, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                    <View style={[styles.row_between_center, { marginBottom: reduxOrderStatus !== "Menunggu Pembayaran" ? '4%' : "0%" }]}>
-                        <View style={[styles.row]}>
-                            <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/process.png')} />
-                            <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}> Status Pesanan</Text>
-                        </View>
-                        <View style={[styles.px, styles.px_3, { backgroundColor: colors.YellowJaja, borderRadius: 3 }]}>
-                            <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>{reduxOrderStatus}</Text>
-                        </View>
-                    </View>
-                    {reduxOrderStatus !== "Menunggu Pembayaran" ?
-                        details ?
-                            <View style={styles.row_between_center}>
-                                <View style={[styles.row]}>
-                                    <Text style={[styles.font_13]}>#{details.items[0].invoice}</Text>
-                                </View>
-                                <TouchableOpacity onPress={() => {
-                                    Linking.canOpenURL(details.downloadOrderPdf).then(supported => {
-                                        if (supported) {
-                                            Linking.openURL(details.downloadOrderPdf)
-                                        } else {
-                                            ToastAndroid.show("Sepertinya ada masalah, coba lagi nanti.", ToastAndroid.LONG, ToastAndroid.TOP)
-
-                                        }
-                                    })
-                                }}
-                                    onLongPress={() => {
-                                        Clipboard.setString(details.downloadOrderPdf)
-                                        ToastAndroid.show("salin to clipboard", ToastAndroid.LONG, ToastAndroid.TOP)
-                                    }}
-                                    style={[styles.p, { backgroundColor: colors.White, borderRadius: 3 }]}>
-                                    <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlueJaja }]}>DOWNLOAD INVOICE</Text>
-                                </TouchableOpacity>
-                            </View>
-                            : null
-                        : null
+            <View style={[styles.container, { backgroundColor: colors.White }]}>
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
                     }
-                </View>
-                {details ?
-                    <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                        <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                            <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/google-maps.png')} />
-                            <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Alamat Pengiriman</Text>
-                        </View>
-                        <View style={[styles.column, styles.p_3]}>
-                            <View style={styles.row_between_center}>
-                                <Text numberOfLines={1} style={[styles.font_13, { width: '70%' }]}>{details.address.receiverName}</Text>
+                    contentContainerStyle={{ flex: 0, flexDirection: 'column', paddingBottom: Hp('7%') }}>
+                    <View style={[styles.column, styles.p_3, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                        <View style={[styles.row_between_center, { marginBottom: reduxOrderStatus !== "Menunggu Pembayaran" ? '4%' : "0%" }]}>
+                            <View style={[styles.row]}>
+                                <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/process.png')} />
+                                <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}> Status Pesanan</Text>
                             </View>
-                            <Text numberOfLines={1} style={[styles.font_13]}>{details.address.phoneNumber}</Text>
-
-                            <Text numberOfLines={3} style={[styles.font_12, styles.mt_2]}>{details.address.address.replace(/<br>/g, "")}</Text>
+                            <View style={[styles.px, styles.px_3, { backgroundColor: colors.YellowJaja, borderRadius: 3 }]}>
+                                <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>{reduxOrderStatus}</Text>
+                            </View>
                         </View>
-                    </View> : null}
-                {details && details.items.length ?
-                    details.items.map((item, idxStore) => {
-                        return (
-                            <View key={String(idxStore)} style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                                <View style={[styles.row_between_center, styles.px_3, styles.py_2, { width: '100%', borderBottomWidth: 0.2, borderBottomColor: colors.WhiteSilver }]}>
+                        {reduxOrderStatus !== "Menunggu Pembayaran" ?
+                            details ?
+                                <View style={styles.row_between_center}>
                                     <View style={[styles.row]}>
-                                        <Image style={[styles.icon_19, { marginRight: '3%', tintColor: colors.BlueJaja }]} source={require('../../assets/icons/store.png')} />
-                                        <Text onPress={() => handleStore(item.store)} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.store.name}</Text>
+                                        <Text style={[styles.font_13]}>#{details.items[0].invoice}</Text>
                                     </View>
-                                    <TouchableRipple onPress={() => handleChat(item)} style={[styles.row_center, styles.px_2, { backgroundColor: colors.BlueJaja, paddingVertical: '1.5%' }]}>
-                                        <View style={styles.row}>
-                                            <Text style={[styles.font_11, styles.T_medium, { color: colors.White }]}>
-                                                Chat Penjual
-                                            </Text>
-                                        </View>
-                                    </TouchableRipple>
+                                    <TouchableOpacity onPress={() => setdownloadInvoice(details.downloadOrderPdf)}
+                                        // console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 843 ~ Linking.canOpenURL ~ details.downloadOrderPdf", details.downloadOrderPdf)
+                                        // navigation.navigate('DownloadInvoice', { url: details.downloadOrderPdf })
+                                        // Linking.canOpenURL(details.downloadOrderPdf).then(supported => {
+                                        //     if (supported) {
+                                        //         Linking.openURL(details.downloadOrderPdf)
+                                        //     } else {
+                                        //         ToastAndroid.show("Sepertinya ada masalah, coba lagi nanti.", ToastAndroid.LONG, ToastAndroid.TOP)
+
+                                        //     }
+                                        // })
+                                        // }}
+                                        onLongPress={() => {
+                                            Clipboard.setString(details.downloadOrderPdf)
+                                            ToastAndroid.show("salin to clipboard", ToastAndroid.LONG, ToastAndroid.TOP)
+                                        }}
+                                        style={[styles.p, { backgroundColor: colors.White, borderRadius: 3 }]}>
+                                        <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlueJaja }]}>DOWNLOAD INVOICE</Text>
+                                    </TouchableOpacity>
                                 </View>
-                                {
-                                    item.products.map((child, idx) => {
-                                        return (
-                                            <View key={String(idx) + "s"} style={[styles.column, styles.px_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver, width: '100%' }]}>
-                                                <View style={[styles.row_start_center, { width: '100%', height: Wp('25%') }]}>
-                                                    <TouchableOpacity onPress={() => handleShowDetail(child)}>
-                                                        <Image style={{ width: Wp('15%'), height: Wp('15%'), borderRadius: 5, backgroundColor: colors.BlackGrey }}
-                                                            resizeMethod={"scale"}
-                                                            resizeMode="cover"
-                                                            source={{ uri: child.image }}
-                                                        />
-                                                    </TouchableOpacity>
-                                                    <View style={[styles.column, styles.ml_2, { height: Wp('15%'), width: Wp('85%') }]}>
-                                                        <Text onPress={() => handleShowDetail(child)} numberOfLines={1} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja, width: '95%' }]}>{child.name}</Text>
-                                                        <View style={[styles.row_between_center, styles.pr_2, { width: '95%', alignItems: 'flex-start' }]}>
-                                                            <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlackGrayScale, }]}>{child.variant ? child.variant : ""}</Text>
-                                                            <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
-                                                                {child.isDiscount ?
-                                                                    <>
-                                                                        <Text></Text>
-                                                                        <Text numberOfLines={1} style={[styles.priceBefore, { fontStyle: 'italic' }]}>{child.priceCurrencyFormat}</Text>
+                                : null
+                            : null
+                        }
+                    </View>
+                    {details ?
+                        <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                            <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
+                                <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/google-maps.png')} />
+                                <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Alamat Pengiriman</Text>
+                            </View>
+                            <View style={[styles.column, styles.p_3]}>
+                                <View style={styles.row_between_center}>
+                                    <Text numberOfLines={1} style={[styles.font_13, { width: '70%' }]}>{details.address.receiverName}</Text>
+                                </View>
+                                <Text numberOfLines={1} style={[styles.font_13]}>{details.address.phoneNumber}</Text>
+
+                                <Text numberOfLines={3} style={[styles.font_12, styles.mt_2]}>{details.address.address.replace(/<br>/g, "")}</Text>
+                            </View>
+                        </View> : null}
+                    {details && details.items.length ?
+                        details.items.map((item, idxStore) => {
+                            return (
+                                <View key={String(idxStore)} style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                                    <View style={[styles.row_between_center, styles.px_3, styles.py_2, { width: '100%', borderBottomWidth: 0.2, borderBottomColor: colors.WhiteSilver }]}>
+                                        <View style={[styles.row]}>
+                                            <Image style={[styles.icon_19, { marginRight: '3%', tintColor: colors.BlueJaja }]} source={require('../../assets/icons/store.png')} />
+                                            <Text onPress={() => handleStore(item.store)} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.store.name}</Text>
+                                        </View>
+                                        <TouchableRipple onPress={() => handleChat(item)} style={[styles.row_center, styles.px_2, { backgroundColor: colors.BlueJaja, paddingVertical: '1.5%' }]}>
+                                            <View style={styles.row}>
+                                                <Text style={[styles.font_11, styles.T_medium, { color: colors.White }]}>
+                                                    Chat Penjual
+                                                </Text>
+                                            </View>
+                                        </TouchableRipple>
+                                    </View>
+                                    {
+                                        item.products.map((child, idx) => {
+                                            return (
+                                                <View key={String(idx) + "s"} style={[styles.column, styles.px_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver, width: '100%' }]}>
+                                                    <View style={[styles.row_start_center, { width: '100%', height: Wp('25%') }]}>
+                                                        <TouchableOpacity onPress={() => handleShowDetail(child)}>
+                                                            <Image style={{ width: Wp('15%'), height: Wp('15%'), borderRadius: 5, backgroundColor: colors.BlackGrey }}
+                                                                resizeMethod={"scale"}
+                                                                resizeMode="cover"
+                                                                source={{ uri: child.image }}
+                                                            />
+                                                        </TouchableOpacity>
+                                                        <View style={[styles.column, styles.ml_2, { height: Wp('15%'), width: Wp('85%') }]}>
+                                                            <Text onPress={() => handleShowDetail(child)} numberOfLines={1} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja, width: '95%' }]}>{child.name}</Text>
+                                                            <View style={[styles.row_between_center, styles.pr_2, { width: '95%', alignItems: 'flex-start' }]}>
+                                                                <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlackGrayScale, }]}>{child.variant ? child.variant : ""}</Text>
+                                                                <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+                                                                    {child.isDiscount ?
+                                                                        <>
+                                                                            <Text></Text>
+                                                                            <Text numberOfLines={1} style={[styles.priceBefore, { fontStyle: 'italic' }]}>{child.priceCurrencyFormat}</Text>
+                                                                            <View style={styles.row}>
+                                                                                <Text numberOfLines={1} style={[styles.font_14]}>{child.qty} x</Text>
+                                                                                <Text numberOfLines={1} style={[styles.priceAfter, { color: colors.BlueJaja }]}> {child.priceDiscountCurrencyFormat}</Text>
+                                                                            </View>
+                                                                        </>
+                                                                        :
                                                                         <View style={styles.row}>
+                                                                            <Text></Text>
                                                                             <Text numberOfLines={1} style={[styles.font_14]}>{child.qty} x</Text>
-                                                                            <Text numberOfLines={1} style={[styles.priceAfter, { color: colors.BlueJaja }]}> {child.priceDiscountCurrencyFormat}</Text>
+                                                                            <Text numberOfLines={1} style={[styles.priceAfter, { color: colors.BlueJaja }]}> {child.priceCurrencyFormat}</Text>
                                                                         </View>
-                                                                    </>
-                                                                    :
-                                                                    <View style={styles.row}>
-                                                                        <Text></Text>
-                                                                        <Text numberOfLines={1} style={[styles.font_14]}>{child.qty} x</Text>
-                                                                        <Text numberOfLines={1} style={[styles.priceAfter, { color: colors.BlueJaja }]}> {child.priceCurrencyFormat}</Text>
-                                                                    </View>
-                                                                }
+                                                                    }
+                                                                </View>
                                                             </View>
                                                         </View>
                                                     </View>
-                                                </View>
-                                                <View style={[styles.row_end_center]}>
-                                                    {/* <Text style={[styles.font_14, { fontStyle: 'italic' }]}>Subtotal </Text> */}
-                                                    <Text numberOfLines={1} style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}> {child.subTotalCurrencyFormat}</Text>
-                                                </View>
-                                            </View>
-                                        )
-                                    })
-                                }
-                                {
-                                    item.voucherStoreSelected && Object.keys(item.voucherStoreSelected).length ?
-                                        <View style={styles.column}>
-                                            <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                                                <TouchableOpacity style={[styles.row_between_center, styles.p_3]}>
-                                                    {/* <Image style={[styles.icon_23, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/offer.png')} /> */}
-                                                    <Text style={[styles.font_14, { color: colors.BlackGrayScale }]}>Voucher Toko</Text>
-                                                    <View style={[styles.p, { backgroundColor: colors.RedFlashsale, borderRadius: 3 }]}>
-                                                        <Text numberOfLines={1} style={[styles.font_12, { color: colors.White }]}>- {item.voucherStoreSelected.discountText}</Text>
+                                                    <View style={[styles.row_end_center]}>
+                                                        {/* <Text style={[styles.font_14, { fontStyle: 'italic' }]}>Subtotal </Text> */}
+                                                        <Text numberOfLines={1} style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}> {child.subTotalCurrencyFormat}</Text>
                                                     </View>
-                                                </TouchableOpacity>
+                                                </View>
+                                            )
+                                        })
+                                    }
+                                    {
+                                        item.voucherStoreSelected && Object.keys(item.voucherStoreSelected).length ?
+                                            <View style={styles.column}>
+                                                <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                                                    <TouchableOpacity style={[styles.row_between_center, styles.p_3]}>
+                                                        {/* <Image style={[styles.icon_23, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/offer.png')} /> */}
+                                                        <Text style={[styles.font_14, { color: colors.BlackGrayScale }]}>Voucher Toko</Text>
+                                                        <View style={[styles.p, { backgroundColor: colors.RedFlashsale, borderRadius: 3 }]}>
+                                                            <Text numberOfLines={1} style={[styles.font_12, { color: colors.White }]}>- {item.voucherStoreSelected.discountText}</Text>
+                                                        </View>
+                                                    </TouchableOpacity>
+                                                </View>
+                                                <View style={[styles.row_end_center, styles.px_2]}>
+                                                    <Text style={[styles.font_14, { fontStyle: 'italic' }]}>Subtotal </Text>
+                                                    <Text numberOfLines={1} style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}> {item.totalDiscountCurrencyFormat}</Text>
+                                                </View>
                                             </View>
-                                            <View style={[styles.row_end_center, styles.px_2]}>
-                                                <Text style={[styles.font_14, { fontStyle: 'italic' }]}>Subtotal </Text>
-                                                <Text numberOfLines={1} style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}> {item.totalDiscountCurrencyFormat}</Text>
-                                            </View>
-                                        </View>
-                                        : null
-                                }
-                                {/* <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
+                                            : null
+                                    }
+                                    {/* <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
                                     <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/vehicle-yellow.png')} />
                                     <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pengiriman</Text>
                                 </View>
@@ -981,148 +1002,149 @@ export default function OrderDetailsScreen() {
                                         </View>
                                     </View> 
                             </View>*/}
-                            </View>
-                        )
-                    })
-                    :
-                    null}
-                <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                    <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                        <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
-                        <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Ringkasan Belanja</Text>
-                    </View>
-                    <View style={[styles.row_between_center, styles.p_3]}>
-                        <View style={styles.column}>
-                            <Text style={[styles.font_13, { marginBottom: '2%' }]}>Total belanja</Text>
-                            <Text style={[styles.font_13, { marginBottom: '2%' }]}>Ongkos </Text>
-                            <Text style={[styles.font_13, { marginBottom: '2%' }]}>Biaya penanganan</Text>
-                            {/* <Text style={[styles.font_13 { marginBottom: '2%' }]}>Voucher Toko</Text> */}
-                            <Text style={[styles.font_13, { marginBottom: '2%' }]}>Voucher Jaja.id</Text>
-
-                            {/* <Text style={[styles.font_13, styles.T_medium, { marginBottom: '2%' }]}>Fee</Text> */}
-                            <Text style={[styles.font_13, styles.T_medium, { marginBottom: '2%' }]}>Total pembayaran</Text>
-
-
-                        </View>
-
-                        {console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 1009 ~ OrderDetailsScreen ~ details", details)}
-                        {details ?
-                            <View style={styles.column_center_end}>
-                                <Text style={[styles.font_13, { marginBottom: '2%' }]}>{details.subTotalCurrencyFormat}</Text>
-                                <Text style={[styles.font_13, { marginBottom: '2%' }]}>{details.shippingCostCurrencyFormat}</Text>
-                                <Text style={[styles.font_13, { marginBottom: '2%' }]}>Rp {priceSplitter(orderPaymentRecent.fee)}</Text>
-                                {/* <Text style={[styles.font_13, { marginBottom: '2%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountCurrencyFormat}</Text> */}
-                                <Text style={[styles.font_13, { marginBottom: '2%', color: details.voucherDiscountJaja ? colors.RedFlashsale : colors.BlackGrayScale }]}>{details.voucherDiscountJajaCurrencyFormat}</Text>
-                                {/* <Text style={[styles.font_13, { marginBottom: '2%', color: details.voucherDiscountJaja ? colors.RedFlashsale : colors.BlackGrayScale }]}>Rp {priceSplitter(orderPaymentRecent.fee)}</Text> */}
-                                {/* <Text style={[styles.font_13, styles.T_semi_bold, { marginBottom: '2%', color: colors.BlueJaja, }]}>{details ? details.totalCurrencyFormat : "Rp.0"}</Text> */}
-                                <Text style={[styles.font_13, styles.T_semi_bold, { marginBottom: '2%', color: colors.BlueJaja, }]}>{reduxOrderStatus !== 'Menunggu Pembayaran' ? details.totalCurrencyFormat : 'Rp' + priceSplitter(orderPaymentRecent.grand_total)}</Text>
-
-                            </View>
-                            : null
-                        }
-
-                    </View>
-
-                </View>
-                {reduxOrderStatus == 'Menunggu Pembayaran' ?
+                                </View>
+                            )
+                        })
+                        :
+                        null}
                     <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                         <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                            <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
-                            <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pembayaran</Text>
+                            <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
+                            <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Ringkasan Belanja</Text>
                         </View>
-                        {
-                            loadingOrderPaymentRecent ?
-                                <ActivityIndicator size="large" />
-                                :
-                                orderPaymentRecent.payment_type == "" ?
+                        <View style={[styles.row_between_center, styles.p_3]}>
+                            <View style={styles.column}>
+                                <Text style={[styles.font_13, { marginBottom: '2%' }]}>Total belanja</Text>
+                                <Text style={[styles.font_13, { marginBottom: '2%' }]}>Ongkos </Text>
+                                <Text style={[styles.font_13, { marginBottom: '2%' }]}>Biaya penanganan</Text>
+                                {/* <Text style={[styles.font_13 { marginBottom: '2%' }]}>Voucher Toko</Text> */}
+                                <Text style={[styles.font_13, { marginBottom: '2%' }]}>Voucher Jaja.id</Text>
 
-                                    listPayment.map(item => {
-                                        return (
-                                            <TouchableRipple
-                                                //onPressIn={() => handleShowPayment(item)} 
-                                                style={[styles.px_3, styles.py_3, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}
-                                                onPress={() => handleShowPayment(item)}
-                                                rippleColor={colors.BlueJaja} >
-                                                <View style={styles.row_between_center}>
-                                                    <Text style={styles.font_13}>{item.payment_type_label === 'Card' ? 'Kartu Kredit' : item.payment_type_label == 'eWallet' ? item.payment_type_label + ' - ' + item.subPayment[0].payment_sub_label : item.payment_type_label}</Text>
-                                                    <Image fadeDuration={300} source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackGrey }]} />
+                                {/* <Text style={[styles.font_13, styles.T_medium, { marginBottom: '2%' }]}>Fee</Text> */}
+                                <Text style={[styles.font_13, styles.T_medium, { marginBottom: '2%' }]}>Total pembayaran</Text>
 
-                                                </View>
-                                            </TouchableRipple>
-                                        )
-                                    })
+
+                            </View>
+
+                            {console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 1009 ~ OrderDetailsScreen ~ details", details)}
+                            {details ?
+                                <View style={styles.column_center_end}>
+                                    <Text style={[styles.font_13, { marginBottom: '2%' }]}>{details.subTotalCurrencyFormat}</Text>
+                                    <Text style={[styles.font_13, { marginBottom: '2%' }]}>{details.shippingCostCurrencyFormat}</Text>
+
+                                    <Text style={[styles.font_13, { marginBottom: '2%' }]}>Rp {priceSplitter(reduxOrderStatus !== 'Menunggu Pembayaran' ? details.orderPaymentRecent.fee : orderPaymentRecent.fee)}</Text>
+                                    {/* <Text style={[styles.font_13, { marginBottom: '2%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountCurrencyFormat}</Text> */}
+                                    <Text style={[styles.font_13, { marginBottom: '2%', color: details.voucherDiscountJaja ? colors.RedFlashsale : colors.BlackGrayScale }]}>{details.voucherDiscountJajaCurrencyFormat}</Text>
+                                    {/* <Text style={[styles.font_13, { marginBottom: '2%', color: details.voucherDiscountJaja ? colors.RedFlashsale : colors.BlackGrayScale }]}>Rp {priceSplitter(orderPaymentRecent.fee)}</Text> */}
+                                    {/* <Text style={[styles.font_13, styles.T_semi_bold, { marginBottom: '2%', color: colors.BlueJaja, }]}>{details ? details.totalCurrencyFormat : "Rp.0"}</Text> */}
+                                    <Text style={[styles.font_13, styles.T_semi_bold, { marginBottom: '2%', color: colors.BlueJaja, }]}>{reduxOrderStatus !== 'Menunggu Pembayaran' ? details.totalCurrencyFormat : 'Rp' + priceSplitter(orderPaymentRecent.grand_total)}</Text>
+
+                                </View>
+                                : null
+                            }
+
+                        </View>
+
+                    </View>
+                    {reduxOrderStatus == 'Menunggu Pembayaran' ?
+                        <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                            <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
+                                <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
+                                <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pembayaran</Text>
+                            </View>
+                            {
+                                loadingOrderPaymentRecent ?
+                                    <ActivityIndicator size="large" />
                                     :
-                                    <View style={[styles.row_center, styles.my_2, { width: '95%', alignSelf: 'center' }]}>
-                                        <TouchableRipple
-                                            //onPress={() => console.log("change")} 
-                                            onPress={() => {
-                                                Alert.alert(
-                                                    'Confirm',
-                                                    'Ingin mengganti metode pembayaran ?',
-                                                    [
-                                                        { text: 'NO', onPress: () => console.warn('NO Pressed'), style: 'cancel' },
-                                                        { text: 'YES', onPress: () => submitChange() },
-                                                    ]
-                                                );
+                                    orderPaymentRecent.payment_type == "" ?
 
-                                            }}
-                                            style={[styles.row_center, styles.py_2, { width: 100 / 2 + '%', backgroundColor: colors.YellowJaja }]}>
-                                            <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                                Ganti
-                                            </Text>
-                                        </TouchableRipple>
-                                        {/* <TouchableRipple onPress={() => console.log("refresh")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.GreenSuccess }]}>
+                                        listPayment.map(item => {
+                                            return (
+                                                <TouchableRipple
+                                                    //onPressIn={() => handleShowPayment(item)} 
+                                                    style={[styles.px_3, styles.py_3, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}
+                                                    onPress={() => handleShowPayment(item)}
+                                                    rippleColor={colors.BlueJaja} >
+                                                    <View style={styles.row_between_center}>
+                                                        <Text style={styles.font_13}>{item.payment_type_label === 'Card' ? 'Kartu Kredit' : item.payment_type_label == 'eWallet' ? item.payment_type_label + ' - ' + item.subPayment[0].payment_sub_label : item.payment_type_label}</Text>
+                                                        <Image fadeDuration={300} source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackGrey }]} />
+
+                                                    </View>
+                                                </TouchableRipple>
+                                            )
+                                        })
+                                        :
+                                        <View style={[styles.row_center, styles.my_2, { width: '95%', alignSelf: 'center' }]}>
+                                            <TouchableRipple
+                                                //onPress={() => console.log("change")} 
+                                                onPress={() => {
+                                                    Alert.alert(
+                                                        'Confirm',
+                                                        'Ingin mengganti metode pembayaran ?',
+                                                        [
+                                                            { text: 'NO', onPress: () => console.warn('NO Pressed'), style: 'cancel' },
+                                                            { text: 'YES', onPress: () => submitChange() },
+                                                        ]
+                                                    );
+
+                                                }}
+                                                style={[styles.row_center, styles.py_2, { width: 100 / 2 + '%', backgroundColor: colors.YellowJaja }]}>
+                                                <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                                    Ganti
+                                                </Text>
+                                            </TouchableRipple>
+                                            {/* <TouchableRipple onPress={() => console.log("refresh")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.GreenSuccess }]}>
                                 <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
                                     Cek Bayar
                                 </Text>
                             </TouchableRipple> */}
 
-                                        <TouchableRipple onPress={handlePayment} style={[styles.row_center, styles.py_2, { width: 100 / 2 + '%', backgroundColor: colors.BlueJaja }]}>
-                                            <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                                Bayar Sekarang
-                                            </Text>
-                                        </TouchableRipple>
+                                            <TouchableRipple onPress={handlePayment} style={[styles.row_center, styles.py_2, { width: 100 / 2 + '%', backgroundColor: colors.BlueJaja }]}>
+                                                <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                                    Bayar Sekarang
+                                                </Text>
+                                            </TouchableRipple>
 
 
-                                    </View>
+                                        </View>
 
-                        }
-                        <View style={[styles.row_center, styles.mb_2, { width: '95%', alignSelf: 'center' }]}>
-                            <TouchableRipple onPress={() => navigation.navigate('OrderCancel')} style={[styles.row_center, styles.py_2, { width: '100%', backgroundColor: colors.Silver, alignSelf: 'center' }]}>
-                                <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                    Batalkan Pesanan
-                                </Text>
-                            </TouchableRipple>
+                            }
+                            <View style={[styles.row_center, styles.mb_2, { width: '95%', alignSelf: 'center' }]}>
+                                <TouchableRipple onPress={() => navigation.navigate('OrderCancel')} style={[styles.row_center, styles.py_2, { width: '100%', backgroundColor: colors.Silver, alignSelf: 'center' }]}>
+                                    <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                        Batalkan Pesanan
+                                    </Text>
+                                </TouchableRipple>
+                            </View>
+
                         </View>
-
-                    </View>
-                    : null}
-                {details && Object.keys(details).length ?
-                    reduxOrderStatus === "Pengiriman" ?
-                        <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'column', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
-                            <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%', marginBottom: '2%' }} contentStyle={{ width: '100%', height: '95%' }} color={colors.BlueJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
-                                Terima Pesanan
-                            </Button>
-                            <Button onPress={() => {
-                                navigation.navigate(details.complain ? 'ResponseComplain' : 'RequestComplain', { invoice: details.items[0].invoice })
-                            }} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
-                                {details.complain ? "Sedang Dikomplain" : "Komplain"}
-                            </Button>
-                        </View>
-                        : reduxOrderStatus === "Pesanan Selesai" ?
-                            <View style={{ position: 'absolute', bottom: 0, zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center', marginBottom: '3%' }}>
-                                <Button icon="star" onPress={() => navigation.navigate('AddReview', { data: details.items[0].products })} style={{ alignSelf: 'center', width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
-                                    Beri Penilaian
+                        : null}
+                    {details && Object.keys(details).length ?
+                        reduxOrderStatus === "Pengiriman" ?
+                            <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'column', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
+                                <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%', marginBottom: '2%' }} contentStyle={{ width: '100%', height: '95%' }} color={colors.BlueJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
+                                    Terima Pesanan
+                                </Button>
+                                <Button onPress={() => {
+                                    navigation.navigate(details.complain ? 'ResponseComplain' : 'RequestComplain', { invoice: details.items[0].invoice })
+                                }} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
+                                    {details.complain ? "Sedang Dikomplain" : "Komplain"}
                                 </Button>
                             </View>
-                            : reduxOrderStatus === "Menunggu Pembayaran" || reduxOrderStatus === "Menunggu Konfirmasi" ?
+                            : reduxOrderStatus === "Pesanan Selesai" ?
+                                <View style={{ position: 'absolute', bottom: 0, zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center', marginBottom: '3%' }}>
+                                    <Button icon="star" onPress={() => navigation.navigate('AddReview', { data: details.items[0].products })} style={{ alignSelf: 'center', width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
+                                        Beri Penilaian
+                                    </Button>
+                                </View>
+                                : reduxOrderStatus === "Menunggu Pembayaran" || reduxOrderStatus === "Menunggu Konfirmasi" ?
 
-                                null
-                                : null
-                    : null
-                }
-            </ScrollView>
-            {/* {
+                                    null
+                                    : null
+                        : null
+                    }
+                </ScrollView>
+                {/* {
                 props.route.params && reduxOrderStatus === "Menunggu Pembayaran" ?
                     <View style={{ position: 'absolute', bottom: 0, zIndex: 100, elevation: 1, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
                         <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '3%' }}>
@@ -1135,6 +1157,12 @@ export default function OrderDetailsScreen() {
                     </View>
                     : null
             } */}
+            </View>
+            {
+                downloadInvoice ?
+                    <WebView source={{ uri: downloadInvoice }} />
+                    : null
+            }
             <ActionSheet closeOnPressBack={false} ref={actionSheetPayment} onClose={() => {
                 if (!selectedSubPayment && selectedSubPayment == '') {
                     setselectedPayment('')

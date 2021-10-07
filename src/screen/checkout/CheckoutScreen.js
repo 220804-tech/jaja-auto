@@ -141,6 +141,7 @@ export default function checkoutScreen() {
                     .then(result => {
                         setTimeout(() => {
                             setloadAs(false)
+
                         }, 200);
                         if (result.status.code === 200) {
                             getCheckout(reduxUseCoin);
@@ -521,6 +522,7 @@ export default function checkoutScreen() {
                             var myHeaders = new Headers();
                             myHeaders.append("Authorization", reduxAuth);
                             myHeaders.append("Content-Type", "application/json");
+                            console.log("🚀 ~ file: CheckoutScreen.js ~ line 530 ~ setTimeout ~ reduxUseCoin", reduxUseCoin)
 
                             var raw = JSON.stringify({
                                 'cart': newArr,
@@ -643,8 +645,9 @@ export default function checkoutScreen() {
 
 
     const handleUseCoin = (coin) => {
+        console.log("🚀 ~ file: CheckoutScreen.js ~ line 647 ~ handleUseCoin ~ coin", coin)
         setUseCoin(coin)
-        ServiceCheckout.getCheckout(reduxAuth, coin).then(res => {
+        ServiceCheckout.getCheckout(reduxAuth, coin ? 1 : 0).then(res => {
             if (res) {
                 dispatch({ type: 'SET_CHECKOUT', payload: res })
                 actionSheetVoucher.current?.setModalVisible(false)
@@ -668,7 +671,7 @@ export default function checkoutScreen() {
             <Appbar back={true} title="Checkout" />
             {load ? <Loading /> : null}
             {Object.keys(reduxCheckout).length == 0 ? <Loading /> : null}
-            <ScrollView contentContainerStyle={{ flex: 0, flexDirection: 'column', paddingBottom: Hp('7%') }} refreshControl={<RefreshControl refreshing={refreshControl} onRefresh={onRefresh} />}>
+            <ScrollView contentContainerStyle={{ flex: 0, flexDirection: 'column', paddingBottom: Hp('7%'), backgroundColor: colors.White }} refreshControl={<RefreshControl refreshing={refreshControl} onRefresh={onRefresh} />}>
                 <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                     <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
                         <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/google-maps.png')} />
@@ -810,8 +813,8 @@ export default function checkoutScreen() {
                                                         </View>
                                                     </View>
                                                     <View style={[styles.column, styles.mb_3]}>
-                                                        <TextInput onChangeText={(text) => handleNotes(text, idxStore)} pla placeholder="Masukkan catatan untuk kurir" style={{ fontSize: 13, paddingHorizontal: 0, paddingVertical: '2%', borderBottomWidth: 0.7, borderBottomColor: colors.Silver, width: '100%' }} />
-                                                        <Text style={[styles.font_12, { color: colors.BlackGrey }]}>Catatan untuk kurir (Opsional)</Text>
+                                                        <TextInput onChangeText={(text) => handleNotes(text, idxStore)} pla placeholder="Masukkan catatan untuk penjual" style={{ fontSize: 13, paddingHorizontal: 0, paddingVertical: '2%', borderBottomWidth: 0.7, borderBottomColor: colors.Silver, width: '100%' }} />
+                                                        <Text style={[styles.font_12, { color: colors.BlackGrey }]}>Catatan untuk penjual </Text>
                                                     </View>
                                                 </TouchableOpacity>
                                                 :
@@ -890,6 +893,7 @@ export default function checkoutScreen() {
                                 />
                                 <Text numberOfLines={1} style={[styles.font_13, styles.T_medium, { textAlignVertical: 'center', marginBottom: '-1%' }]}>Koin dimiliki</Text>
                             </View>
+
                         </View>
                         <View style={styles.column_center_end}>
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>{reduxCheckout.subTotalCurrencyFormat}</Text>

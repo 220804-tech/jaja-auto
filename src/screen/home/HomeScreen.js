@@ -403,7 +403,7 @@ export default function HomeScreen() {
     }
 
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: colors.BlueJaja }]}>
+        <SafeAreaView style={[styles.container, { backgroundColor: colors.White }]}>
             {loading ? <Loading /> : null}
             {/* <ScrollView
                 refreshControl={

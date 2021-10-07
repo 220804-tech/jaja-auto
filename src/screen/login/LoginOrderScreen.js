@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux'
 import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
 import database from '@react-native-firebase/database';
 
-export default function LoginOrderScreen(props) {
+export default function LoginScreen(props) {
     let navigation = useNavigation()
     const dispatch = useDispatch()
 
@@ -103,17 +103,12 @@ export default function LoginOrderScreen(props) {
                             navigation.navigate('VerifikasiEmail', { email: email })
                         } else if (result.status.message === "data not found") {
                             setAlertText('Email atau password anda salah!')
-                        } else {
-                            Alert.alert(
-                                "Jaja.id",
-                                String(result.status.message) + " => " + result.status.code,
-                                [
-                                    { text: "TUTUP", onPress: () => console.log("OK Pressed") }
-                                ]
-                            )
-                            setLoading(false)
+                        } else if (result.status.message === "incorrect email or password") {
                             setAlertText('Email atau password anda salah!')
+                        } else {
+                            setAlertText(String(result.status.message) + ' ' + String(result.status.code))
                         }
+                        setLoading(false)
                     }
                 })
                 .catch(error => {
@@ -373,12 +368,11 @@ export default function LoginOrderScreen(props) {
                 barStyle='default'
                 showHideTransition="fade"
             />
-            {/* <Appbar back={true} title="Kembali" /> */}
             {loading ? <Loading /> : null}
 
-            <View style={[styles.column_around_center, { flex: 1 }]}>
+            <View style={[styles.column_around_center, { flex: 1, backgroundColor: colors.White }]}>
                 <ScrollView>
-                    <View style={{ flex: 1, height: Hp('100%'), width: Wp('100%'), justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={{ flex: 1, height: Hp('100%'), width: Wp('100%'), justifyContent: 'center', alignItems: 'center', backgroundColor: colors.White }}>
                         <View style={[styles.row_center, { width: '100%', height: Hp('30%') }]}>
                             <Image style={{ flex: 0, height: Wp('35%'), width: Wp('70%'), resizeMode: 'center' }} source={require('../../assets/images/JajaId.png')} />
                         </View>
@@ -386,10 +380,11 @@ export default function LoginOrderScreen(props) {
                             <Text style={[styles.alertText, styles.mb_3, { alignSelf: 'center', width: Wp('85%') }]}>{alertText}</Text>
                             <TextInput
                                 ref={emailRef}
-                                returnKeyType="go"
+                                returnKeyType="next"
                                 selectionColor={colors.BlueJaja}
                                 style={{ width: Wp('85%'), marginBottom: '2%' }}
                                 label="Alamat Email"
+
                                 keyboardType="email-address"
                                 onChangeText={(text) => handleChange('email', text)}
                                 // onSubmitEditing={() => passwordRef.current.show()}
@@ -397,6 +392,7 @@ export default function LoginOrderScreen(props) {
                                 theme={{
                                     colors: {
                                         primary: colors.BlueJaja,
+                                        background: colors.White
                                     },
                                 }}
 
@@ -405,7 +401,7 @@ export default function LoginOrderScreen(props) {
                                 <TextInput
                                     ref={passwordRef}
                                     // onSubmitEditing={() => this.login()}
-                                    returnKeyType="go"
+                                    returnKeyType="done"
                                     style={{ width: Wp('85%') }}
                                     mode="outlined"
                                     selectionColor={colors.BlueJaja}
@@ -416,6 +412,8 @@ export default function LoginOrderScreen(props) {
                                     theme={{
                                         colors: {
                                             primary: colors.BlueJaja,
+                                            background: colors.White
+
                                         },
                                     }}
                                 />
