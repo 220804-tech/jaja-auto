@@ -174,7 +174,7 @@ export default function HomeScreen() {
                                 : null
                             }
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.column, styles.mx_2]} onPress={() => reduxAuth || auth ? navigation.navigate('Notification') : navigation.navigate('Login')}>
+                        <TouchableOpacity style={[styles.column, styles.mx_2]} onPress={() => reduxAuth ? navigation.navigate('Notification') : navigation.navigate('Login')}>
                             <Image source={require('../../assets/icons/notif.png')} style={{ width: 24, height: 24, tintColor: colors.White }} />
                             {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
                                 <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalNotifUnread >= 100 ? "99+" : reduxUser.badges.totalNotifUnread + ''}</Text></View>
@@ -344,26 +344,25 @@ export default function HomeScreen() {
         ServiceCore.getDateTime().then(res => {
             if (res) {
                 let date = new Date()
-                if (date.toJSON().toString().slice(0, 10) !== res.dateNow) {
-                    Alert.alert(
-                        "Peringatan!",
-                        `Sepertinya tanggal tidak sesuai!`,
-                        [
-                            { text: "OK", onPress: () => navigation.goBack() }
-                        ],
-                        { cancelable: false }
-                    );
-                } else {
-                    ServiceCore.getFlashsale().then(resp => {
-                        if (resp && resp.flashsale && resp.flashsale.length) {
-                            dispatch({ type: 'SET_SHOW_FLASHSALE', payload: true })
-                            dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.flashsale })
-                        } else {
-                            dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-                        }
-                    })
-
-                }
+                // if (date.toJSON().toString().slice(0, 10) !== res.dateNow) {
+                //     Alert.alert(
+                //         "Peringatan!",
+                //         `Sepertinya tanggal tidak sesuai!`,
+                //         [
+                //             { text: "OK", onPress: () => navigation.goBack() }
+                //         ],
+                //         { cancelable: false }
+                //     );
+                // } else {
+                ServiceCore.getFlashsale().then(resp => {
+                    if (resp && resp.flashsale && resp.flashsale.length) {
+                        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: true })
+                        dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.flashsale })
+                    } else {
+                        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+                    }
+                })
+                // }
             }
         })
     }
@@ -387,16 +386,17 @@ export default function HomeScreen() {
             })
             if (String(error).slice(11, String(error).length) === "Network request failed") {
                 ToastAndroid.show("Tidak dapat terhubung, periksa koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
-            } else {
-                Alert.alert(
-                    "Error with status 12001",
-                    JSON.stringify(error),
-                    [
-                        { text: "OK", onPress: () => console.log("OK Pressed") }
-                    ],
-                    { cancelable: false }
-                );
             }
+            //  else {
+            //     Alert.alert(
+            //         "Error with status 12001",
+            //         JSON.stringify(error),
+            //         [
+            //             { text: "OK", onPress: () => console.log("OK Pressed") }
+            //         ],
+            //         { cancelable: false }
+            //     );
+            // }
         } catch (err) {
             return ToastAndroid.show("Handle Error " + String(err), ToastAndroid.LONG, ToastAndroid.TOP)
         }

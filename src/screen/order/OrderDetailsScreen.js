@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, createRef } from 'react'
-import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Linking, ToastAndroid, Alert, RefreshControl, Modal, FlatList, ActivityIndicator } from 'react-native'
-import { Appbar, colors, styles, Wp, Hp, useNavigation, useFocusEffect, Loading, Utils, ServiceStore, ServiceCheckout } from '../../export'
+import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Linking, ToastAndroid, Alert, RefreshControl, Modal, FlatList, ActivityIndicator, BackHandler } from 'react-native'
+import { Appbar, colors, styles, Wp, Hp, useNavigation, useFocusEffect, Loading, Utils, ServiceStore, ServiceCheckout, ServiceOrder } from '../../export'
 import Clipboard from '@react-native-community/clipboard';
 import { useDispatch, useSelector } from "react-redux";
 import { Button, TouchableRipple, Checkbox } from 'react-native-paper'
@@ -131,31 +131,60 @@ export default function OrderDetailsScreen() {
 
 
     useEffect(() => {
-        // getItem();
-        // let dataSeller = res.store
-        // dataSeller.chat = reduxUser.user.uid + dataSeller.uid
-        // dataSeller.id = dataSeller.uid
-        // setSeller(dataSeller)
-        // setLike(res.isWishlist)
-        // setTimeout(() => {
-        //     if (reduxAuth && res.sellerTerdekat.length && Object.keys(reduxUser.user).length && Object.keys(res.category).length && res.category.slug) {
-        //         FilterLocation(res.sellerTerdekat, reduxUser.user.location, res.category.slug, reduxAuth)
-        //     }
-        // }, 3000);
-
+        setLoading(true)
         ServiceCheckout.getListPayment().then(res => {
-            console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 40 ~ ServiceCheckout.getListPayment ~ res", res)
             if (res) {
                 dispatch({ type: 'SET_LIST_PAYMENT', payload: res })
             }
         })
+        setTimeout(() => {
+            setLoading(false)
+        }, 2500);
+        const backAction = () => {
+
+            getOrder()
+            // navigation.goBack()
+            return true
+        }
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            backAction
+        );
+
+        return () => backHandler.remove();
 
     }, [])
 
+    const getOrder = () => {
+        ServiceOrder.getUnpaid(reduxAuth).then(resUnpaid => {
+            if (resUnpaid) {
+                dispatch({ type: 'SET_UNPAID', payload: resUnpaid.items })
+                dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
+            }
+        })
+        ServiceOrder.getWaitConfirm(reduxAuth).then(reswaitConfirm => {
+            if (reswaitConfirm) {
+                dispatch({ type: 'SET_WAITCONFIRM', payload: reswaitConfirm.items })
+            }
+        })
+        ServiceOrder.getProcess(reduxAuth).then(resProcess => {
+            if (resProcess) {
+                dispatch({ type: 'SET_PROCESS', payload: resProcess.items })
+            }
+        })
+    }
+    useEffect(() => {
+        if (downloadInvoice) {
+            setTimeout(() => {
+                setdownloadInvoice(false)
+            }, 7000);
+        }
+    }, [downloadInvoice])
+
     useFocusEffect(
         useCallback(() => {
-            setdownloadInvoice('')
             getItem()
+            setdownloadInvoice('')
         }, []),
     );
 
@@ -773,7 +802,7 @@ export default function OrderDetailsScreen() {
         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
         dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
         dispatch({ type: 'SET_SLUG', payload: item.slug })
-        navigation.push("Product", { slug: item.slug, image: item.image })
+        navigation.navigate("Product", { slug: item.slug, image: item.image })
     }
     const handleStore = (item) => {
         if (reduxStore && Object.keys(reduxStore).length) {
@@ -1026,7 +1055,6 @@ export default function OrderDetailsScreen() {
 
                             </View>
 
-                            {console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 1009 ~ OrderDetailsScreen ~ details", details)}
                             {details ?
                                 <View style={styles.column_center_end}>
                                     <Text style={[styles.font_13, { marginBottom: '2%' }]}>{details.subTotalCurrencyFormat}</Text>
@@ -1133,7 +1161,10 @@ export default function OrderDetailsScreen() {
                             </View>
                             : reduxOrderStatus === "Pesanan Selesai" ?
                                 <View style={{ position: 'absolute', bottom: 0, zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center', marginBottom: '3%' }}>
-                                    <Button icon="star" onPress={() => navigation.navigate('AddReview', { data: details.items[0].products })} style={{ alignSelf: 'center', width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
+                                    <Button icon="star" onPress={() => {
+                                        // console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 1137 ~ details.items[0].products", details.items[0].products)
+                                        navigation.navigate('AddReview', { data: details.items[0].products })
+                                    }} style={{ alignSelf: 'center', width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                                         Beri Penilaian
                                     </Button>
                                 </View>
@@ -1160,7 +1191,9 @@ export default function OrderDetailsScreen() {
             </View>
             {
                 downloadInvoice ?
-                    <WebView source={{ uri: downloadInvoice }} />
+                    <View style={{ height: 1 }}>
+                        <WebView source={{ uri: downloadInvoice }} />
+                    </View>
                     : null
             }
             <ActionSheet closeOnPressBack={false} ref={actionSheetPayment} onClose={() => {

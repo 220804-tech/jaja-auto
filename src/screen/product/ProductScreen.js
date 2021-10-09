@@ -676,57 +676,103 @@ export default function ProductScreen(props) {
                         {reduxSearch.productDetail.review && reduxSearch.productDetail.review.length ?
                             <View style={[styles.column, styles.p_4, { backgroundColor: colors.White, paddingBottom: Hp('7%') }]}>
                                 <Text style={{ textDecorationLine: 'underline', fontSize: 16, fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale, marginBottom: '3%' }}>Penilaian Produk</Text>
-                                {reduxSearch.productDetail.review ?
-                                    reduxSearch.productDetail.review.map((item, index) => {
-                                        return (
-                                            <View key={String(index)} style={[styles.column, styles.mb_5, styles.mt_2]}>
-                                                {index === 0 ? null :
-                                                    <>
-                                                        <View style={styles.row}>
-                                                            <Image style={[styles.icon_23, styles.mr_2, { borderRadius: 100 }]} source={{ uri: 'https://jaja.id/asset/uplod/ulasan/dd3d4d73-9507-4a59-84ac-ef1b33a52908.jpg' }} />
-                                                            <View style={[styles.column_between_center, { alignItems: 'flex-start', marginTop: '-1%' }]}>
-                                                                <Text style={[styles.font_12]}>{item.customerName}</Text>
-                                                                <StarRating
-                                                                    disabled={false}
-                                                                    maxStars={5}
-                                                                    rating={parseInt(item.rate)}
-                                                                    starSize={14}
-                                                                    fullStarColor={colors.YellowJaja}
-                                                                    emptyStarColor={colors.YellowJaja}
-                                                                />
-                                                            </View>
-                                                        </View>
-                                                        {item.comment ?
-                                                            <Text style={[styles.font_12, styles.mt, styles.mb_2]}>
-                                                                {item.comment}
-                                                            </Text> : null
-                                                        }
-                                                    </>}
-                                                <View style={[styles.row, { flexWrap: 'wrap' }]}>
-                                                    {item.image.map((itm, idx) => {
-                                                        return (
-                                                            <TouchableOpacity key={String(idx) + "i"} onPress={() => navigation.navigate('Review', { data: reduxSearch.productDetail.slug })} style={{ width: Wp('17%'), height: Wp('17%'), justifyContent: 'center', alignItems: 'center', backgroundColor: colors.BlackGrayScale, marginRight: '1%' }}>
-                                                                <Image source={{ uri: itm }} style={{ width: '100%', height: '100%' }} />
-                                                            </TouchableOpacity>
-                                                        )
-                                                    })}
-                                                    {item.video ?
-                                                        <TouchableOpacity onPress={() => navigation.navigate('Review', { data: reduxSearch.productDetail.slug })} style={{ width: Wp('17%'), height: Wp('17%'), justifyContent: 'center', alignItems: 'center', backgroundColor: colors.BlackGrayScale }}>
-                                                            <Image source={require('../../assets/icons/play.png')} style={{ width: Wp('5%'), height: Wp('5%'), marginRight: '2%', tintColor: colors.White }} />
-                                                        </TouchableOpacity>
-                                                        : null
+                                {reduxSearch.productDetail.review.map((item, index) => {
+                                    console.log("🚀 ~ file: ProductScreen.js ~ line 680 ~ {reduxSearch.productDetail.review.map ~ item", item)
+                                    return (
+                                        <View key={String(index)} style={[styles.column, styles.mb_3, styles.px_2, { backgroundColor: colors.White, }]}>
+                                            <View style={styles.row_start_center}>
+                                                <View style={[styles.row_center, { borderWidth: 0.2, borderRadius: 100, borderColor: colors.BlackGrey, marginRight: '2%', width: 24, height: 24 }]}>
+                                                    {item.customerImage ?
+                                                        <Image style={[styles.icon_24, styles.mr_2, { borderRadius: 100 }]} source={{ uri: item.customerImage }} />
+                                                        :
+                                                        <Text style={[styles.font_12, styles.T_semi_bold, { marginBottom: '-2%' }]}>{String(item.customerName).slice(0, 1)}</Text>
                                                     }
                                                 </View>
+                                                <View style={[styles.column_between_center, { alignItems: 'flex-start', marginTop: '-1%' }]}>
+                                                    <Text style={[styles.font_12]}>{item.customerName}</Text>
+                                                    <StarRating
+                                                        disabled={false}
+                                                        maxStars={5}
+                                                        rating={parseInt(item.rate)}
+                                                        starSize={14}
+                                                        fullStarColor={colors.YellowJaja}
+                                                        emptyStarColor={colors.YellowJaja}
+                                                    />
+                                                </View>
                                             </View>
-                                        )
-                                    })
-                                    : null}
+                                            {item.comment ?
+                                                <Text style={[styles.font_12, styles.mt, styles.mb_2]}>
+                                                    {item.comment}
+                                                </Text> : null
+                                            }
+                                            <View style={[styles.row, { flexWrap: 'wrap' }]}>
+                                                {item.image.concat(item.image).map((itm, idx) => {
+                                                    return (
+                                                        <TouchableOpacity onPress={() => navigation.navigate('ZoomReview', { data: index })} style={{ width: Wp('17%'), height: Wp('17%'), justifyContent: 'center', alignItems: 'center', backgroundColor: colors.BlackGrayScale, marginRight: '1%' }}>
+                                                            <Image key={String(idx) + "i"} source={{ uri: itm }} style={{ width: '100%', height: '100%' }} />
+                                                        </TouchableOpacity>
+                                                    )
+                                                })} 
+                                                {/* {item.video ?
+                                                    <TouchableOpacity onPress={() => navigation.navigate('ZoomReview', { data: index })} style={[styles.mt_5, { width: Wp('92%'), height: Wp('50%') }]}>
+                                                        <VideoPlayer
+                                                            video={{ uri: item.video }}
+                                                            videoWidth={Wp('100%')}
+                                                            videoHeight={Wp('50%')}
+                                                            disableFullscreen={false}
+                                                            fullScreenOnLongPress={true}
+                                                        />
+                                                    </TouchableOpacity>
+                                                    : null
+                                                } */}
+                                            </View>
+                                        </View>
+                                        // <View key={String(index)} style={[styles.column, styles.mb_5, styles.mt_2]}>
+                                        //     {index === 0 ? null :
+                                        //         <>
+                                        //             <View style={styles.row}>
+                                        //                 <Image style={[styles.icon_23, styles.mr_2, { borderRadius: 100 }]} source={{ uri: 'https://jaja.id/asset/uplod/ulasan/dd3d4d73-9507-4a59-84ac-ef1b33a52908.jpg' }} />
+                                        //                 <View style={[styles.column_between_center, { alignItems: 'flex-start', marginTop: '-1%' }]}>
+                                        //                     <Text style={[styles.font_12]}>{item.customerName}</Text>
+                                        //                     <StarRating
+                                        //                         disabled={false}
+                                        //                         maxStars={5}
+                                        //                         rating={parseInt(item.rate)}
+                                        //                         starSize={14}
+                                        //                         fullStarColor={colors.YellowJaja}
+                                        //                         emptyStarColor={colors.YellowJaja}
+                                        //                     />
+                                        //                 </View>
+                                        //             </View>
+                                        //             {item.comment ?
+                                        //                 <Text style={[styles.font_12, styles.mt, styles.mb_2]}>
+                                        //                     {item.comment}
+                                        //                 </Text> : null
+                                        //             }
+                                        //         </>}
+                                        //     <View style={[styles.row, { flexWrap: 'wrap' }]}>
+                                        //         {item.image.map((itm, idx) => {
+                                        //             return (
+                                        //                 <TouchableOpacity key={String(idx) + "i"} onPress={() => navigation.navigate('Review', { data: reduxSearch.productDetail.slug })} style={{ width: Wp('17%'), height: Wp('17%'), justifyContent: 'center', alignItems: 'center', backgroundColor: colors.BlackGrayScale, marginRight: '1%' }}>
+                                        //                     <Image source={{ uri: itm }} style={{ width: '100%', height: '100%' }} />
+                                        //                 </TouchableOpacity>
+                                        //             )
+                                        //         })}
+                                        //         {item.video ?
+                                        //             <TouchableOpacity onPress={() => navigation.navigate('Review', { data: reduxSearch.productDetail.slug })} style={{ width: Wp('17%'), height: Wp('17%'), justifyContent: 'center', alignItems: 'center', backgroundColor: colors.BlackGrayScale }}>
+                                        //                 <Image source={require('../../assets/icons/play.png')} style={{ width: Wp('5%'), height: Wp('5%'), marginRight: '2%', tintColor: colors.White }} />
+                                        //             </TouchableOpacity>
+                                        //             : null
+                                        //         }
+                                        //     </View>
+                                        // </View>
+                                    )
+                                })}
                                 <TouchableOpacity onPress={() => navigation.navigate('Review', { data: reduxSearch.productDetail.slug })} style={{ width: Wp('90%'), justifyContent: 'center', alignItems: 'center', padding: '3%', backgroundColor: colors.White, elevation: 0.5 }}>
                                     <Text style={[styles.font_14, { color: colors.BlueJaja, }]}>Tampilkan semua</Text>
                                 </TouchableOpacity>
                             </View>
                             : null}
-
                         {reduxSearch.productDetail.otherProduct && reduxSearch.productDetail.otherProduct.length ?
                             <View style={[styles.column, styles.p_4, styles.mb_2, { backgroundColor: colors.White, paddingBottom: '5%' }]}>
                                 <Text style={[styles.font_14, styles.T_medium]}>Produk Lainnya Di {reduxSearch.productDetail.store.name}</Text>

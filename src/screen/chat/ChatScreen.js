@@ -524,9 +524,15 @@ export default function ChatScreen({ route }) {
 
                     {selectedOrder && Object.keys(selectedOrder).length ?
                         <View style={[style.row_around_center, style.mr_5, style.mb_2, style.p, { borderRadius: 7, backgroundColor: colors.White, width: '55%', alignSelf: 'flex-end' }]}>
-                            <Text style={[style.font_13, { marginBottom: '-1%', alignSelf: 'center', textAlignVertical: 'center', color: colors.BlueJaja }]}>
-                                No. {selectedOrder.invoice}
-                            </Text>
+                            <View style={[style.column_start_center]}>
+                                <Text style={[style.font_13, { marginBottom: '-1%', alignSelf: 'flex-start', textAlignVertical: 'center', color: colors.BlueJaja }]}>
+                                    No. {selectedOrder.invoice}
+                                    {console.log("🚀 ~ file: ChatScreen.js ~ line 530 ~ ChatScreen ~ selectedOrder", selectedOrder)}
+                                </Text>
+                                <Text style={[style.font_12, { marginBottom: '-1%', alignSelf: 'flex-start', textAlignVertical: 'center', color: colors.BlueJaja }]}>
+                                    {selectedOrder.status}
+                                </Text>
+                            </View>
                             <TouchableRipple style={[style.p_3]} onPress={() => setselectedOrder(null)}>
                                 <Image source={require('../../assets/icons/close.png')} style={[style.icon_13, { tintColor: colors.BlackGrey }]} />
                             </TouchableRipple>

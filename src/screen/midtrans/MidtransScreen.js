@@ -27,32 +27,34 @@ export default function MidtransScreen() {
         }
 
         const backAction = () => {
-            Alert.alert(
-                "Jaja.id",
-                "Pesanan ini dapat kamu lihat di halaman pesanan",
-                [
-                    {
-                        text: "OK", onPress: () => {
+            navigation.goBack()
 
-                            ServiceOrder.getUnpaid(reduxAuth).then(resUnpaid => {
-                                if (resUnpaid) {
-                                    dispatch({ type: 'SET_UNPAID', payload: resUnpaid.items })
-                                    dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
-                                } else {
-                                    handleUnpaid()
-                                }
-                            })
-                            ServiceOrder.getWaitConfirm(reduxAuth).then(reswaitConfirm => {
-                                if (reswaitConfirm) {
-                                    dispatch({ type: 'SET_WAITCONFIRM', payload: reswaitConfirm.items })
-                                } else {
-                                    handleWaitConfirm()
-                                }
-                            })
-                            navigation.goBack()
-                        }
-                    }
-                ]);
+            // Alert.alert(
+            //     "Jaja.id",
+            //     "Pesanan ini dapat kamu lihat di halaman pesanan",
+            //     [
+            //         {
+            //             text: "OK", onPress: () => {
+
+            //                 ServiceOrder.getUnpaid(reduxAuth).then(resUnpaid => {
+            //                     if (resUnpaid) {
+            //                         dispatch({ type: 'SET_UNPAID', payload: resUnpaid.items })
+            //                         dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
+            //                     } else {
+            //                         handleUnpaid()
+            //                     }
+            //                 })
+            //                 ServiceOrder.getWaitConfirm(reduxAuth).then(reswaitConfirm => {
+            //                     if (reswaitConfirm) {
+            //                         dispatch({ type: 'SET_WAITCONFIRM', payload: reswaitConfirm.items })
+            //                     } else {
+            //                         handleWaitConfirm()
+            //                     }
+            //                 })
+            //                 navigation.goBack()
+            //             }
+            //         }
+            //     ]);
             return true;
         }
         const backHandler = BackHandler.addEventListener(

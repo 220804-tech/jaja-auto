@@ -23,26 +23,25 @@ export default function FlashsaleComponent(props) {
         ServiceCore.getDateTime().then(res => {
             if (res) {
                 let date = new Date()
-                if (date.toJSON().toString().slice(0, 10) !== res.dateNow) {
-                    Alert.alert(
-                        "Peringatan!",
-                        `Sepertinya tanggal tidak sesuai!`,
-                        [
-                            { text: "OK", onPress: () => navigation.goBack() }
-                        ],
-                        { cancelable: false }
-                    );
-                } else {
-                    ServiceCore.getFlashsale().then(resp => {
-                        if (resp && resp.flashsale && resp.flashsale.length) {
-                            dispatch({ type: 'SET_SHOW_FLASHSALE', payload: true })
-                            dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.flashsale })
-                        } else {
-                            dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-                        }
-                    })
-
-                }
+                // if (date.toJSON().toString().slice(0, 10) !== res.dateNow) {
+                //     Alert.alert(
+                //         "Peringatan!",
+                //         `Sepertinya tanggal tidak sesuai!`,
+                //         [
+                //             { text: "OK", onPress: () => navigation.goBack() }
+                //         ],
+                //         { cancelable: false }
+                //     );
+                // } else {
+                ServiceCore.getFlashsale().then(resp => {
+                    if (resp && resp.flashsale && resp.flashsale.length) {
+                        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: true })
+                        dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.flashsale })
+                    } else {
+                        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+                    }
+                })
+                // }
             }
         })
     }, [])
@@ -50,21 +49,21 @@ export default function FlashsaleComponent(props) {
 
     useFocusEffect(
         useCallback(() => {
-            ServiceCore.getDateTime().then(res => {
-                if (res) {
-                    let date = new Date()
-                    if (date.toJSON().toString().slice(0, 10) !== res.dateNow) {
-                        Alert.alert(
-                            "Peringatan!",
-                            `Sepertinya tanggal tidak sesuai!`,
-                            [
-                                { text: "OK", onPress: () => navigation.goBack() }
-                            ],
-                            { cancelable: false }
-                        );
-                    }
-                }
-            })
+            // ServiceCore.getDateTime().then(res => {
+            //     if (res) {
+            //         let date = new Date()
+            //         if (date.toString().slice(0, 10) !== res.dateNow) {
+            //             Alert.alert(
+            //                 "Peringatan!",
+            //                 `Sepertinya tanggal tidak sesuai!`,
+            //                 [
+            //                     { text: "OK", onPress: () => navigation.goBack() }
+            //                 ],
+            //                 { cancelable: false }
+            //             );
+            //         }
+            //     }
+            // })
         }, []),
     );
 

@@ -12,9 +12,15 @@ export default function OrdersSent() {
     const reduxSent = useSelector(state => state.order.sent)
     const reduxAuth = useSelector(state => state.auth.auth)
     const [refreshing, setRefreshing] = useState(false);
+    const [complain, setComplain] = useState(false);
+
+    useEffect(() => {
+        setComplain(false)
+    }, [])
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
+        console.log("redresh")
         getItem()
         setTimeout(() => {
             setRefreshing(false)
@@ -23,15 +29,27 @@ export default function OrdersSent() {
 
 
     const getItem = () => {
+        setRefreshing(true)
         ServiceOrder.getSent(reduxAuth).then(resSent => {
+            console.log("🚀 ~ file: OrdersSent.js ~ line 27 ~ ServiceOrder.getSent ~ resSent", resSent.items)
+            setRefreshing(false)
             if (resSent && Object.keys(resSent).length) {
                 dispatch({ type: 'SET_SENT', payload: resSent.items })
                 dispatch({ type: 'SET_ORDER_FILTER', payload: resSent.filters })
                 setTimeout(() => ToastAndroid.show("Data berhasil diperbahrui", ToastAndroid.SHORT, ToastAndroid.CENTER), 500);
+                resSent.items.filter(res => {
+                    if (res.complain) {
+                        setComplain(true)
+                    }
+                    console.log("🚀 ~ file: OrdersSent.js ~ line 38 ~ ServiceOrder.getSent ~ res", res.complain)
+                })
             } else {
+                setRefreshing(false)
                 handleSent()
             }
+
         }).catch(err => {
+            setRefreshing(false)
             ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
             handleSent()
         })
@@ -59,7 +77,7 @@ export default function OrdersSent() {
     }
     return (
         <View style={[styles.container, styles.pt_2]}>
-            {reduxSent && reduxSent.length ?
+            {reduxSent && reduxSent.length && complain ?
                 <FlatList
                     data={reduxSent}
                     refreshControl={

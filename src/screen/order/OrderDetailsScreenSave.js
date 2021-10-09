@@ -514,7 +514,10 @@ export default function OrderDetailsScreen() {
                         </View>
                         : reduxOrderStatus === "Pesanan Selesai" ?
                             <View style={{ position: 'absolute', bottom: 0, zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center', marginBottom: '3%' }}>
-                                <Button icon="star" onPress={() => navigation.navigate('AddReview', { data: details.items[0].products })} style={{ alignSelf: 'center', width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
+                                <Button icon="star" onPress={() => {
+                                    console.log("🚀 ~ file: OrderDetailsScreenSave.js ~ line 519 ~ OrderDetailsScreen ~  details.items[0].products ", details.items[0].products)
+                                    // navigation.navigate('AddReview', { data: details.items[0].products })
+                                }} style={{ alignSelf: 'center', width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                                     Beri Penilaian
                                 </Button>
                             </View>

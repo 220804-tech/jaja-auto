@@ -21,7 +21,7 @@ export async function getDateTime() {
             }
         })
         .catch(error => {
-            Utils.handleError(error, 'Error with status code : 12022')
+            // Utils.handleError(error, 'Error with status code : 12022')
         });
 }
 

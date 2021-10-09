@@ -37,16 +37,13 @@ export async function getWaitConfirm(auth) {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", auth);
         myHeaders.append("Cookie", "ci_session=o4b4prbg3c8qthna9jk3gpu5vgskgsb5");
-
         var raw = "";
-
         var requestOptions = {
             method: 'GET',
             headers: myHeaders,
             body: raw,
             redirect: 'follow'
         };
-
         return await fetch("https://jaja.id/backend/order?page=1&limit=50&status=waitConfirm", requestOptions)
             .then(response => response.json())
             .then(result => {
@@ -98,10 +95,8 @@ export async function getSent(auth) {
     if (auth) {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", auth);
-        myHeaders.append("Cookie", "ci_session=o4b4prbg3c8qthna9jk3gpu5vgskgsb5");
-
+        myHeaders.append("Cookie", "ci_session=5brdv3mukq89aljo7pe4n46skfmvcl7i");
         var raw = "";
-
         var requestOptions = {
             method: 'GET',
             headers: myHeaders,
@@ -109,7 +104,7 @@ export async function getSent(auth) {
             redirect: 'follow'
         };
 
-        return await fetch("https://jaja.id/backend/order?page=1&limit=50&status=sent", requestOptions)
+        return await fetch("https://jaja.id/backend/order?page=1&limit=1&status=sent", requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result && Object.keys(result).length && result.status.code === 200 || result.status.code === 204) {

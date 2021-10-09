@@ -6,7 +6,9 @@ const initialState = {
     productDetail: {},
     slug: "",
     maxProduct: false,
-    flashsale: false
+    flashsale: false,
+    reviewProducts: []
+
 
 }
 export default function storeSearch(state = initialState, action) {
@@ -24,6 +26,8 @@ export default function storeSearch(state = initialState, action) {
             return { ...state, keywordSearch: payload }
         case 'SET_DETAIL_PRODUCT':
             return { ...state, productDetail: payload }
+        case 'SET_REVIEW_PRODUCT':
+            return { ...state, reviewProducts: payload }
         case 'SET_SLUG':
             return { ...state, slug: payload }
         case 'SET_SHOW_FLASHSALE':

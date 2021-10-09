@@ -343,7 +343,7 @@ export default function TrolleyScreen() {
                                                         </TouchableWithoutFeedback>
                                                         <View style={[styles.column_center, { alignItems: 'flex-start', height: Wp('21%'), width: '60%' }]}>
                                                             <Text onPress={() => handleSelected(item)} numberOfLines={1} style={[styles.font_13, styles.T_semi_bold, { flex: 0, color: colors.BlueJaja }]}>{item.name}</Text>
-                                                            <Text numberOfLines={1} style={[styles.font_10, { flex: 0, color: colors.BlackGrayScale }]}>Biru{item.variant ? "Variant " + item.variant : ""}</Text>
+                                                            <Text numberOfLines={1} style={[styles.font_10, { flex: 0, color: colors.BlackGrayScale }]}>{item.variant ? "Variant " + item.variant : ""}</Text>
                                                             {item.isDiscount ?
                                                                 <View style={styles.row_around_center}>
                                                                     <Text numberOfLines={1} style={[styles.priceBefore, { flex: 0, color: colors.BlackGrayScale, marginRight: '2%' }]}>{item.priceCurrencyFormat}</Text>

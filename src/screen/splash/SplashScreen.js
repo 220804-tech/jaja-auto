@@ -32,9 +32,7 @@ export default function SplashScreen() {
         }
     ]
 
-
     useEffect(() => {
-
         try {
             EncryptedStorage.getItem('token').then(auth => {
                 getItem(auth)
@@ -64,26 +62,26 @@ export default function SplashScreen() {
         ServiceCore.getDateTime().then(res => {
             if (res) {
                 let date = new Date()
-                if (date.toJSON().toString().slice(0, 10) !== res.dateNow) {
-                    Alert.alert(
-                        "Peringatan!",
-                        `Sepertinya tanggal tidak sesuai!`,
-                        [
-                            { text: "OK", onPress: () => navigation.goBack() }
-                        ],
-                        { cancelable: false }
-                    );
-                } else {
-                    ServiceCore.getFlashsale().then(resp => {
-                        if (resp && resp.flashsale && resp.flashsale.length) {
-                            dispatch({ type: 'SET_LIVE_FLASHSALE', payload: true })
-                            dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.flashsale })
-                        } else {
-                            dispatch({ type: 'SET_LIVE_FLASHSALE', payload: false })
-                        }
-                    })
+                // if (date.toJSON().toString().slice(0, 10) !== res.dateNow) {
+                //     Alert.alert(
+                //         "Peringatan!",
+                //         `Sepertinya tanggal tidak sesuai!`,
+                //         [
+                //             { text: "OK", onPress: () => navigation.goBack() }
+                //         ],
+                //         { cancelable: false }
+                //     );
+                // } else {
+                ServiceCore.getFlashsale().then(resp => {
+                    if (resp && resp.flashsale && resp.flashsale.length) {
+                        dispatch({ type: 'SET_LIVE_FLASHSALE', payload: true })
+                        dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.flashsale })
+                    } else {
+                        dispatch({ type: 'SET_LIVE_FLASHSALE', payload: false })
+                    }
+                })
 
-                }
+                // }
             }
         })
     }
@@ -177,16 +175,17 @@ export default function SplashScreen() {
             })
             if (String(error).slice(11, String(error).length) === "Network request failed") {
                 ToastAndroid.show("Tidak dapat terhubung, periksa koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
-            } else {
-                Alert.alert(
-                    "Error with status 12001",
-                    JSON.stringify(error),
-                    [
-                        { text: "OK", onPress: () => console.log("OK Pressed") }
-                    ],
-                    { cancelable: false }
-                );
             }
+            // else {
+            //     Alert.alert(
+            //         "Error with status 12001",
+            //         JSON.stringify(error),
+            //         [
+            //             { text: "OK", onPress: () => console.log("OK Pressed") }
+            //         ],
+            //         { cancelable: false }
+            //     );
+            // }
         } catch (err) {
             return ToastAndroid.show("Handle Error " + String(err), ToastAndroid.LONG, ToastAndroid.TOP)
         }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, createRef } from 'react'
 import { SafeAreaView, View, Text, Image, FlatList, ScrollView, TouchableOpacity, TextInput, ToastAndroid } from 'react-native'
 import { Button } from "react-native-paper";
-import { styles, Appbar, Wp, colors, Hp, useNavigation, Loading } from '../../export'
+import { styles, Appbar, Wp, colors, Hp, useNavigation, Loading, Utils } from '../../export'
 import { useSelector, useDispatch } from 'react-redux'
 import StarRating from 'react-native-star-rating';
 import FAIcon from 'react-native-vector-icons/FontAwesome5';
@@ -25,25 +25,29 @@ export default function AddReview(props) {
 
     useEffect(() => {
 
-        if (props.route.params.data) {
-            let arr = props.route.params.data
-            let newArr = []
-            arr.map(item => {
-                newArr.push({
-                    "name": item.name,
-                    "variant": item.variant,
-                    "image": item.image,
-                    "productId": item.productId,
-                    "rate": 5,
-                    "comment": "",
-                    "imagesShow": [],
-                    "images": [],
-                    "videoShow": "",
-                    "video": "",
+        try {
+            if (props.route.params.data) {
+                let arr = props.route.params.data
+                let newArr = []
+                arr.map(item => {
+                    newArr.push({
+                        "name": item.name,
+                        "variant": item.variant,
+                        "image": item.image,
+                        "productId": item.productId,
+                        "rate": 5,
+                        "comment": "",
+                        "imagesShow": [],
+                        "images": [],
+                        "videoShow": "",
+                        "video": "",
 
+                    })
                 })
-            })
-            setData(newArr)
+                setData(newArr)
+            }
+        } catch (error) {
+
         }
     }, [props])
 
@@ -165,30 +169,30 @@ export default function AddReview(props) {
         fetch("https://jaja.id/backend/order/rate", requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: AddReview.js ~ line 172 ~ handleReview ~ result", result)
                 res = 'succes'
-                console.log("🚀 ~ file: AddReview.js ~ line 167 ~ handleReview ~ result", result)
                 setLoading(false)
                 if (result.status.code === 200) {
-                    ToastAndroid.show("Pesanan berhasil di review", ToastAndroid.LONG, ToastAndroid.TOP)
+                    Utils.alertPopUp("Pesanan berhasil di review")
                     navigation.goBack()
                 } else {
-                    ToastAndroid.show(String(result.status.message) + " : " + String(result.status.code), ToastAndroid.LONG, ToastAndroid.TOP)
+                    Utils.handleErrorResponse(result, 'Error with status code : 12039')
                 }
             })
             .catch(error => {
-                ToastAndroid.show(JSON.stringify(error), ToastAndroid.LONG, ToastAndroid.TOP)
+                Utils.handleError(JSON.stringify(error), 'Error with status code : 12040')
                 setLoading(false)
                 res = 'failed'
             });
         setTimeout(() => {
             if (!res) {
-                ToastAndroid.show(String("Koneksi tidak stabil.."), ToastAndroid.LONG, ToastAndroid.TOP)
+                Utils.alertPopUp('Koneksi lambat..')
             }
         }, 7000);
-
         setTimeout(() => {
+            setLoading(false)
             if (!res) {
-                ToastAndroid.show(String("Periksa kembai koneksi anda!"), ToastAndroid.LONG, ToastAndroid.TOP)
+                Utils.alertPopUp('Periksa kembai koneksi anda!')
             }
         }, 12000);
     }
@@ -202,7 +206,7 @@ export default function AddReview(props) {
                 keyExtractor={item => item.productId}
                 renderItem={({ item, index }) => {
                     return (
-                        <View style={[styles.column, styles.p_2, styles.mb_3]}>
+                        <View style={[styles.column, styles.px_2, { paddingVertical: 5 }]}>
                             <View style={styles.row}>
                                 <Image style={{ width: Wp('15%'), height: Wp('15%'), marginRight: '2%' }} source={{ uri: item.image ? item.image : null }} />
                                 <View style={[styles.column_between_center, { width: Wp('81%'), alignItems: 'flex-start' }]}>
@@ -280,11 +284,12 @@ export default function AddReview(props) {
                     )
                 }}
             />
-            <View style={{ flex: 0, width: Wp('100%'), height: Hp('6%'), backgroundColor: colors.White, position: 'absolute', bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
-                <Button icon="star" mode="contained" color={colors.BlueJaja} labelStyle={{ color: colors.White }} style={{ width: Wp('95%') }} contentStyle={{ width: Wp('95%') }} onPress={handleReview}>
+            <View style={{ flex: 0, width: Wp('100%'), height: Hp('6%'), position: 'absolute', bottom: 0, justifyContent: 'center', alignItems: 'center', marginBottom: '3%' }}>
+                <Button icon="star" mode="contained" color={colors.BlueJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} style={{ width: Wp('90%') }} contentStyle={{ width: Wp('90%') }} onPress={handleReview}>
                     Simpan
                 </Button>
             </View>
+
             <ActionSheet containerStyle={{ flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.White }} ref={galeryRef}>
                 <View style={[styles.column, { backgroundColor: '#ededed' }]}>
                     <TouchableOpacity onPress={handleOpenCamera} style={{ borderBottomWidth: 0.5, borderBottomColor: colors.Silver, alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%' }}>

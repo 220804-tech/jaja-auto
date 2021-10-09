@@ -33,29 +33,25 @@ export default function FlashsaleScreen() {
                 if (res) {
                     let date = new Date()
                     handleDate(res)
-                    if (date.toJSON().toString().slice(0, 10) !== res.dateNow) {
-                        Alert.alert(
-                            "Peringatan!",
-                            `Sepertinya tanggal tidak sesuai!`,
-                            [
-                                { text: "OK", onPress: () => navigation.goBack() }
-                            ],
-                            { cancelable: false }
-                        );
-                    } else {
-                        console.log("masuk sini")
-                        ServiceCore.getFlashsale().then(resp => {
-
-                            console.log("🚀 ~ file: FlashsaleScreen.js ~ line 51 ~ ServiceCore.getFlashsale ~ resp.flashsale", resp.flashsale)
-                            if (resp && resp.flashsale && resp.flashsale.length) {
-                                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: true })
-                                dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.flashsale })
-                            } else {
-                                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-                            }
-                        })
-
-                    }
+                    // if (date.toJSON().toString().slice(0, 10) !== res.dateNow) {
+                    //     Alert.alert(
+                    //         "Peringatan!",
+                    //         `Sepertinya tanggal tidak sesuai!`,
+                    //         [
+                    //             { text: "OK", onPress: () => navigation.goBack() }
+                    //         ],
+                    //         { cancelable: false }
+                    //     );
+                    // } else {
+                    ServiceCore.getFlashsale().then(resp => {
+                        if (resp && resp.flashsale && resp.flashsale.length) {
+                            dispatch({ type: 'SET_SHOW_FLASHSALE', payload: true })
+                            dispatch({ type: 'SET_DASHFLASHSALE', payload: resp.flashsale })
+                        } else {
+                            dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+                        }
+                    })
+                    // }
                 }
             })
         }, [routes]),
@@ -75,7 +71,7 @@ export default function FlashsaleScreen() {
             newdate[0].first = "Akan Datang"
             newdate[1].second = "Akan Datang"
         }
-        
+
         setRoutes(newdate)
         setIndex(0)
     }
