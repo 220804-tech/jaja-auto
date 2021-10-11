@@ -135,9 +135,12 @@ export default function ProductScreen(props) {
 
                 let dataSeller = res.store
                 dataSeller.chat = reduxUser.user.uid + dataSeller.uid
+                console.log("🚀 ~ file: ProductScreen.js ~ line 138 ~ ServiceProduct.productDetail ~ dataSeller.chat", dataSeller.chat)
+                console.log("🚀 ~ file: ProductScreen.js ~ line 138 ~ ServiceProduct.productDetail ~ dataSeller.uid", dataSeller.uid)
                 dataSeller.id = dataSeller.uid
                 setSeller(dataSeller)
                 setLike(res.isWishlist)
+                console.log("🚀 ~ file: ProductScreen.js ~ line 138 ~ ServiceProduct.productDetail ~ reduxUser.user.uid", reduxUser.user.uid)
                 setTimeout(() => {
                     if (reduxAuth && res.sellerTerdekat.length && Object.keys(reduxUser.user).length && Object.keys(res.category).length && res.category.slug) {
                         FilterLocation(res.sellerTerdekat, reduxUser.user.location, res.category.slug, reduxAuth)
@@ -677,7 +680,6 @@ export default function ProductScreen(props) {
                             <View style={[styles.column, styles.p_4, { backgroundColor: colors.White, paddingBottom: Hp('7%') }]}>
                                 <Text style={{ textDecorationLine: 'underline', fontSize: 16, fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale, marginBottom: '3%' }}>Penilaian Produk</Text>
                                 {reduxSearch.productDetail.review.map((item, index) => {
-                                    console.log("🚀 ~ file: ProductScreen.js ~ line 680 ~ {reduxSearch.productDetail.review.map ~ item", item)
                                     return (
                                         <View key={String(index)} style={[styles.column, styles.mb_3, styles.px_2, { backgroundColor: colors.White, }]}>
                                             <View style={styles.row_start_center}>
@@ -712,7 +714,7 @@ export default function ProductScreen(props) {
                                                             <Image key={String(idx) + "i"} source={{ uri: itm }} style={{ width: '100%', height: '100%' }} />
                                                         </TouchableOpacity>
                                                     )
-                                                })} 
+                                                })}
                                                 {/* {item.video ?
                                                     <TouchableOpacity onPress={() => navigation.navigate('ZoomReview', { data: index })} style={[styles.mt_5, { width: Wp('92%'), height: Wp('50%') }]}>
                                                         <VideoPlayer

@@ -68,7 +68,6 @@ export const getNotifications = async () => {
 }
 
 export const notifChat = async (target, data) => {
-    console.log("🚀 ~ file: Firebase.js ~ line 55 ~ notifChat ~ target", target)
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     myHeaders.append("Authorization", "key=AAAAQjWK8Ko:APA91bFWRgTUvuPlU1dpVR-FqnLQPYgKGtbif1njzRDKnlH5C_uS1MkocgTASxDPw-tDnRjJJrsC6WQdeLDnV1uFp9gTjdwVXU1rvbKvqwhh78LuPhkbwtS79LYwrv_gICYa3MCExD08");

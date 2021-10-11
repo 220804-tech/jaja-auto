@@ -47,8 +47,6 @@ export default function HomeScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const reduxOut = useSelector(state => state.dashboard.out)
-
     const images = [
         {
             title: "Sport & Outdoor",

@@ -4,7 +4,7 @@ import { Paragraph } from 'react-native-paper'
 import database from "@react-native-firebase/database";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import { colors, useNavigation, styles as style, Appbar, DefaultNotFound } from "../../export";
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 
 export default function ListChat() {
     const navigation = useNavigation();
@@ -15,7 +15,8 @@ export default function ListChat() {
     const [users, setUsers] = useState([]);
     const [dataProfile, setDataProfile] = useState({});
     const [refreshing, setRefreshing] = useState(false);
-
+    const reduxnotifCount = useSelector(state => state.notification.notifCount)
+    const dispatch = useDispatch()
     useEffect(() => {
         loadList()
         setRefreshing(false)
@@ -40,12 +41,17 @@ export default function ListChat() {
                     if (item.id !== reduxUser.uid && item.id !== "null") {
                         returnArray.push(item);
                         let sortedObj = returnArray.sort(function (a, b) {
-                            return new Date(b.time) - new Date(a.time);
+                            return new Date(b.message.time) - new Date(a.message.time);
                         });
+                        let countChat = 0
+                        sortedObj.map(item => countChat += item.amount)
+                        dispatch({ type: 'SET_NOTIF_COUNT', payload: { home: reduxnotifCount.home, chat: countChat, orders: reduxnotifCount.orders } })
+                        // database().ref(`/people/${reduxUser.uid}/`).update({ notif: { home: reduxnotifCount.home, chat: countChat, orders: reduxnotifCount.orders } })
+
                         setUsers(sortedObj);
                     }
                 });
-                return returnArray;
+                // return returnArray;
             });
         }
     }
@@ -72,11 +78,17 @@ export default function ListChat() {
     }
 
     const renderItem = ({ item }) => {
+        console.log("🚀 ~ file: ListChatScreen.js ~ line 81 ~ renderItem ~ item", reduxnotifCount)
         return (
             <>
                 {item.message.text ?
                     <TouchableOpacity
-                        onPress={() => navigation.navigate("IsiChat", { data: item, newData: null })}
+                        onPress={() => {
+                            navigation.navigate("IsiChat", { data: item, newData: null })
+                            database().ref('friend/' + reduxUser.uid + "/" + item.id).update({ amount: 0 });
+                            database().ref(`/people/${reduxUser.uid}/`).update({ notif: { home: reduxnotifCount.home, chat: reduxnotifCount.chat - item.amount, orders: reduxnotifCount.orders } })
+
+                        }}
                         style={{
                             paddingHorizontal: '1%',
                             paddingVertical: '4%',
@@ -96,8 +108,8 @@ export default function ListChat() {
                                 <Text style={{ fontSize: 12, color: item.amount && item.amount > 0 ? colors.BlackGrayScale : colors.Silver }}>{item.message.text}</Text>
                             </View>
                             {item && item.amount ?
-                                <View style={{ padding: '1%', backgroundColor: colors.YellowJaja, borderRadius: 100, height: 25, width: 25, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ fontSize: 12, backgroundColor: colors.YellowJaja, color: colors.BlackGrayScale }}>{item.amount}</Text>
+                                <View style={{ padding: '1%', backgroundColor: colors.BlueJaja, borderRadius: 100, height: 25, width: 25, justifyContent: 'center', alignItems: 'center' }}>
+                                    <Text style={[style.font_11, { textAlign: 'center', textAlignVertical: 'center', color: colors.White }]}>{item.amount > 9 ? '9+' : item.amount}</Text>
                                 </View>
                                 : null
                             }

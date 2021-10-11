@@ -27,12 +27,31 @@ export default function BottomRoute() {
                     .ref('/people/' + uid)
                     .on('value', snapshot => {
                         let result = snapshot.val()
+                        console.log("🚀 ~ file: BottomRoute.js ~ line 30 ~ useEffect ~ result", result)
                         if (result && result.notif) {
-                            dispatch({ type: 'SET_NOTIF_COUNT', payload: result.notif })
-                            setNotif(result.notif)
+
+
+                            database().ref("/friend/" + uid).on("value", function (snapshot) {
+                                var returnArray = [];
+                                snapshot.forEach(function (snap) {
+                                    var item = snap.val();
+                                    item.id = snap.key;
+                                    if (item.id !== uid && item.id !== "null") {
+                                        returnArray.push(item);
+                                        let countChat = 0
+                                        returnArray.map(item => countChat += item.amount)
+                                        console.log("🚀 ~ file: ListChatScreen.js ~ line 49 ~ countChat", countChat)
+                                        result.notif.chat = countChat
+                                    }
+                                });
+                                dispatch({ type: 'SET_NOTIF_COUNT', payload: result.notif })
+                                // database().ref(`/people/${uid}/notif`).update({ chat: result.notif.chat })
+
+                                setNotif(result.notif)
+                            });
+                            database().ref(`/people/${uid}/`).update({ notif: { home: result.notif.home, chat: result.notif.chat, orders: result.notif.orders } })
                         }
                         if (result && result.notif && result.notif.orders != reduxnotifCount.orders) {
-                            console.log("cokk update")
                             getOrders()
                         }
                     });

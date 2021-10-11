@@ -294,7 +294,7 @@ export default function SearchScreen() {
                 <ScrollView showsVerticalScrollIndicator={false}>
                     {productSearch && productSearch.length || storeSearch.length || categorySearch.length ?
                         <View style={styles.column}>
-                            <Text style={[styles.font_14, { color: colors.BlueJaja, marginBottom: '2%' }]} adjustsFontSizeToFit>Berdasarkan KategoriSport</Text>
+                            <Text style={[styles.font_14, { color: colors.BlueJaja, marginBottom: '2%' }]} adjustsFontSizeToFit>Berdasarkan Kategori</Text>
                             {categorySearch && categorySearch.length > 0 ?
                                 <FlatList
                                     data={categorySearch}
