@@ -155,7 +155,7 @@ export default function ChatScreen({ route }) {
                         setTimeout(() => {
                             var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
                             firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
-                            firebaseDatabase().ref('people/' + data.id + '/notif').set(message); //pengirimnya
+                            // firebaseDatabase().ref('people/' + data.id + '/notif').set(message); //pengirimnya
                             firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: chat, time: new Date().toString() } });
 
                             firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid + '/amount').once('value').then(snapshot => {

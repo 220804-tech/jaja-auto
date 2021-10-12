@@ -27,9 +27,7 @@ export default function BottomRoute() {
                     .ref('/people/' + uid)
                     .on('value', snapshot => {
                         let result = snapshot.val()
-                        console.log("🚀 ~ file: BottomRoute.js ~ line 30 ~ useEffect ~ result", result)
                         if (result && result.notif) {
-
 
                             database().ref("/friend/" + uid).on("value", function (snapshot) {
                                 var returnArray = [];
