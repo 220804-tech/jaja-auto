@@ -45,10 +45,8 @@ export default function ChatScreen({ route }) {
             if (snapshoot.val() !== null) {
                 let key = snapshoot.val()
                 const values = Object.values(snapshoot.val());
-                console.log("🚀 ~ file: ChatScreen.js ~ line 51 ~ onValueChange ~ values", values)
                 let arr = [];
                 for (const key of values) {
-                    // console.log("🚀 ~ file: ChatScreen.js ~ line 50 ~ onValueChange ~ key", key)
                     arr.push(key)
                 }
                 setLoading(false)
@@ -80,7 +78,6 @@ export default function ChatScreen({ route }) {
                 setselectedOrder(order)
             }
             firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid + '/amount').on('value', snapshot => {
-                console.log("🚀 ~ file: ChatScreen.js ~ line 79 ~ firebaseDatabase ~ snapshot", snapshot.val())
                 if (snapshot.val()) {
                     console.log('belum dibaca')
                     settargetRead(false)
@@ -96,8 +93,46 @@ export default function ChatScreen({ route }) {
 
     }, [selectedProduct, selectedOrder])
 
-    const handleSend = (image) => {
+    const handleSend = async (image) => {
         try {
+            let imageUrl = ''
+            if (image) {
+                var myHeaders = new Headers();
+                myHeaders.append("Authorization", reduxAuth);
+                myHeaders.append("Content-Type", "application/json");
+                myHeaders.append("Cookie", "ci_session=3jj2gelqr7k1pgt00mekej9msvt8evts");
+
+                var raw = JSON.stringify({
+                    "image": image
+                });
+
+                var requestOptions = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: 'follow'
+                };
+
+                await fetch("https://jaja.id/backend/chat/image", requestOptions)
+                    .then(response => response.text())
+                    .then(res => {
+                        try {
+                            let result = JSON.parse(res)
+                            if (result.status.code === 200) {
+                                imageUrl = result.data.url
+                            } else {
+                                imageUrl = false
+                            }
+                        } catch (error) {
+                            imageUrl = false
+                        }
+                    })
+                    .catch(error => {
+                        imageUrl = false
+                        Utils.handleError(error, 'Error with status code : 12044')
+                    });
+            }
+
             if (isiChat.length > 0 || image || selectedOrder || selectedProduct) {
                 let chat = isiChat.length > 0 ? isiChat : image ? 'Mengirim gambar' : selectedOrder && Object.keys(selectedOrder).length ? 'Pesanan No. ' + selectedOrder.invoice : selectedProduct.name
                 var message = {
@@ -106,7 +141,7 @@ export default function ChatScreen({ route }) {
                     time: firebaseDatabase.ServerValue.TIMESTAMP,
                     date: new Date().toString(),
                     from: reduxUser.uid,
-                    image: image,
+                    image: imageUrl,
                     order: null
                 }
                 if (data && reduxAuth) {
@@ -458,13 +493,10 @@ export default function ChatScreen({ route }) {
     const handleOpenCamera = () => {
         galeryRef.current?.setModalVisible(false)
         ImagePicker.openCamera({
-            width: 400,
-            height: 400,
-            cropping: true,
             compressImageQuality: 0.8,
-            // includeBase64: true
+            includeBase64: true
         }).then(image => {
-            handleSend(image.path)
+            handleSend(image.data)
         });
     }
 
@@ -489,17 +521,15 @@ export default function ChatScreen({ route }) {
                 console.log("🚀 ~ file: AddReview.js ~ line ss100 ~ handlePickVideo ~ error", error)
             }
         });
+        console.log("🚀 ~ file: ChatScreen.js ~ line 528 ~ handlePickVideo ~ d", d)
     }
     const handlePickImage = () => {
         galeryRef.current?.setModalVisible(false)
         ImagePicker.openPicker({
-            width: 400,
-            height: 400,
-            cropping: true,
             compressImageQuality: 0.8,
             includeBase64: true
         }).then(image => {
-            handleSend(image.path)
+            handleSend(image.data)
         });
     }
 
@@ -517,11 +547,11 @@ export default function ChatScreen({ route }) {
                         renderItem={renderRow}
                         keyExtractor={(item, index) => String(index)}
                     />
+
                     {/* <KeyboardAvoidingView
                     style={styles.container}
                     behavior={Platform.OS === "ios" ? "padding" : null}
                 > */}
-
 
                     {selectedOrder && Object.keys(selectedOrder).length ?
                         <View style={[style.row_around_center, style.mr_5, style.mb_2, style.p, { borderRadius: 7, backgroundColor: colors.White, width: '55%', alignSelf: 'flex-end' }]}>
@@ -559,13 +589,13 @@ export default function ChatScreen({ route }) {
                                 onChangeText={(text) => setChat(text)} onSubmitEditing={() => handleSend(null)}
                                 value={isiChat}
                             />
-                            {/* {!isiChat.length ?
+                            {!isiChat.length ?
                                 <IconButton
                                     icon={require('../../assets/icons/camera.png')}
                                     style={{ margin: 0, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100 }}
                                     color={colors.BlueJaja}
                                     onPress={() => galeryRef.current?.setModalVisible(true)}
-                                /> : null} */}
+                                /> : null}
                         </View>
 
                         <IconButton
@@ -580,16 +610,16 @@ export default function ChatScreen({ route }) {
                 </ImageBackground>
 
 
-                <ActionSheet containerStyle={{ flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.White }} ref={galeryRef}>
-                    <View style={[style.column, style.pb, { backgroundColor: '#ededed' }]}>
-                        <TouchableOpacity onPress={handleOpenCamera} style={{ borderBottomWidth: 0.5, borderBottomColor: colors.Silver, alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%' }}>
+                <ActionSheet containerStyle={{ flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.White, marginBottom: '10%' }} ref={galeryRef}>
+                    <View style={[style.column, style.pb_5, { backgroundColor: '#ededed' }]}>
+                        <TouchableOpacity onPress={handleOpenCamera} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%', marginBottom: '0.5%' }}>
                             <Text style={[styles.font_16, { alignSelf: 'center' }]}>Ambil Foto</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={handlePickImage} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%', marginBottom: '1%' }}>
+                        <TouchableOpacity onPress={handlePickImage} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%', marginBottom: '0.5%' }}>
                             <Text style={[styles.font_16, { alignSelf: 'center' }]}>Buka Galeri</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => galeryRef.current?.setModalVisible(false)} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '2%' }}>
+                        <TouchableOpacity onPress={() => galeryRef.current?.setModalVisible(false)} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%' }}>
                             <Text style={[styles.font_16, { alignSelf: 'center', color: colors.RedNotif }]}>Batal</Text>
                         </TouchableOpacity>
                     </View >

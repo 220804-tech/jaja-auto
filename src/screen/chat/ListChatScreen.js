@@ -87,7 +87,6 @@ export default function ListChat() {
                             navigation.navigate("IsiChat", { data: item, newData: null })
                             database().ref('friend/' + reduxUser.uid + "/" + item.id).update({ amount: 0 });
                             database().ref(`/people/${reduxUser.uid}/`).update({ notif: { home: reduxnotifCount.home, chat: reduxnotifCount.chat - item.amount, orders: reduxnotifCount.orders } })
-
                         }}
                         style={{
                             paddingHorizontal: '1%',
