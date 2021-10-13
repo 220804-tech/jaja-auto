@@ -547,12 +547,12 @@ export default function checkoutScreen() {
                                             })
                                             // navigation.navigate("Midtrans", { data: result.data })
                                         } else {
-                                            Utils.handleErrorResponse(data, "Error with status code : 12046")
+                                            Utils.handleErrorResponse(data, "Error with status code : 12048")
                                             return null
                                         }
                                     } catch (err) {
                                         error = false
-                                        Utils.handleError(result, "Error with status code : 12047")
+                                        Utils.handleError(result, "Error with status code : 12048")
                                     }
                                     setTimeout(() => {
                                         setLoad(false)

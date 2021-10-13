@@ -8,12 +8,12 @@ import Completed from '../../components/Orders/OrdersCompleted'
 import Failed from '../../components/Orders/OrdersFailed'
 import Return from '../../components/Orders/OrdersComplain'
 
-import { colors, styles, Appbar, DefaultNotFound, ServiceOrder } from '../../export';
+import { colors, styles, Appbar, DefaultNotFound, ServiceOrder, ServiceFirebase } from '../../export';
 const initialLayout = { width: Dimensions.get('window').width };
 import { useDispatch, useSelector } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import LoginOrderScreen from '../login/LoginOrderScreen';
-import { color } from 'react-native-reanimated';
+import database from "@react-native-firebase/database";
 
 export default function OrderScreen() {
     const dispatch = useDispatch()
@@ -28,6 +28,8 @@ export default function OrderScreen() {
     const [count, setCount] = useState(0)
     const [complain, setComplain] = useState(0)
     const [sent, setSent] = useState(0)
+    const reduxUser = useSelector(state => state.user.user)
+    const reduxnotifCount = useSelector(state => state.notification.notifCount)
 
     const [navigate, setNavigate] = useState("Pesanan")
 
@@ -50,23 +52,28 @@ export default function OrderScreen() {
     });
 
     useEffect(() => {
-        setCount(count + 1)
-        let sentCount = 0;
-        let complainCount = 0;
-        if (reduxSent && reduxSent.length) {
-            reduxSent.map(item => {
-                if (item.complain) {
-                    complainCount += 1
-                } else {
-                    sentCount += 1
+        try {
+            setCount(count + 1)
+            let sentCount = 0;
+            let complainCount = 0;
+            if (reduxSent && reduxSent.length) {
+                reduxSent.map(item => {
+                    if (item.complain) {
+                        complainCount += 1
+                    } else {
+                        sentCount += 1
 
-                }
-            })
-        }
-        setComplain(complainCount)
-        setSent(sentCount)
-        if (reduxRefresh) {
-            dispatch({ type: 'SET_ORDER_REFRESH', payload: false })
+                    }
+                })
+            }
+            setComplain(complainCount)
+            setSent(sentCount)
+            if (reduxRefresh) {
+                dispatch({ type: 'SET_ORDER_REFRESH', payload: false })
+            }
+
+        } catch (error) {
+            console.log("🚀 ~ file: OrderScreen.js ~ line 75 ~ useEffect ~ error", error)
         }
     }, [reduxOrder, reduxRefresh])
 
@@ -116,6 +123,14 @@ export default function OrderScreen() {
             }).catch(err => {
                 // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
             })
+            // console.log("🚀 ~ file: OrderScreen.js ~ line 127 ~ useEffect ~ reduxUser.orders", reduxUser)
+            if (reduxnotifCount.orders) {
+                database().ref(`/people/${uid}/notif`).update({ home: reduxnotifCount.home - reduxnotifCount.orders })
+                ServiceFirebase.sellerNotifications(reduxUser.uid, 'home')
+
+                ServiceFirebase.sellerNotifications(reduxUser.uid, 'orders')
+
+            }
         }
     }, [])
 
@@ -128,7 +143,14 @@ export default function OrderScreen() {
                     indicatorStyle={{ backgroundColor: 'white' }}
                     navigationState={{ index, routes }}
                     renderScene={renderScene}
-                    onIndexChange={setIndex}
+                    onIndexChange={(s) => {
+                        setIndex(s)
+
+                        // if (reduxnotifCount.orders) {
+                        //     SE
+                        //     database().ref(`/people/${reduxUser.uid}/`).set({ notif: { home: reduxnotifCount.home, chat: reduxnotifCount.chat, orders: 0 } })
+                        // }
+                    }}
                     initialLayout={initialLayout}
                     renderTabBar={props => (
                         <TabBar

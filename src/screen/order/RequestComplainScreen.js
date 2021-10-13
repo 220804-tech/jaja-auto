@@ -113,6 +113,7 @@ export default function Complain() {
                                                 setLoading(false)
                                             }, 3000);
                                         } catch (error) {
+                                            setLoading(false)
                                             console.log("🚀 ~ file: RequestComplainScreen.js ~ line 109 ~ handleSendComplain ~ error", rsl)
                                         }
                                     })
@@ -120,6 +121,9 @@ export default function Complain() {
                                         Utils.handleError(error, "Error request complain.");
                                         setLoading(false)
                                     });
+                                setTimeout(() => {
+                                    setLoading(false)
+                                }, 10000);
 
                             }
                         },

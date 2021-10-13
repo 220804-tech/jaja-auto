@@ -71,7 +71,9 @@ function NotifikasiScreen(props) {
             };
             fetch(`https://jaja.id/core/seller/dashboard/notifikasi?id_toko=145`, requestOptions)
                 .then(response => response.json())
-                .then(result => console.log("hapus notif"))
+                .then(result => {
+                    console.log("🚀 ~ file: NotifikasiScreen.js ~ line 75 ~ readData ~ result", result)
+                })
                 .catch(error => console.log('error', error));
         } catch (error) {
             console.log(error, "error line 95")
@@ -104,7 +106,7 @@ function NotifikasiScreen(props) {
                     }
                     return data
                 } catch (error) {
-                    alert('jaja', result)
+                    alert(result)
                 }
             })
             .catch(error => {
@@ -113,8 +115,6 @@ function NotifikasiScreen(props) {
     }
 
     const handleOrderDetails = (item) => {
-        console.log("🚀 ~ file: NotifikasiScreen.js ~ line 110 ~ handleOrderDetails ~ item", item.order_id)
-        console.log("🚀 ~ file: NotifikasiScreen.js ~ line 110 ~ handleOrderDetails ~ item", item.invoice)
 
         dispatch({ type: 'SET_INVOICE', payload: item.invoice })
         dispatch({ type: 'SET_ORDER_STATUS', payload: null })
@@ -131,7 +131,6 @@ function NotifikasiScreen(props) {
                     // inverted={-1}
                     keyExtractor={item => item.notificationId}
                     renderItem={({ item, index }) => {
-                        console.log("🚀 ~ file: NotifikasiScreen.js ~ line 144 ~ NotifikasiScreen ~ item", item)
                         return (
                             <TouchableRipple key={index} style={[styles.card, { backgroundColor: item.read == 'T' ? colors.BlueLight : colors.White, }]} onPress={() => handleRead(item)}>
                                 <>

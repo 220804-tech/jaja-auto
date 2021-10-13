@@ -22,6 +22,7 @@ export default function HomeScreen() {
     const reduxProfile = useSelector(state => state.user.user)
     const reduxShowFlashsale = useSelector(state => state.dashboard.flashsaleLive)
     const reduxShowNearest = useSelector(state => state.dashboard.showNearestStore)
+    const reduxBadges = useSelector(state => state.user.badges)
 
     useAndroidBackHandler(() => {
         if (out) {
@@ -174,8 +175,10 @@ export default function HomeScreen() {
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.column, styles.mx_2]} onPress={() => reduxAuth ? navigation.navigate('Notification') : navigation.navigate('Login')}>
                             <Image source={require('../../assets/icons/notif.png')} style={{ width: 24, height: 24, tintColor: colors.White }} />
-                            {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
-                                <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalNotifUnread >= 100 ? "99+" : reduxUser.badges.totalNotifUnread + ''}</Text></View>
+                            {Object.keys(reduxBadges).length && reduxBadges.totalNotifUnread ?
+                                <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxBadges.totalNotifUnread >= 100 ? "99+" : reduxBadges.totalNotifUnread}</Text></View>
+
+                                // <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxBadges.totalNotifUnread >= 100 ? "99+" : reduxBadges.totalNotifUnread + ''}</Text></View>
                                 : null
                             }
                         </TouchableOpacity>

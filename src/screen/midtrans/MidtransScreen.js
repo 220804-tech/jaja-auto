@@ -101,7 +101,7 @@ export default function MidtransScreen() {
 
             })
             .catch(error => {
-                Utils.handleError(error, "Error with status code : 22004")
+                Utils.handleError(error, "Error with status code : 22007")
             });
     }
 

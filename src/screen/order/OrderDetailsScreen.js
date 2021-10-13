@@ -98,7 +98,7 @@ export default function OrderDetailsScreen() {
         },
         {
             "id_payment_method_category": "3",
-            "payment_type_label": "eWallet",
+            "payment_type_label ": "eWallet",
             "payment_type": "gopay",
             "option": false,
             "subPayment": [
@@ -599,24 +599,28 @@ export default function OrderDetailsScreen() {
     }
 
     const getListPayment = (total) => {
-        var myHeaders = new Headers();
-        myHeaders.append("Cookie", "ci_session=mo3huphq5niakt3grmetuf4djpvcd76q");
+        try {
+            var myHeaders = new Headers();
+            myHeaders.append("Cookie", "ci_session=mo3huphq5niakt3grmetuf4djpvcd76q");
 
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            redirect: 'follow'
-        };
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
 
-        fetch("https://jaja.id/backend/payment/methodPayment/" + total, requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 614 ~ getListPayment ~ result", JSON.stringify(result))
-                setListPayment(result);
-            })
-            .catch(error => {
-                Utils.handleError(error, "Error with status code : 22004")
-            });
+            fetch("https://jaja.id/backend/payment/methodPayment/" + total, requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 614 ~ getListPayment ~ result", JSON.stringify(result))
+                    setListPayment(result);
+                })
+                .catch(error => {
+                    Utils.handleError(error, "Error with status code : 22004")
+                });
+        } catch (error) {
+
+        }
 
     }
     const getItem = () => {
@@ -631,28 +635,33 @@ export default function OrderDetailsScreen() {
         };
 
         fetch(`https://jaja.id/backend/order/${reduxOrderInvoice}`, requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                if (result.status.code === 200 || result.status.code === 204) {
-                    setDetails(result.data)
-                    let status = result.data.status;
-                    if (!reduxOrderStatus) {
-                        dispatch({ type: 'SET_ORDER_STATUS', payload: status === 'notPaid' ? "Menunggu Pembayaran" : status === 'waitConfirm' ? 'Menunggu Konfirmasi' : status === 'prepared' ? 'Sedang Disiapkan' : status === 'canceled' ? 'Pesanan Dibatalkan' : status === 'done' ? 'Pesanan Selesai' : null })
+            .then(response => response.text())
+            .then(res => {
+                try {
+                    let result = JSON.parse(res)
+                    if (result.status.code === 200 || result.status.code === 204) {
+                        setDetails(result.data)
+                        let status = result.data.status;
+                        if (!reduxOrderStatus) {
+                            dispatch({ type: 'SET_ORDER_STATUS', payload: status === 'notPaid' ? "Menunggu Pembayaran" : status === 'waitConfirm' ? 'Menunggu Konfirmasi' : status === 'prepared' ? 'Sedang Disiapkan' : status === 'canceled' ? 'Pesanan Dibatalkan' : status === 'done' ? 'Pesanan Selesai' : null })
+                        }
+                        if (status === 'notPaid') {
+                            getPayment(result.data.orderId);
+                        }
+                        // dispatch({ type: 'SET_INVOICE', payload: result.data.items[0].invoice })
+                    } else {
+                        Utils.handleErrorResponse(result, "Error with status code : 22003");
                     }
-                    if (status === 'notPaid') {
-                        getPayment(result.data.orderId);
-                    }
-                    // dispatch({ type: 'SET_INVOICE', payload: result.data.items[0].invoice })
-                } else {
-                    Utils.handleErrorResponse(result, "Error with status code : 22003");
+                    setRefreshing(false)
+                    setLoading(false)
+                } catch (error) {
+                    alert(res)
                 }
-                setRefreshing(false)
-                setLoading(false)
             })
             .catch(error => {
                 setRefreshing(false)
                 setLoading(false)
-                Utils.handleError(error, "Error with status code : 22004")
+                Utils.handleError(error, "Error with status code : 22005")
             });
 
         setTimeout(() => {
@@ -705,7 +714,7 @@ export default function OrderDetailsScreen() {
                 }, 50);
             })
             .catch(error => {
-                Utils.handleError(error, "Error with status code : 22004")
+                Utils.handleError(error, "Error with status code : 22006")
             });
 
 
@@ -738,7 +747,7 @@ export default function OrderDetailsScreen() {
 
             })
             .catch(error => {
-                Utils.handleError(error, "Error with status code : 22004")
+                Utils.handleError(error, "Error with status code : 22008")
             });
     }
 
@@ -1049,6 +1058,7 @@ export default function OrderDetailsScreen() {
                                 <Text style={[styles.font_13, { marginBottom: '2%' }]}>Biaya penanganan</Text>
                                 {/* <Text style={[styles.font_13 { marginBottom: '2%' }]}>Voucher Toko</Text> */}
                                 <Text style={[styles.font_13, { marginBottom: '2%' }]}>Voucher Jaja.id</Text>
+                                <Text style={[styles.font_13, { marginBottom: '2%' }]}>Koin digunakan</Text>
 
                                 {/* <Text style={[styles.font_13, styles.T_medium, { marginBottom: '2%' }]}>Fee</Text> */}
                                 <Text style={[styles.font_13, styles.T_medium, { marginBottom: '2%' }]}>Total pembayaran</Text>
@@ -1066,6 +1076,8 @@ export default function OrderDetailsScreen() {
                                     <Text style={[styles.font_13, { marginBottom: '2%', color: details.voucherDiscountJaja ? colors.RedFlashsale : colors.BlackGrayScale }]}>{details.voucherDiscountJajaCurrencyFormat}</Text>
                                     {/* <Text style={[styles.font_13, { marginBottom: '2%', color: details.voucherDiscountJaja ? colors.RedFlashsale : colors.BlackGrayScale }]}>Rp {priceSplitter(orderPaymentRecent.fee)}</Text> */}
                                     {/* <Text style={[styles.font_13, styles.T_semi_bold, { marginBottom: '2%', color: colors.BlueJaja, }]}>{details ? details.totalCurrencyFormat : "Rp.0"}</Text> */}
+                                    <Text style={[styles.font_13, { marginBottom: '2%', color: details.coin ? colors.RedFlashsale : colors.BlackGrayScale }]}>{details.coinCurrencyFormat}</Text>
+
                                     <Text style={[styles.font_13, styles.T_semi_bold, { marginBottom: '2%', color: colors.BlueJaja, }]}>{reduxOrderStatus !== 'Menunggu Pembayaran' ? details.totalCurrencyFormat : 'Rp' + priceSplitter(orderPaymentRecent.grand_total)}</Text>
 
                                 </View>

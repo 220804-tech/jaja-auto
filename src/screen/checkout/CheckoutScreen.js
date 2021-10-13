@@ -544,7 +544,7 @@ export default function checkoutScreen() {
                                         let data = JSON.parse(result)
                                         if (data && Object.keys(data).length && data.status.code == 200) {
                                             dispatch({ type: 'SET_INVOICE', payload: data.data })
-                                            dispatch({ type: 'SET_ORDER_STATUS', payload: 'Menunggu Pembayaran' })
+                                            dispatch({ type: 'SET_ORDER_STATUS', payload: null })
                                             navigation.replace('OrderDetails')
                                             ServiceCart.getCart(reduxAuth).then(res => {
                                                 if (res) {
@@ -560,12 +560,12 @@ export default function checkoutScreen() {
                                             })
                                             // navigation.navigate("Midtrans", { data: result.data })
                                         } else {
-                                            Utils.handleErrorResponse(data, "Error with status code : 12046")
+                                            Utils.handleErrorResponse(data, "Error with status code : 12048")
                                             return null
                                         }
                                     } catch (err) {
                                         error = false
-                                        Utils.handleError(result, "Error with status code : 12047")
+                                        Utils.handleError(result, "Error with status code : 12049")
                                     }
                                     setTimeout(() => {
                                         setLoad(false)

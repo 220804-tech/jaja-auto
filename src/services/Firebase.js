@@ -42,10 +42,9 @@ export const buyerNotifications = async (params, uidBuyyer) => {
     }
 }
 
-export const sellerNotifications = async (params) => {
+export const sellerNotifications = async (uid, params) => {
     try {
-        let seller = await getToko();
-        database().ref(`/people/${seller.uid}/notif`).update(params === "home" ? { home: 0 } : params === "chat" ? { chat: 0 } : { orders: 0 })
+        database().ref(`/people/${uid}/notif`).update(params === "home" ? { home: 0 } : params === "chat" ? { chat: 0 } : { orders: 0 })
     } catch (error) {
         console.log("🚀 ~ file: Firebase.js ~ line 30 ~ sellerNotifications ~ error", error)
     }

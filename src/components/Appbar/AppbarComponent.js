@@ -86,8 +86,8 @@ export default function AppbarComponent(props) {
                         {props.notif ?
                             <TouchableOpacity style={[styles.column, styles.mx_2]} onPress={handleNotif}>
                                 <Image source={require('../../assets/icons/notif.png')} style={{ width: 24, height: 24, tintColor: colors.White }} />
-                                {Object.keys(reduxUser).length && reduxUser.totalProductInCart ?
-                                    <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.totalProductInCart >= 100 ? "99+" : reduxUser.totalNotifUnread}</Text></View>
+                                {Object.keys(reduxUser).length && reduxUser.totalNotifUnread ?
+                                    <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.totalNotifUnread >= 100 ? "99+" : reduxUser.totalNotifUnread}</Text></View>
                                     : null
                                 }
                             </TouchableOpacity>
