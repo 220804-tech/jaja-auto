@@ -1,6 +1,7 @@
 export default {
     siplahDefault: '#36405e',
     White: "#FFFFFF",
+    WhiteBack: '#fcfcfc',
     WhiteGrey: "#EDEDED",
 
     WhiteSilver: '#d4d4d4',

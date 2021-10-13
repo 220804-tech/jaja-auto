@@ -243,7 +243,7 @@ export default function ProductSearchScreen() {
                 <TouchableOpacity style={styles.row_start_center} onPress={() => navigation.goBack()}>
                     <Image style={styles.appBarButton} source={require('../../assets/icons/arrow.png')} />
                 </TouchableOpacity>
-                <View style={[styles.searchBar, { backgroundColor: colors.BlueJaja, paddingHorizontal: '0%' }]}>
+                <View style={[styles.searchBar, { backgroundColor: colors.BlueJaja, paddingHorizontal: '0%', height: Hp('5%') }]}>
                     <TouchableOpacity style={[styles.row, { width: '85%', marginRight: '1%', backgroundColor: colors.White, height: '100%', alignItems: 'center', borderRadius: 10, paddingHorizontal: '3%' }]} onPress={() => navigation.navigate('Search')}>
                         <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
                         {keyword ?

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, StyleSheet, RefreshControl, Platform, ScrollView, Dimensions, LogBox, Animated, StatusBar, Alert } from 'react-native'
+import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, StyleSheet, RefreshControl, Platform, ScrollView, Dimensions, LogBox, Animated, StatusBar } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { BasedOnSearch, Trending, Category, Flashsale, Loading, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect, NearestStore, ServiceCore, Utils } from '../../export'
@@ -422,19 +422,18 @@ export default function HomeScreen() {
                     }
                 )}
             > */}
-            <StatusBar translucent={false} backgroundColor="transparent" />
+            <StatusBar translucent={false} backgroundColor={colors.BlueJaja} />
             <ReactNativeParallaxHeader
                 headerMinHeight={Hp('7%')}
                 headerMaxHeight={Hp('30%')}
                 extraScrollHeight={20}
                 navbarColor={colors.BlueJaja}
-
                 titleStyle={style.titleStyle}
                 title={title()}
 
                 renderNavBar={() => renderNavBar('Cari hobimu sekarang')}
                 renderContent={renderContent}
-                containerStyle={styles.container}
+                containerStyle={[styles.container, { backgroundColor: colors.BlueJaja }]}
                 contentContainerStyle={style.contentContainer}
                 innerContainerStyle={style.container}
                 headerFixedBackgroundColor='transparent'
@@ -531,7 +530,7 @@ const style = StyleSheet.create({
         paddingHorizontal: '4%',
         paddingBottom: '2.5%',
         // paddingTop: '3.5%',
-        backgroundColor: 'transparent',
+        backgroundColor: colors.BlueJaja,
     },
     statusBar: {
         height: STATUS_BAR_HEIGHT,
@@ -549,8 +548,9 @@ const style = StyleSheet.create({
         color: 'white',
         fontFamily: 'Poppins-SemiBold',
         fontSize: 18,
+        backgroundColor: colors.BlueJaja
     },
     touchIcon: { width: '14%', justifyContent: 'center', alignItems: 'center' },
     swiperBanner: { width: "100%", height: Hp('30%'), resizeMode: 'contain', backgroundColor: colors.BlueJaja },
-    searchBar: { flex: 0, width: '77%', flexDirection: 'row', backgroundColor: colors.White, borderRadius: 11, height: NAV_BAR_HEIGHT / 1.8, alignItems: 'center', paddingHorizontal: '4.5%', marginRight: '3%' }
+    searchBar: { flex: 0, width: '77%', flexDirection: 'row', backgroundColor: colors.White, borderRadius: 11, height: NAV_BAR_HEIGHT / (Platform.OS === 'android' ? 1.8 : 1.6), alignItems: 'center', paddingHorizontal: '4.5%', marginRight: '3%' }
 });

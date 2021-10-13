@@ -248,12 +248,17 @@ export default function ProductScreen(props) {
     }
 
     const handleGetCart = () => {
-        getBadges()
-        ServiceCart.getCart(reduxAuth).then(res => {
-            if (res) {
-                dispatch({ type: 'SET_CART', payload: res })
-            }
-        })
+        try {
+            getBadges()
+            ServiceCart.getCart(reduxAuth).then(res => {
+                if (res) {
+                    dispatch({ type: 'SET_CART', payload: res })
+                }
+            })
+
+        } catch (error) {
+
+        }
 
     }
 
@@ -885,7 +890,7 @@ export default function ProductScreen(props) {
     return (
         <SafeAreaView style={styles.container}>
             {loading ? <Loading /> : null}
-            <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+            <StatusBar translucent={true} backgroundColor="transparent" barStyle="light-content" />
             <ReactNativeParallaxHeader
                 headerMinHeight={Hp('10%')}
                 headerMaxHeight={Wp('100%')}
@@ -945,7 +950,7 @@ const style = StyleSheet.create({
         height: Hp('10%'),
         justifyContent: 'flex-end',
         marginHorizontal: 10,
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
     },
     statusBar: {
         height: STATUS_BAR_HEIGHT,

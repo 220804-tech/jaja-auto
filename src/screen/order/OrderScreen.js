@@ -13,6 +13,7 @@ const initialLayout = { width: Dimensions.get('window').width };
 import { useDispatch, useSelector } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import LoginOrderScreen from '../login/LoginOrderScreen';
+import { color } from 'react-native-reanimated';
 
 export default function OrderScreen() {
     const dispatch = useDispatch()
@@ -123,7 +124,7 @@ export default function OrderScreen() {
             <Appbar title="Pesanan" trolley={true} notif={true} />
             {reduxAuth ?
                 <TabView
-
+                    style={{ backgroundColor: colors.WhiteBack }}
                     indicatorStyle={{ backgroundColor: 'white' }}
                     navigationState={{ index, routes }}
                     renderScene={renderScene}

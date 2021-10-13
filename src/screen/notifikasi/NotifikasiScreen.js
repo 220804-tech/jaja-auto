@@ -127,18 +127,17 @@ function NotifikasiScreen(props) {
             <Appbar back={true} title="Notifikasi" />
             {notifData && notifData.length ?
                 <FlatList
-                    data={notifData}
+                    data={notifData.sort((a, b) => (parseInt(String(a.created_date.slice(14, 16))) > parseInt(String(b.created_date.slice(14, 16))) ? 1 : -1)).reverse()}
                     // inverted={-1}
                     keyExtractor={item => item.notificationId}
                     renderItem={({ item, index }) => {
                         console.log("🚀 ~ file: NotifikasiScreen.js ~ line 144 ~ NotifikasiScreen ~ item", item)
-
                         return (
                             <TouchableRipple key={index} style={[styles.card, { backgroundColor: item.read == 'T' ? colors.BlueLight : colors.White, }]} onPress={() => handleRead(item)}>
                                 <>
                                     <View style={[style.row_between_center, { flex: 0 }]}>
                                         <Text style={styles.textDate}>{item.invoice}</Text>
-                                        <Text style={styles.textDate}>{String(item.created_date).slice(0, 16)} {item.time}</Text>
+                                        <Text style={styles.textDate}>{String(item.created_date).slice(0, 16)}</Text>
                                     </View>
                                     <View style={styles.bodyCard}>
                                         <Text style={styles.textTitle}>{item.title}</Text>

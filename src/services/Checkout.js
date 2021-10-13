@@ -1,4 +1,3 @@
-import { ToastAndroid, Alert } from 'react-native'
 import { Utils } from '../export';
 export async function getCheckout(auth, coin) {
     var myHeaders = new Headers();
@@ -55,7 +54,7 @@ export async function getShipping(auth) {
                 return null
             }
         })
-        .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+        .catch(error => Utils.alertPopUp(String(error)));
 }
 
 
@@ -74,7 +73,7 @@ export async function getListPayment() {
                 return null
             }
         })
-        .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+        .catch(error => Utils.alertPopUp(String(error)));
 }
 
 export async function getPayment(auth, orderId) {
@@ -93,7 +92,7 @@ export async function getPayment(auth, orderId) {
         .then(result => {
             return result;
         })
-        .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+        .catch(error => Utils.alertPopUp(String(error)));
 }
 
 

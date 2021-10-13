@@ -10,6 +10,6 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
     console.log('Message handled in the background!', remoteMessage);
 })
 messaging().onMessage(remoteMessage => {
-    Utils.alertPopUp(JSON.stringify(remoteMessage.notification.body))
+    // Utils.alertPopUp(JSON.stringify(remoteMessage.notification.body))
 });
 AppRegistry.registerComponent(appName, () => App);

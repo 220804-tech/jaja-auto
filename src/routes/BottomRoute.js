@@ -28,7 +28,6 @@ export default function BottomRoute() {
                     .on('value', snapshot => {
                         let result = snapshot.val()
                         if (result && result.notif) {
-
                             database().ref("/friend/" + uid).on("value", function (snapshot) {
                                 var returnArray = [];
                                 snapshot.forEach(function (snap) {

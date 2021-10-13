@@ -397,8 +397,8 @@ export default function OrderDetailsScreen() {
     const tokenMidtransUpdateCore = (params) => {
         var dataPayment = params.dataPayment;
         var fee = dataPayment.payment_fee;
-
-        var totalPembayaran = parseInt(orderPaymentRecent.grand_total) + parseInt(fee);
+        // + parseInt(fee)
+        var totalPembayaran = parseInt(orderPaymentRecent.grand_total);
         var authBasicHeader = midtrans.authBasicHeader;
 
         var payment_type = dataPayment.payment_type;
@@ -611,6 +611,7 @@ export default function OrderDetailsScreen() {
         fetch("https://jaja.id/backend/payment/methodPayment/" + total, requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 614 ~ getListPayment ~ result", JSON.stringify(result))
                 setListPayment(result);
             })
             .catch(error => {

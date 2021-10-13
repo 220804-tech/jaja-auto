@@ -309,7 +309,7 @@ export default function SearchScreen() {
                                             </TouchableOpacity>
                                         )
                                     }} />
-                                : <Text numberOfLines={1} style={[styles.font_13, { color: colors.BlackGrey }]}>- Toko tidak ditemukan</Text>
+                                : <Text numberOfLines={1} style={[styles.font_13, styles.mb_3, { color: colors.BlackGrey }]}>- Kategori tidak ditemukan</Text>
                             }
                             <Text style={[styles.font_14, { color: colors.BlueJaja, marginBottom: '2%' }]} adjustsFontSizeToFit>Berdasarkan pencarian</Text>
                             {productSearch && productSearch.length > 0 ?

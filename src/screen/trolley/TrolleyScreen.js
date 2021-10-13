@@ -13,8 +13,8 @@ export default function TrolleyScreen() {
     const reduxUser = useSelector(state => state.user.user)
 
     const reduxCart = useSelector(state => state.cart)
+    console.log("🚀 ~ file: TrolleyScreen.js ~ line 16 ~ TrolleyScreen ~ reduxCart", reduxCart)
     const reduxAuth = useSelector(state => state.auth.auth)
-    const [auth, setAuth] = useState("")
     const [disableQty, setdisableQty] = useState(false)
     const [loading, setLoading] = useState(false)
     const [refreshing, setRefreshing] = useState(false);
@@ -27,82 +27,63 @@ export default function TrolleyScreen() {
 
     useEffect(() => {
         setLoading(false)
-        if (!auth) {
-            EncryptedStorage.getItem('token').then(res => {
-                if (res) {
-                    setAuth(JSON.parse(res))
-                } else {
-                    navigation.navigate("Login")
-                }
-            })
-        }
-
     }, [reduxCart.cart])
 
-    useFocusEffect(
-        useCallback(() => {
-            EncryptedStorage.getItem('token').then(res => {
-                if (res) {
-                    setAuth(JSON.parse(res))
-                } else {
-                    navigation.navigate("Login")
-                }
-            })
-        }, []),
-    );
-
-
     const handleCheckbox = (name, indexParent, indexChild) => {
-        setDisableCheckout(true)
-        setLoading(true)
-        let arr = reduxCart.cart;
-        if (name === "store") {
-            arr.items[indexParent].isSelected = !arr.items[indexParent].isSelected
-            if (arr.items[indexParent].isSelected) {
-                arr.items[indexParent].products.map((data, i) => {
-                    return arr.items[indexParent].products[i].isSelected = true
-                })
-            } else {
-                arr.items[indexParent].products.map((data, i) => {
-                    return arr.items[indexParent].products[i].isSelected = false
-                })
-            }
-        } else {
-            arr.items[indexParent].products[indexChild].isSelected = !arr.items[indexParent].products[indexChild].isSelected
-        }
-        dispatch({ type: 'SET_CART', payload: arr })
-        // setLoading(false)
-        var myHeaders = new Headers();
-        myHeaders.append("Authorization", reduxAuth ? reduxAuth : auth);
-        myHeaders.append("Content-Type", "application/json");
-        myHeaders.append("Cookie", "ci_session=sdvfphg27d6fhhbhh4ruftor53ppbcko");
-
-        var raw = JSON.stringify({ 'cartId': name === "cart" ? arr.items[indexParent].products[indexChild].cartId : "", 'storeId': name === "store" ? arr.items[indexParent].store.id : "" })
-
-        var requestOptions = {
-            method: 'PUT',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
-        };
-
-        fetch("https://jaja.id/backend/cart/selected", requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                if (result.status.code === 200) {
-                    handleApiCart()
+        try {
+            setDisableCheckout(true)
+            // setLoading(true)
+            let arr = reduxCart.cart;
+            if (name === "store") {
+                arr.items[indexParent].isSelected = !arr.items[indexParent].isSelected
+                if (arr.items[indexParent].isSelected) {
+                    arr.items[indexParent].products.map((data, i) => {
+                        return arr.items[indexParent].products[i].isSelected = true
+                    })
                 } else {
-                    Utils.alertPopUp(String(result.status.message))
+                    arr.items[indexParent].products.map((data, i) => {
+                        return arr.items[indexParent].products[i].isSelected = false
+                    })
                 }
-                setTimeout(() => {
-                    setDisableCheckout(false)
-                }, 500);
+            } else {
+                arr.items[indexParent].products[indexChild].isSelected = !arr.items[indexParent].products[indexChild].isSelected
+            }
+            dispatch({ type: 'SET_CART', payload: arr })
+            // setLoading(false)
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", reduxAuth);
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("Cookie", "ci_session=sdvfphg27d6fhhbhh4ruftor53ppbcko");
 
-            })
-            .catch(error => {
-                setDisableCheckout(false)
-                Utils.handleError(error, 'Error with status code : 12027')
-            })
+            var raw = JSON.stringify({ 'cartId': name === "cart" ? arr.items[indexParent].products[indexChild].cartId : "", 'storeId': name === "store" ? arr.items[indexParent].store.id : "" })
+
+            var requestOptions = {
+                method: 'PUT',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+
+            fetch("https://jaja.id/backend/cart/selected", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status.code === 200) {
+                        handleApiCart()
+                    } else {
+                        Utils.alertPopUp(String(result.status.message))
+                    }
+                    setTimeout(() => {
+                        setDisableCheckout(false)
+                    }, 500);
+
+                })
+                .catch(error => {
+                    setDisableCheckout(false)
+                    Utils.handleError(error, 'Error with status code : 12027')
+                })
+        } catch (error) {
+
+        }
     }
 
     const handleQty = (name, indexParent, indexChild) => {
@@ -123,7 +104,7 @@ export default function TrolleyScreen() {
             setdisableQty(false)
         }, 100);
         var myHeaders = new Headers();
-        myHeaders.append("Authorization", reduxAuth ? reduxAuth : auth);
+        myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("Cookie", "ci_session=gqp7d9ml31ktad3bjvst8jvbbn190ai7");
 
@@ -183,7 +164,7 @@ export default function TrolleyScreen() {
     }
 
     const handleApiCart = () => {
-        ServiceCart.getCart(reduxAuth ? reduxAuth : auth).then(res => {
+        ServiceCart.getCart(reduxAuth).then(res => {
             if (res) {
                 setTimeout(() => setLoading(false), 1000);
                 dispatch({ type: 'SET_CART', payload: res })
@@ -192,43 +173,46 @@ export default function TrolleyScreen() {
     }
 
     const handleCheckout = () => {
-        if (reduxCart.cart.totalData != '0' && disableCheckout === false && reduxCart.cart.totalCart != 0) {
-            dispatch({ type: 'SET_CHECKOUT', payload: {} })
-            navigation.navigate('Checkout')
+        try {
+            if (disableCheckout === false && reduxCart.cart.totalCart != 0) {
+                dispatch({ type: 'SET_CHECKOUT', payload: {} })
+                navigation.navigate('Checkout')
 
-            ServiceCheckout.getCheckout(reduxAuth ? reduxAuth : auth, 0).then(res => {
-                if (res) {
-                    if (res == 'Alamat') {
-                        navigation.navigate('Address', { data: "checkout" })
-                    } else {
-                        navigation.navigate('Checkout')
+                ServiceCheckout.getCheckout(reduxAuth, 0).then(res => {
+                    if (res) {
+                        if (res == 'Alamat') {
+                            navigation.navigate('Address', { data: "checkout" })
+                        } else {
+                            navigation.navigate('Checkout')
+                        }
+                        dispatch({ type: 'SET_CHECKOUT', payload: res })
                     }
-                    console.log("🚀 ~ file: TrolleyScreen.js ~ line 200 ~ ServiceCheckout.getCheckout ~ res", res)
-                    dispatch({ type: 'SET_CHECKOUT', payload: res })
-                }
-            })
-            ServiceCheckout.getShipping(reduxAuth ? reduxAuth : auth).then(res => {
-                if (res) {
-                    dispatch({ type: 'SET_SHIPPING', payload: res })
-                }
-            })
-            ServiceCheckout.getListPayment().then(res => {
-                if (res) {
-                    dispatch({ type: 'SET_LIST_PAYMENT', payload: res })
-                }
-            })
-        } else if (reduxCart.cart.totalCart == 0) {
-            Utils.alertPopUp("Pilih salah satu produk yang ingin dibeli!")
+                })
+                ServiceCheckout.getShipping(reduxAuth).then(res => {
+                    if (res) {
+                        dispatch({ type: 'SET_SHIPPING', payload: res })
+                    }
+                })
+                ServiceCheckout.getListPayment().then(res => {
+                    if (res) {
+                        dispatch({ type: 'SET_LIST_PAYMENT', payload: res })
+                    }
+                })
+            } else if (reduxCart.cart.totalCart == 0) {
+                Utils.alertPopUp("Pilih salah satu produk yang ingin dibeli!")
 
-        } else {
-            setDisableCheckout(true)
+            } else {
+                setDisableCheckout(true)
+            }
+        } catch (error) {
+            alert(error)
         }
 
     }
 
     const handleDeleteCart = (id) => {
         setLoading(true)
-        ServiceCart.deleteCart(reduxAuth ? reduxAuth : auth, id).then(res => {
+        ServiceCart.deleteCart(reduxAuth, id).then(res => {
             if (res == 200) {
                 handleApiCart()
             }
@@ -288,11 +272,13 @@ export default function TrolleyScreen() {
                             return (
                                 <View onPress={() => handleSelected(item)} style={[styles.column_center, styles.mb_2, { backgroundColor: colors.White }]}>
                                     <View style={[styles.row_start_center, styles.p_2, { width: '100%', borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}>
-                                        <Checkbox
-                                            color={colors.BlueJaja}
-                                            status={item.isSelected ? 'checked' : 'unchecked'}
-                                            onPress={() => handleCheckbox("store", indexParent, "")}
-                                        />
+                                        <View>
+                                            <Checkbox
+                                                color={colors.BlueJaja}
+                                                status={item.isSelected ? 'checked' : 'unchecked'}
+                                                onPress={() => handleCheckbox("store", indexParent, "")}
+                                            />
+                                        </View>
                                         <Image style={{
                                             width: Hp('5%'),
                                             height: Hp('5%'),

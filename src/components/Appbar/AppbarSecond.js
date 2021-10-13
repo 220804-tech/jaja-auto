@@ -24,8 +24,8 @@ export default function AppbarSecond(props) {
 
     return (
         <>
-            <StatusBar translucent={true} backgroundColor={colors.BlueJaja} barStyle="light-content" />
-            <View style={[styles.appBar, styles.pb_2, { flex: 0, height: Hp('11%'), backgroundColor: props.backgroundColor ? props.backgroundColor : colors.BlueJaja, alignItems: 'flex-end', }]}>
+            <StatusBar translucent={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
+            <View style={[styles.appBar, styles.pb_2, { flex: 0, backgroundColor: props.backgroundColor ? props.backgroundColor : colors.BlueJaja, alignItems: 'flex-end', }]}>
                 <TouchableOpacity style={[styles.row_start_center, { height: Hp('5%'), marginTop: '-5%' }]} onPress={() => navigation.goBack()}>
                     <Image style={[styles.appBarButton, { tintColor: colors.White }]} source={require('../../assets/icons/arrow.png')} />
                 </TouchableOpacity>
