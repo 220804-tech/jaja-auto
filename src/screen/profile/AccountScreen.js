@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, createRef } from "react";
-import { View, Text, SafeAreaView, Image, TouchableOpacity, TouchableWithoutFeedback, TextInput, Alert, StyleSheet, Linking, ScrollView } from "react-native";
+import { View, Text, SafeAreaView, Image, TouchableOpacity, TouchableWithoutFeedback, TextInput, Alert, StyleSheet, Linking, ScrollView, Platform } from "react-native";
 import { RadioButton, Button } from "react-native-paper";
 import ImagePicker from 'react-native-image-crop-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -451,14 +451,27 @@ export default function Lainnya() {
                 /> :
                 <ScrollView>
                     <View style={styles.card}>
-                        <View style={{ flex: 0, justifyContent: 'center', alignItems: 'center', marginBottom: '11%' }}>
+                        {/* <View style={{ flex: 0, justifyContent: 'center', alignItems: 'center', marginBottom: '11%' }}>
                             <View style={{ width: Wp('32%'), height: Wp('32%'), borderRadius: 100, backgroundColor: colors.Silver, borderWidth: 0.5, borderColor: colors.White }}>
                                 <Image style={{ width: '100%', height: '100%', borderRadius: 100 }} source={{ uri: photo && photo.path ? photo.path : null }} />
                                 <TouchableOpacity onPress={() => imageRef.current?.setModalVisible()} style={{ position: 'absolute', bottom: 10, right: 0, backgroundColor: colors.BlueJaja, height: Wp('8%'), width: Wp('8%'), borderRadius: 100, justifyContent: 'center', alignItems: 'center' }}>
                                     <Image style={{ width: '50%', height: '50%', tintColor: colors.White }} source={require('../../assets/icons/camera.png')} />
                                 </TouchableOpacity>
                             </View>
-                        </View>
+                        </View> */}
+                        {
+                            Platform.OS == 'android' ?
+                                <View style={{ flex: 0, justifyContent: 'center', alignItems: 'center', marginBottom: '11%' }}>
+                                    <View style={{ width: Wp('32%'), height: Wp('32%'), borderRadius: 100, backgroundColor: colors.Silver, borderWidth: 0.5, borderColor: colors.White }}>
+                                        <Image style={{ width: '100%', height: '100%', borderRadius: 100 }} source={{ uri: photo && photo.path ? photo.path : null }} />
+                                        <TouchableOpacity onPress={() => imageRef.current?.setModalVisible()} style={{ position: 'absolute', bottom: 10, right: 0, backgroundColor: colors.BlueJaja, height: Wp('8%'), width: Wp('8%'), borderRadius: 100, justifyContent: 'center', alignItems: 'center' }}>
+                                            <Image style={{ width: '50%', height: '50%', tintColor: colors.White }} source={require('../../assets/icons/camera.png')} />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                                :
+                                <View />
+                        }
                         <TouchableWithoutFeedback onPress={() => handleEdit("Nama Lengkap")}>
                             <View style={styles.form}>
                                 <Text adjustsFontSizeToFit style={[style.font_14]}>Nama Lengkap</Text>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createRef, useCallback } from 'react'
-import { SafeAreaView, View, Text, Image, Alert, TouchableOpacity, ToastAndroid, StatusBar, TouchableHighlight, ScrollView } from 'react-native'
+import { SafeAreaView, View, Text, Image, Alert, TouchableOpacity, ToastAndroid, StatusBar, TouchableHighlight, ScrollView, Platform } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import colors from '../../assets/colors'
 import { styles } from '../../assets/styles/styles'
@@ -427,11 +427,16 @@ export default function LoginScreen(props) {
                                 {Language("Masuk")}
                             </Button>
                             <View style={{ width: Wp('87%'), justifyContent: 'center', marginBottom: '1%', marginTop: '3%' }}>
-                                <GoogleSigninButton
-                                    style={{ width: "100%", height: 48 }}
-                                    size={GoogleSigninButton.Size.Wide}
-                                    color={GoogleSigninButton.Color.Dark}
-                                    onPress={onGoogleButtonPress} />
+                                {
+                                    Platform.OS == 'android' ?
+                                        <GoogleSigninButton
+                                            style={{ width: "100%", height: 48 }}
+                                            size={GoogleSigninButton.Size.Wide}
+                                            color={GoogleSigninButton.Color.Dark}
+                                            onPress={onGoogleButtonPress} />
+                                        :
+                                        <View />
+                                }
                             </View>
                             <View style={[styles.row_between_center, styles.mt_5, { width: Wp('85%') }]}>
                                 <TouchableOpacity onPress={() => navigation.navigate('Register', { navigate: 'Login' })}><Text style={[styles.font_12]}>Belum punya akun?  <Text style={[styles.font_12, { color: colors.BlueJaja }]}>{Language("Register")}</Text></Text></TouchableOpacity>
