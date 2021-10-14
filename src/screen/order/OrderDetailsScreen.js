@@ -132,14 +132,17 @@ export default function OrderDetailsScreen() {
 
     useEffect(() => {
         setLoading(true)
+
+        if (details && Object.keys(details).length) {
+            setLoading(true)
+        }
+    }, [details])
+    useEffect(() => {
         ServiceCheckout.getListPayment().then(res => {
             if (res) {
                 dispatch({ type: 'SET_LIST_PAYMENT', payload: res })
             }
         })
-        setTimeout(() => {
-            setLoading(false)
-        }, 3000);
         const backAction = () => {
 
             getOrder()

@@ -21,7 +21,7 @@ export default function index(props) {
     const [status, setStatus] = useState("Profile")
     const [itemSelected, setSelectedItem] = useState({})
     const [loading, setLoading] = useState(false)
-
+    const reduxUseCoin = useSelector(state => state.checkout.useCoin)
     useEffect(() => {
         setRefreshControl(false)
         getLocation()
@@ -153,7 +153,7 @@ export default function index(props) {
                             dispatch({ type: 'SET_USER', payload: res })
                             if (props.route.params) {
                                 navigation.goBack()
-                                ServiceCheckout.getCheckout(auth, null).then(reps => {
+                                ServiceCheckout.getCheckout(auth, reduxUseCoin ? 1 : 0).then(reps => {
                                     if (reps) {
                                         dispatch({ type: 'SET_CHECKOUT', payload: reps })
                                     }

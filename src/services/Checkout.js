@@ -12,16 +12,21 @@ export async function getCheckout(auth, coin) {
     };
 
     return await fetch(`https://jaja.id/backend/checkout?isCoin=${coin}`, requestOptions)
-        .then(response => response.json())
-        .then(result => {
-            if (result.status.code === 200) {
-                return result.data;
-            } else if (result.status.code == 404 && result.status.message == 'alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu') {
-                Utils.alertPopUp('Silahkan tambah alamat terlebih dahulu!')
-                return 'Alamat'
-            } else {
-                Utils.handleErrorResponse(result, 'Error with status code : 12056')
-                return null
+        .then(response => response.text())
+        .then(res => {
+            try {
+                let result = JSON.parse(res)
+                if (result.status.code === 200) {
+                    return result.data;
+                } else if (result.status.code == 404 && result.status.message == 'alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu') {
+                    Utils.alertPopUp('Silahkan tambah alamat terlebih dahulu!')
+                    return 'Alamat'
+                } else {
+                    Utils.handleErrorResponse(result, 'Error with status code : 12056')
+                    return null
+                }
+            } catch (error) {
+                alert(error + '\n\n' + res)
             }
         })
         .catch(error => Utils.handleError(error, 'Error with status code : 12057'));

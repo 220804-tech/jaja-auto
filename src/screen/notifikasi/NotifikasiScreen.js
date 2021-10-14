@@ -8,6 +8,8 @@ function NotifikasiScreen(props) {
     const [shimmer, setshimmer] = useState(Boolean);
     const reduxUser = useSelector(state => state.user.user)
     const reduxAuth = useSelector(state => state.auth.auth)
+    const reduxBadges = useSelector(state => state.user.badges)
+    console.log("🚀 ~ file: NotifikasiScreen.js ~ line 12 ~ NotifikasiScreen ~ reduxBadges", reduxBadges)
 
     const navigation = useNavigation()
     const dispatch = useDispatch()
@@ -129,7 +131,7 @@ function NotifikasiScreen(props) {
                 <FlatList
                     data={notifData.sort((a, b) => (parseInt(String(a.created_date.slice(14, 16))) > parseInt(String(b.created_date.slice(14, 16))) ? 1 : -1)).reverse()}
                     // inverted={-1}
-                    keyExtractor={item => item.notificationId}
+                    keyExtractor={(item, index) => index + 'SF'}
                     renderItem={({ item, index }) => {
                         return (
                             <TouchableRipple key={index} style={[styles.card, { backgroundColor: item.read == 'T' ? colors.BlueLight : colors.White, }]} onPress={() => handleRead(item)}>
