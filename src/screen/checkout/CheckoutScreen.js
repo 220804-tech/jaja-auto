@@ -4,7 +4,7 @@
 
 import React, { useEffect, useState, createRef, useRef, useCallback } from 'react'
 import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, Alert, StatusBar, FlatList, ToastAndroid, TextInput, RefreshControl, Modal } from 'react-native'
-import { Appbar, colors, styles, Wp, Hp, useNavigation, ServiceCheckout, Loading, Utils, ServiceCart, ServiceUser } from '../../export'
+import { Appbar, colors, styles, Wp, Hp, useNavigation, ServiceCheckout, Loading, Utils, ServiceCart, ServiceUser, ServiceOrder } from '../../export'
 import { Button, TouchableRipple, Checkbox } from 'react-native-paper'
 import ActionSheet from "react-native-actions-sheet";
 import CheckBox from '@react-native-community/checkbox';
@@ -18,7 +18,8 @@ export default function checkoutScreen() {
     const reduxCheckout = useSelector(state => state.checkout.checkout)
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxCoin = useSelector(state => state.user.user.coinFormat)
-    const reduxUseCoin = useSelector(state => state.user.user.useCoin)
+    const reduxUseCoin = useSelector(state => state.checkout.useCoin)
+    console.log("🚀 ~ file: CheckoutScreen.js ~ line 22 ~ checkoutScreen ~ reduxUseCoin", reduxUseCoin)
 
 
     const reduxShipping = useSelector(state => state.checkout.shipping)
@@ -115,13 +116,10 @@ export default function checkoutScreen() {
     }
 
     const handleVoucher = (val, index) => {
-        console.log("🚀 ~ file: CheckoutScreen.js ~ line 108 ~ handleVoucher ~ val", val.id)
         if (voucherOpen == "store") {
             if (val.isClaimed) {
                 actionSheetVoucher.current?.setModalVisible()
-                setTimeout(() => {
-                    setloadAs(true)
-                }, 100);
+                setTimeout(() => setloadAs(true), 100);
                 var myHeaders = new Headers();
                 myHeaders.append("Authorization", reduxAuth);
                 myHeaders.append("Content-Type", "application/json");
@@ -129,7 +127,6 @@ export default function checkoutScreen() {
                     "voucherId": val.id,
                     "storeId": val.storeId
                 });
-                console.log("🚀 ~ file: CheckoutScreen.js ~ line 104 ~ handleVoucher ~ raw", raw)
                 var requestOptions = {
                     method: 'PUT',
                     headers: myHeaders,
@@ -137,61 +134,38 @@ export default function checkoutScreen() {
                     redirect: 'follow'
                 };
                 fetch("https://jaja.id/backend/checkout/selectedVoucherStore", requestOptions)
-                    .then(response => response.json())
-                    .then(result => {
-                        setTimeout(() => {
-                            setloadAs(false)
-
-                        }, 200);
-                        if (result.status.code === 200) {
-                            getCheckout(reduxUseCoin);
-                        } else {
-                            Alert.alert(
-                                "Jaja.id",
-                                "Gunakan voucher : " + result.status.message + " " + result.status.code,
-                                [
-                                    { text: "OK", onPress: () => console.log("OK Pressed") }
-                                ],
-                                { cancelable: false }
-                            );
-                            console.log("Voucher toko " + result.status.message + " " + result.status.code)
+                    .then(response => response.text())
+                    .then(res => {
+                        try {
+                            let result = JSON.parse(res)
+                            if (result.status.code === 200) {
+                                Utils.alertPopUp('Voucher berhasil digunakan!')
+                                getCheckout(reduxUseCoin);
+                            } else {
+                                Utils.handleErrorResponse(result, 'Error with status code : 12060')
+                            }
+                        } catch (error) {
+                            Utils.handleErrorResponse(JSON.stringify(res + '\n\n' + error, 'Error with status code : 12061'))
                         }
-
+                        setTimeout(() => setloadAs(false), 500);
                     })
                     .catch(error => {
                         setloadAs(false)
-                        setTimeout(() => {
-                            Alert.alert(
-                                "Jaja.id",
-                                String("Voucher toko : " + error),
-                                [
-                                    { text: "OK", onPress: () => console.log("OK Pressed") }
-                                ],
-                                { cancelable: false }
-                            );
-                        }, 100);
+                        setTimeout(() => Utils.handleError(error, 'Error with status code : 12062'), 100);
                     });
             } else {
                 handleClaimVoucher("store", val.id, index)
             }
 
         } else if (voucherOpen == "jaja") {
-            // setvoucherPressed(val)
             if (val.isClaimed) {
                 actionSheetVoucher.current?.setModalVisible()
-                setTimeout(() => {
-                    setLoad(true)
-                }, 250);
+                setTimeout(() => setLoad(true), 100);
                 var headers = new Headers();
                 headers.append("Authorization", reduxAuth);
                 headers.append("Content-Type", "application/json");
                 headers.append("Cookie", "ci_session=h2pi6rhg4uma28jrsci9ium4tf7k8id4");
-
-                var row = JSON.stringify({
-                    "voucherId": val.id
-                });
-                console.log("🚀 ~ file: CheckoutScreen.js ~ line 184 ~ handleVoucher ~ row", row)
-
+                var row = JSON.stringify({ "voucherId": val.id });
                 var rq = {
                     method: 'PUT',
                     headers: headers,
@@ -200,117 +174,80 @@ export default function checkoutScreen() {
                 };
 
                 fetch("https://jaja.id/backend/checkout/selectedVoucherJaja", rq)
-                    .then(response => response.json())
-                    .then(result => {
-                        setLoad(false)
-                        if (result.status.code === 200) {
-                            ToastAndroid.show("Voucher berhasil digunakan.", ToastAndroid.LONG, ToastAndroid.CENTER)
-                            getCheckout(reduxUseCoin)
-                        } else {
-                            Alert.alert(
-                                "Jaja.id",
-                                "Gunakan voucher toko : " + result.status.message + " " + result.status.code,
-                                [
-                                    { text: "OK", onPress: () => console.log("OK Pressed") }
-                                ],
-                                { cancelable: false }
-                            );
+                    .then(response => response.text())
+                    .then(res => {
+                        try {
+                            let result = JSON.parse(res)
+                            setTimeout(() => setLoad(false), 500);
+                            if (result.status.code === 200) {
+                                Utils.alertPopUp('Voucher berhasil digunakan!')
+                                getCheckout(reduxUseCoin)
+                            } else {
+                                Utils.handleErrorResponse(result, 'Error with status code 12063')
+                            }
+                        } catch (error) {
                             setLoad(false)
+                            Utils.handleErrorResponse(JSON.stringify(res + '\n\n' + error, 'Error with status code : 12064'))
                         }
-                        setloadAs(false)
                     })
                     .catch(error => {
                         setLoad(false)
-                        setTimeout(() => {
-                            Alert.alert(
-                                "Jaja.id",
-                                String("Voucher : " + error),
-                                [
-                                    { text: "OK", onPress: () => console.log("OK Pressed") }
-                                ],
-                                { cancelable: false }
-                            );
-                        }, 100);
-
+                        setTimeout(() => Utils.handleError(error, 'Error with status code : 12065'), 100);
                     });
 
             } else {
                 handleClaimVoucher("jaja", val.id, index)
             }
         }
+        setTimeout(() => setLoad(false), 5000);
     }
     const handleClaimVoucher = (name, voucherId, index) => {
         setloadAs(true)
-        console.log("🚀 ~ file: CheckoutScreen.js ~ line 1212 ~ handleClaimVoucher ~ voucherId", voucherId)
-        console.log("🚀 ~ file: CheckoutScreen.js ~ line 1212 ~ handleClaimVoucher ~ name", name)
         if (name === "store") {
             var myHeaders = new Headers();
             myHeaders.append("Authorization", reduxAuth);
             myHeaders.append("Content-Type", "application/json");
             myHeaders.append("Cookie", "ci_session=3jj2gelqr7k1pgt00mekej9msvt8evts");
-
-            var raw = JSON.stringify({
-                "voucherId": voucherId
-            });
-
+            var raw = JSON.stringify({ "voucherId": voucherId });
             var requestOptions = {
                 method: 'POST',
                 headers: myHeaders,
                 body: raw,
                 redirect: 'follow'
             };
-
             fetch("https://jaja.id/backend/voucher/claimVoucherStore", requestOptions)
                 .then(response => response.json())
-                .then(result => {
-                    console.log("🚀 ~ file: CheckoutScreen.js ~ line 207 ~ handleClaimVoucher ~ result", result.status)
-                    if (result.status.code === 200) {
-                        ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then(res => {
-                            setTimeout(() => setloadAs(false), 500);
-                            if (res) {
-                                // setCount(count + 1)
-                                setvoucherOpen('store')
-                                setVouchers(res.cart[indexStore].voucherStore)
-                                dispatch({ type: 'SET_CHECKOUT', payload: res })
-                            } else {
+                .then(res => {
+                    try {
+                        let result = JSON.parse(res)
+                        if (result.status.code === 200) {
+                            ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then(res => {
+                                if (res) {
+                                    setvoucherOpen('store')
+                                    setVouchers(res.cart[indexStore].voucherStore)
+                                    dispatch({ type: 'SET_CHECKOUT', payload: res })
+                                }
+                            })
+                        } else {
+                            Utils.handleErrorResponse(result, 'Error with status code : 12067')
+                        }
+                        setTimeout(() => setloadAs(false), 500);
+                    } catch (error) {
+                        setloadAs(false)
+                        Utils.handleErrorResponse(JSON.stringify(res + '\n\n' + error, 'Error with status code : 12068'))
 
-                            }
-                        })
-                    } else {
-                        Alert.alert(
-                            "Jaja.id",
-                            "Klaim voucher toko : " + result.status.message + " " + result.status.code,
-                            [
-                                { text: "OK", onPress: () => console.log("OK Pressed") }
-                            ],
-                            { cancelable: false }
-                        );
                     }
                 })
                 .catch(error => {
                     setloadAs(false)
-                    setTimeout(() => {
-                        Alert.alert(
-                            "Jaja.id",
-                            String("Klaim voucher toko : " + error),
-                            [
-                                { text: "OK", onPress: () => console.log("OK Pressed") }
-                            ],
-                            { cancelable: false }
-                        );
-                    }, 100);
+                    Utils.handleError(error, 'Error with status code : 12069')
                 });
 
         } else {
             var myHeaders = new Headers();
             myHeaders.append("Authorization", reduxAuth);
             myHeaders.append("Content-Type", "application/json");
-
-            var raw = JSON.stringify({
-                "voucherId": voucherId
-            });
-            console.log("🚀 ~ file: CheckoutScreen.js ~ line 235 ~ handleClaimVoucher ~ raw", raw)
-
+            var raw = JSON.stringify({ "voucherId": voucherId });
             var requestOptions = {
                 method: 'POST',
                 headers: myHeaders,
@@ -320,50 +257,35 @@ export default function checkoutScreen() {
 
             fetch("https://jaja.id/backend/voucher/claimVoucherJaja", requestOptions)
                 .then(response => response.json())
-                .then(result => {
+                .then(res => {
                     setTimeout(() => setloadAs(false), 500);
-                    if (result.status.code === 200) {
-                        ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then(res => {
-                            if (res) {
-                                // setCount(count + 1)
-                                setvoucherOpen('jaja')
-                                setVouchers(res.voucherJaja)
-                                dispatch({ type: 'SET_CHECKOUT', payload: res })
-                            }
-                        })
-                    } else {
-                        setTimeout(() => {
-                            Alert.alert(
-                                "Jaja.id",
-                                "Klaim voucher : " + result.status.message + " " + result.status.code,
-                                [
-                                    { text: "OK", onPress: () => console.log("OK Pressed") }
-                                ],
-                                { cancelable: false }
-                            );
-                        }, 100);
+                    try {
+                        let result = JSON.parse(res)
+                        if (result.status.code === 200) {
+                            ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then(res => {
+                                if (res) {
+                                    setvoucherOpen('jaja')
+                                    setVouchers(res.voucherJaja)
+                                    dispatch({ type: 'SET_CHECKOUT', payload: res })
+                                }
+                            })
+                        } else {
+                            setTimeout(() => Utils.handleErrorResponse(result, 'Error with status code : 12070'), 100);
+                        }
+                    } catch (error) {
+                        Utils.handleErrorResponse(JSON.stringify(res + '\n\n' + error, 'Error with status code : 12071'))
                     }
                 })
                 .catch(error => {
                     setloadAs(false)
-                    setTimeout(() => {
-                        Alert.alert(
-                            "Jaja.id",
-                            String("Klaim voucher : " + error),
-                            [
-                                { text: "OK", onPress: () => console.log("OK Pressed") }
-                            ],
-                            { cancelable: false }
-                        );
-                    }, 100);
+                    Utils.handleError(error, 'Error with status code : 12072')
                 });
         }
     }
 
     const deliverySelected = (code, val) => {
-        console.log("🚀 ~ file: CheckoutScreen.js ~ line 97 ~ deliverySelected ~ storePressed", storePressed.id)
         actionSheetDelivery.current?.setModalVisible()
-        setLoad(true)
+        setTimeout(() => setLoad(true), 100);
         var myHeaders = new Headers();
         myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Content-Type", "application/json");
@@ -377,8 +299,6 @@ export default function checkoutScreen() {
             "dateSendTime": sendDate
         });
 
-        console.log("🚀 ~ file: CheckoutScreen.js ~ line 96 ~ deliverySelected ~ sendDate", sendDate)
-
         var requestOptions = {
             method: 'PUT',
             headers: myHeaders,
@@ -387,17 +307,32 @@ export default function checkoutScreen() {
         };
 
         fetch("https://jaja.id/backend/checkout/selectedShipping", requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                if (result.status.code === 200) {
-                    // dispatch({ type: 'SET_CHECKOUT', payload: {} })
-                    getCheckout(reduxUseCoin)
-                } else {
-                    ToastAndroid.show(result.status.message + " " + result.status.code, ToastAndroid.LONG, ToastAndroid.CENTER)
+            .then(response => response.text())
+            .then(res => {
+                try {
+                    let result = JSON.parse(res)
+                    if (result.status.code === 200) {
+                        setTimeout(() => actionSheetVoucher.current?.setModalVisible(false), 1000);
+                        ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then(res => {
+                            if (res) {
+                                dispatch({ type: 'SET_CHECKOUT', payload: res })
+                            }
+                        }).catch(res => {
+                            console.log("🚀 ~ file: CheckoutScreen.js ~ line 329 ~ ServiceCheckout.getCheckout ~ res", res)
+                        })
+                    } else {
+                        Utils.handleErrorResponse(result, 'Error with status code : 12074')
+                    }
+                } catch (error) {
+                    Utils.handleErrorResponse(JSON.stringify(res + '\n\n' + error, 'Error with status code : 12075'))
                 }
+                setTimeout(() => setLoad(false), 11000);
+            })
+            .catch(error => {
+                Utils.handleError(error, "Error with status code : 12076")
                 setLoad(false)
             })
-            .catch(error => setLoad(false) & ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER))
+        setTimeout(() => setLoad(false), 5000);
     }
 
     const handleDescription = voucher => {
@@ -466,8 +401,6 @@ export default function checkoutScreen() {
 
     }
     const checkedValue = (index) => {
-        console.log("🚀 ~ file: CheckoutScreen.js ~ line 183 ~ checkedValue ~ checkedValue", index)
-        console.log("🚀 ~ file: CheckoutScreen.js ~ line 446 ~ checkedValue ~ reduxShipping.length", reduxShipping.length)
         if (reduxShipping.length) {
             handleListDate(index)
         } else {
@@ -528,7 +461,7 @@ export default function checkoutScreen() {
                                 'cart': newArr,
                                 'koin': reduxUseCoin
                             });
-
+                            console.log("🚀 ~ file: CheckoutScreen.js ~ line 532 ~ setTimeout ~ reduxUseCoin", reduxUseCoin)
                             var requestOptions = {
                                 method: 'POST',
                                 headers: myHeaders,
@@ -558,7 +491,18 @@ export default function checkoutScreen() {
                                                     dispatch({ type: "SET_BADGES", payload: {} })
                                                 }
                                             })
-                                            // navigation.navigate("Midtrans", { data: result.data })
+                                            ServiceOrder.getUnpaid(reduxAuth).then(resUnpaid => {
+                                                if (resUnpaid && Object.keys(resUnpaid).length) {
+                                                    dispatch({ type: 'SET_UNPAID', payload: resUnpaid.items })
+                                                    dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
+                                                }
+                                            })
+                                            ServiceOrder.getWaitConfirm(reduxAuth).then(reswaitConfirm => {
+                                                if (reswaitConfirm && Object.keys(reswaitConfirm).length) {
+                                                    dispatch({ type: 'SET_WAITCONFIRM', payload: reswaitConfirm.items })
+                                                    dispatch({ type: 'SET_ORDER_FILTER', payload: reswaitConfirm.filters })
+                                                }
+                                            })
                                         } else {
                                             Utils.handleErrorResponse(data, "Error with status code : 12048")
                                             return null
@@ -577,24 +521,20 @@ export default function checkoutScreen() {
                                     setLoad(false)
                                     Utils.handleError(err, "Error with status code : 120477")
                                 })
-
                             setTimeout(() => {
                                 let text = "Tidak dapat terhubung, periksa kembali koneksi internet anda!"
                                 if (error) {
                                     Utils.CheckSignal().then(res => {
                                         if (res.connect) {
-                                            ToastAndroid.show("Sedang memuat..", ToastAndroid.LONG, ToastAndroid.CENTER)
-                                            AlertIOS.alert("Sedang memuat..");
-
+                                            Utils.alertPopUp("Sedang memuat..")
                                         } else {
                                             setLoad(false)
-                                            ToastAndroid.show(text, ToastAndroid.LONG, ToastAndroid.CENTER)
-                                            AlertIOS.alert(text);
+                                            Utils.alertPopUp(text)
                                         }
                                         setTimeout(() => {
                                             setLoad(false)
                                             if (error) {
-                                                ToastAndroid.show(text, ToastAndroid.LONG, ToastAndroid.CENTER)
+                                                Utils.alertPopUp(text)
                                             }
                                         }, 5000);
                                     })
@@ -645,8 +585,8 @@ export default function checkoutScreen() {
 
 
     const handleUseCoin = (coin) => {
-        console.log("🚀 ~ file: CheckoutScreen.js ~ line 647 ~ handleUseCoin ~ coin", coin)
         setUseCoin(coin)
+        dispatch({ type: 'SET_USECOIN', payload: coin })
         ServiceCheckout.getCheckout(reduxAuth, coin ? 1 : 0).then(res => {
             if (res) {
                 dispatch({ type: 'SET_CHECKOUT', payload: res })
@@ -786,6 +726,7 @@ export default function checkoutScreen() {
                                                 <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/vehicle-yellow.png')} />
                                                 <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pengiriman</Text>
                                             </View>
+                                            {console.log("🚀 ~ file: CheckoutScreen.js ~ line 800 ~ reduxCheckout.cart.map ~ item.shippingSelected", item.shippingSelected)}
                                             {item.shippingSelected.name ?
                                                 <TouchableOpacity onPress={() => {
                                                     console.log("cok")
@@ -797,7 +738,7 @@ export default function checkoutScreen() {
                                                     <View style={styles.row_between_center}>
                                                         <View style={[styles.column_between_center, { alignItems: 'flex-start' }]}>
                                                             <Text numberOfLines={1} style={[styles.font_14]}>{item.shippingSelected.name}</Text>
-                                                            <Text numberOfLines={1} style={[styles.font_12]}>Regular</Text>
+                                                            <Text numberOfLines={1} style={[styles.font_12]}>{item.shippingSelected.type}</Text>
                                                             <Text numberOfLines={1} style={[styles.font_12, styles.T_italic]}>Estimasi {item.shippingSelected.etdText}</Text>
 
                                                         </View>
@@ -935,7 +876,7 @@ export default function checkoutScreen() {
                     Pilih pembayaran
                 </Button>
             </View>
-            <ActionSheet closeOnPressBack={false} closeOnTouchBackdrop={false} ref={actionSheetVoucher} onOpen={() => setloadAs(false)} onClose={() => setvoucherOpen("")} delayActionSheetDraw={false} containerStyle={{ padding: '4%', }}>
+            <ActionSheet ref={actionSheetVoucher} onOpen={() => setloadAs(false)} onClose={() => setvoucherOpen("")} delayActionSheetDraw={false} containerStyle={{ padding: '4%', }}>
                 <View style={[styles.row_between_center, styles.py_2, styles.mb_5]}>
                     <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja, width: '60%' }]}>Pilih Voucher</Text>
                     <TouchableOpacity onPressIn={() => actionSheetVoucher.current?.setModalVisible()}>
@@ -986,7 +927,7 @@ export default function checkoutScreen() {
                     </ScrollView>
                 </View>
             </ActionSheet>
-            <ActionSheet closeOnPressBack={false} closeOnTouchBackdrop={false} ref={actionSheetDelivery} delayActionSheetDraw={false} containerStyle={{ width: Wp('100%') }} containerStyle={{ padding: '2%' }}>
+            <ActionSheet ref={actionSheetDelivery} delayActionSheetDraw={false} containerStyle={{ width: Wp('100%') }} containerStyle={{ padding: '2%' }}>
                 <View style={[styles.row_between_center, styles.py_2, styles.px_4, styles.mb_3]}>
                     <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.BlueJaja }]}>Pilih Ekspedisi</Text>
                     <TouchableOpacity style={{ backgroundColor: 'transparent', paddingVertical: '2%', paddingHorizontal: '3%' }} onPressIn={() => actionSheetDelivery.current?.setModalVisible()}>
@@ -1008,8 +949,6 @@ export default function checkoutScreen() {
                                         renderItem={({ item }) => {
                                             let code = item.code;
                                             let Ename = item.name;
-                                            console.log("🚀 ~ file: CheckoutScreen.js ~ line 959 ~ checkoutScreen ~ Ename", Ename)
-
                                             return (
                                                 <View style={[styles.column_center_start, styles.mb_2, styles.py_2, styles.px_4, { borderBottomWidth: 1, borderBottomColor: colors.Silver, width: '100%' }]}>
                                                     <Text style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>{Ename}</Text>
@@ -1018,8 +957,6 @@ export default function checkoutScreen() {
                                                         keyExtractor={(item, index) => String(index) + "a"}
                                                         style={{ width: '100%' }}
                                                         renderItem={({ item }) => {
-                                                            console.log("🚀 ~ file: CheckoutScreen.js ~ line 980 ~ checkoutScreen ~ item", item)
-
                                                             return (
                                                                 <TouchableOpacity onPress={() => deliverySelected(code, item)} style={[styles.column_center_start, styles.mb_3, styles.py_2, { width: '100%' }]}>
                                                                     <View style={styles.row_between_center}>

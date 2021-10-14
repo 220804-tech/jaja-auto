@@ -139,7 +139,7 @@ export default function OrderDetailsScreen() {
         })
         setTimeout(() => {
             setLoading(false)
-        }, 2500);
+        }, 3000);
         const backAction = () => {
 
             getOrder()
@@ -612,7 +612,6 @@ export default function OrderDetailsScreen() {
             fetch("https://jaja.id/backend/payment/methodPayment/" + total, requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 614 ~ getListPayment ~ result", JSON.stringify(result))
                     setListPayment(result);
                 })
                 .catch(error => {
@@ -639,6 +638,7 @@ export default function OrderDetailsScreen() {
             .then(res => {
                 try {
                     let result = JSON.parse(res)
+                    console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 639 ~ getItem ~ res", res.data)
                     if (result.status.code === 200 || result.status.code === 204) {
                         setDetails(result.data)
                         let status = result.data.status;
@@ -733,18 +733,13 @@ export default function OrderDetailsScreen() {
         };
 
         var url = "https://jaja.id/backend/payment/getPayment/" + orderId;
-        console.log('getPaymentUrl', url);
         fetch(url, requestOptions)
             .then(response => response.json())
             .then(result => {
                 getListPayment(result.orderPaymentRecent.grand_total);
-
                 setOrderPaymentRecent(result.orderPaymentRecent);
                 setMidtrans(result.midtrans);
                 setLoadingOrderPaymentRecent(false);
-                console.log("resultGetPayment", result.orderPaymentRecent);
-                console.log("resultMidtrans", result.midtrans);
-
             })
             .catch(error => {
                 Utils.handleError(error, "Error with status code : 22008")
@@ -1087,7 +1082,7 @@ export default function OrderDetailsScreen() {
                         </View>
 
                     </View>
-                    {reduxOrderStatus == 'Menunggu Pembayaran' ?
+                    {reduxOrderStatus === 'Menunggu Pembayaran' ?
                         <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                             <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
                                 <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />

@@ -125,11 +125,8 @@ export default function OrderScreen() {
             })
             // console.log("🚀 ~ file: OrderScreen.js ~ line 127 ~ useEffect ~ reduxUser.orders", reduxUser)
             if (reduxnotifCount.orders) {
-                database().ref(`/people/${uid}/notif`).update({ home: reduxnotifCount.home - reduxnotifCount.orders })
-                ServiceFirebase.sellerNotifications(reduxUser.uid, 'home')
-
-                ServiceFirebase.sellerNotifications(reduxUser.uid, 'orders')
-
+                let homeCount = reduxnotifCount.home - reduxnotifCount.orders
+                database().ref(`/people/${reduxUser.uid}/notif`).update({ home: homeCount && homeCount > 0 ? homeCount : 0, orders: 0 })
             }
         }
     }, [])

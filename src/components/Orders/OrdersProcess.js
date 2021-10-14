@@ -33,7 +33,6 @@ export default function OrdersProcess() {
                 handleWaitConfirm()
             }
         }).catch(err => {
-            ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
             handleWaitConfirm()
         })
 
