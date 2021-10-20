@@ -82,6 +82,7 @@ export default function Complain() {
                                             "komplain": textComplain,
                                             "video": activeSections !== "1CV" ? video : null,
                                             "images": activeSections !== "1CV" ? images.length ? images : null : null,
+                                            'productsComplain': ['5', '8']
                                         }
                                     ]
                                 })
@@ -268,7 +269,7 @@ export default function Complain() {
                                                         value={textComplain}
                                                         onChangeText={(text) => settextComplain(text)}
 
-                                                        style={{ borderBottomWidth: 0.5, borderBottomColor: colors.Silver, width: Wp('80%'), marginBottom: '3%' }}
+                                                        style={{ borderBottomWidth: 0.5, borderBottomColor: colors.Silver, width: Wp('80%'), marginBottom: '3%', color: colors.BlackGrayScale }}
                                                         numberOfLines={5}
                                                         multiline={true}
                                                         placeholder="Masukkan alasan komplain"
@@ -282,7 +283,7 @@ export default function Complain() {
                                                     <TextInput
                                                         value={titleComplain}
                                                         onChangeText={(text) => settitleComplain(text)}
-                                                        style={{ borderBottomWidth: 0.5, width: Wp('80%') }}
+                                                        style={{ borderBottomWidth: 0.5, width: Wp('80%'), color: colors.BlackGrayScale }}
                                                         numberOfLines={1}
                                                         placeholder="Masukkan judul komplain"
 
@@ -292,7 +293,7 @@ export default function Complain() {
                                                     <TextInput
                                                         value={textComplain}
                                                         onChangeText={(text) => settextComplain(text)}
-                                                        style={{ borderBottomWidth: 0.5, width: Wp('80%'), minHeight: Wp('15%'), maxHeight: Wp('100%') }}
+                                                        style={{ borderBottomWidth: 0.5, width: Wp('80%'), minHeight: Wp('15%'), maxHeight: Wp('100%'), color: colors.BlackGrayScale }}
                                                         numberOfLines={11}
                                                         multiline={true}
                                                         placeholderTextColor={colors.BlackGrey}

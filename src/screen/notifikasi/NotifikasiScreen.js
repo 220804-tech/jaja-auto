@@ -19,9 +19,10 @@ function NotifikasiScreen(props) {
             method: 'GET',
             redirect: 'follow'
         };
-        fetch(`https://jaja.id/backend/notifikasi/${reduxUser ? reduxUser.id : ''}`, requestOptions)
+        fetch(`https://jaja.id/backend/notifikasi/${reduxAuth ? reduxUser.id : ''}`, requestOptions)
             .then(response => response.text())
             .then(result => {
+                console.log("🚀 ~ file: NotifikasiScreen.js ~ line 25 ~ handleNotifikasi ~ result", result)
                 try {
                     let data = JSON.parse(result)
                     if (data.status.code === 200 || data.status.code === 204) {
@@ -48,6 +49,7 @@ function NotifikasiScreen(props) {
             .catch(error => {
                 Utils.handleError(error, 'Error with status code : 15002')
             });
+        console.log("🚀 ~ file: NotifikasiScreen.js ~ line 52 ~ handleNotifikasi ~ reduxUser", reduxUser)
     }
 
     useEffect(() => {
@@ -57,8 +59,8 @@ function NotifikasiScreen(props) {
 
     useFocusEffect(
         useCallback(() => {
-            if (reduxUser && Object.keys(reduxUser).length) {
-                handleNotifikasi()
+            handleNotifikasi()
+            if (reduxAuth) {
             }
             readData()
         }, []),

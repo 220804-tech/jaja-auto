@@ -316,7 +316,7 @@ export default function ProfileScreen(props) {
               : null
             }
 
-            <TouchableWithoutFeedback style={styles.my_5} onPress={() => Linking.openURL("market://details?id=com.seller.jaja")}>
+            <TouchableWithoutFeedback style={styles.my_5} oSnPress={() => Linking.openURL("market://details?id=com.seller.jaja")}>
               <Text adjustsFontSizeToFit style={[style.font_14, style.my_5, { alignSelf: 'center', color: colors.BlueJaja }]}>Mulai Berjualan?</Text>
             </TouchableWithoutFeedback>
           </View>

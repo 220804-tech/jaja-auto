@@ -215,7 +215,7 @@ export default function checkoutScreen() {
                 redirect: 'follow'
             };
             fetch("https://jaja.id/backend/voucher/claimVoucherStore", requestOptions)
-                .then(response => response.json())
+                .then(response => response.text())
                 .then(res => {
                     try {
                         let result = JSON.parse(res)
@@ -823,13 +823,13 @@ export default function checkoutScreen() {
                             {reduxCheckout.voucherJajaType === "ongkir" ? <Text style={[styles.font_13, { marginBottom: '2%' }]}>Diskon Pengiriman</Text> : null}
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>Biaya penanganan</Text>
                             <View style={[styles.row_start_center, { width: Wp('50%'), marginLeft: '-6.5%', paddingLeft: '-2%', opacity: reduxCoin == 0 ? 0.4 : 1 }]}>
-                                <Checkbox
-                                    disabled={reduxCoin == 0 ? true : false}
-                                    theme={{ mode: 'adaptive' }}
-                                    color={colors.BlueJaja}
-                                    status={useCoin ? 'checked' : 'unchecked'}
-                                    onPress={() => handleUseCoin(!useCoin)}
-                                />
+                                    <Checkbox
+                                        disabled={reduxCoin == 0 ? true : false}
+                                        theme={{ mode: 'adaptive' }}
+                                        color={colors.BlueJaja}
+                                        status={useCoin ? 'checked' : 'unchecked'}
+                                        onPress={() => handleUseCoin(!useCoin)}
+                                    />
                                 <Text numberOfLines={1} style={[styles.font_13, styles.T_medium, { textAlignVertical: 'center', marginBottom: '-1%' }]}>Koin dimiliki</Text>
                             </View>
 

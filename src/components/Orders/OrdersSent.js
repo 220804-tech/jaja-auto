@@ -10,6 +10,7 @@ export default function OrdersSent() {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const reduxSent = useSelector(state => state.order.sent)
+    console.log("🚀 ~ file: OrdersSent.js ~ line 13 ~ OrdersSent ~ reduxSent", reduxSent)
     const reduxAuth = useSelector(state => state.auth.auth)
     const [refreshing, setRefreshing] = useState(false);
     const [complain, setComplain] = useState(false);
@@ -77,7 +78,7 @@ export default function OrdersSent() {
     }
     return (
         <View style={[styles.container, styles.pt_2]}>
-            {reduxSent && reduxSent.length && complain ?
+            {reduxSent && reduxSent.length && !complain ?
                 <FlatList
                     data={reduxSent}
                     refreshControl={
@@ -89,7 +90,6 @@ export default function OrdersSent() {
                     keyExtractor={item => item.invoice}
                     renderItem={({ item }) => {
                         if (!item.complain) {
-
                             return (
                                 <TouchableOpacity style={Os.card} onPress={() => handleOrderDetails(item)}>
                                     <View style={[styles.row_between_center, styles.px_2, styles.mb_3, { width: '100%' }]}>
@@ -121,8 +121,6 @@ export default function OrdersSent() {
                                             </View>
                                         </View>
                                     </View>
-                                    {/* <TouchableOpacity style={[styles.row_between_center, styles.p_2, { width: '100%' }]} onPress={() => navigation.navigate('OrderDelivery')}> */}
-
                                     <TouchableOpacity style={[styles.row_between_center, styles.mt_5, styles.px_2]} onPress={() => handleTracking(item)}>
                                         <View style={[styles.row, { width: Wp('60%') }]}>
                                             <Image style={{ width: 19, height: 19, tintColor: colors.YellowJaja, marginRight: '2%' }} source={require('../../assets/icons/google-maps.png')} />

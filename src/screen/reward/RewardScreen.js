@@ -51,16 +51,17 @@ export default function RewardScreen() {
 
         fetch("https://jaja.id/backend/user/historyKoin", requestOptions)
             .then(response => response.text())
-            .then(result => {
+            .then(res => {
+                // alert(JSON.stringify(res))
                 try {
-                    let data = JSON.parse(result)
-                    if (data.status.code == 200 || data.status.code == 204) {
-                        setdoneCoin(data.data.history)
+                    let result = JSON.parse(res)
+                    if (result.status.code == 200 || result.status.code == 204) {
+                        setdoneCoin(result.data.history)
                     } else {
-                        Utils.handleErrorResponse(data, 'Error with status code : 12057')
+                        Utils.handleErrorResponse(result, 'Error with status code : 12057')
                     }
                 } catch (error) {
-                    Utils.handleError(data, 'Error with status code : 12058')
+                    Utils.handleError(res, 'Error with status code : 12058')
                 }
             })
             .catch(error => Utils.handleError(error, "Error with status code : 12059"));
@@ -78,12 +79,12 @@ export default function RewardScreen() {
 
         fetch("https://jaja.id/backend/user/ListCustomerPayouts", requestOptions)
             .then(response => response.text())
-            .then(result => {
+            .then(res => {
                 try {
-                    let data = JSON.parse(result)
-                    console.log("🚀 ~ file: RewardScreen.js ~ line 84 ~ getPending ~ data", data.data.items)
-                    if (data.status.code == 200 || data.status.code == 204) {
-                        setpendingCoin(data.data.items)
+                    let result = JSON.parse(res)
+                    console.log("🚀 ~ file: RewardScreen.js ~ line 84 ~ getPending ~ data", result.data.items)
+                    if (result.status.code == 200 || result.status.code == 204) {
+                        setpendingCoin(result.data.items)
                     } else {
                         Utils.handleErrorResponse(data, 'Error with status code : 120560')
                     }
@@ -209,12 +210,12 @@ export default function RewardScreen() {
                             </View>
                         </View>
                         <View style={[styles.row_center, styles.mb_2, { width: '98%', alignSelf: 'center' }]}>
-                            <TouchableRipple disabled={reduxUser.coin && reduxUser.coin !== '0' ? false : true} onPress={() => setShowModal(true)} style={[styles.row_center, styles.py_2, { width: '50%', backgroundColor: reduxUser.coin && reduxUser.coin !== '0' ? colors.GreenSuccess : colors.Silver }]}>
+                            {/* <TouchableRipple disabled={reduxUser.coin && reduxUser.coin !== '0' ? false : true} onPress={() => setShowModal(true)} style={[styles.row_center, styles.py_2, { width: '50%', backgroundColor: reduxUser.coin && reduxUser.coin !== '0' ? colors.GreenSuccess : colors.Silver }]}>
                                 <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>
                                     Tambah Rekening
                                 </Text>
-                            </TouchableRipple>
-                            <TouchableRipple disabled={reduxUser.coin && reduxUser.coin !== '0' ? false : true} onPress={() => setShowModal(true)} style={[styles.row_center, styles.py_2, { width: '50%', backgroundColor: reduxUser.coin && reduxUser.coin !== '0' ? colors.BlueJaja : colors.Silver }]}>
+                            </TouchableRipple> */}
+                            <TouchableRipple disabled={reduxUser.coin && reduxUser.coin !== '0' ? false : true} onPress={() => setShowModal(true)} style={[styles.row_center, styles.py_2, { width: '99%', backgroundColor: reduxUser.coin && reduxUser.coin !== '0' ? colors.BlueJaja : colors.Silver }]}>
                                 <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>
                                     Ajukan Tarik Saldo
                                 </Text>
@@ -253,7 +254,7 @@ export default function RewardScreen() {
                         />
                     </View>
                 </View>
-                <View style={[styles.column, style.card, styles.mt_5, styles.pb_3]}>
+                <View style={[styles.column, style.card, styles.my_5, styles.pb_3, { width: '98%', alignSelf: 'center' }]}>
                     <View style={[style.banner, styles.px_3, styles.py_4]}>
                         <Text style={[styles.font_13, styles.T_medium, { color: colors.White }]}>Undang teman kamu untuk install Jaja.id dan dapatkan koin belanja hingga 100.000</Text>
                     </View>
@@ -329,19 +330,19 @@ export default function RewardScreen() {
     )
 
     function tabDone() {
-        return <View style={[styles.column, styles.mt_2, styles.p_2, { backgroundColor: colors.White, flex: 1 }]}>
+        return <View style={[styles.column, { backgroundColor: colors.White, flex: 1 }]}>
             <View style={[styles.column, { borderWidth: 1, borderColor: colors.BlueJaja, width: '100%', height: '100%' }]}>
                 <View style={[styles.row_center, styles.px_2, { borderBottomWidth: 1, borderColor: colors.BlueJaja }]}>
-                    <Text style={[styles.font_12, styles.py, { width: '20%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>No.</Text>
+                    <Text style={[styles.font_12, styles.py, { width: '15%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>No.</Text>
                     <Text style={[styles.font_12, styles.py, { width: '40%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>Jumlah</Text>
-                    <Text style={[styles.font_12, styles.py, { width: '40%', textAlign: 'center' }]}>Note</Text>
+                    <Text style={[styles.font_12, styles.py, { width: '45%', textAlign: 'center' }]}>Note</Text>
                 </View>
                 {doneCoin.length ?
                     <ScrollView>
                         {doneCoin.map((item, idx) => {
                             return (
                                 <View style={[styles.row_center, styles.px_2, { borderBottomWidth: 0.5 }]}>
-                                    <View style={[styles.row_center, styles.p, { borderRightWidth: 0.5, width: '20%' }]}>
+                                    <View style={[styles.row_center, styles.p, { borderRightWidth: 0.5, width: '15%' }]}>
                                         <Text style={[styles.font_12, { textAlign: 'center' }]}>{idx + 1}.</Text>
                                     </View>
                                     <View style={[styles.row_center, styles.p, { borderRightWidth: 0.5, width: '40%', }]}>
@@ -350,7 +351,7 @@ export default function RewardScreen() {
                                             :
                                             <Text style={[styles.font_12, { color: colors.RedNotif, textAlign: 'center' }]}>- {item.koin}</Text>}
                                     </View>
-                                    <View style={[styles.row_center, styles.p, { width: '40%', }]}>
+                                    <View style={[styles.row_center, styles.p, { width: '45%', }]}>
                                         <Text style={[styles.font_10, { textAlign: 'center' }]}>{item.note}</Text>
                                     </View>
                                 </View>
@@ -366,15 +367,13 @@ export default function RewardScreen() {
     }
 
     function tabPending() {
-        return <View style={[styles.column, styles.mt_2, styles.p_2, { backgroundColor: colors.White, flex: 1 }]}>
+        return <View style={[styles.column, { backgroundColor: colors.White, flex: 1 }]}>
             <View style={[styles.column, { borderWidth: 1, borderColor: colors.BlueJaja, width: '100%', height: '100%' }]}>
                 <View style={[styles.row_center, { borderBottomWidth: 1, borderColor: colors.BlueJaja }]}>
-                    <Text style={[styles.font_12, styles.py, { width: '20%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>Account</Text>
-                    <Text style={[styles.font_12, styles.py, { width: '30%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>Jumlah</Text>
+                    <Text style={[styles.font_12, styles.py, { width: '40%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>Account</Text>
+                    <Text style={[styles.font_12, styles.py, { width: '35%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>Jumlah</Text>
                     {/* <Text style={[styles.font_12, styles.py, { width: '30%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>Jumlah</Text> */}
-
-                    <Text style={[styles.font_12, styles.py, { width: '20%', textAlign: 'center' }]}>Status</Text>
-
+                    <Text style={[styles.font_12, styles.py, { width: '25%', textAlign: 'center' }]}>Status</Text>
                 </View>
                 {pendingCoin.length ?
                     <ScrollView>
@@ -382,16 +381,16 @@ export default function RewardScreen() {
                             console.log("🚀 ~ file: RewardScreen.js ~ line 353 ~ {pendingCoin.map ~ item", item)
                             return (
                                 <View style={[styles.row_center, { borderBottomWidth: 0.5 }]}>
-                                    <View style={[styles.row_center, styles.p_2, { borderRightWidth: 0.5, width: '20%' }]}>
+                                    <View style={[styles.row_center, styles.p_2, { borderRightWidth: 0.5, width: '40%' }]}>
                                         <Text style={[styles.font_10, { textAlign: 'center' }]}>{String(item.account).slice(0, 6)}XXXX</Text>
                                     </View>
-                                    <View style={[styles.row_center, styles.p_2, { borderRightWidth: 0.5, width: '30%', }]}>
+                                    <View style={[styles.row_center, styles.p_2, { borderRightWidth: 0.5, width: '35%', }]}>
                                         <Text style={[styles.font_12, { textAlign: 'center' }]}>{item.amount}</Text>
                                     </View>
                                     {/* <View style={[styles.row_center, styles.p_2, { borderRightWidth: 0.5, width: '30%', }]}>
                                         <Text style={[styles.font_12, { textAlign: 'center' }]}>{item.noted}Lorem id pariatur anim fugiat</Text>
                                     </View> */}
-                                    <View style={[styles.row_center, styles.p_2, { width: '20%', }]}>
+                                    <View style={[styles.row_center, styles.p_2, { width: '25%', }]}>
                                         <Text style={[styles.font_10, { textAlign: 'center', color: item.status === 'queued' ? colors.RedNotif : colors.GreenSuccess }]}>{item.status === 'queued' ? 'Pending' : 'Success'}</Text>
                                     </View>
                                 </View>

@@ -3,9 +3,10 @@ import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Linking,
 import { Appbar, colors, styles, Wp, Hp, useNavigation, useFocusEffect, Loading, Utils, ServiceStore, ServiceCheckout, ServiceOrder } from '../../export'
 import Clipboard from '@react-native-community/clipboard';
 import { useDispatch, useSelector } from "react-redux";
-import { Button, TouchableRipple, Checkbox } from 'react-native-paper'
+import { Button, TouchableRipple, RadioButton } from 'react-native-paper'
 import ActionSheet from "react-native-actions-sheet";
 import { WebView } from 'react-native-webview';
+import CheckBox from '@react-native-community/checkbox';
 
 export default function OrderDetailsScreen() {
     const navigation = useNavigation();
@@ -129,6 +130,10 @@ export default function OrderDetailsScreen() {
 
     const [showModal, setModalShow] = useState(false);
 
+    const [modalComplain, setmodalComplain] = useState(false);
+    const [checkbox, setcheckbox] = useState(false)
+    const [productsComplain, setproductsComplain] = useState([])
+    const [count, setcount] = useState(0)
 
     useEffect(() => {
         setLoading(true)
@@ -137,6 +142,7 @@ export default function OrderDetailsScreen() {
             setLoading(true)
         }
     }, [details])
+
     useEffect(() => {
         ServiceCheckout.getListPayment().then(res => {
             if (res) {
@@ -484,11 +490,9 @@ export default function OrderDetailsScreen() {
             .then(response => response.json())
             .then(result => {
                 actionSheetPayment.current?.setModalVisible()
-                console.log('charge', JSON.stringify(result));
-
-                console.log('dataToken', JSON.stringify(result));
-                console.log('dataPayment', JSON.stringify(dataPayment));
-
+                // console.log('charge', JSON.stringify(result));
+                // console.log('dataToken', JSON.stringify(result));
+                // console.log('dataPayment', JSON.stringify(dataPayment));
                 var va_or_code_or_link = "";
                 var token = "";
                 if (dataPayment.payment_type == "bank_transfer") {
@@ -522,7 +526,6 @@ export default function OrderDetailsScreen() {
 
             })
             .catch(error => { alert('Kegagalan Respon Server'); });
-
     }
 
     const snapTokenUpdate = (paramPayMD) => {
@@ -641,7 +644,6 @@ export default function OrderDetailsScreen() {
             .then(res => {
                 try {
                     let result = JSON.parse(res)
-                    console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 639 ~ getItem ~ res", res.data)
                     if (result.status.code === 200 || result.status.code === 204) {
                         setDetails(result.data)
                         let status = result.data.status;
@@ -722,8 +724,6 @@ export default function OrderDetailsScreen() {
 
 
     }
-
-
 
     const getPayment = (orderId) => {
         var myHeaders = new Headers();
@@ -865,6 +865,31 @@ export default function OrderDetailsScreen() {
     var contentPaymentRecent = <View />
     const priceSplitter = (number) => (number && number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'));
 
+
+    const handleComplain = (item, idx) => {
+        let newProductComplain = productsComplain
+        let boolean = Boolean(newProductComplain.find(e => e === item.productId))
+        if (boolean) {
+            const filter = newProductComplain.filter(element => element.indexOf(newProductComplain[idx]) === -1)
+            console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 874 ~ handleComplain ~ filter", filter)
+
+        } else {
+            newProductComplain.push(item.productId)
+        }
+        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 872 ~ handleComplain ~ boolean", boolean)
+
+        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 871 ~ handleComplain ~ newProductComplain", newProductComplain)
+        // if (!newProductComplain.length && !boolean) {
+        //     newProductComplain.push(item.productId)
+        //     console.log(true)
+
+        // } else {
+        //     newProductComplain = filter
+        // }
+        // setproductsComplain(newProductComplain)
+        // console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 880 ~ handleComplain ~ newProductComplain", newProductComplain)
+        // setcount(count + 1)
+    }
     return (
         <SafeAreaView style={styles.container}>
             <Appbar title="Detail Pesanan" back={true} />
@@ -889,7 +914,7 @@ export default function OrderDetailsScreen() {
                             </View>
                         </View>
                         {reduxOrderStatus !== "Menunggu Pembayaran" ?
-                            details ?
+                            details && details.items && details.items.length ?
                                 <View style={styles.row_between_center}>
                                     <View style={[styles.row]}>
                                         <Text style={[styles.font_13]}>#{details.items[0].invoice}</Text>
@@ -932,7 +957,9 @@ export default function OrderDetailsScreen() {
 
                                 <Text numberOfLines={3} style={[styles.font_12, styles.mt_2]}>{details.address.address.replace(/<br>/g, "")}</Text>
                             </View>
-                        </View> : null}
+                        </View>
+                        : null
+                    }
                     {details && details.items.length ?
                         details.items.map((item, idxStore) => {
                             return (
@@ -1158,6 +1185,11 @@ export default function OrderDetailsScreen() {
 
                         </View>
                         : null}
+                    {/* <Button onPress={() => {
+                        setmodalComplain(true)
+                    }} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
+                        Komplain
+                    </Button> */}
                     {details && Object.keys(details).length ?
                         reduxOrderStatus === "Pengiriman" ?
                             <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'column', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
@@ -1224,7 +1256,6 @@ export default function OrderDetailsScreen() {
                             data={subPayment}
                             keyExtractor={(item) => item.id}
                             renderItem={({ item, index }) => {
-                                console.log("🚀 ~ file: CheckoutScreen.js ~ line 1057 ~ checkoutScreen ~ item", item)
                                 return (
                                     <TouchableRipple
                                         //onPressIn={() => gotoPaymentDetailSub(item)} 
@@ -1260,7 +1291,7 @@ export default function OrderDetailsScreen() {
                     setModalShow(!showModal);
                 }}>
                 <View style={{ flex: 1, width: Wp('100%'), height: Hp('100%'), backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center' }}>
-                    <View style={[styles.column_start, styles.pt_3s, { width: Wp('95%'), height: Wp('50%'), backgroundColor: colors.White, elevation: 11, zIndex: 999 }]}>
+                    <View style={[styles.column_start, styles.pt_s, { width: Wp('95%'), height: Wp('50%'), backgroundColor: colors.White, elevation: 11, zIndex: 999 }]}>
                         {selectedPayment.payment_type_label === 'Card' ?
                             <View style={[styles.column_center_start, styles.px_4, styles.pt_5, { height: '60%' }]}>
                                 <Text style={[styles.font_14, styles.T_semi_bold, styles.mb_5, { color: colors.BlueJaja, height: '30%' }]}>Kartu Kredit</Text>
@@ -1280,6 +1311,83 @@ export default function OrderDetailsScreen() {
                     </View>
                 </View>
             </Modal>
+
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalComplain}
+                onRequestClose={() => {
+                    setmodalComplain(!modalComplain);
+                }}>
+                <View style={{ flex: 1, width: Wp('100%'), height: Hp('100%'), backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={[styles.column_start, { width: Wp('95%'), elevation: 11, zIndex: 999, backgroundColor: colors.White }]}>
+                        <Text style={[styles.font_14, styles.T_medium, styles.px_3, styles.pt_3, { color: colors.BlueJaja }]}>Pilih produk yang ingin dikomplain</Text>
+
+                        {details && details.items.length ?
+                            details.items.map((item, idxStore) => {
+                                return (
+                                    <View key={String(idxStore)} style={[styles.column, styles.mb, { width: '100%', }]}>
+                                        {item.products.map((child, idx) => {
+                                            return (
+                                                <View key={String(idx) + "s"} style={[styles.column, styles.px_3, styles.py_2, { width: Wp('95%'), backgroundColor: colors.White }]}>
+                                                    <View style={styles.row_between_center}>
+                                                        <View style={[styles.row_start_center, { flex: 1, height: Wp('25%') }]}>
+                                                            <TouchableOpacity >
+                                                                <Image style={{ width: Wp('15%'), height: Wp('15%'), borderRadius: 5, backgroundColor: colors.BlackGrey }}
+                                                                    resizeMethod={"scale"}
+                                                                    resizeMode="cover"
+                                                                    source={{ uri: child.image }}
+                                                                />
+                                                            </TouchableOpacity>
+                                                            <View style={[styles.column, styles.ml_2, { height: Wp('15%'), width: Wp('85%') }]}>
+                                                                <Text numberOfLines={1} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja, width: '95%' }]}>{child.name}</Text>
+                                                                <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlackGrayScale, }]}>{child.variant ? child.variant : "Variasi Biru"}</Text>
+                                                                <View style={styles.row}>
+                                                                    <Text numberOfLines={1} style={[styles.font_14]}>{child.qty} x</Text>
+                                                                    <Text numberOfLines={1} style={[styles.priceAfter, { color: colors.BlueJaja }]}> {child.priceCurrencyFormat}</Text>
+                                                                </View>
+                                                            </View>
+                                                        </View>
+                                                        <CheckBox disabled={false} value={Boolean(productsComplain.find((a) => a == child.productId))}
+
+                                                            onValueChange={() => {
+                                                                handleComplain(child, idx)
+                                                            }
+
+                                                            } />
+                                                    </View>
+                                                </View>
+                                            )
+                                        })
+                                        }
+
+                                    </View>
+                                )
+                            })
+                            :
+                            null}
+                        <View style={[styles.row_end_center, styles.p_3, { width: '100%' }]}>
+                            <View styl={{ width: '40%' }}>
+                            </View>
+                            <Button mode='contained' onPress={() => setmodalComplain(false)} style={[styles.mr_2, { width: '35%' }]} color={colors.YellowJaja} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>
+                                Batal
+                            </Button>
+                            <Button mode='contained' onPress={() => {
+                                setmodalComplain(false)
+                                navigation.navigate(details.complain ? 'ResponseComplain' : 'RequestComplain', { invoice: details.items[0].invoice })
+                            }} style={[{ width: '35%' }]} color={colors.BlueJaja} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>
+                                Komplain
+                            </Button>
+                            {/* <TouchableRipple onPress={() => console.log('pressed')} style={[styles.row_center, styles.p_3, styles.mr, { elevation: 1, width: Wp('25%'), backgroundColor: colors.BlueJaja }]} rippleColor={colors.BlueJaja}>
+                                <Text >Batal</Text>
+                            </TouchableRipple>
+                            <TouchableRipple onPress={() => console.log('pressed')} style={[styles.row_center, styles.p_3, { elevation: 1, width: Wp('25%'), backgroundColor: colors.BlueJaja }]} rippleColor={colors.BlueJaja}>
+                                <Text>Komplain</Text>
+                            </TouchableRipple> */}
+                        </View>
+                    </View>
+                </View>
+            </Modal >
         </SafeAreaView >
     )
 }
