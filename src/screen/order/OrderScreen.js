@@ -23,6 +23,7 @@ export default function OrderScreen() {
 
     const reduxOrder = useSelector(state => state.order.filter)
     const reduxRefresh = useSelector(state => state.order.refresh)
+    const reduxCompleted = useSelector(state => state.order.completed)
 
     const [index, setIndex] = useState(0)
     const [count, setCount] = useState(0)
@@ -170,8 +171,8 @@ export default function OrderScreen() {
                                                         <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({reduxOrder[1].total + reduxOrder[2].total > 9 ? "9+" : reduxOrder[1].total + reduxOrder[2].total})</Text>
                                                         : route.title === "Dikirim" && sent ?
                                                             <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({sent > 9 ? "9+" : sent})</Text>
-                                                            : route.title == "Selesai" && Object.keys(reduxOrder[4]).length && reduxOrder[4].total ?
-                                                                <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({reduxOrder[4].total > 9 ? "9+" : reduxOrder[4].total})</Text>
+                                                            : route.title == "Selesai" && Object.keys(reduxCompleted).length && reduxCompleted.total ?
+                                                                <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({reduxCompleted.total > 9 ? "9+" : reduxCompleted.total})</Text>
                                                                 : route.title === "Dibatalkan" && Object.keys(reduxOrder[5]).length && reduxOrder[5].total ?
                                                                     <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({reduxOrder[5].total > 9 ? "9+" : reduxOrder[5].total})</Text>
                                                                     : route.title === "Pengembalian" && complain ?

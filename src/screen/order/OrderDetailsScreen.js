@@ -137,22 +137,15 @@ export default function OrderDetailsScreen() {
 
     useEffect(() => {
         setLoading(true)
-
         if (details && Object.keys(details).length) {
             setLoading(true)
         }
     }, [details])
 
     useEffect(() => {
-        ServiceCheckout.getListPayment().then(res => {
-            if (res) {
-                dispatch({ type: 'SET_LIST_PAYMENT', payload: res })
-            }
-        })
         const backAction = () => {
-
             getOrder()
-            // navigation.goBack()
+            navigation.goBack()
             return true
         }
         const backHandler = BackHandler.addEventListener(
@@ -182,6 +175,7 @@ export default function OrderDetailsScreen() {
             }
         })
     }
+
     useEffect(() => {
         if (downloadInvoice) {
             setTimeout(() => {
@@ -222,8 +216,6 @@ export default function OrderDetailsScreen() {
             id_order: orderPaymentRecent.order_id,
             dataPayment: dataPayment
         }
-        console.log('paramNosSub', JSON.stringify(param));
-
 
         if (dataPayment.payment_form == "screenOther") {
             if (dataPayment.payment_type == "gopay") {
@@ -255,7 +247,6 @@ export default function OrderDetailsScreen() {
             payment_form: item.payment_form
             //payment_form:'screenOther'
         }
-        console.log('dataPayment', JSON.stringify(dataPayment));
 
         var param = {
             id_order: orderPaymentRecent.order_id,
@@ -315,23 +306,13 @@ export default function OrderDetailsScreen() {
             };
         }
 
-
-
         var paramPay = {
             transaction_details: transaction_details,
             customer_details: customer_details,
             enabled_payments,
             credit_card
         }
-
-
         var url = midtrans.url_snap + "snap/v1/transactions";
-        console.log('url', url);
-        console.log('paramPay', JSON.stringify(paramPay));
-        console.log('midtrans', JSON.stringify(midtrans));
-
-
-
 
         var myHeaders = new Headers();
         myHeaders.append("Authorization", "Basic " + authBasicHeader);
@@ -352,8 +333,6 @@ export default function OrderDetailsScreen() {
             .then(result => {
                 actionSheetPayment.current?.setModalVisible()
 
-                console.log('dataToken', JSON.stringify(result));
-
                 var paramPayMD = {
                     "total_pembayaran": totalPembayaran,
                     "fee": fee,
@@ -363,8 +342,6 @@ export default function OrderDetailsScreen() {
                     "order_id": orderPaymentRecent.order_id,
                     "va_or_code_or_link": result.redirect_url
                 }
-                console.log('paramPayMD', JSON.stringify(paramPayMD));
-
                 if (dataPayment.payment_type == "gopay") {
                     var qr_code_url = snapCharge(result.token);
                     param.qr_code_url = qr_code_url;
@@ -465,9 +442,6 @@ export default function OrderDetailsScreen() {
                 "bill_info2": "Masterdiskon"
             }
         }
-        console.log('parampay', JSON.stringify(paramPay));
-        console.log('midtrans', JSON.stringify(midtrans));
-
 
         var url = midtrans.url + "v2/charge";
 
@@ -490,9 +464,6 @@ export default function OrderDetailsScreen() {
             .then(response => response.json())
             .then(result => {
                 actionSheetPayment.current?.setModalVisible()
-                // console.log('charge', JSON.stringify(result));
-                // console.log('dataToken', JSON.stringify(result));
-                // console.log('dataPayment', JSON.stringify(dataPayment));
                 var va_or_code_or_link = "";
                 var token = "";
                 if (dataPayment.payment_type == "bank_transfer") {
@@ -520,8 +491,6 @@ export default function OrderDetailsScreen() {
                     "order_id": orderPaymentRecent.order_id,
                     "va_or_code_or_link": va_or_code_or_link,
                 }
-                console.log('paramPayMD', JSON.stringify(paramPayMD));
-
                 snapTokenUpdate(paramPayMD);
 
             })
@@ -531,8 +500,6 @@ export default function OrderDetailsScreen() {
     const snapTokenUpdate = (paramPayMD) => {
         var url = midtrans.url_base + 'payment/snap_token_update';
 
-
-        console.log('urlss', url, JSON.stringify(paramPayMD));
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("Cookie", "ci_session=6mmg253sca0no2e0gqas59up68f6ljlo");
@@ -549,8 +516,6 @@ export default function OrderDetailsScreen() {
         fetch(url, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log('snapTokenUpdate', JSON.stringify(result));
-
 
                 if (paramPayMD.dataPayment.payment_form == "screenOther") {
                     handlePayment();
@@ -589,16 +554,13 @@ export default function OrderDetailsScreen() {
 
 
     const handleShowPayment = (item) => {
-        console.log("🚀 ~ file: CheckoutScreen.js ~ line 571 ~ handleShowPayment ~ item", item)
         setselectedPayment(item)
         if (item.payment_type_label !== 'Bank Transfer') {
             //setModalShow(true)
             // setsubPayment('')
             gotoPaymentDetail(item);
-            console.log('pilih');
         } else {
             //alert('sd');
-            console.log('selectedPayment', JSON.stringify(selectedPayment));
             setsubPayment(item.subPayment)
             actionSheetPayment.current?.setModalVisible(true)
         }
@@ -649,6 +611,13 @@ export default function OrderDetailsScreen() {
                         let status = result.data.status;
                         if (!reduxOrderStatus) {
                             dispatch({ type: 'SET_ORDER_STATUS', payload: status === 'notPaid' ? "Menunggu Pembayaran" : status === 'waitConfirm' ? 'Menunggu Konfirmasi' : status === 'prepared' ? 'Sedang Disiapkan' : status === 'canceled' ? 'Pesanan Dibatalkan' : status === 'done' ? 'Pesanan Selesai' : null })
+                            if (status == 'notPaid') {
+                                ServiceCheckout.getListPayment().then(res => {
+                                    if (res) {
+                                        dispatch({ type: 'SET_LIST_PAYMENT', payload: res })
+                                    }
+                                })
+                            }
                         }
                         if (status === 'notPaid') {
                             getPayment(result.data.orderId);
@@ -814,7 +783,6 @@ export default function OrderDetailsScreen() {
     }
     const handleStore = (item) => {
         if (reduxStore && Object.keys(reduxStore).length) {
-            console.log("🚀 ~ file: ProductScreen.js ~ line 259 ~ handleStore ~ reduxStore", reduxStore)
             if (reduxStore.name != item.name) {
                 dispatch({ "type": 'SET_STORE', payload: {} })
                 dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
@@ -866,26 +834,31 @@ export default function OrderDetailsScreen() {
     const priceSplitter = (number) => (number && number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'));
 
 
-    const handleComplain = (item, idx) => {
+    const handleComplain = (idxStore, item, idx) => {
         let newProductComplain = productsComplain
+        let newOrderDetail = details
         let boolean = Boolean(newProductComplain.find(e => e === item.productId))
-        if (boolean) {
-            const filter = newProductComplain.filter(element => element.indexOf(newProductComplain[idx]) === -1)
-            console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 874 ~ handleComplain ~ filter", filter)
+        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 874 ~ handleComplain ~ boolean", boolean)
+        if (!boolean) {
+            newProductComplain.push(item.productId)
+            newOrderDetail.items[idxStore].products[idx].onComplain = true
 
         } else {
-            newProductComplain.push(item.productId)
+            newOrderDetail.items[idxStore].products[idx].onComplain = false
+            newProductComplain = newProductComplain.filter(element => element.indexOf(newProductComplain[idx]) === -1)
         }
-        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 872 ~ handleComplain ~ boolean", boolean)
+        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 878 ~ handleComplain ~ newProductComplain", newProductComplain)
+        setproductsComplain(newProductComplain)
+        setDetails(newOrderDetail)
+        setcount(count + 1)
+        // // if (!newProductComplain.length && !boolean) {
+        // //     newProductComplain.push(item.productId)
+        // //     console.log(true)
 
-        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 871 ~ handleComplain ~ newProductComplain", newProductComplain)
-        // if (!newProductComplain.length && !boolean) {
-        //     newProductComplain.push(item.productId)
-        //     console.log(true)
-
-        // } else {
-        //     newProductComplain = filter
-        // }
+        // // } else {
+        // //     newProductComplain = filter
+        // // }
+        // setDetails(details.items[idxStore] = newOrderDetail)
         // setproductsComplain(newProductComplain)
         // console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 880 ~ handleComplain ~ newProductComplain", newProductComplain)
         // setcount(count + 1)
@@ -1190,29 +1163,27 @@ export default function OrderDetailsScreen() {
                     }} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                         Komplain
                     </Button> */}
+                    {/* navigation.navigate(details.complain?'ResponseComplain': 'RequestComplain', {invoice: details.items[0].invoice }) */}
+
                     {details && Object.keys(details).length ?
                         reduxOrderStatus === "Pengiriman" ?
                             <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'column', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
                                 <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%', marginBottom: '2%' }} contentStyle={{ width: '100%', height: '95%' }} color={colors.BlueJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                                     Terima Pesanan
                                 </Button>
-                                <Button onPress={() => {
-                                    navigation.navigate(details.complain ? 'ResponseComplain' : 'RequestComplain', { invoice: details.items[0].invoice })
-                                }} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
+                                <Button onPress={() => details.complain ? navigation.navigate('ResponseComplain', { invoice: details.items[0].invoice }) : setmodalComplain(true)} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                                     {details.complain ? "Sedang Dikomplain" : "Komplain"}
                                 </Button>
                             </View>
                             : reduxOrderStatus === "Pesanan Selesai" ?
                                 <View style={{ position: 'absolute', bottom: 0, zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center', marginBottom: '3%' }}>
                                     <Button icon="star" onPress={() => {
-                                        // console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 1137 ~ details.items[0].products", details.items[0].products)
                                         navigation.navigate('AddReview', { data: details.items[0].products })
                                     }} style={{ alignSelf: 'center', width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                                         Beri Penilaian
                                     </Button>
                                 </View>
                                 : reduxOrderStatus === "Menunggu Pembayaran" || reduxOrderStatus === "Menunggu Konfirmasi" ?
-
                                     null
                                     : null
                         : null
@@ -1231,12 +1202,13 @@ export default function OrderDetailsScreen() {
                     </View>
                     : null
             } */}
-            </View>
+            </View >
             {
                 downloadInvoice ?
-                    <View style={{ height: 1 }}>
+                    <View style={{ height: 1 }
+                    } >
                         <WebView source={{ uri: downloadInvoice }} />
-                    </View>
+                    </View >
                     : null
             }
             <ActionSheet closeOnPressBack={false} ref={actionSheetPayment} onClose={() => {
@@ -1328,6 +1300,7 @@ export default function OrderDetailsScreen() {
                                 return (
                                     <View key={String(idxStore)} style={[styles.column, styles.mb, { width: '100%', }]}>
                                         {item.products.map((child, idx) => {
+                                            console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 1302 ~ {item.products.map ~ child", child.onComplain)
                                             return (
                                                 <View key={String(idx) + "s"} style={[styles.column, styles.px_3, styles.py_2, { width: Wp('95%'), backgroundColor: colors.White }]}>
                                                     <View style={styles.row_between_center}>
@@ -1348,13 +1321,9 @@ export default function OrderDetailsScreen() {
                                                                 </View>
                                                             </View>
                                                         </View>
-                                                        <CheckBox disabled={false} value={Boolean(productsComplain.find((a) => a == child.productId))}
-
-                                                            onValueChange={() => {
-                                                                handleComplain(child, idx)
-                                                            }
-
-                                                            } />
+                                                        <CheckBox disabled={false}
+                                                            value={child.onComplain ? true : false}
+                                                            onValueChange={() => handleComplain(idxStore, child, idx)} />
                                                     </View>
                                                 </View>
                                             )
@@ -1369,21 +1338,19 @@ export default function OrderDetailsScreen() {
                         <View style={[styles.row_end_center, styles.p_3, { width: '100%' }]}>
                             <View styl={{ width: '40%' }}>
                             </View>
-                            <Button mode='contained' onPress={() => setmodalComplain(false)} style={[styles.mr_2, { width: '35%' }]} color={colors.YellowJaja} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>
+                            <Button mode='contained' onPress={() => setmodalComplain(false)} style={[styles.mr_2, { width: '35%' }]} color={colors.YellowJaja} labelStyle={[styles.font_11, styles.T_semi_bold, { color: colors.White }]}>
                                 Batal
                             </Button>
                             <Button mode='contained' onPress={() => {
-                                setmodalComplain(false)
-                                navigation.navigate(details.complain ? 'ResponseComplain' : 'RequestComplain', { invoice: details.items[0].invoice })
-                            }} style={[{ width: '35%' }]} color={colors.BlueJaja} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>
+                                if (productsComplain && productsComplain.length) {
+                                    setmodalComplain(false)
+                                    navigation.navigate('RequestComplain', { invoice: details.items[0].invoice, productsComplain: productsComplain })
+                                } else {
+                                    Utils.alertPopUp('Pilih produk yang ingin di complain!')
+                                }
+                            }} style={[{ width: '35%' }]} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_semi_bold, { color: colors.White }]}>
                                 Komplain
                             </Button>
-                            {/* <TouchableRipple onPress={() => console.log('pressed')} style={[styles.row_center, styles.p_3, styles.mr, { elevation: 1, width: Wp('25%'), backgroundColor: colors.BlueJaja }]} rippleColor={colors.BlueJaja}>
-                                <Text >Batal</Text>
-                            </TouchableRipple>
-                            <TouchableRipple onPress={() => console.log('pressed')} style={[styles.row_center, styles.p_3, { elevation: 1, width: Wp('25%'), backgroundColor: colors.BlueJaja }]} rippleColor={colors.BlueJaja}>
-                                <Text>Komplain</Text>
-                            </TouchableRipple> */}
                         </View>
                     </View>
                 </View>

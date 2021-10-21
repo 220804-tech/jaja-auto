@@ -10,7 +10,7 @@ import RNFS from 'react-native-fs';
 import FAIcon from 'react-native-vector-icons/FontAwesome5';
 import { useSelector, useDispatch } from 'react-redux';
 
-export default function Complain() {
+export default function Complain({ route }) {
     const navigation = useNavigation()
     const galeryRef = createRef()
     const dispatch = useDispatch()
@@ -41,6 +41,13 @@ export default function Complain() {
     ]
 
     const handleSendComplain = () => {
+        let productsComplain = []
+        try {
+            productsComplain = route.params.productsComplain
+        } catch (error) {
+
+        }
+        console.log("🚀 ~ file: RequestComplainScreen.js ~ line 45 ~ handleSendComplain ~ productsComplain", productsComplain)
         try {
             if (!activeSections) {
                 setalertText('Pilih salah satu alasan komplain!')
@@ -82,7 +89,7 @@ export default function Complain() {
                                             "komplain": textComplain,
                                             "video": activeSections !== "1CV" ? video : null,
                                             "images": activeSections !== "1CV" ? images.length ? images : null : null,
-                                            'productsComplain': ['5', '8']
+                                            'productsComplain': productsComplain && productsComplain.length
                                         }
                                     ]
                                 })

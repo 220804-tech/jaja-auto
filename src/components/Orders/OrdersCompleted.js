@@ -10,6 +10,7 @@ export default function OrdersUnpaid() {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const reduxCompleted = useSelector(state => state.order.completed)
+    console.log("🚀 ~ file: OrdersCompleted.js ~ line 13 ~ OrdersUnpaid ~ reduxCompleted", reduxCompleted)
     const [refreshing, setRefreshing] = useState(false);
     const reduxAuth = useSelector(state => state.auth.auth)
 

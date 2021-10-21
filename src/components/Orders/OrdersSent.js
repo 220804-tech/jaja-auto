@@ -91,7 +91,7 @@ export default function OrdersSent() {
                     renderItem={({ item }) => {
                         if (!item.complain) {
                             return (
-                                <TouchableOpacity style={Os.card} onPress={() => handleOrderDetails(item)}>
+                                <View style={Os.card} >
                                     <View style={[styles.row_between_center, styles.px_2, styles.mb_3, { width: '100%' }]}>
                                         <View style={[styles.row_start_center, { width: '45%' }]}>
                                             <Image style={{ width: Wp('8%'), height: Wp('8%'), borderRadius: 100, marginRight: '5%', resizeMode: 'contain' }} source={{ uri: item.store.image ? item.store.image : null }} />
@@ -122,16 +122,26 @@ export default function OrdersSent() {
                                         </View>
                                     </View>
                                     <TouchableOpacity style={[styles.row_between_center, styles.mt_5, styles.px_2]} onPress={() => handleTracking(item)}>
-                                        <View style={[styles.row, { width: Wp('60%') }]}>
+                                        <View style={[styles.row, { width: Wp('50%') }]}>
                                             <Image style={{ width: 19, height: 19, tintColor: colors.YellowJaja, marginRight: '2%' }} source={require('../../assets/icons/google-maps.png')} />
                                             <Text numberOfLines={1} style={[styles.font_14, { color: colors.YellowJaja }]}>Paket telah dikirim</Text>
                                         </View>
-                                        <Button color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('25%') }} style={{ width: Wp('25%'), alignSelf: 'flex-end' }} labelStyle={{ color: colors.White, fontSize: 14 }} uppercase={false} >
-                                            Lacak
-                                        </Button>
                                     </TouchableOpacity>
+                                    <View style={[styles.row_between_center, styles.mt_5, styles.px_2]}>
+                                        <View style={[styles.row, { width: Wp('40%') }]}>
+
+                                        </View>
+                                        <>
+                                            <Button onPress={() => handleTracking(item)} color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('25%') }} style={{ width: Wp('25%'), alignSelf: 'flex-end' }} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
+                                                Lacak
+                                            </Button>
+                                            <Button onPress={() => handleOrderDetails(item)} color={colors.BlueJaja} mode="contained" contentStyle={{ width: Wp('25%') }} style={{ width: Wp('25%'), alignSelf: 'flex-end', marginRight: '2%' }} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
+                                                Rician
+                                            </Button>
+                                        </>
+                                    </View>
                                     {/* </TouchableOpacity> */}
-                                </TouchableOpacity>
+                                </View>
                             )
                         }
                     }}
