@@ -760,7 +760,12 @@ export default function checkoutScreen() {
                                                 <View style={[styles.column, styles.p_3]}>
                                                     <View style={styles.row_between_center}>
                                                         <Text numberOfLines={1} style={[styles.font_14]}>Pilih Ekspedisi</Text>
-                                                        <TouchableOpacity onPress={() => actionSheetDelivery.current?.setModalVisible()}>
+                                                        <TouchableOpacity onPress={() => {
+                                                            checkedValue(idxStore)
+                                                            setstorePressed(item.store)
+                                                            setindexStore(idxStore)
+                                                            actionSheetDelivery.current?.setModalVisible()
+                                                        }}>
                                                             <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Pilih</Text>
                                                         </TouchableOpacity>
                                                     </View>
@@ -823,13 +828,13 @@ export default function checkoutScreen() {
                             {reduxCheckout.voucherJajaType === "ongkir" ? <Text style={[styles.font_13, { marginBottom: '2%' }]}>Diskon Pengiriman</Text> : null}
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>Biaya penanganan</Text>
                             <View style={[styles.row_start_center, { width: Wp('50%'), marginLeft: '-6.5%', paddingLeft: '-2%', opacity: reduxCoin == 0 ? 0.4 : 1 }]}>
-                                    <Checkbox
-                                        disabled={reduxCoin == 0 ? true : false}
-                                        theme={{ mode: 'adaptive' }}
-                                        color={colors.BlueJaja}
-                                        status={useCoin ? 'checked' : 'unchecked'}
-                                        onPress={() => handleUseCoin(!useCoin)}
-                                    />
+                                <Checkbox
+                                    disabled={reduxCoin == 0 ? true : false}
+                                    theme={{ mode: 'adaptive' }}
+                                    color={colors.BlueJaja}
+                                    status={useCoin ? 'checked' : 'unchecked'}
+                                    onPress={() => handleUseCoin(!useCoin)}
+                                />
                                 <Text numberOfLines={1} style={[styles.font_13, styles.T_medium, { textAlignVertical: 'center', marginBottom: '-1%' }]}>Koin dimiliki</Text>
                             </View>
 

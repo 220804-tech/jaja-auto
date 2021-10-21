@@ -91,7 +91,7 @@ export default function OrdersUnpaid() {
                                         </View>
                                         <View style={[styles.row_between_center, { width: '100%' }]}>
                                             <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}>{item.totalPriceCurrencyFormat}</Text>
-                                            <Button icon="star" color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('35%') }} style={{ width: Wp('35%'), alignSelf: 'flex-end' }} labelStyle={{ color: colors.White, fontSize: 12 }} uppercase={false} >
+                                            <Button color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('35%') }} style={{ width: Wp('35%'), alignSelf: 'flex-end' }} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
                                                 Beri Nilai
                                             </Button>
                                         </View>
@@ -101,16 +101,16 @@ export default function OrdersUnpaid() {
                         )
                     }}
                 /> :
-                <ScrollView contentContainerStyle={styles.container}
+                < ScrollView contentContainerStyle={styles.container}
                     refreshControl={
-                        <RefreshControl
+                        < RefreshControl
                             refreshing={refreshing}
                             onRefresh={onRefresh}
                         />
                     }>
                     <DefaultNotFound textHead="Ups.." textBody="Tampaknya pesanan kamu masih kosong.." ilustration={require('../../assets/ilustrations/empty.png')} />
-                </ScrollView>
+                </ScrollView >
             }
-        </View>
+        </View >
     )
 }

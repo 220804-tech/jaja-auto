@@ -116,6 +116,7 @@ export default function ChatScreen({ route }) {
                 await fetch("https://jaja.id/backend/chat/image", requestOptions)
                     .then(response => response.text())
                     .then(res => {
+                        alert(res)
                         try {
                             let result = JSON.parse(res)
                             if (result.status.code === 200) {
