@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { SafeAreaView, Text, View, StyleSheet, Image, BackHandler, Alert, StatusBar } from 'react-native';
 import { Button, Paragraph } from 'react-native-paper';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
-import { colors, Loading, Wp, Hp, styles, Appbar } from '../../export';
+import { colors, Loading, Wp, Hp, styles, Appbar, Utils } from '../../export';
+import EncryptedStorage from 'react-native-encrypted-storage';
+
 export default class VerifikasiEmail extends Component {
     constructor(props) {
         super(props);
@@ -10,7 +12,7 @@ export default class VerifikasiEmail extends Component {
             step1: false,
             step2: true,
             code: '',
-            timeOut: 15,
+            timeOut: 90,
             button: false,
             password: '',
             confirmPassword: '',
@@ -20,6 +22,9 @@ export default class VerifikasiEmail extends Component {
             accPassword1: false,
             email: '',
             loading: false,
+
+            emailRegist: '',
+            passwordRegist: ''
         };
     }
 
@@ -31,6 +36,16 @@ export default class VerifikasiEmail extends Component {
     componentDidMount() {
         this.setState({
             email: this.props.route.params.email
+        })
+
+        EncryptedStorage.getItem('usrverif').then(res => {
+            if (res) {
+                let result = JSON.stringify(res)
+                this.setState({
+                    emailRegist: result.eml,
+                    passwordRegist: result.pw
+                })
+            }
         })
         console.log("🚀 ~ file: index.js ~ line 43 ~ index ~ componentDidMount ~ this.props", this.props.route.params.email)
         this.backHandler = BackHandler.addEventListener(
@@ -64,32 +79,20 @@ export default class VerifikasiEmail extends Component {
         fetch("https://jaja.id/backend/mailing/register", requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: index.js ~ line 62 ~ index ~ result", result.status)
                 if (result.status.code === 200) {
                     this.setState({ loading: false })
                     setTimeout(() => {
                         this.setState({
                             step1: false,
                             step2: true,
-                            timeOut: 60,
+                            timeOut: 90,
                             button: false,
                         });
                         setTimeout(() =>
-                            Alert.alert(
-                                "Jaja.id",
-                                "Periksa email anda untuk melihat kode verifikasi!", [
-                                {
-                                    text: "Ok",
-                                    onPress: () => console.log("Pressed"),
-                                    style: "cancel"
-                                }
-                            ],
-                                { cancelable: false }
-                            )
+                            Utils.alertPopUp('Periksa email anda untuk melihat kode verifikasi!')
                             , 100);
 
                         this.timerID = setInterval(() => this.setTime(), 1000);
-                        console.log(this.state.email, 'ini email lupa password');
                     }, 50);
                 } else {
                     this.setState({ loading: false })
@@ -111,17 +114,7 @@ export default class VerifikasiEmail extends Component {
             .catch(error => {
                 this.setState({ loading: false })
                 setTimeout(() => {
-                    Alert.alert(
-                        "Jaja.id",
-                        JSON.stringify(error), [
-                        {
-                            text: "TUTUP",
-                            onPress: () => console.log("Pressed"),
-                            style: "cancel"
-                        }
-                    ],
-                        { cancelable: false }
-                    )
+                    Utils.handleError(error, 'Error with status code : 17001')
                 }, 100);
             });
     };
@@ -144,8 +137,6 @@ export default class VerifikasiEmail extends Component {
     }
 
     handleOtp = (code) => {
-        console.log("🚀 ~ file: index.js ~ line 147 ~ index ~ code", code)
-        console.log("🚀 ~ file: index.js ~ line 147 ~ index ~ props.email", this.props.route.params.email)
         this.setState({ loading: true })
         var formdata = new FormData();
         formdata.append("email", this.props.route.params.email);
@@ -160,17 +151,19 @@ export default class VerifikasiEmail extends Component {
         fetch("https://jaja.id/backend/user/verification/register", requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: index.js ~ line 158 ~ index ~ result", result)
                 if (result.status.code === 200) {
                     setTimeout(() => {
                         this.setState({ loading: false })
                     }, 500);
+                    this.handleLogin()
                     setTimeout(() => {
                         this.setState({
                             step1: true,
                             step2: false,
                         });
                     }, 550);
+                    EncryptedStorage.setItem('emailVerification', JSON.stringify('done'))
+
                 } else if (result.status.code === 409) {
                     setTimeout(() => {
                         Alert.alert(
@@ -269,6 +262,122 @@ export default class VerifikasiEmail extends Component {
 
     };
 
+    handleUser = (data) => {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", data);
+        myHeaders.append("Cookie", "ci_session=pjrml5k3rvvcg54esomu3vakagc10iu5");
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        fetch("https://jaja.id/backend/user/profile", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                try {
+                    EncryptedStorage.setItem('user', JSON.stringify(result.data))
+                    dispatch({ type: 'SET_USER', payload: result.data })
+                    dispatch({ type: 'SET_VERIFIKASI', payload: result.data.isVerified })
+                    EncryptedStorage.getItem('deviceToken').then(res => {
+                        if (res) {
+                            let token = JSON.parse(res)
+                            let user = result.data
+                            database().ref("/people/" + user.uid).once('value').then(snapshot => {
+                                let item = snapshot.val();
+                                if (item) {
+                                    database().ref(`/people/${user.uid}/`).update({ name: user.name, photo: user.image, token: token })
+                                } else {
+                                    database().ref(`/people/${user.uid}/`).set({ name: user.name, photo: user.image, token: token, notif: { home: 0, chat: 0, orders: 0 } })
+                                    database().ref(`/friend/${user.uid}/null`).set({ chat: 'null' })
+                                }
+                            });
+                        }
+                    })
+                    getOrders(data)
+                    ServiceUser.getBadges(data).then(res => {
+                        if (res) {
+                            dispatch({ type: "SET_BADGES", payload: res })
+                        } else {
+                            dispatch({ type: "SET_BADGES", payload: {} })
+                        }
+                    })
+                    if (navigate) {
+                        navigation.setParams({ 'navigate': null });
+                        navigation.goBack();
+                        setNavigate("")
+                    } else {
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'Splash' }],
+                        })
+                    }
+                    setTimeout(() => {
+                        dispatch({ type: 'SET_AUTH', payload: data })
+                        EncryptedStorage.setItem('token', JSON.stringify(data))
+                    }, 500);
+
+                } catch (error) {
+                    ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)
+                }
+
+            })
+            .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+    }
+    handleLogin = () => {
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Cookie", "ci_session=jra6dmodn5nc33rhbnpqg3qg2iujc2nd");
+
+        var raw = JSON.stringify({ "email": this.state.emailRegist, "password": this.state.passwordRegist });
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+        fetch("https://jaja.id/backend/user/login", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+
+                if (result.status.code === 200) {
+                    EncryptedStorage.setItem("token", JSON.stringify(result.data))
+
+                } else if (result.status.code === 400 || result.status.code === 404) {
+                    if (result.status.message === "account has not been activated") {
+                        Utils.alertPopUp('Akun anda belum diverifikasi')
+                        this.props.navigation.navigate('VerifikasiEmail', { email: email })
+                    } else if (result.status.message === "data not found") {
+                        setAlertText('Email atau password anda salah!')
+                    } else if (result.status.message === "incorrect email or password") {
+                        setAlertText('Email atau password anda salah!')
+                    } else {
+                        setAlertText(String(result.status.message) + ' ' + String(result.status.code))
+                    }
+                    setLoading(false)
+                }
+            })
+            .catch(error => {
+                console.log("🚀 ~ file: LoginScreen.js ~ line 77 ~ handleSubmit ~ error", error.name)
+                CheckSignal().then(res => {
+                    if (res.connect === false) {
+                        Utils.alertPopUp("Tidak dapat terhubung, periksa kembali koneksi internet anda")
+                    } else {
+                        Alert.alert(
+                            "Jaja.id",
+                            String(error),
+                            [
+                                { text: "OK", onPress: () => console.log("OK Pressed") }
+                            ]
+                        )
+                    }
+
+                })
+            });
+    }
+
     render() {
 
         return (
@@ -286,10 +395,15 @@ export default class VerifikasiEmail extends Component {
                             <Paragraph style={styles1.textJajakan}>Success<Text style={styles1.textCenter}>, email anda berhasil di verifikasi, kembali belanja</Text></Paragraph>
                             <Button
                                 labelStyle={{ color: 'white' }}
-                                onPress={() => this.props.navigation.reset({
-                                    index: 0,
-                                    routes: [{ name: 'Beranda' }],
-                                })}
+                                onPress={() => {
+                                    this.setState({ loading: true })
+                                    setTimeout(() => this.setState({ loading: false }), 2000);
+                                    this.props.navigation.reset({
+                                        index: 0,
+                                        routes: [{ name: 'Splash' }],
+                                    })
+
+                                }}
                                 mode="contained"
                                 contentStyle={styles1.contentButton}
                                 color={colors.YellowJaja}
@@ -315,13 +429,16 @@ export default class VerifikasiEmail extends Component {
                                 <Button
                                     style={styles1.button2}
                                     color={colors.White}
-                                    labelStyle={colors.BlueJaja}
+                                    labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}
                                     mode="contained"
                                     onPress={this.handleKirim}>
                                     Kirim kode otp ulang
                                 </Button>
                                 :
-                                <Button style={styles1.button2} disabled mode="contained">
+                                <Button style={styles1.button2}
+                                    labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.BlackGrayScale }]}
+
+                                    disabled mode="contained">
                                     Kirim kode otp ulang ({this.state.timeOut})
                                 </Button>
                             }

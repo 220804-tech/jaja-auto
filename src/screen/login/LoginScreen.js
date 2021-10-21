@@ -48,6 +48,20 @@ export default function LoginScreen(props) {
         }, []),
     );
 
+    useEffect(() => {
+        EncryptedStorage.getItem('emailVerification').then(res => {
+            if (res) {
+                let result = JSON.parse(res)
+                if (result && result !== 'done') {
+                    navigation.navigate('VerifikasiEmail', { email: result })
+
+                }
+            }
+        })
+
+    }, [])
+
+
     const signOut = async () => {
         try {
             await GoogleSignin.revokeAccess();

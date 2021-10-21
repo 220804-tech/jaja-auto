@@ -160,6 +160,8 @@ class RegisterScreen extends Component {
                         this.props.dispatch({ type: 'SET_USER', payload: res.data.customer })
                         EncryptedStorage.setItem('token', JSON.stringify(res.data.token))
                         console.log("index -> onRegistrasi -> 201", res.status)
+                        EncryptedStorage.setItem('emailVerification', JSON.stringify(credentials.email))
+                        EncryptedStorage.setItem('usrverif', JSON.stringify({ eml: credentials.email, pw: credentials.password }))
                         this.props.navigation.navigate('VerifikasiEmail', { email: credentials.email })
                     } else if (res.status.code == 409) {
                         this.setState({ alertTextEmail: 'Email sudah pernah digunakan!' })
