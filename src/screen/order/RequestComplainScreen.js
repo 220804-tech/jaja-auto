@@ -1,5 +1,5 @@
 import React, { useState, createRef } from 'react'
-import { SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, StatusBar, Image, ScrollView, Alert, } from 'react-native'
+import { SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, StatusBar, Image, ScrollView, Alert } from 'react-native'
 import { styles, Appbar, colors, Wp, Loading, useNavigation, Utils, ServiceFirebase } from '../../export'
 import { Button, Checkbox, RadioButton } from 'react-native-paper';
 import Collapsible from 'react-native-collapsible';
@@ -36,7 +36,7 @@ export default function Complain({ route }) {
     // { id: '1CV', title: "A. Pengiriman Barang", content: [{ id: '1SX', title: 'Barang tidak diterima, namun status telah sampai.' }, { id: '2SX', title: 'Barang sudah melewati tanggal masksimal pengiriman.' }] },
     // , { id: '9SX', title: 'Barang tidak diterima, namun status telah sampai' }, { id: '10SX', title: 'Barang tertukar dengan customer lainnya.' }
     const data = [
-        { id: '2CV', title: "Barang Tidak Sesuai", content: [{ id: '3SX', title: 'Barang rusak' }, { id: '3SX', title: 'Barang tidak berfungsi' }, { id: '4SX', title: 'Ukuran barang tidak sesuai' }, { id: '5SX', title: 'Warna barang tidak sesuai' }, { id: '6SX', title: 'Barang tidak sesuai deskripsi' }, { id: '7SX', title: 'Barang tidak original' }, { id: '8SX', title: 'Barang tidak lengkap' }] },
+        { id: '2CV', title: "Barang Tidak Sesuai", content: [{ id: '3SX', title: 'Barang rusak' }, { id: '3SX', title: 'Barang tidak berfungsi' }, { id: '4SX', title: 'Ukuran barang tidak sesuai' }, { id: '5SX', title: 'Warna barang tidak sesuai' }, { id: '6SX', title: 'Barang tidak sesuai deskripsi' }, { id: '7SX', title: 'Barang tidak original' }, { id: '8SX', title: 'Barang tidak lengkap' }, { id: '3SX', title: 'Barang tidak dikirim ' }] },
         { id: '3CV', title: "Lainnya", content: [] },
     ]
 
@@ -89,11 +89,10 @@ export default function Complain({ route }) {
                                             "komplain": textComplain,
                                             "video": activeSections !== "1CV" ? video : null,
                                             "images": activeSections !== "1CV" ? images.length ? images : null : null,
-                                            'productsComplain': productsComplain && productsComplain.length
+                                            'productsComplain': productsComplain && productsComplain.length ? productsComplain : []
                                         }
                                     ]
                                 })
-
                                 var requestOptions = {
                                     method: 'POST',
                                     headers: myHeaders,
@@ -109,8 +108,7 @@ export default function Complain({ route }) {
                                             if (result.status.code === 200) {
                                                 ServiceFirebase.notifChat(complainTarget, { body: 'Pembeli telah mengajukan komplain', title: 'Komplain' })
                                                 ServiceFirebase.buyerNotifications('orders', orderUid)
-                                                ToastAndroid.show('Komplain kamu berhasil diajukan!', ToastAndroid.LONG, ToastAndroid.CENTER)
-
+                                                Utils.alertPopUp('Komplain kamu berhasil diajukan!')
                                                 navigation.navigate('Pesanan')
                                                 setLoading(false)
                                                 setTimeout(() => {
@@ -130,8 +128,9 @@ export default function Complain({ route }) {
                                         setLoading(false)
                                     });
                                 setTimeout(() => {
+                                    console.log('ressss ')
                                     setLoading(false)
-                                }, 10000);
+                                }, 20000);
 
                             }
                         },
@@ -150,7 +149,7 @@ export default function Complain({ route }) {
         ImagePicker.openPicker({
             // width: 400,
             // height: 400,
-            cropping: true,
+            // cropping: true,
             compressImageQuality: 0.8,
             includeBase64: true
         }).then(media => {
@@ -171,7 +170,7 @@ export default function Complain({ route }) {
         ImagePicker.openCamera({
             // width: 400,
             // height: 400,
-            cropping: true,
+            // cropping: true,
             compressImageQuality: 0.8,
             includeBase64: true
         }).then(media => {

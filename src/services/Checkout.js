@@ -1,4 +1,5 @@
 import { Utils } from '../export';
+
 export async function getCheckout(auth, coin) {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);

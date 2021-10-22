@@ -198,19 +198,24 @@ export default function SplashScreen() {
         };
 
         fetch("https://jaja.id/backend/product/recommendation?page=1&limit=20", requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                if (result.status.code == 200 || result.status.code == 204) {
-                    dispatch({ type: 'SET_DASHRECOMMANDED', payload: result.data.items })
-                    EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))
-                } else {
-                    EncryptedStorage.getItem('dashrecommanded').then(res => {
-                        if (res) {
-                            dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(res) })
-                        }
-                        ToastAndroid.show(result.status.message + " : " + result.status.code, ToastAndroid.LONG, ToastAndroid.CENTER)
-                    })
+            .then(response => response.text())
+            .then(res => {
+                try {
+                    let result = JSON.parse(res)
+                    if (result.status.code == 200 || result.status.code == 204) {
+                        dispatch({ type: 'SET_DASHRECOMMANDED', payload: result.data.items })
+                        EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))
+                    } else {
+                        EncryptedStorage.getItem('dashrecommanded').then(res => {
+                            if (res) {
+                                dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(res) })
+                            }
+                            ToastAndroid.show(result.status.message + " : " + result.status.code, ToastAndroid.LONG, ToastAndroid.CENTER)
+                        })
 
+                    }
+                } catch (error) {
+                    alert(error + '120023 \n\n ' + JSON.stringify(res))
                 }
             })
             .catch(error => {

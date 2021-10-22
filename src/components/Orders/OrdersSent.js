@@ -116,7 +116,7 @@ export default function OrdersSent() {
                                             <View style={[styles.row_between_center, { width: '100%' }]}>
                                                 <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}>{item.totalPriceCurrencyFormat}</Text>
                                                 <TouchableOpacity style={[styles.px_3, styles.py_2, { backgroundColor: colors.White, borderRadius: 3 }]}>
-                                                    {/* <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Rician Pesanan </Text> */}
+                                                    {/* <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Rincian Pesanan </Text> */}
                                                 </TouchableOpacity>
                                             </View>
                                         </View>
@@ -136,7 +136,7 @@ export default function OrdersSent() {
                                                 Lacak
                                             </Button>
                                             <Button onPress={() => handleOrderDetails(item)} color={colors.BlueJaja} mode="contained" contentStyle={{ width: Wp('25%') }} style={{ width: Wp('25%'), alignSelf: 'flex-end', marginRight: '2%' }} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
-                                                Rician
+                                                Rincian
                                             </Button>
                                         </>
                                     </View>

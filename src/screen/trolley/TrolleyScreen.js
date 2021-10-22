@@ -172,22 +172,54 @@ export default function TrolleyScreen() {
         })
     }
 
+    const handleGetCheckout = () => {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", reduxAuth);
+        myHeaders.append("Cookie", "ci_session=r59c24ad1race70f8lc0h1v5lniiuhei");
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        fetch(`https://jaja.id/backend/checkout?isCoin=0&fromCart=1`, requestOptions)
+            .then(response => response.text())
+            .then(res => {
+                try {
+                    let result = JSON.parse(res)
+                    if (result.status.code === 200) {
+                        dispatch({ type: 'SET_CHECKOUT', payload: result.data })
+                        navigation.navigate('Checkout')
+                    } else if (result.status.code == 404 && result.status.message == 'alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu') {
+                        Utils.alertPopUp('Silahkan tambah alamat terlebih dahulu!')
+                        navigation.navigate('Address', { data: "checkout" })
+                    } else {
+                        Utils.handleErrorResponse(result, 'Error with status code : 12056')
+                        return null
+                    }
+                } catch (error) {
+                    alert(error + ': 19002\n\n' + res)
+                }
+            })
+            .catch(error => Utils.handleError(error, 'Error with status code : 12057'));
+    }
     const handleCheckout = () => {
         try {
             if (disableCheckout === false && reduxCart.cart.totalCart != 0) {
                 dispatch({ type: 'SET_CHECKOUT', payload: {} })
                 navigation.navigate('Checkout')
 
-                ServiceCheckout.getCheckout(reduxAuth, 0).then(res => {
-                    if (res) {
-                        if (res == 'Alamat') {
-                            navigation.navigate('Address', { data: "checkout" })
-                        } else {
-                            navigation.navigate('Checkout')
-                        }
-                        dispatch({ type: 'SET_CHECKOUT', payload: res })
-                    }
-                })
+                // ServiceCheckout.getCheckout(reduxAuth, 0).then(res => {
+                //     if (res) {
+                //         if (res == 'Alamat') {
+                //             navigation.navigate('Address', { data: "checkout" })
+                //         } else {
+                //             navigation.navigate('Checkout')
+                //         }
+                //     }
+                // })
+                handleGetCheckout()
+
                 ServiceCheckout.getShipping(reduxAuth).then(res => {
                     if (res) {
                         dispatch({ type: 'SET_SHIPPING', payload: res })

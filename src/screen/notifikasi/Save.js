@@ -112,7 +112,7 @@ function NotifikasiScreen(props) {
                     }
                     return data
                 } catch (error) {
-                    alert('jaja', result)
+                    alert(error + ' : 12310\n\n ', result)
                 }
             })
             .catch(error => {
@@ -121,9 +121,6 @@ function NotifikasiScreen(props) {
     }
 
     const handleOrderDetails = (item) => {
-        console.log("🚀 ~ file: NotifikasiScreen.js ~ line 110 ~ handleOrderDetails ~ item", item.order_id)
-        console.log("🚀 ~ file: NotifikasiScreen.js ~ line 110 ~ handleOrderDetails ~ item", item.invoice)
-
         dispatch({ type: 'SET_INVOICE', payload: item.invoice })
         dispatch({ type: 'SET_ORDER_STATUS', payload: null })
 

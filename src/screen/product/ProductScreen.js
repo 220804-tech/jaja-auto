@@ -73,14 +73,32 @@ export default function ProductScreen(props) {
         }
 
     }, [])
-
-    useFocusEffect(
-        useCallback(() => {
-            try {
+    useEffect(() => {
+        try {
+            if (reduxSearch && Object.keys(reduxSearch).length) {
                 ImgToBase64.getBase64String(reduxSearch.productDetail.image[0])
                     .then(async base64String => {
                         let urlString = 'data:image/jpeg;base64,' + base64String;
                         setImage(urlString)
+                        console.log('masuk sini')
+                    })
+                    .catch(err => console.log("cok"));
+            }
+        } catch (error) {
+
+        }
+
+    }, [reduxSearch])
+
+    useFocusEffect(
+        useCallback(() => {
+            try {
+                console.log("🚀 ~ file: ProductScreen.js ~ line 81 ~ useCallback ~ reduxSearch.productDetail.image", reduxSearch.productDetail.image[0])
+                ImgToBase64.getBase64String(reduxSearch.productDetail.image[0])
+                    .then(async base64String => {
+                        let urlString = 'data:image/jpeg;base64,' + base64String;
+                        setImage(urlString)
+                        console.log('masuk sini')
                     })
                     .catch(err => console.log("cok"));
                 if (reduxAuth) {
@@ -660,23 +678,25 @@ export default function ProductScreen(props) {
                                     <Text style={[styles.font_14, styles.mb_3, styles.T_light]}>{reduxSearch.productDetail.stock}</Text>
                                 </View>
                             </View>
-                            <Text style={{ textDecorationLine: 'underline', fontSize: 14, fontFamily: 'Poppins-Medium', color: colors.BlackGrayScale, marginBottom: '3%' }}>Deskripsi Produk</Text>
+                            <Text style={{ textDecorationLine: 'underline', fontSize: 13, fontFamily: 'Poppins-Medium', color: colors.BlackGrayScale, marginBottom: '3%' }}>Deskripsi Produk</Text>
                             <View style={[styles.row_around_center, styles.mb_3, { alignSelf: 'flex-start' }]}>
                                 {reduxSearch.productDetail.description ?
-                                    <Text style={[styles.font_14, styles.T_light]}>{reduxSearch.productDetail.description.slice(0, deskripsiLenght)}</Text>
+                                    <>
+                                        {/* <Text style={[styles.font_14, styles.T_light]}>{reduxSearch.productDetail.description.slice(0, deskripsiLenght)}</Text> */}
 
-                                    // <View style={[styles.column, { width: '100%' }]}>
-                                    //     <Text numberOfLines={deskripsiLenght == 200 ? 10 : 25} style={[styles.font_14]}>{reduxSearch.productDetail.description.slice(0, deskripsiLenght)}</Text>
-                                    //     {deskripsiLenght == 200 && reduxSearch.productDetail.description.length >= 200 ?
-                                    //         <TouchableOpacity onPress={() => setdeskripsiLenght(reduxSearch.productDetail.description.length + 50)}>
-                                    //             <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Baca selengkapnya..</Text>
-                                    //         </TouchableOpacity>
-                                    //         : reduxSearch.productDetail.description.length <= 200 ? null :
-                                    //             <TouchableOpacity onPress={() => setdeskripsiLenght(200)}>
-                                    //                 <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Baca lebih sedikit</Text>
-                                    //             </TouchableOpacity>
-                                    //     }
-                                    // </View> 
+                                        <View style={[styles.column, { width: '100%' }]}>
+                                            <Text numberOfLines={deskripsiLenght == 200 ? 10 : 25} style={[styles.font_14]}>{reduxSearch.productDetail.description.slice(0, deskripsiLenght)}</Text>
+                                            {deskripsiLenght == 200 && reduxSearch.productDetail.description.length >= 200 ?
+                                                <TouchableOpacity onPress={() => setdeskripsiLenght(reduxSearch.productDetail.description.length + 50)}>
+                                                    <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Baca selengkapnya..</Text>
+                                                </TouchableOpacity>
+                                                : reduxSearch.productDetail.description.length <= 200 ? null :
+                                                    <TouchableOpacity onPress={() => setdeskripsiLenght(200)}>
+                                                        <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Baca lebih sedikit</Text>
+                                                    </TouchableOpacity>
+                                            }
+                                        </View>
+                                    </>
                                     : null}
                             </View>
                         </View>
@@ -843,7 +863,7 @@ export default function ProductScreen(props) {
                                                     </View>
                                                 </View>
                                                 <View style={[Ps.bottomCard, { alignSelf: 'flex-start', width: '100%', height: Wp('18%'), justifyContent: 'flex-start', alignItems: 'flex-start' }]}>
-                                                    <Text numberOfLines={1} style={[Ps.nameProduct, { fontSize: 13 }]}>{item.name}</Text>
+                                                    <Text numberOfLines={1} style={[Ps.nameProductSmall,]}>{item.name}</Text>
                                                     {item.isDiscount ?
                                                         <>
                                                             <View style={styles.row}>

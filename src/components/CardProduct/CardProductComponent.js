@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 import { colors, FastImage, Ps, styles, useNavigation, Wp } from '../../export'
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 import LinearGradient from 'react-native-linear-gradient';
-
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 export default function CardProductComponent(props) {
     const navigation = useNavigation()
     const dispatch = useDispatch()
@@ -73,7 +73,7 @@ export default function CardProductComponent(props) {
                                 <View style={Ps.bottomCard}>
                                     <Text
                                         numberOfLines={2}
-                                        style={Ps.nameProduct}>
+                                        style={[Ps.nameProduct, { width: Wp('40%') }]}>
                                         {item.name}
                                     </Text>
                                     {item.isDiscount ?

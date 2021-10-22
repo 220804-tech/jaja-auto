@@ -120,7 +120,7 @@ export default function OrdersProcess() {
                                                 <View style={[styles.row_between_center, { width: '100%' }]}>
                                                     <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}>{item.totalPriceCurrencyFormat}</Text>
                                                     <TouchableOpacity style={[styles.px_3, styles.py_2, { backgroundColor: colors.White, borderRadius: 3 }]}>
-                                                        {/* <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Rician Pesanan </Text> */}
+                                                        {/* <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Rincian Pesanan </Text> */}
                                                     </TouchableOpacity>
                                                 </View>
                                             </View>
@@ -167,7 +167,7 @@ export default function OrdersProcess() {
                                                 <View style={[styles.row_between_center, { width: '100%' }]}>
                                                     <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}>{item.totalPriceCurrencyFormat}</Text>
                                                     <TouchableOpacity style={[styles.px_3, styles.py_2, { backgroundColor: colors.White, borderRadius: 3 }]}>
-                                                        {/* <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Rician Pesanan </Text> */}
+                                                        {/* <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Rincian Pesanan </Text> */}
                                                     </TouchableOpacity>
                                                 </View>
                                             </View>

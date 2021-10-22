@@ -71,7 +71,7 @@ export default function OrdersUnpaid() {
                     keyExtractor={item => item.orderId}
                     renderItem={({ item }) => {
                         return (
-                            <TouchableNativeFeedback onPress={() => console.log('pressed')} style={[Os.card, styles.px_2, styles.pt]} onLongPress={() => handleOrderDetails(item)}>
+                            <View onPress={() => console.log('pressed')} style={[Os.card, styles.px_2, styles.pt]} onLongPress={() => handleOrderDetails(item)}>
                                 <>
                                     {item.items.map((child, indx) => {
                                         return (
@@ -144,14 +144,15 @@ export default function OrdersUnpaid() {
                                             <Text numberOfLines={1} style={[styles.font_16, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>{item.totalPriceCurrencyFormat}</Text>
                                         </View>
                                         <Button onPress={() => {
-                                            dispatch({ type: 'SET_ORDERID', payload: item.orderId })
-                                            navigation.navigate('Midtrans')
+                                            // dispatch({ type: 'SET_ORDERID', payload: item.orderId })
+                                            // navigation.navigate('Midtrans')
+                                            handleOrderDetails(item)
                                         }} color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('40%') }} style={{ width: Wp('40%'), alignSelf: 'flex-end' }} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} uppercase={false}>
                                             Bayar Sekarang
                                         </Button>
                                     </View>
                                 </>
-                            </TouchableNativeFeedback>
+                            </View>
                         )
                     }}
                 />

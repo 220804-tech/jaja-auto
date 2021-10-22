@@ -67,22 +67,22 @@ export default function NearestStore() {
                                     />
                                 </View>
                                 <View style={[Ps.bottomCard, { alignSelf: 'flex-start', width: '100%', height: Wp('18%'), justifyContent: 'flex-start', alignItems: 'flex-start' }]}>
-                                    <Text numberOfLines={1} style={[Ps.nameProduct, { fontSize: 13 }]}>{item.name}</Text>
+                                    <Text numberOfLines={1} style={[Ps.nameProductSmall]}>{item.name}</Text>
                                     {item.isDiscount ?
                                         <>
                                             <View style={styles.row}>
-                                                <Text style={[Ps.priceBefore, styles.mr_3,]}>{item.price}</Text>
+                                                <Text style={[Ps.priceBeforeSmall, styles.mr_3,]}>{item.price}</Text>
                                                 <Text style={[styles.font_10, styles.T_medium, { zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '1%', paddingHorizontal: '3%', borderRadius: 3 }]}>{item.discount}%</Text>
                                             </View>
                                             <Text style={Ps.priceAfter}>{item.priceDiscount}</Text>
                                         </>
                                         :
-                                        <Text style={[Ps.price, { color: colors.BlueJaja }]}>{item.price}</Text>
+                                        <Text style={[Ps.priceSmall, { color: colors.BlueJaja }]}>{item.price}</Text>
                                     }
                                 </View>
                                 <View style={[Ps.location, { width: '94%' }]}>
                                     <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
-                                    <Text numberOfLines={1} style={[Ps.locarionName, { fontSize: 10, width: '85%' }]}>{item.location}</Text>
+                                    <Text numberOfLines={1} style={[Ps.locarionNameSmall, { width: '85%' }]}>{item.location}</Text>
                                 </View>
                             </TouchableOpacity>
                         )

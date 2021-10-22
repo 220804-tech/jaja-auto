@@ -119,7 +119,7 @@ export async function getSent(auth) {
             redirect: 'follow'
         };
 
-        return await fetch("https://jaja.id/backend/order?page=1&limit=1&status=sent", requestOptions)
+        return await fetch("https://jaja.id/backend/order?page=1&limit=50&status=sent", requestOptions)
             .then(response => response.text())
             .then(res => {
                 try {

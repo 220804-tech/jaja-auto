@@ -56,7 +56,7 @@ function NotifikasiScreen(props) {
         // setshimmer(true)
     }, [reduxUser])
 
-    const readData = async () => {      
+    const readData = async () => {
         try {
             var raw = "";
             var requestOptions = {
