@@ -188,7 +188,7 @@ export default function ProductScreen(props) {
             }
             setRefreshing(false)
             setLoading(false)
-        }, 5000);
+        }, 17000);
     }
 
 

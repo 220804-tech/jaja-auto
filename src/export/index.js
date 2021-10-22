@@ -36,6 +36,8 @@ import { style as Ps } from '../assets/styles/productStyles'
 import { style as Os } from '../assets/styles/orderStyle'
 import { style as Ts } from '../assets/styles/trendingStyles'
 
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+
 import { styles } from '../assets/styles/styles'
 import { widthPercentageToDP as Wp, heightPercentageToDP as Hp } from 'react-native-responsive-screen';
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
@@ -49,5 +51,5 @@ export {
     Appbar, CardProduct, Category, Flashsale, Maps, HobyAverage, RecomandedHobby, Trending, Language, Loading, CheckSignal, BasedOnSearch, styles,
     Ps, Wp, Hp, useNavigation, colors, useFocusEffect, FastImage, Utils, ServiceCart, ServiceCheckout, ServiceUser, ServiceVoucher, ServiceOrder, Os,
     ServiceCategory, ServiceProduct, ServiceStore, ServiceFirebase, Ts, ServiceNotif, ShimmerCardProduct, ServiceCore, Countdown, OrderNotFound,
-    DefaultNotFound, NearestStore, FilterLocation, AppbarSecond, FlashsaleToko
+    DefaultNotFound, NearestStore, FilterLocation, AppbarSecond, FlashsaleToko, RFValue
 }

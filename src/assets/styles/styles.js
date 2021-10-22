@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { Wp, Hp, colors } from '../../export';
+import { Wp, Hp, colors, RFValue } from '../../export';
 
 export const styles = StyleSheet.create({
     container: { flex: 1 },
@@ -106,12 +106,14 @@ export const styles = StyleSheet.create({
     py_4: { paddingVertical: '4%' },
     py_5: { paddingVertical: '5%' },
 
-    font_8: { fontSize: 8, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_9: { fontSize: 9, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_10: { fontSize: 10, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_11: { fontSize: 11, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_12: { fontSize: 12, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_13: { fontSize: 13, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
+    font_7: { fontSize: RFValue(6, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
+
+    font_8: { fontSize: RFValue(6.5, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
+    font_9: { fontSize: RFValue(7, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
+    font_10: { fontSize: RFValue(7.5, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
+    font_11: { fontSize: RFValue(8, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
+    font_12: { fontSize: RFValue(8.5, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
+    font_13: { fontSize: RFValue(9.5, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_14: { fontSize: 14, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_15: { fontSize: 15, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_16: { fontSize: 16, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },

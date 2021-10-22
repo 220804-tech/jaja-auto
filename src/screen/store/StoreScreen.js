@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Dimensions, Image, SafeAreaView, ScrollView, StatusBar, Text, View, ImageBackground } from 'react-native'
+import { Dimensions, Image, SafeAreaView, ScrollView, StatusBar, Text, View, TouchableOpacity } from 'react-native'
 import { Button, Paragraph } from 'react-native-paper'
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view'
 import { useDispatch, useSelector } from 'react-redux'
@@ -15,7 +15,7 @@ export default function StoreScreen() {
     const reduxStore = useSelector(state => state.store.store)
     const reduxUser = useSelector(state => state.user)
     const reduxAuth = useSelector(state => state.auth.auth)
-    const greeting = useSelector(state => state.store.store.description)
+    const greeting = useSelector(state => state.store.store.greeting)
 
     const reduxStoreProduct = useSelector(state => state.store.storeProduct)
     const dispatch = useDispatch()
@@ -23,6 +23,7 @@ export default function StoreScreen() {
     const [status, setStatus] = useState("first")
     const [seller, setSeller] = useState("")
     const [index, setIndex] = useState(0)
+    const [deskripsiLenght, setdeskripsiLenght] = useState(100)
 
     useEffect(() => {
         setLoading(true)
@@ -161,11 +162,29 @@ export default function StoreScreen() {
                             Chat
                         </Button>
                     </View>
-                    {/* {greeting ?
-                        <View style={[styles.py_5, styles.px_2, { width: Wp('100%'), backgroundColor: colors.White, alignItems: 'center' }]}>
-                            <Paragraph style={[styles.font_13]}><Text style={[styles.font_18, styles.T_italic, { color: colors.Black }]}>"</Text>{greeting} Sint irure et quis amet reprehenderit esse laborum anim incididunt. Esse officia magna dolore irure consequat. Magna consectetur magna adipisicing mollit.<Text style={[styles.font_18, styles.T_italic, { color: colors.Black }]}>"</Text></Paragraph>
+                    {greeting ?
+                        <View style={[styles.py_3, { width: Wp('100%'), backgroundColor: colors.White, alignItems: 'center' }]}>
+                            <View style={[styles.row_around_center, { alignSelf: 'flex-start' }]}>
+                                <Text style={[styles.font_12, { color: colors.BlackGrayScale }]}>{String(greeting).slice(0, 150)}</Text>
+                                {/* {greeting ?
+                                    <>
+                                        <View style={[styles.column, { width: '98%' }]}>
+                                            <Text style={[styles.font_12, { color: colors.BlackGrayScale }]}>{String(greeting).slice(0, deskripsiLenght)}</Text>
+                                            {deskripsiLenght == 100 && String(greeting).length >= 100 ?
+                                                <TouchableOpacity onPress={() => setdeskripsiLenght(String(greeting).length + 100)}>
+                                                    <Text style={[styles.font_13, { color: colors.BlueJaja }]}>Baca selengkapnya..</Text>
+                                                </TouchableOpacity>
+                                                : deskripsiLenght < 100 ? null :
+                                                    <TouchableOpacity onPress={() => setdeskripsiLenght(100)}>
+                                                        <Text style={[styles.font_13, { color: colors.BlueJaja }]}>Baca lebih sedikit</Text>
+                                                    </TouchableOpacity>
+                                            }
+                                        </View>
+                                    </>
+                                    : null} */}
+                            </View>
                         </View>
-                        : null} */}
+                        : null}
                 </View>
                 {/* </ImageBackground> */}
 
@@ -192,7 +211,7 @@ export default function StoreScreen() {
                                     return (
                                         <View style={[styles.row_center, { width: Wp('50%'), minHeight: Wp('11%') }]}>
                                             {/* <Image style={[styles.icon_25, { tintColor: focused ? colors.BlueJaja : colors.BlackSilver }]} source={route.title == 'Halaman Toko' ? require('../../assets/icons/store.png') : route.title == 'Produk' ? require('../../assets/icons/goods.png') : require('../../assets/icons/store.png')} /> */}
-                                            <Text style={[styles.font_13, styles.medium, { textAlign: 'center', color: focused ? colors.BlueJaja : colors.BlackGrayScale }]}>{route.title}</Text>
+                                            <Text style={[styles.font_12, styles.medium, { textAlign: 'center', color: focused ? colors.BlueJaja : colors.BlackGrayScale }]}>{route.title}</Text>
                                         </View>
                                     )
                                 }}

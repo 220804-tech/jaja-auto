@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, FlatList, TouchableOpacity, ScrollView } from 'react-native'
-import { styles, Ps, Language, useNavigation, FastImage, Wp, Hp, colors, Ts } from '../../export'
+import { styles, Ps, Language, useNavigation, FastImage, Wp, Hp, colors, Ts, RFValue } from '../../export'
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import LinearGradient from 'react-native-linear-gradient';
@@ -68,26 +68,13 @@ export default function TrendingComponent() {
                                 <View style={{ marginLeft: '0.5%', width: '65%', flexDirection: 'column' }}>
                                     <Text
                                         numberOfLines={2}
-                                        style={{
-                                            width: '50%',
-                                            fontSize: 12,
-                                            fontFamily: 'Lato-Bold',
-                                            letterSpacing: 0,
-                                            textAlign: "left",
-                                        }}
+                                        style={[styles.font_11, { width: '85%' }]}
                                     >
                                         {item.name}
                                     </Text>
                                     <Text
                                         numberOfLines={1}
-                                        style={{
-                                            marginTop: 4,
-                                            fontSize: Hp("1.4%"),
-                                            width: '95%',
-                                            letterSpacing: 0,
-                                            textAlign: "left",
-                                            color: colors.BlackGrey,
-                                        }}
+                                        style={[styles.font_7, { color: colors.BlackGrey }]}
                                     >
                                         {item.totalSeen + " Mengunjungi"}
                                     </Text>

@@ -220,7 +220,7 @@ export default function SearchScreen() {
         let obj = {
             slug: item.slug,
             page: 1,
-            limit: 30,
+            limit: 15,
             keyword: '',
             price: '',
             condition: '',

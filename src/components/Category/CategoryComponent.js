@@ -4,7 +4,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import { useSelector, useDispatch } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
-import { styles, colors, Hp, Wp, FastImage, useNavigation, ServiceCategory, useFocusEffect, CheckSignal, Utils } from '../../export'
+import { styles, colors, Hp, Wp, FastImage, useNavigation, ServiceCategory, useFocusEffect, CheckSignal, Utils, RFValue } from '../../export'
 
 export default function CategoryComponent() {
     let navigation = useNavigation();
@@ -162,7 +162,7 @@ export default function CategoryComponent() {
                                     resizeMode={FastImage.resizeMode.contain}
                                 />
 
-                                <Text numberOfLines={2} style={[styles.font_11, { color: colors.BlueJaja, alignSelf: 'center', textAlign: 'center' }]}>{item.name}</Text>
+                                <Text numberOfLines={2} style={[styles.font_9, styles.mt_5, { color: colors.BlueJaja, alignSelf: 'center', textAlign: 'center' }]}>{item.name}</Text>
                             </TouchableOpacity>
                         )
                     }}

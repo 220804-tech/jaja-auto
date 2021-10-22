@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { View, Text, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native'
-import { styles, Ps, useNavigation, FastImage, colors, Wp, useFocusEffect, } from '../../export'
+import { styles, Ps, useNavigation, FastImage, colors, Wp, useFocusEffect, RFValue } from '../../export'
 import { useSelector, useDispatch } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
@@ -70,9 +70,11 @@ export default function NearestStore() {
                                     <Text numberOfLines={1} style={[Ps.nameProductSmall]}>{item.name}</Text>
                                     {item.isDiscount ?
                                         <>
-                                            <View style={styles.row}>
+                                            <View style={styles.row_center}>
                                                 <Text style={[Ps.priceBeforeSmall, styles.mr_3,]}>{item.price}</Text>
-                                                <Text style={[styles.font_10, styles.T_medium, { zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '1%', paddingHorizontal: '3%', borderRadius: 3 }]}>{item.discount}%</Text>
+                                                <View style={{ zIndex: 1, backgroundColor: colors.RedFlashsale, paddingVertical: '1%', paddingHorizontal: '2%', borderRadius: 3, justifyContent: 'center', alignItems: 'center' }}>
+                                                    <Text style={[styles.font_10, { fontSize: RFValue(5, 480), textAlignVertical: 'center', textAlign: 'center', marginBottom: '-1%', color: colors.White, }]}>{item.discount}%</Text>
+                                                </View>
                                             </View>
                                             <Text style={Ps.priceAfter}>{item.priceDiscount}</Text>
                                         </>
