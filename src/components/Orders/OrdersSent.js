@@ -10,7 +10,6 @@ export default function OrdersSent() {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const reduxSent = useSelector(state => state.order.sent)
-    console.log("🚀 ~ file: OrdersSent.js ~ line 13 ~ OrdersSent ~ reduxSent", reduxSent)
     const reduxAuth = useSelector(state => state.auth.auth)
     const [refreshing, setRefreshing] = useState(false);
     const [complain, setComplain] = useState(false);

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, StatusBar, ScrollView, Alert } from 'react-native'
 import { styles, Appbar, colors, Wp, Loading, useNavigation, Utils } from '../../export'
-import { Button } from 'react-native-paper';
+import { Button, RadioButton } from 'react-native-paper';
 import Collapsible from 'react-native-collapsible';
 import { useSelector } from 'react-redux';
 
@@ -9,12 +9,7 @@ export default function OrderComplain(props) {
     const navigation = useNavigation()
     const reduxOrderStatus = useSelector(state => state.order.orderStatus)
     const reduxOrderInvoice = useSelector(state => state.order.invoice)
-    console.log("🚀 ~ file: OrderCancel.js ~ line 12 ~ OrderComplain ~ reduxOrderInvoice", reduxOrderInvoice)
-
-    console.log("🚀 ~ file: OrderCancel.js ~ line 11 ~ OrderComplain ~ reduxOrderStatus", reduxOrderStatus)
-
     const reduxAuth = useSelector(state => state.auth.auth)
-
     const [activeSections, setactiveSections] = useState(null)
     const [checked, setChecked] = useState(null);
     const [categoryCompalain, setcategoryCompalain] = useState('');
@@ -28,10 +23,10 @@ export default function OrderComplain(props) {
     const [video, setVideo] = useState('');
 
     const data = [
-        { id: '1CV', title: "1. Ganti Metode Pembayaran", content: [] },
-        { id: '2CV', title: "2. Masih Bimbang", content: [] },
-        { id: '3CV', title: "3. Respon Penjual Lambat", content: [] },
-        { id: '4CV', title: "4. Lainnya", content: [] },
+        { id: '1CV', title: "Ganti Metode Pembayaran", content: [] },
+        { id: '2CV', title: "Masih Bimbang", content: [] },
+        { id: '3CV', title: "Respon Penjual Lambat", content: [] },
+        { id: '4CV', title: "Lainnya", content: [] },
 
     ]
 
@@ -120,31 +115,43 @@ export default function OrderComplain(props) {
                         data={data}
                         keyExtractor={item => item.id}
                         renderItem={({ item }) => {
+                            console.log("🚀 ~ file: OrderCancel.js ~ line 141 ~ OrderComplain ~ item", item)
+
                             return (
-                                <View style={[styles.column_center_start, styles.mb_5, styles.p_3, { backgroundColor: colors.White, elevation: 2, width: '100%', }]}>
-                                    <TouchableOpacity onPress={() => setactiveSections(item.id) & setChecked(null) & setcategoryCompalain(item.title) & settitleComplain("") & setalertText("")}><Text style={[styles.font_14, styles.T_semi_bold]}>{item.title}</Text></TouchableOpacity>
+
+                                <TouchableOpacity onPress={() => setactiveSections(item.id) & setChecked(null) & setcategoryCompalain(item.title) & settitleComplain("") & setalertText("")} style={[styles.column_center_start, styles.mb_5, styles.p_3, { backgroundColor: colors.White, elevation: 2, width: '100%', }]}>
+                                    <View style={[styles.row_between_center, { width: '100%' }]}>
+                                        <Text style={[styles.font_14, styles.T_semi_bold]}>{item.title}</Text>
+                                        <RadioButton
+                                            color={colors.BlueJaja}
+                                            value={activeSections}
+                                            status={activeSections === item.id ? 'checked' : 'unchecked'}
+                                            onPress={() => setactiveSections(item.id)}
+
+                                        />
+                                    </View>
                                     <Collapsible style={{ width: '100%' }} collapsed={activeSections !== item.id ? true : false}>
                                         <View style={[styles.column, styles.px_3]}>
-                                            <Text style={[styles.font_13, styles.T_medium, styles.mt_5,]}>Masukkan alasan pembatalan</Text>
+                                            <Text style={[styles.font_12, styles.T_medium, styles.mt_5,]}>Masukkan alasan pembatalan</Text>
                                             <TextInput
                                                 value={textComplain}
                                                 onChangeText={(text) => settextComplain(text)}
-                                                style={[styles.font_13, { borderBottomWidth: 0.5, width: Wp('80%'), minHeight: Wp('15%'), maxHeight: Wp('100%') }]}
+                                                style={[styles.font_12, { borderBottomWidth: 0.5, width: Wp('80%'), minHeight: Wp('15%'), maxHeight: Wp('100%') }]}
                                                 numberOfLines={5}
                                                 multiline={true}
                                                 maxLength={500}
-                                                placeholder="Masukkan alasan pembatalan (opsional)"
+                                                placeholder="Masukkan alasan pembatalan"
                                                 textAlignVertical='top'
                                             />
                                         </View>
 
                                     </Collapsible>
-                                </View>
+                                </TouchableOpacity>
                             )
                         }}
                     />
-                    <Text style={[styles.font_13, styles.my_5, { color: colors.RedNotif }]}>{alertText}</Text>
-                    <Button onPress={handleSendCancel} style={{ width: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained">Batalkan Pesanan</Button>
+                    <Text style={[styles.font_12, styles.my_5, { color: colors.RedNotif }]}>{alertText}</Text>
+                    <Button onPress={handleSendCancel} style={{ width: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} mode="contained">Batalkan Pesanan</Button>
                 </View>
             </ScrollView>
         </SafeAreaView >

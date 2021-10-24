@@ -2,14 +2,13 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, FlatList, Alert, Touchable } from 'react-native';
 import { TouchableRipple } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-import { Appbar, styles as style, colors, Wp, Hp, Utils, DefaultNotFound, useNavigation, useFocusEffect } from '../../export';
+import { Appbar, styles as style, colors, Wp, Hp, Utils, DefaultNotFound, useNavigation, useFocusEffect, ServiceUser } from '../../export';
 function NotifikasiScreen(props) {
     const [notifData, setnotifData] = useState([]);
     const [shimmer, setshimmer] = useState(Boolean);
     const reduxUser = useSelector(state => state.user.user)
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxBadges = useSelector(state => state.user.badges)
-    console.log("🚀 ~ file: NotifikasiScreen.js ~ line 12 ~ NotifikasiScreen ~ reduxBadges", reduxBadges)
 
     const navigation = useNavigation()
     const dispatch = useDispatch()
@@ -22,7 +21,6 @@ function NotifikasiScreen(props) {
         fetch(`https://jaja.id/backend/notifikasi/${reduxAuth ? reduxUser.id : ''}`, requestOptions)
             .then(response => response.text())
             .then(result => {
-                console.log("🚀 ~ file: NotifikasiScreen.js ~ line 25 ~ handleNotifikasi ~ result", result)
                 try {
                     let data = JSON.parse(result)
                     if (data.status.code === 200 || data.status.code === 204) {
@@ -49,7 +47,6 @@ function NotifikasiScreen(props) {
             .catch(error => {
                 Utils.handleError(error, 'Error with status code : 15002')
             });
-        console.log("🚀 ~ file: NotifikasiScreen.js ~ line 52 ~ handleNotifikasi ~ reduxUser", reduxUser)
     }
 
     useEffect(() => {
@@ -65,6 +62,7 @@ function NotifikasiScreen(props) {
             readData()
         }, []),
     );
+
     const readData = async () => {
         try {
             var raw = "";
@@ -91,7 +89,6 @@ function NotifikasiScreen(props) {
         myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Cookie", "ci_session=7vgloal55kn733tsqch0v7lh1tfrcilq");
 
-
         var requestOptions = {
             method: 'GET',
             headers: myHeaders,
@@ -105,6 +102,7 @@ function NotifikasiScreen(props) {
                     let data = JSON.parse(result)
                     if (data.status.code == 200) {
                         handleNotifikasi()
+                        getBadges()
                     } else {
 
                     }
@@ -114,7 +112,7 @@ function NotifikasiScreen(props) {
                 }
             })
             .catch(error => {
-                Utils.handleError(error, 'Error with status code : 12002')
+                Utils.handleError(error, 'Error with status code : 120029')
             });
     }
 
@@ -126,6 +124,15 @@ function NotifikasiScreen(props) {
         navigation.navigate('OrderDetails')
     }
 
+    const getBadges = () => {
+        ServiceUser.getBadges(reduxAuth).then(res => {
+            if (res) {
+                dispatch({ type: "SET_BADGES", payload: res })
+            } else {
+                dispatch({ type: "SET_BADGES", payload: {} })
+            }
+        })
+    }
     return (
         <SafeAreaView style={style.container}>
             <Appbar back={true} title="Notifikasi" />

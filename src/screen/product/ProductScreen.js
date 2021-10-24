@@ -62,13 +62,13 @@ export default function ProductScreen(props) {
     }, []);
 
     useEffect(() => {
-        setLoading(true)
         if (props.route.params && props.route.params.slug) {
             if (showFlashsale) {
                 setFlashsale(true)
             } else {
                 setFlashsale(false)
             }
+            setLoading(true)
             getItem(props.route.params.slug)
         }
 
@@ -180,15 +180,9 @@ export default function ProductScreen(props) {
             if (response !== 'clear') {
                 return ToastAndroid.show("Sedang memuat, koneksi anda lambat!", ToastAndroid.LONG, ToastAndroid.CENTER)
             }
-        }, 7000);
-        setTimeout(() => {
-            if (response !== 'clear') {
-                setRefreshing(false)
-                return ToastAndroid.show("Tidak dapat terhubung, periksa koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.CENTER)
-            }
-            setRefreshing(false)
-            setLoading(false)
-        }, 17000);
+
+        }, 10000);
+
     }
 
 
@@ -675,7 +669,7 @@ export default function ProductScreen(props) {
                                         <Text style={[styles.font_14, styles.mb_3, styles.T_light]}>{reduxSearch.productDetail.masaPengemasan} Hari</Text>
                                         : null
                                     }
-                                    <Text style={[styles.font_14, styles.mb_3, styles.T_light]}>{reduxSearch.productDetail.stock}</Text>
+                                    <Text style={[styles.font_14, styles.mb_3, styles.T_light]}>{reduxSearch.productDetail.stock && reduxSearch.productDetail.stock > 0 ? reduxSearch.productDetail.stock : 0}</Text>
                                 </View>
                             </View>
                             <Text style={{ textDecorationLine: 'underline', fontSize: 13, fontFamily: 'Poppins-Medium', color: colors.BlackGrayScale, marginBottom: '3%' }}>Deskripsi Produk</Text>

@@ -429,9 +429,11 @@ export default function checkoutScreen() {
     }
 
     const handleCheckout = () => {
+        console.log("🚀 ~ file: CheckoutScreen.js ~ line 433 ~ handleCheckout ~ reduxCheckout.total", reduxCheckout.total)
         Alert.alert(
-            "Pilih pembayaran",
-            "Kamu akan melanjutkan ke menu pembayaran?",
+            `${reduxCheckout.total > 0 ? "Pilih Pembayaran" : 'Buat Pesanan'}`,
+            `${reduxCheckout.total > 0 ? 'Pesanan kamu akan dilanjutkan ke menu pembayaran!.' : 'Pesanan kamu akan dibuat!'}`,
+
             [
                 {
                     text: "Periksa Lagi",
@@ -449,7 +451,9 @@ export default function checkoutScreen() {
                         }
 
                         setTimeout(() => {
-
+                            if (reduxCheckout.total <= 0) {
+                                Utils.alertPopUp('Persanan berhasil dibuat!')
+                            }
                             let error = true;
                             var myHeaders = new Headers();
                             myHeaders.append("Authorization", reduxAuth);
@@ -876,7 +880,7 @@ export default function checkoutScreen() {
                     <Text numberOfLines={1} style={[styles.font_18, styles.T_semi_bold, { color: colors.BlueJaja }]}>{reduxCheckout.totalCurrencyFormat}</Text>
                 </View>
                 <Button onPress={handleCheckout} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_14, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
-                    Pilih pembayaran
+                    {reduxCheckout.total > 0 ? 'Pilih pembayaran' : 'Buat Pesanan'}
                 </Button>
             </View>
             <ActionSheet ref={actionSheetVoucher} onOpen={() => setloadAs(false)} onClose={() => setvoucherOpen("")} delayActionSheetDraw={false} containerStyle={{ padding: '4%', }}>

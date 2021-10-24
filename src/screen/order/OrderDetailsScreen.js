@@ -136,13 +136,26 @@ export default function OrderDetailsScreen() {
     const [count, setcount] = useState(0)
 
     useEffect(() => {
-        setLoading(true)
         if (details && Object.keys(details).length) {
-            setLoading(true)
+            setLoading(false)
+            dispatch({ type: 'SET_INVOICE', payload: details.items[0].invoice })
+            let status = details.status;
+            dispatch({ type: 'SET_ORDER_STATUS', payload: status === 'notPaid' ? "Menunggu Pembayaran" : status === 'waitConfirm' ? 'Menunggu Konfirmasi' : status === 'prepared' ? 'Sedang Disiapkan' : status === 'canceled' ? 'Pesanan Dibatalkan' : status === 'done' ? 'Pesanan Selesai' : null })
+            if (status == 'notPaid') {
+                ServiceCheckout.getListPayment().then(res => {
+                    if (res) {
+                        dispatch({ type: 'SET_LIST_PAYMENT', payload: details })
+                    }
+                })
+            }
+            if (status === 'notPaid') {
+                getPayment(details.orderId);
+            }
         }
-    }, [details])
+    }, [details, count])
 
     useEffect(() => {
+        setLoading(true)
         const backAction = () => {
             getOrder()
             navigation.goBack()
@@ -351,7 +364,7 @@ export default function OrderDetailsScreen() {
                 }
 
             })
-            .catch(error => { alert('Kegagalan Respon Server'); });
+            .catch(error => { Utils.alertPopUp('Kegagalan Respon Server : 20201'); });
 
 
     }
@@ -376,7 +389,7 @@ export default function OrderDetailsScreen() {
                 return result.qr_code_url;
 
             })
-            .catch(error => { alert('Kegagalan Respon Server'); });
+            .catch(error => { Utils.alertPopUp('Kegagalan Respon Server : 20202'); });
     }
 
 
@@ -494,7 +507,7 @@ export default function OrderDetailsScreen() {
                 snapTokenUpdate(paramPayMD);
 
             })
-            .catch(error => { alert('Kegagalan Respon Server'); });
+            .catch(error => { Utils.alertPopUp('Kegagalan Respon Server : 20203'); });
     }
 
     const snapTokenUpdate = (paramPayMD) => {
@@ -545,10 +558,7 @@ export default function OrderDetailsScreen() {
 
 
             })
-            .catch(error => { alert('Kegagalan Respon Server'); });
-
-
-
+            .catch(error => { Utils.handleError('Kegagalan Respon Server : 20204'); });
 
     }
 
@@ -600,64 +610,67 @@ export default function OrderDetailsScreen() {
             headers: myHeaders,
             redirect: 'follow'
         };
+        let isError = true
 
         fetch(`https://jaja.id/backend/order/${reduxOrderInvoice}`, requestOptions)
             .then(response => response.text())
             .then(res => {
+                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 618 ~ getItem ~ res", res)
+                isError = false
                 try {
                     let result = JSON.parse(res)
                     if (result.status.code === 200 || result.status.code === 204) {
                         setDetails(result.data)
-                        let status = result.data.status;
-                        if (!reduxOrderStatus) {
-                            dispatch({ type: 'SET_ORDER_STATUS', payload: status === 'notPaid' ? "Menunggu Pembayaran" : status === 'waitConfirm' ? 'Menunggu Konfirmasi' : status === 'prepared' ? 'Sedang Disiapkan' : status === 'canceled' ? 'Pesanan Dibatalkan' : status === 'done' ? 'Pesanan Selesai' : null })
-                            if (status == 'notPaid') {
-                                ServiceCheckout.getListPayment().then(res => {
-                                    if (res) {
-                                        dispatch({ type: 'SET_LIST_PAYMENT', payload: res })
-                                    }
-                                })
-                            }
-                        }
-                        if (status === 'notPaid') {
-                            getPayment(result.data.orderId);
-                        }
-                        // dispatch({ type: 'SET_INVOICE', payload: result.data.items[0].invoice })
-                    } else {
+                        setcount(count + 1)
+                    }
+                    else {
                         Utils.handleErrorResponse(result, "Error with status code : 22003");
                     }
                     setRefreshing(false)
                     setLoading(false)
                 } catch (error) {
-                    alert(res)
+                    Alert.alert(`Error with status code : 22004\n\ ${JSON.stringify(error)}\n ${JSON.stringify(res)}`);
                 }
             })
             .catch(error => {
+                isError = false
                 setRefreshing(false)
                 setLoading(false)
                 Utils.handleError(error, "Error with status code : 22005")
             });
-
         setTimeout(() => {
-            if (refreshing) {
-                Utils.CheckSignal(item => {
-                    if (item.connect) {
-                        setTimeout(() => {
-                            Utils.CheckSignal(res => {
-                                if (!res.connect) {
-                                    Utils.alertPopUp('Tidak dapat terhubung, periksa kembali koneksi anda!')
-                                }
-                                setRefreshing(false)
-                            })
-                        }, 2500);
-                    } else {
+            if (isError) {
+                Utils.alertPopUp('Sedang memuat..')
+                setTimeout(() => {
+                    if (isError) {
+                        Utils.alertPopUp('Sedang memuat..')
                         setRefreshing(false)
-                        Utils.alertPopUp('Tidak dapat terhubung, periksa kembali koneksi anda!')
+                        setLoading(false)
                     }
-                })
-
+                }, 10000);
             }
-        }, 5000);
+        }, 7500);
+
+        // setTimeout(() => {
+        //     if (refreshing) {
+        //         Utils.CheckSignal(item => {
+        //             if (item.connect) {
+        //                 setTimeout(() => {
+        //                     Utils.CheckSignal(res => {
+        //                         if (!res.connect) {
+        //                             Utils.alertPopUp('Tidak dapat terhubung, periksa kembali koneksi anda!')
+        //                         }
+        //                         setRefreshing(false)
+        //                     })
+        //                 }, 2500);
+        //             } else {
+        //                 setRefreshing(false)
+        //                 Utils.alertPopUp('Tidak dapat terhubung, periksa kembali koneksi anda!')
+        //             }
+        //         })
+
+        //     }
+        // }, 5000);
     }
 
     const submitChange = () => {
@@ -838,7 +851,6 @@ export default function OrderDetailsScreen() {
         let newProductComplain = productsComplain
         let newOrderDetail = details
         let boolean = Boolean(newProductComplain.find(e => e === item.productId))
-        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 874 ~ handleComplain ~ boolean", boolean)
         if (!boolean) {
             newProductComplain.push(item.productId)
             newOrderDetail.items[idxStore].products[idx].onComplain = true
@@ -847,7 +859,6 @@ export default function OrderDetailsScreen() {
             newOrderDetail.items[idxStore].products[idx].onComplain = false
             newProductComplain = newProductComplain.filter(element => element.indexOf(newProductComplain[idx]) === -1)
         }
-        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 878 ~ handleComplain ~ newProductComplain", newProductComplain)
         setproductsComplain(newProductComplain)
         setDetails(newOrderDetail)
         setcount(count + 1)
@@ -882,9 +893,10 @@ export default function OrderDetailsScreen() {
                                 <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/process.png')} />
                                 <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}> Status Pesanan</Text>
                             </View>
-                            <View style={[styles.px, styles.px_3, { backgroundColor: colors.YellowJaja, borderRadius: 3 }]}>
-                                <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>{reduxOrderStatus}</Text>
-                            </View>
+                            {reduxOrderStatus ?
+                                <View style={[styles.px, styles.px_3, { backgroundColor: colors.YellowJaja, borderRadius: 3 }]}>
+                                    <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>{reduxOrderStatus}</Text>
+                                </View> : null}
                         </View>
                         {reduxOrderStatus !== "Menunggu Pembayaran" ?
                             details && details.items && details.items.length ?
@@ -1099,9 +1111,10 @@ export default function OrderDetailsScreen() {
                                             :
                                             orderPaymentRecent.payment_type == "" ?
 
-                                                listPayment.map(item => {
+                                                listPayment.map((item, indx) => {
                                                     return (
                                                         <TouchableRipple
+                                                            key={indx + 'HY'}
                                                             //onPressIn={() => handleShowPayment(item)} 
                                                             style={[styles.px_3, styles.py_3, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}
                                                             onPress={() => handleShowPayment(item)}
@@ -1307,9 +1320,8 @@ export default function OrderDetailsScreen() {
                                 return (
                                     <View key={String(idxStore)} style={[styles.column, styles.mb, { width: '100%', }]}>
                                         {item.products.map((child, idx) => {
-                                            console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 1302 ~ {item.products.map ~ child", child.onComplain)
                                             return (
-                                                <View key={String(idx) + "s"} style={[styles.column, styles.px_3, styles.py_2, { width: Wp('95%'), backgroundColor: colors.White }]}>
+                                                <View key={String(idx) + "SC"} style={[styles.column, styles.px_3, styles.py_2, { width: Wp('95%'), backgroundColor: colors.White }]}>
                                                     <View style={styles.row_between_center}>
                                                         <View style={[styles.row_start_center, { flex: 1, height: Wp('25%') }]}>
                                                             <TouchableOpacity >

@@ -32,17 +32,14 @@ export default function OrderDeliveryScreen() {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Cookie", "ci_session=croc9bj799b291gjd0oqd06b3vr2ehm8");
-        var raw = "";
         var requestOptions = {
             method: 'GET',
             headers: myHeaders,
-            body: raw,
             redirect: 'follow'
         };
         fetch(`https://jaja.id/backend/order/${reduxInvoice}`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: OrderDeliveryScreen.js ~ line 45 ~ getItem ~ result", result.data)
                 if (result.status.code === 200 || result.status.code === 204) {
                     dispatch({ type: 'SET_TRACKING', payload: result.data.tracking })
                 } else {

@@ -18,6 +18,8 @@ export default function BottomRoute() {
     const location = useSelector(state => state.user.user.location)
     const reduxnotifCount = useSelector(state => state.notification.notifCount)
     const reduxAuth = useSelector(state => state.auth.auth)
+    const reduxUserNotif = useSelector(state => state.user.badges)
+
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -165,11 +167,12 @@ export default function BottomRoute() {
                         <Text style={{ fontSize: 12, color: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '3%' }}>{Language("Home")}</Text>
                     ),
                     tabBarIcon: ({ size, focused }) => {
+                        console.log("🚀 ~ file: BottomRoute.js ~ line 170 ~ BottomRoute ~ size", size)
                         return (
-                            <View style={style.column}>
+                            <View style={[style.column, style.mx]}>
                                 <FAIcon name="rocket" size={size} color={focused ? colors.YellowJaja : colors.BlueJaja} style={{ marginBottom: '-2%' }} />
-                                {reduxnotifCount && reduxnotifCount.home ?
-                                    <View style={style.countNotif}><Text style={style.textNotif}>{parseInt(reduxnotifCount.home) > 99 ? "99+" : reduxnotifCount.home}</Text></View> : null
+                                {reduxUserNotif.totalNotifUnread ?
+                                    <View style={style.countNotif}><Text style={[style.textNotif, { marginBottom: '-1%' }]}>{parseInt(reduxUserNotif.totalNotifUnread) > 99 ? "99+" : '99+'}</Text></View> : null
                                 }
                             </View>
                         )
@@ -207,10 +210,12 @@ export default function BottomRoute() {
                     ),
                     tabBarIcon: ({ size, focused }) => {
                         return (
-                            <View style={style.column}>
+                            <View style={[style.column, style.mx]}>
                                 <Image style={{ width: size, height: size, tintColor: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '-2%' }} source={require(`../assets/icons/chat.png`)} />
                                 {reduxnotifCount && reduxnotifCount.chat ?
-                                    <View style={style.countNotif}><Text style={style.textNotif}>{parseInt(reduxnotifCount.chat) > 99 ? "99+" : reduxnotifCount.chat}</Text></View> : null
+                                    <View style={style.countNotif}><Text style={[style.textNotif]}>{parseInt(reduxnotifCount.chat) > 99 ? "99+" : reduxnotifCount.chat}</Text></View> : null
+                                    // <View style={style.countNotif}><Text style={style.textNotif}>{parseInt(reduxnotifCount.chat) > 99 ? "99+" : reduxnotifCount.chat}</Text></View> : null
+                                    
                                 }
                             </View>
                         )
@@ -241,7 +246,7 @@ export default function BottomRoute() {
                     ),
                     tabBarIcon: ({ size, focused }) => {
                         return (
-                            <View style={style.column}>
+                            <View style={[style.column, style.mx]}>
                                 <Image style={{ width: size, height: size, tintColor: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '-2%' }} source={require(`../assets/icons/user-active.png`)} />
                                 {location && location.length ? null : <View style={style.countNotif}><Text style={style.textNotif}>1</Text></View>}
                             </View>

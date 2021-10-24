@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useState, useCallback } from 'react'
 import { View, Text, FlatList, Image, RefreshControl, ToastAndroid } from 'react-native'
 import { colors, styles, Wp, ServiceOrder, useNavigation, Os, DefaultNotFound } from '../../export';
 import { useSelector, useDispatch } from 'react-redux'
@@ -10,7 +10,6 @@ export default function OrdersUnpaid() {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const reduxCompleted = useSelector(state => state.order.completed)
-    console.log("🚀 ~ file: OrdersCompleted.js ~ line 13 ~ OrdersUnpaid ~ reduxCompleted", reduxCompleted)
     const [refreshing, setRefreshing] = useState(false);
     const reduxAuth = useSelector(state => state.auth.auth)
 

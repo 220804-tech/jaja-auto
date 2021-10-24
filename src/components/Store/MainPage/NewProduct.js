@@ -34,16 +34,12 @@ export default function NewProduct() {
 
     return (
         <View style={[styles.column, styles.px_3, styles.py_4, { backgroundColor: colors.White }]}>
-            <View style={[styles.row_between_center, styles.mb_3]}>
+            {/* <View style={[styles.row_between_center, styles.mb_3]}>
                 <Text style={styles.titleDashboard}>
-                    Produk terbaru
+                        Produk terbaru
                 </Text>
-                {/* <TouchableOpacity onPress={() => handleCategory('Art Shop')}>
-                    <Text style={[{ fontSize: 13, fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>
-                        Lihat Semua <Image source={require('../../assets/icons/play.png')} style={[styles.icon_10, { tintColor: colors.BlueJaja }]} />
-                    </Text>
-                </TouchableOpacity> */}
-            </View>
+            </View> */}
+
             {products && products.length ?
                 <FlatList
                     showsHorizontalScrollIndicator={false}

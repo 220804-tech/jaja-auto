@@ -54,7 +54,7 @@ export default function LoginScreen(props) {
             await GoogleSignin.signOut();
             // setUser("") // Remember to remove the user from your app's state as well
         } catch (error) {
-            console.error(error);
+            // console.error(error);
         }
     };
 
@@ -91,12 +91,9 @@ export default function LoginScreen(props) {
             fetch("https://jaja.id/backend/user/login", requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    console.log("🚀 ~ file: LoginScreen.js ~ line 58 ~ handleSubmit ~ result", result)
                     if (result.status.code === 200) {
                         EncryptedStorage.setItem("token", JSON.stringify(result.data))
                         handleUser(result.data)
-
-                        console.log("🚀 ~ file: LoginScreen.js ~ line 82 ~ handleSubmit ~  props", props)
                     } else if (result.status.code === 400 || result.status.code === 404) {
                         if (result.status.message === "account has not been activated") {
                             ToastAndroid.show("Akun anda belum diverifikasi", ToastAndroid.LONG, ToastAndroid.CENTER)

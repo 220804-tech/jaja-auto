@@ -4,8 +4,8 @@ import { IconButton, TouchableRipple } from 'react-native-paper'
 import ImagePicker from "react-native-image-crop-picker";
 import firebaseDatabase from '@react-native-firebase/database';
 import ActionSheet from 'react-native-actions-sheet';
-import { colors, Hp, Wp, Appbar, ServiceFirebase as Firebase, styles as style, Loading, Utils } from "../../export";
-import { useSelector } from 'react-redux'
+import { colors, Hp, Wp, Appbar, ServiceFirebase as Firebase, styles as style, Loading, Utils, useNavigation } from "../../export";
+import { useDispatch, useSelector } from 'react-redux'
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CheckSignal } from "../../utils/Form";
 
@@ -14,6 +14,7 @@ export default function ChatScreen({ route }) {
     const reduxAuth = useSelector(state => state.auth.auth)
     const galeryRef = createRef()
     const insets = useSafeAreaInsets();
+    const navigation = useNavigation();
 
     const pictureRef = createRef();
     const flatlist = createRef();
@@ -37,7 +38,7 @@ export default function ChatScreen({ route }) {
 
     const { data, product, order } = route.params;
 
-
+    const dispatch = useDispatch()
     const listChat = [{ id: '1SX', text: 'Halo, apakah barang ini ready?' }, { id: '2SX', text: 'Halo, apakah bisa dikirim hari ini?' }, { id: '3SX', text: 'Terima kasih!' }, { id: '4SX', text: 'Sama-sama!' },]
     useEffect(() => {
         setnameChat(data.name);
@@ -116,11 +117,12 @@ export default function ChatScreen({ route }) {
                 await fetch("https://jaja.id/backend/chat/image", requestOptions)
                     .then(response => response.text())
                     .then(res => {
-                        alert(res)
+                        // alert(JSON.stringify(res))
                         try {
                             let result = JSON.parse(res)
                             if (result.status.code === 200) {
                                 imageUrl = result.data.url
+
                             } else {
                                 imageUrl = false
                             }
@@ -148,11 +150,13 @@ export default function ChatScreen({ route }) {
                 if (data && reduxAuth) {
                     try {
                         if (selectedProduct && Object.keys(selectedProduct).length) {
+
                             handleSendProduct()
                         }
                         if (selectedOrder) {
                             message.order = selectedOrder
                         }
+                        console.log("🚀 ~ file: ChatScreen.js ~ line 149 ~ handleSend ~ message", message)
                         setTimeout(() => {
                             var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
                             firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
@@ -236,7 +240,12 @@ export default function ChatScreen({ route }) {
 
         }
     }
-
+    const handleOrderDetails = (item) => {
+        console.log("🚀 ~ file: ChatScreen.js ~ line 243 ~ handleOrderDetails ~ order", order)
+        dispatch({ type: 'SET_INVOICE', payload: item.invoice })
+        dispatch({ type: 'SET_ORDER_STATUS', payload: item.status })
+        navigation.navigate('OrderDetails', { data: item.invoice, status: "Pengiriman" })
+    }
 
     const renderRow = ({ item, index }) => {
         // console.log("🚀 ~ file: ChatScreen.js ~ line 199 ~ renderRow ~ indexz", index)
@@ -261,89 +270,111 @@ export default function ChatScreen({ route }) {
                                     <Image source={{ uri: item.image }} style={{ width: '96%', height: '96%', resizeMode: 'cover', alignSelf: 'center', justifyContent: 'center', alignItems: 'center', borderRadius: 2 }} />
                                 </View>
                                 :
-
-                                item.message ?
-                                    <View style={{
-                                        width: "100%",
-                                        justifyContent: "flex-end",
-                                        alignSelf: "center",
-                                        flexDirection: "row",
-                                        paddingHorizontal: Wp("5%"),
-                                    }}>
-                                        <View
-                                            style={{
-                                                maxWidth: "80%",
-                                                borderWidth: 0.2,
-                                                borderRadius: 15,
-                                                borderColor: colors.BlueJaja,
-                                                borderTopRightRadius: 0,
-                                                marginVertical: 5,
-                                                marginHorizontal: 10,
-                                                backgroundColor: colors.BlueJaja,
-                                                padding: 10,
-                                            }}>
-                                            {item.order && Object.keys(item.order).length ?
-                                                <>
-                                                    <Text style={[style.font_13, { textAlign: "right", color: colors.White }]}>
-                                                        No. {item.order.invoice}
-                                                    </Text>
-                                                    <Text style={[style.font_11, style.mb_5, { textAlign: "right", color: colors.White }]}>
-                                                        {item.order.status}
-                                                    </Text>
-                                                    <View style={[style.column_end_center, { width: Wp('25%'), height: Wp('25%'), alignSelf: 'flex-end', backgroundColor: colors.BlueLight }]}>
-                                                        <Image source={{ uri: item.order.imageOrder }} style={{ width: '100%', height: '100%', resizeMode: 'contain' }} />
-                                                    </View>
-                                                </>
-                                                : null}
-                                            {item.message ?
-                                                <>
-                                                    <Text
-                                                        style={{
-                                                            fontSize: 14,
-                                                            color: "#FFF", textAlign: "right"
-                                                        }}>
-                                                        {item.message}
-                                                    </Text>
-                                                    {item.date ?
-                                                        <View style={style.row_end_center}>
-                                                            <Text style={[style.font_11, style.mt_2, { color: colors.White, alignSelf: 'flex-end' }]}>{item.date.slice(16, 21)}  </Text>
-                                                            <Image source={require('../../assets/icons/check.png')} style={[style.icon_12, {
-                                                                marginBottom: '-0.2%',
-                                                                tintColor: item.read ? colors.YellowJaja : colors.WhiteSilver
-                                                            }]} />
-                                                        </View>
-                                                        : null
-                                                    }
-                                                </>
-
-                                                : null}
-
-
-                                        </View>
+                                <>
+                                    {item.order && Object.keys(item.order).length ?
                                         <View style={{
-                                            borderRadius: 50,
-                                            width: Hp("6%"),
-                                            height: Hp("6%"),
-                                            backgroundColor: colors.BlackGrayScale,
-                                            overflow: "hidden"
+                                            width: "100%",
+                                            justifyContent: "flex-end",
+                                            alignSelf: "center",
+                                            flexDirection: "row",
+                                            paddingHorizontal: Wp("5%"),
                                         }}>
-                                            <Image
+                                            <View
                                                 style={{
-                                                    justifyContent: "center",
-                                                    alignItems: "center",
-                                                    width: Hp("6%"),
-                                                    height: Hp("6%"),
-                                                    borderRadius: 50,
-                                                    // backgroundColor: colors.BlackGrayScale,
-                                                    overflow: "hidden"
-                                                }}
-                                                resizeMethod={"scale"}
-                                                // resizeMode={item["image"] == '' ? "center" : "cover"}
-                                                source={{ uri: reduxUser.image }}
-                                            />
+                                                    maxWidth: "80%",
+                                                    borderWidth: 0.2,
+                                                    borderRadius: 15,
+                                                    borderColor: colors.BlueJaja,
+                                                    borderTopRightRadius: 0,
+                                                    marginVertical: 5,
+                                                    marginHorizontal: 10,
+                                                    backgroundColor: colors.BlueJaja,
+                                                    padding: 10,
+                                                }}>
+
+                                                <Text onPress={() => handleOrderDetails(item.order)} style={[style.font_13, { textAlign: "right", color: colors.White }]}>
+                                                    No. {item.order.invoice}
+                                                </Text>
+                                                <Text onPress={() => handleOrderDetails(item.order)} style={[style.font_11, style.mb_5, { textAlign: "right", color: colors.White }]}>
+                                                    {item.order.status}
+                                                </Text>
+                                                <View style={[style.column_end_center, { width: Wp('25%'), height: Wp('25%'), alignSelf: 'flex-end', backgroundColor: colors.BlueLight }]}>
+                                                    <Image source={{ uri: item.order.imageOrder }} style={{ width: '100%', height: '100%', resizeMode: 'contain' }} />
+                                                </View>
+                                            </View>
                                         </View>
-                                    </View>
-                                    : null
+                                        : null}
+                                    {item.message ?
+                                        <View style={{
+                                            width: "100%",
+                                            justifyContent: "flex-end",
+                                            alignSelf: "center",
+                                            flexDirection: "row",
+                                            paddingHorizontal: Wp("5%"),
+                                        }}>
+                                            <View
+                                                style={{
+                                                    maxWidth: "80%",
+                                                    borderWidth: 0.2,
+                                                    borderRadius: 15,
+                                                    borderColor: colors.BlueJaja,
+                                                    borderTopRightRadius: 0,
+                                                    marginVertical: 5,
+                                                    marginHorizontal: 10,
+                                                    backgroundColor: colors.BlueJaja,
+                                                    padding: 10,
+                                                }}>
+
+                                                {item.message ?
+                                                    <>
+                                                        <Text
+                                                            style={{
+                                                                fontSize: 14,
+                                                                color: "#FFF", textAlign: "right"
+                                                            }}>
+                                                            {item.message}
+                                                        </Text>
+                                                        {item.date ?
+                                                            <View style={style.row_end_center}>
+                                                                <Text style={[style.font_11, style.mt_2, { color: colors.White, alignSelf: 'flex-end' }]}>{item.date.slice(16, 21)}  </Text>
+                                                                <Image source={require('../../assets/icons/check.png')} style={[style.icon_12, {
+                                                                    marginBottom: '-0.2%',
+                                                                    tintColor: item.read ? colors.YellowJaja : colors.WhiteSilver
+                                                                }]} />
+                                                            </View>
+                                                            : null
+                                                        }
+                                                    </>
+
+                                                    : null}
+
+
+                                            </View>
+                                            <View style={{
+                                                borderRadius: 50,
+                                                width: Hp("6%"),
+                                                height: Hp("6%"),
+                                                backgroundColor: colors.BlackGrayScale,
+                                                overflow: "hidden"
+                                            }}>
+                                                <Image
+                                                    style={{
+                                                        justifyContent: "center",
+                                                        alignItems: "center",
+                                                        width: Hp("6%"),
+                                                        height: Hp("6%"),
+                                                        borderRadius: 50,
+                                                        // backgroundColor: colors.BlackGrayScale,
+                                                        overflow: "hidden"
+                                                    }}
+                                                    resizeMethod={"scale"}
+                                                    // resizeMode={item["image"] == '' ? "center" : "cover"}
+                                                    source={{ uri: reduxUser.image }}
+                                                />
+                                            </View>
+                                        </View>
+                                        : null}
+                                </>
 
                             :
                             <View style={{

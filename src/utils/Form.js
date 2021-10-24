@@ -52,11 +52,11 @@ export async function CheckSignal() {
 export function handleErrorResponse(error, errorCode) {
     if (error && Object.keys(error).length && error.status.code !== 200 && error.status.code !== 204) {
         if (error.status.message) {
-            Utils.alertPopUp(String(error.status.message))
+            Utils.alertPopUp(JSON.stringify(error.status.message))
         } else {
             Alert.alert(
                 errorCode,
-                String(error.status.message) + " => " + String(error.status.code),
+                JSON.stringify(error.status.message) + " => " + JSON.stringify(error.status.code),
                 [
                     {
                         text: "TUTUP",
@@ -89,7 +89,7 @@ export function handleError(error, name) {
     } else {
         Alert.alert(
             `${name}`,
-            `${'Error: ' + String(error)} `,
+            `${'Error: ' + JSON.stringify(error)} `,
             [
                 {
                     text: "TUTUP",

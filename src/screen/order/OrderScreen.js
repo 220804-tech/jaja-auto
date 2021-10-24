@@ -11,7 +11,6 @@ import Return from '../../components/Orders/OrdersComplain'
 import { colors, styles, Appbar, DefaultNotFound, ServiceOrder, ServiceFirebase } from '../../export';
 const initialLayout = { width: Dimensions.get('window').width };
 import { useDispatch, useSelector } from 'react-redux'
-import EncryptedStorage from 'react-native-encrypted-storage';
 import LoginOrderScreen from '../login/LoginOrderScreen';
 import database from "@react-native-firebase/database";
 

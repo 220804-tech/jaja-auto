@@ -89,8 +89,8 @@ export default function MainPage() {
             <ScrollView contentContainerStyle={{ alignItems: 'flex-start' }}>
                 <View style={[styles.column, { width: Wp('100%') }]}>
                     {vouchers && vouchers.length !== 0 ?
-                        <View style={[styles.row_center, styles.my_2, { height: Wp('20%'), paddingHorizontal: '1%' }]}>
-                            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ height: Wp('20%') }}>
+                        <View style={[styles.column_center_start, styles.my_2]}>
+                            {/* <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ height: Wp('20%') }}>
                                 <FlatList
                                     contentContainerStyle={{ alignSelf: 'flex-start' }}
                                     horizontal
@@ -98,6 +98,8 @@ export default function MainPage() {
                                     keyExtractor={(item) => item.id}
                                     data={vouchers}
                                     renderItem={({ item }) => {
+                                        console.log("🚀 ~ file: MainPage.js ~ line 126 ~ MainPage ~ item", item)
+
                                         return (
                                             <View style={[styles.row_start_center, styles.my_3, { width: Wp('45%'), height: Wp('17%'), marginRight: 10 }]}>
                                                 <View style={[styles.row_between_center, styles.pr_2, { width: '100%', height: '100%', backgroundColor: colors.BlueJaja }]}>
@@ -124,7 +126,57 @@ export default function MainPage() {
 
                                     }}
                                 />
-                            </ScrollView>
+                                {console.log("🚀 ~~~~~~~~~~~~~~~~~ \n\n")}
+                            </ScrollView> */}
+                            <View style={[styles.px_4, { paddingVertical: '0.1%', backgroundColor: colors.BlueJaja, width: '55%', borderBottomRightRadius: 100, }]}>
+                                <Text style={[styles.font_14, styles.T_medium, { color: colors.White, width: '80%' }]}>
+                                    Voucher Toko
+                                </Text>
+                            </View>
+                            <FlatList
+                                // refreshControl={
+                                //     <RefreshControl
+                                //         refreshing={refreshing}
+                                //         onRefresh={onRefresh}
+                                //     />
+                                // }
+                                showsVerticalScrollIndicator={false}
+                                style={styles.pt_3}
+                                contentContainerStyle={styles.pb_5}
+                                data={vouchers}
+                                renderItem={({ item, index }) => {
+                                    console.log("file: VoucherScreen.js ~ line 198 ~ VoucherScreen ~ item", item)
+                                    return (
+                                        <View style={[styles.row_center, styles.mb_3]}>
+                                            <View style={[styles.row, { width: '95%', height: Wp('27%'), backgroundColor: colors.White, borderTopWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, borderColor: colors.BlueJaja }]}>
+                                                <View style={{ position: 'absolute', height: '100%', width: Wp('5%'), backgroundColor: colors.BlueJaja, flexDirection: 'column', justifyContent: 'center' }}>
+                                                    <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                    <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                    <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                    <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                    <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                    <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                </View>
+                                                <View style={[styles.column_center, styles.p, { height: '100%', width: '30%', marginLeft: Wp('3%'), backgroundColor: colors.BlueJaja }]}>
+                                                    <Text style={[styles.font_14, styles.mb_2, { color: colors.White, fontFamily: 'Poppins-SemiBold', alignSelf: 'center' }]}>{!item.category ? item.name : item.category === "ongkir" ? 'GRATIS BIAYA PENGIRIMAN' : String(item.category).toUpperCase() + " " + item.discountText}</Text>
+                                                </View>
+                                                <View style={[styles.column_center, styles.px_2, { width: '44%' }]}>
+                                                    <Text numberOfLines={3} style={[styles.font_13, styles.mb_2, { color: colors.BlueJaja, fontFamily: 'Poppins-SemiBold', width: '100%' }]}>{item.discount}</Text>
+                                                    <Text style={[styles.font_8, { position: 'absolute', bottom: 5, color: colors.BlueJaja, fontFamily: 'Poppins-SemiBold', width: '100%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
+                                                </View>
+                                                <View style={[styles.column_center, { width: '22%' }]}>
+                                                    <TouchableOpacity onPress={() => handleVoucher(item, index)} style={{ width: '90%', height: '30%', backgroundColor: item.isClaimed ? colors.White : colors.BlueJaja, padding: '2%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.BlueJaja, borderRadius: 5 }}>
+                                                        <Text style={[styles.font_10, { color: item.isClaimed ? colors.BlueJaja : colors.White, fontFamily: 'Poppins-SemiBold' }]}>{item.isClaimed ? item.isSelected ? "TERPAKAI" : "PAKAI" : "KLAIM"}</Text>
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity onPress={() => handleDescription(item)} style={{ position: 'absolute', bottom: 5 }}>
+                                                        <Text style={[styles.font_12, { color: colors.BlueLink }]}>S&K</Text>
+                                                    </TouchableOpacity>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    )
+                                }}
+                            />
                         </View>
                         : null
                     }
@@ -194,6 +246,11 @@ export default function MainPage() {
                 <View style={[styles.column, styles.mt_3, styles.pb_5]}>
 
                     <View style={styles.column}>
+                        <View style={[styles.px_4, { paddingVertical: '0.1%', backgroundColor: colors.BlueJaja, width: '55%', borderBottomRightRadius: 100, }]}>
+                            <Text style={[styles.font_14, styles.T_medium, { color: colors.White, width: '80%' }]}>
+                                Produk terbaru
+                            </Text>
+                        </View>
                         {reduxStore.store.flashSale && reduxStore.store.flashSale.length ?
                             <View style={{ width: Wp('100%') }}>
                                 <FlashsaleToko data={reduxStore.store.flashSale} />

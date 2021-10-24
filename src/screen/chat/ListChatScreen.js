@@ -40,9 +40,14 @@ export default function ListChat() {
                     console.log(item.id, " firebase");
                     if (item.id !== reduxUser.uid && item.id !== "null") {
                         returnArray.push(item);
-                        let sortedObj = returnArray.sort(function (a, b) {
-                            return new Date(b.message.time) - new Date(a.message.time);
-                        });
+                        let sortedObj = []
+                        try {
+                            sortedObj = returnArray.sort(function (a, b) {
+                                return new Date(b.message.time) - new Date(a.message.time);
+                            });
+                        } catch (error) {
+
+                        }
                         let countChat = 0
                         sortedObj.map(item => countChat += item.amount)
                         dispatch({ type: 'SET_NOTIF_COUNT', payload: { home: reduxnotifCount.home, chat: countChat, orders: reduxnotifCount.orders } })
@@ -78,15 +83,25 @@ export default function ListChat() {
     }
 
     const renderItem = ({ item }) => {
-        console.log("🚀 ~ file: ListChatScreen.js ~ line 81 ~ renderItem ~ item", reduxnotifCount)
+        console.log("🚀 ~ file: ListChatScreen.js ~ line 81 ~ renderItem ~ item", item)
         return (
             <>
-                {item.message.text ?
+                {item.message && Object.keys(item.message).length && item.message.text ?
                     <TouchableOpacity
                         onPress={() => {
                             navigation.navigate("IsiChat", { data: item, newData: null })
-                            database().ref('friend/' + reduxUser.uid + "/" + item.id).update({ amount: 0 });
-                            database().ref(`/people/${reduxUser.uid}/`).update({ notif: { home: reduxnotifCount.home, chat: reduxnotifCount.chat - item.amount, orders: reduxnotifCount.orders } })
+                            try {
+                                let newItem = item
+                                newItem.amount = 0
+
+                                database().ref('friend/' + reduxUser.uid + "/" + item.id).set(newItem);
+                            } catch (error) {
+                            }
+                            try {
+                                database().ref(`/people/${reduxUser.uid}/`).set({ notif: { home: reduxnotifCount.home, chat: reduxnotifCount.chat - item.amount, orders: reduxnotifCount.orders } })
+                            } catch (error) {
+
+                            }
                         }}
                         style={{
                             paddingHorizontal: '1%',
