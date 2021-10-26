@@ -15,6 +15,8 @@ const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
 const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 import { useAndroidBackHandler } from "react-navigation-backhandler";
+import { TouchableRipple } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/FontAwesome';
 LogBox.ignoreAllLogs()
 
 export default function HomeScreen() {
@@ -224,6 +226,12 @@ export default function HomeScreen() {
                     <Category />
                     {reduxShowFlashsale ? <Flashsale /> : null}
                     <Trending />
+                    {/* <TouchableRipple onPress={() => console.log('object')} rippleColor={colors.White} style={[styles.row_center, styles.px, styles.py_3, { backgroundColor: colors.YellowJaja, borderRadius: 15, alignSelf: 'center', width: '95%' }]} >
+                        <View style={[styles.row_around_center, { width: '100%' }]}>
+                            <Text style={[styles.font_11, styles.T_semi_bold, { color: colors.BlackGrayScale, marginBottom: '-0.5%' }]}>Berikan hadiah untuk teman spesial kamu disini!</Text>
+                            <Image source={require('../../assets/icons/heart.png')} style={[styles.icon_27, { marginTop: '-1%' }]} />
+                        </View>
+                    </TouchableRipple> */}
                     {nearestProduct ? <NearestStore /> : null}
 
                     {/* <BasedOnSearch /> */}

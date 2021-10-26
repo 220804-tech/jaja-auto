@@ -24,6 +24,7 @@ export default function LoginScreen(props) {
     const [alertText, setAlertText] = useState("")
     const [loading, setLoading] = useState(false)
     const [navigate, setNavigate] = useState("")
+    const [loginGoogle, setLoginGoogle] = useState(true)
 
 
     useEffect(() => {
@@ -247,49 +248,56 @@ export default function LoginScreen(props) {
         }
     }
     const onGoogleButtonPress = async () => {
-        try {
-            await GoogleSignin.hasPlayServices()
-            const userInfo = await GoogleSignin.signIn();
-            setLoading(true)
-            handleCheckUser(userInfo)
-        } catch (error) {
-            setLoading(false)
-            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-                console.log("Sign In Cancelled : " + error.code);
-            } else if (error.code === statusCodes.SIGN_IN_REQUIRED) {
-                console.log("Sign In Required : " + error.code);
-            } else if (error.code == 12502 || error.code === statusCodes.IN_PROGRESS) {
-                // Alert.alert(
-                //     "Sepertinya ada masalah!",
-                //     "Error with status code " + String(error.code), [
-                //     {
-                //         text: "Reload",
-                //         onPress: () => {
-                //             navigation.reset({
-                //                 index: 0,
-                //                 routes: [{ name: 'Splash' }],
-                //             })
-                //         },
-                //         style: "cancel"
-                //     },
-                // ],
-                //     { cancelable: false }
-                // );
-            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-                console.log("Play Servie Not Available : " + error.code);
-            } else {
-                Alert.alert(
-                    "Jaja.id",
-                    String(error) + String(error.code),
-                    [
-                        {
-                            text: "Ok",
-                            onPress: () => console.log("Pressed"),
-                            style: "cancel"
-                        },
-                    ],
-                    { cancelable: false }
-                );
+        setLoginGoogle(false)
+        signOut()
+        if (loginGoogle) {
+            try {
+                let data = await GoogleSignin.hasPlayServices()
+                const userInfo = await GoogleSignin.signIn();
+                setLoading(true)
+                handleCheckUser(userInfo)
+                setLoginGoogle(true)
+            } catch (error) {
+                setLoading(false)
+                if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                    console.log("Sign In Cancelled : " + error.code);
+                } else if (error.code === statusCodes.SIGN_IN_REQUIRED) {
+                    console.log("Sign In Required : " + error.code);
+                } else if (error.code == 12502 || error.code === statusCodes.IN_PROGRESS) {
+                    // Alert.alert(
+                    //     "Sepertinya ada masalah!",
+                    //     "Error with status code " + String(error.code), [
+                    //     {
+                    //         text: "Reload",
+                    //         onPress: () => {
+                    //             navigation.reset({
+                    //                 index: 0,
+                    //                 routes: [{ name: 'Splash' }],
+                    //             })
+                    //         },
+                    //         style: "cancel"
+                    //     },
+                    // ],
+                    //     { cancelable: false }
+                    // );
+                } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                    console.log("Play Servie Not Available : " + error.code);
+                } else {
+                    Alert.alert(
+                        "Jaja.id",
+                        String(error) + String(error.code),
+                        [
+                            {
+                                text: "Ok",
+                                onPress: () => console.log("Pressed"),
+                                style: "cancel"
+                            },
+                        ],
+                        { cancelable: false }
+                    );
+                }
+                setLoginGoogle(true)
+
             }
         }
     }

@@ -140,7 +140,8 @@ export default function OrderDetailsScreen() {
             setLoading(false)
             dispatch({ type: 'SET_INVOICE', payload: details.items[0].invoice })
             let status = details.status;
-            dispatch({ type: 'SET_ORDER_STATUS', payload: status === 'notPaid' ? "Menunggu Pembayaran" : status === 'waitConfirm' ? 'Menunggu Konfirmasi' : status === 'prepared' ? 'Sedang Disiapkan' : status === 'canceled' ? 'Pesanan Dibatalkan' : status === 'done' ? 'Pesanan Selesai' : null })
+            console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 143 ~ useEffect ~ status", status)
+            dispatch({ type: 'SET_ORDER_STATUS', payload: status === 'notPaid' ? "Menunggu Pembayaran" : status === 'waitConfirm' ? 'Menunggu Konfirmasi' : status === 'prepared' ? 'Sedang Disiapkan' : status === 'canceled' ? 'Pesanan Dibatalkan' : status === 'done' ? 'Pesanan Selesai' : status === 'sent' ? 'Pengiriman' : null })
             if (status == 'notPaid') {
                 ServiceCheckout.getListPayment().then(res => {
                     if (res) {
@@ -770,9 +771,23 @@ export default function OrderDetailsScreen() {
                         fetch("https://jaja.id/backend/order/pesananDiterima", requestOptions)
                             .then(response => response.json())
                             .then(result => {
-                                setLoading(false)
+                                setTimeout(() => setLoading(false), 2000);
                                 if (result.status.code === 200) {
                                     navigation.goBack()
+                                    ServiceOrder.getSent(reduxAuth).then(resSent => {
+                                        if (resSent) {
+                                            dispatch({ type: 'SET_SENT', payload: resSent.items })
+                                        } else {
+                                            handleSent()
+                                        }
+                                    })
+                                    ServiceOrder.getCompleted(reduxAuth).then(resCompleted => {
+                                        if (resCompleted) {
+                                            dispatch({ type: 'SET_COMPLETED', payload: resCompleted.items })
+                                        } else {
+                                            handleCompleted()
+                                        }
+                                    })
                                 } else {
                                     Utils.handleErrorResponse(result, "Error with status code : 22001")
                                 }
@@ -902,7 +917,7 @@ export default function OrderDetailsScreen() {
                             details && details.items && details.items.length ?
                                 <View style={styles.row_between_center}>
                                     <View style={[styles.row]}>
-                                        <Text style={[styles.font_13]}>#{details.items[0].invoice}</Text>
+                                        <Text style={[styles.font_12]}>#{details.items[0].invoice}</Text>
                                     </View>
                                     <TouchableOpacity onPress={() => setdownloadInvoice(details.downloadOrderPdf)}
                                         // console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 843 ~ Linking.canOpenURL ~ details.downloadOrderPdf", details.downloadOrderPdf)
@@ -921,7 +936,7 @@ export default function OrderDetailsScreen() {
                                             ToastAndroid.show("salin to clipboard", ToastAndroid.LONG, ToastAndroid.TOP)
                                         }}
                                         style={[styles.p, { backgroundColor: colors.White, borderRadius: 3 }]}>
-                                        <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlueJaja }]}>DOWNLOAD INVOICE</Text>
+                                        <Text numberOfLines={1} style={[styles.font_11, { color: colors.BlueJaja }]}>DOWNLOAD INVOICE</Text>
                                     </TouchableOpacity>
                                 </View>
                                 : null
@@ -931,16 +946,16 @@ export default function OrderDetailsScreen() {
                     {details ?
                         <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                             <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                                <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/google-maps.png')} />
+                                <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '1%' }]} source={require('../../assets/icons/google-maps.png')} />
                                 <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Alamat Pengiriman</Text>
                             </View>
                             <View style={[styles.column, styles.p_3]}>
                                 <View style={styles.row_between_center}>
-                                    <Text numberOfLines={1} style={[styles.font_13, { width: '70%' }]}>{details.address.receiverName}</Text>
+                                    <Text numberOfLines={1} style={[styles.font_12, { width: '70%' }]}>{details.address.receiverName}</Text>
                                 </View>
-                                <Text numberOfLines={1} style={[styles.font_13]}>{details.address.phoneNumber}</Text>
+                                <Text numberOfLines={1} style={[styles.font_12]}>{details.address.phoneNumber}</Text>
 
-                                <Text numberOfLines={3} style={[styles.font_12, styles.mt_2]}>{details.address.address.replace(/<br>/g, "")}</Text>
+                                <Text numberOfLines={3} style={[styles.font_11, styles.mt_2]}>{details.address.address.replace(/<br>/g, "")}</Text>
                             </View>
                         </View>
                         : null
@@ -975,7 +990,7 @@ export default function OrderDetailsScreen() {
                                                             />
                                                         </TouchableOpacity>
                                                         <View style={[styles.column, styles.ml_2, { height: Wp('15%'), width: Wp('85%') }]}>
-                                                            <Text onPress={() => handleShowDetail(child)} numberOfLines={1} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja, width: '95%' }]}>{child.name}</Text>
+                                                            <Text onPress={() => handleShowDetail(child)} numberOfLines={1} style={[styles.font_13, styles.T_semi_bold, { color: colors.BlueJaja, width: '95%' }]}>{child.name}</Text>
                                                             <View style={[styles.row_between_center, styles.pr_2, { width: '95%', alignItems: 'flex-start' }]}>
                                                                 <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlackGrayScale, }]}>{child.variant ? child.variant : ""}</Text>
                                                                 <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
@@ -984,14 +999,14 @@ export default function OrderDetailsScreen() {
                                                                             <Text></Text>
                                                                             <Text numberOfLines={1} style={[styles.priceBefore, { fontStyle: 'italic' }]}>{child.priceCurrencyFormat}</Text>
                                                                             <View style={styles.row}>
-                                                                                <Text numberOfLines={1} style={[styles.font_14]}>{child.qty} x</Text>
+                                                                                <Text numberOfLines={1} style={[styles.font_13]}>{child.qty} x</Text>
                                                                                 <Text numberOfLines={1} style={[styles.priceAfter, { color: colors.BlueJaja }]}> {child.priceDiscountCurrencyFormat}</Text>
                                                                             </View>
                                                                         </>
                                                                         :
                                                                         <View style={styles.row}>
                                                                             <Text></Text>
-                                                                            <Text numberOfLines={1} style={[styles.font_14]}>{child.qty} x</Text>
+                                                                            <Text numberOfLines={1} style={[styles.font_13]}>{child.qty} x</Text>
                                                                             <Text numberOfLines={1} style={[styles.priceAfter, { color: colors.BlueJaja }]}> {child.priceCurrencyFormat}</Text>
                                                                         </View>
                                                                     }
@@ -1000,8 +1015,8 @@ export default function OrderDetailsScreen() {
                                                         </View>
                                                     </View>
                                                     <View style={[styles.row_end_center]}>
-                                                        {/* <Text style={[styles.font_14, { fontStyle: 'italic' }]}>Subtotal </Text> */}
-                                                        <Text numberOfLines={1} style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}> {child.subTotalCurrencyFormat}</Text>
+                                                        {/* <Text style={[styles.font_13, { fontStyle: 'italic' }]}>Subtotal </Text> */}
+                                                        <Text numberOfLines={1} style={[styles.font_13, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}> {child.subTotalCurrencyFormat}</Text>
                                                     </View>
                                                 </View>
                                             )
@@ -1147,13 +1162,11 @@ export default function OrderDetailsScreen() {
                                                             Ganti
                                                         </Text>
                                                     </TouchableRipple>
-
                                                     {/* <TouchableRipple onPress={() => console.log("refresh")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.GreenSuccess }]}>
 <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
     Cek Bayar
 </Text>
 </TouchableRipple> */}
-
                                                     <TouchableRipple onPress={handlePayment} style={[styles.row_center, styles.py_2, { width: 100 / 2 + '%', backgroundColor: colors.BlueJaja }]}>
                                                         <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
                                                             Bayar Sekarang
@@ -1185,13 +1198,14 @@ export default function OrderDetailsScreen() {
                     </Button> */}
                     {/* navigation.navigate(details.complain?'ResponseComplain': 'RequestComplain', {invoice: details.items[0].invoice }) */}
 
+                    {console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 1190 ~ reduxOrderStatus", reduxOrderStatus)}
                     {details && Object.keys(details).length ?
                         reduxOrderStatus === "Pengiriman" ?
                             <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'column', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
-                                <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%', marginBottom: '2%' }} contentStyle={{ width: '100%', height: '95%' }} color={colors.BlueJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
+                                <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%', marginBottom: '2%' }} contentStyle={{ width: '100%', height: '95%' }} color={colors.BlueJaja} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                                     Terima Pesanan
                                 </Button>
-                                <Button onPress={() => details.complain ? navigation.navigate('ResponseComplain', { invoice: details.items[0].invoice }) : setmodalComplain(true)} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
+                                <Button onPress={() => details.complain ? navigation.navigate('ResponseComplain', { invoice: details.items[0].invoice }) : setmodalComplain(true)} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                                     {details.complain ? "Sedang Dikomplain" : "Komplain"}
                                 </Button>
                             </View>
