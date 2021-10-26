@@ -177,16 +177,16 @@ export default function WishlistScreen() {
                 <View style={[styles.column_center, { width: Wp('100%'), height: showChild ? index === 3 ? Hp('25%') : Hp('13%') : Hp('7%'), backgroundColor: colors.White, elevation: 2, position: 'absolute', zIndex: 9999 }]}>
                     <View style={[styles.row_between_center, styles.px_2, { width: '100%', backgroundColor: colors.White, height: Hp('7%') }]}>
                         <TouchableOpacity onPress={() => handleIndex(0, null, null)} style={[styles.row_center, styles.py_2, styles.mr_2, { width: Wp('22%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 0 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                            <Text style={[styles.font_12, { color: index === 0 ? colors.White : colors.BlackGrayScale }]}>Favorit Kamu</Text>
+                            <Text style={[styles.font_10, { color: index === 0 ? colors.White : colors.BlackGrayScale }]}>Favorit Kamu</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => handleIndex(1, 0, null)} style={[styles.row_center, styles.py_2, styles.mr_2, { width: Wp('22%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 1 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                            <Text style={[styles.font_12, { color: index === 1 ? colors.White : colors.BlackGrayScale }]}>Kondisi</Text>
+                            <Text style={[styles.font_10, { color: index === 1 ? colors.White : colors.BlackGrayScale }]}>Kondisi</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => handleIndex(2, 0, null)} style={[styles.row_center, styles.py_2, styles.mr_2, { width: Wp('22%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 2 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                            <Text style={[styles.font_12, { color: index === 2 ? colors.White : colors.BlackGrayScale }]}>Proses</Text>
+                            <Text style={[styles.font_10, { color: index === 2 ? colors.White : colors.BlackGrayScale }]}>Proses</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => handleIndex(3, 0, null)} style={[styles.row_center, styles.py_2, { width: Wp('22%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 3 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                            <Text style={[styles.font_12, { color: index === 3 ? colors.White : colors.BlackGrayScale }]}>Kategori</Text>
+                            <Text style={[styles.font_10, { color: index === 3 ? colors.White : colors.BlackGrayScale }]}>Kategori</Text>
                         </TouchableOpacity>
                     </View>
                     {
@@ -194,20 +194,20 @@ export default function WishlistScreen() {
                             index === 1 ?
                                 <View style={[styles.row_between_center, styles.px_2, { width: '100%', backgroundColor: colors.White, elevation: 1, height: Hp('6%') }]}>
                                     <TouchableOpacity onPress={() => handleIndex(1, 1, null)} style={[styles.row_center, styles.py_2, styles.mr_2, { width: Wp('47%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 1 && indexChild === 1 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                                        <Text style={[styles.font_12, { color: index === 1 && indexChild === 1 ? colors.White : colors.BlackGrayScale }]}>Baru</Text>
+                                        <Text style={[styles.font_10, { color: index === 1 && indexChild === 1 ? colors.White : colors.BlackGrayScale }]}>Baru</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => handleIndex(1, 2, null)} style={[styles.row_center, styles.py_2, { width: Wp('47%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 1 && indexChild === 2 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                                        <Text style={[styles.font_12, { color: index === 1 && indexChild === 2 ? colors.White : colors.BlackGrayScale }]}>Bekas</Text>
+                                        <Text style={[styles.font_10, { color: index === 1 && indexChild === 2 ? colors.White : colors.BlackGrayScale }]}>Bekas</Text>
                                     </TouchableOpacity>
                                 </View>
                                 :
                                 index === 2 ?
                                     <View style={[styles.row_between_center, styles.px_2, { width: '100%', backgroundColor: colors.White, elevation: 1, height: Hp('6%') }]}>
                                         <TouchableOpacity onPress={() => handleIndex(2, 1, null)} style={[styles.row_center, styles.py_2, styles.mr_2, { width: Wp('47%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 2 && indexChild === 1 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                                            <Text style={[styles.font_12, { color: index === 2 && indexChild === 1 ? colors.White : colors.BlackGrayScale }]}>Stok Tersedia</Text>
+                                            <Text style={[styles.font_10, { color: index === 2 && indexChild === 1 ? colors.White : colors.BlackGrayScale }]}>Stok Tersedia</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity onPress={() => handleIndex(2, 2, null)} style={[styles.row_center, styles.py_2, { width: Wp('47%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 2 && indexChild === 2 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                                            <Text style={[styles.font_12, { color: index === 2 && indexChild === 2 ? colors.White : colors.BlackGrayScale }]}>Pre Order</Text>
+                                            <Text style={[styles.font_10, { color: index === 2 && indexChild === 2 ? colors.White : colors.BlackGrayScale }]}>Pre Order</Text>
                                         </TouchableOpacity>
                                     </View>
                                     :
@@ -215,44 +215,44 @@ export default function WishlistScreen() {
                                         <View style={[styles.column, styles.px_2, { width: '100%', backgroundColor: colors.White, elevation: 1, height: Hp('18%') }]}>
                                             <View style={[styles.row_between_center, styles.mb_4,]}>
                                                 <TouchableOpacity onPress={() => handleIndex(3, 1, 'books')} style={[styles.row_center, styles.py_2, styles.mr_2, { width: Wp('22%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 3 && indexChild === 1 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                                                    <Text style={[styles.font_12, { color: index === 3 && indexChild === 1 ? colors.White : colors.BlackGrayScale }]}>Books</Text>
+                                                    <Text style={[styles.font_10, { color: index === 3 && indexChild === 1 ? colors.White : colors.BlackGrayScale }]}>Books</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity onPress={() => handleIndex(3, 2, 'musics')} style={[styles.row_center, styles.py_2, { width: Wp('22%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 3 && indexChild === 2 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                                                    <Text style={[styles.font_12, { color: index === 3 && indexChild === 2 ? colors.White : colors.BlackGrayScale }]}>Musics</Text>
+                                                    <Text style={[styles.font_10, { color: index === 3 && indexChild === 2 ? colors.White : colors.BlackGrayScale }]}>Musics</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity onPress={() => handleIndex(3, 3, 'sports')} style={[styles.row_center, styles.py_2, styles.mr_2, { width: Wp('22%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 3 && indexChild === 3 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                                                    <Text style={[styles.font_12, { color: index === 3 && indexChild === 3 ? colors.White : colors.BlackGrayScale }]}>Sports</Text>
+                                                    <Text style={[styles.font_10, { color: index === 3 && indexChild === 3 ? colors.White : colors.BlackGrayScale }]}>Sports</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity onPress={() => handleIndex(3, 4, 'toys')} style={[styles.row_center, styles.py_2, { width: Wp('22%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 3 && indexChild === 4 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                                                    <Text style={[styles.font_12, { color: index === 3 && indexChild === 4 ? colors.White : colors.BlackGrayScale }]}>Toys</Text>
+                                                    <Text style={[styles.font_10, { color: index === 3 && indexChild === 4 ? colors.White : colors.BlackGrayScale }]}>Toys</Text>
                                                 </TouchableOpacity>
                                             </View>
                                             <View style={[styles.row_between_center, styles.mb_4,]}>
                                                 <TouchableOpacity onPress={() => handleIndex(3, 5, 'electronics')} style={[styles.row_center, styles.py_2, styles.mr_2, { width: Wp('22%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 3 && indexChild === 5 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                                                    <Text style={[styles.font_12, { color: index === 3 && indexChild === 5 ? colors.White : colors.BlackGrayScale }]}>Electronics</Text>
+                                                    <Text style={[styles.font_10, { color: index === 3 && indexChild === 5 ? colors.White : colors.BlackGrayScale }]}>Electronics</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity onPress={() => handleIndex(3, 6, 'fashion')} style={[styles.row_center, styles.py_2, { width: Wp('22%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 3 && indexChild === 6 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                                                    <Text style={[styles.font_12, { color: index === 3 && indexChild === 6 ? colors.White : colors.BlackGrayScale }]}>Fashion</Text>
+                                                    <Text style={[styles.font_10, { color: index === 3 && indexChild === 6 ? colors.White : colors.BlackGrayScale }]}>Fashion</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity onPress={() => handleIndex(3, 7, 'travelling')} style={[styles.row_center, styles.py_2, styles.mr_2, { width: Wp('22%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 3 && indexChild === 7 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                                                    <Text style={[styles.font_12, { color: index === 3 && indexChild === 7 ? colors.White : colors.BlackGrayScale }]}>Travelling</Text>
+                                                    <Text style={[styles.font_10, { color: index === 3 && indexChild === 7 ? colors.White : colors.BlackGrayScale }]}>Travelling</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity onPress={() => handleIndex(3, 8, 'cooking')} style={[styles.row_center, styles.py_2, { width: Wp('22%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 3 && indexChild === 8 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                                                    <Text style={[styles.font_12, { color: index === 3 && indexChild === 8 ? colors.White : colors.BlackGrayScale }]}>Cooking</Text>
+                                                    <Text style={[styles.font_10, { color: index === 3 && indexChild === 8 ? colors.White : colors.BlackGrayScale }]}>Cooking</Text>
                                                 </TouchableOpacity>
                                             </View>
                                             <View style={[styles.row_between_center]}>
                                                 <TouchableOpacity onPress={() => handleIndex(3, 9, 'art-shop')} style={[styles.row_center, styles.py_2, styles.mr_2, { width: Wp('22%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 3 && indexChild === 9 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                                                    <Text style={[styles.font_12, { color: index === 3 && indexChild === 9 ? colors.White : colors.BlackGrayScale }]}>Art Shop</Text>
+                                                    <Text style={[styles.font_10, { color: index === 3 && indexChild === 9 ? colors.White : colors.BlackGrayScale }]}>Art Shop</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity onPress={() => handleIndex(3, 10, 'gaming')} style={[styles.row_center, styles.py_2, { width: Wp('22%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 3 && indexChild === 10 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                                                    <Text style={[styles.font_12, { color: index === 3 && indexChild === 10 ? colors.White : colors.BlackGrayScale }]}>Gaming</Text>
+                                                    <Text style={[styles.font_10, { color: index === 3 && indexChild === 10 ? colors.White : colors.BlackGrayScale }]}>Gaming</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity onPress={() => handleIndex(3, 11, 'pets')} style={[styles.row_center, styles.py_2, styles.mr_2, { width: Wp('22%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 3 && indexChild === 11 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                                                    <Text style={[styles.font_12, { color: index === 3 && indexChild === 11 ? colors.White : colors.BlackGrayScale }]}>Pets</Text>
+                                                    <Text style={[styles.font_10, { color: index === 3 && indexChild === 11 ? colors.White : colors.BlackGrayScale }]}>Pets</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity onPress={() => handleIndex(3, 12, 'gardening')} style={[styles.row_center, styles.py_2, { width: Wp('22%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 3 && indexChild === 12 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
-                                                    <Text style={[styles.font_12, { color: index === 3 && indexChild === 12 ? colors.White : colors.BlackGrayScale }]}>Gardening</Text>
+                                                    <Text style={[styles.font_10, { color: index === 3 && indexChild === 12 ? colors.White : colors.BlackGrayScale }]}>Gardening</Text>
                                                 </TouchableOpacity>
                                             </View>
                                         </View>

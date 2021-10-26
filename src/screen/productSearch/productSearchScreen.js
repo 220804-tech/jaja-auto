@@ -322,15 +322,15 @@ export default function ProductSearchScreen() {
             </View>
 
             <ActionSheet ref={actionSheetRef} delayActionSheetDraw={false} containerStyle={{ height: Hp('60%'), padding: '4%' }}>
-                <View style={styles.row_between_center}>
-                    <Text adjustsFontSizeToFit style={[styles.font_16, styles.my_3, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja, }]}>Filter</Text>
-                    <View style={styles.row_around_center}>
-                        <TouchableOpacity onPress={handleReset} style={{ paddingLeft: '3%', justifyContent: 'center' }}>
-                            <Text adjustsFontSizeToFit style={[styles.font_16, styles.my_3, { fontFamily: 'Poppins-SemiBold', color: colors.YellowJaja, alignSelf: 'flex-start', textAlign: 'right' }]}>Reset</Text>
+                <View style={[styles.row_between_center, styles.mb_3, { width: '100%' }]}>
+                    <Text adjustsFontSizeToFit style={[styles.font_16, styles.T_semi_bold, { width: '50%', color: colors.BlueJaja, }]}>Filter</Text>
+                    <View style={[styles.row_center_end, { backgroundColor: 'grey' }]}>
+                        <TouchableOpacity onPress={handleReset} style={{ paddingHorizontal: '2%', justifyContent: 'center', marginRight: '2%' }}>
+                            <Text adjustsFontSizeToFit style={[styles.font_14, styles.T_semi_bold, styles.mr_3, { color: colors.YellowJaja, alignSelf: 'flex-start', textAlign: 'right' }]}>Reset</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={handleFetch} style={{ paddingLeft: '3%', justifyContent: 'center' }}>
-                            <Text adjustsFontSizeToFit style={[styles.font_16, styles.my_3, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja, alignSelf: 'flex-start', textAlign: 'right' }]}>Simpan</Text>
+                        <TouchableOpacity onPress={handleFetch} style={{ paddingHorizontal: '2%', justifyContent: 'center' }}>
+                            <Text adjustsFontSizeToFit style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja, alignSelf: 'flex-start', textAlign: 'right' }]}>Simpan</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

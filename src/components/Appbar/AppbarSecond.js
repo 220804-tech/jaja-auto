@@ -32,13 +32,12 @@ export default function AppbarSecond(props) {
                 <View style={[styles.searchBar, { backgroundColor: colors.BlueJaja, paddingHorizontal: '0%', height: Hp('5%') }]}>
                     <View style={[styles.row, { width: '85%', marginRight: '1%', backgroundColor: colors.White, height: '100%', alignItems: 'center', borderRadius: 10, paddingHorizontal: '3%' }]}>
                         <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
-                        <TextInput autoFocus={props.autofocus ? props.autofocus : false} keyboardType="default" returnKeyType="search" adjustsFontSizeToFit style={[styles.font_13, { marginBottom: '-1%', width: '90%' }]} placeholder={props.title} onChangeText={text => {
+                        <TextInput autoFocus={props.autofocus ? props.autofocus : false} keyboardType="default" returnKeyType="search" adjustsFontSizeToFit style={[styles.font_12, { marginBottom: '-1%', width: '90%' }]} placeholder={props.title} onChangeText={text => {
                             if (props.autofocus) {
                                 props.handleSearch(text)
                             }
                         }}
                             onSubmitEditing={(value) => {
-                                console.log("🚀 ~ file: AppbarSecond.js ~ line 41 ~ AppbarSecond ~ value", value)
                                 props.handleSubmit(value.nativeEvent.text)
                             }}></TextInput>
                     </View>
