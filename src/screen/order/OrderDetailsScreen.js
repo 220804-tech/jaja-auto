@@ -622,6 +622,7 @@ export default function OrderDetailsScreen() {
                     let result = JSON.parse(res)
                     if (result.status.code === 200 || result.status.code === 204) {
                         setDetails(result.data)
+                        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 625 ~ getItem ~ result.data", result.data)
                         setcount(count + 1)
                     }
                     else {
@@ -954,8 +955,9 @@ export default function OrderDetailsScreen() {
                                     <Text numberOfLines={1} style={[styles.font_12, { width: '70%' }]}>{details.address.receiverName}</Text>
                                 </View>
                                 <Text numberOfLines={1} style={[styles.font_12]}>{details.address.phoneNumber}</Text>
-
                                 <Text numberOfLines={3} style={[styles.font_11, styles.mt_2]}>{details.address.address.replace(/<br>/g, "")}</Text>
+                                <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold]}>Catatan :{details.items[0].note}</Text>
+
                             </View>
                         </View>
                         : null
@@ -1078,32 +1080,32 @@ export default function OrderDetailsScreen() {
                         </View>
                         <View style={[styles.row_between_center, styles.p_3]}>
                             <View style={styles.column}>
-                                <Text style={[styles.font_13, { marginBottom: '2%' }]}>Total belanja</Text>
-                                <Text style={[styles.font_13, { marginBottom: '2%' }]}>Ongkos </Text>
-                                <Text style={[styles.font_13, { marginBottom: '2%' }]}>Biaya penanganan</Text>
-                                {/* <Text style={[styles.font_13 { marginBottom: '2%' }]}>Voucher Toko</Text> */}
-                                <Text style={[styles.font_13, { marginBottom: '2%' }]}>Voucher Jaja.id</Text>
-                                <Text style={[styles.font_13, { marginBottom: '2%' }]}>Koin digunakan</Text>
+                                <Text style={[styles.font_12, { marginBottom: '2%' }]}>Total belanja</Text>
+                                <Text style={[styles.font_12, { marginBottom: '2%' }]}>Ongkos </Text>
+                                <Text style={[styles.font_12, { marginBottom: '2%' }]}>Biaya penanganan</Text>
+                                {/* <Text style={[styles.font_12 { marginBottom: '2%' }]}>Voucher Toko</Text> */}
+                                <Text style={[styles.font_12, { marginBottom: '2%' }]}>Voucher Jaja.id</Text>
+                                <Text style={[styles.font_12, { marginBottom: '2%' }]}>Koin digunakan</Text>
 
-                                {/* <Text style={[styles.font_13, styles.T_medium, { marginBottom: '2%' }]}>Fee</Text> */}
-                                <Text style={[styles.font_13, styles.T_medium, { marginBottom: '2%' }]}>Total pembayaran</Text>
+                                {/* <Text style={[styles.font_12, styles.T_medium, { marginBottom: '2%' }]}>Fee</Text> */}
+                                <Text style={[styles.font_12, styles.T_medium, { marginBottom: '2%' }]}>Total pembayaran</Text>
 
 
                             </View>
 
                             {details ?
                                 <View style={styles.column_center_end}>
-                                    <Text style={[styles.font_13, { marginBottom: '2%' }]}>{details.subTotalCurrencyFormat}</Text>
-                                    <Text style={[styles.font_13, { marginBottom: '2%' }]}>{details.shippingCostCurrencyFormat}</Text>
+                                    <Text style={[styles.font_12, { marginBottom: '2%' }]}>{details.subTotalCurrencyFormat}</Text>
+                                    <Text style={[styles.font_12, { marginBottom: '2%' }]}>{details.shippingCostCurrencyFormat}</Text>
 
-                                    <Text style={[styles.font_13, { marginBottom: '2%' }]}>Rp {priceSplitter(reduxOrderStatus !== 'Menunggu Pembayaran' ? details.orderPaymentRecent.fee : orderPaymentRecent.fee)}</Text>
-                                    {/* <Text style={[styles.font_13, { marginBottom: '2%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountCurrencyFormat}</Text> */}
-                                    <Text style={[styles.font_13, { marginBottom: '2%', color: details.voucherDiscountJaja ? colors.RedFlashsale : colors.BlackGrayScale }]}>{details.voucherDiscountJajaCurrencyFormat}</Text>
-                                    {/* <Text style={[styles.font_13, { marginBottom: '2%', color: details.voucherDiscountJaja ? colors.RedFlashsale : colors.BlackGrayScale }]}>Rp {priceSplitter(orderPaymentRecent.fee)}</Text> */}
-                                    {/* <Text style={[styles.font_13, styles.T_semi_bold, { marginBottom: '2%', color: colors.BlueJaja, }]}>{details ? details.totalCurrencyFormat : "Rp.0"}</Text> */}
-                                    <Text style={[styles.font_13, { marginBottom: '2%', color: details.coin ? colors.RedFlashsale : colors.BlackGrayScale }]}>{details.coinCurrencyFormat}</Text>
+                                    <Text style={[styles.font_12, { marginBottom: '2%' }]}>Rp {priceSplitter(reduxOrderStatus !== 'Menunggu Pembayaran' ? details.orderPaymentRecent.fee : orderPaymentRecent.fee)}</Text>
+                                    {/* <Text style={[styles.font_12, { marginBottom: '2%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountCurrencyFormat}</Text> */}
+                                    <Text style={[styles.font_12, { marginBottom: '2%', color: details.voucherDiscountJaja ? colors.RedFlashsale : colors.BlackGrayScale }]}>{details.voucherDiscountJajaCurrencyFormat}</Text>
+                                    {/* <Text style={[styles.font_12, { marginBottom: '2%', color: details.voucherDiscountJaja ? colors.RedFlashsale : colors.BlackGrayScale }]}>Rp {priceSplitter(orderPaymentRecent.fee)}</Text> */}
+                                    {/* <Text style={[styles.font_12, styles.T_semi_bold, { marginBottom: '2%', color: colors.BlueJaja, }]}>{details ? details.totalCurrencyFormat : "Rp.0"}</Text> */}
+                                    <Text style={[styles.font_12, { marginBottom: '2%', color: details.coin ? colors.RedFlashsale : colors.BlackGrayScale }]}>{details.coinCurrencyFormat}</Text>
 
-                                    <Text style={[styles.font_13, styles.T_semi_bold, { marginBottom: '2%', color: colors.BlueJaja, }]}>{reduxOrderStatus !== 'Menunggu Pembayaran' ? details.totalCurrencyFormat : 'Rp' + priceSplitter(orderPaymentRecent.grand_total)}</Text>
+                                    <Text style={[styles.font_12, styles.T_semi_bold, { marginBottom: '2%', color: colors.BlueJaja, }]}>{reduxOrderStatus !== 'Menunggu Pembayaran' ? details.totalCurrencyFormat : 'Rp' + priceSplitter(orderPaymentRecent.grand_total)}</Text>
 
                                 </View>
                                 : null
@@ -1135,7 +1137,7 @@ export default function OrderDetailsScreen() {
                                                             onPress={() => handleShowPayment(item)}
                                                             rippleColor={colors.BlueJaja} >
                                                             <View style={styles.row_between_center}>
-                                                                <Text style={styles.font_13}>{item.payment_type_label === 'Card' ? 'Kartu Kredit' : item.payment_type_label == 'eWallet' ? item.payment_type_label + ' - ' + item.subPayment[0].payment_sub_label : item.payment_type_label}</Text>
+                                                                <Text style={styles.font_12}>{item.payment_type_label === 'Card' ? 'Kartu Kredit' : item.payment_type_label == 'eWallet' ? item.payment_type_label + ' - ' + item.subPayment[0].payment_sub_label : item.payment_type_label}</Text>
                                                                 <Image fadeDuration={300} source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackGrey }]} />
 
                                                             </View>
@@ -1182,7 +1184,7 @@ export default function OrderDetailsScreen() {
                                 : null}
 
                             <View style={[styles.row_center, styles.mb_2, { width: '95%', alignSelf: 'center' }]}>
-                                <TouchableRipple onPress={() => navigation.navigate('OrderCancel')} style={[styles.row_center, styles.py_2, { width: '95%', backgroundColor: colors.Silver, alignSelf: 'center' }]}>
+                                <TouchableRipple onPress={() => navigation.navigate('OrderCancel')} style={[styles.row_center, styles.py_2, { width: '95%', backgroundColor: colors.red, alignSelf: 'center' }]}>
                                     <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
                                         Batalkan Pesanan
                                     </Text>
@@ -1198,7 +1200,6 @@ export default function OrderDetailsScreen() {
                     </Button> */}
                     {/* navigation.navigate(details.complain?'ResponseComplain': 'RequestComplain', {invoice: details.items[0].invoice }) */}
 
-                    {console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 1190 ~ reduxOrderStatus", reduxOrderStatus)}
                     {details && Object.keys(details).length ?
                         reduxOrderStatus === "Pengiriman" ?
                             <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'column', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>

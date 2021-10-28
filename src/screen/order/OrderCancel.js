@@ -54,7 +54,6 @@ export default function OrderComplain(props) {
                                 body: raw,
                                 redirect: 'follow'
                             };
-                            console.log("🚀 ~ file: OrderCancel.js ~ line 63 ~ handleSendCancel ~ reduxOrderInvoice", reduxOrderInvoice)
                             if (reduxOrderStatus == "Menunggu Pembayaran") {
                                 fetch(`https://jaja.id/backend/order/batalBelumbayar?order_id=${reduxOrderInvoice}`, requestOptions)
                                     .then(response => response.json())

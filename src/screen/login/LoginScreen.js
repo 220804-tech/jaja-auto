@@ -265,9 +265,9 @@ export default function LoginScreen(props) {
         }
     }
     const onGoogleButtonPress = async () => {
-        setLoginGoogle(false)
         signOut()
         if (loginGoogle) {
+            setLoginGoogle(false)
             try {
                 let data = await GoogleSignin.hasPlayServices()
                 const userInfo = await GoogleSignin.signIn();
@@ -342,8 +342,9 @@ export default function LoginScreen(props) {
         fetch("https://jaja.id/backend/user/google", requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: LoginScreen.js ~ line 345 ~ handleCheckUser ~ result", result)
                 if (result.status.code === 200) {
-                    handleUser(result.data)
+                    // handleUser(result.data)
                 } else {
                     Alert.alert(
                         "Sepertinya ada masalah.",

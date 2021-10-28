@@ -51,7 +51,7 @@ export default function AppbarComponent(props) {
     return (
         <>
 
-            <StatusBar translucent={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
+            <StatusBar translucent={false} backgroundColor={props.bgTop ? props.bgTop : colors.BlueJaja} barStyle="light-content" />
             <View style={[styles.appBar, { justifyContent: 'flex-start', backgroundColor: props.Bg ? props.Bg : colors.BlueJaja }]}>
                 <View style={[styles.row_start_center, { flex: 1 }]}>
                     {props.back ?
@@ -67,7 +67,7 @@ export default function AppbarComponent(props) {
                             </TouchableOpacity>
                         : null}
                     {props.title ?
-                        <Text style={[styles.font_16, { fontFamily: 'Poppins-SemiBold', color: colors.White, width: '60%' }]}>{Language(props.title)}</Text>
+                        <Text style={[styles.font_15, { fontFamily: 'Poppins-SemiBold', color: colors.White, width: '60%', marginBottom: '-0.8%' }]}>{Language(props.title)}</Text>
                         : null
                     }
                 </View>

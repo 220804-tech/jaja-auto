@@ -7,7 +7,6 @@ import ActionSheet from 'react-native-actions-sheet';
 import { colors, Hp, Wp, Appbar, ServiceFirebase as Firebase, styles as style, Loading, Utils, useNavigation } from "../../export";
 import { useDispatch, useSelector } from 'react-redux'
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CheckSignal } from "../../utils/Form";
 
 export default function ChatScreen({ route }) {
     const reduxUser = useSelector(state => state.user.user)
@@ -137,7 +136,7 @@ export default function ChatScreen({ route }) {
             }
 
             if (isiChat.length > 0 || image || selectedOrder || selectedProduct) {
-                let chat = isiChat.length > 0 ? isiChat : image ? 'Mengirim gambar' : selectedOrder && Object.keys(selectedOrder).length ? 'Pesanan No. ' + selectedOrder.invoice : selectedProduct.name
+                let chat = isiChat.length > 0 ? isiChat : imageUrl ? 'Mengirim gambar' : selectedOrder && Object.keys(selectedOrder).length ? 'Pesanan No. ' + selectedOrder.invoice : selectedProduct.name
                 var message = {
                     message: isiChat,
                     read: false,
@@ -248,9 +247,6 @@ export default function ChatScreen({ route }) {
     }
 
     const renderRow = ({ item, index }) => {
-        // console.log("🚀 ~ file: ChatScreen.js ~ line 199 ~ renderRow ~ indexz", index)
-
-
         let dateNow = String(item.date).slice(0, 3);
         let dateRight = String(item.date).slice(4, 15)
         return (
@@ -327,11 +323,7 @@ export default function ChatScreen({ route }) {
 
                                                 {item.message ?
                                                     <>
-                                                        <Text
-                                                            style={{
-                                                                fontSize: 14,
-                                                                color: "#FFF", textAlign: "right"
-                                                            }}>
+                                                        <Text style={[style.font_12, { color: colors.White }]}>
                                                             {item.message}
                                                         </Text>
                                                         {item.date ?
@@ -377,7 +369,7 @@ export default function ChatScreen({ route }) {
                                 </>
 
                             :
-                            <View style={{
+                            <TouchableRipple style={{
                                 flex: 1,
                                 width: '100%',
                                 padding: '3%',
@@ -389,45 +381,48 @@ export default function ChatScreen({ route }) {
                                 elevation: 0,
                                 marginBottom: '2%'
                             }}
+                                rippleColor={colors.BlueJaja}
+                                onPress={() => console.log('prssed => ', String(item.productTitle))}
                             >
-                                <View style={{ flex: 0 }}>
-                                    <Image style={{
-                                        alignSelf: "center",
-                                        width: Wp("15%"),
-                                        height: Wp("15%"),
-                                        marginRight: 10,
-                                        borderRadius: 2
-                                    }}
-                                        resizeMethod={"scale"}
-                                        resizeMode={"cover"}
-                                        source={{ uri: item.productImage ? item.productImage : null }}
-                                    />
-                                </View>
+                                <>
+                                    <View style={{ flex: 0 }}>
+                                        <Image style={{
+                                            alignSelf: "center",
+                                            width: Wp("15%"),
+                                            height: Wp("15%"),
+                                            marginRight: 10,
+                                            borderRadius: 2
+                                        }}
+                                            resizeMethod={"scale"}
+                                            resizeMode={"cover"}
+                                            source={{ uri: item.productImage ? item.productImage : null }}
+                                        />
+                                    </View>
 
-                                <View style={{ flex: 1 }}>
-                                    <Text numberOfLines={1} style={[style.font_13, { width: '90%' }]}>{item.productTitle}</Text>
-                                    {item.priceDiscount > 0 ?
-                                        <View style={{ flex: 0, flexDirection: 'column' }}>
-                                            <View style={{ flexDirection: 'row' }}>
-                                                <Text adjustsFontSizeToFit style={{ textDecorationLine: 'line-through', marginRight: '3%', fontSize: 12 }}>{item.priceFirst}</Text>
-                                                <View style={{ backgroundColor: colors.RedFlashsale, justifyContent: 'center', alignItems: 'center', borderRadius: 3, paddingHorizontal: '2%' }}>
-                                                    <Text adjustsFontSizeToFit style={[style.font_10, style.T_medium, { color: 'white' }]}>{item.priceDiscount + "%"}</Text>
+                                    <View style={{ flex: 1 }}>
+                                        <Text numberOfLines={1} style={[style.font_13, { width: '90%' }]}>{item.productTitle}</Text>
+                                        {item.priceDiscount > 0 ?
+                                            <View style={{ flex: 0, flexDirection: 'column' }}>
+                                                <View style={{ flexDirection: 'row' }}>
+                                                    <Text adjustsFontSizeToFit style={{ textDecorationLine: 'line-through', marginRight: '3%', fontSize: 12 }}>{item.priceFirst}</Text>
+                                                    <View style={{ backgroundColor: colors.RedFlashsale, justifyContent: 'center', alignItems: 'center', borderRadius: 3, paddingHorizontal: '2%' }}>
+                                                        <Text adjustsFontSizeToFit style={[style.font_10, style.T_medium, { color: 'white' }]}>{item.priceDiscount + "%"}</Text>
+                                                    </View>
                                                 </View>
+                                                <Text adjustsFontSizeToFit style={{ marginRight: '3%', fontSize: 12 }}>{item.priceLast}</Text>
                                             </View>
-                                            <Text adjustsFontSizeToFit style={{ marginRight: '3%', fontSize: 12 }}>{item.priceLast}</Text>
-                                        </View>
 
-                                        :
-                                        <Text style={{ color: colors.RedFlashsale, fontFamily: 'Poppins-SemiBold', fontSize: Wp("4%") }}>
-                                            {item.priceLast}
-                                        </Text>
-                                    }
-                                </View>
-                            </View>
+                                            :
+                                            <Text style={{ color: colors.RedFlashsale, fontFamily: 'Poppins-SemiBold', fontSize: Wp("4%") }}>
+                                                {item.priceLast}
+                                            </Text>
+                                        }
+                                    </View>
+                                </>
+                            </TouchableRipple>
 
                         :
                         <View style={{ flex: 1, flexDirection: "row" }}>
-
                             <View style={{
                                 width: "100%",
                                 justifyContent: "flex-start",
@@ -436,7 +431,6 @@ export default function ChatScreen({ route }) {
                             }}>
                                 <View style={{
                                     borderRadius: 50,
-
                                     width: Hp("6%"),
                                     height: Hp("6%"),
                                     backgroundColor: colors.BlueJaja,
@@ -468,15 +462,9 @@ export default function ChatScreen({ route }) {
                                         padding: 10,
                                     }}
                                 >
-                                    {/* {console.log("🚀 ~ file: ChatScreen.js ~ line 392 ~ renderRow ~ item.message", item)} */}
                                     {item.message ?
                                         <>
-                                            <Text
-                                                style={{
-                                                    fontSize: Hp("2%"),
-                                                    color: "#FFF"
-                                                }}
-                                            >
+                                            <Text style={[style.font_12, { color: colors.White }]}>
                                                 {item.message}
                                             </Text>
                                         </>
@@ -571,6 +559,63 @@ export default function ChatScreen({ route }) {
             <SafeAreaProvider style={[style.container]}>
                 {loading ? <Loading /> : null}
                 <ImageBackground source={require('../../assets/images/bgChat3.jpg')} style={{ width: '100%', height: '100%', paddingBottom: Math.max(insets.bottom, 0) }}>
+                    {product && Object.keys(product).length ?
+
+                        < TouchableRipple style={{
+                            // flex: 1,
+                            width: '100%',
+                            padding: '3%',
+                            borderRadius: 3,
+                            borderTopRightRadius: 0,
+                            flexDirection: "row",
+                            alignSelf: 'center',
+                            backgroundColor: colors.White,
+                            elevation: 0,
+                            marginBottom: '2%'
+                        }}
+                            rippleColor={colors.BlueJaja}
+                            onPress={() => console.log('prssed => ', product.isDiscount)}
+                        >
+                            <>
+                                <View style={{ flex: 0 }}>
+                                    <Image style={{
+                                        alignSelf: "center",
+                                        width: Wp("15%"),
+                                        height: Wp("15%"),
+                                        marginRight: 10,
+                                        borderRadius: 2
+                                    }}
+                                        resizeMethod={"scale"}
+                                        resizeMode={"cover"}
+                                        source={{ uri: product.image[0] ? product.image[0] : null }}
+                                    />
+                                </View>
+
+                                <View style={{ flex: 1 }}>
+                                    <Text numberOfLines={1} style={[style.font_13, { width: '90%' }]}>{product.name}</Text>
+                                    {product.isDiscount > 0 ?
+                                        <View style={{ flex: 0, flexDirection: 'column' }}>
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <Text adjustsFontSizeToFit style={{ textDecorationLine: 'line-through', marginRight: '3%', fontSize: 12 }}>{product.priceFirst}</Text>
+                                                <View style={{ backgroundColor: colors.RedFlashsale, justifyContent: 'center', alignItems: 'center', borderRadius: 3, paddingHorizontal: '2%' }}>
+                                                    <Text adjustsFontSizeToFit style={[style.font_10, style.T_medium, { color: 'white' }]}>{product.discount + "%"}</Text>
+                                                </View>
+                                            </View>
+                                            <Text adjustsFontSizeToFit style={{ marginRight: '3%', fontSize: 12 }}>{product.price}</Text>
+                                        </View>
+
+                                        :
+                                        <Text style={{ color: colors.RedFlashsale, fontFamily: 'Poppins-SemiBold', fontSize: Wp("4%") }}>
+                                            {product.price}
+                                        </Text>
+                                    }
+                                </View>
+                            </>
+                        </TouchableRipple>
+
+                        : null
+
+                    }
                     <FlatList
                         inverted={-1}
                         ref={flatlist}
@@ -600,7 +645,7 @@ export default function ChatScreen({ route }) {
                             </TouchableRipple>
                         </View>
                         : null}
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ width: '170%', paddingHorizontal: '4%' }}>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ width: '180%', paddingHorizontal: '4%' }}>
                         {listChat.map(item => {
                             return (
                                 <TouchableRipple borderless={true} rippleColor={colors.BlueJaja} key={item.id} onPress={() => setChat(item.text)} style={[style.px_2, style.py, { backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.BlueJaja, borderRadius: 11, marginRight: 5 }]}>

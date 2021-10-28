@@ -10,8 +10,8 @@ export default function AppbarSecond(props) {
     const dispatch = useDispatch()
 
     const handleGetCart = () => {
-        if (reduxAuth || auth) {
-            ServiceCart.getCart(reduxAuth ? reduxAuth : auth).then(res => {
+        if (reduxAuth) {
+            ServiceCart.getCart(reduxAuth).then(res => {
                 if (res) {
                     dispatch({ type: 'SET_CART', payload: res })
                 }

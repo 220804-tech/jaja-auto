@@ -83,7 +83,6 @@ export default function ListChat() {
     }
 
     const renderItem = ({ item }) => {
-        console.log("🚀 ~ file: ListChatScreen.js ~ line 81 ~ renderItem ~ item", item)
         return (
             <>
                 {item.message && Object.keys(item.message).length && item.message.text ?

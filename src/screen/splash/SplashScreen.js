@@ -192,16 +192,17 @@ export default function SplashScreen() {
     }
 
     const getData = () => {
+
         var requestOptions = {
             method: 'GET',
             redirect: 'follow'
         };
 
         fetch("https://jaja.id/backend/product/recommendation?page=1&limit=20", requestOptions)
-            .then(response => response.text())
-            .then(res => {
+            .then(response => response.json())
+            .then(result => {
                 try {
-                    let result = JSON.parse(res)
+                    // let result = JSON.parse(res)
                     if (result.status.code == 200 || result.status.code == 204) {
                         dispatch({ type: 'SET_DASHRECOMMANDED', payload: result.data.items })
                         EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))
@@ -215,7 +216,7 @@ export default function SplashScreen() {
 
                     }
                 } catch (error) {
-                    alert(error + '120023 \n\n ' + JSON.stringify(res))
+                    alert(error + '120023 \n\n ' + JSON.stringify(result))
                 }
             })
             .catch(error => {

@@ -324,7 +324,7 @@ export default function ProductSearchScreen() {
             <ActionSheet ref={actionSheetRef} delayActionSheetDraw={false} containerStyle={{ height: Hp('60%'), padding: '4%' }}>
                 <View style={[styles.row_between_center, styles.mb_3, { width: '100%' }]}>
                     <Text adjustsFontSizeToFit style={[styles.font_16, styles.T_semi_bold, { width: '50%', color: colors.BlueJaja, }]}>Filter</Text>
-                    <View style={[styles.row_center_end, { backgroundColor: 'grey' }]}>
+                    <View style={[styles.row_center_end]}>
                         <TouchableOpacity onPress={handleReset} style={{ paddingHorizontal: '2%', justifyContent: 'center', marginRight: '2%' }}>
                             <Text adjustsFontSizeToFit style={[styles.font_14, styles.T_semi_bold, styles.mr_3, { color: colors.YellowJaja, alignSelf: 'flex-start', textAlign: 'right' }]}>Reset</Text>
                         </TouchableOpacity>

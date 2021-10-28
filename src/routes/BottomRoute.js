@@ -172,7 +172,7 @@ export default function BottomRoute() {
                             <View style={[style.column, style.mx]}>
                                 <FAIcon name="rocket" size={size} color={focused ? colors.YellowJaja : colors.BlueJaja} style={{ marginBottom: '-2%' }} />
                                 {reduxUserNotif.totalNotifUnread ?
-                                    <View style={style.countNotif}><Text style={[style.textNotif, { marginBottom: '-1%' }]}>{parseInt(reduxUserNotif.totalNotifUnread) > 99 ? "99+" : '99+'}</Text></View> : null
+                                    <View style={style.countNotif}><Text style={[style.textNotif, { marginBottom: '-1%' }]}>{parseInt(reduxUserNotif.totalNotifUnread) > 99 ? "99+" : parseInt(reduxUserNotif.totalNotifUnread)}</Text></View> : null
                                 }
                             </View>
                         )
@@ -215,7 +215,7 @@ export default function BottomRoute() {
                                 {reduxnotifCount && reduxnotifCount.chat ?
                                     <View style={style.countNotif}><Text style={[style.textNotif]}>{parseInt(reduxnotifCount.chat) > 99 ? "99+" : reduxnotifCount.chat}</Text></View> : null
                                     // <View style={style.countNotif}><Text style={style.textNotif}>{parseInt(reduxnotifCount.chat) > 99 ? "99+" : reduxnotifCount.chat}</Text></View> : null
-                                    
+
                                 }
                             </View>
                         )

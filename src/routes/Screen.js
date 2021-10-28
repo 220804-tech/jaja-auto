@@ -40,11 +40,14 @@ import DetailComplain from "../screen/order/DetailComplain";
 import OrderCancel from "../screen/order/OrderCancel";
 import AddAccount from "../screen/profile/AddAccount";
 import CoinPage from "../screen/profile/KoinJaja";
+import Gift from "../screen/gift/GiftScreen";
+import GiftSearch from "../screen/gift/GiftSearchScreen";
+import GiftDetails from "../screen/gift/GiftDetailScreen";
 
 
 export {
     Home, Product, ListChat, Chat, Orders, Profile, Login, Register, Splash, Search, Trolley, ProductSearch, Checkout, VerifikasiEmail, Account,
     Address, Category, AddAddress, Store, Midtrans, ForgotPassword, Feed, Review, ZoomReview, OrderDetails, AddReview, OrderDelivery, AddAccount,
     CustomerService, Notification, Vouchers, Flashsale, Wishlist, HistoryProduct, Reward, Referral, RequestComplain, DetailComplain, OrderCancel,
-    CoinPage, DownloadInvoice
+    CoinPage, DownloadInvoice, Gift, GiftSearch, GiftDetails
 };

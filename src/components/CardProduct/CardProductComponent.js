@@ -11,10 +11,18 @@ export default function CardProductComponent(props) {
     const [img, setImg] = useState(require('../../assets/images/JajaId.png'))
 
     const handleShowDetail = item => {
-        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-        dispatch({ type: 'SET_SLUG', payload: item.slug })
-        navigation.push("Product", { slug: item.slug, image: item.image })
+        if (!props.gift) {
+            dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+            dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+            dispatch({ type: 'SET_SLUG', payload: item.slug })
+            navigation.push("Product", { slug: item.slug, image: item.image })
+        } else {
+            console.log("🚀 ~ file: CardProductComponent.js ~ line 14 ~ CardProductComponent ~ item", item)
+            dispatch({ type: 'SET_GIFT', payload: item })
+            navigation.navigate("GiftDetails")
+
+        }
+
     }
     useEffect(() => {
         // dispatch({ type: 'SET_DASHRECOMMANDED', payload: [] })
@@ -44,6 +52,7 @@ export default function CardProductComponent(props) {
             keyExtractor={(item, index) => String(item.id) + index + "XH"}
             contentContainerStyle={{ justifyContent: 'space-between' }}
             renderItem={({ item, index }) => {
+
                 return (
                     <>
                         {!item.loading ?
