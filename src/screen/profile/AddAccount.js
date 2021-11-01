@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, createRef } from 'react'
-import { View, Text, TouchableOpacity, TextInput, SafeAreaView, Image, TouchableNativeFeedback, ScrollView, FlatList, ToastAndroid } from 'react-native'
+import { View, Text, TouchableOpacity, TextInput, SafeAreaView, Image, TouchableNativeFeedback, ScrollView, FlatList } from 'react-native'
 import { styles, colors, useNavigation, Hp, Wp, Appbar, Utils, Loading } from '../../export'
 import ActionSheet from "react-native-actions-sheet";
 import { Button } from 'react-native-paper';
@@ -33,6 +33,7 @@ export default function AddAccount() {
     const [addAccount, setaddAccount] = useState(false);
     const [namaPemilik, setNamaPemilik] = useState('');
     const [alertNamaPemilik, setAlertNamaPemilik] = useState('');
+    const [statusView, setstatusView] = useState('show');
 
     useEffect(() => {
         getListBank()
@@ -71,7 +72,7 @@ export default function AddAccount() {
                 setFirstBank(pertamax.concat(keduax));
             })
             .catch(error => {
-                ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)
+                Utils.alertPopUp(JSON.stringify(error))
                 setshimmerRK(false)
             });
     }
@@ -89,15 +90,42 @@ export default function AddAccount() {
 
     const handleSubmit = async () => {
         setLoading(true)
+        // var myHeaders = new Headers();
+        // myHeaders.append("Authorization", reduxAuth);
+        // myHeaders.append("Cookie", "ci_session=c93q2bi6ff2brqqqk67o3caanoh29scq");
+        // var requestOptions = {
+        //     method: 'GET',
+        //     headers: myHeaders,
+        //     redirect: 'follow'
+        // };
+
+        // "bankCode": "mandiri",
+        // "bankName": "PT. BANK CENTRAL ASIA TBK.",
+        // "account": "1560015898705",
+        // "branchOffice": "Bintara",
+        // "city": "Bekasi"
+
         var myHeaders = new Headers();
         myHeaders.append("Authorization", reduxAuth);
-        myHeaders.append("Cookie", "ci_session=c93q2bi6ff2brqqqk67o3caanoh29scq");
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+            "bankCode": bkKode,
+            "bankName": bkName,
+            "account": acc,
+            "branchOffice": branch_office,
+            "city": city
+        });
+
         var requestOptions = {
-            method: 'GET',
+            method: 'POST',
             headers: myHeaders,
+            body: raw,
             redirect: 'follow'
         };
-        fetch(`https://jaja.id/backend/order/rekeningCust?name=${namaPemilik}&bank_code=${bkKode}&bank_name=${bkName}&account=${acc}`, requestOptions)
+
+        fetch("https://jaja.id/backend/user/bankAccount", requestOptions)
+            // fetch(`https://jaja.id/backend/order/rekeningCust?name=${namaPemilik}&bank_code=${bkKode}&bank_name=${bkName}&account=${acc}`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result && Object.keys(result).length && result.status.code == 200) {
@@ -106,10 +134,10 @@ export default function AddAccount() {
                     setacc("")
                     setcity("")
                     setbranch_office("")
-                    ToastAndroid.show('Rekening kamu berhasil ditambahkan.', ToastAndroid.LONG, ToastAndroid.CENTER)
+                    Utils.alertPopUp('Rekening kamu berhasil ditambahkan.')
                     navigation.goBack()
                 } else if (result && Object.keys(result).length && result.status.message) {
-                    setAlertRekening(result.status.message)
+                    Utils.alertPopUp(result.status.message)
                 } else {
                     Utils.handleErrorResponse(error, "Error with status code : 12030")
                 }

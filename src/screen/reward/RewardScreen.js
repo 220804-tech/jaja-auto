@@ -4,6 +4,7 @@ import { Button, TouchableRipple } from 'react-native-paper'
 import { colors, styles, Wp, Hp, Appbar, useNavigation, Utils, Loading } from '../../export'
 import { useSelector } from 'react-redux';
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view'
+import { getListAccount } from '../../services/User';
 const initialLayout = { width: Dimensions.get('window').width };
 
 export default function RewardScreen() {
@@ -24,6 +25,7 @@ export default function RewardScreen() {
     useEffect(() => {
         getItem()
         getPending()
+        getList()
     }, [count])
 
     const [routes] = useState([
@@ -37,6 +39,15 @@ export default function RewardScreen() {
         second: tabDone,
         // third: Posts,
     });
+
+    const getList = () => {
+        try {
+            let res = getListAccount(reduxAuth)
+            console.log("🚀 ~ file: RewardScreen.js ~ line 46 ~ getList ~ res", res)
+        } catch (error) {
+
+        }
+    }
 
     const getItem = () => {
         var myHeaders = new Headers();
@@ -92,32 +103,6 @@ export default function RewardScreen() {
                     Utils.handleError(error, 'Error with status code : 12061')
                 }
             })
-            .catch(error => Utils.handleError(error, "Error with status code : 12062"));
-        //     var myHeaders = new Headers();
-        //     myHeaders.append("Authorization", reduxAuth);
-        //     myHeaders.append("Cookie", "ci_session=4an0u670mohqnot9kjg6vm2s9klamrdq");
-
-        //     var requestOptions = {
-        //         method: 'GET',
-        //         headers: myHeaders,
-        //         redirect: 'follow'
-        //     };
-
-        //     fetch("https://jaja.id/backend/user/ListCustomerPayouts", requestOptions)
-        //         .then(response => response.text())
-        //         .then(result => {
-        //             try {
-        //                 let data = JSON.parse(result)
-        //                 if (data.status.code == 200 || data.status.code == 204) {
-        //                     setpendingCoin(data.data)
-        //                 } else {
-        //                     Utils.handleErrorResponse(data, 'Error with status code : 120560')
-        //                 }
-        //             } catch (error) {
-        //                 Utils.handleError(error, 'Error with status code : 12061')
-        //             }
-        //         })
-        //         .catch(error => Utils.handleError(error, "Error with status code : 12062"));
     }
 
     const handleRefund = () => {
@@ -210,12 +195,12 @@ export default function RewardScreen() {
                             </View>
                         </View>
                         <View style={[styles.row_center, styles.mb_2, { width: '98%', alignSelf: 'center' }]}>
-                            {/* <TouchableRipple disabled={reduxUser.coin && reduxUser.coin !== '0' ? false : true} onPress={() => setShowModal(true)} style={[styles.row_center, styles.py_2, { width: '50%', backgroundColor: reduxUser.coin && reduxUser.coin !== '0' ? colors.GreenSuccess : colors.Silver }]}>
+                            <TouchableRipple disabled={reduxUser.coin && reduxUser.coin !== '0' ? false : true} onPress={() => navigation.navigate('AddAccount')} style={[styles.row_center, styles.py_2, { width: '50%', backgroundColor: reduxUser.coin && reduxUser.coin !== '0' ? colors.GreenSuccess : colors.Silver }]}>
                                 <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>
                                     Tambah Rekening
                                 </Text>
-                            </TouchableRipple> */}
-                            <TouchableRipple disabled={reduxUser.coin && reduxUser.coin !== '0' ? false : true} onPress={() => setShowModal(true)} style={[styles.row_center, styles.py_2, { width: '99%', backgroundColor: reduxUser.coin && reduxUser.coin !== '0' ? colors.BlueJaja : colors.Silver }]}>
+                            </TouchableRipple>
+                            <TouchableRipple disabled={reduxUser.coin && reduxUser.coin !== '0' ? false : true} onPress={() => setShowModal(true)} style={[styles.row_center, styles.py_2, { width: '50%', backgroundColor: reduxUser.coin && reduxUser.coin !== '0' ? colors.BlueJaja : colors.Silver }]}>
                                 <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>
                                     Ajukan Tarik Saldo
                                 </Text>

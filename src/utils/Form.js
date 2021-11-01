@@ -88,7 +88,7 @@ export function handleError(error, name) {
         Utils.alertPopUp("Tidak dapat terhubung, periksa kembali koneksi internet anda!")
     } else {
         Alert.alert(
-            `${name}`,
+            JSON.stringify(name),
             `${'Error: ' + JSON.stringify(error)} `,
             [
                 {

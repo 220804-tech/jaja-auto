@@ -269,7 +269,7 @@ export default function LoginScreen(props) {
         if (loginGoogle) {
             setLoginGoogle(false)
             try {
-                let data = await GoogleSignin.hasPlayServices()
+                await GoogleSignin.hasPlayServices()
                 const userInfo = await GoogleSignin.signIn();
                 setLoading(true)
                 handleCheckUser(userInfo)
@@ -344,7 +344,7 @@ export default function LoginScreen(props) {
             .then(result => {
                 console.log("🚀 ~ file: LoginScreen.js ~ line 345 ~ handleCheckUser ~ result", result)
                 if (result.status.code === 200) {
-                    // handleUser(result.data)
+                    handleUser(result.data)
                 } else {
                     Alert.alert(
                         "Sepertinya ada masalah.",

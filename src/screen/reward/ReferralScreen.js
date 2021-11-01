@@ -23,14 +23,12 @@ export default function ReferralScreen() {
 
     const handleShare = () => {
         try {
-            console.log("file: ReferralScreen.js ~ line 32 ~ handleShare ~ image", image)
             let string = String(reduxUser.pin).toLocaleUpperCase()
             const shareOptions = {
                 title: 'Jaja',
                 message: `Pakai kode referral saya *${string}* dan dapatkan 10.000 koin, untuk belanja di Jaja.id, instal sekarang https://play.google.com/store/apps/details?id=com.seller.jaja`, // Note that according to the documentation at least one of "message" or "url" fields is required
                 url: image,
             };
-            console.log("file: ReferralScreen.js ~ line 33 ~ handleShare ~ shareOptions", shareOptions)
 
             Share.open(shareOptions)
                 .then((res) => {
@@ -39,20 +37,6 @@ export default function ReferralScreen() {
                 .catch((err) => {
                     err && console.log(err);
                 });
-
-            // Share.share(shareOptions);
-            // const result = await Share.share({
-            //     message: 'Pakai kode undanganku dan dapatkan 10.000 koin Jaja.id https://play.google.com/store/apps/details?id=com.seller.jaja | '
-            // });
-            // if (result.action === Share.sharedAction) {
-            //     if (result.activityType) {
-            //         // shared with activity type of result.activityType
-            //     } else {
-            //         // shared
-            //     }
-            // } else if (result.action === Share.dismissedAction) {
-            //     // dismissed
-            // }
         } catch (error) {
             alert(error.message);
         }

@@ -1,4 +1,5 @@
 import { ToastAndroid, Alert } from 'react-native'
+import { Utils } from '../export';
 export async function getBadges(auth) {
     if (auth) {
         var myHeaders = new Headers();
@@ -82,7 +83,7 @@ export async function getProfile(auth) {
             } else {
                 Alert.alert(
                     "Error get profile",
-                    `${String(error)}`,
+                    `${JSON.stringify(error)}`,
                     [
                         { text: "OK", onPress: () => console.log("OK Pressed") }
                     ],
@@ -130,7 +131,7 @@ export async function deleteAddress(auth, alamatId) {
             } else {
                 Alert.alert(
                     "Error deleting address",
-                    `${String(error)}`,
+                    `${JSON.stringify(error)}`,
                     [
                         { text: "OK", onPress: () => console.log("OK Pressed") }
                     ],
@@ -140,3 +141,33 @@ export async function deleteAddress(auth, alamatId) {
             return null
         });
 }
+
+
+export async function getListAccount(auth) {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", auth);
+    myHeaders.append("Cookie", "ci_session=ikeb5jtejc1l6nr5f11bvfni51ghd5ls");
+
+    var requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow'
+    };
+
+    fetch("https://jaja.id/backend/user/bankAccount", requestOptions)
+        .then(response => response.text())
+        .then(result => {
+            try {
+                let response = JSON.parse(result)
+                if (response.status.code === 200 || response.status.code === 204) {
+                    return response.data
+                } else {
+                    Utils.alertPopUp(response.status.message)
+                }
+            } catch (error) {
+                Utils.handleError(result, 'Error with status code 17021')
+            }
+        })
+        .catch(error => Utils.handleError(error, 'Error with status code : 17022'));
+}
+

@@ -167,7 +167,6 @@ export default function BottomRoute() {
                         <Text style={{ fontSize: 12, color: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '3%' }}>{Language("Home")}</Text>
                     ),
                     tabBarIcon: ({ size, focused }) => {
-                        console.log("🚀 ~ file: BottomRoute.js ~ line 170 ~ BottomRoute ~ size", size)
                         return (
                             <View style={[style.column, style.mx]}>
                                 <FAIcon name="rocket" size={size} color={focused ? colors.YellowJaja : colors.BlueJaja} style={{ marginBottom: '-2%' }} />
