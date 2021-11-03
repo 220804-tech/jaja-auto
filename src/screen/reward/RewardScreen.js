@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { SafeAreaView, View, Text, StyleSheet, Image, AlertIOS, ToastAndroid, Platform, Modal, TextInput, ScrollView, Dimensions } from 'react-native'
+import { SafeAreaView, View, Text, StyleSheet, Image, Platform, Modal, TextInput, ScrollView, Dimensions } from 'react-native'
 import { Button, TouchableRipple } from 'react-native-paper'
-import { colors, styles, Wp, Hp, Appbar, useNavigation, Utils, Loading } from '../../export'
+import { colors, styles, Wp, Hp, Appbar, useNavigation, Utils, Loading, ServiceUser } from '../../export'
 import { useSelector } from 'react-redux';
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view'
-import { getListAccount } from '../../services/User';
 const initialLayout = { width: Dimensions.get('window').width };
 
 export default function RewardScreen() {
@@ -19,6 +18,8 @@ export default function RewardScreen() {
     const [loading, setLoading] = useState(false);
     const [doneCoin, setdoneCoin] = useState([])
     const [pendingCoin, setpendingCoin] = useState([])
+    const [primary, setPrimary] = useState(null)
+    const [listBK, setlistBK] = useState(null)
 
     const [count, setCount] = useState(0)
 
@@ -41,9 +42,21 @@ export default function RewardScreen() {
     });
 
     const getList = () => {
+        console.log('rdftyguhijokl;')
         try {
-            let res = getListAccount(reduxAuth)
-            console.log("🚀 ~ file: RewardScreen.js ~ line 46 ~ getList ~ res", res)
+            ServiceUser.getListAccount(reduxAuth).then(res => {
+                console.log("🚀 ~ file: RewardScreen.js ~ line 46 ~ ServiceUser.getListAccount ~ res", res)
+                if (res && res.length) {
+                    res.map(item => {
+                        if (item.isPrimary) {
+                            setPrimary(item)
+                        }
+
+                    })
+                    setlistBK(res)
+
+                }
+            })
         } catch (error) {
 
         }
@@ -72,11 +85,12 @@ export default function RewardScreen() {
                         Utils.handleErrorResponse(result, 'Error with status code : 12057')
                     }
                 } catch (error) {
-                    Utils.handleError(res, 'Error with status code : 12058')
+                    Utils.handleError(JSON.stringify(error) + JSON.stringify(res), 'Error with status code : 12058')
                 }
             })
             .catch(error => Utils.handleError(error, "Error with status code : 12059"));
     }
+
     const getPending = () => {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", reduxAuth);
@@ -93,7 +107,6 @@ export default function RewardScreen() {
             .then(res => {
                 try {
                     let result = JSON.parse(res)
-                    console.log("🚀 ~ file: RewardScreen.js ~ line 84 ~ getPending ~ data", result.data.items)
                     if (result.status.code == 200 || result.status.code == 204) {
                         setpendingCoin(result.data.items)
                     } else {
@@ -186,18 +199,29 @@ export default function RewardScreen() {
                     <View style={[styles.column, styles.pt_2, styles.mb_3, { backgroundColor: colors.White }]}>
                         <View style={[styles.row_between_center, styles.p_2, styles.mb_5]}>
                             <View style={[styles.column]}>
-                                <Text style={[styles.font_13, styles.T_medium, styles.mb_3,]}>Koin Tersedia</Text>
-                                <Text style={[styles.font_13, styles.T_medium]}>Nomor Akun</Text>
+                                <Text style={[styles.font_13, styles.mb_3,]}>Koin Tersedia</Text>
+                                <Text style={[styles.font_13]}>Rekening : </Text>
+                                {listBK && listBK.length ?
+                                    listBK.map((res, idx) => {
+                                        return (
+                                            <View key={String(idx) + 'GF'} style={styles.row_between_center}>
+                                                <Text style={[styles.font_12]}>- {String(res.account).slice(0, 4)}XXXX ({String(res.accountName).slice(0, 5)})</Text>
+                                            </View>
+                                        )
+                                    })
+                                    : null}
                             </View>
                             <View style={styles.column_center_end}>
-                                <Text style={[styles.font_13, styles.T_medium, styles.mb_3,]}>{reduxUser.coin}</Text>
-                                <Text style={[styles.font_13, styles.T_medium,]}>{reduxUser.account ? String(reduxUser.account).slice(0, 4) + 'XXXXX' : '-'}</Text>
+                                <Text style={[styles.font_13, styles.mb_3,]}>{reduxUser.coin}</Text>
+                                <Text style={[styles.font_13,]}></Text>
+                                <Text style={[styles.font_13,]}></Text>
+
                             </View>
                         </View>
                         <View style={[styles.row_center, styles.mb_2, { width: '98%', alignSelf: 'center' }]}>
                             <TouchableRipple disabled={reduxUser.coin && reduxUser.coin !== '0' ? false : true} onPress={() => navigation.navigate('AddAccount')} style={[styles.row_center, styles.py_2, { width: '50%', backgroundColor: reduxUser.coin && reduxUser.coin !== '0' ? colors.GreenSuccess : colors.Silver }]}>
                                 <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>
-                                    Tambah Rekening
+                                    {listBK && listBK.length ? 'Rekening' : 'Tambah Rekening'}
                                 </Text>
                             </TouchableRipple>
                             <TouchableRipple disabled={reduxUser.coin && reduxUser.coin !== '0' ? false : true} onPress={() => setShowModal(true)} style={[styles.row_center, styles.py_2, { width: '50%', backgroundColor: reduxUser.coin && reduxUser.coin !== '0' ? colors.BlueJaja : colors.Silver }]}>
@@ -296,7 +320,7 @@ export default function RewardScreen() {
                         <Text style={[styles.font_14, styles.T_semi_bold, styles.mb_5, { color: colors.BlueJaja }]}>Tarik Saldo</Text>
 
                         <Text style={styles.font_13}>Masukkan Nominal</Text>
-                        <TextInput keyboardType="numeric" style={[styles.font_13, styles.mb_5, { borderBottomWidth: 0.2 }]} value={nominal} placeholder="20000" onChangeText={(text) => handleChange(text)} />
+                        <TextInput keyboardType="numeric" style={[styles.font_13, styles.mb_5, { borderBottomWidth: 0.2 }]} value={String(nominal)} placeholder="20000" onChangeText={(text) => handleChange(text)} />
                         <View style={styles.row_end}>
                             <Button onPress={() => setShowModal(false)} mode="contained" color={colors.Silver} labelStyle={[styles.font_12, styles.T_medium, { color: colors.White }]} style={styles.mr_5}>
                                 Tutup
@@ -326,7 +350,7 @@ export default function RewardScreen() {
                     <ScrollView>
                         {doneCoin.map((item, idx) => {
                             return (
-                                <View style={[styles.row_center, styles.px_2, { borderBottomWidth: 0.5 }]}>
+                                <View key={String(idx) + 'GH'} style={[styles.row_center, styles.px_2, { borderBottomWidth: 0.5 }]}>
                                     <View style={[styles.row_center, styles.p, { borderRightWidth: 0.5, width: '15%' }]}>
                                         <Text style={[styles.font_12, { textAlign: 'center' }]}>{idx + 1}.</Text>
                                     </View>
@@ -363,9 +387,8 @@ export default function RewardScreen() {
                 {pendingCoin.length ?
                     <ScrollView>
                         {pendingCoin.map((item, indx) => {
-                            console.log("🚀 ~ file: RewardScreen.js ~ line 353 ~ {pendingCoin.map ~ item", item)
                             return (
-                                <View style={[styles.row_center, { borderBottomWidth: 0.5 }]}>
+                                <View key={String(indx) + 'HG'} style={[styles.row_center, { borderBottomWidth: 0.5 }]}>
                                     <View style={[styles.row_center, styles.p_2, { borderRightWidth: 0.5, width: '40%' }]}>
                                         <Text style={[styles.font_10, { textAlign: 'center' }]}>{String(item.account).slice(0, 6)}XXXX</Text>
                                     </View>

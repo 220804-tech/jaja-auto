@@ -5,6 +5,9 @@ const initialState = {
     storeKeyword: '',
     maxProduct: false,
     positionIndex: 1,
+    storeFilter: [],
+    storeSort: []
+
 
 }
 export default function storeStore(state = initialState, action) {
@@ -22,6 +25,11 @@ export default function storeStore(state = initialState, action) {
             return { ...state, maxProduct: payload }
         case 'SET_STORE_INDEX':
             return { ...state, positionIndex: payload }
+        case 'SET_STORE_FILTER':
+            return { ...state, storeFilter: payload }
+        case 'SET_STORE_SORT':
+            return { ...state, storeSort: payload }
+
         default:
             return state;
     }

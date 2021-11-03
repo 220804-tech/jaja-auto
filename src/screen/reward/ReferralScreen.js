@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 
 export default function ReferralScreen() {
     const reduxUser = useSelector(state => state.user.user)
-    console.log("file: ReferralScreen.js ~ line 11 ~ ReferralScreen ~ reduxUser", reduxUser.pin)
     const [image, setImage] = useState('')
 
 
@@ -54,6 +53,7 @@ export default function ReferralScreen() {
                         <Text style={[styles.font_18, { color: colors.BlueJaja }]}>
                             {String(reduxUser.pin).toLocaleUpperCase()}
                         </Text>
+                        
                     </View>
                     <Button onPress={handleShare} color={colors.BlueJaja} labelStyle={{ color: colors.White, fontFamily: 'Poppins-SemiBold', fontSize: 10 }} mode="contained" style={{ borderRadius: 100 }}>Bagikan Kode</Button>
                 </View>

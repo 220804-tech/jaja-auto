@@ -59,7 +59,7 @@ export default function ProfileScreen(props) {
     }, 3000);
   }, []);
 
-  const getAccount = () => {
+  const getAccount = async () => {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", reduxAuth);
     myHeaders.append("Cookie", "ci_session=71o6pecall1g4dt83l7a6vhl4igak0ms");
@@ -69,8 +69,7 @@ export default function ProfileScreen(props) {
       headers: myHeaders,
       redirect: 'follow'
     };
-    fetch(`https://jaja.id/backend/order/ListRekening?id_customer=${reduxUser.id}`, requestOptions)
-
+    await fetch(`https://jaja.id/backend/order/ListRekening?id_customer=${reduxUser.id}`, requestOptions)
       .then(response => response.json())
       .then(result => {
         if (result && Object.keys(result).length && result.status.code == 200) {

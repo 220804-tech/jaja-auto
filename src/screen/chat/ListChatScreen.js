@@ -37,7 +37,6 @@ export default function ListChat() {
                 snapshot.forEach(function (snap) {
                     var item = snap.val();
                     item.id = snap.key;
-                    console.log(item.id, " firebase");
                     if (item.id !== reduxUser.uid && item.id !== "null") {
                         returnArray.push(item);
                         let sortedObj = []

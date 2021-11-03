@@ -94,13 +94,13 @@ export default function ProductScreen(props) {
         useCallback(() => {
             try {
                 console.log("🚀 ~ file: ProductScreen.js ~ line 81 ~ useCallback ~ reduxSearch.productDetail.image", reduxSearch.productDetail.image[0])
-                ImgToBase64.getBase64String(reduxSearch.productDetail.image[0])
-                    .then(async base64String => {
-                        let urlString = 'data:image/jpeg;base64,' + base64String;
-                        setImage(urlString)
-                        console.log('masuk sini')
-                    })
-                    .catch(err => console.log("cok"));
+                // ImgToBase64.getBase64String(reduxSearch.productDetail.image[0])
+                //     .then(async base64String => {
+                //         let urlString = 'data:image/jpeg;base64,' + base64String;
+                //         setImage(urlString)
+                //         console.log('masuk sini')
+                //     })
+                //     .catch(err => console.log("cok"));
                 if (reduxAuth) {
                     // CheckSignal().then(res => {
                     //     if (res.connect) {
@@ -185,8 +185,6 @@ export default function ProductScreen(props) {
         }
     }
     const handleFlashsale = (flashsale, status) => {
-        console.log("🚀 ~ file: ProductScreen.js ~ line 184 ~ handleFlashsale ~ status", status)
-        console.log("🚀 ~ file: ProductScreen.js ~ line 184 ~ handleFlashsale ~ flashsale", flashsale)
         try {
             if (flashsale && Object.keys(flashsale).length) {
                 setFlashsale(true)
@@ -322,18 +320,20 @@ export default function ProductScreen(props) {
 
         ServiceStore.getStoreProduct(obj).then(res => {
             if (res) {
-                console.log('cari new product')
                 dispatch({ "type": 'SET_NEW_PRODUCT', payload: res.items })
             }
         })
         obj.sort = ''
         ServiceStore.getStoreProduct(obj).then(res => {
             if (res) {
-                console.log('cari all product')
-                dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
+                dispatch({ type: 'SET_STORE_PRODUCT', payload: res.items })
+                dispatch({ type: 'SET_STORE_FILTER', payload: res.filters })
+                dispatch({ type: 'SET_STORE_SORT', payload: res.sorts })
+
             }
         })
     }
+
 
     const handleTrolley = () => {
         handleGetCart()
@@ -441,16 +441,22 @@ export default function ProductScreen(props) {
     }
 
     const handleShare = async () => {
-        console.log("🚀 ~ file: ProductScreen.js ~ line 360 ~ handleShare ~ slug", reduxSearch.productDetail.name)
         try {
+            setLoading(true)
+            let imageUrl = ''
+            await ImgToBase64.getBase64String(reduxSearch.productDetail.image[0])
+                .then(base64String => {
+                    let urlString = 'data:image/jpeg;base64,' + base64String;
+                    imageUrl = urlString
+                })
+                .catch(err => console.log("cok"));
             let link = await buildLink()
-            console.log("🚀 ~ file: ProductScreen.js ~ line 373 ~ handleShare ~ link", link)
             const shareOptions = {
                 title: 'Jaja',
                 message: `${reduxSearch.productDetail.name}\nDownload sekarang ${link}`,
-                url: image,
+                url: imageUrl,
             };
-
+            setTimeout(() => setLoading(false), 1000);
             Share.open(shareOptions)
                 .then((res) => {
                     console.log(res);

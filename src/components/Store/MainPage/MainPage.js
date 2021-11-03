@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react'
-import { View, Text, FlatList, TouchableOpacity, Image, ScrollView, ToastAndroid } from 'react-native'
+import React, { useState, useEffect, createRef } from 'react'
+import { View, Text, FlatList, TouchableOpacity, Image, ScrollView, Alert } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { styles, Wp, Hp, colors, useNavigation, CardProduct, NearestStore, FlashsaleToko, ServiceStore } from '../../../export'
+import { styles, Wp, Hp, colors, useNavigation, CardProduct, NearestStore, FlashsaleToko, ServiceStore, Utils } from '../../../export'
 import Swiper from 'react-native-swiper'
 import EncryptedStorage from 'react-native-encrypted-storage'
-import { Paragraph } from 'react-native-paper'
+import ActionSheet from "react-native-actions-sheet";
 import NewProduct from './NewProduct'
 
 export default function MainPage() {
     const navigation = useNavigation();
+    const actionSheetRef = createRef();
+
     const dispatch = useDispatch()
     const greeting = useSelector(state => state.store.store.description)
     const vouchers = useSelector(state => state.store.store.voucher)
@@ -69,7 +71,7 @@ export default function MainPage() {
                 .then(response => response.json())
                 .then(result => {
                     if (result.status.code === 200) {
-                        ToastAndroid.show("Voucher berhasil diklaim", ToastAndroid.LONG, ToastAndroid.CENTER)
+                        Utils.alertPopUp('Voucher berhasil diklaim')
                         ServiceStore.getStore(reduxStore.store.slug, reduxAuth).then(res => {
                             if (res) {
                                 dispatch({ "type": 'SET_STORE', payload: res })
@@ -77,13 +79,37 @@ export default function MainPage() {
                             }
                         })
                     } else if (result.status.code === 409) {
-                        ToastAndroid.show("Voucher sudah pernah diklaim", ToastAndroid.LONG, ToastAndroid.CENTER)
-
+                        Utils.alertPopUp("Voucher sudah pernah diklaim")
                     }
                 })
-                .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+                .catch(error => Utils.alertPopUp(JSON.stringify(error)));
         }
     }
+    const handleDescription = voucher => {
+        console.log("file: VoucherScreen.js ~ line 154 ~ VoucherScreen ~ voucher", voucher)
+        Alert.alert(
+            "Syarat dan Ketentuan Voucher",
+            `\n\n1.Kode ${voucher.code}
+            \n2. Voucher ${String(voucher.category) === "ongkir" ? "Gratis Biaya Pengiriman" : String(voucher.category) === "diskon" ? 'Diskon Belanja' : "CASHBACK"}
+            \n3. Mulai tanggal ${voucher.startDate}
+            \n4. Berakhir tanggal ${voucher.endDate}
+            \n5. Diskon didapatkan ${voucher.discount}
+            ${voucher.minShoppingCurrencyFormat ? '\n6. Minimal pembelian ' + voucher.minShoppingCurrencyFormat : ""}
+            `,
+            [
+                {
+                    text: "Setuju",
+                    onPress: () => console.log("ok"),
+                    style: "cancel",
+                },
+            ],
+            {
+                cancelable: false,
+            }
+        );
+    }
+
+
     return (
         <View style={[styles.column_start, { width: Wp('100%'), backgroundColor: colors.White }]}>
             <ScrollView contentContainerStyle={{ alignItems: 'flex-start' }}>
@@ -128,7 +154,7 @@ export default function MainPage() {
                                 />
                                 {console.log("🚀 ~~~~~~~~~~~~~~~~~ \n\n")}
                             </ScrollView> */}
-                            <View style={[styles.px_4, { paddingVertical: '0.1%', backgroundColor: colors.BlueJaja, width: '55%', borderBottomRightRadius: 100, }]}>
+                            <View style={[styles.px_4, { paddingVertical: '0.2%', backgroundColor: colors.BlueJaja, width: Wp('60%'), borderBottomRightRadius: 100, }]}>
                                 <Text style={[styles.font_14, styles.T_medium, { color: colors.White, width: '80%' }]}>
                                     Voucher Toko
                                 </Text>
@@ -145,7 +171,6 @@ export default function MainPage() {
                                 contentContainerStyle={styles.pb_5}
                                 data={vouchers}
                                 renderItem={({ item, index }) => {
-                                    console.log("file: VoucherScreen.js ~ line 198 ~ VoucherScreen ~ item", item)
                                     return (
                                         <View style={[styles.row_center, styles.mb_3]}>
                                             <View style={[styles.row, { width: '95%', height: Wp('27%'), backgroundColor: colors.White, borderTopWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, borderColor: colors.BlueJaja }]}>
@@ -158,11 +183,11 @@ export default function MainPage() {
                                                     <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
                                                 </View>
                                                 <View style={[styles.column_center, styles.p, { height: '100%', width: '30%', marginLeft: Wp('3%'), backgroundColor: colors.BlueJaja }]}>
-                                                    <Text style={[styles.font_14, styles.mb_2, { color: colors.White, fontFamily: 'Poppins-SemiBold', alignSelf: 'center' }]}>{!item.category ? item.name : item.category === "ongkir" ? 'GRATIS BIAYA PENGIRIMAN' : String(item.category).toUpperCase() + " " + item.discountText}</Text>
+                                                    <Text style={[styles.font_12, styles.mb_2, { color: colors.White, fontFamily: 'Poppins-SemiBold', alignSelf: 'center', textAlign: 'center', width: '90%' }]}>{!item.category ? item.name : item.category === "ongkir" ? 'GRATIS BIAYA PENGIRIMAN' : String(item.category).toUpperCase() + " " + item.discountText}</Text>
                                                 </View>
-                                                <View style={[styles.column_center, styles.px_2, { width: '44%' }]}>
+                                                <View style={[styles.column_around_center, styles.px_2, styles.pt_3, { width: '44%' }]}>
                                                     <Text numberOfLines={3} style={[styles.font_13, styles.mb_2, { color: colors.BlueJaja, fontFamily: 'Poppins-SemiBold', width: '100%' }]}>{item.discount}</Text>
-                                                    <Text style={[styles.font_8, { position: 'absolute', bottom: 5, color: colors.BlueJaja, fontFamily: 'Poppins-SemiBold', width: '100%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
+                                                    <Text style={[styles.font_8, { color: colors.BlueJaja, fontFamily: 'Poppins-SemiBold', width: '100%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
                                                 </View>
                                                 <View style={[styles.column_center, { width: '22%' }]}>
                                                     <TouchableOpacity onPress={() => handleVoucher(item, index)} style={{ width: '90%', height: '30%', backgroundColor: item.isClaimed ? colors.White : colors.BlueJaja, padding: '2%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.BlueJaja, borderRadius: 5 }}>
@@ -246,7 +271,7 @@ export default function MainPage() {
                 <View style={[styles.column, styles.mt_3, styles.pb_5]}>
 
                     <View style={styles.column}>
-                        <View style={[styles.px_4, { paddingVertical: '0.1%', backgroundColor: colors.BlueJaja, width: '55%', borderBottomRightRadius: 100, }]}>
+                        <View style={[styles.px_4, { paddingVertical: '0.2%', backgroundColor: colors.BlueJaja, width: Wp('60%'), borderBottomRightRadius: 100, }]}>
                             <Text style={[styles.font_14, styles.T_medium, { color: colors.White, width: '80%' }]}>
                                 Produk terbaru
                             </Text>
@@ -311,6 +336,8 @@ export default function MainPage() {
                     /> */}
                 </View>
             </ScrollView>
+
+
         </View >
     )
 }

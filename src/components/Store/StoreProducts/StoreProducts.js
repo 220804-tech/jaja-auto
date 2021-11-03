@@ -4,7 +4,7 @@ import EncryptedStorage from 'react-native-encrypted-storage'
 import ActionSheet from "react-native-actions-sheet";
 import { useNavigation, colors, styles, Wp, Loading, Hp, CardProduct, ShimmerCardProduct, Utils, ServiceStore } from '../../../export'
 import { useDispatch, useSelector } from 'react-redux'
-import { Button } from 'react-native-paper';
+import { Button, Menu, Divider, Provider } from 'react-native-paper';
 const { height: hg } = Dimensions.get('screen')
 
 export default function StoreProducts() {
@@ -12,12 +12,13 @@ export default function StoreProducts() {
     const actionSheetRef = createRef();
     // const data = useSelector(state => state.search.searchProduct)
     const keyword = useSelector(state => state.search.keywordSearch)
-    const reduxFilters = useSelector(state => state.search.filters)
-    const reduxSorts = useSelector(state => state.search.sorts)
+    const reduxFilters = useSelector(state => state.store.storeFilter)
+    const reduxSorts = useSelector(state => state.store.storeSort)
     const reduxmaxProduct = useSelector(state => state.store.maxProduct)
     const data = useSelector(state => state.store.storeProduct)
     const textSearch = useSelector(state => state.store.storeKeyword)
     const reduxStore = useSelector(state => state.store.store)
+
 
     const dispatch = useDispatch()
     const [scrollY, setscrollY] = useState(new Animated.Value(0))
@@ -30,15 +31,19 @@ export default function StoreProducts() {
     const [loadmore, setLoadmore] = useState(true);
     const [page, setPage] = useState(1);
 
-    const [location, setLocation] = useState('');
     const [condition, setCondition] = useState('');
     const [stock, setStock] = useState('');
     const [sort, setSort] = useState('');
+
     const [refreshing, setRefreshing] = useState(false);
     const [focus, setFocus] = useState(0);
     const [filter, setFilter] = useState(false);
 
+    const [visible, setVisible] = React.useState(false);
 
+    const openMenu = () => setVisible(true);
+
+    const closeMenu = () => setVisible(false);
     useEffect(() => {
         setLoading(true)
         setTimeout(() => {
@@ -128,6 +133,38 @@ export default function StoreProducts() {
         }, 5000);
     }
 
+
+    const handleFilter = (name) => {
+        actionSheetRef.current?.setModalVisible(false)
+        dispatch({ type: 'SET_MAX_SEARCH', payload: false })
+        setTimeout(() => setLoading(true), 200);
+        let obj = {
+            slug: reduxStore.slug,
+            page: 1,
+            limit: 20,
+            keyword: '',
+            price: '',
+            condition: '',
+            preorder: '',
+            brand: '',
+            sort: '',
+        }
+        if (name && name !== 'reset') {
+            obj.keyword = keyword
+            obj.condition = condition
+            obj.preorder = stock
+            obj.sort = sort
+        }
+        ServiceStore.getStoreProduct(obj).then(res => {
+            if (res) {
+                dispatch({ type: 'SET_STORE_PRODUCT', payload: res.items })
+                setTimeout(() => setLoading(false), 1000);
+            }
+        })
+        setTimeout(() => setLoading(false), 15000);
+
+
+    }
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         setTimeout(() => {
@@ -135,23 +172,62 @@ export default function StoreProducts() {
         }, 2000);
     }, []);
 
+
+    const handleSelected = (name, indexParent, indexChild) => {
+        if (name === 'filter') {
+            let val = reduxFilters[indexParent].name
+            let valChild = reduxFilters[indexParent].items[indexChild].value
+            if (val === "Kondisi") {
+                if (condition === valChild) {
+                    setCondition("")
+                } else {
+                    setCondition(valChild)
+                }
+            } else if (val === "Stok") {
+                if (stock === valChild) {
+                    setStock("")
+                } else {
+                    setStock(valChild)
+                }
+
+            }
+        } else if (name === "sort") {
+            let valChild = reduxSorts[indexChild].value
+            if (valChild === sort) {
+                setSort("")
+            } else {
+                setSort(valChild)
+            }
+        }
+    }
+
+
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={[styles.column, { flex: 1, backgroundColor: colors.White }]}>
+
                 <View style={[styles.row_around_center, { width: '100%', elevation: 1 }]}>
-                    <Button style={{ width: Wp('33.33%'), borderRadius: 0, borderRightWidth: 0 }} uppercase={false} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_medium, { color: focus == 1 || focus == 0 ? colors.BlueJaja : colors.BlackGrayScale }]} contentStyle={{ borderRadius: 0 }} onPress={() => setFocus(1) & setFilter(true)} mode="outlined">
-                        Semua
-                    </Button>
-                    <Button style={{ width: Wp('33.33%'), borderRadius: 0 }} uppercase={false} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_medium, { color: focus == 2 ? colors.BlueJaja : colors.BlackGrayScale }]} contentStyle={{ borderRadius: 0 }} onPress={() => setFocus(2) & setFilter(true)} mode="outlined">
-                        Terlaris
-                    </Button>
-                    <Button icon={focus == 3 ? require('../../../assets/icons/sort-up.png') : focus == 4 ? require('../../../assets/icons/sort-down.png') : null} style={{ width: Wp('33.33%'), borderRadius: 0, borderLeftWidth: 0 }} uppercase={false} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_medium, { color: focus == 3 || focus == 4 ? colors.BlueJaja : colors.BlackGrayScale }]} contentStyle={{ borderRadius: 0 }} onPress={() => {
-                        focus == 3 ? setFocus(4) : setFocus(3)
-                        setFilter(true)
-                    }} mode="outlined">
-                        Harga
-                    </Button>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                        <Button style={{ width: Wp('33.33%'), borderRadius: 0, borderRightWidth: 0 }} uppercase={false} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_medium, { color: focus == 1 || focus == 0 ? colors.BlueJaja : colors.BlackGrayScale }]} contentStyle={{ borderRadius: 0 }} onPress={() => setFocus(1) & setFilter(true)} mode="outlined">
+                            Semua
+                        </Button>
+                        {/* <Button style={{ width: Wp('33.33%'), borderRadius: 0 }} uppercase={false} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_medium, { color: focus == 2 ? colors.BlueJaja : colors.BlackGrayScale }]} contentStyle={{ borderRadius: 0 }} onPress={() => setFocus(2) & setFilter(true)} mode="outlined">
+                                Terlaris
+                            </Button> */}
+                        <Button icon={focus == 3 ? require('../../../assets/icons/sort-up.png') : focus == 4 ? require('../../../assets/icons/sort-down.png') : null} style={{ width: Wp('33.33%'), borderRadius: 0 }} uppercase={false} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_medium, { color: focus == 3 || focus == 4 ? colors.BlueJaja : colors.BlackGrayScale }]} contentStyle={{ borderRadius: 0 }} onPress={() => {
+                            focus == 3 ? setFocus(4) : setFocus(3)
+                            setFilter(true)
+                        }} mode="outlined">
+                            Harga
+                        </Button>
+                        <Button style={{ width: Wp('33.33%'), borderRadius: 0, borderLeftWidth: 0 }} uppercase={false} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_medium, { color: focus == 2 ? colors.BlueJaja : colors.BlackGrayScale }]} contentStyle={{ borderRadius: 0 }} onPress={() => actionSheetRef.current?.setModalVisible(true)} mode="outlined">
+                            Filter
+                        </Button>
+                    </ScrollView>
+
                 </View>
+
                 {loading ? <Loading /> : null}
                 {
                     data && data.length ?
@@ -191,7 +267,61 @@ export default function StoreProducts() {
                 }
 
             </View >
+            <ActionSheet ref={actionSheetRef} delayActionSheetDraw={false} containerStyle={{ height: Hp('60%'), padding: '4%' }}>
+                <View style={[styles.row_between_center, styles.mb_3, { width: '100%' }]}>
+                    <Text adjustsFontSizeToFit style={[styles.font_16, styles.T_semi_bold, { width: '50%', color: colors.BlueJaja, }]}>Filter</Text>
+                    <View style={[styles.row_center_end]}>
+                        <TouchableOpacity onPress={() => handleFilter('reset')} style={{ paddingHorizontal: '2%', justifyContent: 'center', marginRight: '2%' }}>
+                            <Text adjustsFontSizeToFit style={[styles.font_14, styles.T_semi_bold, styles.mr_3, { color: colors.YellowJaja, alignSelf: 'flex-start', textAlign: 'right' }]}>Reset</Text>
+                        </TouchableOpacity>
 
+                        <TouchableOpacity onPress={() => handleFilter('filter')} style={{ paddingHorizontal: '2%', justifyContent: 'center' }}>
+                            <Text adjustsFontSizeToFit style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja, alignSelf: 'flex-start', textAlign: 'right' }]}>Simpan</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                <ScrollView style={styles.mb_5}>
+                    {reduxFilters && reduxFilters.length ?
+                        reduxFilters.map((item, index) => {
+                            return (
+                                <View key={String(index) + "XP"} style={[styles.mb_4]}>
+                                    <Text adjustsFontSizeToFit style={[styles.font_16, { fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale }]}>{item.name}</Text>
+                                    <View style={{ flex: 0, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
+                                        {item.items.map((child, idx) => {
+                                            return (
+                                                <TouchableOpacity key={String(idx) + 'FA'} onPress={() => handleSelected('filter', index, idx)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: child.value === condition || child.value === stock ? colors.BlueJaja : colors.BlackGrey, backgroundColor: child.value === condition || child.value === stock ? colors.BlueJaja : colors.White, borderRadius: 11, paddingHorizontal: '3%', paddingVertical: '2%', marginRight: '3%', marginTop: '3%' }}>
+                                                    <Text adjustsFontSizeToFit style={[styles.font_14, { color: child.value === condition || child.value === stock ? colors.White : colors.BlackGrayScale }]}>{child.name}</Text>
+                                                </TouchableOpacity>
+                                            )
+                                        })}
+                                    </View>
+                                </View>
+                            )
+                        })
+                        : null
+                    }
+                    {console.log("🚀 ~ file: StoreProducts.js ~ line 305 ~ StoreProducts ~ reduxSorts", reduxSorts)}
+                    {reduxSorts && reduxSorts.length ?
+                        <View style={[styles.mb_4]}>
+                            <Text adjustsFontSizeToFit style={[styles.font_16, { fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale }]}>Urutkan</Text>
+                            <View style={{ flex: 0, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
+                                {reduxSorts.map((child, idx) => {
+                                    console.log("🚀 ~ file: StoreProducts.js ~ line 315 ~ {reduxSorts.map ~ reduxSorts", reduxSorts)
+
+                                    return (
+                                        <TouchableOpacity key={String(idx) + "CH"} onPress={() => handleSelected('sort', null, idx)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: child.value === sort ? colors.BlueJaja : colors.BlackGrey, backgroundColor: child.value === sort ? colors.BlueJaja : colors.White, borderRadius: 11, paddingHorizontal: '3%', paddingVertical: '2%', marginRight: '3%', marginTop: '3%' }}>
+                                            <Text adjustsFontSizeToFit style={[styles.font_14, { color: child.value === sort ? colors.White : colors.BlackGrayScale }]}>{child.name}</Text>
+                                        </TouchableOpacity>
+                                    )
+                                })}
+                            </View>
+                        </View>
+
+                        : null
+                    }
+                </ScrollView>
+            </ActionSheet>
         </SafeAreaView >
     )
 }

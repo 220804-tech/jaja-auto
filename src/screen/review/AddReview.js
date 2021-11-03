@@ -14,6 +14,7 @@ export default function AddReview(props) {
     const navigation = useNavigation();
     const reduxAuth = useSelector(state => state.auth.auth)
     const galeryRef = createRef()
+    const reduxOrderInvoice = useSelector(state => state.order.invoice)
 
     const [loading, setLoading] = useState(false)
 
@@ -24,7 +25,6 @@ export default function AddReview(props) {
     const [data, setData] = useState([])
 
     useEffect(() => {
-
         try {
             if (props.route.params.data) {
                 let arr = props.route.params.data
@@ -120,7 +120,6 @@ export default function AddReview(props) {
     }
 
     const handleBase64 = (file) => {
-
     }
 
     const handleRemoveImage = (indexParent, indexChild) => {
@@ -156,6 +155,7 @@ export default function AddReview(props) {
         myHeaders.append("Content-Type", "application/json");
 
         var raw = JSON.stringify({
+            "invoice": reduxOrderInvoice,
             "rates": data
         });
         var requestOptions = {
@@ -234,7 +234,7 @@ export default function AddReview(props) {
                                 })}
                             </View>
                             <View style={{ borderWidth: 0.5, borderColor: colors.Silver, borderRadius: 5 }}>
-                                <TextInput placeholder="Barang sesuai pesanan." multiline={true} numberOfLines={3} textAlignVertical="top" maxLength={200}>
+                                <TextInput onChangeText={(text) => handleChange(text, index, "comment")} placeholder="Barang sesuai pesanan." multiline={true} numberOfLines={3} textAlignVertical="top" maxLength={200}>
                                     {item.comment}
                                 </TextInput>
                             </View>

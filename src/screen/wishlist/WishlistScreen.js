@@ -102,8 +102,6 @@ export default function WishlistScreen() {
         //     .catch(error => console.log('error', error));
     }
     const handleFilter = (idx, iChild, category) => {
-        console.log("file: WishlistScreen.js ~ line 83 ~ handleFilter ~ iChild", iChild)
-        console.log("file: WishlistScreen.js ~ line 83 ~ handleFilter ~ idx", index)
         var myHeaders = new Headers();
         myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Cookie", "ci_session=91d3621an28utlc15bm92p079shhhbec");
@@ -114,7 +112,7 @@ export default function WishlistScreen() {
             redirect: 'follow'
         };
 
-        fetch(`https://jaja.id/backend/user/wishlist/${reduxUser.id}?keyword=&filter_category=${idx == 3 && category ? category : ''}&filter_preorder=${idx == 2 ? iChild == 1 ? 'T' : 'Y' : ''}&filter_condition=${idx == 1 ? iChild == 1 ? 'baru' : 'pernah dipakai' : ''}&filter_location=&limit=10&page=1`, requestOptions)
+        fetch(`https://jaja.id/backend/user/wishlist/keyword=&filter_category=${idx == 3 && category ? category : ''}&filter_preorder=${idx == 2 ? iChild == 1 ? 'T' : 'Y' : ''}&filter_condition=${idx == 1 ? iChild == 1 ? 'baru' : 'pernah dipakai' : ''}&filter_location=&limit=10&page=1`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.status.code === 200 || result.status.code === 204) {

@@ -154,20 +154,28 @@ export async function getListAccount(auth) {
         redirect: 'follow'
     };
 
-    fetch("https://jaja.id/backend/user/bankAccount", requestOptions)
+    return await fetch("https://jaja.id/backend/user/bankAccount", requestOptions)
         .then(response => response.text())
         .then(result => {
             try {
                 let response = JSON.parse(result)
+                console.log("🚀 ~ file: User.js ~ line 160 ~ getListAccount ~ result", response.data)
                 if (response.status.code === 200 || response.status.code === 204) {
                     return response.data
                 } else {
                     Utils.alertPopUp(response.status.message)
+                    return null
                 }
             } catch (error) {
                 Utils.handleError(result, 'Error with status code 17021')
+                return null
+
             }
         })
-        .catch(error => Utils.handleError(error, 'Error with status code : 17022'));
+        .catch(error => {
+            Utils.handleError(error, 'Error with status code : 17022')
+            return null
+
+        });
 }
 

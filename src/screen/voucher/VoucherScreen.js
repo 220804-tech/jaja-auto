@@ -196,7 +196,6 @@ export default function VoucherScreen() {
                         contentContainerStyle={styles.pb_5}
                         data={vouchers}
                         renderItem={({ item, index }) => {
-                            console.log("file: VoucherScreen.js ~ line 198 ~ VoucherScreen ~ item", item)
                             return (
                                 <View style={[styles.row_center, styles.mb_3]}>
                                     <View style={[styles.row, { width: '95%', height: Wp('27%'), backgroundColor: colors.White, borderTopWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, borderColor: colors.YellowJaja }]}>

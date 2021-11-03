@@ -10,7 +10,6 @@ export default function ProductSearchScreen() {
     const navigation = useNavigation();
     const actionSheetRef = createRef();
     const data = useSelector(state => state.search.searchProduct)
-    console.log("🚀 ~ file: productSearchScreen.js ~ line 13 ~ ProductSearchScreen ~ data", data)
     const keyword = useSelector(state => state.search.keywordSearch)
     const reduxFilters = useSelector(state => state.search.filters)
     const reduxSorts = useSelector(state => state.search.sorts)
@@ -191,7 +190,6 @@ export default function ProductSearchScreen() {
         }
     }
     const handleLoadMore = () => {
-        console.log("reloaddddddddddddddd")
         if (loadmore === false) {
             setLoadmore(true)
             setPage(page + 1)

@@ -111,38 +111,40 @@ export default function SplashScreen() {
             myHeaders.append("Authorization", token ? JSON.parse(token) : "");
             myHeaders.append("Cookie", "ci_session=gpkr7eq1528c92su0vj0rokdjutlsl2r");
 
-            var raw = "";
-
             var requestOptions = {
                 method: 'GET',
                 headers: token ? myHeaders : "",
-                body: raw,
                 redirect: 'follow'
             };
             let hasil = null;
             fetch("https://jaja.id/backend/home", requestOptions)
-                .then(response => response.json())
-                .then(resp => {
-                    hasil = true;
-                    if (resp.status.code == 200 || resp.status.code == 204) {
-                        if (resp.data.categoryChoice) {
-                            dispatch({ type: 'SET_DASHCATEGORY', payload: resp.data.categoryChoice })
-                            EncryptedStorage.setItem('dashcategory', JSON.stringify(resp.data.categoryChoice))
+                .then(response => response.text())
+                .then(respp => {
+                    try {
+                        let resp = JSON.parse(respp)
+                        hasil = true;
+                        if (resp.status.code == 200 || resp.status.code == 204) {
+                            if (resp.data.categoryChoice) {
+                                dispatch({ type: 'SET_DASHCATEGORY', payload: resp.data.categoryChoice })
+                                EncryptedStorage.setItem('dashcategory', JSON.stringify(resp.data.categoryChoice))
+                            }
+                            if (resp.data.trending) {
+                                dispatch({ type: 'SET_DASHTRENDING', payload: resp.data.trending })
+                                EncryptedStorage.setItem('dashtrending', JSON.stringify(resp.data.trending))
+                            }
+                            if (resp.data.basedOnSearch) {
+                                dispatch({ type: 'SET_DASHPOPULAR', payload: resp.data.basedOnSearch })
+                                EncryptedStorage.setItem('dashpopular', JSON.stringify(resp.data.basedOnSearch))
+                            }
+                        } else {
+                            handleError(resp.status.message + " => " + resp.status.code)
                         }
-                        if (resp.data.trending) {
-                            dispatch({ type: 'SET_DASHTRENDING', payload: resp.data.trending })
-                            EncryptedStorage.setItem('dashtrending', JSON.stringify(resp.data.trending))
-                        }
-                        if (resp.data.basedOnSearch) {
-                            dispatch({ type: 'SET_DASHPOPULAR', payload: resp.data.basedOnSearch })
-                            EncryptedStorage.setItem('dashpopular', JSON.stringify(resp.data.basedOnSearch))
-                        }
-                    } else {
-                        handleError(resp.status.message + " => " + resp.status.code)
+                    } catch (error) {
+                        Utils.alertPopUp(JSON.stringify(respp))
                     }
                 })
                 .catch(error => {
-                    Utils.handleError(error, 'Error with status code : 19021')
+                    Utils.handleError(error + '98', 'Error with status code : 19021')
                     handleError(error)
                 })
             setTimeout(() => {

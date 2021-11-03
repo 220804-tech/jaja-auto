@@ -26,6 +26,7 @@ export default function ChatScreen({ route }) {
     const [newFriend, setnewFriend] = useState(false)
     const [loadChat, setloadChat] = useState(true)
     const [sellerImage, setesellerImage] = useState(null)
+    const [target, setTarget] = useState(null)
 
     const [nameChat, setnameChat] = useState("")
     const [dataFriend, setdataFriend] = useState("")
@@ -34,11 +35,12 @@ export default function ChatScreen({ route }) {
     const [selectedProduct, setSelectedProduct] = useState('')
     const [selectedOrder, setselectedOrder] = useState('')
     const [targetRead, settargetRead] = useState(false)
+    const [amountNow, setamountNow] = useState(0)
 
     const { data, product, order } = route.params;
 
     const dispatch = useDispatch()
-    const listChat = [{ id: '1SX', text: 'Halo, apakah barang ini ready?' }, { id: '2SX', text: 'Halo, apakah bisa dikirim hari ini?' }, { id: '3SX', text: 'Terima kasih!' }, { id: '4SX', text: 'Sama-sama!' },]
+    const listChat = [{ id: '1SX', text: 'Halo!' }, { id: '1SX', text: 'Halo, apakah barang ini ready?' }, { id: '2SX', text: 'Halo, apakah bisa dikirim hari ini?' }, { id: '3SX', text: 'Terima kasih!' }, { id: '4SX', text: 'Sama-sama!' },]
     useEffect(() => {
         setnameChat(data.name);
         firebaseDatabase().ref('/messages/' + data.chat).on('value', function (snapshoot) {
@@ -70,6 +72,7 @@ export default function ChatScreen({ route }) {
     }, [data]);
 
     useEffect(() => {
+        setLoading(true)
         try {
             if (product && Object.keys(product).length && selectedProduct !== null) {
                 setSelectedProduct(product)
@@ -79,14 +82,17 @@ export default function ChatScreen({ route }) {
             }
             firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid + '/amount').on('value', snapshot => {
                 if (snapshot.val()) {
-                    console.log('belum dibaca')
                     settargetRead(false)
                 } else {
-                    console.log('dibaca')
                     settargetRead(true)
                 }
             })
 
+            firebaseDatabase()
+                .ref("/people/" + data.id + "/token")
+                .once('value')
+                .then(snapshot => setTarget(String(snapshot.val())))
+            setTimeout(() => setLoading(false), 2000);
         } catch (error) {
 
         }
@@ -148,40 +154,29 @@ export default function ChatScreen({ route }) {
                 }
                 if (data && reduxAuth) {
                     try {
-                        if (selectedProduct && Object.keys(selectedProduct).length) {
-
-                            handleSendProduct()
-                        }
                         if (selectedOrder) {
                             message.order = selectedOrder
                         }
-                        console.log("🚀 ~ file: ChatScreen.js ~ line 149 ~ handleSend ~ message", message)
-                        setTimeout(() => {
-                            var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
-                            firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
-                            // firebaseDatabase().ref('people/' + data.id + '/notif').set(message); //pengirimnya
-                            firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: chat, time: new Date().toString() } });
-
-                            firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid + '/amount').once('value').then(snapshot => {
-                                let amountNow = snapshot.val()
+                        if (selectedProduct && Object.keys(selectedProduct).length) {
+                            handleSendProduct()
+                        } else {
+                            setTimeout(() => {
+                                var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
+                                firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
+                                firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: chat, time: new Date().toString() } });
                                 firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: { text: chat, time: new Date().toString() }, amount: amountNow ? amountNow + 1 : 1 });
-
-
-
-                            });
-                            let fire = firebaseDatabase().ref("/people/" + data.id).limitToLast(20).on("value", async function (snapshot) {
-                                let item = await snapshot.val();
-                                setselectedOrder(null)
-                                if (item.token) {
+                                if (target) {
+                                    console.log("🚀 ~ file: ChatScreen.js ~ line 170 ~ setTimeout ~ target", typeof target)
                                     try {
-                                        await Firebase.notifChat(item.token, { body: chat, title: reduxUser.name })
+                                        Firebase.notifChat(target, { body: chat, title: reduxUser.name })
                                         // await Firebase.buyerNotifications('chat', data.id)
                                     } catch (error) {
+                                        console.log("🚀 ~ file: ChatScreen.js ~ line 182 ~ setTimeout ~ error", error)
                                     }
                                 }
-                                firebaseDatabase().ref(`/people/${data.id}`).off('value', fire)
-                            })
-                        }, selectedProduct && Object.keys(selectedProduct).length ? 100 : 0);
+                            }, selectedProduct && Object.keys(selectedProduct).length ? 100 : 0);
+                        }
+
                     } catch (error) {
                         // alert(error)
 
@@ -207,11 +202,13 @@ export default function ChatScreen({ route }) {
                     priceLast: selectedProduct.isDiscount ? selectedProduct.priceDiscount : selectedProduct.price,
                     productImage: selectedProduct.image[0],
                     productTitle: selectedProduct.name,
+                    productSlug: selectedProduct.slug,
+
                 }
+                setSelectedProduct(null)
                 if (data) {
                     try {
                         var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
-                        console.log("🚀 ~ file: ChatScreen.js ~ line 135 ~ handleSendProduct ~ msgId", data.id)
                         firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
                         firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: selectedProduct.name, time: new Date().toString() } });
 
@@ -219,15 +216,6 @@ export default function ChatScreen({ route }) {
                             let amountNow = snapshot.val()
                             firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: { text: selectedProduct.name, time: new Date().toString() }, amount: amountNow ? amountNow + 1 : 1 });
                         });
-
-                        let fire = firebaseDatabase().ref("/people/" + data.id).limitToLast(20).on("value", async function (snapshot) {
-                            let item = await snapshot.val();
-                            if (item.token) {
-                                await Firebase.notifChat(item.token, { body: selectedProduct.name, title: reduxUser.name })
-                                setSelectedProduct(null)
-                            }
-                            firebaseDatabase().ref(`/people/${data.id}`).off('value', fire)
-                        })
                     } catch (error) {
                         console.log("data error", error)
                     }
@@ -240,13 +228,20 @@ export default function ChatScreen({ route }) {
         }
     }
     const handleOrderDetails = (item) => {
-        console.log("🚀 ~ file: ChatScreen.js ~ line 243 ~ handleOrderDetails ~ order", order)
         dispatch({ type: 'SET_INVOICE', payload: item.invoice })
         dispatch({ type: 'SET_ORDER_STATUS', payload: item.status })
         navigation.navigate('OrderDetails', { data: item.invoice, status: "Pengiriman" })
     }
 
+    const handleShowDetail = item => {
+        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+        dispatch({ type: 'SET_SLUG', payload: item.productSlug })
+        navigation.navigate("Product", { slug: item.productSlug, image: item.productImage })
+
+    }
     const renderRow = ({ item, index }) => {
+        console.log("🚀 ~ file: ChatScreen.js ~ line 244 ~ renderRow ~ item", item)
         let dateNow = String(item.date).slice(0, 3);
         let dateRight = String(item.date).slice(4, 15)
         return (
@@ -382,8 +377,7 @@ export default function ChatScreen({ route }) {
                                 marginBottom: '2%'
                             }}
                                 rippleColor={colors.BlueJaja}
-                                onPress={() => console.log('prssed => ', String(item.productTitle))}
-                            >
+                                onPress={() => handleShowDetail(item)}>
                                 <>
                                     <View style={{ flex: 0 }}>
                                         <Image style={{
@@ -422,6 +416,7 @@ export default function ChatScreen({ route }) {
                             </TouchableRipple>
 
                         :
+
                         <View style={{ flex: 1, flexDirection: "row" }}>
                             <View style={{
                                 width: "100%",
@@ -449,6 +444,19 @@ export default function ChatScreen({ route }) {
                                         source={{ uri: sellerImage }}
                                     />
                                 </View>
+                                {item.image ?
+                                    <View
+                                        style={{
+                                            width: Wp('100%'),
+                                            justifyContent: "flex-start",
+                                            flexDirection: "row",
+                                        }}
+                                    >
+                                        <View style={[{ width: Wp('70%'), height: Wp('70%'), alignSelf: 'flex-end', alignItems: 'flex-end', justifyContent: 'flex-end' }]}>
+                                            <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%', resizeMode: 'contain', alignSelf: 'flex-end', padding: "0.2%" }} />
+                                        </View>
+                                    </View>
+                                    : null}
                                 <View
                                     style={{
                                         maxWidth: "80%",
@@ -530,7 +538,6 @@ export default function ChatScreen({ route }) {
             includeBase64: true,
         }).then(async video => {
             try {
-                console.log("🚀 ~ file: AddReview.js ~ line 105 ~ handlePickVideo ~ video", video)
                 let base64data = await RNFS.readFile(video.path, 'base64').then();
                 let newData = JSON.parse(JSON.stringify(data))
                 newData[indx].videoShow = video.path;
@@ -541,7 +548,6 @@ export default function ChatScreen({ route }) {
                 console.log("🚀 ~ file: AddReview.js ~ line ss100 ~ handlePickVideo ~ error", error)
             }
         });
-        console.log("🚀 ~ file: ChatScreen.js ~ line 528 ~ handlePickVideo ~ d", d)
     }
     const handlePickImage = () => {
         galeryRef.current?.setModalVisible(false)
@@ -560,9 +566,7 @@ export default function ChatScreen({ route }) {
                 {loading ? <Loading /> : null}
                 <ImageBackground source={require('../../assets/images/bgChat3.jpg')} style={{ width: '100%', height: '100%', paddingBottom: Math.max(insets.bottom, 0) }}>
                     {product && Object.keys(product).length ?
-
-                        < TouchableRipple style={{
-                            // flex: 1,
+                        <TouchableRipple style={{
                             width: '100%',
                             padding: '3%',
                             borderRadius: 3,
@@ -573,9 +577,7 @@ export default function ChatScreen({ route }) {
                             elevation: 0,
                             marginBottom: '2%'
                         }}
-                            rippleColor={colors.BlueJaja}
-                            onPress={() => console.log('prssed => ', product.isDiscount)}
-                        >
+                            rippleColor={colors.BlueJaja}>
                             <>
                                 <View style={{ flex: 0 }}>
                                     <Image style={{
@@ -612,9 +614,7 @@ export default function ChatScreen({ route }) {
                                 </View>
                             </>
                         </TouchableRipple>
-
                         : null
-
                     }
                     <FlatList
                         inverted={-1}
@@ -624,12 +624,10 @@ export default function ChatScreen({ route }) {
                         renderItem={renderRow}
                         keyExtractor={(item, index) => String(index)}
                     />
-
                     {/* <KeyboardAvoidingView
                     style={styles.container}
                     behavior={Platform.OS === "ios" ? "padding" : null}
                 > */}
-
                     {selectedOrder && Object.keys(selectedOrder).length ?
                         <View style={[style.row_around_center, style.mr_5, style.mb_2, style.p, { borderRadius: 7, backgroundColor: colors.White, width: '55%', alignSelf: 'flex-end' }]}>
                             <View style={[style.column_start_center]}>
@@ -645,17 +643,33 @@ export default function ChatScreen({ route }) {
                             </TouchableRipple>
                         </View>
                         : null}
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ width: '180%', paddingHorizontal: '4%' }}>
-                        {listChat.map(item => {
-                            return (
-                                <TouchableRipple borderless={true} rippleColor={colors.BlueJaja} key={item.id} onPress={() => setChat(item.text)} style={[style.px_2, style.py, { backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.BlueJaja, borderRadius: 11, marginRight: 5 }]}>
-                                    <Text style={[style.font_11, { color: colors.BlueJaja }]}>{item.text}</Text>
-                                </TouchableRipple>
-                            )
-                        })}
-                    </ScrollView>
+                    <View style={{ backgroundColor: 'transparent', width: Wp('100%') }}>
+                        {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                            {listChat.map((item, index) => {
+                                return (
+                                    <TouchableRipple borderless={true} rippleColor={colors.BlueJaja} key={item.id} onPress={() => setChat(item.text)} style={[style.py, { backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.BlueJaja, borderRadius: 11, marginRight: 5, paddingHorizontal: '1%' }]}>
+                                        <Text style={[style.font_11, { color: colors.BlueJaja }]}>{item.text}</Text>
+                                    </TouchableRipple>
+                                )
+                            })}
+                        </ScrollView> */}
+                        <FlatList
+                            horizontal={true}
+                            style={[{ width: Wp('100%'), backgroundColor: 'transparent', height: Hp('3.5%') }]}
+                            data={listChat}
+                            contentContainerStyle={[style.px_4]}
+                            showsHorizontalScrollIndicator={false}
+                            renderItem={({ item }) => {
+                                return (
+                                    <TouchableRipple borderless={true} rippleColor={colors.Blackk} key={item.id} onPress={() => setChat(item.text)} style={[style.py, { flex: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.Blackk, borderRadius: 11, marginHorizontal: 3, paddingHorizontal: 11 }]}>
+                                        <Text style={[style.font_11, { color: colors.BlackGrayScale , textAlign: 'center', textAlignVertical: 'center' }]}>{item.text}</Text>
+                                    </TouchableRipple>
+                                )
+                            }}
+                            keyExtractor={(item, index) => String(index)}
+                        />
+                    </View>
                     <View style={[style.row_around_center, style.px_2, style.mb_2, { height: Hp('7%'), backgroundColor: 'transparent', }]}>
-
                         <View style={[style.row_start_center, {
                             width: "80%", height: '77%', borderRadius: 100, backgroundColor: colors.White, opacity: 0.9, borderWidth: 0.2,
                             borderColor: colors.BlueJaja,
@@ -668,20 +682,19 @@ export default function ChatScreen({ route }) {
                             />
                             {!isiChat.length ?
                                 <IconButton
+
                                     icon={require('../../assets/icons/camera.png')}
                                     style={{ margin: 0, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100 }}
                                     color={colors.BlueJaja}
                                     onPress={() => galeryRef.current?.setModalVisible(true)}
                                 /> : null}
                         </View>
-
                         <IconButton
                             icon={require('../../assets/icons/send.png')}
                             style={{ margin: 0, backgroundColor: colors.BlueJaja, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100 }}
                             color={colors.White}
                             onPress={() => handleSend(null)}
                         />
-
                     </View>
                     {/* </KeyboardAvoidingView> */}
                 </ImageBackground>

@@ -28,7 +28,6 @@ export default function ReviewScreen(props) {
             .then(response => response.json())
             .then(result => {
                 if (result.status.code === 200 || result.status.code === 204) {
-                    console.log("🚀 ~ file: ReviewScreen.js ~ line 25 ~ getItem ~ result.status", result.data.items)
                     dispatch({ type: 'SET_REVIEW_PRODUCT', payload: result.data.items })
                 }
             })
