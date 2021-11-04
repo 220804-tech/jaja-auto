@@ -222,7 +222,7 @@ export default function ProductScreen(props) {
                 } else {
                     console.log("masuk else")
                     setalert('Pilih salah satu variasi!')
-                    ToastAndroid.show('Anda belum memilih variasi produk ini!', ToastAndroid.LONG, ToastAndroid.CENTER)
+                    Utils.alertPopUp('Anda belum memilih variasi produk ini!')
                 }
             } else {
                 console.log("keluar")
@@ -256,16 +256,15 @@ export default function ProductScreen(props) {
         fetch("https://jaja.id/backend/cart", requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: ProductScreen.js ~ line 227 ~ handleApiCart ~ result", result)
                 if (result.status.code === 200) {
-                    ToastAndroid.show('Produk berhasil ditambahkan', ToastAndroid.LONG, ToastAndroid.TOP)
+                    Utils.alertPopUp('Produk berhasil ditambahkan!')
                     if (name === "buyNow") {
                         handleTrolley()
                     } else {
                         handleGetCart()
                     }
                 } else if (result.status.code === 400 && result.status.message == 'quantity cannot more than stock') {
-                    ToastAndroid.show("Stok produk tidak tersedia", ToastAndroid.LONG, ToastAndroid.CENTER)
+                    Utils.alertPopUp("Stok produk tidak tersedia")
                 } else {
                     Utils.handleErrorResponse(result, 'Error with status code : 12023')
                 }
@@ -292,7 +291,6 @@ export default function ProductScreen(props) {
 
     const handleStore = () => {
         if (reduxStore && Object.keys(reduxStore).length) {
-            console.log("🚀 ~ file: ProductScreen.js ~ line 259 ~ handleStore ~ reduxStore", reduxStore)
             if (reduxStore.name != seller.name) {
                 dispatch({ "type": 'SET_STORE', payload: {} })
                 dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })

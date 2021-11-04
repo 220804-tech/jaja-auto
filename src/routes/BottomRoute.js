@@ -247,7 +247,9 @@ export default function BottomRoute() {
                         return (
                             <View style={[style.column, style.mx]}>
                                 <Image style={{ width: size, height: size, tintColor: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '-2%' }} source={require(`../assets/icons/user-active.png`)} />
-                                {location && location.length ? null : <View style={style.countNotif}><Text style={style.textNotif}>1</Text></View>}
+                                {/* {location && location.length ? null :\ */}
+                                <View style={style.countNotif}><Text style={style.textNotif}>1</Text></View>
+                                {/* } */}
                             </View>
                         )
                     }
