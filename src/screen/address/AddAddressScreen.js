@@ -465,7 +465,7 @@ export default function AddAddressScreen(props) {
                                 <Text style={style.appBarText}>{props.route.params && props.route.params.edit ? " Ubah Alamat" : " Tambah Alamat"}</Text>
                             </View>
                             {kcValue ?
-                                <TouchableRipple background={colors.jaja} onPress={handleSave} rippleColor={colors.White} style={[style.row_center, style.px_2, style.py_2, style.mt_1, { flex: 1, backgroundColor: colors.YellowJaja, borderRadius: 7, width: Wp('20%') }]}>
+                                <TouchableRipple background={colors.BlueJaja} onPress={handleSave} rippleColor={colors.White} style={[style.row_center, style.px_2, style.py_2, style.mt_1, { flex: 1, backgroundColor: colors.YellowJaja, borderRadius: 7, width: Wp('20%') }]}>
 
                                     <Text style={[style.font_12, style.T_semi_bold, { color: colors.White }]}>Simpan</Text>
                                     {/* <Button mode="contained" color={colors.YellowJaja} labelStyle={[style.font_12, style.T_semi_bold, { color: colors.White }]} style={{}} onPress={handleSave}>Simpan</Button> */}

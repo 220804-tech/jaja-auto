@@ -335,7 +335,7 @@ export default function HomeScreen() {
                         if (res) {
                             dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(res) })
                         }
-                        ToastAndroid.show(result.status.message + " : " + result.status.code, ToastAndroid.LONG, ToastAndroid.CENTER)
+                        ToastAndroid.show(String(result.status.message + " : " + result.status.code), ToastAndroid.LONG, ToastAndroid.CENTER)
                     })
 
                 }
@@ -346,7 +346,7 @@ export default function HomeScreen() {
                         dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(store) })
                     }
                 })
-                Utils.handleError(error, 'Error with status code : 12002')
+                // Utils.handleError(error, 'Error with status code : 12002')
             });
     }
     const getFlashsale = () => {

@@ -24,9 +24,10 @@ export default function OrderComplain(props) {
 
     const data = [
         { id: '1CV', title: "Ganti Metode Pembayaran", content: [] },
-        { id: '2CV', title: "Masih Bimbang", content: [] },
-        { id: '3CV', title: "Respon Penjual Lambat", content: [] },
-        { id: '4CV', title: "Lainnya", content: [] },
+        { id: '2CV', title: "Ganti Alamat Pengiriman", content: [] },
+        { id: '3CV', title: "Ganti Produk atau Variasi Produk", content: [] },
+        { id: '4CV', title: "Respon Penjual Lambat", content: [] },
+        { id: '5CV', title: "Lainnya", content: [] },
 
     ]
 

@@ -159,7 +159,6 @@ export async function getListAccount(auth) {
         .then(result => {
             try {
                 let response = JSON.parse(result)
-                console.log("🚀 ~ file: User.js ~ line 160 ~ getListAccount ~ result", response.data)
                 if (response.status.code === 200 || response.status.code === 204) {
                     return response.data
                 } else {

@@ -1184,7 +1184,7 @@ export default function OrderDetailsScreen() {
                                 : null}
 
                             <View style={[styles.row_center, styles.mb_2, { width: '95%', alignSelf: 'center' }]}>
-                                <TouchableRipple onPress={() => navigation.navigate('OrderCancel')} style={[styles.row_center, styles.py_2, { width: '95%', backgroundColor: colors.red, alignSelf: 'center' }]}>
+                                <TouchableRipple onPress={() => navigation.navigate('OrderCancel')} style={[styles.row_center, styles.py_2, { width: '95%', backgroundColor: colors.Red, alignSelf: 'center' }]}>
                                     <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
                                         Batalkan Pesanan
                                     </Text>

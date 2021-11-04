@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import { SafeAreaView, View, Text, StyleSheet, Image, Platform, Modal, TextInput, ScrollView, Dimensions } from 'react-native'
-import { Button, TouchableRipple } from 'react-native-paper'
+import React, { useState, useEffect, useCallback } from 'react'
+import { SafeAreaView, View, Text, StyleSheet, Image, Platform, Modal, TextInput, ScrollView, Dimensions, RefreshControl, Alert } from 'react-native'
+import { Button, TouchableRipple, Switch, IconButton } from 'react-native-paper'
 import { colors, styles, Wp, Hp, Appbar, useNavigation, Utils, Loading, ServiceUser } from '../../export'
 import { useSelector } from 'react-redux';
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view'
+import { color } from 'react-native-reanimated';
 const initialLayout = { width: Dimensions.get('window').width };
 
 export default function RewardScreen() {
@@ -20,13 +21,16 @@ export default function RewardScreen() {
     const [pendingCoin, setpendingCoin] = useState([])
     const [primary, setPrimary] = useState(null)
     const [listBK, setlistBK] = useState(null)
+    const [refreshing, setRefreshing] = useState(false);
 
     const [count, setCount] = useState(0)
 
     useEffect(() => {
+        setLoading(true)
         getItem()
         getPending()
         getList()
+        setTimeout(() => setLoading(false), 5000);
     }, [count])
 
     const [routes] = useState([
@@ -42,10 +46,9 @@ export default function RewardScreen() {
     });
 
     const getList = () => {
-        console.log('rdftyguhijokl;')
         try {
             ServiceUser.getListAccount(reduxAuth).then(res => {
-                console.log("🚀 ~ file: RewardScreen.js ~ line 46 ~ ServiceUser.getListAccount ~ res", res)
+                console.log("🚀 ~ file: RewardScreen.js ~ line 51 ~ ServiceUser.getListAccount ~ res", res)
                 if (res && res.length) {
                     res.map(item => {
                         if (item.isPrimary) {
@@ -60,6 +63,7 @@ export default function RewardScreen() {
         } catch (error) {
 
         }
+        setTimeout(() => setLoading(false), 1000);
     }
 
     const getItem = () => {
@@ -189,48 +193,205 @@ export default function RewardScreen() {
         let result = Utils.regex('number', text)
         setNominal(result)
     }
+    const toggleSwitch = (idx) => {
+        console.log("🚀 ~ file: RewardScreen.js ~ line 191 ~ toggleSwitch ~ idx", idx)
+        try {
+            let arr = listBK;
+            if (!arr[idx].isPrimary) {
+                arr[idx].isPrimary = !arr[idx].isPrimary;
+                handleChangePrimary(arr[idx].id)
+            }
+            for (let index = 0; index < arr.length; index++) {
+                if (index !== idx) {
+                    arr[index].is_primary = false
+                }
+            }
+            setCount(count + 1)
+        } catch (error) {
+            alert(error)
+        }
+        // setAddress(arr)
 
+    }
+    const handleChangePrimary = (val) => {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", reduxAuth);
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+            "bankAccountId": val
+        });
+
+        var requestOptions = {
+            method: 'PUT',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+        fetch("https://jaja.id/backend/user/changePrimaryBankAccount", requestOptions)
+            .then(response => response.text())
+            .then(res => {
+                try {
+                    let result = JSON.parse(res)
+                    if (result.status.code === 200) {
+                        getList()
+                        Utils.alertPopUp('Rekening utama berhasil diganti!')
+                    } else {
+                        Utils.handleErrorResponse(result, 'Error with status code : 12066')
+                    }
+                } catch (error) {
+                    // Alert()
+                }
+            })
+            .catch(error => Utils.handleError(JSON.stringify(error), 'Error with status code : 12067'));
+    }
+
+    const handleDelete = val => {
+        console.log("🚀 ~ file: RewardScreen.js ~ line 251 ~ RewardScreen ~ val", val)
+        Alert.alert(
+            "Hapus Rekening!",
+            `Anda yakin ingin menhapus rekening?`,
+            [
+
+                {
+                    text: "BATAL", onPress: () => console.log("pressed")
+
+                },
+                {
+                    text: "HAPUS",
+                    onPress: () => {
+                        var myHeaders = new Headers();
+                        myHeaders.append("Authorization", reduxAuth);
+
+                        var requestOptions = {
+                            method: 'DELETE',
+                            headers: myHeaders,
+                            redirect: 'follow'
+                        };
+
+                        fetch(`https://jaja.id/backend/user/bankAccount/${val}`, requestOptions)
+                            .then(response => response.text())
+                            .then(result => {
+                                try {
+                                    let res = JSON.parse(result)
+                                    if (res.status.code === 200) {
+                                        Utils.alertPopUp('Rekening berhasil dihapus!')
+                                        getList()
+                                    } else {
+                                        Utils.handleErrorResponse(res, 'Error with status code : 1268')
+                                    }
+                                } catch (error) {
+                                    Utils.handleErrorResponse(result, 'Error with status code : 1267')
+
+                                }
+                            })
+                            .catch(error => Utils.handleError(error, 'Error with status code : 12069'));
+                    },
+                    style: "cancel"
+                },
+            ],
+            { cancelable: false }
+        );
+
+    }
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        getItem()
+        getPending()
+        getList()
+        setTimeout(() => {
+            setRefreshing(false)
+        }, 3000);
+    }, []);
     return (
         <SafeAreaView style={styles.container}>
             <Appbar back={true} title="Koin Jaja" />
             {loading ? <Loading /> : null}
             <View style={[styles.column, styles.p, { flex: 1 }]}>
                 <View style={[styles.column, { flex: 1, borderRadius: 5, }]}>
+
                     <View style={[styles.column, styles.pt_2, styles.mb_3, { backgroundColor: colors.White }]}>
-                        <View style={[styles.row_between_center, styles.p_2, styles.mb_5]}>
-                            <View style={[styles.column]}>
-                                <Text style={[styles.font_13, styles.mb_3,]}>Koin Tersedia</Text>
-                                <Text style={[styles.font_13]}>Rekening : </Text>
-                                {listBK && listBK.length ?
-                                    listBK.map((res, idx) => {
-                                        return (
-                                            <View key={String(idx) + 'GF'} style={styles.row_between_center}>
-                                                <Text style={[styles.font_12]}>- {String(res.account).slice(0, 4)}XXXX ({String(res.accountName).slice(0, 5)})</Text>
-                                            </View>
-                                        )
-                                    })
-                                    : null}
-                            </View>
-                            <View style={styles.column_center_end}>
-                                <Text style={[styles.font_13, styles.mb_3,]}>{reduxUser.coin}</Text>
-                                <Text style={[styles.font_13,]}></Text>
-                                <Text style={[styles.font_13,]}></Text>
+                        <ScrollView refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                            />
+                        }>
+                            <View style={[styles.row_between_center, styles.p_2, styles.mb_5]}>
+                                <View style={[styles.column]}>
+                                    <View style={styles.row_between_center}>
+                                        <Text style={[styles.font_12, styles.mb_3, styles.T_semi_bold]}>Koin Tersedia : </Text>
+                                        <Text style={[styles.font_12, styles.mb_3, styles.T_semi_bold]}>{reduxUser.coin ? reduxUser.coin : '0'}</Text>
+
+
+                                    </View>
+                                    {listBK && listBK.length ?
+                                        listBK.map((res, idx) => {
+                                            console.log("🚀 ~ file: RewardScreen.js ~ line 256 ~ listBK.map ~ res", res)
+                                            if (!res.isPrimary) {
+                                                return (
+
+                                                    <View key={String(idx) + 'GF'} style={[styles.column_start_center, styles.mb_3, { width: Wp('94%') }]}>
+                                                        <View key={String(idx) + 'GF'} style={[styles.row_between_center, styles.mb, { width: Wp('94%') }]}>
+
+                                                            <View style={[styles.row_start_center, { width: '60%' }]}>
+                                                                {/* {res.isPrimary ? <Text numberOfLines={1} style={[styles.font_12, { color: !res.isPrimary ? colors.BlueJaja : colors.BlackGrayScale }]}>Nomor Akun</Text> : null} */}
+                                                                <Text style={[styles.font_12, styles.mb_3, styles.T_semi_bold]}>Rekening : </Text>
+
+                                                                {listBK && listBK.length > 1 && !res.isPrimary ?
+                                                                    <Switch
+                                                                        trackColor={{ false: "#767577", true: "#99e6ff" }}
+                                                                        thumbColor={res.isPrimary ? colors.BlueJaja : "#f4f3f4"}
+                                                                        ios_backgroundColor="#3e3e3e"
+                                                                        onValueChange={() => toggleSwitch(idx)}
+                                                                        value={res.isPrimary} />
+                                                                    : null
+                                                                }
+                                                            </View>
+                                                            <Text style={[styles.font_12, { color: res.isPrimary ? colors.BlueJaja : colors.BlackGrayScale }]}>- {String(res.account).slice(0, 4)}XXXX ({String(res.accountName).slice(0, 5)})</Text>
+                                                        </View>
+                                                        <View style={[styles.row_end_center, styles.mb_3, { width: Wp('94%') }]}>
+                                                            <TouchableRipple rippleColor={colors.White} style={[styles.px_3, styles.py, styles.mr, { alignSelf: 'flex-end', backgroundColor: colors.BlueJaja, borderRadius: 7 }]} onPress={() => {
+                                                                if (res.verified) {
+                                                                    Utils.alertPopUp('Akun telah diverifikasi!')
+                                                                } else {
+                                                                    Utils.alertPopUp('Cek email anda untuk verifikasi akun!')
+                                                                }
+                                                            }}>
+                                                                <Text numberOfLines={1} style={[styles.font_10, styles.T_semi_bold, { color: colors.White }]}>{res.verified ? 'Terverifikasi' : 'Belum Verifikasi'}</Text>
+                                                            </TouchableRipple>
+                                                            <IconButton
+                                                                icon="delete"
+                                                                style={{ padding: 0, margin: 0, backgroundColor: colors.Red }}
+                                                                color={colors.White}
+                                                                size={20}
+                                                                onPress={() => handleDelete(res.id)}
+                                                            />
+                                                        </View>
+                                                    </View>
+                                                )
+                                            }
+                                        })
+                                        : null}
+                                </View>
 
                             </View>
-                        </View>
-                        <View style={[styles.row_center, styles.mb_2, { width: '98%', alignSelf: 'center' }]}>
-                            <TouchableRipple disabled={reduxUser.coin && reduxUser.coin !== '0' ? false : true} onPress={() => navigation.navigate('AddAccount')} style={[styles.row_center, styles.py_2, { width: '50%', backgroundColor: reduxUser.coin && reduxUser.coin !== '0' ? colors.GreenSuccess : colors.Silver }]}>
-                                <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>
-                                    {listBK && listBK.length ? 'Rekening' : 'Tambah Rekening'}
-                                </Text>
-                            </TouchableRipple>
-                            <TouchableRipple disabled={reduxUser.coin && reduxUser.coin !== '0' ? false : true} onPress={() => setShowModal(true)} style={[styles.row_center, styles.py_2, { width: '50%', backgroundColor: reduxUser.coin && reduxUser.coin !== '0' ? colors.BlueJaja : colors.Silver }]}>
-                                <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>
-                                    Ajukan Tarik Saldo
-                                </Text>
-                            </TouchableRipple>
-                        </View>
+                            <View style={[styles.row_center, styles.mb_2, { width: '98%', alignSelf: 'center' }]}>
+                                <TouchableRipple disabled={listBK && listBK.length ? true : false} onPress={() => navigation.navigate('AddAccount')} style={[styles.row_center, styles.py_2, { width: '50%', backgroundColor: listBK && listBK.length ? colors.Silver : colors.GreenSuccess }]}>
+                                    <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>Tambah Rekening</Text>
+                                </TouchableRipple>
+                                <TouchableRipple disabled={reduxUser.coin && reduxUser.coin !== '0' ? false : true} onPress={() => setShowModal(true)} style={[styles.row_center, styles.py_2, { width: '50%', backgroundColor: reduxUser.coin && reduxUser.coin !== '0' ? colors.BlueJaja : colors.Silver }]}>
+                                    <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>
+                                        Ajukan Tarik Saldo
+                                    </Text>
+                                </TouchableRipple>
+                            </View>
+                        </ScrollView>
+
                     </View>
+
+
                     <View style={[styles.container, { width: Wp('100%'), backgroundColor: colors.White }]}>
                         <TabView
                             tabBarPosition="top"
@@ -348,6 +509,7 @@ export default function RewardScreen() {
                 </View>
                 {doneCoin.length ?
                     <ScrollView>
+
                         {doneCoin.map((item, idx) => {
                             return (
                                 <View key={String(idx) + 'GH'} style={[styles.row_center, styles.px_2, { borderBottomWidth: 0.5 }]}>
@@ -390,7 +552,7 @@ export default function RewardScreen() {
                             return (
                                 <View key={String(indx) + 'HG'} style={[styles.row_center, { borderBottomWidth: 0.5 }]}>
                                     <View style={[styles.row_center, styles.p_2, { borderRightWidth: 0.5, width: '40%' }]}>
-                                        <Text style={[styles.font_10, { textAlign: 'center' }]}>{String(item.account).slice(0, 6)}XXXX</Text>
+                                        <Text style={[styles.font_10, { textAlign: 'center' }]}>{String(item.account).slice(0, 4)}XXXX</Text>
                                     </View>
                                     <View style={[styles.row_center, styles.p_2, { borderRightWidth: 0.5, width: '35%', }]}>
                                         <Text style={[styles.font_12, { textAlign: 'center' }]}>{item.amount}</Text>
