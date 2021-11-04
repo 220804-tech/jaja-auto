@@ -158,8 +158,9 @@ export default function ChatScreen({ route }) {
                             message.order = selectedOrder
                         }
                         if (selectedProduct && Object.keys(selectedProduct).length) {
-                            handleSendProduct()
-                        } else {
+                            handleSendProduct(isiChat)
+                        }
+                        else {
                             setTimeout(() => {
                                 var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
                                 firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
@@ -189,11 +190,11 @@ export default function ChatScreen({ route }) {
 
         }
     }
-    const handleSendProduct = () => {
+    const handleSendProduct = (msg) => {
         try {
             if (selectedProduct && Object.keys(selectedProduct).length) {
                 var message = {
-                    message: "",
+                    message: msg ? msg : '',
                     read: false,
                     time: firebaseDatabase.ServerValue.TIMESTAMP,
                     from: reduxUser.uid,
@@ -255,165 +256,166 @@ export default function ChatScreen({ route }) {
                 }
                 {
                     item.from === reduxUser.uid ?
-                        !item.productTitle ?
-                            item.image ?
-                                <View style={[style.row_center, { width: Wp('65%'), height: Wp('65%'), backgroundColor: colors.BlueJaja, alignSelf: 'flex-end', paddingRight: '5%', borderRadius: 5 }]}>
-                                    <Image source={{ uri: item.image }} style={{ width: '96%', height: '96%', resizeMode: 'cover', alignSelf: 'center', justifyContent: 'center', alignItems: 'center', borderRadius: 2 }} />
-                                </View>
-                                :
-                                <>
-                                    {item.order && Object.keys(item.order).length ?
-                                        <View style={{
-                                            width: "100%",
-                                            justifyContent: "flex-end",
-                                            alignSelf: "center",
-                                            flexDirection: "row",
-                                            paddingHorizontal: Wp("5%"),
-                                        }}>
-                                            <View
-                                                style={{
-                                                    maxWidth: "80%",
-                                                    borderWidth: 0.2,
-                                                    borderRadius: 15,
-                                                    borderColor: colors.BlueJaja,
-                                                    borderTopRightRadius: 0,
-                                                    marginVertical: 5,
-                                                    marginHorizontal: 10,
-                                                    backgroundColor: colors.BlueJaja,
-                                                    padding: 10,
-                                                }}>
+                        item.image ?
+                            <View style={[style.row_center, { width: Wp('65%'), height: Wp('65%'), backgroundColor: colors.BlueJaja, alignSelf: 'flex-end', paddingRight: '5%', borderRadius: 5 }]}>
+                                <Image source={{ uri: item.image }} style={{ width: '96%', height: '96%', resizeMode: 'cover', alignSelf: 'center', justifyContent: 'center', alignItems: 'center', borderRadius: 2 }} />
+                            </View>
+                            :
+                            <>
+                                {item.order && Object.keys(item.order).length ?
+                                    <View style={{
+                                        width: "100%",
+                                        justifyContent: "flex-end",
+                                        alignSelf: "center",
+                                        flexDirection: "row",
+                                        paddingHorizontal: Wp("5%"),
+                                    }}>
+                                        <View
+                                            style={{
+                                                maxWidth: "80%",
+                                                borderWidth: 0.2,
+                                                borderRadius: 15,
+                                                borderColor: colors.BlueJaja,
+                                                borderTopRightRadius: 0,
+                                                marginVertical: 5,
+                                                marginHorizontal: 10,
+                                                backgroundColor: colors.BlueJaja,
+                                                padding: 10,
+                                            }}>
 
-                                                <Text onPress={() => handleOrderDetails(item.order)} style={[style.font_13, { textAlign: "right", color: colors.White }]}>
-                                                    No. {item.order.invoice}
-                                                </Text>
-                                                <Text onPress={() => handleOrderDetails(item.order)} style={[style.font_11, style.mb_5, { textAlign: "right", color: colors.White }]}>
-                                                    {item.order.status}
-                                                </Text>
-                                                <View style={[style.column_end_center, { width: Wp('25%'), height: Wp('25%'), alignSelf: 'flex-end', backgroundColor: colors.BlueLight }]}>
-                                                    <Image source={{ uri: item.order.imageOrder }} style={{ width: '100%', height: '100%', resizeMode: 'contain' }} />
-                                                </View>
+                                            <Text onPress={() => handleOrderDetails(item.order)} style={[style.font_13, { textAlign: "right", color: colors.White }]}>
+                                                No. {item.order.invoice}
+                                            </Text>
+                                            <Text onPress={() => handleOrderDetails(item.order)} style={[style.font_11, style.mb_5, { textAlign: "right", color: colors.White }]}>
+                                                {item.order.status}
+                                            </Text>
+                                            <View style={[style.column_end_center, { width: Wp('25%'), height: Wp('25%'), alignSelf: 'flex-end', backgroundColor: colors.BlueLight }]}>
+                                                <Image source={{ uri: item.order.imageOrder }} style={{ width: '100%', height: '100%', resizeMode: 'contain' }} />
                                             </View>
                                         </View>
-                                        : null}
-                                    {item.message ?
-                                        <View style={{
-                                            width: "100%",
-                                            justifyContent: "flex-end",
-                                            alignSelf: "center",
-                                            flexDirection: "row",
-                                            paddingHorizontal: Wp("5%"),
-                                        }}>
-                                            <View
-                                                style={{
-                                                    maxWidth: "80%",
-                                                    borderWidth: 0.2,
-                                                    borderRadius: 15,
-                                                    borderColor: colors.BlueJaja,
-                                                    borderTopRightRadius: 0,
-                                                    marginVertical: 5,
-                                                    marginHorizontal: 10,
-                                                    backgroundColor: colors.BlueJaja,
-                                                    padding: 10,
-                                                }}>
-
-                                                {item.message ?
-                                                    <>
-                                                        <Text style={[style.font_12, { color: colors.White }]}>
-                                                            {item.message}
-                                                        </Text>
-                                                        {item.date ?
-                                                            <View style={style.row_end_center}>
-                                                                <Text style={[style.font_11, style.mt_2, { color: colors.White, alignSelf: 'flex-end' }]}>{item.date.slice(16, 21)}  </Text>
-                                                                <Image source={require('../../assets/icons/check.png')} style={[style.icon_12, {
-                                                                    marginBottom: '-0.2%',
-                                                                    tintColor: item.read ? colors.YellowJaja : colors.WhiteSilver
-                                                                }]} />
-                                                            </View>
-                                                            : null
-                                                        }
-                                                    </>
-
-                                                    : null}
-
-
-                                            </View>
-                                            <View style={{
-                                                borderRadius: 50,
-                                                width: Hp("6%"),
-                                                height: Hp("6%"),
-                                                backgroundColor: colors.BlackGrayScale,
-                                                overflow: "hidden"
-                                            }}>
-                                                <Image
-                                                    style={{
-                                                        justifyContent: "center",
-                                                        alignItems: "center",
-                                                        width: Hp("6%"),
-                                                        height: Hp("6%"),
-                                                        borderRadius: 50,
-                                                        // backgroundColor: colors.BlackGrayScale,
-                                                        overflow: "hidden"
-                                                    }}
+                                    </View>
+                                    : null}
+                                {item.productTitle ?
+                                    <TouchableRipple style={{
+                                        flex: 1,
+                                        width: '100%',
+                                        padding: '3%',
+                                        borderRadius: 3,
+                                        borderTopRightRadius: 0,
+                                        flexDirection: "row",
+                                        alignSelf: 'center',
+                                        backgroundColor: colors.White,
+                                        elevation: 0,
+                                        marginBottom: '2%'
+                                    }}
+                                        rippleColor={colors.BlueJaja}
+                                        onPress={() => handleShowDetail(item)}>
+                                        <>
+                                            <View style={{ flex: 0 }}>
+                                                <Image style={{
+                                                    alignSelf: "center",
+                                                    width: Wp("15%"),
+                                                    height: Wp("15%"),
+                                                    marginRight: 10,
+                                                    borderRadius: 2
+                                                }}
                                                     resizeMethod={"scale"}
-                                                    // resizeMode={item["image"] == '' ? "center" : "cover"}
-                                                    source={{ uri: reduxUser.image }}
+                                                    resizeMode={"cover"}
+                                                    source={{ uri: item.productImage ? item.productImage : null }}
                                                 />
                                             </View>
-                                        </View>
-                                        : null}
-                                </>
 
-                            :
-                            <TouchableRipple style={{
-                                flex: 1,
-                                width: '100%',
-                                padding: '3%',
-                                borderRadius: 3,
-                                borderTopRightRadius: 0,
-                                flexDirection: "row",
-                                alignSelf: 'center',
-                                backgroundColor: colors.White,
-                                elevation: 0,
-                                marginBottom: '2%'
-                            }}
-                                rippleColor={colors.BlueJaja}
-                                onPress={() => handleShowDetail(item)}>
-                                <>
-                                    <View style={{ flex: 0 }}>
-                                        <Image style={{
-                                            alignSelf: "center",
-                                            width: Wp("15%"),
-                                            height: Wp("15%"),
-                                            marginRight: 10,
-                                            borderRadius: 2
-                                        }}
-                                            resizeMethod={"scale"}
-                                            resizeMode={"cover"}
-                                            source={{ uri: item.productImage ? item.productImage : null }}
-                                        />
-                                    </View>
-
-                                    <View style={{ flex: 1 }}>
-                                        <Text numberOfLines={1} style={[style.font_13, { width: '90%' }]}>{item.productTitle}</Text>
-                                        {item.priceDiscount > 0 ?
-                                            <View style={{ flex: 0, flexDirection: 'column' }}>
-                                                <View style={{ flexDirection: 'row' }}>
-                                                    <Text adjustsFontSizeToFit style={{ textDecorationLine: 'line-through', marginRight: '3%', fontSize: 12 }}>{item.priceFirst}</Text>
-                                                    <View style={{ backgroundColor: colors.RedFlashsale, justifyContent: 'center', alignItems: 'center', borderRadius: 3, paddingHorizontal: '2%' }}>
-                                                        <Text adjustsFontSizeToFit style={[style.font_10, style.T_medium, { color: 'white' }]}>{item.priceDiscount + "%"}</Text>
+                                            <View style={{ flex: 1 }}>
+                                                <Text numberOfLines={1} style={[style.font_13, { width: '90%' }]}>{item.productTitle}</Text>
+                                                {item.priceDiscount > 0 ?
+                                                    <View style={{ flex: 0, flexDirection: 'column' }}>
+                                                        <View style={{ flexDirection: 'row' }}>
+                                                            <Text adjustsFontSizeToFit style={{ textDecorationLine: 'line-through', marginRight: '3%', fontSize: 12 }}>{item.priceFirst}</Text>
+                                                            <View style={{ backgroundColor: colors.RedFlashsale, justifyContent: 'center', alignItems: 'center', borderRadius: 3, paddingHorizontal: '2%' }}>
+                                                                <Text adjustsFontSizeToFit style={[style.font_10, style.T_medium, { color: 'white' }]}>{item.priceDiscount + "%"}</Text>
+                                                            </View>
+                                                        </View>
+                                                        <Text adjustsFontSizeToFit style={{ marginRight: '3%', fontSize: 12 }}>{item.priceLast}</Text>
                                                     </View>
-                                                </View>
-                                                <Text adjustsFontSizeToFit style={{ marginRight: '3%', fontSize: 12 }}>{item.priceLast}</Text>
-                                            </View>
 
-                                            :
-                                            <Text style={{ color: colors.RedFlashsale, fontFamily: 'Poppins-SemiBold', fontSize: Wp("4%") }}>
-                                                {item.priceLast}
-                                            </Text>
-                                        }
+                                                    :
+                                                    <Text style={{ color: colors.RedFlashsale, fontFamily: 'Poppins-SemiBold', fontSize: Wp("4%") }}>
+                                                        {item.priceLast}
+                                                    </Text>
+                                                }
+                                            </View>
+                                        </>
+                                    </TouchableRipple>
+                                    : null
+                                }
+                                {item.message ?
+                                    <View style={{
+                                        width: "100%",
+                                        justifyContent: "flex-end",
+                                        alignSelf: "center",
+                                        flexDirection: "row",
+                                        paddingHorizontal: Wp("5%"),
+                                    }}>
+                                        <View
+                                            style={{
+                                                maxWidth: "80%",
+                                                borderWidth: 0.2,
+                                                borderRadius: 15,
+                                                borderColor: colors.BlueJaja,
+                                                borderTopRightRadius: 0,
+                                                marginVertical: 5,
+                                                marginHorizontal: 10,
+                                                backgroundColor: colors.BlueJaja,
+                                                padding: 10,
+                                            }}>
+
+                                            {item.message ?
+                                                <>
+                                                    <Text style={[style.font_12, { color: colors.White }]}>
+                                                        {item.message}
+                                                    </Text>
+                                                    {item.date ?
+                                                        <View style={style.row_end_center}>
+                                                            <Text style={[style.font_11, style.mt_2, { color: colors.White, alignSelf: 'flex-end' }]}>{item.date.slice(16, 21)}  </Text>
+                                                            <Image source={require('../../assets/icons/check.png')} style={[style.icon_12, {
+                                                                marginBottom: '-0.2%',
+                                                                tintColor: item.read ? colors.YellowJaja : colors.WhiteSilver
+                                                            }]} />
+                                                        </View>
+                                                        : null
+                                                    }
+                                                </>
+
+                                                : null}
+
+
+                                        </View>
+                                        <View style={{
+                                            borderRadius: 50,
+                                            width: Hp("6%"),
+                                            height: Hp("6%"),
+                                            backgroundColor: colors.BlackGrayScale,
+                                            overflow: "hidden"
+                                        }}>
+                                            <Image
+                                                style={{
+                                                    justifyContent: "center",
+                                                    alignItems: "center",
+                                                    width: Hp("6%"),
+                                                    height: Hp("6%"),
+                                                    borderRadius: 50,
+                                                    // backgroundColor: colors.BlackGrayScale,
+                                                    overflow: "hidden"
+                                                }}
+                                                resizeMethod={"scale"}
+                                                // resizeMode={item["image"] == '' ? "center" : "cover"}
+                                                source={{ uri: reduxUser.image }}
+                                            />
+                                        </View>
                                     </View>
-                                </>
-                            </TouchableRipple>
+                                    : null}
+
+                            </>
 
                         :
 
@@ -662,7 +664,7 @@ export default function ChatScreen({ route }) {
                             renderItem={({ item }) => {
                                 return (
                                     <TouchableRipple borderless={true} rippleColor={colors.Blackk} key={item.id} onPress={() => setChat(item.text)} style={[style.py, { flex: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.Blackk, borderRadius: 11, marginHorizontal: 3, paddingHorizontal: 11 }]}>
-                                        <Text style={[style.font_11, { color: colors.BlackGrayScale , textAlign: 'center', textAlignVertical: 'center' }]}>{item.text}</Text>
+                                        <Text style={[style.font_11, { color: colors.BlackGrayScale, textAlign: 'center', textAlignVertical: 'center' }]}>{item.text}</Text>
                                     </TouchableRipple>
                                 )
                             }}
