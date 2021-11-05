@@ -17,6 +17,7 @@ const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 import { useAndroidBackHandler } from "react-navigation-backhandler";
 import { TouchableRipple } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 LogBox.ignoreAllLogs()
 
 export default function HomeScreen() {
@@ -30,7 +31,7 @@ export default function HomeScreen() {
         if (out) {
             return false;
         } else {
-            ToastAndroid.show("Tekan sekali lagi untuk keluar aplikasi", ToastAndroid.LONG, ToastAndroid.TOP)
+            Utils.alertPopUp("Tekan sekali lagi untuk keluar aplikasi")
             setTimeout(() => {
                 setOut(false)
             }, 4500);
@@ -106,7 +107,7 @@ export default function HomeScreen() {
     useEffect(() => {
         try {
             dispatch({ 'type': 'SET_LOADMORE', payload: false })
-            EncryptedStorage.getItem('token').then(res => {
+            AsyncStorage.getItem('token').then(res => {
                 if (res) {
                     setAuth(JSON.parse(res))
                 }
@@ -412,7 +413,7 @@ export default function HomeScreen() {
     }
 
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: colors.White }]}>
+        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS==='ios'?colors.BlueJaja: colors.White }]}>
             {loading ? <Loading /> : null}
             {/* <ScrollView
                 refreshControl={

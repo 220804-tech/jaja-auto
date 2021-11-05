@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { ServiceOrder, colors, styles, useNavigation, ServiceCore, Utils } from '../../export';
 import database from '@react-native-firebase/database';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SplashScreen() {
     const reduxDashboard = useSelector(state => state.dashboard)
@@ -34,19 +35,19 @@ export default function SplashScreen() {
 
     useEffect(() => {
         try {
-            EncryptedStorage.getItem('token').then(auth => {
+            AsyncStorage.getItem('token').then(auth => {
                 getItem(auth)
                 getData()
                 getFlashsale()
                 getOrders(auth)
                 dispatch({ type: 'SET_AUTH', payload: JSON.parse(auth) })
-            })
-            EncryptedStorage.getItem('user').then(res => {
-                if (res) {
-                    dispatch({ type: 'SET_VERIFIKASI', payload: JSON.parse(res).isVerified })
-                    dispatch({ type: 'SET_USER', payload: JSON.parse(res) })
-                    getFirebase(JSON.parse(res))
-                }
+                EncryptedStorage.getItem('user').then(res => {
+                    if (res) {
+                        dispatch({ type: 'SET_VERIFIKASI', payload: JSON.parse(res).isVerified })
+                        dispatch({ type: 'SET_USER', payload: JSON.parse(res) })
+                        getFirebase(JSON.parse(res))
+                    }
+                })
             })
 
         } catch (error) {
@@ -328,7 +329,7 @@ export default function SplashScreen() {
         })
     }
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, {backgroundColor: colors.BlueJaja}]}>
             <StatusBar
                 translucent={false}
                 animated={true}

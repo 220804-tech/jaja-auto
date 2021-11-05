@@ -7,13 +7,11 @@ import { ServiceCheckout } from '../../export';
 export default function MidtransComponent() {
     const reduxOrderId = useSelector(state => state.checkout.orderId)
     const [view, setView] = useState("")
+    const reduxAuth = useSelector(state => state.auth.auth)
+
 
     useEffect(() => {
-        EncryptedStorage.getItem('token').then(res => {
-            if (res) {
-                getItem(JSON.parse(res))
-            }
-        })
+        getItem(JSON.parse(reduxAuth))
     }, [])
 
     const getItem = (val) => {

@@ -19,11 +19,6 @@ export default function RecomandedHobbyComponent(props) {
 
     useEffect(() => {
         getStorage()
-        // EncryptedStorage.getItem('token').then(res => {
-        //     if (res) {
-        //         setAuth(JSON.stringify(res))
-        //     }
-        // })
         if (reduxLoadmore) {
             handleLoadMore()
             setLoading(true)

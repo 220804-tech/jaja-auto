@@ -11,19 +11,13 @@ export default function TrendingComponent() {
     const dispatch = useDispatch()
     const reduxdashTrending = useSelector(state => state.dashboard.trending)
     const [storagedashTrending, setstoragedashTrending] = useState([])
-    const [auth, setAuth] = useState("")
     const [shimmerData] = useState(['1X', '2X', '3X'])
 
     useEffect(() => {
-        EncryptedStorage.getItem('token').then(res => {
-            if (res) {
-                setAuth(JSON.stringify(res))
-            }
-        })
         getStorage()
     }, [])
     const handleShowDetail = item => {
-        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+        dispatch({ type: 'SET_DETAIL_PRßODUCT', payload: {} })
         dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
         dispatch({ type: 'SET_SLUG', payload: item.slug })
         navigation.push("Product", { slug: item.slug, image: item.image })

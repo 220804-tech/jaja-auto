@@ -3,12 +3,12 @@ import { SafeAreaView, Text, View, TouchableOpacity, ScrollView, StyleSheet, Fla
 import { Paragraph, Switch, Appbar, Button, TouchableRipple } from "react-native-paper";
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { colors, styles as style, ServiceUser, ServiceCheckout, Loading, Hp } from '../../export'
-import * as Service from '../../services/Address';
+import * as Service from '../../services/Address'       ;
 import { useDispatch, useSelector } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import Swipeable from 'react-native-swipeable';
 // import { StatusBar } from 'native-base';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function index(props) {
     const dispatch = useDispatch()
     const reduxUser = useSelector(state => state.user.user.location)
@@ -17,32 +17,26 @@ export default function index(props) {
     const [refreshControl, setRefreshControl] = useState(false)
     const [count, setcount] = useState(0)
     const [count2, setcount2] = useState(0)
-    const [auth, setAuth] = useState(0)
     const [status, setStatus] = useState("Profile")
     const [itemSelected, setSelectedItem] = useState({})
     const [loading, setLoading] = useState(false)
     const reduxUseCoin = useSelector(state => state.checkout.useCoin)
+
     useEffect(() => {
         setRefreshControl(false)
         getLocation()
         if (props.route.params && props.route.params.data) {
             setStatus(props.route.params.data)
         }
-        console.log("🚀 ~ file: AddressScreen.js ~ line 34 ~ useEffect ~ props.route.params.data", props.route.params)
-
     }, [props])
 
 
     useFocusEffect(
         useCallback(() => {
             try {
-                EncryptedStorage.getItem('token').then(res => {
-                    if (res) {
-                        setAuth(JSON.parse(res))
-                    } else {
-                        navigation.navigate(Login)
-                    }
-                })
+                if (!reduxAuth) {
+                    navigation.navigate(Login)
+                } 
             } catch (error) {
                 console.log("🚀 ~ file: AddressScreen.js ~ line 59 ~ useEffect ~ error", error)
             }
@@ -127,10 +121,8 @@ export default function index(props) {
     const handleChangePrimary = (addressId) => {
         setRefreshControl(true)
         var myHeaders = new Headers();
-        myHeaders.append("Authorization", auth);
+        myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Content-Type", "application/json");
-        console.log("🚀 ~ file: AddressScreen.js ~ line 90 ~ handleChangePrimary ~ addressId", addressId)
-        console.log("🚀 ~ file: AddressScreen.js ~ line 96 ~ handleChangePrimary ~ auth", auth)
         var raw = JSON.stringify({
             "addressId": addressId
         });
@@ -147,18 +139,18 @@ export default function index(props) {
             .then(result => {
                 setRefreshControl(false)
                 if (result.status.code === 200) {
-                    ServiceUser.getProfile(auth).then(res => {
+                    ServiceUser.getProfile(reduxAuth).then(res => {
                         if (res) {
                             EncryptedStorage.setItem('user', JSON.stringify(res))
                             dispatch({ type: 'SET_USER', payload: res })
                             if (props.route.params) {
                                 navigation.goBack()
-                                ServiceCheckout.getCheckout(auth, reduxUseCoin ? 1 : 0).then(reps => {
+                                ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then(reps => {
                                     if (reps) {
                                         dispatch({ type: 'SET_CHECKOUT', payload: reps })
                                     }
                                 })
-                                ServiceCheckout.getShipping(auth).then(res => {
+                                ServiceCheckout.getShipping(reduxAuth).then(res => {
                                     console.log("🚀 ~ file: TrolleyScreen.js ~ line 161 ~ ServiceCheckout.getShipping ~ res", res)
                                     if (res) {
                                         dispatch({ type: 'SET_SHIPPING', payload: res })

@@ -500,21 +500,6 @@ export default function ChatScreen({ route }) {
         );
     }
 
-    function statePertamax() {
-        // AsyncStorage.getItem('token').then((result) => {
-        //     setToken(result)
-        // });
-        // AsyncStorage.getItem("xxTwo").then(toko => {
-        //     setPhone(JSON.parse(toko).telepon)
-        //     setUid(JSON.parse(toko).uid)
-        //     if (data != null) {
-        //         firebaseDatabase().ref('friend/' + JSON.parse(toko).uid + "/" + data.id + "/status").set({ amount: 0, read: true })
-        //     }
-        // });
-        // AsyncStorage.getItem("xxTwo").then(toko => {
-        //     setnamaToko(JSON.parse(toko).nama_toko);
-        // });
-    }
 
     function setChat(value) {
         setIsiChat(value)
