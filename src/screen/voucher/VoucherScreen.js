@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView, View, Text, FlatList, TouchableOpacity, Alert, RefreshControl, Image, ScrollView } from 'react-native'
 import { color } from 'react-native-reanimated'
 import { useSelector, useDispatch } from 'react-redux'
-import { styles, Appbar, Wp, colors, Loading, useNavigation } from '../../export'
+import { styles, Appbar, Wp, colors, Loading, useNavigation, Utils } from '../../export'
 
 export default function VoucherScreen() {
     const [vouchers, setVouchers] = useState([])
@@ -128,13 +128,7 @@ export default function VoucherScreen() {
                     dispatch({ type: 'SET_KEYWORD', payload: text })
                 })
                 .catch(error => {
-                    CheckSignal().then(res => {
-                        if (res.connect == false) {
-                            ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda", ToastAndroid.LONG, ToastAndroid.CENTER)
-                        } else {
-                            ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)
-                        }
-                    })
+                    Utils.handleError(error, 'Error with status code : 12101')
                 });
             navigation.navigate('ProductSearch')
 
@@ -208,11 +202,11 @@ export default function VoucherScreen() {
                                             <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
                                         </View>
                                         <View style={[styles.column_center, styles.p, { height: '100%', width: '30%', marginLeft: Wp('3%'), backgroundColor: colors.YellowJaja }]}>
-                                            <Text style={[styles.font_14, styles.mb_2, { color: colors.White, fontFamily: 'Poppins-SemiBold', alignSelf: 'center' }]}>{item.category === "ongkir" ? 'GRATIS BIAYA PENGIRIMAN' : String(item.category).toUpperCase() + " " + item.discountText}</Text>
+                                            <Text style={[styles.font_12, styles.mb_2, { color: colors.White, fontFamily: 'Poppins-SemiBold', alignSelf: 'center' }]}>{item.category === "ongkir" ? 'GRATIS BIAYA PENGIRIMAN' : String(item.category).toUpperCase() + " " + item.discountText}</Text>
                                         </View>
-                                        <View style={[styles.column_center, styles.px_2, { width: '44%' }]}>
-                                            <Text numberOfLines={3} style={[styles.font_13, styles.mb_2, { color: colors.YellowJaja, fontFamily: 'Poppins-SemiBold', width: '100%' }]}>{item.name}</Text>
-                                            <Text style={[styles.font_8, { position: 'absolute', bottom: 5, color: colors.YellowJaja, fontFamily: 'Poppins-SemiBold', width: '100%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
+                                        <View style={[styles.column_around_center, styles.px_2, { width: '44%' }]}>
+                                            <Text numberOfLines={3} style={[styles.font_12, styles.mb_2, styles.T_semi_bold, { color: colors.YellowJaja, width: '100%', marginBottom: '-7%' }]}>{item.name} MIN 50</Text>
+                                            <Text style={[styles.font_8, { color: colors.YellowJaja, width: '100%', marginBottom: "-5%" }]}>Berakhir dalam {item.endDate} {item.type}</Text>
                                         </View>
                                         <View style={[styles.column_center, { width: '22%' }]}>
                                             <TouchableOpacity onPress={() => handleVoucher(item, index)} style={{ width: '90%', height: '30%', backgroundColor: item.isClaimed ? colors.White : colors.YellowJaja, padding: '2%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.YellowJaja, borderRadius: 5 }}>

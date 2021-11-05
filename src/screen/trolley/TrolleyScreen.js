@@ -13,7 +13,6 @@ export default function TrolleyScreen() {
     const reduxUser = useSelector(state => state.user.user)
 
     const reduxCart = useSelector(state => state.cart)
-    console.log("🚀 ~ file: TrolleyScreen.js ~ line 16 ~ TrolleyScreen ~ reduxCart", reduxCart)
     const reduxAuth = useSelector(state => state.auth.auth)
     const [disableQty, setdisableQty] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -22,6 +21,7 @@ export default function TrolleyScreen() {
     const [cartSelected, setSelectedCard] = useState('')
     const [idx, setIndex] = useState(0)
     const [useCoin, setUseCoin] = useState(false)
+    const [update, setupdate] = useState(true)
 
     if (swipeRef && !Object.keys(swipeRef).length) swipeRef[idx] = createRef();
 
@@ -31,56 +31,65 @@ export default function TrolleyScreen() {
 
     const handleCheckbox = (name, indexParent, indexChild) => {
         try {
-            setDisableCheckout(true)
-            // setLoading(true)
-            let arr = reduxCart.cart;
-            if (name === "store") {
-                arr.items[indexParent].isSelected = !arr.items[indexParent].isSelected
-                if (arr.items[indexParent].isSelected) {
-                    arr.items[indexParent].products.map((data, i) => {
-                        return arr.items[indexParent].products[i].isSelected = true
-                    })
-                } else {
-                    arr.items[indexParent].products.map((data, i) => {
-                        return arr.items[indexParent].products[i].isSelected = false
-                    })
-                }
-            } else {
-                arr.items[indexParent].products[indexChild].isSelected = !arr.items[indexParent].products[indexChild].isSelected
-            }
-            dispatch({ type: 'SET_CART', payload: arr })
-            // setLoading(false)
-            var myHeaders = new Headers();
-            myHeaders.append("Authorization", reduxAuth);
-            myHeaders.append("Content-Type", "application/json");
-            myHeaders.append("Cookie", "ci_session=sdvfphg27d6fhhbhh4ruftor53ppbcko");
 
-            var raw = JSON.stringify({ 'cartId': name === "cart" ? arr.items[indexParent].products[indexChild].cartId : "", 'storeId': name === "store" ? arr.items[indexParent].store.id : "" })
+            if (update) {
+                setupdate(false)
+                setDisableCheckout(true)
 
-            var requestOptions = {
-                method: 'PUT',
-                headers: myHeaders,
-                body: raw,
-                redirect: 'follow'
-            };
-
-            fetch("https://jaja.id/backend/cart/selected", requestOptions)
-                .then(response => response.json())
-                .then(result => {
-                    if (result.status.code === 200) {
-                        handleApiCart()
+                // setLoading(true)
+                let arr = reduxCart.cart;
+                if (name === "store") {
+                    arr.items[indexParent].isSelected = !arr.items[indexParent].isSelected
+                    if (arr.items[indexParent].isSelected) {
+                        arr.items[indexParent].products.map((data, i) => {
+                            return arr.items[indexParent].products[i].isSelected = true
+                        })
                     } else {
-                        Utils.alertPopUp(String(result.status.message))
+                        arr.items[indexParent].products.map((data, i) => {
+                            return arr.items[indexParent].products[i].isSelected = false
+                        })
                     }
-                    setTimeout(() => {
-                        setDisableCheckout(false)
-                    }, 500);
+                } else {
+                    arr.items[indexParent].products[indexChild].isSelected = !arr.items[indexParent].products[indexChild].isSelected
+                }
+                dispatch({ type: 'SET_CART', payload: arr })
+                // setLoading(false)
+                var myHeaders = new Headers();
+                myHeaders.append("Authorization", reduxAuth);
+                myHeaders.append("Content-Type", "application/json");
+                myHeaders.append("Cookie", "ci_session=sdvfphg27d6fhhbhh4ruftor53ppbcko");
 
-                })
-                .catch(error => {
-                    setDisableCheckout(false)
-                    Utils.handleError(error, 'Error with status code : 12027')
-                })
+                var raw = JSON.stringify({ 'cartId': name === "cart" ? arr.items[indexParent].products[indexChild].cartId : "", 'storeId': name === "store" ? arr.items[indexParent].store.id : "" })
+
+                var requestOptions = {
+                    method: 'PUT',
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: 'follow'
+                };
+
+                fetch("https://jaja.id/backend/cart/selected", requestOptions)
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.status.code === 200) {
+                            handleApiCart()
+                        } else {
+                            Utils.alertPopUp(String(result.status.message))
+                        }
+                        setTimeout(() => {
+                            setDisableCheckout(false)
+                            setupdate(true)
+                        }, 500);
+
+                    })
+                    .catch(error => {
+                        setDisableCheckout(false)
+                        Utils.handleError(error, 'Error with status code : 12027')
+                    })
+            }
+            setTimeout(() => {
+                setupdate(true)
+            }, 3000);
         } catch (error) {
 
         }

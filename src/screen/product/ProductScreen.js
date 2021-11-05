@@ -63,13 +63,13 @@ export default function ProductScreen(props) {
 
     useEffect(() => {
         if (props.route.params && props.route.params.slug) {
+            setLoading(true)
+            getItem(props.route.params.slug)
             if (showFlashsale) {
                 setFlashsale(true)
             } else {
                 setFlashsale(false)
             }
-            setLoading(true)
-            getItem(props.route.params.slug)
         }
 
     }, [])
@@ -138,7 +138,6 @@ export default function ProductScreen(props) {
                     let dataSeller = res.store
                     dataSeller.chat = reduxUser.user.uid + dataSeller.uid
                     dataSeller.id = dataSeller.uid
-                    console.log("🚀 ~ file: masukkkkkkk ok,", dataSeller)
                     setSeller(dataSeller)
                     setLike(res.isWishlist)
                 } catch (error) {
@@ -167,9 +166,8 @@ export default function ProductScreen(props) {
         })
         setTimeout(() => {
             if (response !== 'clear') {
-                return ToastAndroid.show("Sedang memuat, koneksi anda lambat!", ToastAndroid.LONG, ToastAndroid.CENTER)
+                return Utils.alertPopUp("Sedang memuat..")
             }
-
         }, 10000);
 
     }
@@ -290,6 +288,8 @@ export default function ProductScreen(props) {
     }
 
     const handleStore = () => {
+        navigation.navigate('Store')
+
         if (reduxStore && Object.keys(reduxStore).length) {
             if (reduxStore.name != seller.name) {
                 dispatch({ "type": 'SET_STORE', payload: {} })
@@ -301,7 +301,6 @@ export default function ProductScreen(props) {
         ServiceStore.getStore(slg, reduxAuth).then(res => {
             if (res) {
                 dispatch({ "type": 'SET_STORE', payload: res })
-                navigation.navigate('Store')
             }
         })
         let obj = {
@@ -872,9 +871,9 @@ export default function ProductScreen(props) {
                                                         }}
                                                         resizeMode={FastImage.resizeMode.contain}
                                                     />
-                                                    <View style={[styles.font_14, styles.px_5, styles.py, { position: 'absolute', bottom: 0, backgroundColor: colors.BlueJaja, borderTopRightRadius: 11, alignItems: 'center', justifyContent: 'center' }]}>
+                                                    {/* <View style={[styles.font_14, styles.px_5, styles.py, { position: 'absolute', bottom: 0, backgroundColor: colors.BlueJaja, borderTopRightRadius: 11, alignItems: 'center', justifyContent: 'center' }]}>
                                                         <Text style={[styles.font_8, { marginBottom: '-2%', color: colors.White }]}>Seller Terdekat</Text>
-                                                    </View>
+                                                    </View> */}
                                                 </View>
                                                 <View style={[Ps.bottomCard, { alignSelf: 'flex-start', width: '100%', height: Wp('18%'), justifyContent: 'flex-start', alignItems: 'flex-start' }]}>
                                                     <Text numberOfLines={1} style={[Ps.nameProductSmall,]}>{item.name}</Text>
