@@ -17,7 +17,7 @@ import React, {
       </SafeAreaView>
     </View>
   );
-  
+    
   class DarkTheme extends Component {
     render() {
       return (

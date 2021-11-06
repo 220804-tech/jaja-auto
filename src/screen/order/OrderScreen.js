@@ -13,6 +13,8 @@ const initialLayout = { width: Dimensions.get('window').width };
 import { useDispatch, useSelector } from 'react-redux'
 import LoginOrderScreen from '../login/LoginOrderScreen';
 import database from "@react-native-firebase/database";
+import { Platform } from 'react-native';
+import { colorsDark } from 'react-native-elements/dist/config';
 
 export default function OrderScreen() {
     const dispatch = useDispatch()
@@ -136,8 +138,8 @@ export default function OrderScreen() {
     }, [])
 
     return (
-        <SafeAreaView style={styles.container}>
-            <Appbar title="Pesanan" trolley={true} notif={true} />
+        <SafeAreaView style={(styles.container, { backgroundColor: Platform.OS==='ios'?colors.BlueJaja: colors.White  })}>
+        <Appbar title="Pesanan" trolley={true} notif={true} />
             {reduxAuth ?
                 <TabView
                     style={{ backgroundColor: colors.WhiteBack }}

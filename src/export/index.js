@@ -31,7 +31,6 @@ import * as ServiceStore from '../services/Store'
 import * as ServiceFirebase from '../services/Firebase'
 import * as ServiceNotif from '../services/Notification'
 import * as ServiceCore from '../services/Core'
-
 import { style as Ps } from '../assets/styles/productStyles'
 import { style as Os } from '../assets/styles/orderStyle'
 import { style as Ts } from '../assets/styles/trendingStyles'

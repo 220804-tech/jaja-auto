@@ -5,6 +5,7 @@ import database from "@react-native-firebase/database";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import { colors, useNavigation, styles as style, Appbar, DefaultNotFound } from "../../export";
 import { useSelector, useDispatch } from 'react-redux'
+import { Platform } from "react-native";
 
 export default function ListChat() {
     const navigation = useNavigation();
@@ -136,7 +137,7 @@ export default function ListChat() {
 
 
     return (
-        <SafeAreaView style={style.container}>
+        <SafeAreaView style={[style.container, {backgroundColor: Platform.OS==='ios'? colors.BlueJaja: colors.White}]}>
             <Appbar title="Chats" trolley={true} notif={true} />
             {
                 users.length ?

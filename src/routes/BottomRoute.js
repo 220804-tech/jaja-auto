@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, Image, Alert } from 'react-native'
+import { View, Text, Image, Alert , Platform} from 'react-native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Home, Feed, Orders, ListChat, Profile } from './Screen'
 import { styles as style } from '../assets/styles/styles'
@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Hp, ServiceOrder } from '../export';
 import EncryptedStorage from 'react-native-encrypted-storage';
 // import { Language } from '../utils/language/Language' 
+
 const Tab = createBottomTabNavigator();
 export default function BottomRoute() {
     const [notif, setNotif] = useState("")
@@ -19,7 +20,6 @@ export default function BottomRoute() {
     const reduxnotifCount = useSelector(state => state.notification.notifCount)
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxUserNotif = useSelector(state => state.user.badges)
-
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -40,7 +40,7 @@ export default function BottomRoute() {
                                         let countChat = 0
                                         returnArray.map(item => countChat += item.amount)
                                         console.log("🚀 ~ file: ListChatScreen.js ~ line 49 ~ countChat", countChat)
-                                        result.notif.chat = countChat
+                                        result.snotif.chat = countChat
                                     }
                                 });
                                 dispatch({ type: 'SET_NOTIF_COUNT', payload: result.notif })
@@ -158,7 +158,7 @@ export default function BottomRoute() {
     return (
         <Tab.Navigator backBehavior='firstRoute' screenOptions={{
             headerShown: false, tabBarStyle: {
-                height: Hp('7.5%')
+                height:Platform.OS==='android'? Hp('7.5%'): Hp('9%')
             },
         }}>
             <Tab.Screen name="Home" component={Home}
@@ -177,7 +177,7 @@ export default function BottomRoute() {
                         )
                     }
                 }}
-            // options={{
+            // options={{s
             //     tabBarLabel: ({ size, focused }) => (
             //         <Text style={{ fontSize: 12, color: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '3%' }}>{Language("Beranda")}</Text>
             //     ),

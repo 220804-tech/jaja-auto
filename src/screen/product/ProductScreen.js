@@ -268,7 +268,7 @@ export default function ProductScreen(props) {
                 }
             })
             .catch(error => {
-                Utils.handleError(error, 'Error with status code : 12024')
+                Utils.handleError(JSON.stringify(error), 'Error with status code : 12024')
             });
     }
 
@@ -921,7 +921,7 @@ export default function ProductScreen(props) {
 
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, {backgroundColor: Platform.OS === 'ios'?colors.BlueJaja: colors.White}]}>
             {loading ? <Loading /> : null}
             <StatusBar translucent={true} backgroundColor="transparent" barStyle="light-content" />
             <ReactNativeParallaxHeader
@@ -962,7 +962,6 @@ export default function ProductScreen(props) {
                     }
                 }}
             />
-
             <View style={{ position: 'absolute', bottom: 0, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row', elevation: 3 }}>
                 <TouchableOpacity onPress={handleChat} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
                     <Image source={require('../../assets/icons/chats.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: colors.RedFlashsale }} />

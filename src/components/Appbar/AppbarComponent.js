@@ -8,7 +8,7 @@ export default function AppbarComponent(props) {
     let navigation = useNavigation()
     const reduxUser = useSelector(state => state.user.badges)
     const reduxAuth = useSelector(state => state.auth.auth)
-    const dispatch = useDispatch()
+    const dispatch = useDispatch()  
 
     useEffect(() => {
         if (Platform.OS == 'ios') {
@@ -16,8 +16,9 @@ export default function AppbarComponent(props) {
             StatusBar.setBackgroundColor(colors.BlueJaja, true)
         }
     }, [reduxUser])
+
     const handleGetCart = () => {
-        if (reduxAuth) {
+        if (reduxAuth) {    
             ServiceCart.getCart(reduxAuth).then(res => {
                 if (res) {
                     dispatch({ type: 'SET_CART', payload: res })

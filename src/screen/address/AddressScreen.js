@@ -51,16 +51,6 @@ export default function index(props) {
     }, []);
 
 
-    const getItem = async () => {
-        // try {
-        //     let response = await Storage.getToko()
-        //     setAddress(response.lokasi)
-        //     setToko(response)
-        // } catch (error) {
-        //     ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)
-        // }
-    }
-
     const getData = async () => {
         try {
             ServiceUser.getProfile(reduxAuth).then(async res => {
