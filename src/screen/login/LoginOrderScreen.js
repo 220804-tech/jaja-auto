@@ -4,7 +4,7 @@ import EncryptedStorage from 'react-native-encrypted-storage'
 import colors from '../../assets/colors'
 import { styles } from '../../assets/styles/styles'
 import { Button, TextInput } from 'react-native-paper'
-import { Language, Loading, CheckSignal, Wp, ServiceOrder, useFocusEffect, ServiceUser, Appbar, Hp } from '../../export'
+import { Language, Loading, CheckSignal, Wp, ServiceOrder, useFocusEffect, ServiceUser, Appbar, Hp, Utils } from '../../export'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch } from 'react-redux'
 import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
@@ -36,18 +36,28 @@ export default function LoginScreen(props) {
             webClientId: "284366139562-tnj3641sdb4ia9om7bcp25vh3qn5vvo8.apps.googleusercontent.com",
             offlineAccess: true
         });
-
-
     }, [props])
 
     useFocusEffect(
         useCallback(() => {
             if (GoogleSignin.isSignedIn()) {
-                console.log("keluar");
                 signOut()
             }
         }, []),
     );
+
+    useEffect(() => {
+        EncryptedStorage.getItem('emailVerification').then(res => {
+            if (res) {
+                let result = JSON.parse(res)
+                if (result && result !== 'done') {
+                    navigation.navigate('VerifikasiEmail', { email: result })
+                }
+            }
+        })
+
+    }, [])
+
 
     const signOut = async () => {
         try {
@@ -55,7 +65,7 @@ export default function LoginScreen(props) {
             await GoogleSignin.signOut();
             // setUser("") // Remember to remove the user from your app's state as well
         } catch (error) {
-            // console.error(error);
+            console.error(error);
         }
     };
 
@@ -73,13 +83,12 @@ export default function LoginScreen(props) {
         if (!email) {
             setAlertText('Email tidak boleh kosong!')
         } else if (!password) {
-            setAlertText('Password tidak boleh kosong')
+            setAlertText('Password tidak boleh kosong!')
         } else {
             setLoading(true)
             var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
             myHeaders.append("Cookie", "ci_session=jra6dmodn5nc33rhbnpqg3qg2iujc2nd");
-
             var raw = JSON.stringify({ "email": email, "password": password });
 
             var requestOptions = {
@@ -97,7 +106,7 @@ export default function LoginScreen(props) {
                         handleUser(result.data)
                     } else if (result.status.code === 400 || result.status.code === 404) {
                         if (result.status.message === "account has not been activated") {
-                            ToastAndroid.show("Akun anda belum diverifikasi", ToastAndroid.LONG, ToastAndroid.CENTER)
+                            Utils.alertPopUp("Akun anda belum diverifikasi")
                             navigation.navigate('VerifikasiEmail', { email: email })
                         } else if (result.status.message === "data not found") {
                             setAlertText('Email atau password anda salah!')
@@ -110,22 +119,8 @@ export default function LoginScreen(props) {
                     }
                 })
                 .catch(error => {
-                    console.log("🚀 ~ file: LoginScreen.js ~ line 77 ~ handleSubmit ~ error", error.name)
-                    CheckSignal().then(res => {
-                        if (res.connect === false) {
-                            ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda", ToastAndroid.LONG, ToastAndroid.CENTER)
-                        } else {
-                            Alert.alert(
-                                "Jaja.id",
-                                String(error),
-                                [
-                                    { text: "OK", onPress: () => console.log("OK Pressed") }
-                                ]
-                            )
-                        }
-
-                    })
-                });
+                    Utils.handleError(JSON.stringify(error), 'Error with status code : 12111')
+                })
         }
         setTimeout(() => {
             setLoading(false)
@@ -138,13 +133,9 @@ export default function LoginScreen(props) {
         myHeaders.append("Authorization", data);
         myHeaders.append("Cookie", "ci_session=pjrml5k3rvvcg54esomu3vakagc10iu5");
 
-        var raw = "";
-
-
         var requestOptions = {
             method: 'GET',
             headers: myHeaders,
-            body: raw,
             redirect: 'follow'
         };
 
@@ -194,12 +185,13 @@ export default function LoginScreen(props) {
                     }, 500);
 
                 } catch (error) {
-                    ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)
+                    Utils.handleError(JSON.stringify(error), 'Error with status code : 12113')
                 }
 
             })
-            .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));
+            .catch(error => Utils.alertPopUp(JSON.stringify(error)));
     }
+
     const getOrders = (auth) => {
         if (auth) {
             ServiceOrder.getUnpaid(auth).then(resUnpaid => {
@@ -208,51 +200,51 @@ export default function LoginScreen(props) {
                     dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
                 }
             }).catch(err => {
-                ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+                Utils.alertPopUp(JSON.stringify(err), 'Error with status code : 12112')
             })
             ServiceOrder.getWaitConfirm(auth).then(reswaitConfirm => {
                 if (reswaitConfirm) {
                     dispatch({ type: 'SET_WAITCONFIRM', payload: reswaitConfirm.items })
                 }
             }).catch(err => {
-                ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+
             })
             ServiceOrder.getProcess(auth).then(resProcess => {
                 if (resProcess) {
                     dispatch({ type: 'SET_PROCESS', payload: resProcess.items })
                 }
             }).catch(err => {
-                ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+
             })
             ServiceOrder.getSent(auth).then(resSent => {
                 if (resSent) {
                     dispatch({ type: 'SET_SENT', payload: resSent.items })
                 }
             }).catch(err => {
-                ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+
             })
             ServiceOrder.getCompleted(auth).then(resCompleted => {
                 if (resCompleted) {
                     dispatch({ type: 'SET_COMPLETED', payload: resCompleted.items })
                 }
             }).catch(err => {
-                ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+
             })
             ServiceOrder.getFailed(auth).then(resFailed => {
                 if (resFailed) {
                     dispatch({ type: 'SET_FAILED', payload: resFailed.items })
                 }
             }).catch(err => {
-                ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+
             })
         }
     }
     const onGoogleButtonPress = async () => {
-        setLoginGoogle(false)
         signOut()
         if (loginGoogle) {
+            setLoginGoogle(false)
             try {
-                let data = await GoogleSignin.hasPlayServices()
+                await GoogleSignin.hasPlayServices()
                 const userInfo = await GoogleSignin.signIn();
                 setLoading(true)
                 handleCheckUser(userInfo)
@@ -264,6 +256,7 @@ export default function LoginScreen(props) {
                 } else if (error.code === statusCodes.SIGN_IN_REQUIRED) {
                     console.log("Sign In Required : " + error.code);
                 } else if (error.code == 12502 || error.code === statusCodes.IN_PROGRESS) {
+
                     // Alert.alert(
                     //     "Sepertinya ada masalah!",
                     //     "Error with status code " + String(error.code), [
@@ -303,9 +296,6 @@ export default function LoginScreen(props) {
     }
 
     const handleCheckUser = (data) => {
-        setTimeout(() => {
-            setLoading(false)
-        }, 2000);
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 
@@ -348,7 +338,7 @@ export default function LoginScreen(props) {
             .catch(error => {
                 Alert.alert(
                     "Error!",
-                    String(error),
+                    JSON.stringify(error),
                     [
                         {
                             text: "RELOAD", onPress: () => {

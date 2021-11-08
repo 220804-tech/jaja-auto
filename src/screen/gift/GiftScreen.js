@@ -22,7 +22,7 @@ export default function GiftScreen() {
             <View style={[styles.row_start_center, styles.mt_2, { flexWrap: 'wrap', width: '100%' }]}>
                 {state.map((item, idx) => {
                     return (
-                        <TouchableRipple onPress={() => navigation.navigate('GiftSearch', { price: item.price })} style={[styles.column_center, styles.p_5, { marginRight: idx == 0 || idx == 2 ? '1.5%' : '0%', width: Wp('49%'), height: Wp('49%'), backgroundColor: colors.BlueJaja, marginBottom: '1.5%' }]}>
+                        <TouchableRipple key={String(idx) + 'QW'} onPress={() => navigation.navigate('GiftSearch', { price: item.price })} style={[styles.column_center, styles.p_5, { marginRight: idx == 0 || idx == 2 ? '1.5%' : '0%', width: Wp('49%'), height: Wp('49%'), backgroundColor: colors.BlueJaja, marginBottom: '1.5%' }]}>
                             <>
                                 <Image style={[{ width: '90%', height: '90%', tintColor: colors.White, marginBottom: '5%' }]} source={item.uri} />
                                 <Text style={[styles.font_14, styles.T_medium, { color: colors.White }]}>{item.name}</Text>

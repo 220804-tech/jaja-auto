@@ -14,6 +14,7 @@ export default function StoreProducts() {
     const keyword = useSelector(state => state.search.keywordSearch)
     const reduxFilters = useSelector(state => state.store.storeFilter)
     const reduxSorts = useSelector(state => state.store.storeSort)
+
     const reduxmaxProduct = useSelector(state => state.store.maxProduct)
     const data = useSelector(state => state.store.storeProduct)
     const textSearch = useSelector(state => state.store.storeKeyword)
@@ -34,6 +35,8 @@ export default function StoreProducts() {
     const [condition, setCondition] = useState('');
     const [stock, setStock] = useState('');
     const [sort, setSort] = useState('');
+    const [category, setCategory] = useState('');
+
 
     const [refreshing, setRefreshing] = useState(false);
     const [focus, setFocus] = useState(0);
@@ -56,15 +59,12 @@ export default function StoreProducts() {
         //     console.log("jsahfdhjkjhgfdfghjk")
         // }
         if (focus > 0) {
-            console.log("🚀 ~ file: StoreProducts.js ~ line 54 ~ useEffect ~ focus", focus)
             fetchLoadmore()
         }
     }, [focus])
 
     const handleLoadMore = () => {
-        console.log("reloaddddddddddddddd")
         if (loadmore === true) {
-            console.log("reloaddddddddddddddd trueeeeeeeeeeeeee")
             setLoadmore(true)
             setPage(page + 1)
             fetchLoadmore()
@@ -99,7 +99,6 @@ export default function StoreProducts() {
                 setTimeout(() => setLoading(false), 1000);
                 if (res && res.items && res.items.length) {
                     if (filter) {
-                        console.log("masuk filter ")
                         dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
                         dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
                     } else {
@@ -112,7 +111,6 @@ export default function StoreProducts() {
             })
         } catch (error) {
             error = false
-            console.log("🚀 ~ file: StoreProducts.js ~ line 214 ~ fetchLoadmore ~ error", error)
         }
         setTimeout(() => {
             if (error == true) {
@@ -148,12 +146,19 @@ export default function StoreProducts() {
             preorder: '',
             brand: '',
             sort: '',
+            category: ''
         }
         if (name && name !== 'reset') {
+            console.log("🚀 ~ file: reset")
             obj.keyword = keyword
             obj.condition = condition
             obj.preorder = stock
             obj.sort = sort
+            obj.category = category
+            setFocus(2)
+        } else {
+            setFocus(1)
+            console.log("🚀 ~ file: simpan")
         }
         ServiceStore.getStoreProduct(obj).then(res => {
             if (res) {
@@ -162,8 +167,6 @@ export default function StoreProducts() {
             }
         })
         setTimeout(() => setLoading(false), 15000);
-
-
     }
     const onRefresh = useCallback(() => {
         setRefreshing(true);
@@ -174,6 +177,7 @@ export default function StoreProducts() {
 
 
     const handleSelected = (name, indexParent, indexChild) => {
+        console.log("🚀 ~ file: StoreProducts.js ~ line 180 ~ handleSelected ~ name", name)
         if (name === 'filter') {
             let val = reduxFilters[indexParent].name
             let valChild = reduxFilters[indexParent].items[indexChild].value
@@ -189,7 +193,8 @@ export default function StoreProducts() {
                 } else {
                     setStock(valChild)
                 }
-
+            } else if (val === "Kategori") {
+                setCategory(valChild)
             }
         } else if (name === "sort") {
             let valChild = reduxSorts[indexChild].value
@@ -201,12 +206,9 @@ export default function StoreProducts() {
         }
     }
 
-
-
     return (
         <SafeAreaView style={styles.container}>
             <View style={[styles.column, { flex: 1, backgroundColor: colors.White }]}>
-
                 <View style={[styles.row_around_center, { width: '100%', elevation: 1 }]}>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                         <Button style={{ width: Wp('33.33%'), borderRadius: 0, borderRightWidth: 0 }} uppercase={false} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_medium, { color: focus == 1 || focus == 0 ? colors.BlueJaja : colors.BlackGrayScale }]} contentStyle={{ borderRadius: 0 }} onPress={() => setFocus(1) & setFilter(true)} mode="outlined">
@@ -259,7 +261,6 @@ export default function StoreProducts() {
                                 <CardProduct data={data} />
 
                                 {reduxmaxProduct || data.length < 2 ? <Text style={[styles.font_14, styles.my_5, { alignSelf: 'center', color: colors.BlueJaja, width: Wp('100%'), textAlign: 'center' }]}>Semua produk berhasil ditampilkan.</Text> : <ShimmerCardProduct />}
-                                {/* {console.log("🚀 ~ file: StoreProducts.js ~ line 256 ~ StoreProducts ~ reduxmaxProduct", reduxmaxProduct)} */}
                             </ScrollView>
 
                         </View>
@@ -290,8 +291,8 @@ export default function StoreProducts() {
                                     <View style={{ flex: 0, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                                         {item.items.map((child, idx) => {
                                             return (
-                                                <TouchableOpacity key={String(idx) + 'FA'} onPress={() => handleSelected('filter', index, idx)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: child.value === condition || child.value === stock ? colors.BlueJaja : colors.BlackGrey, backgroundColor: child.value === condition || child.value === stock ? colors.BlueJaja : colors.White, borderRadius: 11, paddingHorizontal: '3%', paddingVertical: '2%', marginRight: '3%', marginTop: '3%' }}>
-                                                    <Text adjustsFontSizeToFit style={[styles.font_14, { color: child.value === condition || child.value === stock ? colors.White : colors.BlackGrayScale }]}>{child.name}</Text>
+                                                <TouchableOpacity key={String(idx) + 'FA'} onPress={() => handleSelected('filter', index, idx)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: child.value === condition || child.value === stock || child.value === category ? colors.BlueJaja : colors.BlackGrey, backgroundColor: child.value === condition || child.value === stock || child.value === category ? colors.BlueJaja : colors.White, borderRadius: 11, paddingHorizontal: '3%', paddingVertical: '2%', marginRight: '3%', marginTop: '3%' }}>
+                                                    <Text adjustsFontSizeToFit style={[styles.font_14, { color: child.value === condition || child.value === stock || child.value === category ? colors.White : colors.BlackGrayScale }]}>{child.name}</Text>
                                                 </TouchableOpacity>
                                             )
                                         })}
@@ -301,14 +302,11 @@ export default function StoreProducts() {
                         })
                         : null
                     }
-                    {console.log("🚀 ~ file: StoreProducts.js ~ line 305 ~ StoreProducts ~ reduxSorts", reduxSorts)}
                     {reduxSorts && reduxSorts.length ?
                         <View style={[styles.mb_4]}>
                             <Text adjustsFontSizeToFit style={[styles.font_16, { fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale }]}>Urutkan</Text>
                             <View style={{ flex: 0, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                                 {reduxSorts.map((child, idx) => {
-                                    console.log("🚀 ~ file: StoreProducts.js ~ line 315 ~ {reduxSorts.map ~ reduxSorts", reduxSorts)
-
                                     return (
                                         <TouchableOpacity key={String(idx) + "CH"} onPress={() => handleSelected('sort', null, idx)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: child.value === sort ? colors.BlueJaja : colors.BlackGrey, backgroundColor: child.value === sort ? colors.BlueJaja : colors.White, borderRadius: 11, paddingHorizontal: '3%', paddingVertical: '2%', marginRight: '3%', marginTop: '3%' }}>
                                             <Text adjustsFontSizeToFit style={[styles.font_14, { color: child.value === sort ? colors.White : colors.BlackGrayScale }]}>{child.name}</Text>
@@ -317,7 +315,6 @@ export default function StoreProducts() {
                                 })}
                             </View>
                         </View>
-
                         : null
                     }
                 </ScrollView>

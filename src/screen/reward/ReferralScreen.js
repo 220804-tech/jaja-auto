@@ -53,7 +53,7 @@ export default function ReferralScreen() {
                         <Text style={[styles.font_18, { color: colors.BlueJaja }]}>
                             {String(reduxUser.pin).toLocaleUpperCase()}
                         </Text>
-                        
+
                     </View>
                     <Button onPress={handleShare} color={colors.BlueJaja} labelStyle={{ color: colors.White, fontFamily: 'Poppins-SemiBold', fontSize: 10 }} mode="contained" style={{ borderRadius: 100 }}>Bagikan Kode</Button>
                 </View>

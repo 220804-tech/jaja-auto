@@ -231,15 +231,16 @@ export default function SearchScreen() {
 
         ServiceStore.getStoreProduct(obj).then(res => {
             if (res) {
-                console.log('cari new product')
+                console.log('get new product')
                 dispatch({ "type": 'SET_NEW_PRODUCT', payload: res.items })
             }
         })
         obj.sort = ''
         ServiceStore.getStoreProduct(obj).then(res => {
             if (res) {
-                console.log('cari all product')
                 dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
+                dispatch({ "type": 'SET_STORE_FILTER', payload: res.filters })
+                dispatch({ "type": 'SET_STORE_SORT', payload: res.sorts })
             }
         })
 
@@ -294,7 +295,7 @@ export default function SearchScreen() {
                 <ScrollView showsVerticalScrollIndicator={false}>
                     {productSearch && productSearch.length || storeSearch.length || categorySearch.length ?
                         <View style={styles.column}>
-                            <Text style={[styles.font_14, { color: colors.BlueJaja, marginBottom: '2%' }]} adjustsFontSizeToFit>Berdasarkan Kategori</Text>
+                            <Text style={[styles.font_14, { color: colors.BlueJaja, marginBottom: '2%' }]}>Berdasarkan Kategori</Text>
                             {categorySearch && categorySearch.length > 0 ?
                                 <FlatList
                                     data={categorySearch}
@@ -304,14 +305,14 @@ export default function SearchScreen() {
                                     renderItem={({ item }) => {
                                         return (
                                             <TouchableOpacity onPress={() => handleSelectedCategory(item)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', paddingVertical: '2%', marginBottom: '2%', backgroundColor: colors.White, borderBottomWidth: 0.5, borderColor: colors.Silver }}>
-                                                <Image style={[styles.mr_2, { height: Wp('9%'), width: Wp('9%'), borderRadius: 100 }]} source={{ uri: item.icon }} />
-                                                <Text numberOfLines={1} style={[styles.font_13, { color: colors.BlackGrey }]}>{item.name}</Text>
+                                                <Image style={[styles.mr_2, { height: Wp('8%'), width: Wp('8%'), borderRadius: 100 }]} source={{ uri: item.icon }} />
+                                                <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlackGrey }]}>{item.name}</Text>
                                             </TouchableOpacity>
                                         )
                                     }} />
-                                : <Text numberOfLines={1} style={[styles.font_13, styles.mb_3, { color: colors.BlackGrey }]}>- Kategori tidak ditemukan</Text>
+                                : <Text numberOfLines={1} style={[styles.font_12, styles.mb_3, { color: colors.BlackGrey }]}>- Kategori tidak ditemukan</Text>
                             }
-                            <Text style={[styles.font_14, { color: colors.BlueJaja, marginBottom: '2%' }]} adjustsFontSizeToFit>Berdasarkan pencarian</Text>
+                            <Text style={[styles.font_14, { color: colors.BlueJaja, marginBottom: '2%' }]} >Berdasarkan pencarian</Text>
                             {productSearch && productSearch.length > 0 ?
                                 <FlatList
                                     data={productSearch}
@@ -323,7 +324,7 @@ export default function SearchScreen() {
                                             <>
                                                 {Object.keys(item).length ?
                                                     <TouchableOpacity onPress={() => handleSelected(item)} style={{ paddingVertical: '2.5%', marginBottom: '2%', backgroundColor: colors.White, borderBottomWidth: 0.5, borderColor: colors.Silver }}>
-                                                        <Text numberOfLines={1} style={[styles.font_13, { color: colors.BlackGrey }]}>{item.name}</Text>
+                                                        <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlackGrey }]}>{item.name}</Text>
                                                     </TouchableOpacity>
                                                     : null}
                                             </>
@@ -332,7 +333,7 @@ export default function SearchScreen() {
                                 : <Text numberOfLines={1} style={[styles.font_13, { color: colors.BlackGrey }]}>- Produk tidak ditemukan</Text>
                             }
                             <View style={[styles.column, styles.py_3]}>
-                                <Text style={[styles.font_14, { color: colors.BlueJaja, marginBottom: '2%' }]} adjustsFontSizeToFit>Toko</Text>
+                                <Text style={[styles.font_14, { color: colors.BlueJaja, marginBottom: '2%' }]} >Toko</Text>
                                 {storeSearch && storeSearch.length > 0 ?
                                     <FlatList
                                         data={storeSearch}
@@ -342,8 +343,8 @@ export default function SearchScreen() {
                                         renderItem={({ item }) => {
                                             return (
                                                 <TouchableOpacity onPress={() => handleSelectedToko(item)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', paddingVertical: '2%', marginBottom: '2%', backgroundColor: colors.White, borderBottomWidth: 0.5, borderColor: colors.Silver }}>
-                                                    <Image style={[styles.mr_2, { height: Wp('9%'), width: Wp('9%'), borderRadius: 100 }]} source={{ uri: item.image }} />
-                                                    <Text numberOfLines={1} style={[styles.font_13, { color: colors.BlackGrey }]}>{item.name}</Text>
+                                                    <Image style={[styles.mr_2, { height: Wp('8%'), width: Wp('8%'), borderRadius: 100 }]} source={{ uri: item.image }} resizeMethod='resize' />
+                                                    <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlackGrey }]}>{item.name}</Text>
                                                 </TouchableOpacity>
                                             )
                                         }} />
@@ -355,9 +356,9 @@ export default function SearchScreen() {
                         historySearch.length ?
                             <View style={styles.column}>
                                 <View style={[styles.row_between_center, styles.mb_5]}>
-                                    <Text style={[styles.font_14, { color: colors.BlueJaja }]} adjustsFontSizeToFit>Riwayat Pencarian</Text>
+                                    <Text style={[styles.font_14, { color: colors.BlueJaja }]} >Riwayat Pencarian</Text>
                                     <TouchableOpacity onPress={handleClear} style={{ width: '20%' }}>
-                                        <Text style={[styles.font_14, { color: colors.BlueJaja, textAlign: 'center' }]} adjustsFontSizeToFit>Clear</Text>
+                                        <Text style={[styles.font_14, { color: colors.BlueJaja, textAlign: 'center' }]} >Clear</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <FlatList
@@ -376,7 +377,7 @@ export default function SearchScreen() {
                             :
                             <View style={styles.column}>
                                 <View style={[styles.row_between_center, styles.mb_5]}>
-                                    <Text style={[styles.font_14, { color: colors.BlueJaja }]} adjustsFontSizeToFit>Rekomendasi</Text>
+                                    <Text style={[styles.font_14, { color: colors.BlueJaja }]} >Rekomendasi</Text>
                                 </View>
                                 <FlatList
                                     data={slug}

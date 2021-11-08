@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@monterosa/react-native-parallax-scroll": "^1.8.0",
+    "@react-native-async-storage/async-storage": "^1.15.11",
     "@react-native-community/art": "^1.2.0",
     "@react-native-community/checkbox": "^0.5.7",
     "@react-native-community/clipboard": "^1.5.1",

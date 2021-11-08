@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import StarRating from 'react-native-star-rating';
 LogBox.ignoreAllLogs()
 import ImgToBase64 from 'react-native-image-base64';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 
 export default function GiftDetailScreen(props) {
@@ -49,7 +50,23 @@ export default function GiftDetailScreen(props) {
     const [cardUse, setcardUse] = useState(false)
 
     const [catatan, setcatatan] = useState('')
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [dateSelected, setdateSelected] = useState(null)
+    console.log("🚀 ~ file: GiftDetailScreen.js ~ line 55 ~ GiftDetailScreen ~ dateSelected", dateSelected)
 
+    const [dateMin, setdateMin] = useState({
+        year: 0,
+        month: 0,
+        date: 0,
+    });
+
+    const [dateMax, setdateMax] = useState({
+        year: 0,
+        month: 0,
+        date: 0,
+    });
+
+    const [count, setcount] = useState(0)
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true)        // setLoading(true);
@@ -81,9 +98,20 @@ export default function GiftDetailScreen(props) {
             let dataSeller = {
                 chat: reduxUser.user.uid + '5ff7b38436b51seller113'
             }
-            console.log("🚀 ~ file: ProductScreen.js ~ line 138 ~ ServiceProduct.productDetail ~ dataSeller.chat", dataSeller.chat)
-            console.log("🚀 ~ file: ProductScreen.js ~ line 138 ~ ServiceProduct.productDetail ~ dataSeller.uid", dataSeller.uid)
             dataSeller.id = dataSeller.uid
+            var future = new Date();
+            future.setDate(future.getDate() + 3);
+            setdateMin({
+                year: future.getFullYear(),
+                month: future.getMonth(),
+                date: future.getDate()
+            })
+            future.setMonth(future.getMonth() + 4);
+            setdateMax({
+                year: future.getFullYear(),
+                month: future.getMonth(),
+                date: future.getDate()
+            })
         }, []),
     );
 
@@ -109,32 +137,15 @@ export default function GiftDetailScreen(props) {
 
 
     const handlePrice = (name) => {
-        let newData = giftDetails;
         if (name == 'box') {
-            if (boxUse) {
-                let result = parseInt(newData.priceInt) - 7000
-                newData.priceInt = result <= 0 ? 0 : result
-                console.log('asasa' + String(newData.price).toLocaleString())
-                newData.price = 'Rp' + result
-            } else {
-                newData.priceInt = parseInt(newData.priceInt) + 7000
-                newData.price = 'Rp' + newData.priceInt
-            }
             setboxUse(!boxUse)
         } else {
-            setcardUse(!ardUse)
+            setcardUse(!cardUse)
         }
-        // if (cardUse) {
-        //    
-        //     newData.priceInt = newData.priceInt - 7000
-        //     if (newData.priceInt <= 0) {
-        //         newData.priceInt = 0
-        //     }
-        //     newData.price = 'Rp' + newData.priceInt
-        // }
-        // dispatch({ type: 'SET_GIFT', payload: newData })
     }
-
+    function currencyFormat(num) {
+        return 'Rp' + String(num).replace(/(\d)(?=(\d{3})+(?!\d))/g, '.')
+    }
     const handleTrolley = () => {
         navigation.navigate("Trolley")
     }
@@ -323,7 +334,7 @@ export default function GiftDetailScreen(props) {
                                             </View>
                                             :
                                             <View style={[styles.row_between_center, { width: '100%' }]}>
-                                                <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{giftDetails.price}</Text>
+                                                <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{boxUse ? giftDetails.priceBox : giftDetails.price}</Text>
                                             </View>
                                         }
                                     </View>
@@ -395,7 +406,7 @@ export default function GiftDetailScreen(props) {
                                 </TouchableOpacity>
                             </View>
                             : null}
-                        <View style={[styles.column, styles.mb_3]}>
+                        <View style={[styles.column]}>
                             <View style={[styles.row_start_center, styles.mx_2]}>
                                 <TouchableRipple onPress={() => handlePrice('box')} style={[styles.column_start_center, styles.p_2, styles.mr, { width: Wp('30%'), height: Wp('35%'), backgroundColor: colors.White }]}>
                                     <>
@@ -429,9 +440,10 @@ export default function GiftDetailScreen(props) {
                                     </>
                                 </TouchableRipple>
                             </View>
-                            {
-                                cardUse ?
-                                    <View style={[styles.mt_2, styles.p_4, { width: '100%', backgroundColor: colors.White }]} >
+
+                            <View style={[styles.column, styles.p_2, styles.mt_2, { width: '100%', backgroundColor: colors.White }]}>
+                                {cardUse ?
+                                    <View style={[styles.mt_2, styles.p_2, { width: '100%', backgroundColor: colors.White }]}>
                                         <Text style={styles.font_13}>Masukan catatan untuk kartu ucapanmu disini :</Text>
                                         <TextInput
                                             value={catatan}
@@ -442,11 +454,33 @@ export default function GiftDetailScreen(props) {
                                             placeholder='Pesan untuk kartu ucapan'
                                             onChangeText={(e) => setcatatan(e)}
                                         />
-                                    </View> :
-                                    null
-                            }
+                                    </View>
+                                    : null
+                                }
+                                {dateSelected ?
+                                    <View style={[styles.column, styles.p_2, styles.mb, { backgroundColor: colors.White, paddingBottom: '5%' }]}>
+                                        <View style={styles.row_between_center}>
+                                            <Text style={{ textDecorationLine: 'underline', fontSize: 14, fontFamily: 'Poppins-Medium', color: colors.BlackGrayScale, marginBottom: '3%' }}>Tanggal Pengiriman</Text>
+                                            <TouchableRipple onPress={() => setDatePickerVisibility(true)} style={[styles.px_2, styles.mb_3]}>
+                                                <Text style={{ fontSize: 14, fontFamily: 'Poppins-Medium', color: colors.BlueJaja }}>Ubah</Text>
+                                            </TouchableRipple>
+
+                                        </View>
+                                        <Text style={[styles.font_14, styles.mb_3]}>Paket akan dikirim tanggal {String(dateSelected)}</Text>
+                                    </View>
+                                    :
+                                    <TouchableRipple rippleColor={colors.BlueJaja} style={[styles.row_center, styles.p_2, { borderWidth: 0.7, borderColor: colors.BlueJaja, borderRadius: 7 }]} onPress={() => setDatePickerVisibility(true)}>
+                                        <View style={[styles.row_center, { width: '100%' }]}>
+                                            <Text style={[styles.font_13, { color: colors.BlueJaja, width: '90%', alignSelf: 'center', textAlign: 'center' }]}>Tentukan kapan barang akan dikirim</Text>
+                                            <Image style={[styles.icon_16, { tintColor: colors.BlueJaja }]} source={require('../../assets/icons/right-arrow.png')} />
+                                        </View>
+                                    </TouchableRipple>
+                                }
+                            </View>
+
+
                         </View>
-                        <View style={[styles.column, styles.p_4, styles.mb_2, { backgroundColor: colors.White, borderTopRightRadius: 20, borderTopLeftRadius: 20, paddingBottom: '5%' }]}>
+                        <View style={[styles.column, styles.p_4, styles.mb, { backgroundColor: colors.White, paddingBottom: '5%' }]}>
                             <Text style={{ textDecorationLine: 'underline', fontSize: 14, fontFamily: 'Poppins-Medium', color: colors.BlackGrayScale, marginBottom: '3%' }}>Informasi Produk</Text>
                             <View style={[styles.row_around_center, styles.mb_5, { alignSelf: 'flex-start' }]}>
                                 <View style={[styles.column, { width: '40%' }]}>
@@ -697,10 +731,18 @@ export default function GiftDetailScreen(props) {
             handleLogin()
         }
     }
+    const handleConfirmDate = (res) => {
+        try {
+            let date = res
+            date.setMonth(date.getMonth() + 1)
+            let month = date.getMonth() === 1 ? 'Januari' : date.getMonth() === 2 ? 'Februari' : date.getMonth() === 3 ? 'Maret' : date.getMonth() === 4 ? 'April' : date.getMonth() === 5 ? 'Mei' : date.getMonth() === 6 ? 'Juni' : date.getMonth() === 7 ? 'Juli' : date.getMonth() === 8 ? 'Agustus' : date.getMonth() === 9 ? 'September' : date.getMonth() === 10 ? 'Oktober' : date.getMonth() === 11 ? 'November' : 'Desember'
+            let result = String(date.getDate()) + ' ' + month + ' ' + String(date.getFullYear())
+            setdateSelected(result)
+            setDatePickerVisibility(false)
+        } catch (error) {
 
-
-
-
+        }
+    }
     return (
         <SafeAreaView style={styles.container}>
             {/* {loading ? <Loading /> : null} */}
@@ -729,7 +771,6 @@ export default function GiftDetailScreen(props) {
                                 useNativeDriver: false,
                                 listener: event => {
                                     if (isCloseToBottom(event.nativeEvent)) {
-                                        console.log("oNSCROLL ");
                                         loadMoreData()
                                     }
                                 }
@@ -755,6 +796,19 @@ export default function GiftDetailScreen(props) {
                     {giftDetails.stock == '0' ? 'Stok Habis' : 'Beli Sekarang'}
                 </Button>
             </View>
+            <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode="date"
+                minimumDate={new Date(dateMin.year, dateMin.month, dateMin.date)}
+                maximumDate={new Date(dateMax.year, dateMax.month, dateMax.date)}
+                onDateChange={() => setDatePickerVisibility(false)}
+                onConfirm={(text) => {
+                    setTimeout(() => {
+                        handleConfirmDate(text)
+                    }, 200);
+                }}
+                onCancel={() => setDatePickerVisibility(false)}
+            />
         </SafeAreaView >
     )
 }

@@ -216,9 +216,7 @@ export default function ProductScreen(props) {
             if (reduxSearch.productDetail.variant && reduxSearch.productDetail.variant.length) {
                 if (Object.keys(variasiSelected).length) {
                     handleApiCart(name)
-                    console.log("masuk iff")
                 } else {
-                    console.log("masuk else")
                     setalert('Pilih salah satu variasi!')
                     Utils.alertPopUp('Anda belum memilih variasi produk ini!')
                 }

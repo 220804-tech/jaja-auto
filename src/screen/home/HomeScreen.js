@@ -413,7 +413,7 @@ export default function HomeScreen() {
     }
 
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS==='ios'? colors.BlueJaja: colors.White }]}>
+        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : colors.White }]}>
             {loading ? <Loading /> : null}
             {/* <ScrollViews
                 refreshControl={
