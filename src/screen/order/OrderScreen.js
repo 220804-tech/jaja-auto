@@ -138,8 +138,8 @@ export default function OrderScreen() {
     }, [])
 
     return (
-        <SafeAreaView style={(styles.container, { backgroundColor: Platform.OS==='ios'?colors.BlueJaja: colors.White  })}>
-        <Appbar title="Pesanan" trolley={true} notif={true} />
+        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : colors.White }]}>
+            <Appbar title="Pesanan" trolley={true} notif={true} />
             {reduxAuth ?
                 <TabView
                     style={{ backgroundColor: colors.WhiteBack }}

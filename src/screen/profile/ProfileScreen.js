@@ -10,6 +10,7 @@ const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
 const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 import { useDispatch, useSelector } from 'react-redux'
 import { getDistance, getPreciseDistance } from 'geolib';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function ProfileScreen(props) {
   const navigation = useNavigation();
   const dispatch = useDispatch()
@@ -157,6 +158,7 @@ export default function ProfileScreen(props) {
                   })
                 }, 500);
               })
+              AsyncStorage.clear()
             } catch (error) {
               setTimeout(() => {
                 setLoading(false)
@@ -249,10 +251,10 @@ export default function ProfileScreen(props) {
                   </View>
                   :
                   <View style={[styles.row_start, styles.mt_5, { height: Wp('17%'), width: '80%', justifyContent: 'flex-end' }]}>
-                    <Button onPress={() => handleAuth('Login')} color={colors.White} mode="contained" contentStyle={{ width: Wp('30%'), height: Wp('10%') }} style={{ width: Wp('30%'), height: Wp('10%') }} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.YellowJaja }]} uppercase={false} >
+                    <Button onPress={() => handleAuth('Login')} color={colors.White} mode="contained" contentStyle={{ width: Wp('30%'), height: Wp('10%') }} style={{ width: Wp('30%'), height: Wp('10%') }} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.YellowJaja }]} uppercase={false} >
                       Login
                     </Button>
-                    <Button onPress={() => handleAuth('Register')} color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('30%'), height: Wp('10%') }} style={{ marginLeft: '3%', width: Wp('30%'), height: Wp('10%') }} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
+                    <Button onPress={() => handleAuth('Register')} color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('30%'), height: Wp('10%') }} style={{ marginLeft: '3%', width: Wp('30%'), height: Wp('10%') }} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
                       Daftar
                     </Button>
                   </View>
