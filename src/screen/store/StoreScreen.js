@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Dimensions, Image, SafeAreaView, ScrollView, StatusBar, Text, View, TouchableOpacity } from 'react-native'
+import { Dimensions, Image, SafeAreaView, ScrollView, StatusBar, Text, View, TouchableOpacity, Platform } from 'react-native'
 import { Button, Paragraph } from 'react-native-paper'
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view'
 import { useDispatch, useSelector } from 'react-redux'
@@ -122,7 +122,7 @@ export default function StoreScreen() {
 
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : colors.White }]}>
             <StatusBar
                 translucent={false}
                 // animated={true}

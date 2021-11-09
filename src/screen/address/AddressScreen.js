@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback, createRef, useRef } from 'react'
-import { SafeAreaView, Text, View, TouchableOpacity, ScrollView, StyleSheet, FlatList, Image, RefreshControl, Alert, ToastAndroid, TouchableHighlight, TouchableWithoutFeedback,StatusBar} from "react-native";
+import { SafeAreaView, Text, View, TouchableOpacity, ScrollView, StyleSheet, FlatList, Image, RefreshControl, Alert, ToastAndroid, TouchableHighlight, TouchableWithoutFeedback, StatusBar } from "react-native";
 import { Paragraph, Switch, Appbar, Button, TouchableRipple } from "react-native-paper";
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { colors, styles as style, ServiceUser, ServiceCheckout, Loading, Hp } from '../../export'
-import * as Service from '../../services/Address'       ;
+import * as Service from '../../services/Address';
 import { useDispatch, useSelector } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import Swipeable from 'react-native-swipeable';
@@ -36,11 +36,11 @@ export default function index(props) {
             try {
                 if (!reduxAuth) {
                     navigation.navigate(Login)
-                } 
+                }
             } catch (error) {
                 console.log("🚀 ~ file: AddressScreen.js ~ line 59 ~ useEffect ~ error", error)
             }
-            getItem()
+            // getItem()
             getData()
         }, [count]),
     );

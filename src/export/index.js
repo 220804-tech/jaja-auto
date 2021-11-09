@@ -17,6 +17,7 @@ import Language from '../utils/Language'
 import Loading from '../components/Loading/LoadingComponent'
 import CheckSignal from '../utils/Signal'
 import FilterLocation from '../utils/FilterLocation'
+import axios from 'axios'
 
 import Maps from '../components/Maps/MapsComponent'
 import * as Utils from '../utils/Form'
@@ -50,5 +51,5 @@ export {
     Appbar, CardProduct, Category, Flashsale, Maps, HobyAverage, RecomandedHobby, Trending, Language, Loading, CheckSignal, BasedOnSearch, styles,
     Ps, Wp, Hp, useNavigation, colors, useFocusEffect, FastImage, Utils, ServiceCart, ServiceCheckout, ServiceUser, ServiceVoucher, ServiceOrder, Os,
     ServiceCategory, ServiceProduct, ServiceStore, ServiceFirebase, Ts, ServiceNotif, ShimmerCardProduct, ServiceCore, Countdown, OrderNotFound,
-    DefaultNotFound, NearestStore, FilterLocation, AppbarSecond, FlashsaleToko, RFValue
+    DefaultNotFound, NearestStore, FilterLocation, AppbarSecond, FlashsaleToko, RFValue, axios
 }

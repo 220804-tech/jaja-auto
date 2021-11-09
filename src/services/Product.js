@@ -1,5 +1,5 @@
 import { ToastAndroid, Alert } from 'react-native'
-import { Utils } from '../export';
+import { Utils, axios } from '../export';
 export async function productDetail(auth, slug) {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);
@@ -31,4 +31,28 @@ export async function productDetail(auth, slug) {
             return null
         });
 
+}
+
+export async function addCart(auth, crendentials) {
+    try {
+        var config = {
+            method: 'post',
+            url: 'https://jaja.id/backend/cart',
+            headers: {
+                'Authorization': auth
+            },
+            data: crendentials
+        };
+
+        return await axios(config)
+            .then(function (response) {
+                return response.data
+            })
+            .catch(function (error) {
+                Utils.handleError(JSON.stringify(error), 'Error with status code : 12115')
+                return null
+            });
+    } catch (error) {
+
+    }
 }

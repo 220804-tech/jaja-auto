@@ -510,9 +510,14 @@ export default function checkoutScreen() {
                                             Utils.handleErrorResponse(data, "Error with status code : 12048")
                                             return null
                                         }
+                                        setTimeout(() => {
+                                            setLoad(false)
+                                        }, 2000);
                                     } catch (err) {
                                         error = false
                                         Utils.handleError(result, "Error with status code : 12049")
+                                        setLoad(false)
+
                                     }
                                     setTimeout(() => {
                                         setLoad(false)
@@ -604,7 +609,7 @@ export default function checkoutScreen() {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : colors.White }]}>
             <StatusBar
                 animated={true}
                 backgroundColor={colors.BlueJaja}
@@ -912,11 +917,11 @@ export default function checkoutScreen() {
                                                         <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
                                                     </View>
                                                     <View style={[styles.column_center, styles.p, { height: '100%', width: '30%', marginLeft: Wp('3%'), backgroundColor: colors.BlueJaja }]}>
-                                                        <Text style={[styles.font_14, styles.mb_2, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White, alignSelf: 'center', textAlign: 'center' }]}>{item.category ? item.category === "ongkir" ? 'GRATIS BIAYA PENGIRIMAN' : String(item.category).toUpperCase() + " " + item.discountText : "DISKON " + item.discountText}</Text>
+                                                        <Text style={[styles.font_12, styles.mb_2, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White, alignSelf: 'center', textAlign: 'center' }]}>{item.category ? item.category === "ongkir" ? 'GRATIS BIAYA PENGIRIMAN' : String(item.category).toUpperCase() + " " + item.discountText : "DISKON " + item.discountText}</Text>
                                                     </View>
-                                                    <View style={[styles.column_center, styles.px_2, { width: '44%' }]}>
-                                                        <Text numberOfLines={3} style={[styles.font_13, styles.mb_2, styles.T_semi_bold, { color: colors.BlueJaja, width: '100%' }]}>{item.name}</Text>
-                                                        <Text style={[styles.font_8, styles.T_semi_bold, { position: 'absolute', bottom: 5, color: colors.BlueJaja, width: '100%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
+                                                    <View style={[styles.column_around_center, styles.px_2, { width: '44%' }]}>
+                                                        <Text numberOfLines={3} style={[styles.font_12, styles.mb_2, styles.T_semi_bold, { color: colors.BlueJaja, width: '100%', marginBottom: '-2%' }]}>{item.name}</Text>
+                                                        <Text style={[styles.font_8, styles.T_semi_bold, { color: colors.BlueJaja, width: '100%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
                                                     </View>
                                                     <View style={[styles.column_center, { width: '22%' }]}>
                                                         <TouchableOpacity onPress={() => handleVoucher(item, index)} style={{ width: '90%', height: '30%', backgroundColor: item.isClaimed ? colors.White : colors.BlueJaja, padding: '2%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.BlueJaja, borderRadius: 5 }}>
@@ -931,7 +936,7 @@ export default function checkoutScreen() {
                                         )
                                     }}
                                 />
-                                <Text numberOfLines={2} style={[styles.font_13, styles.T_semi_bold, styles.my_3, { color: colors.BlackGrey }]}>* Voucher yang belum sesuai dengan S&K</Text>
+                                {/* <Text numberOfLines={2} style={[styles.font_13, styles.T_semi_bold, styles.my_3, { color: colors.BlackGrey }]}>* Voucher yang belum sesuai dengan S&K</Text> */}
                                 <FlatList
                                     data={voucherOpen === "store" ? vouchers : reduxCheckout.voucherJaja.filter(item => item.isValid === false)}
                                     keyExtractor={(item) => item.id}
@@ -953,9 +958,9 @@ export default function checkoutScreen() {
                                                     <View style={[styles.column_center, styles.p, { height: '100%', width: '30%', marginLeft: Wp('3%'), backgroundColor: colors.Silver }]}>
                                                         <Text style={[styles.font_14, styles.mb_2, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White, alignSelf: 'center', textAlign: 'center' }]}>{item.category ? item.category === "ongkir" ? 'GRATIS BIAYA PENGIRIMAN' : String(item.category).toUpperCase() + " " + item.discountText : "DISKON " + item.discountText}</Text>
                                                     </View>
-                                                    <View style={[styles.column_center, styles.px_2, { width: '44%' }]}>
-                                                        <Text numberOfLines={3} style={[styles.font_13, styles.mb_2, styles.T_semi_bold, { color: colors.Silver, width: '100%' }]}>{item.name}</Text>
-                                                        <Text style={[styles.font_8, styles.T_semi_bold, { position: 'absolute', bottom: 5, color: colors.Silver, width: '100%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
+                                                    <View style={[styles.column_around_center, styles.px_2, { width: '44%' }]}>
+                                                        <Text numberOfLines={3} style={[styles.font_12, styles.mb_2, styles.T_semi_bold, { color: colors.Silver, width: '100%', marginBottom: '-2%' }]}>{item.name}</Text>
+                                                        <Text style={[styles.font_8, styles.T_semi_bold, { color: colors.Silver, width: '100%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
                                                     </View>
                                                     <View style={[styles.column_center, { width: '22%' }]}>
                                                         <TouchableOpacity disabled={true} onPress={() => handleVoucher(item, index)} style={{ width: '90%', height: '30%', backgroundColor: item.isClaimed ? colors.White : colors.Silver, padding: '2%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.Silver, borderRadius: 5 }}>

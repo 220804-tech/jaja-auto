@@ -96,6 +96,7 @@ export default function DetailComplain() {
     const handleSteps = (step) => {
         dispatch({ type: 'SET_COMPLAIN_STEPS', payload: step })
     }
+
     const handeCurrencyPosition = (status) => {
         dispatch({ type: 'SET_COMPLAIN_STATUS', payload: status })
     }

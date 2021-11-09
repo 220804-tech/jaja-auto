@@ -4,6 +4,7 @@ import { Hp, Wp, colors, Loading, Appbar, styles as style, Utils } from '../../e
 import { Text, View, SafeAreaView, Image, StyleSheet, BackHandler, StatusBar, ScrollView, ToastAndroid, TouchableOpacity } from 'react-native';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { connect } from 'react-redux'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class RegisterScreen extends Component {
     constructor(props) {
@@ -158,8 +159,8 @@ class RegisterScreen extends Component {
                     if (res.status.code == 200) {
                         EncryptedStorage.setItem('user', JSON.stringify(res.data.customer))
                         this.props.dispatch({ type: 'SET_USER', payload: res.data.customer })
+                        AsyncStorage.setItem('token', JSON.stringify(res.data.token))
                         EncryptedStorage.setItem('token', JSON.stringify(res.data.token))
-                        console.log("index -> onRegistrasi -> 201", res.status)
                         EncryptedStorage.setItem('emailVerification', JSON.stringify(credentials.email))
                         EncryptedStorage.setItem('usrverif', JSON.stringify({ eml: credentials.email, pw: credentials.password }))
                         this.props.navigation.navigate('VerifikasiEmail', { email: credentials.email })

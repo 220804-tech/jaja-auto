@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef, createRef } from 'react'
-import { View, Text, SafeAreaView, Image, TouchableOpacity, FlatList, StatusBar, RefreshControl, TouchableWithoutFeedback, Alert } from 'react-native'
+import { View, Text, SafeAreaView, Image, TouchableOpacity, FlatList, StatusBar, RefreshControl, TouchableWithoutFeedback, Alert, Platform } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { styles, Hp, Wp, colors, useNavigation, Appbar, ServiceCart, Loading, ServiceCheckout, useFocusEffect, DefaultNotFound, Utils, } from '../../export'
 import { Button, Checkbox } from 'react-native-paper'
 import { useDispatch, useSelector } from "react-redux";
 import Swipeable from 'react-native-swipeable';
+import CheckBox from '@react-native-community/checkbox'
 
 export default function TrolleyScreen() {
     let navigation = useNavigation()
@@ -286,7 +287,7 @@ export default function TrolleyScreen() {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : colors.w }]}>
             {/* <StatusBar
                 animated={true}
                 translucent={false}
@@ -313,13 +314,27 @@ export default function TrolleyScreen() {
                             return (
                                 <View onPress={() => handleSelected(item)} style={[styles.column_center, styles.mb_2, { backgroundColor: colors.White }]}>
                                     <View style={[styles.row_start_center, styles.p_2, { width: '100%', borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}>
-                                        <View>
+                                        {Platform.OS === 'ios' ?
+                                            <CheckBox
+                                                lineWidth={1.5}
+                                                onTintColor={colors.BlueJaja}
+                                                onCheckColor={colors.BlueJaja}
+                                                onAnimationType='fill'
+                                                boxType='square'
+                                                disabled={false}
+                                                value={item.isSelected ? true : false}
+                                                onValueChange={() => handleCheckbox("store", indexParent, "")}
+                                                style={styles.mr_3}
+                                            />
+                                            :
                                             <Checkbox
                                                 color={colors.BlueJaja}
                                                 status={item.isSelected ? 'checked' : 'unchecked'}
                                                 onPress={() => handleCheckbox("store", indexParent, "")}
+                                                style={styles.mr_2}
+
                                             />
-                                        </View>
+                                        }
                                         <Image style={{
                                             width: Hp('5%'),
                                             height: Hp('5%'),
@@ -347,14 +362,28 @@ export default function TrolleyScreen() {
                                                 <Swipeable ref={swipeRef[index]} onRef={(ref) => setSwipeRef(ref)} rightButtons={swipeComponent(item)} onRightActionRelease={() => {
                                                     setIndex(index)
                                                 }}>
-                                                    <View onPress={() => handleSelected(item)} style={[styles.row_center, styles.mb_2, styles.p_2]}>
+                                                    <View onPress={() => handleSelected(item)} style={[styles.row_center, styles.mb_2, styles.px_5]}>
+                                                        {Platform.OS === 'ios' ?
+                                                            <CheckBox
 
-                                                        <Checkbox
-                                                            color={colors.BlueJaja}
-                                                            status={item.isSelected ? 'checked' : 'unchecked'}
-                                                            onPress={() => handleCheckbox("cart", indexParent, index)}
+                                                                onAnimationType='fill'
+                                                                lineWidth={1.5}
+                                                                onTintColor={colors.BlueJaja}
+                                                                onCheckColor={colors.BlueJaja}
+                                                                boxType='square'
+                                                                disabled={false}
+                                                                value={item.isSelected ? true : false}
+                                                                onValueChange={() => handleCheckbox("cart", indexParent, index)}
+                                                                style={styles.mr}
+                                                            />
+                                                            :
+                                                            <Checkbox
+                                                                color={colors.BlueJaja}
+                                                                status={item.isSelected ? 'checked' : 'unchecked'}
+                                                                onPress={() => handleCheckbox("cart", indexParent, index)}
 
-                                                        />
+                                                            />
+                                                        }
                                                         <TouchableWithoutFeedback onPress={() => handleSelected(item)}>
                                                             <Image style={{
                                                                 width: Wp('24%'),
@@ -368,16 +397,18 @@ export default function TrolleyScreen() {
                                                                 source={{ uri: item.image }}
                                                             />
                                                         </TouchableWithoutFeedback>
-                                                        <View style={[styles.column_center, { alignItems: 'flex-start', height: Wp('21%'), width: '60%' }]}>
-                                                            <Text onPress={() => handleSelected(item)} numberOfLines={1} style={[styles.font_13, styles.T_semi_bold, { flex: 0, color: colors.BlueJaja }]}>{item.name}</Text>
-                                                            <Text numberOfLines={1} style={[styles.font_10, { flex: 0, color: colors.BlackGrayScale }]}>{item.variant ? "Variant " + item.variant : ""}</Text>
+                                                        <View style={[styles.column_between_center, { alignItems: 'flex-start', height: Wp('23%'), width: '60%' }]}>
+                                                            <View style={styles.column_center_start}>
+                                                                <Text onPress={() => handleSelected(item)} numberOfLines={1} style={[styles.font_13, styles.T_medium, { flex: 0, color: colors.BlueJaja }]}>{item.name}</Text>
+                                                                <Text numberOfLines={1} style={[styles.font_10, { flex: 0, color: colors.BlackGrayScale }]}>{item.variant ? "Variant " + item.variant : ""}</Text>
+                                                            </View>
                                                             {item.isDiscount ?
                                                                 <View style={styles.row_around_center}>
                                                                     <Text numberOfLines={1} style={[styles.priceBefore, { flex: 0, color: colors.BlackGrayScale, marginRight: '2%' }]}>{item.priceCurrencyFormat}</Text>
-                                                                    <Text numberOfLines={1} style={[styles.priceAfter, styles.font_13, styles.T_semi_bold, { color: colors.RedFlashsale }]}>{item.priceDiscountCurrencyFormat}</Text>
+                                                                    <Text numberOfLines={1} style={[styles.font_10, styles.T_semi_bold, { color: colors.RedFlashsale }]}>{item.priceCurrencyFormat}</Text>
                                                                 </View>
                                                                 :
-                                                                <Text numberOfLines={1} style={[styles.priceAfter, { flex: 0, color: colors.RedMaroon }]}>{item.priceCurrencyFormat}</Text>
+                                                                <Text numberOfLines={1} style={[styles.font_12, styles.mb_2, { flex: 0, color: colors.RedMaroon }]}>{item.priceCurrencyFormat}</Text>
                                                             }
                                                             <View style={[styles.row_between_center, { flex: 0 }]}>
                                                                 <View style={[styles.row_around_center, { flex: 1 }]}>

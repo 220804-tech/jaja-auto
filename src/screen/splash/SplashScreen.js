@@ -36,6 +36,7 @@ export default function SplashScreen() {
     useEffect(() => {
         try {
             AsyncStorage.getItem('token').then(auth => {
+                console.log("🚀 ~ file: SplashScreen.js ~ line 39 ~ AsyncStorage.getItem ~ auth", auth)
                 getItem(auth)
                 getData()
                 getFlashsale()
@@ -114,7 +115,7 @@ export default function SplashScreen() {
 
             var requestOptions = {
                 method: 'GET',
-                headers: token ? myHeaders : "",
+                headers: myHeaders,
                 redirect: 'follow'
             };
             let hasil = null;
@@ -145,7 +146,7 @@ export default function SplashScreen() {
                     }
                 })
                 .catch(error => {
-                    Utils.handleError(error + '98', 'Error with status code : 19021')
+                    Utils.handleError(JSON.stringify(error), 'Error with status code : 19021')
                     handleError(error)
                 })
             setTimeout(() => {
@@ -329,7 +330,7 @@ export default function SplashScreen() {
         })
     }
     return (
-        <SafeAreaView style={[styles.container, {backgroundColor: colors.BlueJaja}]}>
+        <SafeAreaView style={[styles.container, { backgroundColor: colors.BlueJaja }]}>
             <StatusBar
                 translucent={false}
                 animated={true}

@@ -14,10 +14,18 @@ export function regexEmail(e) {
 }
 
 export function alertPopUp(text) {
-    if (Platform.OS === 'android') {
-        ToastAndroid.show(text, ToastAndroid.LONG, ToastAndroid.CENTER)
-    } else {
-        AlertIOS.alert(text);
+    try {
+        if (Platform.OS === 'android') {
+            ToastAndroid.show(text, ToastAndroid.LONG, ToastAndroid.CENTER)
+        } else {
+            // AlertIOS.alert(text);
+            Alert.alert(
+                text,
+                // "My Alert Msg"
+            );
+        }
+    } catch (error) {
+
     }
 }
 
@@ -52,11 +60,11 @@ export async function CheckSignal() {
 export function handleErrorResponse(error, errorCode) {
     if (error && Object.keys(error).length && error.status.code !== 200 && error.status.code !== 204) {
         if (error.status.message) {
-            Utils.alertPopUp(JSON.stringify(error.status.message))
+            Utils.alertPopUp(String(error.status.message))
         } else {
             Alert.alert(
                 errorCode,
-                JSON.stringify(error.status.message) + " => " + JSON.stringify(error.status.code),
+                String(error.status.message) + " => " + String(error.status.code),
                 [
                     {
                         text: "TUTUP",
@@ -87,19 +95,24 @@ export function handleError(error, name) {
     if (String(error).slice(11, String(error).length) === "Network request failed") {
         Utils.alertPopUp("Tidak dapat terhubung, periksa kembali koneksi internet anda!")
     } else {
-        Alert.alert(
-            JSON.stringify(name),
-            `${'Error: ' + JSON.stringify(error)} `,
-            [
-                {
-                    text: "TUTUP",
-                    onPress: () => console.log("Cancel Pressed"),
-                    style: "cancel"
-                }
-            ],
-            { cancelable: false }
-        );
+        if (Platform.OS === 'android') {
+            Alert.alert(
+                JSON.stringify(name),
+                `${'Error: ' + JSON.stringify(error)} `,
+                [
+                    {
+                        text: "TUTUP",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                    }
+                ],
+                { cancelable: false }
+            );
+        } else {
+
+        }
     }
+
 }
 
 

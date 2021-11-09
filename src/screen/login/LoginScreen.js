@@ -9,6 +9,7 @@ import { useNavigation } from '@react-navigation/native'
 import { useDispatch } from 'react-redux'
 import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
 import database from '@react-native-firebase/database';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function LoginScreen(props) {
     let navigation = useNavigation()
@@ -102,8 +103,9 @@ export default function LoginScreen(props) {
                 .then(response => response.json())
                 .then(result => {
                     if (result.status.code === 200) {
-                        EncryptedStorage.setItem("token", JSON.stringify(result.data))
+                        AsyncStorage.setItem('token', JSON.stringify(result.data))
                         handleUser(result.data)
+                        EncryptedStorage.setItem("token", JSON.stringify(result.data))
                     } else if (result.status.code === 400 || result.status.code === 404) {
                         if (result.status.message === "account has not been activated") {
                             Utils.alertPopUp("Akun anda belum diverifikasi")
@@ -129,6 +131,7 @@ export default function LoginScreen(props) {
     }
 
     const handleUser = (data) => {
+
         var myHeaders = new Headers();
         myHeaders.append("Authorization", data);
         myHeaders.append("Cookie", "ci_session=pjrml5k3rvvcg54esomu3vakagc10iu5");
@@ -191,7 +194,7 @@ export default function LoginScreen(props) {
             })
             .catch(error => Utils.alertPopUp(JSON.stringify(error)));
     }
-    
+
     const getOrders = (auth) => {
         if (auth) {
             ServiceOrder.getUnpaid(auth).then(resUnpaid => {
@@ -316,6 +319,7 @@ export default function LoginScreen(props) {
             .then(response => response.json())
             .then(result => {
                 if (result.status.code === 200) {
+                    AsyncStorage.setItem('token', JSON.stringify(result.data))
                     handleUser(result.data)
                 } else {
                     Alert.alert(

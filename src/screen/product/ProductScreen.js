@@ -14,9 +14,9 @@ import Share from 'react-native-share';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 import { useDispatch, useSelector } from "react-redux";
 import StarRating from 'react-native-star-rating';
-LogBox.ignoreAllLogs()
 import ImgToBase64 from 'react-native-image-base64';
-
+import { cleanSingle } from 'react-native-image-crop-picker';
+LogBox.ignoreAllLogs()
 
 export default function ProductScreen(props) {
     const navigation = useNavigation()
@@ -232,42 +232,64 @@ export default function ProductScreen(props) {
         }, 2000);
     }
 
-    const handleApiCart = (name) => {
-        var myHeaders = new Headers();
-        myHeaders.append("Authorization", reduxAuth);
-        myHeaders.append("Content-Type", "application/json");
-        var raw = JSON.stringify({
-            "productId": idProduct,
-            "flashSaleId": flashsale ? flashsaleData.id_flashsale : "",
-            "lelangId": "",
-            "variantId": variasiPressed,
-            "qty": qty
-        });
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
-        };
-        fetch("https://jaja.id/backend/cart", requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                if (result.status.code === 200) {
-                    Utils.alertPopUp('Produk berhasil ditambahkan!')
-                    if (name === "buyNow") {
-                        handleTrolley()
-                    } else {
-                        handleGetCart()
-                    }
-                } else if (result.status.code === 400 && result.status.message == 'quantity cannot more than stock') {
-                    Utils.alertPopUp("Stok produk tidak tersedia")
+    const handleApiCart = async (name) => {
+        try {
+            var credentials = { "productId": idProduct, "flashSaleId": flashsale ? flashsaleData.id_flashsale : "", "lelangId": "", "variantId": variasiPressed, "qty": qty };
+            let result = await ServiceProduct.addCart(reduxAuth, credentials)
+            console.log("🚀 ~ file: ProductScreen.js ~ line 238 ~ handleApiCart ~ result", result)
+            if (result && result.status.code === 200) {
+                Utils.alertPopUp('Produk berhasil ditambahkan!')
+
+                if (name === "buyNow") {
+                    console.log('masuk sini');
+                    handleTrolley()
                 } else {
-                    Utils.handleErrorResponse(result, 'Error with status code : 12023')
+                    console.log('keluar');
+                    handleGetCart()
                 }
-            })
-            .catch(error => {
-                Utils.handleError(JSON.stringify(error), 'Error with status code : 12024')
-            });
+            } else if (result.status.code === 400 && result.status.message === 'quantity cannot more than stock') {
+                Utils.alertPopUp("Stok produk tidak tersedia")
+            } else {
+                Utils.handleErrorResponse(result, 'Error with status code : 12023')
+            }
+        } catch (error) {
+
+        }
+        // var myHeaders = new Headers();
+        // myHeaders.append("Authorization", reduxAuth);
+        // myHeaders.append("Content-Type", "application/json");
+        // var credentials = qs.stringify({
+        //     "productId": idProduct,
+        //     "flashSaleId": flashsale ? flashsaleData.id_flashsale : "",
+        //     "lelangId": "",
+        //     "variantId": variasiPressed,
+        //     "qty": qty
+        // });
+        // var requestOptions = {
+        //     method: 'POST',
+        //     headers: myHeaders,
+        //     body: raw,
+        //     redirect: 'follow'
+        // };
+        // fetch("https://jaja.id/backend/cart", requestOptions)
+        //     .then(response => response.json())
+        //     .then(result => {
+        //         if (result.status.code === 200) {
+        //             Utils.alertPopUp('Produk berhasil ditambahkan!')
+        //             if (name === "buyNow") {
+        //                 handleTrolley()
+        //             } else {
+        //                 handleGetCart()
+        //             }
+        //         } else if (result.status.code === 400 && result.status.message === 'quantity cannot more than stock') {
+        //             Utils.alertPopUp("Stok produk tidak tersedia")
+        //         } else {
+        //             Utils.handleErrorResponse(result, 'Error with status code : 12023')
+        //         }
+        //     })
+        //     .catch(error => {
+        //         Utils.handleError(JSON.stringify(error), 'Error with status code : 12024')
+        //     });
     }
 
     const handleGetCart = () => {
@@ -919,7 +941,7 @@ export default function ProductScreen(props) {
 
 
     return (
-        <SafeAreaView style={[styles.container, {backgroundColor: Platform.OS === 'ios'?colors.BlueJaja: colors.White}]}>
+        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : colors.White }]}>
             {loading ? <Loading /> : null}
             <StatusBar translucent={true} backgroundColor="transparent" barStyle="light-content" />
             <ReactNativeParallaxHeader

@@ -289,7 +289,7 @@ export default function SearchScreen() {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : colors.White }]}>
             <AppbarSecond autofocus={true} handleSearch={handleSearch} title='Cari hobimu disini..' handleSubmit={handleFetch} />
             <View style={[styles.column, { flex: 1, backgroundColor: colors.White }, styles.p_3]}>
                 <ScrollView showsVerticalScrollIndicator={false}>
@@ -343,7 +343,7 @@ export default function SearchScreen() {
                                         renderItem={({ item }) => {
                                             return (
                                                 <TouchableOpacity onPress={() => handleSelectedToko(item)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', paddingVertical: '2%', marginBottom: '2%', backgroundColor: colors.White, borderBottomWidth: 0.5, borderColor: colors.Silver }}>
-                                                    <Image style={[styles.mr_2, { height: Wp('8%'), width: Wp('8%'), borderRadius: 100 }]} source={{ uri: item.image }} resizeMethod='resize' />
+                                                    <Image style={[styles.mr_2, { height: Wp('8%'), width: Wp('8%'), borderRadius: 100, resizeMode: 'contain' }]} source={{ uri: item.image }} />
                                                     <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlackGrey }]}>{item.name}</Text>
                                                 </TouchableOpacity>
                                             )
