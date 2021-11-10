@@ -1,6 +1,7 @@
 import { Alert, ToastAndroid, Platform, AlertIOS } from 'react-native'
 import NetInfo from "@react-native-community/netinfo";
 import { Utils } from '../export';
+import Toast from 'react-native-simple-toast';
 
 export function regexEmail(e) {
     let val = e.nativeEvent.text;
@@ -18,11 +19,8 @@ export function alertPopUp(text) {
         if (Platform.OS === 'android') {
             ToastAndroid.show(text, ToastAndroid.LONG, ToastAndroid.CENTER)
         } else {
-            // AlertIOS.alert(text);
-            Alert.alert(
-                text,
-                // "My Alert Msg"
-            );
+            Toast.show(text);
+
         }
     } catch (error) {
 
@@ -93,6 +91,7 @@ export function handleErrorResponse(error, errorCode) {
 
 export function handleError(error, name) {
     if (String(error).slice(11, String(error).length) === "Network request failed") {
+
         Utils.alertPopUp("Tidak dapat terhubung, periksa kembali koneksi internet anda!")
     } else {
         if (Platform.OS === 'android') {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, SafeAreaView, Dimensions, ToastAndroid } from 'react-native'
+import { View, Text, SafeAreaView, Dimensions, ToastAndroid, StatusBar } from 'react-native'
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import Unpaid from '../../components/Orders/OrdersUnpaid'
 import Process from '../../components/Orders/OrdersProcess'
@@ -136,7 +136,12 @@ export default function OrderScreen() {
             }
         }
     }, [])
-
+    useEffect(() => {
+        if (Platform.OS == 'ios') {
+            StatusBar.setBarStyle('light-content', true);	//<<--- add this
+            StatusBar.setBackgroundColor(colors.BlueJaja, true)
+        }
+    }, [reduxUser])
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : colors.White }]}>
             <Appbar title="Pesanan" trolley={true} notif={true} />

@@ -53,7 +53,6 @@ export default function OrdersUnpaid() {
         dispatch({ type: 'SET_INVOICE', payload: item.orderId })
         dispatch({ type: 'SET_ORDER_STATUS', payload: 'Menunggu Pembayaran' })
         navigation.navigate('OrderDetails', { data: item.orderId, status: 'Menunggu Pembayaran' })
-
     }
 
     return (

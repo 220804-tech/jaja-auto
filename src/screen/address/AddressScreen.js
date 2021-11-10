@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, createRef, useRef } from 'react'
-import { SafeAreaView, Text, View, TouchableOpacity, ScrollView, StyleSheet, FlatList, Image, RefreshControl, Alert, ToastAndroid, TouchableHighlight, TouchableWithoutFeedback, StatusBar } from "react-native";
+import { SafeAreaView, Text, View, TouchableOpacity, ScrollView, StyleSheet, FlatList, Image, RefreshControl, Alert, ToastAndroid, TouchableHighlight, TouchableWithoutFeedback, StatusBar, Platform } from "react-native";
 import { Paragraph, Switch, Appbar, Button, TouchableRipple } from "react-native-paper";
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { colors, styles as style, ServiceUser, ServiceCheckout, Loading, Hp } from '../../export'
@@ -236,12 +236,12 @@ export default function index(props) {
                                 Pilih Alamat
                             </Button> :
                             <View style={[style.row_end_center, { width: '40%' }]}>
-                                <Text adjustsFontSizeToFit numberOfLines={1} style={[style.font_12, { fontFamily: 'Poppins-SemiBold', color: item.is_primary ? colors.BlueJaja : colors.Silver }]}>Alamat utama</Text>
+                                <Text adjustsFontSizeToFit numberOfLines={1} style={[style.font_12, { fontFamily: 'Poppins-Medium', color: item.is_primary ? colors.BlueJaja : colors.Silver, marginRight: Platform.OS === 'ios' ? '3%' : '0%' }]}>Alamat utama</Text>
                                 {reduxUser && reduxUser.length > 1 ?
                                     <Switch
                                         trackColor={{ false: "#767577", true: "#99e6ff" }}
                                         thumbColor={item.is_primary ? colors.BlueJaja : "#f4f3f4"}
-                                        ios_backgroundColor="#3e3e3e"
+                                        ios_backgroundColor="#ffff"
                                         onValueChange={() => toggleSwitch(index)}
                                         value={item.is_primary} />
                                     : null
@@ -274,7 +274,7 @@ export default function index(props) {
             <StatusBar translucent={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
 
             {loading ? <Loading /> : null}
-            <Appbar.Header style={[style.appBar, { height: Hp('7%') }]}>
+            <Appbar.Header style={[style.appBar, { height: Platform.OS === 'ios' ? Hp('6%') : Hp('7%'), elevation: 0 }]}>
                 <View style={style.row_start_center}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Image style={style.appBarButton} source={require('../../assets/icons/arrow.png')} />

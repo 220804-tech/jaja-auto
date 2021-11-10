@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Text, TextInput, TouchableOpacity, View, StatusBar } from 'react-native';
+import { Image, Text, TextInput, TouchableOpacity, View, StatusBar, Platform } from 'react-native';
 import { colors, Hp, styles, useNavigation, ServiceCart } from '../../export';
 import { useSelector, useDispatch } from 'react-redux'
 
@@ -29,10 +29,10 @@ export default function AppbarSecond(props) {
                 <TouchableOpacity style={[styles.row_start_center, { height: Hp('5%'), marginTop: '-5%' }]} onPress={() => navigation.goBack()}>
                     <Image style={[styles.appBarButton, { tintColor: colors.White }]} source={require('../../assets/icons/arrow.png')} />
                 </TouchableOpacity>
-                <View style={[styles.searchBar, { backgroundColor: colors.BlueJaja, paddingHorizontal: '0%', height: Hp('5%') }]}>
+                <View style={[styles.searchBar, { backgroundColor: colors.BlueJaja, paddingHorizontal: '0%', height: Platform.OS === 'ios' ? Hp('4.7%') : Hp('5%') }]}>
                     <View style={[styles.row, { width: '85%', marginRight: '1%', backgroundColor: colors.White, height: '100%', alignItems: 'center', borderRadius: 10, paddingHorizontal: '3%' }]}>
                         <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
-                        <TextInput autoFocus={props.autofocus ? props.autofocus : false} keyboardType="default" returnKeyType="search" adjustsFontSizeToFit style={[styles.font_12, { marginBottom: '-1%', width: '90%' }]} placeholder={props.title} onChangeText={text => {
+                        <TextInput autoFocus={props.autofocus ? props.autofocus : false} keyboardType="default" returnKeyType="search" adjustsFontSizeToFit style={[styles.font_12, { marginBottom: Platform.OS === 'ios' ? '0%' : '-1%', width: '90%' }]} placeholder={props.title} onChangeText={text => {
                             if (props.autofocus) {
                                 props.handleSearch(text)
                             }

@@ -71,8 +71,8 @@ export default function OrdersFailed() {
                                             <Text numberOfLines={1} style={[styles.font_12]}>{item.store.name}</Text>
                                         </View>
                                         : null}
-                                    <View style={[styles.row_end_center, styles.pr_2, { width: '40%', }]}>
-                                        <Text style={[styles.font_11, styles.T_medium, { color: colors.RedNotif }]}>{String('Dibatalkan  ' + item.cancelBy).toUpperCase()}</Text>
+                                    <View style={[styles.row_end_center, styles.pr_2, { width: '45%', }]}>
+                                        <Text style={[styles.font_9, styles.T_medium, { color: colors.RedNotif }]}>{String('Dibatalkan  ' + item.cancelBy).toUpperCase()}</Text>
                                     </View>
                                 </View>
 

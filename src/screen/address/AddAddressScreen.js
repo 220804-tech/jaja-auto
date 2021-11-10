@@ -446,7 +446,7 @@ export default function AddAddressScreen(props) {
         );
     }
     return (
-        <SafeAreaView style={style.container}>
+        <SafeAreaView style={[style.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
             {loading ? <Loading /> : null}
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -455,23 +455,25 @@ export default function AddAddressScreen(props) {
                 {status === "edit" ?
 
                     <ScrollView stickyHeaderIndices={[0]}>
-                        <View style={{ flexDirection: 'row' }}>
-                        </View>
-                        <View style={[style.appBar, { flex: 2, flexDirection: 'row', backgroundColor: colors.BlueJaja, width: '100%', paddingBottom: '3%' }]}>
-                            <View style={[style.row_start_center, style.pb, { flex: 2, width: 100 }]}>
-                                <TouchableOpacity onPress={() => navigation.goBack()}>
-                                    <Image style={style.appBarButton} source={require('../../assets/icons/arrow.png')} />
-                                </TouchableOpacity>
-                                <Text style={style.appBarText}>{props.route.params && props.route.params.edit ? " Ubah Alamat" : " Tambah Alamat"}</Text>
+                        <>
+                            <View style={{ flexDirection: 'row' }}>
                             </View>
-                            {kcValue ?
-                                <TouchableRipple background={colors.BlueJaja} onPress={handleSave} rippleColor={colors.White} style={[style.row_center, style.px_2, style.py_2, style.mt_1, { flex: 1, backgroundColor: colors.YellowJaja, borderRadius: 7, width: Wp('20%') }]}>
+                            <View style={[style.appBar, { flex: 2, flexDirection: 'row', backgroundColor: colors.BlueJaja, width: '100%', paddingBottom: '3%' }]}>
+                                <View style={[style.row_start_center, style.pb, { flex: 2, width: 100 }]}>
+                                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                                        <Image style={style.appBarButton} source={require('../../assets/icons/arrow.png')} />
+                                    </TouchableOpacity>
+                                    <Text style={style.appBarText}>{props.route.params && props.route.params.edit ? " Ubah Alamat" : " Tambah Alamat"}</Text>
+                                </View>
+                                {kcValue ?
+                                    <TouchableRipple background={colors.BlueJaja} onPress={handleSave} rippleColor={colors.White} style={[style.row_center, style.px_2, style.py_2, style.mt_1, { flex: 1, backgroundColor: colors.YellowJaja, borderRadius: 7, width: Wp('20%') }]}>
 
-                                    <Text style={[style.font_12, style.T_semi_bold, { color: colors.White }]}>Simpan</Text>
-                                    {/* <Button mode="contained" color={colors.YellowJaja} labelStyle={[style.font_12, style.T_semi_bold, { color: colors.White }]} style={{}} onPress={handleSave}>Simpan</Button> */}
-                                </TouchableRipple>
-                                : null}
-                        </View>
+                                        <Text style={[style.font_12, style.T_semi_bold, { color: colors.White }]}>Simpan</Text>
+                                        {/* <Button mode="contained" color={colors.YellowJaja} labelStyle={[style.font_12, style.T_semi_bold, { color: colors.White }]} style={{}} onPress={handleSave}>Simpan</Button> */}
+                                    </TouchableRipple>
+                                    : null}
+                            </View>
+                        </>
 
                         {/* <Appbar back={true} title={props.route.params && props.route.params.edit ? "Ubah Alamat" : "Tambah Alamat"} /> */}
                         <View style={[style.column_start_center, style.p_4, { backgroundColor: colors.White }]}>

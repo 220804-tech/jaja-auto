@@ -138,20 +138,21 @@ export default function OrderDetailsScreen() {
     useEffect(() => {
         if (details && Object.keys(details).length) {
             setLoading(false)
-            dispatch({ type: 'SET_INVOICE', payload: details.items[0].invoice })
             let status = details.status;
-            console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 143 ~ useEffect ~ status", status)
             dispatch({ type: 'SET_ORDER_STATUS', payload: status === 'notPaid' ? "Menunggu Pembayaran" : status === 'waitConfirm' ? 'Menunggu Konfirmasi' : status === 'prepared' ? 'Sedang Disiapkan' : status === 'canceled' ? 'Pesanan Dibatalkan' : status === 'done' ? 'Pesanan Selesai' : status === 'sent' ? 'Pengiriman' : null })
-            if (status == 'notPaid') {
+            if (status === 'notPaid') {
+                dispatch({ type: 'SET_INVOICE', payload: details.orderId })
                 ServiceCheckout.getListPayment().then(res => {
                     if (res) {
                         dispatch({ type: 'SET_LIST_PAYMENT', payload: details })
                     }
                 })
-            }
-            if (status === 'notPaid') {
                 getPayment(details.orderId);
+            } else {
+                dispatch({ type: 'SET_INVOICE', payload: details.items[0].invoice })
+                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 153 ~ useEffect ~ details.orderId ", details.orderId)
             }
+
         }
     }, [details, count])
 
@@ -245,7 +246,7 @@ export default function OrderDetailsScreen() {
     }
 
 
-    const gotoPaymentDetailSub = (item) => {
+    const gotoPaymentdub = (item) => {
         // this.setState({modalVisible:false});
         // const { navigation} = this.props;
         // const {id_order,paymentChooseTemp,config} =this.state;
@@ -297,11 +298,11 @@ export default function OrderDetailsScreen() {
         var payment_type = dataPayment.payment_type;
         var payment_sub = dataPayment.payment_sub;
 
-        var transaction_details = {
+        var transaction_d = {
             gross_amount: totalPembayaran,
             order_id: orderPaymentRecent.payment_id
         }
-        var customer_details = {
+        var customer_d = {
             email: reduxUser.user.email,
             first_name: reduxUser.user.name,
             last_name: '',
@@ -321,8 +322,8 @@ export default function OrderDetailsScreen() {
         }
 
         var paramPay = {
-            transaction_details: transaction_details,
-            customer_details: customer_details,
+            transaction_d: transaction_d,
+            customer_d: customer_d,
             enabled_payments,
             credit_card
         }
@@ -404,11 +405,11 @@ export default function OrderDetailsScreen() {
         var payment_type = dataPayment.payment_type;
         var payment_sub = dataPayment.payment_sub;
 
-        var transaction_details = {
+        var transaction_d = {
             gross_amount: totalPembayaran,
             order_id: orderPaymentRecent.payment_id
         }
-        var customer_details = {
+        var customer_d = {
             email: reduxUser.user.email,
             first_name: reduxUser.user.name,
             last_name: '',
@@ -428,17 +429,17 @@ export default function OrderDetailsScreen() {
 
             var paramPay = {
                 payment_type: dataPayment.payment_type,
-                transaction_details: transaction_details,
+                transaction_d: transaction_d,
                 gopay,
-                customer_details: customer_details,
+                customer_d: customer_d,
 
             }
 
         } else {
             var paramPay = {
                 payment_type: dataPayment.payment_type,
-                transaction_details: transaction_details,
-                customer_details: customer_details,
+                transaction_d: transaction_d,
+                customer_d: customer_d,
 
             }
 
@@ -616,13 +617,11 @@ export default function OrderDetailsScreen() {
         fetch(`https://jaja.id/backend/order/${reduxOrderInvoice}`, requestOptions)
             .then(response => response.text())
             .then(res => {
-                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 618 ~ getItem ~ res", res)
                 isError = false
                 try {
                     let result = JSON.parse(res)
                     if (result.status.code === 200 || result.status.code === 204) {
                         setDetails(result.data)
-                        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 625 ~ getItem ~ result.data", result.data)
                         setcount(count + 1)
                     }
                     else {
@@ -891,7 +890,7 @@ export default function OrderDetailsScreen() {
         // setcount(count + 1)
     }
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
             <Appbar title="Detail Pesanan" back={true} />
             {loading ? <Loading /> : null}
             <View style={[styles.container, { backgroundColor: colors.White }]}>
@@ -1089,7 +1088,10 @@ export default function OrderDetailsScreen() {
 
                                 {/* <Text style={[styles.font_12, styles.T_medium, { marginBottom: '2%' }]}>Fee</Text> */}
                                 <Text style={[styles.font_12, styles.T_medium, { marginBottom: '2%' }]}>Total pembayaran</Text>
-
+                                {reduxOrderStatus === 'Pesanan Dibatalkan' ?
+                                    <Text style={[styles.font_11, styles.T_italic, { marginBottom: '2%', color: colors.RedMaroon }]}>*Dibatalkan oleh {details.cancelBy}{details.cancelReason ? ' - ' + details.cancelReason : null}</Text>
+                                    : null
+                                }
 
                             </View>
 

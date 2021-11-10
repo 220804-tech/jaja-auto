@@ -57,7 +57,7 @@ export default function ProductScreen(props) {
         // setLoading(true);
         if (slug) {
             getItem(props.route.params.slug)
-            ToastAndroid.show("Refreshing..", ToastAndroid.LONG, ToastAndroid.CENTER)
+            Utils.alertPopUp('Refreshing..')
         }
     }, []);
 
@@ -239,7 +239,6 @@ export default function ProductScreen(props) {
             console.log("🚀 ~ file: ProductScreen.js ~ line 238 ~ handleApiCart ~ result", result)
             if (result && result.status.code === 200) {
                 Utils.alertPopUp('Produk berhasil ditambahkan!')
-
                 if (name === "buyNow") {
                     console.log('masuk sini');
                     handleTrolley()
@@ -389,9 +388,9 @@ export default function ProductScreen(props) {
 
     const renderNavBar = () => (
         <View style={style.navContainer}>
-            <View style={style.statusBar} />
+            {/* <View style={style.statusBar} /> */}
 
-            <View style={style.navBar}>
+            <View style={[style.navBar, styles.pt_3]}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, padding: '3%', backgroundColor: colors.BlueJaja, justifyContent: 'center', alignItems: 'center', borderRadius: 100 }}>
                     <Image source={require('../../assets/icons/arrow.png')} style={{ width: 25, height: 25, marginRight: '3%', tintColor: colors.White }} />
                 </TouchableOpacity>
@@ -410,23 +409,47 @@ export default function ProductScreen(props) {
         return (
             <>
                 {reduxSearch.productDetail.image ?
-                    <Swiper
-                        horizontal={true}
-                        dotColor={colors.White}
-                        activeDotColor={colors.BlueJaja}
-                        style={{ backgroundColor: colors.White }}>
-                        {
-                            reduxSearch.productDetail.image.map((item, key) => {
+                    // <View style={{ width: Wp('100%'), height: Hp('45%'), backgroundColor: colors.YellowJaja }}>
+
+                    //     <Swiper
+                    //         horizontal={true}
+                    //         dotColor={colors.White}
+                    //         activeDotColor={colors.BlueJaja}
+                    //         style={{ backgroundColor: colors.WhiteBack }}
+                    //     >
+                    //         {
+                    //             reduxSearch.productDetail.image.map((item, key) => {
+                    //                 return (
+                    //                     <View key={String(key)} style={{ width: '90%', height: '90%', backgroundColor: colors.WhiteBack }}>
+                    //                         <Image style={style.swiperProduct}
+                    //                             source={{ uri: item }}
+                    //                         />
+                    //                     </View>
+                    //                 );
+                    //             })
+                    //         }
+                    //     </Swiper>
+                    // </View>
+                    <View style={{ width: Wp('100%'), height: Hp('45%'), backgroundColor: colors.White, marginTop: '-11%' }}>
+                        <Swiper
+                            autoplayTimeout={4}
+                            horizontal={true}
+                            loop={false}
+                            dotColor={colors.White}
+                            activeDotColor={colors.BlueJaja}
+                            paginationStyle={{ bottom: 10 }}
+                            autoplay={true}
+                            loop={true}
+                        >
+                            {reduxSearch.productDetail.image.map((item, key) => {
                                 return (
-                                    <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%') }}>
-                                        <Image style={style.swiperProduct}
-                                            source={{ uri: item }}
-                                        />
-                                    </View>
+                                    <Image style={style.swiperProduct}
+                                        source={{ uri: item }}
+                                    />
                                 );
-                            })
-                        }
-                    </Swiper>
+                            })}
+                        </Swiper>
+                    </View>
                     :
                     <View style={{ width: Wp('100%'), height: Wp('100%'), backgroundColor: colors.White }}>
                         <Image style={style.swiperProduct}
@@ -943,20 +966,22 @@ export default function ProductScreen(props) {
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : colors.White }]}>
             {loading ? <Loading /> : null}
-            <StatusBar translucent={true} backgroundColor="transparent" barStyle="light-content" />
+            <StatusBar translucent={false} backgroundColor="transparent" barStyle="light-content" />
             <ReactNativeParallaxHeader
-                headerMinHeight={Hp('10%')}
-                headerMaxHeight={Wp('100%')}
+                headerMinHeight={Platform.OS === 'ios' ? Hp('4%') : Hp('7%')}
+                headerMaxHeight={Platform.OS === 'ios' ? Hp('45%') : Hp('40%')}
                 extraScrollHeight={20}
-                statusBarColor='transparent'
+                // statusBarColor='transparent'
                 navbarColor={colors.BlueJaja}
-
-                titleStyle={{ height: Wp('100%') }}
+                titleStyle={style.titleStyle}
                 title={title()}
                 backgroundImageScale={1.2}
                 renderNavBar={renderNavBar}
                 renderContent={renderContent}
-                headerFixedBackgroundColor={colors.BlueJaja}
+                containerStyle={[styles.container, { backgroundColor: colors.BlueJaja }]}
+                contentContainerStyle={style.contentContainer}
+                innerContainerStyle={style.container}
+                headerFixedBackgroundColor='transparent'
                 alwaysShowTitle={false}
                 scrollViewProps={{
                     nestedScrollEnabled: true,
@@ -998,25 +1023,55 @@ export default function ProductScreen(props) {
 }
 
 const style = StyleSheet.create({
+    // navContainer: {
+    //     height: Hp('9%'),
+    //     justifyContent: 'flex-end',
+    //     marginHorizontal: 10,
+    //     backgroundColor: 'transparent',
+    // },
+    // statusBar: {
+    //     height: STATUS_BAR_HEIGHT,
+    //     backgroundColor: 'transparent',
+    // },
+    // navBar: {
+    //     height: '100%',
+    //     justifyContent: 'space-between',
+    //     alignItems: 'center',
+    //     paddingTop: '5%',
+    //     flexDirection: 'row',
+    //     backgroundColor: 'transparent',
+    //     paddingHorizontal: '1%'
+    // },
+
     navContainer: {
-        height: Hp('10%'),
+        height: Platform.OS === 'ios' ? Hp('5.5%') : Hp('7%'),
         justifyContent: 'flex-end',
-        marginHorizontal: 10,
+        alignItems: 'center',
+        paddingHorizontal: '4%',
+        paddingBottom: '2.5%',
+        // paddingTop: '3.5%',
         backgroundColor: 'transparent',
     },
-    statusBar: {
-        height: STATUS_BAR_HEIGHT,
-        backgroundColor: 'transparent',
-    },
+    // statusBar: {
+    //     height: STATUS_BAR_HEIGHT,
+    //     backgroundColor: 'transparent',
+    // },
     navBar: {
-        height: '100%',
+        height: NAV_BAR_HEIGHT,
+        width: '100%',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingTop: '5%',
         flexDirection: 'row',
         backgroundColor: 'transparent',
-        paddingHorizontal: '1%'
+        // paddingHorizontal: '1%'
     },
+    titleStyle: {
+        color: 'white',
+        fontFamily: 'Poppins-SemiBold',
+        fontSize: 18,
+        backgroundColor: colors.BlueJaja
+    },
+
     swiperProduct: { width: '100%', height: '100%', resizeMode: 'contain' },
     searchBar: { flexDirection: 'row', backgroundColor: colors.White, borderRadius: 12, height: NAV_BAR_HEIGHT / 1.7, width: '70%', alignItems: 'center', paddingHorizontal: '4%' }
 });

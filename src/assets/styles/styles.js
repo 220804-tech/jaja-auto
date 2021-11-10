@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { Wp, Hp, colors, RFValue } from '../../export';
 
 export const styles = StyleSheet.create({
@@ -149,8 +149,8 @@ export const styles = StyleSheet.create({
     priceBefore: { fontSize: 12, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale, textDecorationLine: 'line-through', },
     priceAfter: { fontSize: 14, fontFamily: 'Poppins-Regular', color: colors.RedFlashsale },
 
-    appBar: { zIndex: 1000, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', backgroundColor: '#64B0C9', height: Hp('7%'), width: Wp('100%'), color: colors.siplahDefault, paddingHorizontal: '4%', paddingBottom: '4%' },
-    appBar2: { zIndex: 1000, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#64B0C9', height: Hp('7%'), width: Wp('100%'), color: colors.siplahDefault, paddingHorizontal: '4%' },
+    appBar: { zIndex: 1000, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', backgroundColor: '#64B0C9', height: Platform.OS === 'ios' ? Hp('5.5%') : Hp('7%'), width: Wp('100%'), color: colors.siplahDefault, paddingHorizontal: '4%', paddingBottom: '4%' },
+    appBar2: { zIndex: 1000, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#64B0C9', height: Platform.OS === 'ios' ? Hp('5.5%') : Hp('7%'), width: Wp('100%'), color: colors.siplahDefault, paddingHorizontal: '4%' },
 
     appBarText: { color: 'white', fontSize: 16, fontFamily: 'Poppins-SemiBold', },
     appBarButton: { tintColor: colors.White, height: 25, width: 25 },
@@ -185,7 +185,7 @@ export const styles = StyleSheet.create({
     },
     search: { flexDirection: 'row', paddingHorizontal: '3%', borderRadius: 5, flex: 1, marginHorizontal: '0.5%', marginVertical: '3%', backgroundColor: colors.WhiteSilver },
 
-    searchBar: { flex: 0, flexDirection: 'row', backgroundColor: colors.White, borderRadius: 11, height: '77%', width: '90%', alignItems: 'center', paddingHorizontal: '4%' },
+    searchBar: { flex: 0, flexDirection: 'row', backgroundColor: colors.White, borderRadius: 11, height: Platform.OS === 'ios' ? '66%' : '77%', width: '90%', alignItems: 'center', paddingHorizontal: '4%' },
 
     FL_TouchAble: { borderBottomColor: colors.Silver, borderBottomWidth: 1, paddingVertical: '3%' },
     FL_TouchAbleItem: { fontSize: 14, fontFamily: 'Poppins-Medium', color: colors.BlackGrayScale },

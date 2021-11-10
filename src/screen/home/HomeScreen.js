@@ -436,7 +436,7 @@ export default function HomeScreen() {
             > */}
             <StatusBar translucent={false} backgroundColor={colors.BlueJaja} />
             <ReactNativeParallaxHeader
-                headerMinHeight={Hp('7%')}
+                headerMinHeight={Platform.OS === 'ios' ? Hp('5.5%') : Hp('7%')}
                 headerMaxHeight={Hp('30%')}
                 extraScrollHeight={20}
                 navbarColor={colors.BlueJaja}
@@ -536,7 +536,7 @@ const style = StyleSheet.create({
 
     },
     navContainer: {
-        height: Hp('7%'),
+        height: Platform.OS === 'ios' ? Hp('5.7%') : Hp('7%'),
         justifyContent: 'flex-end',
         alignItems: 'center',
         paddingHorizontal: '4%',
@@ -549,7 +549,7 @@ const style = StyleSheet.create({
         backgroundColor: 'transparent',
     },
     navBar: {
-        // height: NAV_BAR_HEIGHT,
+        height: NAV_BAR_HEIGHT,
         justifyContent: 'space-between',
         alignItems: 'center',
         flexDirection: 'row',
@@ -564,5 +564,5 @@ const style = StyleSheet.create({
     },
     touchIcon: { width: '14%', justifyContent: 'center', alignItems: 'center' },
     swiperBanner: { width: "100%", height: Hp('30%'), resizeMode: 'contain', backgroundColor: colors.BlueJaja },
-    searchBar: { flex: 0, width: '77%', flexDirection: 'row', backgroundColor: colors.White, borderRadius: 11, height: NAV_BAR_HEIGHT / (Platform.OS === 'android' ? 1.8 : 1.6), alignItems: 'center', paddingHorizontal: '4.5%', marginRight: '3%' }
+    searchBar: { flex: 0, width: '77%', flexDirection: 'row', backgroundColor: colors.White, borderRadius: 11, height: NAV_BAR_HEIGHT / (Platform.OS === 'android' ? 1.8 : 1.2), alignItems: 'center', paddingHorizontal: '4.5%', marginRight: '3%' }
 });
