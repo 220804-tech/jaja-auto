@@ -388,9 +388,9 @@ export default function ProductScreen(props) {
 
     const renderNavBar = () => (
         <View style={style.navContainer}>
-            {/* <View style={style.statusBar} /> */}
+            {Platform.OS === 'ios' ? null : <View style={style.statusBar} />}
 
-            <View style={[style.navBar, styles.pt_3]}>
+            <View style={[style.navBar, { paddingTop: Platform.OS === 'ios' ? '3%' : '5%' }]}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, padding: '3%', backgroundColor: colors.BlueJaja, justifyContent: 'center', alignItems: 'center', borderRadius: 100 }}>
                     <Image source={require('../../assets/icons/arrow.png')} style={{ width: 25, height: 25, marginRight: '3%', tintColor: colors.White }} />
                 </TouchableOpacity>
@@ -430,26 +430,46 @@ export default function ProductScreen(props) {
                     //         }
                     //     </Swiper>
                     // </View>
-                    <View style={{ width: Wp('100%'), height: Hp('45%'), backgroundColor: colors.White, marginTop: '-11%' }}>
+                    Platform.OS === 'ios' ?
+                        <View style={{ width: Wp('100%'), height: Hp('45%'), backgroundColor: colors.White, marginTop: '-11%' }}>
+                            <Swiper
+                                autoplayTimeout={4}
+                                horizontal={true}
+                                loop={false}
+                                dotColor={colors.White}
+                                activeDotColor={colors.BlueJaja}
+                                paginationStyle={{ bottom: 10 }}
+                                autoplay={true}
+                                loop={true}
+                            >
+                                {reduxSearch.productDetail.image.map((item, key) => {
+                                    return (
+                                        <Image style={style.swiperProduct}
+                                            source={{ uri: item }}
+                                        />
+                                    );
+                                })}
+                            </Swiper>
+                        </View>
+                        :
                         <Swiper
-                            autoplayTimeout={4}
                             horizontal={true}
-                            loop={false}
                             dotColor={colors.White}
                             activeDotColor={colors.BlueJaja}
-                            paginationStyle={{ bottom: 10 }}
-                            autoplay={true}
-                            loop={true}
+                            style={{ backgroundColor: colors.WhiteBack }}
                         >
-                            {reduxSearch.productDetail.image.map((item, key) => {
-                                return (
-                                    <Image style={style.swiperProduct}
-                                        source={{ uri: item }}
-                                    />
-                                );
-                            })}
+                            {
+                                reduxSearch.productDetail.image.map((item, key) => {
+                                    return (
+                                        <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%') }}>
+                                            <Image style={style.swiperProduct}
+                                                source={{ uri: item }}
+                                            />
+                                        </View>
+                                    );
+                                })
+                            }
                         </Swiper>
-                    </View>
                     :
                     <View style={{ width: Wp('100%'), height: Wp('100%'), backgroundColor: colors.White }}>
                         <Image style={style.swiperProduct}
@@ -739,7 +759,6 @@ export default function ProductScreen(props) {
                                 {reduxSearch.productDetail.description ?
                                     <>
                                         {/* <Text style={[styles.font_14, styles.T_light]}>{reduxSearch.productDetail.description.slice(0, deskripsiLenght)}</Text> */}
-
                                         <View style={[styles.column, { width: '100%' }]}>
                                             <Text numberOfLines={deskripsiLenght == 200 ? 10 : 25} style={[styles.font_14]}>{reduxSearch.productDetail.description.slice(0, deskripsiLenght)}</Text>
                                             {deskripsiLenght == 200 && reduxSearch.productDetail.description.length >= 200 ?
@@ -966,12 +985,12 @@ export default function ProductScreen(props) {
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : colors.White }]}>
             {loading ? <Loading /> : null}
-            <StatusBar translucent={false} backgroundColor="transparent" barStyle="light-content" />
+            <StatusBar translucent={Platform.OS === 'ios' ? false : true} backgroundColor="transparent" barStyle="light-content" />
             <ReactNativeParallaxHeader
-                headerMinHeight={Platform.OS === 'ios' ? Hp('4%') : Hp('7%')}
-                headerMaxHeight={Platform.OS === 'ios' ? Hp('45%') : Hp('40%')}
+                headerMinHeight={Platform.OS === 'ios' ? Hp('4%') : Hp('9%')}
+                headerMaxHeight={Platform.OS === 'ios' ? Hp('45%') : Wp('100%')}
                 extraScrollHeight={20}
-                // statusBarColor='transparent'
+                statusBarColor='transparent'
                 navbarColor={colors.BlueJaja}
                 titleStyle={style.titleStyle}
                 title={title()}
@@ -981,7 +1000,7 @@ export default function ProductScreen(props) {
                 containerStyle={[styles.container, { backgroundColor: colors.BlueJaja }]}
                 contentContainerStyle={style.contentContainer}
                 innerContainerStyle={style.container}
-                headerFixedBackgroundColor='transparent'
+                headerFixedBackgroundColor={Platform.OS === 'ios' ? 'transparent' : colors.BlueJaja}
                 alwaysShowTitle={false}
                 scrollViewProps={{
                     nestedScrollEnabled: true,
@@ -1044,7 +1063,7 @@ const style = StyleSheet.create({
     // },
 
     navContainer: {
-        height: Platform.OS === 'ios' ? Hp('5.5%') : Hp('7%'),
+        height: Platform.OS === 'ios' ? Hp('5.5%') : Hp('10%'),
         justifyContent: 'flex-end',
         alignItems: 'center',
         paddingHorizontal: '4%',

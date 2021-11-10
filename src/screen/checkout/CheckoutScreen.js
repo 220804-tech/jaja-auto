@@ -507,6 +507,8 @@ export default function checkoutScreen() {
                                                 }
                                             })
                                         } else {
+                                            setLoad(false)
+
                                             Utils.handleErrorResponse(data, "Error with status code : 12048")
                                             return null
                                         }

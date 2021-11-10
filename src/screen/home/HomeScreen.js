@@ -537,12 +537,12 @@ const style = StyleSheet.create({
     },
     navContainer: {
         height: Platform.OS === 'ios' ? Hp('5.7%') : Hp('7%'),
-        justifyContent: 'flex-end',
+        justifyContent: Platform.OS === 'ios' ? 'flex-end' : 'center',
         alignItems: 'center',
         paddingHorizontal: '4%',
         paddingBottom: '2.5%',
-        // paddingTop: '3.5%',
-        backgroundColor: colors.BlueJaja,
+        paddingTop: '2.2%',
+        backgroundColor: 'transparent',
     },
     statusBar: {
         height: STATUS_BAR_HEIGHT,
@@ -556,6 +556,10 @@ const style = StyleSheet.create({
         backgroundColor: 'transparent',
         // paddingHorizontal: '1%'
     },
+
+
+
+
     titleStyle: {
         color: 'white',
         fontFamily: 'Poppins-SemiBold',
