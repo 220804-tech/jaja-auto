@@ -69,7 +69,7 @@ export const style = StyleSheet.create({
         height: 13,
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
-        tintColor: colors.BlackGrayScale,
+        tintColor: colors.RedFlashsale,
         marginRight: '3%',
     },
 });

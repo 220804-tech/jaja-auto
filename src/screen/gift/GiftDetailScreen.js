@@ -469,10 +469,10 @@ export default function GiftDetailScreen(props) {
                                         <Text style={[styles.font_14, styles.mb_3]}>Paket akan dikirim tanggal {String(dateSelected)}</Text>
                                     </View>
                                     :
-                                    <TouchableRipple rippleColor={colors.BlueJaja} style={[styles.row_center, styles.p_2, { borderWidth: 0.7, borderColor: colors.BlueJaja, borderRadius: 7 }]} onPress={() => setDatePickerVisibility(true)}>
+                                    <TouchableRipple rippleColor={colors.RedFlashsale} style={[styles.row_center, styles.p_2, { borderWidth: 0.7, borderColor: colors.RedFlashsale, borderRadius: 7 }]} onPress={() => setDatePickerVisibility(true)}>
                                         <View style={[styles.row_center, { width: '100%' }]}>
-                                            <Text style={[styles.font_13, { color: colors.BlueJaja, width: '90%', alignSelf: 'center', textAlign: 'center' }]}>Tentukan kapan barang akan dikirim</Text>
-                                            <Image style={[styles.icon_16, { tintColor: colors.BlueJaja }]} source={require('../../assets/icons/right-arrow.png')} />
+                                            <Text style={[styles.font_13, { color: colors.RedFlashsale, width: '90%', alignSelf: 'center', textAlign: 'center' }]}>Tentukan kapan barang akan dikirim</Text>
+                                            <Image style={[styles.icon_16, { tintColor: colors.RedFlashsale }]} source={require('../../assets/icons/right-arrow.png')} />
                                         </View>
                                     </TouchableRipple>
                                 }
@@ -734,9 +734,9 @@ export default function GiftDetailScreen(props) {
     const handleConfirmDate = (res) => {
         try {
             let date = res
-            date.setMonth(date.getMonth() + 1)
-            let month = date.getMonth() === 1 ? 'Januari' : date.getMonth() === 2 ? 'Februari' : date.getMonth() === 3 ? 'Maret' : date.getMonth() === 4 ? 'April' : date.getMonth() === 5 ? 'Mei' : date.getMonth() === 6 ? 'Juni' : date.getMonth() === 7 ? 'Juli' : date.getMonth() === 8 ? 'Agustus' : date.getMonth() === 9 ? 'September' : date.getMonth() === 10 ? 'Oktober' : date.getMonth() === 11 ? 'November' : 'Desember'
-            let result = String(date.getDate()) + ' ' + month + ' ' + String(date.getFullYear())
+            let monthUpdate = date.getMonth() + 1
+            let month = monthUpdate === 1 ? 'Januari' : monthUpdate === 2 ? 'Februari' : monthUpdate === 3 ? 'Maret' : monthUpdate === 4 ? 'April' : monthUpdate === 5 ? 'Mei' : monthUpdate === 6 ? 'Juni' : monthUpdate === 7 ? 'Juli' : monthUpdate === 8 ? 'Agustus' : monthUpdate === 9 ? 'September' : monthUpdate === 10 ? 'Oktober' : monthUpdate === 11 ? 'November' : 'Desember'
+            let result = String(date.getDate()) + ' ' + String(month) + ' ' + String(date.getFullYear())
             setdateSelected(result)
             setDatePickerVisibility(false)
         } catch (error) {
@@ -792,7 +792,7 @@ export default function GiftDetailScreen(props) {
                 <TouchableOpacity disabled={disableCart} onPress={() => handleAddCart("trolley")} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
                     <Image source={require('../../assets/icons/giftBox.png')} style={{ width: 23, height: 23, marginRight: '3%' }} />
                 </TouchableOpacity>
-                <Button disabled={disableCart} onPress={() => console.log('beli')} style={{ width: '50%', height: '100%', backgroundColor: disableCart ? colors.BlackGrey : flashsale ? colors.RedFlashsale : colors.BlueJaja }} contentStyle={{ width: '100%', height: '100%' }} color={disableCart ? colors.BlackGrayScale : flashsale ? colors.RedFlashsale : colors.BlueJaja} labelStyle={[styles.font_14, styles.T_semi_bold, { color: colors.White }]} mode="contained">
+                <Button disabled={disableCart} onPress={() => Utils.alertPopUp('Pesanan kamu berhasil dibuat!')} style={{ width: '50%', height: '100%', backgroundColor: disableCart ? colors.BlackGrey : flashsale ? colors.RedFlashsale : colors.BlueJaja }} contentStyle={{ width: '100%', height: '100%' }} color={disableCart ? colors.BlackGrayScale : flashsale ? colors.RedFlashsale : colors.BlueJaja} labelStyle={[styles.font_14, styles.T_semi_bold, { color: colors.White }]} mode="contained">
                     {giftDetails.stock == '0' ? 'Stok Habis' : 'Beli Sekarang'}
                 </Button>
             </View>

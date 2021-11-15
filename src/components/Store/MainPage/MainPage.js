@@ -190,11 +190,11 @@ export default function MainPage() {
                                                     <Text style={[styles.font_8, { color: colors.BlueJaja, fontFamily: 'Poppins-SemiBold', width: '100%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
                                                 </View>
                                                 <View style={[styles.column_center, { width: '22%' }]}>
-                                                    {item.isClaimed ?
-                                                        <TouchableOpacity onPress={() => handleVoucher(item, index)} style={{ width: '90%', height: '30%', backgroundColor: item.isClaimed ? colors.White : colors.BlueJaja, padding: '2%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.BlueJaja, borderRadius: 5 }}>
-                                                            <Text style={[styles.font_10, { color: item.isClaimed ? colors.BlueJaja : colors.White, fontFamily: 'Poppins-SemiBold' }]}>{item.isClaimed ? item.isSelected ? "TERPAKAI" : "PAKAI" : "KLAIM"}</Text>
-                                                        </TouchableOpacity>
-                                                        : null}
+                                                    {/* {item.isClaimed ? */}
+                                                    <TouchableOpacity onPress={() => handleVoucher(item, index)} style={{ width: '90%', height: '30%', backgroundColor: item.isClaimed ? colors.White : colors.BlueJaja, padding: '2%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.BlueJaja, borderRadius: 5 }}>
+                                                        <Text style={[styles.font_10, { color: item.isClaimed ? colors.BlueJaja : colors.White, fontFamily: 'Poppins-SemiBold' }]}>{item.isClaimed ? item.isSelected ? "TERPAKAI" : "PAKAI" : "KLAIM"}</Text>
+                                                    </TouchableOpacity>
+                                                    {/* : null} */}
                                                     <TouchableOpacity onPress={() => handleDescription(item)} style={{ position: 'absolute', bottom: 5 }}>
                                                         <Text style={[styles.font_12, { color: colors.BlueLink }]}>S&K</Text>
                                                     </TouchableOpacity>

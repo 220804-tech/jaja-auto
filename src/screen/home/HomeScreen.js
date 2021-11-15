@@ -227,7 +227,7 @@ export default function HomeScreen() {
                     <Category />
                     {reduxShowFlashsale ? <Flashsale /> : null}
                     <Trending />
-                    {/* <TouchableRipple onPress={() => navigation.navigate('Gift')} rippleColor={colors.White} style={[styles.row_center, styles.px, styles.py_3, { backgroundColor: colors.BlueJaja, borderRadius: 15, alignSelf: 'center', width: '95%' }]} >
+                    {/* <TouchableRipple onPress={() => navigation.navigate('Gift')} rippleColor={colors.White} style={[styles.row_center, styles.px, styles.py_3, styles.my_3, { backgroundColor: colors.RedFlashsale, borderRadius: 15, alignSelf: 'center', width: '95%', elevation: 2 }]} >
                         <View style={[styles.row_around_center, { width: '100%' }]}>
                             <Text style={[styles.font_11, styles.T_semi_bold, { color: colors.White, marginBottom: '-0.5%' }]}>Berikan hadiah untuk teman spesial kamu disini!</Text>
                             <Image source={require('../../assets/icons/heart.png')} style={[styles.icon_27, { marginTop: '-1%' }]} />

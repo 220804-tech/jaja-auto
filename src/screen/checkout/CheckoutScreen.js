@@ -946,35 +946,37 @@ export default function checkoutScreen() {
                                     renderItem={({ item, index }) => {
                                         console.log("🚀 ~ file: CheckoutScreen.js ~ line 961 ~ checkoutScreen ~ item", item.isValid)
 
-                                        return (
-                                            <View style={[styles.row_center, styles.mb_3]}>
-                                                <View style={[styles.row, { width: '100%', height: Wp('25%'), backgroundColor: colors.White, borderTopWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, borderColor: colors.Silver }]}>
-                                                    <View style={{ position: 'absolute', height: '100%', width: Wp('5%'), backgroundColor: colors.Silver, flexDirection: 'column', justifyContent: 'center' }}>
-                                                        <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                                        <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                                        <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                                        <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                                        <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                                        <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                                    </View>
-                                                    <View style={[styles.column_center, styles.p, { height: '100%', width: '30%', marginLeft: Wp('3%'), backgroundColor: colors.Silver }]}>
-                                                        <Text style={[styles.font_14, styles.mb_2, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White, alignSelf: 'center', textAlign: 'center' }]}>{item.category ? item.category === "ongkir" ? 'GRATIS BIAYA PENGIRIMAN' : String(item.category).toUpperCase() + " " + item.discountText : "DISKON " + item.discountText}</Text>
-                                                    </View>
-                                                    <View style={[styles.column_around_center, styles.px_2, { width: '44%' }]}>
-                                                        <Text numberOfLines={3} style={[styles.font_12, styles.mb_2, styles.T_semi_bold, { color: colors.Silver, width: '100%', marginBottom: '-2%' }]}>{item.name}</Text>
-                                                        <Text style={[styles.font_8, styles.T_semi_bold, { color: colors.Silver, width: '100%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
-                                                    </View>
-                                                    <View style={[styles.column_center, { width: '22%' }]}>
-                                                        <TouchableOpacity disabled={true} onPress={() => handleVoucher(item, index)} style={{ width: '90%', height: '30%', backgroundColor: item.isClaimed ? colors.White : colors.Silver, padding: '2%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.Silver, borderRadius: 5 }}>
-                                                            <Text style={[styles.font_10, styles.T_semi_bold, { marginBottom: '-1%', color: item.isClaimed ? colors.Silver : colors.White }]}>{item.isClaimed ? item.isSelected ? "TERPAKAI" : "PAKAI" : "KLAIM"}</Text>
-                                                        </TouchableOpacity>
-                                                        <TouchableOpacity onPress={() => handleDescription(item)} style={{ position: 'absolute', bottom: 5 }}>
-                                                            <Text style={[styles.font_12, { color: colors.BlueLink }]}>S&K</Text>
-                                                        </TouchableOpacity>
+                                        if (!item.isValid) {
+                                            return (
+                                                <View style={[styles.row_center, styles.mb_3]}>
+                                                    <View style={[styles.row, { width: '100%', height: Wp('25%'), backgroundColor: colors.White, borderTopWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, borderColor: colors.Silver }]}>
+                                                        <View style={{ position: 'absolute', height: '100%', width: Wp('5%'), backgroundColor: colors.Silver, flexDirection: 'column', justifyContent: 'center' }}>
+                                                            <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                            <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                            <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                            <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                            <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                            <View style={{ height: Wp('4%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                        </View>
+                                                        <View style={[styles.column_center, styles.p, { height: '100%', width: '30%', marginLeft: Wp('3%'), backgroundColor: colors.Silver }]}>
+                                                            <Text style={[styles.font_14, styles.mb_2, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White, alignSelf: 'center', textAlign: 'center' }]}>{item.category ? item.category === "ongkir" ? 'GRATIS BIAYA PENGIRIMAN' : String(item.category).toUpperCase() + " " + item.discountText : "DISKON " + item.discountText}</Text>
+                                                        </View>
+                                                        <View style={[styles.column_around_center, styles.px_2, { width: '44%' }]}>
+                                                            <Text numberOfLines={3} style={[styles.font_12, styles.mb_2, styles.T_semi_bold, { color: colors.Silver, width: '100%', marginBottom: '-2%' }]}>{item.name}</Text>
+                                                            <Text style={[styles.font_8, styles.T_semi_bold, { color: colors.Silver, width: '100%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
+                                                        </View>
+                                                        <View style={[styles.column_center, { width: '22%' }]}>
+                                                            <TouchableOpacity disabled={true} onPress={() => handleVoucher(item, index)} style={{ width: '90%', height: '30%', backgroundColor: item.isClaimed ? colors.White : colors.Silver, padding: '2%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.Silver, borderRadius: 5 }}>
+                                                                <Text style={[styles.font_10, styles.T_semi_bold, { marginBottom: '-1%', color: item.isClaimed ? colors.Silver : colors.White }]}>{item.isClaimed ? item.isSelected ? "TERPAKAI" : "PAKAI" : "KLAIM"}</Text>
+                                                            </TouchableOpacity>
+                                                            <TouchableOpacity onPress={() => handleDescription(item)} style={{ position: 'absolute', bottom: 5 }}>
+                                                                <Text style={[styles.font_12, { color: colors.BlueLink }]}>S&K</Text>
+                                                            </TouchableOpacity>
+                                                        </View>
                                                     </View>
                                                 </View>
-                                            </View>
-                                        )
+                                            )
+                                        }
                                     }}
                                 />
                             </View>
@@ -1005,6 +1007,7 @@ export default function checkoutScreen() {
                                         renderItem={({ item }) => {
                                             let code = item.code;
                                             let Ename = item.name;
+                                            console.log("🚀 ~ file: CheckoutScreen.js ~ line 1014 ~ checkoutScreen ~ item.icon ", item.icon)
                                             return (
                                                 <View style={[styles.column_center_start, styles.mb_2, styles.py_2, styles.px_4, { borderBottomWidth: 1, borderBottomColor: colors.Silver, width: '100%' }]}>
                                                     <Text style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>{Ename}</Text>

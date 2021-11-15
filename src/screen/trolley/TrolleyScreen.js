@@ -465,7 +465,7 @@ export default function TrolleyScreen() {
                 </View> */}
                     <View style={[styles.row, { height: Hp('7%') }]}>
                         <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '2%', paddingLeft: '4%', paddingVertical: '1%' }}>
-                            <Text style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja, marginBottom: '-2%' }]}>Subtotal :</Text>
+                            <Text style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja, marginBottom: '-2%' }]}>Total Harga :</Text>
                             <Text numberOfLines={1} style={[styles.font_18, styles.T_semi_bold, { color: colors.BlueJaja }]}>{reduxCart.cart.totalCartCurrencyFormat ? reduxCart.cart.totalCartCurrencyFormat : 'Rp0'}</Text>
                         </View>
                         <Button disabled={disableCheckout} onPress={handleCheckout} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_14, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
