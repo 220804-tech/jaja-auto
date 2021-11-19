@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, Image, Alert , Platform} from 'react-native'
+import { View, Text, Image, Alert, Platform } from 'react-native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Home, Feed, Orders, ListChat, Profile } from './Screen'
 import { styles as style } from '../assets/styles/styles'
@@ -40,7 +40,7 @@ export default function BottomRoute() {
                                         let countChat = 0
                                         returnArray.map(item => countChat += item.amount)
                                         console.log("🚀 ~ file: ListChatScreen.js ~ line 49 ~ countChat", countChat)
-                                        result.snotif.chat = countChat
+                                        result.notif.chat = countChat
                                     }
                                 });
                                 dispatch({ type: 'SET_NOTIF_COUNT', payload: result.notif })
@@ -158,7 +158,7 @@ export default function BottomRoute() {
     return (
         <Tab.Navigator backBehavior='firstRoute' screenOptions={{
             headerShown: false, tabBarStyle: {
-                height:Platform.OS==='android'? Hp('7.5%'): Hp('9%')
+                height: Platform.OS === 'android' ? Hp('7.5%') : Hp('9%')
             },
         }}>
             <Tab.Screen name="Home" component={Home}

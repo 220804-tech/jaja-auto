@@ -137,7 +137,7 @@ export default function ListChat() {
 
 
     return (
-        <SafeAreaView style={[style.container, {backgroundColor: Platform.OS==='ios'? colors.BlueJaja: colors.White}]}>
+        <SafeAreaView style={[style.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : colors.White }]}>
             <Appbar title="Chats" trolley={true} notif={true} />
             {
                 users.length ?

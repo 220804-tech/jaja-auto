@@ -90,9 +90,13 @@ export default function OrdersUnpaid() {
                                         </View>
                                         <View style={[styles.row_between_center, { width: '100%' }]}>
                                             <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}>{item.totalPriceCurrencyFormat}</Text>
-                                            <Button color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('35%') }} style={{ width: Wp('35%'), alignSelf: 'flex-end' }} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
-                                                Beri Nilai
-                                            </Button>
+                                            {reduxCompleted[0].isRating ?
+                                                <Button color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('35%') }} style={{ width: Wp('35%'), alignSelf: 'flex-end' }} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
+                                                    Beri Nilai
+                                                </Button>
+                                                : null
+                                            }
+
                                         </View>
                                     </View>
                                 </View>

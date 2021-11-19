@@ -983,7 +983,7 @@ export default function ProductScreen(props) {
 
 
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : colors.White }]}>
+        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
             {loading ? <Loading /> : null}
             <StatusBar translucent={Platform.OS === 'ios' ? false : true} backgroundColor="transparent" barStyle="light-content" />
             <ReactNativeParallaxHeader
@@ -997,9 +997,9 @@ export default function ProductScreen(props) {
                 backgroundImageScale={1.2}
                 renderNavBar={renderNavBar}
                 renderContent={renderContent}
-                containerStyle={[styles.container, { backgroundColor: colors.BlueJaja }]}
+                containerStyle={[styles.container, { backgroundColor: colors.WhiteGrey }]}
                 contentContainerStyle={style.contentContainer}
-                innerContainerStyle={style.container}
+                innerContainerStyle={{ backgroundColor: colors.WhiteGrey }}
                 headerFixedBackgroundColor={Platform.OS === 'ios' ? 'transparent' : colors.BlueJaja}
                 alwaysShowTitle={false}
                 scrollViewProps={{

@@ -1212,7 +1212,7 @@ export default function OrderDetailsScreen() {
                                     {details.complain ? "Sedang Dikomplain" : "Komplain"}
                                 </Button>
                             </View>
-                            : reduxOrderStatus === "Pesanan Selesai" ?
+                            : reduxOrderStatus === "Pesanan Selesai" && details.items[0].isRating ?
                                 <View style={{ position: 'absolute', bottom: 0, zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center', marginBottom: '3%' }}>
                                     <Button icon="star" onPress={() => {
                                         navigation.navigate('AddReview', { data: details.items[0].products })
