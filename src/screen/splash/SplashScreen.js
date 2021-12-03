@@ -220,7 +220,7 @@ export default function SplashScreen() {
 
                     }
                 } catch (error) {
-                    alert(error + '120023 \n\n ' + JSON.stringify(result))
+                    // alert(error + '120023 \n\n ' + JSON.stringify(result))
                 }
             })
             .catch(error => {
@@ -229,7 +229,7 @@ export default function SplashScreen() {
                         dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(store) })
                     }
                 })
-                Utils.handleError(error, 'Error with status code : 12002')
+                // Utils.handleError(error, 'Error with status code : 12002')
             });
     }
 

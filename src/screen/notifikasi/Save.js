@@ -116,7 +116,7 @@ function NotifikasiScreen(props) {
                 }
             })
             .catch(error => {
-                Utils.handleError(error, 'Error with status code : 12002')
+                // Utils.handleError(error, 'Error with status code : 12002')
             });
     }
 

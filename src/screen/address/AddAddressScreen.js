@@ -112,56 +112,60 @@ export default function AddAddressScreen(props) {
     }
 
     useEffect(() => {
-        if (props.route.params && props.route.params.edit) {
-            let value = props.route.params.data;
-            setnamaPenerima(value.nama_penerima)
-            setphoneNumber(value.no_telepon)
-            setprovValue(value.provinsi)
-            setprovinsiId(value.provinsi_id)
-            setkabkotaValue(value.kota_kabupaten)
-            setkabkotaId(value.kota_kabupaten_id)
-            setkcValue(value.kecamatan)
-            setkecamatanId(value.kecamatan_id)
-            setklValue(value.kelurahan)
+        try {
+            if (props.route.params && props.route.params.edit) {
+                let value = props.route.params.data;
+                setnamaPenerima(value.nama_penerima)
+                setphoneNumber(value.no_telepon)
+                setprovValue(value.provinsi)
+                setprovinsiId(value.provinsi_id)
+                setkabkotaValue(value.kota_kabupaten)
+                setkabkotaId(value.kota_kabupaten_id)
+                setkcValue(value.kecamatan)
+                setkecamatanId(value.kecamatan_id)
+                setklValue(value.kelurahan)
 
-            setkelurahanId(value.kelurahan_id)
-            setkodePos(value.kode_pos)
-            setlabel(value.label)
-            setalamat(value.alamat_lengkap)
-            setalamatGoogle(value.alamat_google)
-            setRegion({
-                latitude: parseFloat(value.latitude),
-                longitude: parseFloat(value.longitude),
-                latitudeDelta: 0.0043,
-                longitudeDelta: 0.0034
-            })
-            Service.getKelurahan(value.kecamatan_kd).then(res => {
-                setkelurahan(res.kelurahan)
-                setkelurahanApi(res.kelurahan)
-            })
-            setView("edit")
-        } else {
-            setRegion({
-                latitude: -6.2617525,
-                longitude: 106.8407469,
-                latitudeDelta: 0.0922 * 0.025,
-                longitudeDelta: 0.0421 * 0.025,
-            })
-            setView("add")
-        }
-        setshowButton(false)
-        setLoading(false)
-        EncryptedStorage.getItem("token").then(res => {
-            if (res) {
-                setAuth(JSON.parse(res))
+                setkelurahanId(value.kelurahan_id)
+                setkodePos(value.kode_pos)
+                setlabel(value.label)
+                setalamat(value.alamat_lengkap)
+                setalamatGoogle(value.alamat_google)
+                setRegion({
+                    latitude: parseFloat(value.latitude),
+                    longitude: parseFloat(value.longitude),
+                    latitudeDelta: 0.0043,
+                    longitudeDelta: 0.0034
+                })
+                Service.getKelurahan(value.kecamatan_kd).then(res => {
+                    setkelurahan(res.kelurahan)
+                    setkelurahanApi(res.kelurahan)
+                })
+                setView("edit")
             } else {
-                navigation.navigate('Login')
+                setRegion({
+                    latitude: -6.2617525,
+                    longitude: 106.8407469,
+                    latitudeDelta: 0.0922 * 0.025,
+                    longitudeDelta: 0.0421 * 0.025,
+                })
+                setView("add")
             }
-        })
-        getItem()
-        if (props.handleSave) {
-            console.log(props.handleSave, "wakakak")
-            handleSave()
+            setshowButton(false)
+            setLoading(false)
+            EncryptedStorage.getItem("token").then(res => {
+                if (res) {
+                    setAuth(JSON.parse(res))
+                } else {
+                    navigation.navigate('Login')
+                }
+            })
+            getItem()
+            if (props.handleSave) {
+                console.log(props.handleSave, "wakakak")
+                handleSave()
+            }
+        } catch (error) {
+
         }
     }, [props.handleSave, props.edit])
 
@@ -466,8 +470,7 @@ export default function AddAddressScreen(props) {
                                     <Text style={style.appBarText}>{props.route.params && props.route.params.edit ? " Ubah Alamat" : " Tambah Alamat"}</Text>
                                 </View>
                                 {kcValue ?
-                                    <TouchableRipple background={colors.BlueJaja} onPress={handleSave} rippleColor={colors.White} style={[style.row_center, style.px_2, style.py_2, style.mt_1, { flex: 1, backgroundColor: colors.YellowJaja, borderRadius: 7, width: Wp('20%') }]}>
-
+                                    <TouchableRipple onPress={handleSave} rippleColor={colors.White} style={[style.row_center, style.px_2, style.py_2, style.mt_1, { flex: 1, backgroundColor: colors.YellowJaja, borderRadius: 7, width: Wp('20%') }]}>
                                         <Text style={[style.font_12, style.T_semi_bold, { color: colors.White }]}>Simpan</Text>
                                         {/* <Button mode="contained" color={colors.YellowJaja} labelStyle={[style.font_12, style.T_semi_bold, { color: colors.White }]} style={{}} onPress={handleSave}>Simpan</Button> */}
                                     </TouchableRipple>

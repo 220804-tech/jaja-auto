@@ -22,6 +22,7 @@ export default function RewardScreen() {
     const [primary, setPrimary] = useState(null)
     const [listBK, setlistBK] = useState(null)
     const [refreshing, setRefreshing] = useState(false);
+    const [countt, setCountt] = useState(0)
 
     const [count, setCount] = useState(0)
 
@@ -57,7 +58,7 @@ export default function RewardScreen() {
 
                     })
                     setlistBK(res)
-
+                    setCountt(countt + 1)
                 }
             })
         } catch (error) {
@@ -304,6 +305,7 @@ export default function RewardScreen() {
             setRefreshing(false)
         }, 3000);
     }, []);
+
     return (
         <SafeAreaView style={styles.container}>
             <Appbar back={true} title="Koin Jaja" />
@@ -320,24 +322,27 @@ export default function RewardScreen() {
                         }>
                             <View style={[styles.row_between_center, styles.p_2, styles.mb_5]}>
                                 <View style={[styles.column]}>
-                                    <View style={styles.row_between_center}>
-                                        <Text style={[styles.font_12, styles.mb_3, styles.T_semi_bold]}>Koin Tersedia : </Text>
-                                        <Text style={[styles.font_12, styles.mb_3, styles.T_semi_bold]}>{reduxUser.coin ? reduxUser.coin : '0'}</Text>
-
+                                    <View style={[styles.row_between_center]}>
+                                        <Text style={[styles.font_14, styles.mb, styles.T_medium, { width: '50%' }]}>Koin Tersedia : </Text>
+                                        <Text style={[styles.font_14, styles.mb, { width: '50%', alignSelf: 'flex-end', textAlign: 'right' }]}>{reduxUser.coin ? reduxUser.coin : '0'}</Text>
+                                    </View>
+                                    <View style={[styles.row_between_center]}>
+                                        <Text style={[styles.font_14, styles.mb_3, styles.T_medium]}>Rekening : </Text>
+                                        <Text style={[styles.font_14, styles.mb_3]}>{listBK && listBK.length ? "" : "Tidak ada"} </Text>
 
                                     </View>
                                     {listBK && listBK.length ?
-                                        listBK.map((res, idx) => {
+                                        listBK.concat(listBK).map((res, idx) => {
                                             console.log("🚀 ~ file: RewardScreen.js ~ line 256 ~ listBK.map ~ res", res)
-                                            if (!res.isPrimary) {
+                                            if (res.isPrimary) {
                                                 return (
 
-                                                    <View key={String(idx) + 'GF'} style={[styles.column_start_center, styles.mb_3, { width: Wp('94%') }]}>
-                                                        <View key={String(idx) + 'GF'} style={[styles.row_between_center, styles.mb, { width: Wp('94%') }]}>
+                                                    <View key={String(idx) + 'GF'} style={[styles.column_start_center, styles.mb_3, styles.py_3, { width: Wp('94%'), borderBottomWidth: 0.2, borderBottomColor: colors.Silver }]}>
+                                                        <View key={String(idx) + 'GF'} style={[styles.row_between_center, styles.mb_3, { width: Wp('94%') }]}>
 
                                                             <View style={[styles.row_start_center, { width: '60%' }]}>
                                                                 {/* {res.isPrimary ? <Text numberOfLines={1} style={[styles.font_12, { color: !res.isPrimary ? colors.BlueJaja : colors.BlackGrayScale }]}>Nomor Akun</Text> : null} */}
-                                                                <Text style={[styles.font_12, styles.mb_3, styles.T_semi_bold]}>Rekening : </Text>
+                                                                <Text style={[styles.font_14]}>{idx + 1}. {res.accountName} </Text>
 
                                                                 {listBK && listBK.length > 1 && !res.isPrimary ?
                                                                     <Switch
@@ -349,9 +354,9 @@ export default function RewardScreen() {
                                                                     : null
                                                                 }
                                                             </View>
-                                                            <Text style={[styles.font_12, { color: res.isPrimary ? colors.BlueJaja : colors.BlackGrayScale }]}>- {String(res.account).slice(0, 4)}XXXX ({String(res.accountName).slice(0, 5)})</Text>
+                                                            <Text style={[styles.font_12, { color: res.isPrimary ? colors.BlueJaja : colors.BlackGrayScale }]}>{String(res.account).slice(0, 4)}XXXX ({String(res.accountName).slice(0, 5)})</Text>
                                                         </View>
-                                                        <View style={[styles.row_end_center, styles.mb_3, { width: Wp('94%') }]}>
+                                                        <View style={[styles.row_end_center, styles.mb, { width: Wp('94%') }]}>
                                                             <TouchableRipple rippleColor={colors.White} style={[styles.px_3, styles.py, styles.mr, { alignSelf: 'flex-end', backgroundColor: colors.BlueJaja, borderRadius: 7 }]} onPress={() => {
                                                                 if (res.verified) {
                                                                     Utils.alertPopUp('Akun telah diverifikasi!')
@@ -465,7 +470,7 @@ export default function RewardScreen() {
                         <Button onPress={() => navigation.navigate('Referral')} color={colors.BlueJaja} labelStyle={{ color: colors.White, fontFamily: 'Poppins-SemiBold', fontSize: 12 }} mode="contained" style={{ borderRadius: 100 }}>Pelajari</Button>
                     </View> */}
                 </View>
-            </View>
+            </View >
             <Modal visible={showModal} animationType="fade" transparent={true} onRequestClose={() => setShowModal(!showModal)}>
                 <View style={[styles.row_center, { flex: 1, width: Wp('100%'), height: Hp('100%'), backgroundColor: 'transparent', zIndex: 999, }]}>
                     <View style={[styles.column, styles.p_3, {

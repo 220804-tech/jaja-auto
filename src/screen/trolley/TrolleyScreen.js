@@ -402,10 +402,11 @@ export default function TrolleyScreen() {
                                                                 <Text onPress={() => handleSelected(item)} numberOfLines={1} style={[styles.font_13, styles.T_medium, { flex: 0, color: colors.BlueJaja }]}>{item.name}</Text>
                                                                 <Text numberOfLines={1} style={[styles.font_10, { flex: 0, color: colors.BlackGrayScale }]}>{item.variant ? "Variant " + item.variant : ""}</Text>
                                                             </View>
+                                                            {console.log("🚀 ~ file: TrolleyScreen.js ~ line 406 ~ TrolleyScreen ~ item", item)}
                                                             {item.isDiscount ?
-                                                                <View style={styles.row_around_center}>
+                                                                < View style={styles.row_around_center}>
                                                                     <Text numberOfLines={1} style={[styles.priceBefore, { flex: 0, color: colors.BlackGrayScale, marginRight: '2%' }]}>{item.priceCurrencyFormat}</Text>
-                                                                    <Text numberOfLines={1} style={[styles.font_10, styles.T_semi_bold, { color: colors.RedFlashsale }]}>{item.priceCurrencyFormat}</Text>
+                                                                    <Text numberOfLines={1} style={[styles.font_10, styles.T_semi_bold, { color: colors.RedFlashsale }]}>{item.priceDiscountCurrencyFormat}</Text>
                                                                 </View>
                                                                 :
                                                                 <Text numberOfLines={1} style={[styles.font_12, styles.mb_2, { flex: 0, color: colors.RedMaroon }]}>{item.priceCurrencyFormat}</Text>

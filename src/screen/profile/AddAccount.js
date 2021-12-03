@@ -128,6 +128,7 @@ export default function AddAccount() {
             // fetch(`https://jaja.id/backend/order/rekeningCust?name=${namaPemilik}&bank_code=${bkKode}&bank_name=${bkName}&account=${acc}`, requestOptions)
             .then(response => response.json())
             .then(result => {
+                alert(JSON.stringify(result))
                 if (result && Object.keys(result).length && result.status.code == 200) {
                     setbkKode("")
                     setbkName("")

@@ -9,11 +9,19 @@
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
+      <!-- <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:host="1jajaid.page.link" android:scheme="http"/>
+        <data android:host="1jajaid.page.link" android:scheme="https"/>
+      </intent-filter> -->
       <intent-filter>
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:host="1jajaid.page.link" android:scheme="https"/>
+        <data android:host="jajaid.page.link" android:scheme="http"/>
+        <data android:host="jajaid.page.link" android:scheme="https"/>
       </intent-filter>
     </activity>
     <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyC_O0-LKyAboQn0O5_clZnePHSpQQ5slQU"/>

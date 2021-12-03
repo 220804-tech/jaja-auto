@@ -57,7 +57,17 @@ export default function checkoutScreen() {
     const [listMonth, setlistMonth] = useState(["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "September", "Desember"])
     const [useCoin, setUseCoin] = useState(false)
 
+    const [dateMin, setdateMin] = useState({
+        year: 0,
+        month: 0,
+        date: 0,
+    });
 
+    const [dateMax, setdateMax] = useState({
+        year: 0,
+        month: 0,
+        date: 0,
+    });
     useEffect(() => {
         setRefreshControl(false)
         setLoad(false)
@@ -84,6 +94,26 @@ export default function checkoutScreen() {
 
         }
     }, [selectedSubPayment])
+
+
+    useEffect(() => {
+        var future = new Date();
+        future.setDate(future.getDate() + 2);
+        setdateMin({
+            year: future.getFullYear(),
+            month: future.getMonth(),
+            date: future.getDate()
+        })
+        future.setDate(future.getDate() + 5);
+
+        setdateMax({
+            year: future.getFullYear(),
+            month: future.getMonth(),
+            date: future.getDate()
+        })
+    }, [])
+
+
 
     const getCheckout = (coin) => {
         if (coin) {
@@ -763,7 +793,7 @@ export default function checkoutScreen() {
                                                         </View>
                                                     </View>
                                                     <View style={[styles.column, styles.mb_3]}>
-                                                        <TextInput onChangeText={(text) => handleNotes(text, idxStore)} pla placeholder="Masukkan catatan untuk penjual" style={{ fontSize: 13, paddingHorizontal: 0, paddingVertical: '2%', borderBottomWidth: 0.7, borderBottomColor: colors.Silver, width: '100%' }} />
+                                                        <TextInput onChangeText={(text) => handleNotes(text, idxStore)} pla placeholder="Masukkan catatan untuk penjual" style={{ fontSize: 13, color: colors.BlackGrayScale, paddingHorizontal: 0, paddingVertical: '2%', borderBottomWidth: 0.7, borderBottomColor: colors.Silver, width: '100%' }} />
                                                         <Text style={[styles.font_12, { color: colors.BlackGrey }]}>Catatan untuk penjual </Text>
                                                     </View>
                                                 </TouchableOpacity>
@@ -838,6 +868,7 @@ export default function checkoutScreen() {
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>Biaya Pengiriman</Text>
                             {reduxCheckout.voucherJajaType === "ongkir" ? <Text style={[styles.font_13, { marginBottom: '2%' }]}>Diskon Pengiriman</Text> : null}
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>Biaya penanganan</Text>
+                            {reduxCheckout.coinUsed ? <Text style={[styles.font_13, { marginBottom: '2%' }]}>Koin Digunakan</Text> : null}
                             <View style={[styles.row_start_center, { width: Wp('50%'), marginLeft: '-6.5%', paddingLeft: '-2%', opacity: reduxCoin == 0 ? 0.4 : 1 }]}>
                                 <Checkbox
                                     disabled={reduxCoin == 0 ? true : false}
@@ -856,7 +887,8 @@ export default function checkoutScreen() {
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>{reduxCheckout.shippingCostCurrencyFormat}</Text>
                             {reduxCheckout.voucherJajaType === "ongkir" ? <Text style={[styles.font_13, { marginBottom: '2%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountJajaCurrencyFormat}</Text> : null}
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>Rp0</Text>
-                            <Text numberOfLines={1} style={[styles.font_13, styles.T_medium, styles.py_2, { textAlignVertical: 'center', marginBottom: "-2%", opacity: reduxCoin == 0 ? 0.4 : 1, backgroundColor: colors.White }]}>(-{reduxCoin})</Text>
+                            {reduxCheckout.coinUsed ? <Text style={[styles.font_13, { color: colors.RedFlashsale, marginBottom: '2%' }]}>[-{reduxCheckout.coinUsedFormat}]</Text> : null}
+                            <Text numberOfLines={1} style={[styles.font_13, styles.T_medium, styles.py_2, { textAlignVertical: 'center', marginBottom: "-2%", opacity: reduxCoin == 0 ? 0.4 : 1, backgroundColor: colors.White }]}>{reduxCoin}</Text>
                         </View>
                     </View>
                 </View>
@@ -1070,7 +1102,7 @@ export default function checkoutScreen() {
                                                                         <Image source={require('../../assets/icons/calendar.png')} style={[styles.icon_19, { tintColor: colors.BlueJaja }]} />
                                                                     </View>
                                                                     <View style={{ width: '100%', borderTopWidth: 1, borderTopColor: colors.Silver, marginTop: '2%' }}>
-                                                                        <Text style={[styles.font_12, styles.T_italic]}>Minimal tanggal pengiriman {maxSendDate}</Text>
+                                                                        <Text style={[styles.font_12, styles.T_italic]}>Pilih tanggal pengiriman dari penjual</Text>
                                                                     </View>
                                                                 </TouchableOpacity>
                                                                 : null
@@ -1161,6 +1193,8 @@ export default function checkoutScreen() {
             <DateTimePickerModal
                 isVisible={isDatePickerVisible}
                 mode="date"
+                minimumDate={new Date(dateMin.year, dateMin.month, dateMin.date)}
+                maximumDate={new Date(dateMax.year, dateMax.month, dateMax.date)}
                 onDateChange={() => setDatePickerVisibility(false)}
                 onConfirm={(text) => {
                     setTimeout(() => {

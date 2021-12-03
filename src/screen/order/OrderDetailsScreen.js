@@ -1349,8 +1349,8 @@ export default function OrderDetailsScreen() {
                                                                 />
                                                             </TouchableOpacity>
                                                             <View style={[styles.column, styles.ml_2, { height: Wp('15%'), width: Wp('85%') }]}>
-                                                                <Text numberOfLines={1} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja, width: '95%' }]}>{child.name}</Text>
-                                                                <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlackGrayScale, }]}>{child.variant ? child.variant : "Variasi Biru"}</Text>
+                                                                <Text numberOfLines={1} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja, width: '75%' }]}>{child.name}</Text>
+                                                                <Text numberOfLines={1} style={[styles.font_11, { color: colors.BlackGrayScale }]}>{child.variant ? child.variant : "Variasi Biru"}</Text>
                                                                 <View style={styles.row}>
                                                                     <Text numberOfLines={1} style={[styles.font_14]}>{child.qty} x</Text>
                                                                     <Text numberOfLines={1} style={[styles.priceAfter, { color: colors.BlueJaja }]}> {child.priceCurrencyFormat}</Text>
@@ -1359,6 +1359,11 @@ export default function OrderDetailsScreen() {
                                                         </View>
                                                         <CheckBox disabled={false}
                                                             value={child.onComplain ? true : false}
+                                                            onFillColor={colors.Red}
+                                                            tintColors={{
+                                                                false: colors.Silver,
+                                                                true: colors.BlueJaja
+                                                            }}
                                                             onValueChange={() => handleComplain(idxStore, child, idx)} />
                                                     </View>
                                                 </View>

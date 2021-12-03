@@ -76,6 +76,8 @@ export default function HomeScreen() {
     ]
 
     const handleDynamicLink = link => {
+        // alert(link)
+        console.log(link)
         // Handle dynamic link inside your own application
         if (link.url === 'https://jajaidbuyer.page.link/Splash') {
             setLoading(true)
@@ -127,9 +129,10 @@ export default function HomeScreen() {
         } catch (error) {
 
         }
+        console.log('xfcygvhbjknqlw jhgcfygv')
         const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
-        // When the component is unmounted, remove the listener
         return () => unsubscribe();
+
     }, [])
 
     const getBadges = () => {

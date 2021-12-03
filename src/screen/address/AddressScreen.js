@@ -23,10 +23,14 @@ export default function index(props) {
     const reduxUseCoin = useSelector(state => state.checkout.useCoin)
 
     useEffect(() => {
-        setRefreshControl(false)
-        getLocation()
-        if (props.route.params && props.route.params.data) {
-            setStatus(props.route.params.data)
+        try {
+            setRefreshControl(false)
+            getLocation()
+            if (props.route.params && props.route.params.data) {
+                setStatus(props.route.params.data)
+            }
+        } catch (error) {
+
         }
     }, [props])
 
@@ -40,7 +44,6 @@ export default function index(props) {
             } catch (error) {
                 console.log("🚀 ~ file: AddressScreen.js ~ line 59 ~ useEffect ~ error", error)
             }
-            // getItem()
             getData()
         }, [count]),
     );

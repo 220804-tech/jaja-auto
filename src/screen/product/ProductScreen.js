@@ -15,7 +15,7 @@ import dynamicLinks from '@react-native-firebase/dynamic-links';
 import { useDispatch, useSelector } from "react-redux";
 import StarRating from 'react-native-star-rating';
 import ImgToBase64 from 'react-native-image-base64';
-import { cleanSingle } from 'react-native-image-crop-picker';
+
 LogBox.ignoreAllLogs()
 
 export default function ProductScreen(props) {
@@ -52,6 +52,7 @@ export default function ProductScreen(props) {
     const [qty, setqty] = useState(1)
     const [seller, setSeller] = useState("")
     const [disableCart, setdisableCart] = useState(false)
+    const [link, setlink] = useState('')
 
     const onRefresh = React.useCallback(() => {
         // setLoading(true);
@@ -80,7 +81,6 @@ export default function ProductScreen(props) {
                     .then(async base64String => {
                         let urlString = 'data:image/jpeg;base64,' + base64String;
                         setImage(urlString)
-                        console.log('masuk sini')
                     })
                     .catch(err => console.log("cok"));
             }
@@ -89,11 +89,39 @@ export default function ProductScreen(props) {
         }
 
     }, [reduxSearch])
+    useEffect(() => {
+        try {
+            dynamicLink()
+        } catch (error) {
+
+        }
+
+    }, [reduxSearch])
+
+    const dynamicLink = async () => {
+        const link_URL = await dynamicLinks().buildShortLink({
+            link: 'https://jajaid.page.link/product',
+            domainUriPrefix: 'https://jajaid.page.link',
+            // ios: {
+            // bundleId: 'com.reelweb',
+            // appStoreId: '34354',
+            // fallbackUrl: 'https://apps.apple.com/us/app/reelweb-app/id1535962213',
+            // },
+            android: {
+                packageName: 'com.jajaidbuyer',
+                // fallbackUrl: 'https://play.google.com/store/apps/details?id=com.reelweb',
+            },
+            navigation: {
+                forcedRedirectEnabled: true,
+            }
+        });
+        setlink(link_URL)
+        console.log("🚀 ~ file: ProductScreen.js ~ line 118 ~ constlink_URL=awaitdynamicLinks ~ link_URL", link_URL)
+    }
 
     useFocusEffect(
         useCallback(() => {
             try {
-                console.log("🚀 ~ file: ProductScreen.js ~ line 81 ~ useCallback ~ reduxSearch.productDetail.image", reduxSearch.productDetail.image[0])
                 // ImgToBase64.getBase64String(reduxSearch.productDetail.image[0])
                 //     .then(async base64String => {
                 //         let urlString = 'data:image/jpeg;base64,' + base64String;
@@ -179,7 +207,7 @@ export default function ProductScreen(props) {
                 setvariasiSelected(variant[0])
             }
         } catch (error) {
-            alert('890' + JSON.stringify(error))
+            // alert('890' + JSON.stringify(error))
         }
     }
     const handleFlashsale = (flashsale, status) => {
@@ -502,28 +530,20 @@ export default function ProductScreen(props) {
 
     const handleShare = async () => {
         try {
-            setLoading(true)
-            let imageUrl = ''
-            await ImgToBase64.getBase64String(reduxSearch.productDetail.image[0])
-                .then(base64String => {
-                    let urlString = 'data:image/jpeg;base64,' + base64String;
-                    imageUrl = urlString
-                })
-                .catch(err => console.log("cok"));
-            let link = await buildLink()
+            console.log("🚀 ~ file: ProductScreen.js ~ line 536 ~ handleShare ~ link", link)
+
             const shareOptions = {
                 title: 'Jaja',
                 message: `${reduxSearch.productDetail.name}\nDownload sekarang ${link}`,
-                url: imageUrl,
+                url: image,
             };
-            setTimeout(() => setLoading(false), 1000);
-            Share.open(shareOptions)
-                .then((res) => {
-                    console.log(res);
-                })
-                .catch((err) => {
-                    err && console.log(err);
-                });
+            // Share.open(shareOptions)
+            //     .then((res) => {
+            //         console.log(res);
+            //     })
+            //     .catch((err) => {
+            //         err && console.log(err);
+            //     });
 
             // console.log("🚀 ~ file: ProductScreen.js ~ line 357 ~ handleShare ~ slug", slug)
             // try {
@@ -534,13 +554,13 @@ export default function ProductScreen(props) {
             //     };
             //     console.log("file: ReferralScreen.js ~ line 33 ~ handleShare ~ shareOptions", shareOptions)
 
-            //     Share.open(shareOptions)
-            //         .then((res) => {
-            //             console.log(res);
-            //         })
-            //         .catch((err) => {
-            //             err && console.log(err);
-            //         });
+            Share.open(shareOptions)
+                .then((res) => {
+                    console.log(res);
+                })
+                .catch((err) => {
+                    err && console.log(err);
+                });
 
             //     // let link = await buildLink(slug);
             //     // console.log("file: ReferralScreen.js ~ line 33 ~ handleShare ~ shareOptions", shareOptions)
@@ -551,24 +571,7 @@ export default function ProductScreen(props) {
         }
 
     }
-    const buildLink = async () => {
-        console.log("🚀 ~ file: ProductScreen.js ~ line 418 ~ buildLink ~ buildLink", buildLink)
-        // const link = `https:///m?sd=${reduxSearch.productDetail.slug}`
-        const link = await dynamicLinks().buildLink({
-            link: 'https://invertase.io',
-            // domainUriPrefix is created in your Firebase console
-            domainUriPrefix: 'https://1jajaid.page.link/m',
-            // optional setup which updates Firebase analytics campaign
-            // "banner". This also needs setting up before hand
-            fallbackUrl: 'string',
 
-            minimumVersion: 1,
-            android: {
-                packageName: 'string',
-            }
-        })
-        return link;
-    }
 
     const renderContent = () => {
         return (

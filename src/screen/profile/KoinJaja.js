@@ -15,7 +15,7 @@ export default function KoinJaja() {
                 <View style={[styles.column, styles.pt_2, { backgroundColor: colors.White }]}>
                     <View style={[styles.row_between_center, styles.p_2]}>
                         <View style={styles.column}>
-                            <Text style={[styles.font_13, styles.T_medium, styles.mb_3,]}>Koin Tersedia</Text>
+                            <Text style={[styles.font_13, styles.T_medium, styles.mb_3, {}]}>Koin Tersedia</Text>
                             <Text style={[styles.font_13, styles.T_medium, styles.mb_3,]}>Nomor Akun</Text>
                         </View>
                         <View style={styles.column_center_end}>

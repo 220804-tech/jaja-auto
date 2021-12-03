@@ -72,7 +72,7 @@ export default function OrdersFailed() {
                                         </View>
                                         : null}
                                     <View style={[styles.row_end_center, styles.pr_2, { width: '45%', }]}>
-                                        <Text style={[styles.font_9, styles.T_medium, { color: colors.RedNotif }]}>{String('Dibatalkan  ' + item.cancelBy).toUpperCase()}</Text>
+                                        <Text style={[styles.font_8, styles.T_medium, { color: colors.RedNotif }]}>{String(item.cancelBy).toUpperCase()}</Text>
                                     </View>
                                 </View>
 

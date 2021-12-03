@@ -24,16 +24,20 @@ export default function map(props) {
     const LATITUDE_DELTA = 0.0922;
 
     useEffect(() => {
-        console.log("file: Maps.js ~ line 27 ~ useEffect ~ props.region", props.region)
-        if (props.region) {
-            setRegion(props.region)
-        } else {
-            setRegion({
-                latitude: -6.2617525,
-                longitude: 106.8407469,
-                latitudeDelta: 0.0922 * 0.025,
-                longitudeDelta: 0.0421 * 0.025,
-            })
+        try {
+            console.log("file: Maps.js ~ line 27 ~ useEffect ~ props.region", props.region)
+            if (props.region) {
+                setRegion(props.region)
+            } else {
+                setRegion({
+                    latitude: -6.2617525,
+                    longitude: 106.8407469,
+                    latitudeDelta: 0.0922 * 0.025,
+                    longitudeDelta: 0.0421 * 0.025,
+                })
+            }
+        } catch (error) {
+
         }
     }, [])
 
@@ -46,8 +50,6 @@ export default function map(props) {
     }
 
     const handleCheckLokasi = () => {
-        console.log("🚀 ~ file: Maps.js ~ line 49 ~ handleCheckLokasi ~ region.latitude", region.latitude)
-        console.log("🚀 ~ file: Maps.js ~ line 50 ~ handleCheckLokasi ~ region.longitude", region.longitude)
         fetch("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + region.latitude + "," + region.longitude + "&sensor=false&key=AIzaSyB4C8a6rkM6BKu1W0owWvStPzGHoc4ZBXI")
             .then((response) => response.json())
             .then((responseJson) => {

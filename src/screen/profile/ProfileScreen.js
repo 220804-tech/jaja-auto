@@ -266,7 +266,7 @@ export default function ProfileScreen(props) {
             <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Account' : 'Login')}>
               <Image style={[styles.icon_27, styles.mr_3]} source={require(`../../assets/icons/customer.png`)} />
               <Text style={[styles.font_14, styles.T_medium, styles.my_4,]}>Pengaturan Akun</Text>
-              {!account === true ? null : <Text style={[styles.font_10, styles.T_italic, styles.ml_2, { color: colors.RedNotif }]}>( Masukkan rekening )</Text>}
+              {/* {!account === true ? null : <Text style={[styles.font_10, styles.T_italic, styles.ml_2, { color: colors.RedNotif }]}>( Masukkan rekening )</Text>} */}
             </TouchableOpacity>
             <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Address' : 'Login')}>
               <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/google-maps.png`)} />
