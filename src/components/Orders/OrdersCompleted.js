@@ -65,6 +65,8 @@ export default function OrdersUnpaid() {
                     keyExtractor={item => item.invoice}
 
                     renderItem={({ item }) => {
+                        console.log("🚀 ~ file: OrdersCompleted.js ~ line 106 ~ OrdersUnpaid ~ item", item.isRating)
+
                         return (
                             <TouchableOpacity style={Os.card} onPress={() => handleOrderDetails(item)}>
                                 <View style={[styles.row_between_center, styles.px_2, styles.mb_3, { width: '100%' }]}>
@@ -90,12 +92,13 @@ export default function OrdersUnpaid() {
                                         </View>
                                         <View style={[styles.row_between_center, { width: '100%' }]}>
                                             <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}>{item.totalPriceCurrencyFormat}</Text>
-                                            {reduxCompleted[0].isRating ?
-                                                <Button color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('35%') }} style={{ width: Wp('35%'), alignSelf: 'flex-end' }} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
-                                                    Beri Nilai
-                                                </Button>
-                                                : null
-                                            }
+
+                                            <Button color={item.isRating ? colors.YellowJaja : colors.BlueJaja} mode="contained" contentStyle={{ width: Wp('27%') }} style={{ width: Wp('27%'), alignSelf: 'flex-end' }} labelStyle={[styles.font_9, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
+                                                {item.isRating ?
+                                                    "Beri Nilai"
+                                                    : 'Rician'
+                                                }
+                                            </Button>
 
                                         </View>
                                     </View>

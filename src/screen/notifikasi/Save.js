@@ -105,7 +105,7 @@ function NotifikasiScreen(props) {
             .then(result => {
                 try {
                     let data = JSON.parse(result)
-                    if (data.status.code == 200) {
+                    if (data.status.code === 200) {
                         handleNotifikasi()
                     } else {
 

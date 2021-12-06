@@ -29,7 +29,7 @@ export default function ProsesComplain() {
                 .then(response => response.json())
                 .then(result => {
                     console.log("🚀 ~ file: WaitingDelivery.js ~ line 30 ~ handleReceiptNumber ~ result", result)
-                    if (result.status.code == 200) {
+                    if (result.status.code === 200) {
                         dispatch({ type: 'SET_COMPLAIN_UPDATE', payload: true })
                     } else {
                         Utils.handleErrorResponse(result, "Error with status code : 12034")

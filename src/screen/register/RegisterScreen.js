@@ -156,7 +156,7 @@ class RegisterScreen extends Component {
                     console.log("🚀 ~ file: RegisterScreen.js ~ line 169 ~ index ~ res", res)
                     json = res;
                     setTimeout(() => this.setState({ loading: false }), 2000);
-                    if (res.status.code == 200) {
+                    if (res.status.code === 200) {
                         EncryptedStorage.setItem('user', JSON.stringify(res.data.customer))
                         this.props.dispatch({ type: 'SET_USER', payload: res.data.customer })
                         AsyncStorage.setItem('token', JSON.stringify(res.data.token))

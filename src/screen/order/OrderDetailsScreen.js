@@ -189,6 +189,8 @@ export default function OrderDetailsScreen() {
                 dispatch({ type: 'SET_PROCESS', payload: resProcess.items })
             }
         })
+        dispatch({ type: 'SET_ORDER_REFRESH', payload: true })
+
     }
 
     useEffect(() => {
@@ -788,6 +790,8 @@ export default function OrderDetailsScreen() {
                                             handleCompleted()
                                         }
                                     })
+                                    dispatch({ type: 'SET_ORDER_REFRESH', payload: true })
+
                                 } else {
                                     Utils.handleErrorResponse(result, "Error with status code : 22001")
                                 }
@@ -954,8 +958,8 @@ export default function OrderDetailsScreen() {
                                     <Text numberOfLines={1} style={[styles.font_12, { width: '70%' }]}>{details.address.receiverName}</Text>
                                 </View>
                                 <Text numberOfLines={1} style={[styles.font_12]}>{details.address.phoneNumber}</Text>
-                                <Text numberOfLines={3} style={[styles.font_11, styles.mt_2]}>{details.address.address.replace(/<br>/g, "")}</Text>
-                                <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold]}>Catatan :{details.items[0].note}</Text>
+                                <Text numberOfLines={3} style={[styles.font_11, styles.mt_2]}>{details.address.address.replace(/<br>/g, "\n")}</Text>
+                                <Text numberOfLines={1} style={[styles.font_12]}>Catatan : {details.items[0].note}</Text>
 
                             </View>
                         </View>
@@ -970,7 +974,7 @@ export default function OrderDetailsScreen() {
                                             <Image style={[styles.icon_19, { marginRight: '3%', tintColor: colors.BlueJaja }]} source={require('../../assets/icons/store.png')} />
                                             <Text onPress={() => handleStore(item.store)} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.store.name}</Text>
                                         </View>
-                                        <TouchableRipple onPress={() => handleChat(item)} style={[styles.row_center, styles.px_2, { backgroundColor: colors.BlueJaja, paddingVertical: '1.5%' }]}>
+                                        <TouchableRipple onPress={() => handleChat(item)} style={[styles.row_center, styles.px_2, { backgroundColor: colors.BlueJaja, paddingVertical: '1.5%', elevation: 3, borderRadius: 2 }]}>
                                             <View style={styles.row}>
                                                 <Text style={[styles.font_11, styles.T_medium, { color: colors.White }]}>
                                                     Chat Penjual
@@ -1077,7 +1081,7 @@ export default function OrderDetailsScreen() {
                             <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
                             <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Ringkasan Belanja</Text>
                         </View>
-                        <View style={[styles.row_between_center, styles.p_3]}>
+                        <View style={[styles.row_between_center, styles.p_3, {}]}>
                             <View style={styles.column}>
                                 <Text style={[styles.font_12, { marginBottom: '2%' }]}>Total belanja</Text>
                                 <Text style={[styles.font_12, { marginBottom: '2%' }]}>Ongkos </Text>
@@ -1088,10 +1092,6 @@ export default function OrderDetailsScreen() {
 
                                 {/* <Text style={[styles.font_12, styles.T_medium, { marginBottom: '2%' }]}>Fee</Text> */}
                                 <Text style={[styles.font_12, styles.T_medium, { marginBottom: '2%' }]}>Total pembayaran</Text>
-                                {reduxOrderStatus === 'Pesanan Dibatalkan' ?
-                                    <Text style={[styles.font_11, styles.T_italic, { marginBottom: '2%', color: colors.RedMaroon }]}>*Dibatalkan oleh {details.cancelBy}{details.cancelReason ? ' - ' + details.cancelReason : null}</Text>
-                                    : null
-                                }
 
                             </View>
 
@@ -1112,9 +1112,13 @@ export default function OrderDetailsScreen() {
                                 </View>
                                 : null
                             }
-
                         </View>
-
+                        <View style={[styles.px_3]}>
+                            {reduxOrderStatus === 'Pesanan Dibatalkan' && details ?
+                                <Text style={[styles.font_11, styles.T_italic, { marginBottom: '2%', color: colors.RedMaroon, }]}>*{details.cancelBy} {details.cancelReason ? ' - ' + details.cancelReason : ' - Qui officia ea incididunt mollit cillum dolore aliquip aliqua sint pariatur.'}</Text>
+                                : null
+                            }
+                        </View>
                     </View>
                     {reduxOrderStatus === 'Menunggu Pembayaran' || reduxOrderStatus === 'Menunggu Konfirmasi' ?
                         <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>

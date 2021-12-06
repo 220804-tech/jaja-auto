@@ -11,11 +11,13 @@ export default function ProductSearchScreen() {
     const actionSheetRef = createRef();
     const data = useSelector(state => state.search.searchProduct)
     const keyword = useSelector(state => state.search.keywordSearch)
+    const categoryName = useSelector(state => state.search.keywordSearch)
+
     const reduxFilters = useSelector(state => state.search.filters)
     const reduxSorts = useSelector(state => state.search.sorts)
     const reduxmaxProduct = useSelector(state => state.search.maxProduct)
     const reduxSearch = useSelector(state => state.search)
-    console.log("🚀 ~ file: productSearchScreen.js ~ line 14 ~ ProductSearchScreen ~ keyword", keyword)
+    console.log("🚀 ~ file: productSearchScreen.js ~ line 14 ~ ProductSearchScreen ~ keyword", categoryName)
 
     const dispatch = useDispatch()
     const [scrollY, setscrollY] = useState(new Animated.Value(0))
@@ -56,8 +58,10 @@ export default function ProductSearchScreen() {
         };
         setPage(1)
 
+        console.log("🚀 ~ file: productSearchScreen.js ~ line 85 ~ handleFetch ~ categoryName", categoryName)
+        console.log("🚀 ~ file: productSearchScreen.js ~ line 86 ~ handleFetch ~ location", location)
 
-        fetch(`https://jaja.id/backend/product/search/result?page=1&limit=10&keyword=${keyword}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
+        fetch(`https://jaja.id/backend/product/search/result?page=1&limit=10&keyword=${keyword}&filter_category=${categoryName}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 console.log("🚀 ~ file: productSearchScreen.js ~ line 12112 ~ handleFetch ~ result", result.data.items)
@@ -200,7 +204,7 @@ export default function ProductSearchScreen() {
         }
     }
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
-        return layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 0.77)
+        return layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 1.1)
     }
 
     const fetchLoadmore = () => {
@@ -209,7 +213,7 @@ export default function ProductSearchScreen() {
             redirect: 'follow'
         };
 
-        fetch(`https://jaja.id/backend/product/search/result?page=${page + 1}&limit=26&keyword=${keyword}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
+        fetch(`https://jaja.id/backend/product/search/result?page=${page + 1}&limit=50&keyword=${keyword}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.status.code === 200) {
@@ -353,7 +357,7 @@ export default function ProductSearchScreen() {
                                     <View style={{ flex: 0, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                                         {item.items.map((child, idx) => {
                                             return (
-                                                <TouchableOpacity key={String(index) + 'LJ'} onPress={() => handleSelected('filter', index, idx)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: child.value === location || child.value === condition || child.value === stock ? colors.BlueJaja : colors.BlackGrey, backgroundColor: child.value === location || child.value === condition || child.value === stock ? colors.BlueJaja : colors.White, borderRadius: 11, paddingHorizontal: '3%', paddingVertical: '2%', marginRight: '3%', marginTop: '3%' }}>
+                                                <TouchableOpacity key={String(idx) + 'LJ'} onPress={() => handleSelected('filter', index, idx)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: child.value === location || child.value === condition || child.value === stock ? colors.BlueJaja : colors.BlackGrey, backgroundColor: child.value === location || child.value === condition || child.value === stock ? colors.BlueJaja : colors.White, borderRadius: 11, paddingHorizontal: '3%', paddingVertical: '2%', marginRight: '3%', marginTop: '3%' }}>
                                                     <Text adjustsFontSizeToFit style={[styles.font_14, { color: child.value === location || child.value === condition || child.value === stock ? colors.White : colors.BlackGrayScale }]}>{child.name}</Text>
                                                 </TouchableOpacity>
                                             )

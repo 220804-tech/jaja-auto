@@ -42,11 +42,6 @@ export default function StoreProducts() {
     const [focus, setFocus] = useState(0);
     const [filter, setFilter] = useState(false);
 
-    const [visible, setVisible] = React.useState(false);
-
-    const openMenu = () => setVisible(true);
-
-    const closeMenu = () => setVisible(false);
     useEffect(() => {
         setLoading(true)
         setTimeout(() => {
@@ -99,7 +94,6 @@ export default function StoreProducts() {
                 setTimeout(() => setLoading(false), 1000);
                 if (res && res.items && res.items.length) {
                     if (filter) {
-                        dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
                         dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
                     } else {
                         dispatch({ "type": 'SET_STORE_PRODUCT', payload: data.concat(res.items) })
@@ -142,14 +136,13 @@ export default function StoreProducts() {
             limit: 20,
             keyword: '',
             price: '',
-            condition: '',
-            preorder: '',
+            condition: condition,
+            preorder: stock,
             brand: '',
-            sort: '',
+            sort: sort,
             category: ''
         }
-        if (name && name !== 'reset') {
-            console.log("🚀 ~ file: reset")
+        if (name !== 'reset') {
             obj.keyword = keyword
             obj.condition = condition
             obj.preorder = stock
@@ -162,7 +155,9 @@ export default function StoreProducts() {
         }
         ServiceStore.getStoreProduct(obj).then(res => {
             if (res) {
+                console.log("🚀 ~ file: StoreProducts.js ~ line 165 ~ ServiceStore.getStoreProduct ~ res", res.items.length)
                 dispatch({ type: 'SET_STORE_PRODUCT', payload: res.items })
+                setcount(count + 1)
                 setTimeout(() => setLoading(false), 1000);
             }
         })
@@ -177,7 +172,6 @@ export default function StoreProducts() {
 
 
     const handleSelected = (name, indexParent, indexChild) => {
-        console.log("🚀 ~ file: StoreProducts.js ~ line 180 ~ handleSelected ~ name", name)
         if (name === 'filter') {
             let val = reduxFilters[indexParent].name
             let valChild = reduxFilters[indexParent].items[indexChild].value
@@ -231,6 +225,7 @@ export default function StoreProducts() {
                 </View>
 
                 {loading ? <Loading /> : null}
+                {console.log("🚀 ~ file: StoreProducts.js ~ line 230 ~ StoreProducts ~ data", data)}
                 {
                     data && data.length ?
                         <View style={[styles.column, styles.px_3, { flex: 1, justifyContent: "center", alignItems: 'flex-start' }]}>
@@ -264,7 +259,7 @@ export default function StoreProducts() {
                             </ScrollView>
 
                         </View>
-                        : reduxmaxProduct ? null : <Text style={[styles.font_14, styles.mt_5, { alignSelf: 'center' }]}>Produk tidak ditemukan!</Text>
+                        : <Text style={[styles.font_14, styles.mt_5, { alignSelf: 'center' }]}>Produk tidak ditemukan!</Text>
                 }
 
             </View >

@@ -62,15 +62,25 @@ export default function CardProductComponent(props) {
                                 key={index}>
                                 {item.isDiscount ? <Text adjustsFontSizeToFit style={Ps.textDiscount}>{item.discount}%</Text> : null}
                                 <View style={[styles.column, { height: Wp('44%'), width: Wp('44%'), borderTopLeftRadius: 3, borderTopRightRadius: 3 }]}>
-                                    <FastImage
-                                        style={Ps.imageProduct}
-                                        source={{
-                                            uri: item.image,
-                                            headers: { Authorization: 'someAuthToken' },
-                                            priority: FastImage.priority.normal,
-                                        }}
-                                        resizeMode={FastImage.resizeMode.contain}
-                                    />
+                                    {item.image ?
+                                        <FastImage
+                                            style={Ps.imageProduct}
+                                            source={{
+                                                uri: item.image,
+                                                headers: { Authorization: 'someAuthToken' },
+                                                priority: FastImage.priority.normal,
+                                            }}  
+                                            resizeMode={FastImage.resizeMode.contain}
+                                        />
+                                        :
+                                        <FastImage
+                                            style={Ps.imageProduct}
+                                            source={require('../../assets/images/JajaId.png')}
+                                            resizeMode={FastImage.resizeMode.contain}
+                                        />
+                                    }
+
+
                                     {item.freeOngkir == 'Y' ?
                                         <View style={[styles.font_14, styles.px_5, styles.py, { position: 'absolute', bottom: 0, backgroundColor: colors.RedFlashsale, borderTopRightRadius: 11, justifyContent: 'center', alignItems: 'center' }]}>
                                             <Text adjustsFontSizeToFit style={[styles.font_10, styles.T_medium, { marginBottom: '-2%', marginLeft: '-1.5%', color: colors.White }]}>Gratis Ongkir</Text>

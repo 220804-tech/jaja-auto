@@ -59,9 +59,9 @@ export default function CategoryComponent() {
         navigation.navigate('Category');
     }
     const handleSelected = (res) => {
-        console.log("🚀 ~ file: CategoryComponent.js ~ line 65 ~ handleSelected ~ handleSelected", res)
         handleFetch(res)
         handleSaveKeyword(res.name)
+        dispatch({ type: 'SET_CATEGORY_NAME', payload: res.name })
     }
 
     const handleFetch = (item) => {
@@ -78,7 +78,6 @@ export default function CategoryComponent() {
             fetch(`https://jaja.id/backend/product/category/${item.slug}?page=1&limit=100&keyword=&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    console.log("🚀 ~ file: CategoryComponent.js ~ line 83 ~ handleFetch ~ result", result)
                     if (result && Object.keys(result).length && result.status.code == 200) {
                         dispatch({ type: 'SET_SEARCH', payload: result.data.items })
                         dispatch({ type: 'SET_FILTERS', payload: result.data.filters })

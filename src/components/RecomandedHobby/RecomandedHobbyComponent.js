@@ -45,7 +45,7 @@ export default function RecomandedHobbyComponent(props) {
             .then(response => response.json())
             .then(result => {
                 loadingFetch = false
-                if (result.status.code == 200) {
+                if (result.status.code === 200) {
                     dispatch({ type: 'SET_DASHRECOMMANDED', payload: reduxdashRecommanded.concat(result.data.items) })
                     dispatch({ 'type': 'SET_MAX_RECOMMANDED', payload: false })
                     EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))

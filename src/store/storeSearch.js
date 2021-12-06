@@ -7,8 +7,8 @@ const initialState = {
     slug: "",
     maxProduct: false,
     flashsale: false,
-    reviewProducts: []
-
+    reviewProducts: [],
+    categoryName: ''
 
 }
 export default function storeSearch(state = initialState, action) {
@@ -16,6 +16,9 @@ export default function storeSearch(state = initialState, action) {
     switch (type) {
         case 'SET_SEARCH':
             return { ...state, searchProduct: payload }
+        case 'SET_CATEGORY_NAME':
+            return { ...state, categoryName: payload }
+
         case 'SET_MAX_SEARCH':
             return { ...state, maxProduct: payload }
         case 'SET_FILTERS':

@@ -286,7 +286,7 @@ export default function HomeScreen() {
                 .then(response => response.json())
                 .then(resp => {
                     hasil = true;
-                    if (resp.status.code == 200 || resp.status.code == 204) {
+                    if (resp.status.code === 200 || resp.status.code == 204) {
                         if (resp.data.categoryChoice) {
                             dispatch({ type: 'SET_DASHCATEGORY', payload: resp.data.categoryChoice })
                             EncryptedStorage.setItem('dashcategory', JSON.stringify(resp.data.categoryChoice))
@@ -331,7 +331,7 @@ export default function HomeScreen() {
         fetch("https://jaja.id/backend/product/recommendation?page=1&limit=20", requestOptions)
             .then(response => response.json())
             .then(result => {
-                if (result.status.code == 200 || result.status.code == 204) {
+                if (result.status.code === 200 || result.status.code === 204) {
                     dispatch({ type: 'SET_DASHRECOMMANDED', payload: result.data.items })
                     EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))
                 } else {

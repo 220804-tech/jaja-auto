@@ -125,24 +125,39 @@ export default function AddAccount() {
         };
 
         fetch("https://jaja.id/backend/user/bankAccount", requestOptions)
-            // fetch(`https://jaja.id/backend/order/rekeningCust?name=${namaPemilik}&bank_code=${bkKode}&bank_name=${bkName}&account=${acc}`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                alert(JSON.stringify(result))
-                if (result && Object.keys(result).length && result.status.code == 200) {
+                if (result && Object.keys(result).length && result.status.code === 200) {
                     setbkKode("")
                     setbkName("")
                     setacc("")
                     setcity("")
                     setbranch_office("")
-                    Utils.alertPopUp('Rekening kamu berhasil ditambahkan.')
-                    navigation.goBack()
+                    setTimeout(() => {
+                        setLoading(false)
+                        Alert.alert(
+                            "Akun anda berhasil ditambahkan.",
+                            `Periksa email anda untuk verifikasi akun!`,
+                            [
+
+                                {
+                                    text: "TUTUP", onPress: () => {
+                                        Utils.alertPopUp('Periksa email anda untuk verifikasi akun!')
+                                        navigation.goBack()
+                                    }
+                                },
+                            ],
+                            { cancelable: false }
+                        );
+                    }, 3000);
                 } else if (result && Object.keys(result).length && result.status.message) {
+                    setLoading(false)
                     Utils.alertPopUp(result.status.message)
                 } else {
+                    setLoading(false)
                     Utils.handleErrorResponse(error, "Error with status code : 12030")
                 }
-                setLoading(false)
+
             })
             .catch(error => {
                 setLoading(false)

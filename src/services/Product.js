@@ -15,7 +15,7 @@ export async function productDetail(auth, slug) {
         .then(result => {
             try {
                 let data = JSON.parse(result)
-                if (data && Object.keys(data).length && data.status.code == 200) {
+                if (data && Object.keys(data).length && data.status.code === 200) {
                     return data.data;
                 } else {
                     Utils.handleErrorResponse(data, "Error with status code : 12051")

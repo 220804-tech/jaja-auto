@@ -8,7 +8,6 @@ import Swiper from 'react-native-swiper'
 import firebaseDatabase from '@react-native-firebase/database';
 export default function RequestComplain() {
     const complainDetails = useSelector(state => state.complain.complainDetails)
-    console.log("🚀 ~ file: RequestComplain.js ~ line 11 ~ RequestComplain ~ complainDetails", complainDetails)
     const complainStep = useSelector(state => state.complain.complainStep)
     const orderInvoice = useSelector(state => state.order.invoice)
     // const orderUid = useSelector(state => state.order.orderUid)
@@ -57,7 +56,7 @@ export default function RequestComplain() {
                         fetch(`https://jaja.id/core/seller/order/solusiKomplain?invoice=${orderInvoice}&solusi=${checked}&catatan_solusi=checked`, requestOptions)
                             .then(response => response.json())
                             .then(result => {
-                                if (result.status.code == 200) {
+                                if (result.status.code === 200) {
                                     ToastAndroid.show('Solusi berhasil dipilih!', ToastAndroid.LONG, ToastAndroid.TOP)
                                     getItem()
                                 } else {
@@ -105,7 +104,7 @@ export default function RequestComplain() {
                 fetch(`https://jaja.id/core/seller/order/solusiKomplain?invoice=${orderInvoice}&solusi=${checked}&catatan_solusi=checked`, requestOptions)
                     .then(response => response.json())
                     .then(result => {
-                        if (result.status.code == 200) {
+                        if (result.status.code === 200) {
                             ToastAndroid.show('Solusi berhasil dipilih!', ToastAndroid.LONG, ToastAndroid.TOP)
                             Firebase.notifChat(item.token, { body: 'Komplain kamu telah direspon penjual.', title: 'Komplain Pesanan' })
                             dispatch({ type: 'SET_COMPLAIN_UPDATE', payload: true })
@@ -135,7 +134,8 @@ export default function RequestComplain() {
                 {complainDetails && Object.keys(complainDetails).length ?
                     <View style={styles.container}>
                         <View style={[styles.column, styles.py_2, styles.px_4, styles.mb_2, styles.T_medium, { width: '100%', backgroundColor: colors.White, borderBottomRightRadius: 10, borderBottomLeftRadius: 10, borderTopRightRadius: 10 }]}>
-                            <Text style={[styles.font_13, styles.T_medium]}>Komplain anda telah diajukan,<Text style={[styles.font_13, { color: colors.BlackTitle }]}>{'\n'}bila penjual tidak merespon komplain kamu sebelum tanggal {String(complainDetails.complain_limit).slice(0, 16)} pengajuan komplain kamu akan otomatis disetujui dengan solusi Pengembalian Uang</Text></Text>
+                            <Text style={[styles.font_13, styles.T_medium]}>Komplain anda telah diajukan!3</Text>
+                            <Text style={[styles.font_13, { color: colors.BlackTitle }]}>bila penjual tidak merespon komplain kamu sebelum tanggal {String(complainDetails.complain_limit).slice(0, 16)} pengajuan komplain kamu akan otomatis disetujui dengan solusi Pengembalian Uang</Text>
                         </View>
 
 
@@ -146,12 +146,12 @@ export default function RequestComplain() {
                             </View>
 
                             <View style={[styles.column, styles.px]}>
-                                <Text style={styles.font_13}>{complainDetails.jenis_komplain} - {complainDetails.judul_komplain}</Text>
-                                <Text numberOfLines={3} style={[styles.font_13, styles.mt_3]}>Alasan Komplain : <Text style={styles.font_13}>{'\n' + complainDetails.komplain}</Text></Text>
+                                {/* <Text style={styles.font_13}>{complainDetails.jenis_komplain} - {complainDetails.judul_komplain}</Text> */}
+                                <Text numberOfLines={3} style={[styles.font_13, styles.mt_3]}>Alasan Komplain : {complainDetails.judul_komplain + ' - ' + complainDetails.komplain}</Text>
                                 <Text style={[styles.font_13, styles.mt_3]}>Bukti komplain :</Text>
 
                                 <View style={[styles.row]}>
-                                    {!complainDetails.gambar1 && !complainDetails.gambar2 && !complainDetails.gambar3 && BcomplainDetails.video ?
+                                    {!complainDetails.gambar1 && !complainDetails.gambar2 && !complainDetails.gambar3 && complainDetails.video ?
                                         <View style={styles.column}>
                                             <Text style={[styles.font_13, styles.T_light]}>- 0 Foto dilampirkan</Text>
                                             <Text style={[styles.font_13, styles.T_light]}>- 0 Video dilampirkan</Text>
@@ -192,12 +192,12 @@ export default function RequestComplain() {
                                         resizeMode="cover"
                                         source={{ uri: complainDetails.product[0].image }}
                                     />
-                                    <View style={[styles.column_around_center, styles.mt_3, { marginTop: '-1%', alignItems: 'flex-start', height: Wp('13%'), width: Wp('82%'), paddingHorizontal: '3%' }]}>
-                                        <Text numberOfLines={1} style={[styles.font_13, { width: '90%' }]}>{complainDetails.product[0].name}</Text>
-                                        <Text numberOfLines={1} style={[styles.font_12]}>{complainDetails.product[0].variasi ? complainDetails.product[0].variasi : ""}</Text>
+                                    <View style={[styles.column_around_center, styles.mt_3, { marginTop: '-0.5%', alignItems: 'flex-start', height: Wp('13%'), width: Wp('82%'), paddingHorizontal: '3%' }]}>
+                                        <Text numberOfLines={1} style={[styles.font_12, styles.mb_2, { width: '90%' }]}>{complainDetails.product[0].name}</Text>
+                                        <Text numberOfLines={1} style={[styles.font_10]}>{complainDetails.product[0].variasi ? complainDetails.product[0].variasi : ""}</Text>
                                         <View styzx le={[styles.row_between_center, { width: '90%' }]}>
-                                            <Text numberOfLines={1} style={[styles.font_13, styles.T_light]}>{complainDetails.totalOtherProduct ? "+(" + complainDetails.totalOtherProduct + " produk lainnya)" : ""}</Text>
-                                            <Text numberOfLines={1} style={[styles.font_13]}>{complainDetails.totalOtherProduct ? complainDetails.totalOtherProduct + ' X ' : null}{complainDetails.totalPriceCurrencyFormat}</Text>
+                                            <Text numberOfLines={1} style={[styles.font_12, styles.T_light]}>{complainDetails.totalOtherProduct ? "+(" + complainDetails.totalOtherProduct + " produk lainnya)" : ""}</Text>
+                                            <Text numberOfLines={1} style={[styles.font_10]}>{complainDetails.totalOtherProduct ? complainDetails.totalOtherProduct + ' X ' : null}{complainDetails.totalPriceCurrencyFormat}</Text>
                                         </View>
                                     </View>
                                 </View>
@@ -206,17 +206,17 @@ export default function RequestComplain() {
 
                         </View>
                         <View style={[styles.column, styles.py_2, styles.px_4, styles.mt_2, styles.T_medium, { width: '100%', backgroundColor: colors.White, borderBottomRightRadius: 10, borderBottomLeftRadius: 10, borderTopRightRadius: 10 }]}>
-                            <View style={styles.row_between_center}>
+                            <View style={[styles.row_between_center, styles.mb]}>
                                 <Text style={[styles.font_13, styles.T_medium]}>No. Invoice</Text>
-                                <Text style={[styles.font_13, { color: colors.BlackTitle }]}>{complainDetails.invoice}</Text>
+                                <Text style={[styles.font_12, { color: colors.BlackTitle }]}>{complainDetails.invoice}</Text>
                             </View>
                             <View style={styles.row_between_center}>
-                                <Text style={[styles.font_13, styles.T_light]}>Tanggal Pengajuan</Text>
-                                <Text style={[styles.font_13, { color: colors.BlackTitle }]}>{String(complainDetails.created_date).slice(0, 16)}</Text>
+                                <Text style={[styles.font_12, styles.T_light]}>Tanggal Pengajuan</Text>
+                                <Text style={[styles.font_12, { color: colors.BlackTitle }]}>{String(complainDetails.created_date).slice(0, 16)}</Text>
                             </View>
                             <View style={styles.row_between_center}>
-                                <Text style={[styles.font_13, styles.T_light]}>Batas Waktu</Text>
-                                <Text style={[styles.font_13, { color: colors.BlackTitle }]}>{String(complainDetails.complain_limit).slice(0, 16)}</Text>
+                                <Text style={[styles.font_12, styles.T_light]}>Batas Waktu</Text>
+                                <Text style={[styles.font_12, { color: colors.BlackTitle }]}>{String(complainDetails.complain_limit).slice(0, 16)}</Text>
                             </View>
                         </View>
                     </View>

@@ -31,7 +31,7 @@ export default function WaitingDelivery() {
                 .then(response => response.json())
                 .then(result => {
                     console.log("🚀 ~ file: WaitingDelivery.js ~ line 30 ~ handleReceiptNumber ~ result", result)
-                    if (result.status.code == 200) {
+                    if (result.status.code === 200) {
                         dispatch({ type: 'SET_COMPLAIN_UPDATE', payload: true })
                         Firebase.notifChat(complainTarget, { body: 'Pembeli telah mengirim kembali barang yang di komplain', title: 'Komplain' })
                         Firebase.buyerNotifications('orders', orderUid)

@@ -97,7 +97,7 @@ export default function ChatScreen({ route }) {
 
         }
 
-    }, [selectedProduct, selectedOrder])
+    }, [selectedOrder])
 
     const handleSend = async (image) => {
         try {
@@ -159,9 +159,9 @@ export default function ChatScreen({ route }) {
                         }
                         if (selectedProduct && Object.keys(selectedProduct).length) {
                             handleSendProduct(isiChat)
-                        }
-                        else {
+                        } else {
                             setTimeout(() => {
+                                setselectedOrder(null)
                                 var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
                                 firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
                                 firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: chat, time: new Date().toString() } });
@@ -242,7 +242,6 @@ export default function ChatScreen({ route }) {
 
     }
     const renderRow = ({ item, index }) => {
-        console.log("🚀 ~ file: ChatScreen.js ~ line 244 ~ renderRow ~ item", item)
         let dateNow = String(item.date).slice(0, 3);
         let dateRight = String(item.date).slice(4, 15)
         return (
@@ -257,8 +256,11 @@ export default function ChatScreen({ route }) {
                 {
                     item.from === reduxUser.uid ?
                         item.image ?
-                            <View style={[style.row_center, { width: Wp('65%'), height: Wp('65%'), backgroundColor: colors.BlueJaja, alignSelf: 'flex-end', paddingRight: '5%', borderRadius: 5 }]}>
-                                <Image source={{ uri: item.image }} style={{ width: '96%', height: '96%', resizeMode: 'cover', alignSelf: 'center', justifyContent: 'center', alignItems: 'center', borderRadius: 2 }} />
+                            // <View style={[style.row_center, { width: Wp('65%'), height: Wp('65%'), backgroundColor: colors.BlueJaja, alignSelf: 'flex-end', paddingRight: '5%', borderRadius: 5 }]}>
+                            //     <Image source={{ uri: item.image }} style={{ width: '96%', height: '96%', resizeMode: 'cover', alignSelf: 'center', justifyContent: 'center', alignItems: 'center', borderRadius: 2 }} />
+                            // </View>
+                            <View style={[{ width: Wp('70%'), height: Wp('70%'), alignSelf: 'flex-end', alignItems: 'flex-end', justifyContent: 'flex-end', paddingHorizontal: '0.5%', marginRight: '-3%' }]}>
+                                <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%', resizeMode: 'contain', alignSelf: 'center' }} />
                             </View>
                             :
                             <>
@@ -326,20 +328,20 @@ export default function ChatScreen({ route }) {
                                             </View>
 
                                             <View style={{ flex: 1 }}>
-                                                <Text numberOfLines={1} style={[style.font_13, { width: '90%' }]}>{item.productTitle}</Text>
-                                                {item.priceDiscount > 0 ?
+                                                <Text numberOfLines={1} style={[style.font_12, { width: '90%' }]}>{item.productTitle}</Text>
+                                                {item.priceDiscount && parseInt(item.priceDiscount) > 0 ?
                                                     <View style={{ flex: 0, flexDirection: 'column' }}>
                                                         <View style={{ flexDirection: 'row' }}>
-                                                            <Text adjustsFontSizeToFit style={{ textDecorationLine: 'line-through', marginRight: '3%', fontSize: 12 }}>{item.priceFirst}</Text>
-                                                            <View style={{ backgroundColor: colors.RedFlashsale, justifyContent: 'center', alignItems: 'center', borderRadius: 3, paddingHorizontal: '2%' }}>
-                                                                <Text adjustsFontSizeToFit style={[style.font_10, style.T_medium, { color: 'white' }]}>{item.priceDiscount + "%"}</Text>
+                                                            <Text adjustsFontSizeToFit style={[style.font_7, style.mr_2, { textDecorationLine: 'line-through' }]}>{item.priceFirst}</Text>
+                                                            <View style={{ backgroundColor: colors.RedFlashsale, justifyContent: 'center', alignItems: 'center', borderRadius: 3, paddingHorizontal: '1.5%' }}>
+                                                                <Text adjustsFontSizeToFit style={[style.font_8, style.T_semi_bold, { color: 'white' }]}>{item.priceDiscount + "%"}</Text>
                                                             </View>
                                                         </View>
-                                                        <Text adjustsFontSizeToFit style={{ marginRight: '3%', fontSize: 12 }}>{item.priceLast}</Text>
+                                                        <Text adjustsFontSizeToFit style={[style.font_12, style.mr_3, style.mt]}>{item.priceLast}</Text>
                                                     </View>
 
                                                     :
-                                                    <Text style={{ color: colors.RedFlashsale, fontFamily: 'Poppins-SemiBold', fontSize: Wp("4%") }}>
+                                                    <Text style={style.font_12}>
                                                         {item.priceLast}
                                                     </Text>
                                                 }
@@ -552,7 +554,7 @@ export default function ChatScreen({ route }) {
             <SafeAreaProvider style={[style.container]}>
                 {loading ? <Loading /> : null}
                 <ImageBackground source={require('../../assets/images/bgChat3.jpg')} style={{ width: '100%', height: '100%', paddingBottom: Math.max(insets.bottom, 0) }}>
-                    {product && Object.keys(product).length ?
+                    {selectedProduct && Object.keys(selectedProduct).length ?
                         <TouchableRipple style={{
                             width: '100%',
                             padding: '3%',
@@ -581,16 +583,30 @@ export default function ChatScreen({ route }) {
                                 </View>
 
                                 <View style={{ flex: 1 }}>
-                                    <Text numberOfLines={1} style={[style.font_13, { width: '90%' }]}>{product.name}</Text>
-                                    {product.isDiscount > 0 ?
+                                    <View style={style.row}>
+                                        <Text numberOfLines={1} style={[style.font_12, style.mr_2, { width: '90%' }]}>{product.name}</Text>
+                                        <Image style={{
+                                            alignSelf: "center",
+                                            width: Wp("3.5%"),
+                                            height: Wp("3.5%"),
+                                            borderRadius: 2,
+                                            tintColor: colors.RedDanger
+                                        }}
+                                            resizeMethod={"scale"}
+                                            resizeMode={"cover"}
+                                            source={require('../../assets/icons/close.png')}
+                                        />
+                                    </View>
+                                    {console.log("🚀 ~ file: ChatScreen.js ~ line 599 ~ ChatScreen ~ product", selectedProduct.priceDiscount)}
+                                    {product.isDiscount ?
                                         <View style={{ flex: 0, flexDirection: 'column' }}>
                                             <View style={{ flexDirection: 'row' }}>
-                                                <Text adjustsFontSizeToFit style={{ textDecorationLine: 'line-through', marginRight: '3%', fontSize: 12 }}>{product.priceFirst}</Text>
+                                                <Text adjustsFontSizeToFit style={[style.font_9, { textDecorationLine: 'line-through', marginRight: '3%' }]}>{product.price}</Text>
                                                 <View style={{ backgroundColor: colors.RedFlashsale, justifyContent: 'center', alignItems: 'center', borderRadius: 3, paddingHorizontal: '2%' }}>
                                                     <Text adjustsFontSizeToFit style={[style.font_10, style.T_medium, { color: 'white' }]}>{product.discount + "%"}</Text>
                                                 </View>
                                             </View>
-                                            <Text adjustsFontSizeToFit style={{ marginRight: '3%', fontSize: 12 }}>{product.price}</Text>
+                                            <Text adjustsFontSizeToFit style={[style.font_12, { marginRight: '3%' }]}>{product.priceDiscount}</Text>
                                         </View>
 
                                         :

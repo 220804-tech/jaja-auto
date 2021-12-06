@@ -135,15 +135,16 @@ export default function AddReview(props) {
     }
 
     const handleChange = (value, index, name) => {
+        console.log("🚀 ~ file: AddReview.js ~ line 138 ~ handleChange ~ value", value)
         if (name === "rate") {
             let newData = JSON.parse(JSON.stringify(data))
             newData[index].rate = value;
             setData(newData)
             setIdx(null)
         } else if (name === "comment") {
-            let newData = JSON.parse(JSON.stringify(data))
-            newData[index].comment += value + ". ";
-            setData(newData)
+            // let newData = JSON.parse(JSON.stringify(data))
+            data[index].comment += value + ". ";
+            // setData(newData)
             setIdx(null)
         }
     }
@@ -229,12 +230,12 @@ export default function AddReview(props) {
                             <View style={[styles.row, { flexWrap: 'wrap' }]}>
                                 {inputText.map((input, indx) => {
                                     return (
-                                        <TouchableOpacity key={indx + "C"} onPress={() => handleChange(input.text, index, "comment")} style={[styles.py, styles.px_2, styles.mr, styles.mb_2, { borderWidth: 0.5, borderColor: colors.Silver, borderRadius: 3 }]}><Text multiline={true} style={[styles.font_12, { color: input.pressed ? colors.White : colors.BlackGrayScale }]}>{input.text}</Text></TouchableOpacity>
+                                        <TouchableOpacity key={indx + "C"} onPress={() => data[index].comment += input.text + ". "} style={[styles.py, styles.px_2, styles.mr, styles.mb_2, { borderWidth: 0.5, borderColor: colors.Silver, borderRadius: 3 }]}><Text multiline={true} style={[styles.font_12, { color: input.pressed ? colors.White : colors.BlackGrayScale }]}>{input.text}</Text></TouchableOpacity>
                                     )
                                 })}
                             </View>
                             <View style={{ borderWidth: 0.5, borderColor: colors.Silver, borderRadius: 5 }}>
-                                <TextInput style={{ color: colors.BlackGrayScale }} onChangeText={(text) => handleChange(text, index, "comment")} placeholder="Barang sesuai pesanan." multiline={true} numberOfLines={3} textAlignVertical="top" maxLength={200}>
+                                <TextInput style={{ color: colors.BlackGrayScale }} onChangeText={(text) => data[index].comment += text} placeholder="Barang sesuai pesanan." multiline={true} numberOfLines={3} textAlignVertical="top" maxLength={200}>
                                     {item.comment}
                                 </TextInput>
                             </View>

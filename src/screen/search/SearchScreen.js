@@ -143,11 +143,13 @@ export default function SearchScreen() {
             headers: myHeaders,
             redirect: 'follow'
         };
+        dispatch({ type: 'SET_CATEGORY_NAME', payload: null })
+
         dispatch({ type: 'SET_SEARCH', payload: [] })
         dispatch({ type: 'SET_FILTERS', payload: [] })
         dispatch({ type: 'SET_SORTS', payload: [] })
         dispatch({ type: 'SET_KEYWORD', payload: '' })
-        fetch(`https://jaja.id/backend/product/search/result?page=1&limit=20&keyword=${text}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
+        fetch(`https://jaja.id/backend/product/search/result?page=1&limit=50&keyword=${text}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 dispatch({ type: 'SET_SEARCH', payload: result.data.items })
@@ -203,9 +205,7 @@ export default function SearchScreen() {
 
 
     const handleSelectedToko = (item) => {
-        console.log("🚀 ~ file: SearchScreen.js ~ line 195 ~ handleSelectedToko ~ item", item)
         if (reduxStore && Object.keys(reduxStore).length) {
-            console.log("🚀 ~ file: ProductScreen.js ~ line 259 ~ handleStore ~ reduxStore", reduxStore)
             if (reduxStore.name != item.name) {
                 dispatch({ "type": 'SET_STORE', payload: {} })
                 dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
@@ -217,10 +217,12 @@ export default function SearchScreen() {
                 navigation.navigate('Store')
             }
         })
+        dispatch({ type: 'SET_CATEGORY_NAME', payload: null })
+
         let obj = {
             slug: item.slug,
             page: 1,
-            limit: 15,
+            limit: 30,
             keyword: '',
             price: '',
             condition: '',
@@ -247,7 +249,6 @@ export default function SearchScreen() {
     }
 
     const handleSelectedCategory = (item) => {
-        console.log("🚀 ~ file: SearchScreen.js ~ line 249 ~ handleSelectedCategory ~ item", item)
         if (item) {
             dispatch({ type: 'SET_KEYWORD', payload: item.name })
             var myHeaders = new Headers();
@@ -257,8 +258,9 @@ export default function SearchScreen() {
                 headers: myHeaders,
                 redirect: 'follow'
             };
+            dispatch({ type: 'SET_CATEGORY_NAME', payload: item.slug })
 
-            fetch(`https://jaja.id/backend/product/category/${item.slug}?page=1&limit=100&keyword=&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
+            fetch(`https://jaja.id/backend/product/category/${item.slug}?page=1&limit=50&keyword=&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     console.log("🚀 ~ file: CategoryComponent.js ~ line 83 ~ handleFetch ~ result", result)
@@ -284,7 +286,7 @@ export default function SearchScreen() {
 
             setTimeout(() => {
                 navigation.navigate('ProductSearch')
-            }, 500);
+            }, 250);
         }
     }
 

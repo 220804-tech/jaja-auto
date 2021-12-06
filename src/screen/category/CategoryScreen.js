@@ -42,6 +42,8 @@ export default function CategoryScreen() {
     const handleSelected = (res) => {
         handleFetch(res)
         handleSaveKeyword(res)
+        dispatch({ type: 'SET_CATEGORY_NAME', payload: res })
+
     }
     const handleFetch = (text) => {
         if (text) {
