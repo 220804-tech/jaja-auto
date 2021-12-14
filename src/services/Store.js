@@ -38,9 +38,10 @@ export async function getStoreProduct(data) {
         redirect: 'follow'
     };
 
-    return await fetch(`https://jaja.id/backend/product/store/${data.slug ? data.slug : ""}?page=${data.page}&limit=${data.limit}&keyword=${data.keyword ? data.keyword : ""}&filter_price=&filter_location=${data.price ? data.price : ""}&filter_condition=${data.condition ? data.condition : ""}&filter_preorder=${data.preorder ? data.preorder : ""}&filter_brand=${data.brand ? data.brand : ""}&filter_category=${data.category ? data.category : ""}&sort=${data.sort ? data.sort : ""} `, requestOptions)
+    return await fetch(`https://jaja.id/backend/product/store/${data.slug ? data.slug : ""}?page=${data.page}&limit=${data.limit}&keyword=${data.keyword ? data.keyword : ""}&filter_price=&filter_location=&filter_condition=${data.condition ? data.condition : ""}&filter_preorder=${data.preorder ? data.preorder : ""}&filter_brand=${data.brand ? data.brand : ""}&filter_category=${data.category ? data.category : ""}&sort=${data.sort ? data.sort : ""} `, requestOptions)
         .then(response => response.json())
         .then(result => {
+            console.log("🚀 ~ file: Store.js ~ line 44 ~ getStoreProduct ~ result", result.data)
             if (result.status.code === 200 || result.status.code === 204) {
                 return result.data;
             } else {

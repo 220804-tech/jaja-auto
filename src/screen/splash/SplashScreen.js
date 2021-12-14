@@ -56,9 +56,11 @@ export default function SplashScreen() {
         }
         setTimeout(() => {
             navigation.replace('Beranda')
+
         }, 4000);
 
     }, [])
+
 
     const getFlashsale = () => {
         ServiceCore.getDateTime().then(res => {

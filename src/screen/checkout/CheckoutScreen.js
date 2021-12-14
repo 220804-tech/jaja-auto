@@ -51,7 +51,7 @@ export default function checkoutScreen() {
 
     const [deliveryDate, setdeliveryDate] = useState("")
     const [notes, setNotes] = useState([])
-    const [sendDate, setsendDate] = useState("")
+    const [sendDate, setSendDate] = useState("")
 
     const [rangeDate, setrangeDate] = useState([])
     const [listMonth, setlistMonth] = useState(["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "September", "Desember"])
@@ -318,7 +318,7 @@ export default function checkoutScreen() {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Content-Type", "application/json");
-        myHeaders.append("Cookie", "ci_session=b5p6pllgk6nasb4odeguib41hl576554");
+        myHeaders.append("Cookie", "ci_session=f7mkmnsrubv4fb7flu6tfcv8uecmproe");
 
         var raw = JSON.stringify({
             "storeId": storePressed.id,
@@ -327,6 +327,7 @@ export default function checkoutScreen() {
             "sendTime": sendTime,
             "dateSendTime": sendDate
         });
+        console.log("🚀 ~ file: CheckoutScreen.js ~ line 330 ~ deliverySelected ~ raw", raw)
 
         var requestOptions = {
             method: 'PUT',
@@ -389,9 +390,17 @@ export default function checkoutScreen() {
     }
 
     const handleConfirmDate = (date) => {
+        //     console.log("🚀 ~ file: CheckoutScreen.js ~ line 393 ~ handleConfirmDate ~ date", date)
+        //     console.log("🚀 ~ file: CheckoutScreen.js ~ line 393 ~ handleConfirmDate ~ date", date.getDate())
+        //     console.log("🚀 ~ file: CheckoutScreen.js ~ line 393 ~ handleConfirmDate ~ date", date.getMonth() + 1)
+        //     console.log("🚀 ~ file: CheckoutScreen.js ~ line 393 ~ handleConfirmDate ~ date", date.getFullYear())
+        let mothSelected = parseInt(date.getMonth()) < 12 ? date.getMonth() + 1 : '01'
+        let dateSelected = date.getFullYear() + "-" + mothSelected + '-' + date.getDate()
+        console.log("🚀 ~ file: CheckoutScreen.js ~ line 399 ~ handleConfirmDate ~ dateSelected", dateSelected)
+
         try {
             let mont = new Date()
-            // let year = new Date().getFullYear()
+            // let year = new 399().getFullYear()
             let str = JSON.stringify(date);
             let dateDay = str.slice(9, 11);
             let dateMonth = str.slice(6, 8);
@@ -400,7 +409,7 @@ export default function checkoutScreen() {
             if (str.slice(1, 8) === JSON.stringify(mont).slice(1, 8) && parseInt(min) <= 1) {
                 setdeliveryDate(str.slice(1, 11))
                 let string = listMonth[parseInt(dateMonth) - 1];
-                setsendDate(dateDay.replace(0, "") + " " + string)
+                setSendDate(dateSelected)
             } else {
                 ToastAndroid.show(`Minimal tanggal pengiriman ${sendDate} sampai seterusnya`, ToastAndroid.LONG, ToastAndroid.CENTER)
                 ToastAndroid.show(`Maksimal tanggal pengiriman 1 bulan setelah barang sampai`, ToastAndroid.LONG, ToastAndroid.CENTER)
@@ -414,10 +423,12 @@ export default function checkoutScreen() {
     };
 
     const handleListDate = (index) => {
-        let string = new Date().getDate() + parseInt(reduxShipping[index].items[0].type[0].etd.slice(2, 3)) + " " + listMonth[new Date().getMonth()];
+        let dateNow = new Date()
+        let mothSelected = parseInt(dateNow.getMonth()) < 12 ? dateNow.getMonth() + 1 : '01'
+        let string = new Date().getDate() + parseInt(reduxShipping[index].items[0].type[0].etd.slice(2, 3))
         console.log("🚀 ~ file: CheckoutScreen.js ~ line 160 ~ handleListDate ~ string", string)
         setmaxSendDate(string)
-        setsendDate(string)
+        setSendDate(dateNow.getFullYear() + '-' + mothSelected + "-" + string)
 
         let range = new Date().getDate() + parseInt(reduxShipping[index].items[0].type[0].etd.slice(2, 3));
         console.log("🚀 ~ file: CheckoutScreen.js ~ line 158 ~ handleListDate ~ range", range)
@@ -605,7 +616,6 @@ export default function checkoutScreen() {
         setRefreshControl(true)
         ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then(res => {
             if (res) {
-                console.log("🚀 ~ file: CheckoutScreen.js ~ line 616 ~ ServiceCheckout.getCheckout ~ res", res)
                 dispatch({ type: 'SET_CHECKOUT', payload: res })
                 ToastAndroid.show("Updated", ToastAndroid.LONG, ToastAndroid.CENTER)
                 setTimeout(() => {
@@ -766,6 +776,7 @@ export default function checkoutScreen() {
                                                 <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/vehicle-yellow.png')} />
                                                 <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pengiriman</Text>
                                             </View>
+                                            {console.log("🚀 ~ file: CheckoutScreen.js ~ line 780 ~ reduxCheckout.cart.map ~ item.shippingSelected", item.shippingSelected)}
                                             {item.shippingSelected.name ?
                                                 <TouchableOpacity onPress={() => {
                                                     console.log("cok")
@@ -778,7 +789,12 @@ export default function checkoutScreen() {
                                                         <View style={[styles.column_between_center, { alignItems: 'flex-start' }]}>
                                                             <Text numberOfLines={1} style={[styles.font_14]}>{item.shippingSelected.name}</Text>
                                                             <Text numberOfLines={1} style={[styles.font_12]}>{item.shippingSelected.type}</Text>
-                                                            <Text numberOfLines={1} style={[styles.font_12, styles.T_italic]}>Estimasi {item.shippingSelected.etdText}</Text>
+                                                            <Text numberOfLines={1} style={[styles.font_12]}>Estimasi {item.shippingSelected.etdText}</Text>
+                                                            {item.shippingSelected.sendTime === 'pilih tanggal' ?
+                                                                <Text numberOfLines={1} style={[styles.font_12]}>Akan dikirim</Text>
+                                                                : null
+                                                            }
+
 
                                                         </View>
                                                         <View style={[styles.column_between_center, { alignItems: 'flex-end' }]}>
@@ -790,6 +806,14 @@ export default function checkoutScreen() {
                                                             }
 
                                                             <Text numberOfLines={1} style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja, }]}>{item.shippingSelected.priceCurrencyFormat}</Text>
+                                                            {item.shippingSelected.sendTime === 'pilih tanggal' ?
+                                                                <Text numberOfLines={1} style={[styles.font_12]}>{item.shippingSelected.dateSendTime}</Text>
+                                                                :
+                                                                null
+
+                                                            }
+
+
                                                         </View>
                                                     </View>
                                                     <View style={[styles.column, styles.mb_3]}>
@@ -877,7 +901,7 @@ export default function checkoutScreen() {
                                     status={useCoin ? 'checked' : 'unchecked'}
                                     onPress={() => handleUseCoin(!useCoin)}
                                 />
-                                <Text numberOfLines={1} style={[styles.font_13, styles.T_medium, { textAlignVertical: 'center', marginBottom: '-1%' }]}>Koin dimiliki</Text>
+                                <Text numberOfLines={1} style={[styles.font_13, { textAlignVertical: 'center', marginBottom: '-1%' }]}>Koin dimiliki</Text>
                             </View>
 
                         </View>
@@ -888,7 +912,7 @@ export default function checkoutScreen() {
                             {reduxCheckout.voucherJajaType === "ongkir" ? <Text style={[styles.font_13, { marginBottom: '2%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountJajaCurrencyFormat}</Text> : null}
                             <Text style={[styles.font_13, { marginBottom: '2%' }]}>Rp0</Text>
                             {reduxCheckout.coinUsed ? <Text style={[styles.font_13, { color: colors.RedFlashsale, marginBottom: '2%' }]}>[-{reduxCheckout.coinUsedFormat}]</Text> : null}
-                            <Text numberOfLines={1} style={[styles.font_13, styles.T_medium, styles.py_2, { textAlignVertical: 'center', marginBottom: "-2%", opacity: reduxCoin == 0 ? 0.4 : 1, backgroundColor: colors.White }]}>{reduxCoin}</Text>
+                            <Text numberOfLines={1} style={[styles.font_13, styles.py_2, { textAlignVertical: 'center', marginBottom: "-2%", opacity: reduxCoin == 0 ? 0.4 : 1, backgroundColor: colors.White }]}>({reduxCoin})</Text>
                         </View>
                     </View>
                 </View>
@@ -1039,7 +1063,6 @@ export default function checkoutScreen() {
                                         renderItem={({ item }) => {
                                             let code = item.code;
                                             let Ename = item.name;
-                                            console.log("🚀 ~ file: CheckoutScreen.js ~ line 1014 ~ checkoutScreen ~ item.icon ", item.icon)
                                             return (
                                                 <View style={[styles.column_center_start, styles.mb_2, styles.py_2, styles.px_4, { borderBottomWidth: 1, borderBottomColor: colors.Silver, width: '100%' }]}>
                                                     <Text style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>{Ename}</Text>
@@ -1084,7 +1107,7 @@ export default function checkoutScreen() {
                                                                 value={sendTime === item.value ? true : false}
                                                                 onValueChange={() => {
                                                                     if (item.value !== "pilih tanggal") {
-                                                                        setsendDate("")
+                                                                        setSendDate("")
                                                                     }
                                                                     setsendTime(item.value)
                                                                 }}

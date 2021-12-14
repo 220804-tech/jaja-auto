@@ -16,8 +16,10 @@ const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
 const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 import { useAndroidBackHandler } from "react-navigation-backhandler";
 import { TouchableRipple } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import queryString from 'query-string';
+
+
 LogBox.ignoreAllLogs()
 
 export default function HomeScreen() {
@@ -76,15 +78,21 @@ export default function HomeScreen() {
     ]
 
     const handleDynamicLink = link => {
-        // alert(link)
-        console.log(link)
-        // Handle dynamic link inside your own application
-        if (link.url === 'https://jajaidbuyer.page.link/Splash') {
-            setLoading(true)
-            setTimeout(() => {
-                setLoading(false)
-                navigation.navigate('Pesanan')
-            }, 500);
+        try {
+            const parsed = queryString.parseUrl(link.url);
+            if ('https://jajaid.page.link/product?' === String(link.url).slice(0, 33)) {
+                setLoading(true)
+                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+                let slug = Object.values(parsed.query)
+                dispatch({ type: 'SET_SLUG', payload: slug[0] })
+                setTimeout(() => {
+                    navigation.push("Product", { slug: slug[0], image: null })
+                    setLoading(false)
+                }, 500);
+            }
+        } catch (error) {
+
         }
     };
 
@@ -100,12 +108,32 @@ export default function HomeScreen() {
                 if (reduxAuth) {
                     getBadges()
                 }
+
             } catch (error) {
 
             }
         }, [reduxAuth]),
     );
 
+
+    useFocusEffect(
+        useCallback(() => {
+
+            // const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
+            // setLoading(false)
+            // console.log("🚀 ~ file: HomeScreen.js ~ line 134 ~ useEffect ~ unsubscribe", unsubscribe)
+            // return () => unsubscribe();
+
+            dynamicLinks().getInitialLink().then(link => {
+                handleDynamicLink(link)
+            })
+
+            const linkingListener = dynamicLinks().onLink(handleDynamicLink)
+            return () => {
+                linkingListener()
+            }
+        }, []),
+    );
     useEffect(() => {
         try {
             dispatch({ 'type': 'SET_LOADMORE', payload: false })
@@ -130,9 +158,8 @@ export default function HomeScreen() {
 
         }
         console.log('xfcygvhbjknqlw jhgcfygv')
-        const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
-        return () => unsubscribe();
 
+        setTimeout(() => setLoading(false), 5000);
     }, [])
 
     const getBadges = () => {
@@ -223,6 +250,7 @@ export default function HomeScreen() {
                 <ScrollView
                     refreshControl={
                         <RefreshControl
+                            style={{ zIndex: 9999 }}
                             refreshing={refreshing}
                             onRefresh={onRefresh}
                         />

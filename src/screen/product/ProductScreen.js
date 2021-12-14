@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react'
-import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, StyleSheet, StatusBar, Animated, Platform, Dimensions, LogBox, ToastAndroid, RefreshControl, Alert, ScrollView } from 'react-native'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
+import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, StyleSheet, StatusBar, Animated, Platform, Dimensions, LogBox, ToastAndroid, RefreshControl, Alert, ScrollView, Modal } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { Button } from 'react-native-paper'
@@ -15,11 +15,12 @@ import dynamicLinks from '@react-native-firebase/dynamic-links';
 import { useDispatch, useSelector } from "react-redux";
 import StarRating from 'react-native-star-rating';
 import ImgToBase64 from 'react-native-image-base64';
-
+import ViewShot from "react-native-view-shot";
 LogBox.ignoreAllLogs()
 
 export default function ProductScreen(props) {
     const navigation = useNavigation()
+    const viewShotRef = useRef(null);
     const reduxSearch = useSelector(state => state.search)
     const reduxUser = useSelector(state => state.user)
     const reduxAuth = useSelector(state => state.auth.auth)
@@ -31,6 +32,7 @@ export default function ProductScreen(props) {
     const dispatch = useDispatch()
 
     const [scrollY, setscrollY] = useState(new Animated.Value(0))
+    const [modal, setmodal] = useState(false)
 
     const [refreshing, setRefreshing] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -60,9 +62,11 @@ export default function ProductScreen(props) {
             getItem(props.route.params.slug)
             Utils.alertPopUp('Refreshing..')
         }
+
     }, []);
 
     useEffect(() => {
+        setmodal(false)
         if (props.route.params && props.route.params.slug) {
             setLoading(true)
             getItem(props.route.params.slug)
@@ -100,23 +104,21 @@ export default function ProductScreen(props) {
 
     const dynamicLink = async () => {
         const link_URL = await dynamicLinks().buildShortLink({
-            link: 'https://jajaid.page.link/product',
+            link: `https://jajaid.page.link/product?slug=${props.route.params.slug}`,
             domainUriPrefix: 'https://jajaid.page.link',
             // ios: {
-            // bundleId: 'com.reelweb',
-            // appStoreId: '34354',
-            // fallbackUrl: 'https://apps.apple.com/us/app/reelweb-app/id1535962213',
+            //     bundleId: 'com.jajabuyer',
+            //     appStoreId: 'id1547981332',
+            //     fallbackUrl: 'https://apps.apple.com/id/app/jaja-id-marketplace-hobbies/id1547981332?l=id',
             // },
             android: {
                 packageName: 'com.jajaidbuyer',
-                // fallbackUrl: 'https://play.google.com/store/apps/details?id=com.reelweb',
-            },
-            navigation: {
-                forcedRedirectEnabled: true,
-            }
+                fallbackUrl: 'https://play.google.com/store/apps/details?id=com.jajaidbuyer',
+            }            // navigation: {
+            //     forcedRedirectEnabled: true,
+            // }
         });
         setlink(link_URL)
-        console.log("🚀 ~ file: ProductScreen.js ~ line 118 ~ constlink_URL=awaitdynamicLinks ~ link_URL", link_URL)
     }
 
     useFocusEffect(
@@ -151,7 +153,10 @@ export default function ProductScreen(props) {
         let response;
         ServiceProduct.productDetail(reduxAuth, slg).then(res => {
             response = "clear"
-            if (res) {
+            if (res?.status?.code === 400) {
+                Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                navigation.goBack()
+            } else if (res) {
                 dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res })
                 handleVariasi(res.variant)
                 setLoading(false)
@@ -186,7 +191,7 @@ export default function ProductScreen(props) {
             }
 
         }).catch(err => {
-            Utils.alertPopUp(JSON.stringify(err))
+            Utils.alertPopUp(String(err), "Error with status code: 121222")
             setLoading(false)
             setRefreshing(false)
             response = "clear"
@@ -264,7 +269,6 @@ export default function ProductScreen(props) {
         try {
             var credentials = { "productId": idProduct, "flashSaleId": flashsale ? flashsaleData.id_flashsale : "", "lelangId": "", "variantId": variasiPressed, "qty": qty };
             let result = await ServiceProduct.addCart(reduxAuth, credentials)
-            console.log("🚀 ~ file: ProductScreen.js ~ line 238 ~ handleApiCart ~ result", result)
             if (result && result.status.code === 200) {
                 Utils.alertPopUp('Produk berhasil ditambahkan!')
                 if (name === "buyNow") {
@@ -528,47 +532,61 @@ export default function ProductScreen(props) {
         }
     }
 
-    const handleShare = async () => {
-        try {
-            console.log("🚀 ~ file: ProductScreen.js ~ line 536 ~ handleShare ~ link", link)
-
-            const shareOptions = {
-                title: 'Jaja',
-                message: `${reduxSearch.productDetail.name}\nDownload sekarang ${link}`,
-                url: image,
-            };
-            // Share.open(shareOptions)
-            //     .then((res) => {
-            //         console.log(res);
-            //     })
-            //     .catch((err) => {
-            //         err && console.log(err);
-            //     });
-
-            // console.log("🚀 ~ file: ProductScreen.js ~ line 357 ~ handleShare ~ slug", slug)
-            // try {
-            //     const shareOptions = {
-            //         title: 'Jaja',
-            //         message: `Pakai kode referral saya  dan dapatkan 10.000 koin, untuk belanja di Jaja.id, instal sekarang https://play.google.com/store/apps/details?id=com.seller.jaja`, // Note that according to the documentation at least one of "message" or "url" fields is required
-            //         url: image,
-            //     };
-            //     console.log("file: ReferralScreen.js ~ line 33 ~ handleShare ~ shareOptions", shareOptions)
-
-            Share.open(shareOptions)
-                .then((res) => {
-                    console.log(res);
-                })
-                .catch((err) => {
-                    err && console.log(err);
+    const handleShare = () => {
+        console.log("🚀 ~ file: ProductScreen.js ~ line 536 ~ handleShare ~ link", variasiSelected)
+        setmodal(true)
+        setTimeout(async () => {
+            try {
+                let img64 = ''
+                await viewShotRef.current.capture().then(async uri => {
+                    console.log('do something with ', typeof uri);
+                    await ImgToBase64.getBase64String(uri)
+                        .then(base64String => {
+                            let urlString = 'data:image/jpeg;base64,' + base64String;
+                            img64 = urlString
+                            // console.log("🚀 ~ file: ProductScreen.js ~ line 545 ~ viewShotRef.current.capture ~ urlString", urlString)
+                        })
+                        .catch(err => console.log("cok"));
                 });
+                setmodal(false)
+                const shareOptions = {
+                    title: 'Jaja',
+                    message: `Dapatkan ${reduxSearch.productDetail.name} di Jaja.id \nDownload sekarang ${link}`,
+                    url: img64,
+                };
+                // Share.open(shareOptions)
+                //     .then((res) => {
+                //         console.log(res);
+                //     })
+                //     .catch((err) => {
+                //         err && console.log(err);
+                //     });
 
-            //     // let link = await buildLink(slug);
-            //     // console.log("file: ReferralScreen.js ~ line 33 ~ handleShare ~ shareOptions", shareOptions)
+                // console.log("🚀 ~ file: ProductScreen.js ~ line 357 ~ handleShare ~ slug", slug)
+                // try {
+                //     const shareOptions = {
+                //         title: 'Jaja',
+                //         message: `Pakai kode referral saya  dan dapatkan 10.000 koin, untuk belanja di Jaja.id, instal sekarang https://play.google.com/store/apps/details?id=com.seller.jaja`, // Note that according to the documentation at least one of "message" or "url" fields is required
+                //         url: image,
+                //     };
+                //     console.log("file: ReferralScreen.js ~ line 33 ~ handleShare ~ shareOptions", shareOptions)
+
+                Share.open(shareOptions)
+                    .then((res) => {
+                        console.log(res);
+                    })
+                    .catch((err) => {
+                        err && console.log(err);
+                    });
+
+                //     // let link = await buildLink(slug);
+                //     // console.log("file: ReferralScreen.js ~ line 33 ~ handleShare ~ shareOptions", shareOptions)
 
 
-        } catch (error) {
+            } catch (error) {
 
-        }
+            }
+        }, 1000);
 
     }
 
@@ -576,6 +594,7 @@ export default function ProductScreen(props) {
     const renderContent = () => {
         return (
             <View style={[styles.column, { backgroundColor: '#e8e8e8', paddingBottom: Hp('6%') }]}>
+
                 {reduxSearch.productDetail && Object.keys(reduxSearch.productDetail).length ?
                     <View style={styles.column}>
                         {flashsale ?
@@ -968,8 +987,13 @@ export default function ProductScreen(props) {
                             <RecomandedHobby color={colors.BlackGrayScale} />
                         </View>
                     </View>
+
+
                     : null
                 }
+
+
+
             </View >
         );
     };
@@ -981,14 +1005,15 @@ export default function ProductScreen(props) {
             handleLogin()
         }
     }
-
-
-
+    const onCapture = uri => {
+        console.log("do something with ", uri);
+    }
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
             {loading ? <Loading /> : null}
             <StatusBar translucent={Platform.OS === 'ios' ? false : true} backgroundColor="transparent" barStyle="light-content" />
+
             <ReactNativeParallaxHeader
                 headerMinHeight={Platform.OS === 'ios' ? Hp('4%') : Hp('9%')}
                 headerMaxHeight={Platform.OS === 'ios' ? Hp('45%') : Wp('100%')}
@@ -1029,6 +1054,7 @@ export default function ProductScreen(props) {
                     }
                 }}
             />
+
             <View style={{ position: 'absolute', bottom: 0, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row', elevation: 3 }}>
                 <TouchableOpacity onPress={handleChat} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
                     <Image source={require('../../assets/icons/chats.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: colors.RedFlashsale }} />
@@ -1040,6 +1066,79 @@ export default function ProductScreen(props) {
                     {reduxSearch.productDetail.stock == '0' ? 'Stok Habis' : reduxSearch.productDetail.statusProduk != 'live' ? 'Diarsipkan' : 'Beli Sekarang'}
                 </Button>
             </View>
+            {Object.keys(reduxSearch.productDetail).length ?
+                <Modal animationType="fade" transparent={true} visible={modal} onRequestClose={() => setmodal(!modal)}>
+                    <View style={{ height: Hp('50%'), width: Wp('100%'), backgroundColor: colors.White, opacity: 0.95, zIndex: 9999, elevation: 11 }}>
+                        <ViewShot ref={viewShotRef} options={{ format: "jpg" }}>
+                            <View style={{ width: Wp('100%'), height: Wp('100%'), backgroundColor: colors.White }}>
+                                <Image style={style.swiperProduct}
+                                    source={{ uri: reduxSearch.productDetail.image[0] }}
+                                />
+                            </View>
+                            <View style={{ flex: 0, flexDirection: 'column', backgroundColor: colors.White, padding: '3%', marginBottom: '1%' }}>
+                                <Text style={[styles.font_18, styles.mb_2]}>{reduxSearch.productDetail.name}</Text>
+                                {Object.keys(variasiSelected).length ?
+                                    <View style={[styles.row_start_center,]}>
+                                        {console.log("🚀 ~ file: ProductScreen.js ~ line 1075 ~ handleShare ~ variasiSelected", variasiSelected)}
+                                        <View style={[styles.row, { width: '87%', height: '100%' }]}>
+                                            {variasiSelected.isDiscount ?
+                                                <View style={styles.row}>
+                                                    <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 5 }]}>
+                                                        <Text style={[styles.font_16, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{reduxSearch.productDetail.discount}%</Text>
+                                                    </View>
+                                                    <View style={styles.column}>
+                                                        <Text style={Ps.priceBefore}>{variasiSelected.price}</Text>
+                                                        <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{variasiSelected.priceDiscount}</Text>
+                                                    </View>
+                                                </View>
+                                                :
+                                                <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{variasiSelected.price}</Text>
+                                            }
+                                        </View>
+                                    </View>
+                                    :
+                                    flashsale ?
+                                        <View style={[styles.row_start_center,]}>
+                                            <View style={[styles.row_center, { width: '87%', height: '100%' }]}>
+                                                <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1.5%', borderRadius: 5 }]}>
+                                                    <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{flashsaleData.discountFlash}%</Text>
+                                                </View>
+                                                <View style={[styles.column, { height: Wp('11.5%'), }]}>
+                                                    <Text style={Ps.priceBefore}>{reduxSearch.productDetail.price}</Text>
+                                                    <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{reduxSearch.productDetail.price}</Text>
+                                                </View>
+                                            </View>
+                                        </View>
+                                        :
+                                        <View style={[styles.row_start_center,]}>
+                                            {console.log('nasua=sasjhuytdr56ft7yg8uhknjbhvgcftxdrzsewqased5rftyguhi')}
+                                            <View style={[styles.row_start_center, { width: '87%', }]}>
+                                                {reduxSearch.productDetail.isDiscount ?
+                                                    <View style={[styles.row_start_center]}>
+                                                        <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1.5%', borderRadius: 5 }]}>
+                                                            <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{reduxSearch.productDetail.discount}%</Text>
+                                                        </View>
+                                                        <View style={[styles.column]}>
+                                                            <Text style={Ps.priceBefore}>{reduxSearch.productDetail.price}</Text>
+                                                            <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{reduxSearch.productDetail.priceDiscount}</Text>
+                                                        </View>
+                                                    </View>
+                                                    :
+                                                    <View style={[styles.row_between_center, { width: '100%' }]}>
+                                                        <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{reduxSearch.productDetail.price}</Text>
+                                                    </View>
+                                                }
+                                            </View>
+
+                                        </View>
+                                }
+
+                            </View>
+
+                        </ViewShot>
+                    </View>
+                </Modal > : null
+            }
         </SafeAreaView >
     )
 }

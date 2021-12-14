@@ -35,6 +35,7 @@ export default function OrderDetailsScreen() {
     });
     const [midtrans, setMidtrans] = useState();
     const [loadingOrderPaymentRecent, setLoadingOrderPaymentRecent] = useState(true);
+    const [paymentUpdate, setPaymentUpdate] = useState(0)
     const [listPayment, setListPayment] = useState([
         {
             "id_payment_method_category": "1",
@@ -171,6 +172,7 @@ export default function OrderDetailsScreen() {
         return () => backHandler.remove();
 
     }, [])
+
 
     const getOrder = () => {
         ServiceOrder.getUnpaid(reduxAuth).then(resUnpaid => {
@@ -581,6 +583,7 @@ export default function OrderDetailsScreen() {
     }
 
     const getListPayment = (total) => {
+        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 586 ~ getListPayment ~ total", total)
         try {
             var myHeaders = new Headers();
             myHeaders.append("Cookie", "ci_session=mo3huphq5niakt3grmetuf4djpvcd76q");
@@ -595,10 +598,14 @@ export default function OrderDetailsScreen() {
                 .then(response => response.json())
                 .then(result => {
                     setListPayment(result);
+                    setPaymentUpdate(paymentUpdate + 1)
+                    console.log('masui sini nggk')
+                    setTimeout(() => actionSheetPayment.current?.setModalVisible(true), 3000);
                 })
                 .catch(error => {
                     Utils.handleError(error, "Error with status code : 22004")
                 });
+            x
         } catch (error) {
 
         }
@@ -728,6 +735,7 @@ export default function OrderDetailsScreen() {
                 setOrderPaymentRecent(result.orderPaymentRecent);
                 setMidtrans(result.midtrans);
                 setLoadingOrderPaymentRecent(false);
+
             })
             .catch(error => {
                 Utils.handleError(error, "Error with status code : 22008")
@@ -968,7 +976,7 @@ export default function OrderDetailsScreen() {
                     {details && details.items.length ?
                         details.items.map((item, idxStore) => {
                             return (
-                                <View key={String(idxStore)} style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                                <View key={String(idxStore) + 'AL'} style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]} >
                                     <View style={[styles.row_between_center, styles.px_3, styles.py_2, { width: '100%', borderBottomWidth: 0.2, borderBottomColor: colors.WhiteSilver }]}>
                                         <View style={[styles.row]}>
                                             <Image style={[styles.icon_19, { marginRight: '3%', tintColor: colors.BlueJaja }]} source={require('../../assets/icons/store.png')} />
@@ -985,7 +993,7 @@ export default function OrderDetailsScreen() {
                                     {
                                         item.products.map((child, idx) => {
                                             return (
-                                                <View key={String(idx) + "s"} style={[styles.column, styles.px_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver, width: '100%' }]}>
+                                                <View key={String(idx) + "SV"} style={[styles.column, styles.px_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver, width: '100%' }]}>
                                                     <View style={[styles.row_start_center, { width: '100%', height: Wp('25%') }]}>
                                                         <TouchableOpacity onPress={() => handleShowDetail(child)}>
                                                             <Image style={{ width: Wp('15%'), height: Wp('15%'), borderRadius: 5, backgroundColor: colors.BlackGrey }}
@@ -1274,8 +1282,8 @@ export default function OrderDetailsScreen() {
                                         //onPressIn={() => gotoPaymentDetailSub(item)} 
                                         style={[styles.py_4, styles.px_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}
                                         onPress={() => {
-                                            //actionSheetPayment.current?.setModalVisible()
-                                            gotoPaymentDetailSub(item)
+                                            actionSheetPayment.current?.setModalVisible()
+                                            // gotoPaymentDetailSub(item)
 
                                         }}
                                         rippleColor={colors.BlueJaja} >
@@ -1339,7 +1347,7 @@ export default function OrderDetailsScreen() {
                         {details && details.items.length ?
                             details.items.map((item, idxStore) => {
                                 return (
-                                    <View key={String(idxStore)} style={[styles.column, styles.mb, { width: '100%', }]}>
+                                    <View key={String(idxStore) + 'FA'} style={[styles.column, styles.mb, { width: '100%', }]}>
                                         {item.products.map((child, idx) => {
                                             return (
                                                 <View key={String(idx) + "SC"} style={[styles.column, styles.px_3, styles.py_2, { width: Wp('95%'), backgroundColor: colors.White }]}>

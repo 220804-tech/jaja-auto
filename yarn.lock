@@ -7894,6 +7894,11 @@
     "prop-types" "^15.7.2"
     "shaka-player" "^2.5.9"
 
+"react-native-view-shot@^3.1.2":
+  "integrity" "sha512-9u9fPtp6a52UMoZ/UCPrCjKZk8tnkI9To0Eh6yYnLKFEGkRZ7Chm6DqwDJbYJHeZrheCCopaD5oEOnRqhF4L2Q=="
+  "resolved" "https://registry.npmjs.org/react-native-view-shot/-/react-native-view-shot-3.1.2.tgz"
+  "version" "3.1.2"
+
 "react-native-webview@^11.13.0":
   "integrity" "sha512-jjQAKWv8JzRmcn76fMe4lXD84AAeR7kn43kAmUe1GX312BMLaP+RbKlgpYAlNuOBXL0YirItGKDrpaD0bNROOA=="
   "resolved" "https://registry.npmjs.org/react-native-webview/-/react-native-webview-11.13.0.tgz"

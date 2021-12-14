@@ -12,4 +12,5 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
 messaging().onMessage(remoteMessage => {
     // Utils.alertPopUp(JSON.stringify(remoteMessage.notification.body))
 });
+
 AppRegistry.registerComponent(appName, () => App);

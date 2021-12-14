@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import {
@@ -7,6 +7,7 @@ import {
     Notification, Vouchers, Flashsale, Wishlist, HistoryProduct, Reward, Referral, DetailComplain, OrderCancel, RequestComplain,
     AddAccount, CoinPage, DownloadInvoice, Gift, GiftSearch, GiftDetails
 } from "./Screen";
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 
 import BottomRoutes from './BottomRoute'
 const Stack = createStackNavigator();
@@ -14,6 +15,28 @@ const Stack = createStackNavigator();
 export default function Routes() {
     const [protectRoute, setprotectRoute] = useState(true)
 
+    useEffect(() => {
+
+        // const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
+        // console.log("🚀 ~ file: Sasasasa.js ~ line 134 ~ useEffect ~ unsubscribe", unsubscribe)
+        // return () => unsubscribe();
+    }, [])
+
+
+    const handleDynamicLink = link => {
+        // alert(JSON.stringify(link))
+        // alert(link)
+        // Handle dynamic link inside your own application
+        // const parsed = queryString.parseUrl(link.url);
+        if ('https://jajaid.page.link/product?' === String(link.url).slice(0, 33)) {
+            // dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+            // dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+            // let slug = Object.keys(parsed.query)
+            // dispatch({ type: 'SET_SLUG', payload: slug[0] })
+            // navigation.push("Product", { slug: slug[0], image: null })
+            // navigation.navigate('Pesanan')
+        }
+    };
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>

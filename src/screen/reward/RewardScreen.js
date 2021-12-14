@@ -19,7 +19,7 @@ export default function RewardScreen() {
     const [doneCoin, setdoneCoin] = useState([])
     const [pendingCoin, setpendingCoin] = useState([])
     const [primary, setPrimary] = useState(null)
-    const [listBK, setlistBK] = useState(null)
+    const [listBK, setlistBK] = useState([])
     const [refreshing, setRefreshing] = useState(false);
     const [countt, setCountt] = useState(0)
 
@@ -64,10 +64,12 @@ export default function RewardScreen() {
                     })
                     setlistBK(res)
                     setCountt(countt + 1)
+                } else {
+                    setlistBK([])
                 }
             })
         } catch (error) {
-
+            setlistBK([])
         }
         setTimeout(() => setLoading(false), 1000);
     }
@@ -280,7 +282,6 @@ export default function RewardScreen() {
                         fetch(`https://jaja.id/backend/user/bankAccount/${val}`, requestOptions)
                             .then(response => response.text())
                             .then(result => {
-                                alert(JSON.stringify(result))
                                 try {
                                     let res = JSON.parse(result)
                                     if (res.status.code === 200) {
@@ -340,8 +341,9 @@ export default function RewardScreen() {
                                     <Text style={[styles.font_14, styles.mb_3]}>{listBK && listBK.length ? "" : "Tidak ada"} </Text>
 
                                 </View>
+                                {console.log("🚀 ~ file: RewardScreen.js ~ line 344 ~ RewardScreen ~ listBK", listBK)}
                                 {listBK && listBK.length ?
-                                    listBK.concat(listBK).map((res, idx) => {
+                                    listBK.map((res, idx) => {
                                         console.log("🚀 ~ file: RewardScreen.js ~ line 256 ~ listBK.map ~ res", res)
                                         if (res.isPrimary) {
                                             return (

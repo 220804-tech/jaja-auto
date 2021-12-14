@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { View, Text, SafeAreaView, Dimensions, ToastAndroid, StatusBar } from 'react-native'
+import React, { useState, useEffect, useCallback } from 'react'
+import { View, Text, SafeAreaView, Dimensions, ToastAndroid, StatusBar, Platform } from 'react-native'
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import Unpaid from '../../components/Orders/OrdersUnpaid'
 import Process from '../../components/Orders/OrdersProcess'
@@ -8,13 +8,11 @@ import Completed from '../../components/Orders/OrdersCompleted'
 import Failed from '../../components/Orders/OrdersFailed'
 import Return from '../../components/Orders/OrdersComplain'
 
-import { colors, styles, Appbar, DefaultNotFound, ServiceOrder, ServiceFirebase } from '../../export';
+import { colors, styles, Appbar, DefaultNotFound, ServiceOrder, ServiceFirebase, useFocusEffect } from '../../export';
 const initialLayout = { width: Dimensions.get('window').width };
 import { useDispatch, useSelector } from 'react-redux'
 import LoginOrderScreen from '../login/LoginOrderScreen';
 import database from "@react-native-firebase/database";
-import { Platform } from 'react-native';
-import { colorsDark } from 'react-native-elements/dist/config';
 
 export default function OrderScreen() {
     const dispatch = useDispatch()
@@ -57,91 +55,103 @@ export default function OrderScreen() {
         sixth: Return,
     });
 
-    useEffect(() => {
-        try {
-            setCount(count + 1)
-            let sentCount = 0;
-            let complainCount = 0;
-            if (reduxSent && reduxSent.length) {
-                reduxSent.map(item => {
-                    if (item.complain) {
-                        complainCount += 1
-                    } else {
-                        sentCount += 1
+    useFocusEffect(
+        useCallback(() => {
+            try {
+                setCount(count + 1)
+                let sentCount = 0;
+                let complainCount = 0;
+                if (reduxSent && reduxSent.length) {
+                    reduxSent.map(item => {
+                        if (item.complain) {
+                            complainCount += 1
+                        } else {
+                            sentCount += 1
 
+                        }
+                    })
+                }
+                setComplain(complainCount)
+                setSent(sentCount)
+                if (reduxRefresh) {
+                    dispatch({ type: 'SET_ORDER_REFRESH', payload: false })
+                }
+
+            } catch (error) {
+                console.log("🚀 ~ file: OrderScreen.js ~ line 82 ~ useEffect ~ error", error)
+            }
+        }, [reduxOrder, reduxRefresh])
+    );
+
+    useFocusEffect(
+        useCallback(() => {
+            try {
+                if (reduxAuth || reduxRefresh) {
+                    dispatch({ type: 'SET_ORDER_REFRESH', payload: false })
+
+                    ServiceOrder.getUnpaid(reduxAuth).then(resUnpaid => {
+                        if (resUnpaid) {
+                            dispatch({ type: 'SET_UNPAID', payload: resUnpaid.items })
+                            dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
+                        }
+                    }).catch(err => {
+                        // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+                    })
+                    ServiceOrder.getWaitConfirm(reduxAuth).then(reswaitConfirm => {
+                        if (reswaitConfirm) {
+                            dispatch({ type: 'SET_WAITCONFIRM', payload: reswaitConfirm.items })
+                        }
+                    }).catch(err => {
+                        // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+                    })
+                    ServiceOrder.getProcess(reduxAuth).then(resProcess => {
+                        if (resProcess) {
+                            dispatch({ type: 'SET_PROCESS', payload: resProcess.items })
+                        }
+                    }).catch(err => {
+                        // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+                    })
+                    ServiceOrder.getSent(reduxAuth).then(resSent => {
+                        if (resSent) {
+                            dispatch({ type: 'SET_SENT', payload: resSent.items })
+                        }
+                    }).catch(err => {
+                        // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+                    })
+                    ServiceOrder.getCompleted(reduxAuth).then(resCompleted => {
+                        if (resCompleted) {
+                            dispatch({ type: 'SET_COMPLETED', payload: resCompleted.items })
+                        }
+                    }).catch(err => {
+                        // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+                    })
+                    ServiceOrder.getFailed(reduxAuth).then(resFailed => {
+                        if (resFailed) {
+                            dispatch({ type: 'SET_FAILED', payload: resFailed.items })
+                        }
+                    }).catch(err => {
+                        // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+                    })
+                    // console.log("🚀 ~ file: OrderScreen.js ~ line 127 ~ useEffect ~ reduxUser.orders", reduxUser)
+                    if (reduxnotifCount.orders) {
+                        let homeCount = reduxnotifCount.home - reduxnotifCount.orders
+                        database().ref(`/people/${reduxUser.uid}/notif`).update({ home: homeCount && homeCount > 0 ? homeCount : 0, orders: 0 })
                     }
-                })
-            }
-            setComplain(complainCount)
-            setSent(sentCount)
-            if (reduxRefresh) {
-                dispatch({ type: 'SET_ORDER_REFRESH', payload: false })
-            }
+                }
 
-        } catch (error) {
-            console.log("🚀 ~ file: OrderScreen.js ~ line 75 ~ useEffect ~ error", error)
-        }
-    }, [reduxOrder, reduxRefresh])
-
-
-    useEffect(() => {
-        if (reduxAuth) {
-            ServiceOrder.getUnpaid(reduxAuth).then(resUnpaid => {
-                if (resUnpaid) {
-                    dispatch({ type: 'SET_UNPAID', payload: resUnpaid.items })
-                    dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
-                }
-            }).catch(err => {
-                // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
-            })
-            ServiceOrder.getWaitConfirm(reduxAuth).then(reswaitConfirm => {
-                if (reswaitConfirm) {
-                    dispatch({ type: 'SET_WAITCONFIRM', payload: reswaitConfirm.items })
-                }
-            }).catch(err => {
-                // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
-            })
-            ServiceOrder.getProcess(reduxAuth).then(resProcess => {
-                if (resProcess) {
-                    dispatch({ type: 'SET_PROCESS', payload: resProcess.items })
-                }
-            }).catch(err => {
-                // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
-            })
-            ServiceOrder.getSent(reduxAuth).then(resSent => {
-                if (resSent) {
-                    dispatch({ type: 'SET_SENT', payload: resSent.items })
-                }
-            }).catch(err => {
-                // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
-            })
-            ServiceOrder.getCompleted(reduxAuth).then(resCompleted => {
-                if (resCompleted) {
-                    dispatch({ type: 'SET_COMPLETED', payload: resCompleted.items })
-                }
-            }).catch(err => {
-                // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
-            })
-            ServiceOrder.getFailed(reduxAuth).then(resFailed => {
-                if (resFailed) {
-                    dispatch({ type: 'SET_FAILED', payload: resFailed.items })
-                }
-            }).catch(err => {
-                // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
-            })
-            // console.log("🚀 ~ file: OrderScreen.js ~ line 127 ~ useEffect ~ reduxUser.orders", reduxUser)
-            if (reduxnotifCount.orders) {
-                let homeCount = reduxnotifCount.home - reduxnotifCount.orders
-                database().ref(`/people/${reduxUser.uid}/notif`).update({ home: homeCount && homeCount > 0 ? homeCount : 0, orders: 0 })
+            } catch (error) {
+                console.log("🚀 ~ file: OrderScreen.js ~ line 143 ~ useEffect ~ error", error)
             }
-        }
-    }, [])
+        }, [reduxRefresh]),
+    );
+
     useEffect(() => {
         if (Platform.OS == 'ios') {
             StatusBar.setBarStyle('light-content', true);	//<<--- add this
             StatusBar.setBackgroundColor(colors.BlueJaja, true)
         }
     }, [reduxUser])
+
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : colors.White }]}>
             <Appbar title="Pesanan" trolley={true} notif={true} />

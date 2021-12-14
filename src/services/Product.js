@@ -3,8 +3,7 @@ import { Utils, axios } from '../export';
 export async function productDetail(auth, slug) {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);
-    myHeaders.append("Cookie", "ci_session=8jq5h19sle86cb2nhest67lejudq2e1q");
-
+    myHeaders.append("Cookie", "ci_session=pkkgeivel5ftbi5a9eod0r8k5276f8v9");
     var requestOptions = {
         method: 'GET',
         headers: auth ? myHeaders : "",
@@ -18,16 +17,18 @@ export async function productDetail(auth, slug) {
                 if (data && Object.keys(data).length && data.status.code === 200) {
                     return data.data;
                 } else {
-                    Utils.handleErrorResponse(data, "Error with status code : 12051")
-                    return null
+                    if (data.status.code !== 400) {
+                        Utils.handleErrorResponse(data, "Error with status code : 12051")
+                    }
+                    return data
                 }
             } catch (error) {
-                Utils.handleError(result, "Error with status code : 12052")
+                Utils.handleError(JSON.stringify(result), "Error with status code : 12052")
             }
         })
         .catch(error => {
             console.log("🚀 ~ file: Product.js ~ line 32 ~ productDetail ~ error", error)
-            Utils.handleError(error, "Error with status code : 120477")
+            Utils.handleError(JSON.stringify(error), "Error with status code : 120477")
             return null
         });
 

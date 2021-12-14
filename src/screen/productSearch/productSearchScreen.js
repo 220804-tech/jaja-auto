@@ -58,10 +58,9 @@ export default function ProductSearchScreen() {
         };
         setPage(1)
 
-        console.log("🚀 ~ file: productSearchScreen.js ~ line 85 ~ handleFetch ~ categoryName", categoryName)
-        console.log("🚀 ~ file: productSearchScreen.js ~ line 86 ~ handleFetch ~ location", location)
+        console.log("🚀 ~ file: productSearchScreen.js ~ line 90 ~ handleFetch ~ keyword", keyword + " " + categoryName + " " + location + " " + stock + " " + condition + " " + sort)
 
-        fetch(`https://jaja.id/backend/product/search/result?page=1&limit=10&keyword=${keyword}&filter_category=${categoryName}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
+        fetch(`https://jaja.id/backend/product/search/result?page=1&limit=100&keyword=${keyword}&filter_category=${categoryName}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 console.log("🚀 ~ file: productSearchScreen.js ~ line 12112 ~ handleFetch ~ result", result.data.items)

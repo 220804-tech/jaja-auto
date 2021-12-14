@@ -222,7 +222,7 @@ export default function SearchScreen() {
         let obj = {
             slug: item.slug,
             page: 1,
-            limit: 30,
+            limit: 100,
             keyword: '',
             price: '',
             condition: '',
@@ -233,7 +233,6 @@ export default function SearchScreen() {
 
         ServiceStore.getStoreProduct(obj).then(res => {
             if (res) {
-                console.log('get new product')
                 dispatch({ "type": 'SET_NEW_PRODUCT', payload: res.items })
             }
         })

@@ -153,6 +153,7 @@ export default function StoreProducts() {
             setFocus(1)
             console.log("🚀 ~ file: simpan")
         }
+        console.log("🚀 ~ file: StoreProducts.js ~ line 157 ~ ServiceStore.getStoreProduct ~ obj", obj)
         ServiceStore.getStoreProduct(obj).then(res => {
             if (res) {
                 console.log("🚀 ~ file: StoreProducts.js ~ line 165 ~ ServiceStore.getStoreProduct ~ res", res.items.length)
@@ -225,7 +226,6 @@ export default function StoreProducts() {
                 </View>
 
                 {loading ? <Loading /> : null}
-                {console.log("🚀 ~ file: StoreProducts.js ~ line 230 ~ StoreProducts ~ data", data)}
                 {
                     data && data.length ?
                         <View style={[styles.column, styles.px_3, { flex: 1, justifyContent: "center", alignItems: 'flex-start' }]}>
