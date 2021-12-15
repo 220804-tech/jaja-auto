@@ -212,7 +212,7 @@ export default function ProductScreen(props) {
                 setvariasiSelected(variant[0])
             }
         } catch (error) {
-            // alert('890' + JSON.stringify(error))
+            // alert('890' + String(error))
         }
     }
     const handleFlashsale = (flashsale, status) => {
@@ -319,7 +319,7 @@ export default function ProductScreen(props) {
         //         }
         //     })
         //     .catch(error => {
-        //         Utils.handleError(JSON.stringify(error), 'Error with status code : 12024')
+        //         Utils.handleError(String(error), 'Error with status code : 12024')
         //     });
     }
 
@@ -1079,7 +1079,6 @@ export default function ProductScreen(props) {
                                 <Text style={[styles.font_18, styles.mb_2]}>{reduxSearch.productDetail.name}</Text>
                                 {Object.keys(variasiSelected).length ?
                                     <View style={[styles.row_start_center,]}>
-                                        {console.log("🚀 ~ file: ProductScreen.js ~ line 1075 ~ handleShare ~ variasiSelected", variasiSelected)}
                                         <View style={[styles.row, { width: '87%', height: '100%' }]}>
                                             {variasiSelected.isDiscount ?
                                                 <View style={styles.row}>
@@ -1111,7 +1110,6 @@ export default function ProductScreen(props) {
                                         </View>
                                         :
                                         <View style={[styles.row_start_center,]}>
-                                            {console.log('nasua=sasjhuytdr56ft7yg8uhknjbhvgcftxdrzsewqased5rftyguhi')}
                                             <View style={[styles.row_start_center, { width: '87%', }]}>
                                                 {reduxSearch.productDetail.isDiscount ?
                                                     <View style={[styles.row_start_center]}>

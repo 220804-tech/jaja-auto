@@ -82,7 +82,7 @@ export default function MainPage() {
                         Utils.alertPopUp("Voucher sudah pernah diklaim")
                     }
                 })
-                .catch(error => Utils.alertPopUp(JSON.stringify(error)));
+                .catch(error => Utils.alertPopUp(String(error)));
         }
     }
     const handleDescription = voucher => {

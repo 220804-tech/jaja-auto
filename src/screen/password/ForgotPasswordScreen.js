@@ -99,7 +99,7 @@ export default class ForgotPasswordScreen extends Component {
                 })
                 .catch(error => {
                     this.setState({ loading: false })
-                    setTimeout(() => alert("Code 4 : " + JSON.stringify(error)), 100);
+                    setTimeout(() => alert("Code 4 : " + String(error)), 100);
                 });
         }
     };

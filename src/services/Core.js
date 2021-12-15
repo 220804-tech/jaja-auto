@@ -51,7 +51,7 @@ export async function getFlashsale() {
             } else {
                 Alert.alert(
                     "Error get flashsale",
-                    JSON.stringify(error),
+                    String(error),
                     [
                         { text: "OK", onPress: () => console.log("OK Pressed") }
                     ],

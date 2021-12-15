@@ -121,7 +121,7 @@ export default function LoginScreen(props) {
                     }
                 })
                 .catch(error => {
-                    Utils.handleError(JSON.stringify(error), 'Error with status code : 12111')
+                    Utils.handleError(String(error), 'Error with status code : 12111')
                 })
         }
         setTimeout(() => {
@@ -188,11 +188,11 @@ export default function LoginScreen(props) {
                     }, 500);
 
                 } catch (error) {
-                    Utils.handleError(JSON.stringify(error), 'Error with status code : 12113')
+                    Utils.handleError(String(error), 'Error with status code : 12113')
                 }
 
             })
-            .catch(error => Utils.alertPopUp(JSON.stringify(error)));
+            .catch(error => Utils.alertPopUp(String(error)));
     }
 
     const getOrders = (auth) => {
@@ -203,7 +203,7 @@ export default function LoginScreen(props) {
                     dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
                 }
             }).catch(err => {
-                Utils.alertPopUp(JSON.stringify(err), 'Error with status code : 12112')
+                Utils.alertPopUp(String(err), 'Error with status code : 12112')
             })
             ServiceOrder.getWaitConfirm(auth).then(reswaitConfirm => {
                 if (reswaitConfirm) {
@@ -342,7 +342,7 @@ export default function LoginScreen(props) {
             .catch(error => {
                 Alert.alert(
                     "Error!",
-                    JSON.stringify(error),
+                    String(error),
                     [
                         {
                             text: "RELOAD", onPress: () => {

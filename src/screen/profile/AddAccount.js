@@ -72,7 +72,7 @@ export default function AddAccount() {
                 setFirstBank(pertamax.concat(keduax));
             })
             .catch(error => {
-                Utils.alertPopUp(JSON.stringify(error))
+                Utils.alertPopUp(String(error))
                 setshimmerRK(false)
             });
     }

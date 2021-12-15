@@ -639,7 +639,7 @@ export default function OrderDetailsScreen() {
                     setRefreshing(false)
                     setLoading(false)
                 } catch (error) {
-                    Alert.alert(`Error with status code : 22004\n\ ${JSON.stringify(error)}\n ${JSON.stringify(res)}`);
+                    Alert.alert(`Error with status code : 22004\n\ ${String(error)}\n ${JSON.stringify(res)}`);
                 }
             })
             .catch(error => {

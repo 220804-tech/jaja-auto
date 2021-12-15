@@ -181,7 +181,7 @@ export default function AddReview(props) {
                 }
             })
             .catch(error => {
-                Utils.handleError(JSON.stringify(error), 'Error with status code : 12040')
+                Utils.handleError(String(error), 'Error with status code : 12040')
                 setLoading(false)
                 res = 'failed'
             });

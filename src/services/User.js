@@ -83,7 +83,7 @@ export async function getProfile(auth) {
             } else {
                 Alert.alert(
                     "Error get profile",
-                    `${JSON.stringify(error)}`,
+                    `${String(error)}`,
                     [
                         { text: "OK", onPress: () => console.log("OK Pressed") }
                     ],
@@ -131,7 +131,7 @@ export async function deleteAddress(auth, alamatId) {
             } else {
                 Alert.alert(
                     "Error deleting address",
-                    `${JSON.stringify(error)}`,
+                    `${String(error)}`,
                     [
                         { text: "OK", onPress: () => console.log("OK Pressed") }
                     ],

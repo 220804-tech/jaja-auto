@@ -309,11 +309,9 @@ export default function HomeScreen() {
                 body: raw,
                 redirect: 'follow'
             };
-            let hasil = null;
             fetch("https://jaja.id/backend/home", requestOptions)
                 .then(response => response.json())
                 .then(resp => {
-                    hasil = true;
                     if (resp.status.code === 200 || resp.status.code == 204) {
                         if (resp.data.categoryChoice) {
                             dispatch({ type: 'SET_DASHCATEGORY', payload: resp.data.categoryChoice })
@@ -332,20 +330,8 @@ export default function HomeScreen() {
                     }
                 })
                 .catch(error => {
-                    hasil = true
                     handleError(error)
                 })
-            setTimeout(() => {
-                if (hasil !== true) {
-                    Utils.CheckSignal().then(res => {
-                        if (res.connect) {
-                            ToastAndroid.show("Sedang memuat..", ToastAndroid.LONG, ToastAndroid.TOP)
-                        } else {
-                            return ToastAndroid.show("Tidak dapat tehubung, periksa kembali koneksi anda", ToastAndroid.LONG, ToastAndroid.TOP)
-                        }
-                    })
-                }
-            }, 15000);
         } catch (error) {
             handleError(error)
         }
@@ -367,7 +353,7 @@ export default function HomeScreen() {
                         if (res) {
                             dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(res) })
                         }
-                        ToastAndroid.show(String(result.status.message + " : " + result.status.code), ToastAndroid.LONG, ToastAndroid.CENTER)
+                        Utils.alertPopUp(String(result.status.message + " : " + result.status.code))
                     })
 
                 }
@@ -425,13 +411,10 @@ export default function HomeScreen() {
                     dispatch({ type: 'SET_DASHHOBYAVERAGE', payload: JSON.parse(result) })
                 }
             })
-            if (String(error).slice(11, String(error).length) === "Network request failed") {
-                ToastAndroid.show("Tidak dapat terhubung, periksa koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
-            }
             //  else {
             //     Alert.alert(
             //         "Error with status 12001",
-            //         JSON.stringify(error),
+            //         String(error),
             //         [
             //             { text: "OK", onPress: () => console.log("OK Pressed") }
             //         ],

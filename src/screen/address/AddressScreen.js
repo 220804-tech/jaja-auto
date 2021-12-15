@@ -172,7 +172,7 @@ export default function index(props) {
                 setLoading(false)
                 Alert.alert(
                     "Jaja.id",
-                    JSON.stringify(error),
+                    String(error),
                     [
                         {
                             text: "TUTUP",

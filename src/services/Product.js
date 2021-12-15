@@ -28,7 +28,7 @@ export async function productDetail(auth, slug) {
         })
         .catch(error => {
             console.log("🚀 ~ file: Product.js ~ line 32 ~ productDetail ~ error", error)
-            Utils.handleError(JSON.stringify(error), "Error with status code : 120477")
+            Utils.handleError(String(error), "Error with status code : 120477")
             return null
         });
 
@@ -50,7 +50,7 @@ export async function addCart(auth, crendentials) {
                 return response.data
             })
             .catch(function (error) {
-                Utils.handleError(JSON.stringify(error), 'Error with status code : 12115')
+                Utils.handleError(String(error), 'Error with status code : 12115')
                 return null
             });
     } catch (error) {

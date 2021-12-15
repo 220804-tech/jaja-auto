@@ -28,8 +28,12 @@ export function alertPopUp(text) {
 }
 
 export function regex(name, value) {
-    if (name === "number") {
-        return (value.replace(/[^0-9]/gi, ''))
+    try {
+        if (name === "number") {
+            return (value.replace(/[^0-9]/gi, ''))
+        }
+    } catch (error) {
+
     }
 }
 
@@ -56,13 +60,14 @@ export async function CheckSignal() {
 
 
 export function handleErrorResponse(error, errorCode) {
-    if (error && Object.keys(error).length && error.status.code !== 200 && error.status.code !== 204) {
-        if (error.status.message) {
+    if (error?.status?.code !== 200 && error?.status?.code !== 204) {
+        if (!!error?.status?.message) {
             Utils.alertPopUp(String(error.status.message))
         } else {
+            console.log("🚀 ~ file: Form.js ~ line 65 ~ handleErrorResponse ~ error", error)
             Alert.alert(
                 errorCode,
-                String(error.status.message) + " => " + String(error.status.code),
+                String(errorCode) + " => " + String(error),
                 [
                     {
                         text: "TUTUP",
@@ -91,13 +96,12 @@ export function handleErrorResponse(error, errorCode) {
 
 export function handleError(error, name) {
     if (String(error).slice(11, String(error).length) === "Network request failed") {
-
         Utils.alertPopUp("Tidak dapat terhubung, periksa kembali koneksi internet anda!")
     } else {
         if (Platform.OS === 'android') {
             Alert.alert(
-                JSON.stringify(name),
-                `${'Error: ' + JSON.stringify(error)} `,
+                String(name),
+                `${'Error: ' + String(error)} `,
                 [
                     {
                         text: "TUTUP",
@@ -115,3 +119,44 @@ export function handleError(error, name) {
 }
 
 
+
+export function handleCurrency(number) {
+    try {
+        if (number) {
+            var reverse = number.toString().split("").reverse().join(""),
+                ribuan = reverse.match(/\d{1,3}/g);
+            ribuan = ribuan.join(".").split("").reverse().join("");
+            return ribuan;
+        }
+    } catch (error) {
+
+    }
+}
+
+
+
+export function handleWarningText(text) {
+    try {
+        if (text) {
+            let warningText = String('shopee shope lazada tokoped tokopedia jd.id jdid bukalapak whatsapp').split(" ")
+            let word = text
+            var words = text.split(" ");
+            words.map(res => {
+                warningText.map(result => {
+                    if (res.toLowerCase() === result.toLowerCase()) {
+                        console.log("true")
+                        word = word.replace(res, '***')
+                    } else {
+                        console.log("false")
+                    }
+                })
+            })
+            setdeskripsiLenght(word.length)
+            setdeskripsi(word)
+        } else {
+            return text
+        }
+    } catch (error) {
+
+    }
+}

@@ -148,7 +148,7 @@ export default function SplashScreen() {
                     }
                 })
                 .catch(error => {
-                    Utils.handleError(JSON.stringify(error), 'Error with status code : 19021')
+                    Utils.handleError(String(error), 'Error with status code : 19021')
                     handleError(error)
                 })
             setTimeout(() => {
@@ -157,7 +157,6 @@ export default function SplashScreen() {
                 }
             }, 15000);
         } catch (error) {
-            ToastAndroid.show("Error Get Item" + String(err), ToastAndroid.LONG, ToastAndroid.TOP)
             handleError(error)
         }
     }
@@ -185,7 +184,7 @@ export default function SplashScreen() {
             // else {
             //     Alert.alert(
             //         "Error with status 12001",
-            //         JSON.stringify(error),
+            //         String(error),
             //         [
             //             { text: "OK", onPress: () => console.log("OK Pressed") }
             //         ],

@@ -231,15 +231,16 @@ export default function TrolleyScreen() {
                 handleGetCheckout()
 
                 ServiceCheckout.getShipping(reduxAuth).then(res => {
+                    console.log("🚀 ~ file: TrolleyScreen.js ~ line 234 ~ ServiceCheckout.getShipping ~ res", res)
                     if (res) {
                         dispatch({ type: 'SET_SHIPPING', payload: res })
                     }
                 })
-                ServiceCheckout.getListPayment().then(res => {
-                    if (res) {
-                        dispatch({ type: 'SET_LIST_PAYMENT', payload: res })
-                    }
-                })
+                // ServiceCheckout.getListPayment().then(res => {
+                //     if (res) {
+                //         dispatch({ type: 'SET_LIST_PAYMENT', payload: res })
+                //     }
+                // })
             } else if (reduxCart.cart.totalCart == 0) {
                 Utils.alertPopUp("Pilih salah satu produk yang ingin dibeli!")
 

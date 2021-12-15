@@ -221,7 +221,7 @@ export default function checkoutScreen() {
                     })
                     .catch(error => {
                         setLoad(false)
-                        setTimeout(() => Utils.handleError(JSON.stringify(error), 'Error with status code : 12065'), 100);
+                        setTimeout(() => Utils.handleError(String(error), 'Error with status code : 12065'), 100);
                     });
 
             } else {
