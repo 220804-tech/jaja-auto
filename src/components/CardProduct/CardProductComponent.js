@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native'
-import { useDispatch } from 'react-redux'
-import { colors, FastImage, Ps, styles, useNavigation, Wp } from '../../export'
+import { useDispatch, useSelector } from 'react-redux'
+import { colors, FastImage, Ps, ServiceProduct, styles, useNavigation, Wp } from '../../export'
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 import LinearGradient from 'react-native-linear-gradient';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
@@ -9,13 +9,27 @@ export default function CardProductComponent(props) {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const [img, setImg] = useState(require('../../assets/images/JajaId.png'))
+    const reduxAuth = useSelector(state => state.auth.auth)
 
     const handleShowDetail = item => {
+        console.log("🚀 ~ file: CardProductComponent.js ~ line 15 ~ CardProductComponent ~ item", item)
         if (!props.gift) {
-            dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+            dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+            dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: item })
             dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
             dispatch({ type: 'SET_SLUG', payload: item.slug })
-            navigation.push("Product", { slug: item.slug, image: item.image })
+
+            navigation.push("Product")
+            ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+                if (res && res?.status?.code === 400) {
+                    Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                    navigation.goBack()
+                } else {
+                    dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                }
+            })
+
         } else {
             console.log("🚀 ~ file: CardProductComponent.js ~ line 14 ~ CardProductComponent ~ item", item)
             dispatch({ type: 'SET_GIFT', payload: item })

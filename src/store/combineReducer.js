@@ -13,6 +13,8 @@ import auth from './storeAuth'
 import profile from './storeProfile'
 import complain from './complainStore'
 import gift from './storeGift'
+import product from './storeProduct'
+
 
 export default combineReducers({
     notification,
@@ -28,5 +30,6 @@ export default combineReducers({
     auth,
     profile,
     complain,
-    gift
+    gift,
+    product
 })
