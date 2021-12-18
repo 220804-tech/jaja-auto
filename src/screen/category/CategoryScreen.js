@@ -147,7 +147,7 @@ export default function CategoryScreen() {
                                             }}
                                             resizeMode={FastImage.resizeMode.contain}
                                         />
-                                        <Text adjustsFontSizeToFit style={[styles.font_12, { color: colors.BlueJaja, textAlign: 'center' }]}>
+                                        <Text adjustsFontSizeToFit style={[styles.font_11, { color: colors.BlueJaja, textAlign: 'center' }]}>
                                             {item.name}
                                         </Text>
                                     </TouchableOpacity>

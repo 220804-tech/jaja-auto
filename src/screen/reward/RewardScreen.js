@@ -32,7 +32,7 @@ export default function RewardScreen() {
         setLoading(true)
         getItem()
         getPending()
-        setTimeout(() => setLoading(false), 5000);
+        setTimeout(() => setLoading(false), 3000);
     }, [count])
 
     useFocusEffect(
@@ -329,7 +329,6 @@ export default function RewardScreen() {
             .then(result => {
                 try {
                     let res = JSON.parse(result)
-                    console.log("🚀 ~ file: RewardScreen.js ~ line 343 ~ handleModal ~ res", res)
                     if (res?.status?.code === 200) {
                         setdata(res.data)
                         setLoading(false)
@@ -382,6 +381,7 @@ export default function RewardScreen() {
                 Utils.handleError(res, 'Error with status code : 120302')
             });
     }
+
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         getItem()
@@ -430,7 +430,6 @@ export default function RewardScreen() {
                                                             <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.font_12]}>{idx + 1}. {res.accountName} Alaynsyah saputa </Text>
                                                             {res.verified ?
                                                                 <Text style={[styles.font_7, styles.T_semi_bold, { color: colors.BlueJaja, textAlignVertical: 'top', marginTop: '-2%' }]}>Verified</Text>
-
                                                                 : null
                                                             }
                                                         </View>
@@ -460,7 +459,6 @@ export default function RewardScreen() {
                                                                         "Akun belum diverifikasi.",
                                                                         `Periksa email anda untuk verifikasi akun!`,
                                                                         [
-
                                                                             {
                                                                                 text: "TUTUP", onPress: () => Utils.alertPopUp('Periksa email anda untuk verifikasi akun!')
                                                                             },
@@ -472,8 +470,6 @@ export default function RewardScreen() {
                                                                         ],
                                                                         { cancelable: false }
                                                                     );
-
-
                                                                 }}>
                                                                     <Text numberOfLines={1} style={[styles.font_8, styles.T_semi_bold, { color: colors.White }]}>Belum Verifikasi</Text>
                                                                 </TouchableRipple>

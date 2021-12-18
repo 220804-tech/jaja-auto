@@ -23,7 +23,6 @@ export default function FlashsaleSecondComponent() {
                 renderItem={({ item }) => {
 
                     if (String(item.time_live) === '18:00') {
-
                         return (
                             <View onPress={() => handleShowDetail(item)} style={[styles.row_start_center, styles.mb_2, styles.px_2, { height: Wp('31.5%'), width: Wp('100%'), borderBottomWidth: 0.5, borderBottomColor: colors.Silver, backgroundColor: colors.White }]}>
                                 <View style={[styles.row_center, { position: 'absolute', left: 0, top: 0, zIndex: 999, width: Wp('8%'), height: Wp('6.5%'), backgroundColor: colors.RedFlashsale, padding: '2%', borderBottomRightRadius: 5 }]}>

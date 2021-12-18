@@ -16,8 +16,8 @@ export default function OrderDetailsScreen() {
     const [loading, setLoading] = useState(false)
     const [details, setDetails] = useState(null)
     const [refreshing, setRefreshing] = useState(null)
-    const [selectedPayment, setselectedPayment] = useState('')
     const [selectedSubPayment, setselectedSubPayment] = useState('')
+    const [selectedPayment, setselectedPayment] = useState('')
     const [orderPaymentRecent, setOrderPaymentRecent] = useState({
         "id_token": "",
         "order_id": "",
@@ -35,7 +35,6 @@ export default function OrderDetailsScreen() {
     });
     const [midtrans, setMidtrans] = useState();
     const [loadingOrderPaymentRecent, setLoadingOrderPaymentRecent] = useState(true);
-    const [paymentUpdate, setPaymentUpdate] = useState(0)
     const [listPayment, setListPayment] = useState([
         {
             "id_payment_method_category": "1",
@@ -100,7 +99,7 @@ export default function OrderDetailsScreen() {
         },
         {
             "id_payment_method_category": "3",
-            "payment_type_label ": "eWallet",
+            "payment_type_label": "eWallet",
             "payment_type": "gopay",
             "option": false,
             "subPayment": [
@@ -116,6 +115,7 @@ export default function OrderDetailsScreen() {
             ]
         }
     ]);
+
 
     const reduxStore = useSelector(state => state.store.store)
     const reduxListPayment = useSelector(state => state.checkout.listPayment)
@@ -235,6 +235,8 @@ export default function OrderDetailsScreen() {
             id_order: orderPaymentRecent.order_id,
             dataPayment: dataPayment
         }
+        console.log('paramNosSub', JSON.stringify(param));
+
 
         if (dataPayment.payment_form == "screenOther") {
             if (dataPayment.payment_type == "gopay") {
@@ -250,7 +252,7 @@ export default function OrderDetailsScreen() {
     }
 
 
-    const gotoPaymentdub = (item) => {
+    const gotoPaymentDetailSub = (item) => {
         // this.setState({modalVisible:false});
         // const { navigation} = this.props;
         // const {id_order,paymentChooseTemp,config} =this.state;
@@ -266,6 +268,7 @@ export default function OrderDetailsScreen() {
             payment_form: item.payment_form
             //payment_form:'screenOther'
         }
+        console.log('dataPayment', JSON.stringify(dataPayment));
 
         var param = {
             id_order: orderPaymentRecent.order_id,
@@ -302,11 +305,11 @@ export default function OrderDetailsScreen() {
         var payment_type = dataPayment.payment_type;
         var payment_sub = dataPayment.payment_sub;
 
-        var transaction_d = {
+        var transaction_details = {
             gross_amount: totalPembayaran,
             order_id: orderPaymentRecent.payment_id
         }
-        var customer_d = {
+        var customer_details = {
             email: reduxUser.user.email,
             first_name: reduxUser.user.name,
             last_name: '',
@@ -325,13 +328,23 @@ export default function OrderDetailsScreen() {
             };
         }
 
+
+
         var paramPay = {
-            transaction_d: transaction_d,
-            customer_d: customer_d,
+            transaction_details: transaction_details,
+            customer_details: customer_details,
             enabled_payments,
             credit_card
         }
+
+
         var url = midtrans.url_snap + "snap/v1/transactions";
+        console.log('url', url);
+        console.log('paramPay', JSON.stringify(paramPay));
+        console.log('midtrans', JSON.stringify(midtrans));
+
+
+
 
         var myHeaders = new Headers();
         myHeaders.append("Authorization", "Basic " + authBasicHeader);
@@ -352,6 +365,8 @@ export default function OrderDetailsScreen() {
             .then(result => {
                 actionSheetPayment.current?.setModalVisible()
 
+                console.log('dataToken', JSON.stringify(result));
+
                 var paramPayMD = {
                     "total_pembayaran": totalPembayaran,
                     "fee": fee,
@@ -361,6 +376,8 @@ export default function OrderDetailsScreen() {
                     "order_id": orderPaymentRecent.order_id,
                     "va_or_code_or_link": result.redirect_url
                 }
+                console.log('paramPayMD', JSON.stringify(paramPayMD));
+
                 if (dataPayment.payment_type == "gopay") {
                     var qr_code_url = snapCharge(result.token);
                     param.qr_code_url = qr_code_url;
@@ -370,10 +387,11 @@ export default function OrderDetailsScreen() {
                 }
 
             })
-            .catch(error => { Utils.alertPopUp('Kegagalan Respon Server : 20201'); });
+            .catch(error => { Utils.alertPopUp(`Kegagalan Respon Server : 20203 => ${String(error)}`); });
 
 
     }
+
 
     const snapCharge = (token) => {
         var myHeaders = new Headers();
@@ -395,25 +413,25 @@ export default function OrderDetailsScreen() {
                 return result.qr_code_url;
 
             })
-            .catch(error => { Utils.alertPopUp('Kegagalan Respon Server : 20202'); });
+            .catch(error => { Utils.alertPopUp(`Kegagalan Respon Server : 20204 => ${String(error)}`); });
     }
 
 
     const tokenMidtransUpdateCore = (params) => {
         var dataPayment = params.dataPayment;
         var fee = dataPayment.payment_fee;
-        // + parseInt(fee)
-        var totalPembayaran = parseInt(orderPaymentRecent.grand_total);
+
+        var totalPembayaran = parseInt(orderPaymentRecent.grand_total) + parseInt(fee);
         var authBasicHeader = midtrans.authBasicHeader;
 
         var payment_type = dataPayment.payment_type;
         var payment_sub = dataPayment.payment_sub;
 
-        var transaction_d = {
+        var transaction_details = {
             gross_amount: totalPembayaran,
             order_id: orderPaymentRecent.payment_id
         }
-        var customer_d = {
+        var customer_details = {
             email: reduxUser.user.email,
             first_name: reduxUser.user.name,
             last_name: '',
@@ -433,17 +451,17 @@ export default function OrderDetailsScreen() {
 
             var paramPay = {
                 payment_type: dataPayment.payment_type,
-                transaction_d: transaction_d,
+                transaction_details: transaction_details,
                 gopay,
-                customer_d: customer_d,
+                customer_details: customer_details,
 
             }
 
         } else {
             var paramPay = {
                 payment_type: dataPayment.payment_type,
-                transaction_d: transaction_d,
-                customer_d: customer_d,
+                transaction_details: transaction_details,
+                customer_details: customer_details,
 
             }
 
@@ -461,6 +479,9 @@ export default function OrderDetailsScreen() {
                 "bill_info2": "Masterdiskon"
             }
         }
+        console.log('parampay', JSON.stringify(paramPay));
+        console.log('midtrans', JSON.stringify(midtrans));
+
 
         var url = midtrans.url + "v2/charge";
 
@@ -483,6 +504,11 @@ export default function OrderDetailsScreen() {
             .then(response => response.json())
             .then(result => {
                 actionSheetPayment.current?.setModalVisible()
+                console.log('charge', JSON.stringify(result));
+
+                console.log('dataToken', JSON.stringify(result));
+                console.log('dataPayment', JSON.stringify(dataPayment));
+
                 var va_or_code_or_link = "";
                 var token = "";
                 if (dataPayment.payment_type == "bank_transfer") {
@@ -510,15 +536,19 @@ export default function OrderDetailsScreen() {
                     "order_id": orderPaymentRecent.order_id,
                     "va_or_code_or_link": va_or_code_or_link,
                 }
+                console.log('paramPayMD', JSON.stringify(paramPayMD));
+
                 snapTokenUpdate(paramPayMD);
 
             })
-            .catch(error => { Utils.alertPopUp('Kegagalan Respon Server : 20203'); });
-    }
+            .catch(error => { Utils.alertPopUp(`Kegagalan Respon Server : 20205 => ${String(error)}`); });
 
+    }
     const snapTokenUpdate = (paramPayMD) => {
         var url = midtrans.url_base + 'payment/snap_token_update';
 
+
+        console.log('urlss', url, JSON.stringify(paramPayMD));
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("Cookie", "ci_session=6mmg253sca0no2e0gqas59up68f6ljlo");
@@ -535,6 +565,8 @@ export default function OrderDetailsScreen() {
         fetch(url, requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log('snapTokenUpdate', JSON.stringify(result));
+
 
                 if (paramPayMD.dataPayment.payment_form == "screenOther") {
                     handlePayment();
@@ -564,51 +596,45 @@ export default function OrderDetailsScreen() {
 
 
             })
-            .catch(error => { Utils.handleError('Kegagalan Respon Server : 20204'); });
+            .catch(error => { Utils.alertPopUp(`Kegagalan Respon Server : 20206 => ${String(error)}`); });
 
     }
 
 
     const handleShowPayment = (item) => {
+        console.log("🚀 ~ file: CheckoutScreen.js ~ line 571 ~ handleShowPayment ~ item", item)
         setselectedPayment(item)
         if (item.payment_type_label !== 'Bank Transfer') {
             //setModalShow(true)
             // setsubPayment('')
             gotoPaymentDetail(item);
+            console.log('pilih');
         } else {
             //alert('sd');
+            console.log('selectedPayment', JSON.stringify(selectedPayment));
             setsubPayment(item.subPayment)
             actionSheetPayment.current?.setModalVisible(true)
         }
     }
 
     const getListPayment = (total) => {
-        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 586 ~ getListPayment ~ total", total)
-        try {
-            var myHeaders = new Headers();
-            myHeaders.append("Cookie", "ci_session=mo3huphq5niakt3grmetuf4djpvcd76q");
+        var myHeaders = new Headers();
+        myHeaders.append("Cookie", "ci_session=mo3huphq5niakt3grmetuf4djpvcd76q");
 
-            var requestOptions = {
-                method: 'POST',
-                headers: myHeaders,
-                redirect: 'follow'
-            };
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
 
-            fetch("https://jaja.id/backend/payment/methodPayment/" + total, requestOptions)
-                .then(response => response.json())
-                .then(result => {
-                    setListPayment(result);
-                    setPaymentUpdate(paymentUpdate + 1)
-                    console.log('masui sini nggk')
-                    setTimeout(() => actionSheetPayment.current?.setModalVisible(true), 3000);
-                })
-                .catch(error => {
-                    Utils.handleError(error, "Error with status code : 22004")
-                });
-            x
-        } catch (error) {
-
-        }
+        fetch("https://jaja.id/backend/payment/methodPayment/" + total, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                setListPayment(result);
+            })
+            .catch(error => {
+                Utils.handleError(error, "Error with status code : 22004")
+            });
 
     }
     const getItem = () => {
@@ -621,66 +647,52 @@ export default function OrderDetailsScreen() {
             headers: myHeaders,
             redirect: 'follow'
         };
-        let isError = true
 
         fetch(`https://jaja.id/backend/order/${reduxOrderInvoice}`, requestOptions)
-            .then(response => response.text())
-            .then(res => {
-                isError = false
-                try {
-                    let result = JSON.parse(res)
-                    if (result.status.code === 200 || result.status.code === 204) {
-                        setDetails(result.data)
-                        setcount(count + 1)
+            .then(response => response.json())
+            .then(result => {
+                if (result.status.code === 200 || result.status.code === 204) {
+                    setDetails(result.data)
+                    let status = result.data.status;
+                    if (!reduxOrderStatus) {
+                        dispatch({ type: 'SET_ORDER_STATUS', payload: status === 'notPaid' ? "Menunggu Pembayaran" : status === 'waitConfirm' ? 'Menunggu Konfirmasi' : status === 'prepared' ? 'Sedang Disiapkan' : status === 'canceled' ? 'Pesanan Dibatalkan' : status === 'done' ? 'Pesanan Selesai' : null })
                     }
-                    else {
-                        Utils.handleErrorResponse(result, "Error with status code : 22003");
+                    if (status === 'notPaid') {
+                        getPayment(result.data.orderId);
                     }
-                    setRefreshing(false)
-                    setLoading(false)
-                } catch (error) {
-                    Alert.alert(`Error with status code : 22004\n\ ${String(error)}\n ${JSON.stringify(res)}`);
+                    // dispatch({ type: 'SET_INVOICE', payload: result.data.items[0].invoice })
+                } else {
+                    Utils.handleErrorResponse(result, "Error with status code : 22003");
                 }
-            })
-            .catch(error => {
-                isError = false
                 setRefreshing(false)
                 setLoading(false)
-                Utils.handleError(error, "Error with status code : 22005")
+            })
+            .catch(error => {
+                setRefreshing(false)
+                setLoading(false)
+                Utils.handleError(error, "Error with status code : 22004")
             });
+
         setTimeout(() => {
-            if (isError) {
-                Utils.alertPopUp('Sedang memuat..')
-                setTimeout(() => {
-                    if (isError) {
-                        Utils.alertPopUp('Sedang memuat..')
+            if (refreshing) {
+                Utils.CheckSignal(item => {
+                    if (item.connect) {
+                        setTimeout(() => {
+                            Utils.CheckSignal(res => {
+                                if (!res.connect) {
+                                    Utils.alertPopUp('Tidak dapat terhubung, periksa kembali koneksi anda!')
+                                }
+                                setRefreshing(false)
+                            })
+                        }, 2500);
+                    } else {
                         setRefreshing(false)
-                        setLoading(false)
+                        Utils.alertPopUp('Tidak dapat terhubung, periksa kembali koneksi anda!')
                     }
-                }, 10000);
+                })
+
             }
-        }, 7500);
-
-        // setTimeout(() => {
-        //     if (refreshing) {
-        //         Utils.CheckSignal(item => {
-        //             if (item.connect) {
-        //                 setTimeout(() => {
-        //                     Utils.CheckSignal(res => {
-        //                         if (!res.connect) {
-        //                             Utils.alertPopUp('Tidak dapat terhubung, periksa kembali koneksi anda!')
-        //                         }
-        //                         setRefreshing(false)
-        //                     })
-        //                 }, 2500);
-        //             } else {
-        //                 setRefreshing(false)
-        //                 Utils.alertPopUp('Tidak dapat terhubung, periksa kembali koneksi anda!')
-        //             }
-        //         })
-
-        //     }
-        // }, 5000);
+        }, 5000);
     }
 
     const submitChange = () => {
@@ -711,11 +723,13 @@ export default function OrderDetailsScreen() {
                 }, 50);
             })
             .catch(error => {
-                Utils.handleError(error, "Error with status code : 22006")
+                Utils.handleError(error, "Error with status code : 22004")
             });
 
 
     }
+
+
 
     const getPayment = (orderId) => {
         var myHeaders = new Headers();
@@ -728,17 +742,21 @@ export default function OrderDetailsScreen() {
         };
 
         var url = "https://jaja.id/backend/payment/getPayment/" + orderId;
+        console.log('getPaymentUrl', url);
         fetch(url, requestOptions)
             .then(response => response.json())
             .then(result => {
                 getListPayment(result.orderPaymentRecent.grand_total);
+
                 setOrderPaymentRecent(result.orderPaymentRecent);
                 setMidtrans(result.midtrans);
                 setLoadingOrderPaymentRecent(false);
+                console.log("resultGetPayment", result.orderPaymentRecent);
+                console.log("resultMidtrans", result.midtrans);
 
             })
             .catch(error => {
-                Utils.handleError(error, "Error with status code : 22008")
+                Utils.handleError(error, "Error with status code : 22004")
             });
     }
 
@@ -1283,8 +1301,7 @@ export default function OrderDetailsScreen() {
                                         style={[styles.py_4, styles.px_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}
                                         onPress={() => {
                                             actionSheetPayment.current?.setModalVisible()
-                                            // gotoPaymentDetailSub(item)
-
+                                            gotoPaymentDetailSub(item)
                                         }}
                                         rippleColor={colors.BlueJaja} >
                                         <View style={styles.row_between_center}>

@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, Linking, StyleSheet, Platform, Dimensions, Image, Alert, ScrollView, RefreshControl, TouchableWithoutFeedback } from 'react-native';
+import { SafeAreaView, View, Text, TouchableOpacity, Linking, StyleSheet, Platform, Dimensions, Image, Alert, ScrollView, RefreshControl } from 'react-native';
 import { styles, Hp, Wp, colors, useNavigation, useFocusEffect, Loading, Appbar, ServiceCart, Utils } from '../../export'
 import { Button, TouchableRipple } from 'react-native-paper'
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -21,6 +21,7 @@ export default function ProfileScreen(props) {
 
   const [loading, setLoading] = useState(false)
   const [account, setAccount] = useState(false)
+  const [count, setcount] = useState(0)
 
   const reduxProfile = useSelector(state => state.user.user)
 
@@ -36,13 +37,11 @@ export default function ProfileScreen(props) {
       })
     }
     getAccount()
-    getItem()
-  }, [props, reduxAuth])
+  }, [props, reduxAuth, reduxProfile])
 
   useFocusEffect(
     useCallback(() => {
       getItem()
-
     }, []),
   );
 
@@ -109,6 +108,7 @@ export default function ProfileScreen(props) {
                 EncryptedStorage.setItem('user', JSON.stringify(result.data))
                 dispatch({ type: 'SET_USER', payload: result.data })
                 dispatch({ type: 'SET_VERIFIKASI', payload: result.data.isVerified })
+                setcount(count + 1)
                 return true
               } else {
                 Utils.handleErrorResponse(result, 'Error with status code : 12044')
@@ -292,11 +292,10 @@ export default function ProfileScreen(props) {
             </TouchableOpacity>
             <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => {
               Linking.canOpenURL('https://jaja.id/bantuan/').then(supported => {
-                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 82 ~ Linking.canOpenURL ~ supported", supported)
                 if (supported) {
                   Linking.openURL('https://jaja.id/bantuan/')
                 } else {
-                  ToastAndroid.show("Sepertinya ada masalah, coba lagi nanti.", ToastAndroid.LONG, ToastAndroid.TOP)
+                  Utils.alertPopUp("Sepertinya ada masalah, coba lagi nanti.")
 
                 }
               })

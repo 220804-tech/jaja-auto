@@ -7,7 +7,7 @@ import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 import { styles, colors, Hp, Wp, FastImage, useNavigation, ServiceCategory, useFocusEffect, CheckSignal, Utils, RFValue } from '../../export'
 
 export default function CategoryComponent() {
-    let navigation = useNavigation();
+    const navigation = useNavigation();
     const dispatch = useDispatch()
     const reduxDashboard = useSelector(state => state.dashboard.category)
     const [shimmerData] = useState(['1X', '2X', '3X', '4X', '5X'])
@@ -161,7 +161,7 @@ export default function CategoryComponent() {
                                     resizeMode={FastImage.resizeMode.contain}
                                 />
 
-                                <Text numberOfLines={2} style={[styles.font_9, styles.mt_5, { color: colors.BlueJaja, alignSelf: 'center', textAlign: 'center' }]}>{item.name}</Text>
+                                <Text numberOfLines={2} style={[styles.font_8, styles.mt_5, { color: colors.BlueJaja, alignSelf: 'center', textAlign: 'center' }]}>{item.name}</Text>
                             </TouchableOpacity>
                         )
                     }}

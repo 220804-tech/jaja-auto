@@ -28,16 +28,16 @@ export default function CardProductComponent(props) {
         // dispatch({ type: 'SET_DASHRECOMMANDED', payload: [] })
     }, [])
 
-    FastImage.preload([
-        {
-            uri: 'https://picsum.photos/700',
-            headers: { Authorization: 'someAuthToken' },
-        },
-        {
-            uri: 'https://picsum.photos/700',
-            headers: { Authorization: 'someAuthToken' },
-        },
-    ])
+    // FastImage.preload([
+    //     {
+    //         uri: 'https://picsum.photos/700',
+    //         headers: { Authorization: 'someAuthToken' },
+    //     },
+    //     {
+    //         uri: 'https://picsum.photos/700',
+    //         headers: { Authorization: 'someAuthToken' },
+    //     },
+    // ])
 
     return (
         <FlatList
@@ -62,22 +62,21 @@ export default function CardProductComponent(props) {
                                 key={index}>
                                 {item.isDiscount ? <Text adjustsFontSizeToFit style={Ps.textDiscount}>{item.discount}%</Text> : null}
                                 <View style={[styles.column, { height: Wp('44%'), width: Wp('44%'), borderTopLeftRadius: 3, borderTopRightRadius: 3 }]}>
-                                    {item.image ?
-                                        <FastImage
-                                            style={Ps.imageProduct}
-                                            source={{
-                                                uri: item.image,
-                                                headers: { Authorization: 'someAuthToken' },
-                                                priority: FastImage.priority.normal,
-                                            }}
-                                            resizeMode={FastImage.resizeMode.contain}
-                                        />
-                                        :
-                                        <FastImage
-                                            style={Ps.imageProduct}
-                                            source={require('../../assets/images/JajaId.png')}
-                                            resizeMode={FastImage.resizeMode.contain}
-                                        />
+                                    {
+                                        item?.image && item.image !== null && String(item.image).includes('http') ?
+                                            <FastImage
+                                                style={Ps.imageProduct}
+                                                source={{
+                                                    uri: item.image,
+                                                }}
+                                                resizeMode={FastImage.resizeMode.contain}
+                                            />
+                                            :
+                                            <FastImage
+                                                style={Ps.imageProduct}
+                                                source={require('../../assets/images/JajaId.png')}
+                                                resizeMode={FastImage.resizeMode.contain}
+                                            />
                                     }
 
 

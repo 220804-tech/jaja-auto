@@ -65,8 +65,6 @@ export default function OrdersUnpaid() {
                     keyExtractor={item => item.invoice}
 
                     renderItem={({ item }) => {
-                        console.log("🚀 ~ file: OrdersCompleted.js ~ line 106 ~ OrdersUnpaid ~ item", item.isRating)
-
                         return (
                             <TouchableOpacity style={Os.card} onPress={() => handleOrderDetails(item)}>
                                 <View style={[styles.row_between_center, styles.px_2, styles.mb_3, { width: '100%' }]}>

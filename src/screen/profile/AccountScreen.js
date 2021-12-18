@@ -229,7 +229,7 @@ export default function Lainnya() {
             "name": name,
             "phoneNumber": telephone,
             "email": profile.email,
-            "gender": checked === "first" ? "pria" : "wanita",
+            "gender": gender === "pria" ? "pria" : "wanita",
             "birthDate": date ? date : profile.birthDate,
             "photo": photo.data ? "data:image/jpeg;base64," + photo.data : profile.imageFile
         })
@@ -507,7 +507,7 @@ export default function Lainnya() {
                                     <RadioButton
                                         color={colors.BlueJaja}
                                         value="first"
-                                        status={gender == "pria" ? 'checked' : 'unchecked'}
+                                        status={gender === "pria" ? 'checked' : 'unchecked'}
                                         onPress={() => {
                                             setgender("pria")
                                             setshowButton(true)
@@ -519,7 +519,7 @@ export default function Lainnya() {
                                     <RadioButton
                                         color={colors.BlueJaja}
                                         value="second"
-                                        status={gender == "wanita" ? 'checked' : 'unchecked'}
+                                        status={gender === "wanita" ? 'checked' : 'unchecked'}
                                         onPress={() => {
                                             setgender("wanita")
                                             setshowButton(true)
