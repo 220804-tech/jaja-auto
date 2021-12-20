@@ -53,7 +53,7 @@ function NotifikasiScreen(props) {
                     }
                     return data
                 } catch (error) {
-                    alert(error + "\n\n" + result)
+                    Utils.alertPopUp(String(error) + '\n' + 'Error with status code : 121672')
                 }
             })
             .catch(error => {

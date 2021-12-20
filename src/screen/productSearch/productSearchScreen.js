@@ -223,7 +223,7 @@ export default function ProductSearchScreen() {
                     }
                 }
             })
-            .catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER) & setLoadmore(false));
+            .catch(error => Utils.alertPopUp(String(error)) & setLoadmore(false));
     }
     const onRefresh = useCallback(() => {
         if (data && data.length) {
@@ -232,8 +232,8 @@ export default function ProductSearchScreen() {
                 setRefreshing(false)
             }, 2000);
         } else {
-            handleReset()
-        }
+            // handleReset()
+        }   
     }, []);
 
     return (

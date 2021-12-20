@@ -40,7 +40,7 @@ function NotifikasiScreen(props) {
                     }
                     return data
                 } catch (error) {
-                    alert("saaffytguhijokl " + result)
+                    Utils.alertPopUp(String(error) + '\n' + 'Error with status code : 13113')
                 }
             })
             .catch(error => {
@@ -99,8 +99,8 @@ function NotifikasiScreen(props) {
                     }
                     return data
                 } catch (error) {
-                    alert('jaja', result)
-                }
+        // alert(m.nativeEvent.data);
+        }
             })
             .catch(error => {
                 // Utils.handleError(error, 'Error with status code : 12002')

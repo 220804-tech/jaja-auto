@@ -12,14 +12,13 @@ export default function CardProductComponent(props) {
     const reduxAuth = useSelector(state => state.auth.auth)
 
     const handleShowDetail = item => {
-        console.log("🚀 ~ file: CardProductComponent.js ~ line 15 ~ CardProductComponent ~ item", item)
         if (!props.gift) {
             dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+            navigation.navigate("Product")
             dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: item })
             dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
             dispatch({ type: 'SET_SLUG', payload: item.slug })
 
-            navigation.push("Product")
             ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
                 if (res && res?.status?.code === 400) {
                     Utils.alertPopUp('Sepertinya data tidak ditemukan!')

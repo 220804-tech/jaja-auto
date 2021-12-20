@@ -138,7 +138,7 @@ export default function MidtransScreen() {
     const onMessage = (m) => {
         console.log("🚀 ~ file: MidtransScreen.js ~ line 136 ~ onMessage ~ data", data)
         //Prints out data that was passed.
-        alert(m.nativeEvent.data);
+        // alert(m.nativeEvent.data);
     }
     return (
         <SafeAreaView style={styles.container}>

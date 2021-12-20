@@ -37,7 +37,7 @@ export default function ReferralScreen() {
                     err && console.log(err);
                 });
         } catch (error) {
-            alert(error.message);
+            Utils.alertPopUp(String(error) + '\n' + 'Error with status code : 132142')
         }
     }
 

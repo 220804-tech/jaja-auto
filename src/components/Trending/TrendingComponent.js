@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, FlatList, TouchableOpacity, ScrollView } from 'react-native'
-import { styles, Ps, Language, useNavigation, FastImage, Wp, Hp, colors, Ts, RFValue } from '../../export'
+import { styles, Ps, Language, useNavigation, FastImage, Wp, Hp, colors, Ts, RFValue, ServiceProduct, Utils } from '../../export'
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import LinearGradient from 'react-native-linear-gradient';
@@ -12,15 +12,32 @@ export default function TrendingComponent() {
     const reduxdashTrending = useSelector(state => state.dashboard.trending)
     const [storagedashTrending, setstoragedashTrending] = useState([])
     const [shimmerData] = useState(['1X', '2X', '3X'])
+    const reduxAuth = useSelector(state => state.auth.auth)
 
     useEffect(() => {
         getStorage()
     }, [])
+
     const handleShowDetail = item => {
-        dispatch({ type: 'SET_DETAIL_PRßODUCT', payload: {} })
+        // dispatch({ type: 'SET_DETAIL_PRßODUCT', payload: {} })
+        // dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+        // dispatch({ type: 'SET_SLUG', payload: item.slug })
+        // navigation.push("Product", { slug: item.slug, image: item.image })
+        dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+        navigation.navigate("Product")
+        dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: item })
         dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
         dispatch({ type: 'SET_SLUG', payload: item.slug })
-        navigation.push("Product", { slug: item.slug, image: item.image })
+
+        ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+            if (res && res?.status?.code === 400) {
+                Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                navigation.goBack()
+            } else {
+                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+            }
+        })
     }
 
 

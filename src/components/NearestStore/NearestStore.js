@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { View, Text, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native'
-import { styles, Ps, useNavigation, FastImage, colors, Wp, useFocusEffect, RFValue } from '../../export'
+import { styles, Ps, useNavigation, FastImage, colors, Wp, useFocusEffect, RFValue, ServiceProduct, Utils } from '../../export'
 import { useSelector, useDispatch } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
@@ -10,6 +10,7 @@ export default function NearestStore() {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const reduxdashNearestStore = useSelector(state => state.dashboard.nearestStore)
+    const reduxAuth = useSelector(state => state.auth.auth)
 
 
     useEffect(() => {
@@ -24,10 +25,25 @@ export default function NearestStore() {
 
 
     const handleShowDetail = item => {
-        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+        // dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+        // dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+        // dispatch({ type: 'SET_SLUG', payload: item.slug })
+        // navigation.push("Product", { slug: item.slug, image: item.image })
+        dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+        navigation.navigate("Product")
+        dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: item })
         dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
         dispatch({ type: 'SET_SLUG', payload: item.slug })
-        navigation.push("Product", { slug: item.slug, image: item.image })
+
+        ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+            if (res && res?.status?.code === 400) {
+                Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                navigation.goBack()
+            } else {
+                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+            }
+        })
     }
 
     const [shimmerData] = useState(['1X', '2X', '3X'])

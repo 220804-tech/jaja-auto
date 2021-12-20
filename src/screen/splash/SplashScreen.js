@@ -221,7 +221,12 @@ export default function SplashScreen() {
 
                     }
                 } catch (error) {
-                    // alert(error + '120023 \n\n ' + JSON.stringify(result))
+                    Utils.alertPopUp(error + '120023 \n\n ' + JSON.stringify(result))
+                    EncryptedStorage.getItem('dashrecommanded').then(store => {
+                        if (store) {
+                            dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(store) })
+                        }
+                    })
                 }
             })
             .catch(error => {

@@ -29,12 +29,6 @@ export default function CategoryComponent() {
         getStorage()
     }, [reduxDashboard])
 
-    useFocusEffect(
-        useCallback(() => {
-
-        }, []),
-    );
-
     const getStorage = () => {
         EncryptedStorage.getItem('dashcategory').then(res => {
             if (res) {

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, createRef, useRef } from 'reac
 import { SafeAreaView, Text, View, TouchableOpacity, ScrollView, StyleSheet, FlatList, Image, RefreshControl, Alert, ToastAndroid, TouchableHighlight, TouchableWithoutFeedback, StatusBar, Platform } from "react-native";
 import { Paragraph, Switch, Appbar, Button, TouchableRipple } from "react-native-paper";
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
-import { colors, styles as style, ServiceUser, ServiceCheckout, Loading, Hp } from '../../export'
+import { colors, styles as style, ServiceUser, ServiceCheckout, Loading, Hp, Utils } from '../../export'
 import * as Service from '../../services/Address';
 import { useDispatch, useSelector } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -105,7 +105,7 @@ export default function index(props) {
             }
             setcount(count + 1)
         } catch (error) {
-            alert(error)
+            Utils.alertPopUp(String(error) + '\n' + 'Error with status code : 129872')
         }
         // setAddress(arr)
 

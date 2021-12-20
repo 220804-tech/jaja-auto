@@ -41,7 +41,7 @@ function NotifikasiScreen(props) {
                     }
                     return data
                 } catch (error) {
-                    alert("Error : " + result)
+                    Utils.alertPopUp(String(error) + '\n' + 'Error with status code : 123172')
                 }
             })
             .catch(error => {
@@ -108,7 +108,7 @@ function NotifikasiScreen(props) {
                     }
                     return data
                 } catch (error) {
-                    alert(result)
+                    Utils.alertPopUp(String(error) + '\n' + 'Error with status code : 12212')
                 }
             })
             .catch(error => {

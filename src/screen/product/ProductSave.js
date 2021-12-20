@@ -56,13 +56,12 @@ export default function ProductScreen(props) {
     const [disableCart, setdisableCart] = useState(false)
     const [link, setlink] = useState('')
 
-    const onRefresh = React.useCallback(() => {
+    const onRefresh = useCallback(() => {
         // setLoading(true);
         if (slug) {
             getItem(props.route.params.slug)
             Utils.alertPopUp('Refreshing..')
         }
-
     }, []);
 
     useEffect(() => {
@@ -76,8 +75,8 @@ export default function ProductScreen(props) {
                 setFlashsale(false)
             }
         }
-
     }, [])
+
     useEffect(() => {
         try {
             if (reduxSearch && Object.keys(reduxSearch).length) {
