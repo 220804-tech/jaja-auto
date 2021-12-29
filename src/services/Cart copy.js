@@ -68,7 +68,15 @@ export async function getTrolley(auth, gift, dispatch) {
             try {
                 let res = JSON.parse(result)
                 if (res?.status?.code === 200 || res?.status?.code === 204) {
-                    dispatch({ type: 'SET_CART', payload: res.data })
+                    if (gift) {
+                        dispatch({ type: 'SET_CART', payload: res.data })
+                        dispatch({ type: 'SET_CART_STATUS', payload: 'gift' })
+
+                    } else {
+                        dispatch({ type: 'SET_CART_GIFT', payload: res.data })
+                        dispatch({ type: 'SET_CART_STATUS', payload: '' })
+
+                    }
                     return true
                 } else {
                     Utils.handleErrorResponse(res, 'Error with status code : 12300');

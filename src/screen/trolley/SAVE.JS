@@ -12,10 +12,11 @@ export default function TrolleyScreen() {
     const dispatch = useDispatch()
     const [swipeRef, setSwipeRef] = useState(Object.create(null));
     const reduxUser = useSelector(state => state.user.user)
+    const cartStatus = useSelector(state => state.cart.cartStatus)
+    console.log("🚀 ~ file: TrolleyScreen.js ~ line 16 ~ TrolleyScreen ~ cartStatus", cartStatus)
+
 
     const reduxCart = useSelector(state => state.cart)
-    const cartStatus = useSelector(state => state.cart.cartStatus)
-
     const reduxAuth = useSelector(state => state.auth.auth)
     const [disableQty, setdisableQty] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -28,7 +29,7 @@ export default function TrolleyScreen() {
 
     if (swipeRef && !Object.keys(swipeRef).length) swipeRef[idx] = createRef();
 
-    useEffect(() => setLoading(false), [reduxCart.cart])
+    useEffect(() => { setLoading(false) }, [reduxCart])
 
     const handleCheckbox = (name, indexParent, indexChild) => {
         try {
@@ -37,7 +38,7 @@ export default function TrolleyScreen() {
                 setDisableCheckout(true)
 
                 // setLoading(true)
-                let arr = reduxCart.cart;
+                let arr = cartStatus === 'gift' ? reduxCart.cartGift : reduxCart.cart;
                 if (name === "store") {
                     arr.items[indexParent].isSelected = !arr.items[indexParent].isSelected
                     if (arr.items[indexParent].isSelected) {
@@ -52,7 +53,11 @@ export default function TrolleyScreen() {
                 } else {
                     arr.items[indexParent].products[indexChild].isSelected = !arr.items[indexParent].products[indexChild].isSelected
                 }
-                dispatch({ type: 'SET_CART', payload: arr })
+                if (cartStatus === 'gift') {
+                    dispatch({ type: 'SET_CART_GIFT', payload: arr })
+                } else {
+                    dispatch({ type: 'SET_CART', payload: arr })
+                }
                 // setLoading(false)
                 var myHeaders = new Headers();
                 myHeaders.append("Authorization", reduxAuth);
@@ -68,11 +73,10 @@ export default function TrolleyScreen() {
                     redirect: 'follow'
                 };
 
-                fetch(`https://jaja.id/backend/cart/selected?is_gift=${cartStatus === 1 ? 1 : 0}`, requestOptions)
+                fetch("https://jaja.id/backend/cart/selected", requestOptions)
                     .then(response => response.json())
                     .then(result => {
                         if (result.status.code === 200) {
-                            console.log("🚀 ~ file: TrolleyScreen.js ~ line 74 ~ handleCheckbox ~ result", result)
                             handleApiCart()
                         } else {
                             Utils.alertPopUp(String(result.status.message))
@@ -97,71 +101,76 @@ export default function TrolleyScreen() {
     }
 
     const handleQty = (name, indexParent, indexChild) => {
-        setDisableCheckout(true)
-        setdisableQty(true)
-        let arr = reduxCart.cart;
-        if (name === "plus") {
-            arr.items[indexParent].products[indexChild].qty = String(parseInt(arr.items[indexParent].products[indexChild].qty) + 1)
-        } else {
-            if (arr.items[indexParent].products[indexChild].qty < 1) {
-                arr.items[indexParent].products[indexChild].qty = 0
+        try {
+            setDisableCheckout(true)
+            setdisableQty(true)
+            let arr = cartStatus === 'gift' ? reduxCart.cartGift : reduxCart.cart;
+            if (name === "plus") {
+                arr.items[indexParent].products[indexChild].qty = String(parseInt(arr.items[indexParent].products[indexChild].qty) + 1)
             } else {
-                arr.items[indexParent].products[indexChild].qty = String(parseInt(arr.items[indexParent].products[indexChild].qty) - 1)
+                if (arr.items[indexParent].products[indexChild].qty < 1) {
+                    arr.items[indexParent].products[indexChild].qty = 0
+                } else {
+                    arr.items[indexParent].products[indexChild].qty = String(parseInt(arr.items[indexParent].products[indexChild].qty) - 1)
+                }
             }
-        }
-        setTimeout(() => {
-            // dispatch({ type: "SET_CART", payload: arr })
-            setdisableQty(false)
-        }, 100);
-        var myHeaders = new Headers();
-        myHeaders.append("Authorization", reduxAuth);
-        myHeaders.append("Content-Type", "application/json");
-        myHeaders.append("Cookie", "ci_session=gqp7d9ml31ktad3bjvst8jvbbn190ai7");
+            setTimeout(() => {
+                // dispatch({ type: "SET_CART", payload: arr })
+                setdisableQty(false)
+            }, 100);
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", reduxAuth);
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("Cookie", "ci_session=gqp7d9ml31ktad3bjvst8jvbbn190ai7");
 
-        var raw = JSON.stringify({
-            "productId": arr.items[indexParent].products[indexChild].productId,
-            "qty": arr.items[indexParent].products[indexChild].qty,
-            'variantId': arr.items[indexParent].products[indexChild].variantId
-        });
+            var raw = JSON.stringify({
+                "productId": arr.items[indexParent].products[indexChild].productId,
+                "qty": arr.items[indexParent].products[indexChild].qty,
+                'variantId': arr.items[indexParent].products[indexChild].variantId
+            });
 
-        var requestOptions = {
-            method: 'PUT',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
-        };
+            var requestOptions = {
+                method: 'PUT',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
 
-        fetch("https://jaja.id/backend/cart/qty?action=change", requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                if (result.status.code === 200) {
-                } else if (result.status.code === 400) {
-                    if (result.status.message === "quantity cannot more than stock") {
-                        Utils.alertPopUp('Stok produk tidak cukup')
-                    } else if (result.status.message === 'quantity cannot less than 1') {
+            fetch("https://jaja.id/backend/cart/qty?action=change", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status.code === 200) {
+                    } else if (result.status.code === 400) {
+                        if (result.status.message === "quantity cannot more than stock") {
+                            Utils.alertPopUp('Stok produk tidak cukup')
+                        } else if (result.status.message === 'quantity cannot less than 1') {
 
+                        } else {
+                            Utils.alertPopUp(String(result.status.message) + " => " + String(result.status.code))
+                        }
                     } else {
                         Utils.alertPopUp(String(result.status.message) + " => " + String(result.status.code))
-                    }
-                } else {
-                    Utils.alertPopUp(String(result.status.message) + " => " + String(result.status.code))
 
+                        handleFailed(name, indexParent, indexChild)
+                    }
+                    handleApiCart()
+                    setTimeout(() => {
+                        setDisableCheckout(false)
+                    }, 500);
+                })
+                .catch(error => {
                     handleFailed(name, indexParent, indexChild)
-                }
-                handleApiCart()
-                setTimeout(() => {
                     setDisableCheckout(false)
-                }, 500);
-            })
-            .catch(error => {
-                handleFailed(name, indexParent, indexChild)
-                setDisableCheckout(false)
-                Utils.handleError(error, 'Error with status code : 16002')
-            })
+                    Utils.handleError(error, 'Error with status code : 16002')
+                })
+        } catch (error) {
+            console.log("🚀 ~ file: TrolleyScreen.js ~ line 165 ~ handleQty ~ error", error)
+
+        }
     }
 
     const handleFailed = (name, indexParent, indexChild) => {
-        let arr = reduxCart.cart;
+        let arr = cartStatus === 'gift' ? reduxCart.cartGift : reduxCart.cart;
         if (name === "plus") {
             arr.items[indexParent].products[indexChild].qty = String(parseInt(arr.items[indexParent].products[indexChild].qty) - 1)
         } else {
@@ -171,14 +180,24 @@ export default function TrolleyScreen() {
                 arr.items[indexParent].products[indexChild].qty = String(parseInt(arr.items[indexParent].products[indexChild].qty) + 1)
             }
         }
-        dispatch({ type: "SET_CART", payload: arr })
+        if (cartStatus === 'gift') {
+            dispatch({ type: "SET_CART", payload: arr })
+        } else {
+            dispatch({ type: "SET_CART_GIFT", payload: arr })
+        }
     }
 
-    const handleApiCart = () => {
-        console.log("🚀 ~ file: TrolleyScreen.js ~ line 179 ~ handleApiCart ~ cartStatus", cartStatus)
-        ServiceCart.getTrolley(reduxAuth, cartStatus === 1 ? 1 : 0, dispatch)
-        setTimeout(() => setLoading(false), 1000);
+    const handleApiCart = async () => {
+        console.log("🚀 ~ file: TrolleyScreen.js ~ line 189 ~ handleApiCart ~ cartStatus", cartStatus)
+        if (cartStatus === 'gift') {
+            await ServiceCart.getTrolley(reduxAuth, 1, dispatch)
+            console.log('test')
+        } else {
+            await ServiceCart.getTrolley(reduxAuth, 0, dispatch)
+            console.log('test 12')
 
+        }
+        setTimeout(() => setLoading(false), 1000);
     }
 
     const handleGetCheckout = () => {
@@ -218,7 +237,6 @@ export default function TrolleyScreen() {
             if (disableCheckout === false && reduxCart.cart.totalCart != 0) {
                 dispatch({ type: 'SET_CHECKOUT', payload: {} })
                 navigation.navigate('Checkout')
-
                 // ServiceCheckout.getCheckout(reduxAuth, 0).then(res => {
                 //     if (res) {
                 //         if (res == 'Alamat') {
@@ -264,6 +282,7 @@ export default function TrolleyScreen() {
     }
 
     const onRefresh = useCallback(() => {
+        console.log("🚀 ~ file: TrolleyScreen.js ~ line 289 ~ onRefresh ~ cartStatus", cartStatus)
         setRefreshing(true);
         handleApiCart()
         setTimeout(() => {
@@ -272,17 +291,35 @@ export default function TrolleyScreen() {
     }, []);
 
     const handleSelected = item => {
-        console.log("🚀 ~ file: TrolleyScreen.js ~ line 275 ~ TrolleyScreen ~ item", item)
-        // dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        // navigation.navigate("Product", { slug: item.slug, image: item.image })
-        dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
-        navigation.push("Product")
-        dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: { image: item.productImage, slug: item.slug } })
+        // dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+        // dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: { image: item.image, slug: item.slug } })
+        // dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+        // dispatch({ type: 'SET_SLUG', payload: item.slug })
+
+        // ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+        //     if (res && res?.status?.code === 400) {
+        //         utils.alertPopUp('Sepertinya data tidak ditemukan!')
+        //         navigation.goBack()
+        //     } else {
+        //         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+        //         dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+        //     }
+        // })
+        if (!cartStatus) {
+            navigation.navigate("Product")
+        } else {
+            dispatch({ type: 'SET_GIFT', payload: item })
+            dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: {} })
+            dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+            navigation.navigate("GiftDetails")
+        }
+
+        dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: item })
         dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
         dispatch({ type: 'SET_SLUG', payload: item.slug })
 
         ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
-            if (res?.status?.code === 400) {
+            if (res && res?.status?.code === 400) {
                 Utils.alertPopUp('Sepertinya data tidak ditemukan!')
                 navigation.goBack()
             } else {
@@ -315,9 +352,9 @@ export default function TrolleyScreen() {
             <Appbar back={true} title="Keranjang" />
             {loading ? <Loading /> : null}
             <View style={{ flex: 1, backgroundColor: Platform.OS === 'ios' ? colors.White : null }}>
-                {reduxCart.cart.items && reduxCart.cart.items.length ?
+                {reduxCart?.cart?.items?.[0] || reduxCart?.cartGift?.items?.[0] ?
                     <FlatList
-                        data={reduxCart.cart.items}
+                        data={cartStatus === 'gift' ? reduxCart.cartGift.items : reduxCart.cart.items}
                         refreshControl={
                             <RefreshControl
                                 refreshing={refreshing}
@@ -329,7 +366,7 @@ export default function TrolleyScreen() {
                         renderItem={({ item, index }) => {
                             let indexParent = index
                             return (
-                                <View onPress={() => handleSelected(item)} style={[styles.column_center, styles.mb_2, { backgroundColor: colors.White }]}>
+                                <View onPress={() => handleSelected(item)} style={[styles.column_center, styles.mb_3, { backgroundColor: colors.White }]}>
                                     <View style={[styles.row_start_center, styles.p_2, { width: '100%', borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}>
                                         {Platform.OS === 'ios' ?
                                             <CheckBox
@@ -379,7 +416,7 @@ export default function TrolleyScreen() {
                                                 <Swipeable ref={swipeRef[index]} onRef={(ref) => setSwipeRef(ref)} rightButtons={swipeComponent(item)} onRightActionRelease={() => {
                                                     setIndex(index)
                                                 }}>
-                                                    <View onPress={() => handleSelected(item)} style={[styles.row_center, styles.mb_2, styles.px_5]}>
+                                                    <View onPress={() => handleSelected(item)} style={[styles.row_center, styles.mb_3, styles.px_5]}>
                                                         {Platform.OS === 'ios' ?
                                                             <CheckBox
 
@@ -402,17 +439,26 @@ export default function TrolleyScreen() {
                                                             />
                                                         }
                                                         <TouchableWithoutFeedback onPress={() => handleSelected(item)}>
-                                                            <Image style={{
+                                                            <View style={{
                                                                 width: Wp('24%'),
                                                                 height: Wp('24%'),
                                                                 marginHorizontal: '3%',
                                                                 borderRadius: 5,
-                                                                backgroundColor: colors.BlackGrey
-                                                            }}
-                                                                resizeMethod={"scale"}
-                                                                resizeMode={item.image ? "cover" : "center"}
-                                                                source={{ uri: item.image }}
-                                                            />
+                                                                backgroundColor: null,
+                                                                resizeMode: 'contain',
+                                                                borderWidth: 0.5,
+                                                                borderColor: colors.Blackk,
+                                                                padding: '2%'
+                                                            }}>
+                                                                <Image style={{
+                                                                    width: '100%',
+                                                                    height: '100%',
+                                                                }}
+                                                                    resizeMethod={"scale"}
+                                                                    resizeMode={item.image ? "cover" : "center"}
+                                                                    source={{ uri: item.image }}
+                                                                />
+                                                            </View>
                                                         </TouchableWithoutFeedback>
                                                         <View style={[styles.column_between_center, { alignItems: 'flex-start', height: Wp('23%'), width: '60%' }]}>
                                                             <View style={styles.column_center_start}>
@@ -483,7 +529,7 @@ export default function TrolleyScreen() {
                     <View style={[styles.row, { height: Hp('7%') }]}>
                         <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '2%', paddingLeft: '4%', paddingVertical: '1%' }}>
                             <Text style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja, marginBottom: '-2%' }]}>Total Harga :</Text>
-                            <Text numberOfLines={1} style={[styles.font_18, styles.T_semi_bold, { color: colors.BlueJaja }]}>{reduxCart.cart.totalCartCurrencyFormat ? reduxCart.cart.totalCartCurrencyFormat : 'Rp0'}</Text>
+                            <Text numberOfLines={1} style={[styles.font_18, styles.T_semi_bold, { color: colors.BlueJaja }]}>{cartStatus === 'gift' ? reduxCart.cart.totalCartCurrencyFormat ? reduxCart.cart.totalCartCurrencyFormat : 'Rp0' : reduxCart.cartGift.totalCartCurrencyFormat ? reduxCart.cartGift.totalCartCurrencyFormat : 'Rp0'}</Text>
                         </View>
                         <Button disabled={disableCheckout} onPress={handleCheckout} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_14, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                             Checkout

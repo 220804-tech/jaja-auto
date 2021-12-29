@@ -1,5 +1,6 @@
 import { ToastAndroid, Alert } from 'react-native'
 import { Utils } from '../export';
+
 export async function getBadges(auth) {
     if (auth) {
         var myHeaders = new Headers();
@@ -41,6 +42,44 @@ export async function getBadges(auth) {
         return null
     }
 }
+
+export async function getBadge(auth, dispatch) {
+    if (auth) {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", auth);
+        myHeaders.append("Cookie", "ci_session=8jq5h19sle86cb2nhest67lejudq2e1q");
+        var raw = "";
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        }
+
+        return await fetch("https://jaja.id/backend/user/info", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                try {
+                    let res = JSON.parse(result);
+                    if (res.status.code === 200) {
+                        dispatch({ type: "SET_BADGES", payload: res.data });
+                    } else {
+                        Utils.handleErrorResponse(error, 'Error with status code : 12303')
+                    }
+                } catch (error) {
+                    Utils.handleError(error, 'Error with status code : 12304')
+                }
+                return false
+            })
+            .catch(error => {
+                Utils.handleError(error, 'Error with status code : 12305')
+                return false
+            })
+    } else {
+        return false
+    }
+}
+
 
 export async function getProfile(auth) {
     var myHeaders = new Headers();

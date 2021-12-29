@@ -4,7 +4,7 @@ import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { Button, TouchableRipple, Checkbox } from 'react-native-paper'
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-import { styles, colors, useNavigation, Hp, Wp, Ps, useFocusEffect, FastImage, RecomandedHobby, Utils, } from '../../export'
+import { styles, colors, useNavigation, Hp, Wp, Ps, useFocusEffect, FastImage, RecomandedHobby, Utils, ServiceProduct, ServiceCart, ServiceUser, } from '../../export'
 const IS_IPHONE_X = SCREEN_HEIGHT === 812 || SCREEN_HEIGHT === 896;
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
@@ -25,8 +25,12 @@ export default function GiftDetailScreen(props) {
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
     const slug = useSelector(state => state.search.slug)
-    const giftDetails = useSelector(state => state.gift.details)
+    const giftDetails = useSelector(state => state.product.productDetail)
+    const reduxStore = useSelector(state => state.store.store)
 
+    const prod = useSelector(state => state.gift.details)
+    const reduxLoad = useSelector(state => state.product.productLoad)
+    const reduxTemporary = useSelector(state => state.product.productTemporary)
     const dispatch = useDispatch()
 
     const [scrollY, setscrollY] = useState(new Animated.Value(0))
@@ -52,7 +56,6 @@ export default function GiftDetailScreen(props) {
     const [catatan, setcatatan] = useState('')
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [dateSelected, setdateSelected] = useState(null)
-    console.log("🚀 ~ file: GiftDetailScreen.js ~ line 55 ~ GiftDetailScreen ~ dateSelected", dateSelected)
 
     const [dateMin, setdateMin] = useState({
         year: 0,
@@ -135,7 +138,6 @@ export default function GiftDetailScreen(props) {
 
     }
 
-
     const handlePrice = (name) => {
         if (name == 'box') {
             setboxUse(!boxUse)
@@ -143,30 +145,38 @@ export default function GiftDetailScreen(props) {
             setcardUse(!cardUse)
         }
     }
+
     function currencyFormat(num) {
         return 'Rp' + String(num).replace(/(\d)(?=(\d{3})+(?!\d))/g, '.')
     }
+
     const handleTrolley = () => {
-        navigation.navigate("Trolley")
+        if (reduxAuth) {
+            ServiceCart.getTrolley(reduxAuth, 1, dispatch)
+            dispatch({ type: 'SET_CART_STATUS', payload: 1 })
+            navigation.navigate("Trolley")
+        } else {
+            handleLogin()
+        }
     }
 
     const handleWishlist = () => {
         setLike(!like)
     }
-    const handleLogin = () => navigation.navigate('Login', { navigate: "Product" })
+
+    const handleLogin = () => navigation.navigate('Login', { navigate: "GiftDetails" })
 
     const renderNavBar = () => (
         <View style={style.navContainer}>
             <View style={style.statusBar} />
-
             <View style={style.navBar}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, padding: '3%', backgroundColor: colors.BlueJaja, justifyContent: 'center', alignItems: 'center', borderRadius: 100 }}>
                     <Image source={require('../../assets/icons/arrow.png')} style={{ width: 25, height: 25, marginRight: '3%', tintColor: colors.White }} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleTrolley} style={{ width: 40, height: 40, padding: '3%', backgroundColor: colors.BlueJaja, justifyContent: 'center', alignItems: 'center', borderRadius: 100 }}>
                     <Image source={require('../../assets/icons/cart.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: colors.White }} />
-                    {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
-                        <View style={[styles.countNotif, { right: 3, top: 3 }]}><Text style={styles.textNotif}>{reduxUser.badges.totalProductInCart >= 100 ? "99+" : reduxUser.badges.totalProductInCart}</Text></View>
+                    {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductGiftInCart ?
+                        <View style={[styles.countNotif, { right: 3, top: 3 }]}><Text style={styles.textNotif}>{reduxUser.badges.totalProductGiftInCart >= 100 ? "99+" : reduxUser.badges.totalProductGiftInCart}</Text></View>
                         : null
                     }
                 </TouchableOpacity>
@@ -175,32 +185,73 @@ export default function GiftDetailScreen(props) {
     );
 
     const title = () => {
+        let arr = [reduxTemporary.image]
         return (
             <>
-                {giftDetails.image && Array.isArray(giftDetails.image) && giftDetails.image.length ?
-                    <Swiper
-                        horizontal={true}
-                        dotColor={colors.White}
-                        activeDotColor={colors.BlueJaja}
-                        style={{ backgroundColor: colors.White }}>
-                        {
-                            giftDetails.image.map((item, key) => {
-                                return (
-                                    <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%') }}>
-                                        <Image style={style.swiperProduct}
-                                            source={{ uri: item }}
-                                        />
-                                    </View>
-                                );
-                            })
-                        }
-                    </Swiper>
-                    :
-                    <View style={{ width: Wp('100%'), height: Wp('100%'), backgroundColor: colors.White }}>
-                        <Image style={style.swiperProduct}
-                            source={{ uri: giftDetails.image }}
-                        />
-                    </View>
+                {
+                    Platform.OS === 'ios' ?
+                        <View style={{ width: Wp('100%'), height: Hp('45%'), backgroundColor: colors.White, marginTop: '-11%' }}>
+                            <Swiper
+                                horizontal={true}
+                                dotColor={colors.White}
+                                activeDotColor={colors.BlueJaja}
+                                paginationStyle={{ bottom: 10 }}>
+                                {
+                                    reduxLoad ?
+                                        arr.map((item, key) => {
+                                            return (
+                                                <Image style={style.swiperProduct}
+                                                    source={{ uri: item }}
+                                                />
+                                            );
+                                        })
+                                        :
+                                        giftDetails.image.map((item, key) => {
+                                            return (
+                                                <Image style={style.swiperProduct}
+                                                    source={{ uri: item }}
+                                                />
+                                            );
+                                        })
+
+                                }
+                            </Swiper>
+                        </View>
+                        :
+                        <Swiper
+                            horizontal={true}
+                            dotColor={colors.White}
+                            activeDotColor={colors.BlueJaja}
+                            style={{ backgroundColor: colors.WhiteBack }}>
+                            {reduxLoad ?
+                                arr.map((item, key) => {
+                                    return (
+                                        <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%') }}>
+                                            <Image style={style.swiperProduct}
+                                                source={{ uri: item }}
+                                            />
+                                        </View>
+                                    );
+                                })
+                                :
+                                giftDetails.image.map((item, key) => {
+                                    return (
+                                        <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%') }}>
+                                            <Image style={style.swiperProduct}
+                                                source={{ uri: item }}
+                                            />
+                                        </View>
+                                    );
+                                })
+
+                            }
+                        </Swiper>
+                    // :
+                    // <View style={{ width: Wp('100%'), height: Wp('100%') }}>
+                    //     <Image style={style.swiperProduct}
+                    //         source={{ uri: reduxTemporary.image }}
+                    //     />
+                    // </View>
                 }
             </>
         );
@@ -226,10 +277,8 @@ export default function GiftDetailScreen(props) {
     }
 
     const handleShare = async () => {
-        console.log("🚀 ~ file: ProductScreen.js ~ line 360 ~ handleShare ~ slug", giftDetails.name)
         try {
             let link = await buildLink()
-            console.log("🚀 ~ file: ProductScreen.js ~ line 373 ~ handleShare ~ link", link)
             const shareOptions = {
                 title: 'Jaja',
                 message: `${giftDetails.name}\nDownload sekarang ${link}`,
@@ -270,6 +319,7 @@ export default function GiftDetailScreen(props) {
         }
 
     }
+
     const buildLink = async () => {
         console.log("🚀 ~ file: ProductScreen.js ~ line 418 ~ buildLink ~ buildLink", buildLink)
         // const link = `https:///m?sd=${giftDetails.slug}`
@@ -289,6 +339,10 @@ export default function GiftDetailScreen(props) {
         return link;
     }
 
+    const handleStore = () => {
+        navigation.navigate('Gift')
+
+    }
     const renderContent = () => {
         return (
             <View style={[styles.column, { backgroundColor: '#e8e8e8', paddingBottom: Hp('6%') }]}>
@@ -388,11 +442,11 @@ export default function GiftDetailScreen(props) {
                         {giftDetails.store ?
                             <View style={[styles.row_between_center, styles.p_3, styles.mb_3, { backgroundColor: colors.White }]}>
                                 <View style={[styles.row, { width: '67%' }]}>
-                                    <TouchableOpacity onPress={handleStore} style={{ height: Wp('15%'), width: Wp('15%'), borderRadius: 5, marginRight: '3%', backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.Silver }}>
+                                    <TouchableOpacity onPress={() => navigation.navigate('Gift')} style={{ height: Wp('15%'), width: Wp('15%'), borderRadius: 5, marginRight: '3%', backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.Silver }}>
                                         <Image style={{ height: '100%', width: '100%', resizeMode: 'contain', borderRadius: 5 }} source={Object.keys(giftDetails).length && giftDetails.store.image ? { uri: giftDetails.store.image } : require('../../assets/images/JajaId.png')} />
                                     </TouchableOpacity>
                                     <View style={[styles.column_between_center, { width: '77%', alignItems: 'flex-start' }]}>
-                                        <Text numberOfLines={1} onPress={handleStore} style={[styles.font_14, styles.T_medium, { width: '100%' }]}>{giftDetails.store.name}</Text>
+                                        <Text numberOfLines={1} onPress={() => navigation.navigate('Gift')} style={[styles.font_14, styles.T_medium, { width: '100%' }]}>{giftDetails.store.name}</Text>
                                         {giftDetails.store.location ?
                                             <View style={[Ps.location, { position: 'relative', width: '100%', marginLeft: '-1%', padding: 0 }]}>
                                                 <Image style={[styles.icon_14, { marginRight: '2%' }]} source={require('../../assets/icons/google-maps.png')} />
@@ -401,14 +455,14 @@ export default function GiftDetailScreen(props) {
                                             : null}
                                     </View>
                                 </View>
-                                <TouchableOpacity style={[styles.row_center, styles.py_2, styles.px_3, { borderWidth: 1, borderColor: flashsale ? colors.RedFlashsale : colors.BlueJaja, borderRadius: 100 }]} onPress={handleStore}>
-                                    <Text style={[styles.font_10, styles.T_semi_bold, { color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>Kunjungi Toko</Text>
+                                <TouchableOpacity style={[styles.row_center, styles.py_2, styles.px_3, { borderWidth: 1, borderColor: flashsale ? colors.RedFlashsale : colors.BlueJaja, borderRadius: 100 }]} onPress={() => navigation.navigate('Gift')}>
+                                    <Text style={[styles.font_10, styles.T_semi_bold, { color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>Cari Hadiah</Text>
                                 </TouchableOpacity>
                             </View>
                             : null}
                         <View style={[styles.column]}>
                             <View style={[styles.row_start_center, styles.mx_2]}>
-                                <TouchableRipple onPress={() => handlePrice('box')} style={[styles.column_start_center, styles.p_2, styles.mr, { width: Wp('30%'), height: Wp('35%'), backgroundColor: colors.White }]}>
+                                <TouchableRipple onPress={() => console.log('pressed')} style={[styles.column_start_center, styles.p_2, styles.mr, { width: Wp('30%'), height: Wp('35%'), backgroundColor: colors.White }]}>
                                     <>
                                         <Image style={{ width: Wp('16%'), height: Wp('16%'), marginBottom: '3%' }} source={require('../../assets/icons/giftBox.png')} />
                                         <Text style={[styles.font_11, styles.T_medium, { alignSelf: 'center' }]}>Bungkus Kado</Text>
@@ -417,8 +471,9 @@ export default function GiftDetailScreen(props) {
                                                 <Text style={[styles.font_11, styles.T_medium, { alignSelf: 'center' }]}>Rp7.000</Text>
                                             </View>
                                             <Checkbox
+                                                disabled={true}
                                                 color={colors.BlueJaja}
-                                                status={boxUse ? 'checked' : 'unchecked'}
+                                                status='checked'
                                             // onPress={() => setboxUse(!boxUse)}
                                             />
                                         </View>
@@ -731,6 +786,7 @@ export default function GiftDetailScreen(props) {
             handleLogin()
         }
     }
+
     const handleConfirmDate = (res) => {
         try {
             let date = res
@@ -740,6 +796,67 @@ export default function GiftDetailScreen(props) {
             setdateSelected(result)
             setDatePickerVisibility(false)
         } catch (error) {
+
+        }
+    }
+
+    const handleAddCart = (name) => {
+        console.log("masuk sini kann")
+        setdisableCart(true)
+        if (reduxAuth) {
+            if (giftDetails.variant && giftDetails.variant.length) {
+                if (Object.keys(variasiSelected).length) {
+                    handleApiCart(name)
+                } else {
+                    setalert('Pilih salah satu variasi!')
+                    Utils.alertPopUp('Anda belum memilih variasi produk ini!')
+                }
+            } else {
+                console.log("keluarrrr")
+                handleApiCart(name)
+            }
+        } else {
+            handleLogin()
+        }
+        setTimeout(() => {
+            setdisableCart(false)
+        }, 2000);
+    }
+
+    const handleGetCart = () => {
+        try {
+            if (reduxAuth) {
+                ServiceUser.getBadge()
+                ServiceCart.getTrolley(reduxAuth, 1, dispatch)
+            }
+
+        } catch (error) {
+
+        }
+
+    }
+
+    const handleApiCart = async (name) => {
+        console.log("🚀 ~ file: GiftDetailScreen.js ~ line 814 ~ handleApiCart ~ name", name)
+        try {
+            var credentials = { "productId": giftDetails.id, "flashSaleId": flashsale ? flashsaleData.id_flashsale : "", "lelangId": "", "variantId": variasiPressed, "qty": 1 };
+            let result = await ServiceProduct.addCart(reduxAuth, credentials)
+            if (result && result.status.code === 200) {
+                Utils.alertPopUp('Produk berhasil ditambahkan!')
+                if (name === "buyNow") {
+                    console.log('masuk sini yaa');
+                    handleTrolley()
+                } else {
+                    console.log('keluar');
+                    handleGetCart()
+                }
+            } else if (result.status.code === 400 && result.status.message === 'quantity cannot more than stock') {
+                Utils.alertPopUp("Stok produk tidak tersedia")
+            } else {
+                Utils.handleErrorResponse(result, 'Error with status code : 12023')
+            }
+        } catch (error) {
+            console.log("🚀 ~ file: GiftDetailScreen.js ~ line 834 ~ handleApiCart ~ error", error)
 
         }
     }
@@ -792,7 +909,7 @@ export default function GiftDetailScreen(props) {
                 <TouchableOpacity disabled={disableCart} onPress={() => handleAddCart("trolley")} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
                     <Image source={require('../../assets/icons/giftBox.png')} style={{ width: 23, height: 23, marginRight: '3%' }} />
                 </TouchableOpacity>
-                <Button disabled={disableCart} onPress={() => Utils.alertPopUp('Pesanan kamu berhasil dibuat!')} style={{ width: '50%', height: '100%', backgroundColor: disableCart ? colors.BlackGrey : flashsale ? colors.RedFlashsale : colors.BlueJaja }} contentStyle={{ width: '100%', height: '100%' }} color={disableCart ? colors.BlackGrayScale : flashsale ? colors.RedFlashsale : colors.BlueJaja} labelStyle={[styles.font_14, styles.T_semi_bold, { color: colors.White }]} mode="contained">
+                <Button disabled={disableCart} onPress={() => handleAddCart("buyNow")} style={{ width: '50%', height: '100%', backgroundColor: disableCart ? colors.BlackGrey : flashsale ? colors.RedFlashsale : colors.BlueJaja }} contentStyle={{ width: '100%', height: '100%' }} color={disableCart ? colors.BlackGrayScale : flashsale ? colors.RedFlashsale : colors.BlueJaja} labelStyle={[styles.font_14, styles.T_semi_bold, { color: colors.White }]} mode="contained">
                     {giftDetails.stock == '0' ? 'Stok Habis' : 'Beli Sekarang'}
                 </Button>
             </View>

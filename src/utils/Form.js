@@ -63,8 +63,7 @@ export function handleErrorResponse(error, errorCode) {
     if (error?.status?.code !== 200 && error?.status?.code !== 204) {
         if (!!error?.status?.message) {
             Utils.alertPopUp(String(error.status.message))
-        } else {
-            console.log("🚀 ~ file: Form.js ~ line 65 ~ handleErrorResponse ~ error", error)
+        } else {    
             Alert.alert(
                 errorCode,
                 String(errorCode) + " => " + String(error),

@@ -11,16 +11,15 @@ export default function AppbarSecond(props) {
 
     const handleGetCart = () => {
         if (reduxAuth) {
-            ServiceCart.getCart(reduxAuth).then(res => {
-                if (res) {
-                    dispatch({ type: 'SET_CART', payload: res })
-                }
-            })
-            navigation.navigate("Trolley")
+            ServiceCart.getTrolley(reduxAuth, props.gift ? 1 : 0, dispatch)
+            dispatch({ type: 'SET_CART_STATUS', payload: props.gift ? 1 : 0 })
+            navigation.navigate("Trolley")  
         } else {
             navigation.navigate('Login', { navigate: 'Trolley' })
         }
+
     }
+
 
     return (
         <>

@@ -1,13 +1,15 @@
-import React, { useState } from 'react'
-import { View, Text, SafeAreaView, Dimensions, Image, StatusBar, ScrollView } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { View, Text, SafeAreaView, Dimensions, Image, ScrollView } from 'react-native'
 import { TouchableRipple } from 'react-native-paper'
-import { Appbar, colors, styles, Wp, useNavigation, CardProduct } from '../../export'
+import { useDispatch } from 'react-redux'
+import { Appbar, colors, styles, Wp, useNavigation, CardProduct, ServiceProduct } from '../../export'
 const { width } = Dimensions.get('screen')
 
 
 export default function GiftScreen() {
     const navigation = useNavigation();
-    const [state, setstate] = useState([{ name: 'PAKET GIFT 100 RIBU', uri: `${require('../../assets/icons/gift/tshirt.png')}`, price: 100000 }, { name: 'PAKET GIFT 200 RIBU', uri: `${require('../../assets/icons/gift/summer.png')}`, price: 200000 }, { name: 'PAKET GIFT 300 RIBU', uri: `${require('../../assets/icons/gift/shoes.png')}`, price: 300000 }, { name: 'PAKET GIFT 400 RIBU', uri: `${require('../../assets/icons/gift/watch.png')}`, price: 400000 },])
+    const dispatch = useDispatch()
+    const [state, setstate] = useState([{ name: 'PAKET GIFT 100 RIBU', uri: `${require('../../assets/icons/gift/tshirt.png')}`, price: 100 }, { name: 'PAKET GIFT 200 RIBU', uri: `${require('../../assets/icons/gift/summer.png')}`, price: 200 }, { name: 'PAKET GIFT 300 RIBU', uri: `${require('../../assets/icons/gift/shoes.png')}`, price: 300 }, { name: 'PAKET GIFT 400 RIBU', uri: `${require('../../assets/icons/gift/watch.png')}`, price: 400 },])
     const [data, setdata] = useState([
         {
             name: 'Apple iPhone 12 256GB Red',
@@ -74,6 +76,21 @@ export default function GiftScreen() {
 
         },
     ])
+
+    useEffect(() => {
+
+        try {
+            ServiceProduct.getStoreProduct({ gift: 1 }).then(res => {
+                console.log("🚀 ~ file: GiftScreen.js ~ line 890 ~ ServiceProduct.getProducts ~ res", res.data.sorts)
+                dispatch({ type: "SET_PRODUCT_GIFT", payload: res?.data?.items })
+                dispatch({ type: "SET_FILTER_GIFT", payload: res?.data?.filters })
+                dispatch({ type: "SET_SORT_GIFT", payload: res?.data?.sorts })
+            }).catch(err => console.log(String(err)))
+        } catch (error) {
+
+        }
+
+    }, [])
 
     return (
         <SafeAreaView style={styles.container}>
