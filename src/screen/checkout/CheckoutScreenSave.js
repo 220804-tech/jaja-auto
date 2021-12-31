@@ -610,7 +610,7 @@ export default function checkoutScreen() {
     }
     const onRefresh = useCallback(() => {
         setRefreshControl(true)
-        ServiceCheckout.getCheckout(reduxAuth, null).then(res => {
+        ServiceCheckout.getCheckout(reduxAuth, 0).then(res => {
             if (res) {
                 console.log("🚀 ~ file: CheckoutScreen.js ~ line 616 ~ ServiceCheckout.getCheckout ~ res", res)
                 dispatch({ type: 'SET_CHECKOUT', payload: res })
@@ -620,7 +620,7 @@ export default function checkoutScreen() {
                 }, 2000);
             }
         })
-        ServiceCheckout.getShipping(reduxAuth).then(res => {
+        ServiceCheckout.getShipping(reduxAuth, 0).then(res => {
             if (res) {
                 dispatch({ type: 'SET_SHIPPING', payload: res })
             }

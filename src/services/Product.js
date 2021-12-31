@@ -1,5 +1,6 @@
 import { ToastAndroid, Alert } from 'react-native'
-import { Utils, axios } from '../export';
+import { Utils, axios, } from '../export';
+import EncryptedStorage from 'react-native-encrypted-storage'
 export async function productDetail(auth, slug) {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);
@@ -70,32 +71,28 @@ export async function getProduct(auth, slug) {
 
 
 export async function addCart(auth, crendentials) {
-    try {
-        var config = {
-            method: 'post',
-            url: 'https://jaja.id/backend/cart',
-            headers: {
-                'Authorization': auth
-            },
-            data: crendentials
-        };
+    var config = {
+        method: 'post',
+        url: 'https://jaja.id/backend/cart',
+        headers: {
+            'Authorization': auth
+        },
+        data: crendentials
+    };
 
-        return await axios(config)
-            .then(function (response) {
-                return response.data
-            })
-            .catch(function (error) {
-                Utils.handleError(String(error), 'Error with status code : 12115')
-                return null
-            });
-    } catch (error) {
+    return await axios(config)
+        .then(function (response) {
+            return response.data
+        })
+        .catch(function (error) {
+            Utils.handleError(String(error), 'Error with status code : 12115')
+            return null
+        });
 
-    }
 }
 
 
 export async function getProducts(params) {
-    console.log("🚀 ~ file: Product.js ~ line 98 ~ getProducts ~ params", params)
     var myHeaders = new Headers();
     myHeaders.append("Cookie", "ci_session=ar4c21d3los4kftggm2kt0fm1r4tofbv");
 
@@ -104,10 +101,8 @@ export async function getProducts(params) {
         headers: myHeaders,
         redirect: 'follow'
     };
-    console.log(`https://jaja.id/backend/product/search/result?page=1&limit=10&keyword=${params.keyword ? params.keyword : ''}&filter_price=&filter_location=&filter_condition=&filter_preorder=${params.preorder ? params.preorder : ''}&filter_brand=${params.brand ? params.brand : ''}&sort=&is_gift=${params.gift ? params.gift : 0}`)
 
-
-    return await fetch(`https://jaja.id/backend/product/search/result?page=1&limit=10&keyword=${params.keyword ? params.keyword : ''}&filter_price=&filter_location=&filter_condition=&filter_preorder=${params.preorder ? params.preorder : ''}&filter_brand=${params.brand ? params.brand : ''}&sort=&is_gift=${params.gift ? params.gift : 0}`, requestOptions)
+    return await fetch(`https://jaja.id/backend/product/search/result?page=1&limit=250&keyword=${params.keyword ? params.keyword : ''}&filter_price=&filter_location=&filter_condition=&filter_preorder=${params.preorder ? params.preorder : ''}&filter_brand=${params.brand ? params.brand : ''}&sort=&is_gift=${params.gift ? params.gift : 0}`, requestOptions)
         .then(response => response.text())
         .then(result => {
             console.log("🚀 ~ file: Product.js ~ line 110 ~ getProducts ~ result", result)
@@ -133,7 +128,6 @@ export async function getProducts(params) {
 }
 
 export async function getStoreProduct(params) {
-    console.log("🚀 ~ file: Product.js ~ line 98 ~ getProducts ~ params", params)
     var myHeaders = new Headers();
     myHeaders.append("Cookie", "ci_session=ar4c21d3los4kftggm2kt0fm1r4tofbv");
 
@@ -142,13 +136,10 @@ export async function getStoreProduct(params) {
         headers: myHeaders,
         redirect: 'follow'
     };
-    console.log(`https://jaja.id/backend/product/store/jaja-official?page=1&limit=10&keyword=${params.keyword ? params.keyword : ''}&filter_price=&filter_location=&filter_condition=&filter_preorder=${params.preorder ? params.preorder : ''}&filter_brand=${params.brand ? params.brand : ''}&sort=&is_gift=${params.gift ? params.gift : 0}`)
 
-
-    return await fetch(`https://jaja.id/backend/product/store/jaja-gift?page=1&limit=10&keyword=${params.keyword ? params.keyword : ''}&filter_price=&filter_location=&filter_condition=&filter_preorder=${params.preorder ? params.preorder : ''}&filter_brand=${params.brand ? params.brand : ''}&sort=&is_gift=${params.gift ? params.gift : 0}`, requestOptions)
+    return await fetch(`https://jaja.id/backend/product/store/jaja-gift?page=1&limit=${params.gift ? 750 : 250}&keyword=${params.keyword ? params.keyword : ''}&filter_price=${params.price ? params.price : ''}&filter_location=&filter_condition=&filter_preorder=${params.preorder ? params.preorder : ''}&filter_brand=${params.brand ? params.brand : ''}&sort=&is_gift=${params.gift ? params.gift : 0}`, requestOptions)
         .then(response => response.text())
         .then(result => {
-            console.log("🚀 ~ file: Product.js ~ line 110 ~ getProducts ~ result", result)
             try {
                 let data = JSON.parse(result)
                 if (data?.status?.code === 200 || data?.status?.code === 204) {
@@ -159,7 +150,7 @@ export async function getStoreProduct(params) {
                 }
             } catch (error) {
                 console.log("🚀 ~ file: Product.js ~ line 121 ~ getProducts ~ error", error)
-                Utils.handleError(JSON.stringify(result), "Error with status code : 12525 ")
+                Utils.handleError("Error with status code : 12525 \n" + String(error) + '\n' + JSON.stringify(result))
                 return null
             }
         })
@@ -168,4 +159,38 @@ export async function getStoreProduct(params) {
             return null
         });
 
+}
+
+
+export async function getRecommendation(dispatch) {
+    var config = {
+        method: 'get',
+        url: 'https://jaja.id/backend/product/recommendation?page=1&limit=50',
+        headers: {
+            'Cookie': 'ci_session=3ocrqec6u5otqek055fej001v7vk1hp6'
+        },
+    };
+
+    axios(config)
+        .then(function (response) {
+            if (response?.data?.status?.code === 200) {
+                dispatch({ type: 'SET_DASHRECOMMANDED', payload: response.data.data.items })
+                EncryptedStorage.setItem('dashrecommanded', JSON.stringify(response.data.data.items))
+            } else {
+                Utils.handleErrorResponse(response.data, 'Error with status code : 120001')
+                handleProductRecommanded();
+            }
+        })
+        .catch(function (error) {
+            Utils.handleError(error, 'Error with status code : 120002')
+            handleProductRecommanded()
+        });
+
+    const handleProductRecommanded = () => {
+        EncryptedStorage.getItem('dashrecommanded').then(result => {
+            if (result) {
+                dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(result) });
+            }
+        });
+    }
 }

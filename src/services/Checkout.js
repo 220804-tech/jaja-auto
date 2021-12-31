@@ -27,13 +27,13 @@ export async function getCheckout(auth, coin) {
                     return null
                 }
             } catch (error) {
-                alert(error + '\n\n' + res)
+                Utils.alertPopUp(String(error) + ' 120565\n\n' + JSON.stringify(res))
             }
         })
         .catch(error => Utils.handleError(error, 'Error with status code : 12057'));
 }
 
-export async function getShipping(auth) {
+export async function getShipping(auth, gift) {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);
     myHeaders.append("Cookie", "ci_session=sj57u2rf54ump5hhscmu30jljrigpooq");
@@ -47,9 +47,11 @@ export async function getShipping(auth) {
         redirect: 'follow'
     };
 
-    return await fetch("https://jaja.id/backend/checkout/shipping", requestOptions)
+    console.log(`https://jaja.id/backend/checkout/shipping?is_gift=${gift === 1 ? 1 : 0}`)
+    return await fetch(`https://jaja.id/backend/checkout/shipping?is_gift=${gift === 1 ? 1 : 0}`, requestOptions)
         .then(response => response.json())
         .then(result => {
+
             if (result.status.code === 200) {
                 return result.data;
             } else if (result.status.code == 404 && result.status.message == 'alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu') {

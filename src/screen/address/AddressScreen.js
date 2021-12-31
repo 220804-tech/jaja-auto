@@ -143,7 +143,7 @@ export default function index(props) {
                                         dispatch({ type: 'SET_CHECKOUT', payload: reps })
                                     }
                                 })
-                                ServiceCheckout.getShipping(reduxAuth).then(res => {
+                                ServiceCheckout.getShipping(reduxAuth, 0).then(res => {
                                     console.log("🚀 ~ file: TrolleyScreen.js ~ line 161 ~ ServiceCheckout.getShipping ~ res", res)
                                     if (res) {
                                         dispatch({ type: 'SET_SHIPPING', payload: res })

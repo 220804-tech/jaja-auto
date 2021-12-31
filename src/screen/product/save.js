@@ -192,7 +192,6 @@ export default function ProductScreen(props) {
                     }
                 }, 3000);
             } else {
-                alert('masuk sini')
                 setLoading(false)
                 setRefreshing(false)
             }

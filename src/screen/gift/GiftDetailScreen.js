@@ -226,7 +226,7 @@ export default function GiftDetailScreen(props) {
                             {reduxLoad ?
                                 arr.map((item, key) => {
                                     return (
-                                        <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%') }}>
+                                        <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%'), backgroundColor: colors.White }}>
                                             <Image style={style.swiperProduct}
                                                 source={{ uri: item }}
                                             />
@@ -345,7 +345,7 @@ export default function GiftDetailScreen(props) {
     }
     const renderContent = () => {
         return (
-            <View style={[styles.column, { backgroundColor: '#e8e8e8', paddingBottom: Hp('6%') }]}>
+            <View style={[styles.column, { backgroundColor: reduxLoad ? colors.White : colors.BlackGround, paddingBottom: Hp('6%') }]}>
                 {giftDetails && Object.keys(giftDetails).length ?
                     <View style={styles.column}>
                         <View style={{ flex: 0, flexDirection: 'column', backgroundColor: colors.White, padding: '3%', marginBottom: '1%' }}>
@@ -440,7 +440,7 @@ export default function GiftDetailScreen(props) {
                         }
 
                         {giftDetails.store ?
-                            <View style={[styles.row_between_center, styles.p_3, styles.mb_3, { backgroundColor: colors.White }]}>
+                            <View style={[styles.row_between_center, styles.p_3, styles.mb_2, { backgroundColor: colors.White }]}>
                                 <View style={[styles.row, { width: '67%' }]}>
                                     <TouchableOpacity onPress={() => navigation.navigate('Gift')} style={{ height: Wp('15%'), width: Wp('15%'), borderRadius: 5, marginRight: '3%', backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.Silver }}>
                                         <Image style={{ height: '100%', width: '100%', resizeMode: 'contain', borderRadius: 5 }} source={Object.keys(giftDetails).length && giftDetails.store.image ? { uri: giftDetails.store.image } : require('../../assets/images/JajaId.png')} />
@@ -862,7 +862,7 @@ export default function GiftDetailScreen(props) {
     }
     return (
         <SafeAreaView style={styles.container}>
-            {/* {loading ? <Loading /> : null} */}
+            {loading ? <Loading /> : null}
             <StatusBar translucent={true} backgroundColor="transparent" barStyle="light-content" />
             <ReactNativeParallaxHeader
                 headerMinHeight={Hp('10%')}
@@ -906,8 +906,8 @@ export default function GiftDetailScreen(props) {
                 <TouchableOpacity onPress={handleChat} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
                     <Image source={require('../../assets/icons/chats.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: colors.RedFlashsale }} />
                 </TouchableOpacity>
-                <TouchableOpacity disabled={disableCart} onPress={() => handleAddCart("trolley")} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
-                    <Image source={require('../../assets/icons/giftBox.png')} style={{ width: 23, height: 23, marginRight: '3%' }} />
+                <TouchableOpacity disabled={disableCart} onPress={() => handleAddCart("trolley")} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center', }}>
+                    <Image source={require('../../assets/icons/gift.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: colors.RedFlashsale }} />
                 </TouchableOpacity>
                 <Button disabled={disableCart} onPress={() => handleAddCart("buyNow")} style={{ width: '50%', height: '100%', backgroundColor: disableCart ? colors.BlackGrey : flashsale ? colors.RedFlashsale : colors.BlueJaja }} contentStyle={{ width: '100%', height: '100%' }} color={disableCart ? colors.BlackGrayScale : flashsale ? colors.RedFlashsale : colors.BlueJaja} labelStyle={[styles.font_14, styles.T_semi_bold, { color: colors.White }]} mode="contained">
                     {giftDetails.stock == '0' ? 'Stok Habis' : 'Beli Sekarang'}

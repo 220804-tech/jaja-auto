@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, StyleSheet, RefreshControl, Platform, ScrollView, Dimensions, LogBox, Animated, StatusBar } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
-import { BasedOnSearch, Trending, Category, Flashsale, Loading, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect, NearestStore, ServiceCore, Utils } from '../../export'
+import { BasedOnSearch, Trending, Category, Flashsale, Loading, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect, NearestStore, ServiceCore, Utils, ServiceProduct } from '../../export'
 const { height: SCREEN_HEIGHT, width } = Dimensions.get('window');
 import DeviceInfo from 'react-native-device-info';
 import ParallaxScrollView from 'react-native-parallax-scrollview';
@@ -119,16 +119,13 @@ export default function HomeScreen() {
 
     useFocusEffect(
         useCallback(() => {
-
             // const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
             // setLoading(false)
             // console.log("🚀 ~ file: HomeScreen.js ~ line 134 ~ useEffect ~ unsubscribe", unsubscribe)
             // return () => unsubscribe();
-
             dynamicLinks().getInitialLink().then(link => {
                 handleDynamicLink(link)
             })
-
             const linkingListener = dynamicLinks().onLink(handleDynamicLink)
             return () => {
                 linkingListener()
@@ -138,11 +135,7 @@ export default function HomeScreen() {
     useEffect(() => {
         try {
             dispatch({ 'type': 'SET_LOADMORE', payload: false })
-            AsyncStorage.getItem('token').then(res => {
-                if (res) {
-                    setAuth(JSON.parse(res))
-                }
-            })
+
             EncryptedStorage.getItem('nearestProduct').then(res => {
                 if (res && res.length) {
                     setnearestProduct(true)
@@ -164,7 +157,7 @@ export default function HomeScreen() {
     }, [])
 
     const getBadges = () => {
-        ServiceUser.getBadges(reduxAuth ? reduxAuth : auth).then(result => {
+        ServiceUser.getBadges(reduxAuth).then(result => {
             if (result) {
                 dispatch({ type: "SET_BADGES", payload: result })
             } else {
@@ -174,8 +167,8 @@ export default function HomeScreen() {
     }
     const handleGetCart = () => {
         try {
-            if (reduxAuth ? reduxAuth : auth) {
-                ServiceCart.getCart(reduxAuth ? reduxAuth : auth).then(res => {
+            if (reduxAuth) {
+                ServiceCart.getCart(reduxAuth).then(res => {
                     if (res) {
                         dispatch({ type: 'SET_CART', payload: res })
                     }
@@ -224,53 +217,44 @@ export default function HomeScreen() {
 
     const title = () => {
         return (
-            <Swiper
-                autoplayTimeout={3}
-                horizontal={true}
-                loop={false}
-                dotColor={colors.White}
-                activeDotColor={colors.BlueJaja}
-                paginationStyle={{ bottom: 10 }}
-                autoplay={true}
-                loop={true}
-            >
-                {images.map((item, key) => {
-                    return (
-                        <Image key={String(key)} style={style.swiperBanner}
-                            resizeMode={item.image ? "contain" : "cover"}
-                            source={{ uri: item.image }}
-                        />
-                    );
-                })}
-            </Swiper>
+            <></>
         );
     };
+
+    const handleShowGift = () => {
+        navigation.navigate('Gift')
+        ServiceProduct.getStoreProduct({ gift: 1 }).then(res => {
+            dispatch({ type: "SET_PRODUCT_GIFT_HOME", payload: res?.data?.items })
+            dispatch({ type: "SET_FILTER_GIFT", payload: res?.data?.filters })
+            dispatch({ type: "SET_SORT_GIFT", payload: res?.data?.sorts })
+        })
+    }
     const renderContent = () => {
         return (
-            <View style={[styles.column, { backgroundColor: colors.White }]}>
-                <ScrollView
+            <View style={[styles.column, { backgroundColor: colors.White, alignSelf: 'center', justifyContent: 'center', width: Wp('100%') }]}>
+                {/* <ScrollView
                     refreshControl={
                         <RefreshControl
                             style={{ zIndex: 9999 }}
                             refreshing={refreshing}
                             onRefresh={onRefresh}
                         />
-                    }>
-                    <Category />
-                    {reduxShowFlashsale ? <Flashsale /> : null}
-                    <Trending />
-                    <TouchableRipple onPress={() => navigation.navigate('Gift')} rippleColor={colors.White} style={[styles.row_center, styles.px, styles.py_3, styles.my_3, { backgroundColor: colors.RedFlashsale, borderRadius: 15, alignSelf: 'center', width: '95%', elevation: 2 }]} >
-                        <View style={[styles.row_around_center, { width: '100%' }]}>
-                            <Text style={[styles.font_11, styles.T_semi_bold, { color: colors.White, marginBottom: '-0.5%' }]}>Berikan hadiah untuk teman spesial kamu disini!</Text>
-                            <Image source={require('../../assets/icons/heart.png')} style={[styles.icon_27, { marginTop: '-1%' }]} />
-                        </View>
-                    </TouchableRipple>
-                    {nearestProduct ? <NearestStore /> : null}
+                    }> */}
+                <Category />
+                {reduxShowFlashsale ? <Flashsale /> : null}
+                <Trending />
+                <TouchableRipple onPress={handleShowGift} rippleColor={colors.White} style={[styles.row_center, styles.px, styles.py_3, styles.my_3, { backgroundColor: colors.RedFlashsale, borderRadius: 15, alignSelf: 'center', width: '95%', elevation: 2 }]} >
+                    <View style={[styles.row_around_center, { width: '100%' }]}>
+                        <Text style={[styles.font_11, styles.T_semi_bold, { color: colors.White, marginBottom: '-0.5%' }]}>Berikan hadiah untuk teman spesial kamu disini!</Text>
+                        <Image source={require('../../assets/icons/heart.png')} style={[styles.icon_27, { marginTop: '-1%' }]} />
+                    </View>
+                </TouchableRipple>
+                {nearestProduct ? <NearestStore /> : null}
 
-                    {/* <BasedOnSearch /> */}
-                    {/* <HobbyAverage /> */}
-                    <RecomandedHobby />
-                </ScrollView>
+                {/* <BasedOnSearch /> */}
+                {/* <HobbyAverage /> */}
+                <RecomandedHobby />
+                {/* </ScrollView> */}
 
 
             </View>

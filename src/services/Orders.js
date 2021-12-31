@@ -28,7 +28,7 @@ export async function getUnpaid(auth) {
                         return null
                     }
                 } catch (error) {
-                    alert(JSON.stringify(res))
+                    Utils.alertPopUp('Error with status code : 12201\n' + JSON.stringify(res) + '\n' + String(error))
                 }
             })
             .catch(error => {
@@ -61,7 +61,7 @@ export async function getWaitConfirm(auth) {
                         return null
                     }
                 } catch (error) {
-                    alert(JSON.stringify(res))
+                    Utils.alertPopUp('Error with status code : 12203\n' + JSON.stringify(res) + '\n' + String(error))
                 }
             })
             .catch(error => {
@@ -97,7 +97,7 @@ export async function getProcess(auth) {
                         return null
                     }
                 } catch (error) {
-                    alert(JSON.stringify(res))
+                    Utils.alertPopUp('Error with status code : 12202\n' + JSON.stringify(res) + '\n' + String(error))
                 }
             })
             .catch(error => {
@@ -131,7 +131,7 @@ export async function getSent(auth) {
                         return null
                     }
                 } catch (error) {
-                    alert(JSON.stringify(res))
+                    Utils.alertPopUp('Error with status code : 12204\n' + JSON.stringify(res) + '\n' + String(error))
                 }
             })
             .catch(error => {
@@ -167,7 +167,7 @@ export async function getCompleted(auth) {
                         return null
                     }
                 } catch (error) {
-                    alert(JSON.stringify(res))
+                    Utils.alertPopUp('Error with status code : 12205\n' + JSON.stringify(res) + '\n' + String(error))
                 }
             })
             .catch(error => {
@@ -203,7 +203,7 @@ export async function getFailed(auth) {
                         return null
                     }
                 } catch (error) {
-                    alert(JSON.stringify(res))
+                    Utils.alertPopUp('Error with status code : 12206\n' + JSON.stringify(res) + '\n' + String(error))
                 }
             })
             .catch(error => {

@@ -9,7 +9,6 @@ import { Button, TouchableRipple, Checkbox } from 'react-native-paper'
 import ActionSheet from "react-native-actions-sheet";
 import CheckBox from '@react-native-community/checkbox';
 import { useDispatch, useSelector } from "react-redux";
-import EncryptedStorage from 'react-native-encrypted-storage';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 export default function checkoutScreen() {
@@ -327,7 +326,6 @@ export default function checkoutScreen() {
             "sendTime": sendTime,
             "dateSendTime": sendDate
         });
-        console.log("🚀 ~ file: CheckoutScreen.js ~ line 330 ~ deliverySelected ~ raw", raw)
 
         var requestOptions = {
             method: 'PUT',
@@ -339,6 +337,7 @@ export default function checkoutScreen() {
         fetch("https://jaja.id/backend/checkout/selectedShipping", requestOptions)
             .then(response => response.text())
             .then(res => {
+                console.log("🚀 ~ file: CheckoutScreen.js ~ line 340 ~ deliverySelected ~ res", res)
                 try {
                     let result = JSON.parse(res)
                     if (result.status.code === 200) {
@@ -347,8 +346,6 @@ export default function checkoutScreen() {
                             if (res) {
                                 dispatch({ type: 'SET_CHECKOUT', payload: res })
                             }
-                        }).catch(res => {
-                            console.log("🚀 ~ file: CheckoutScreen.js ~ line 329 ~ ServiceCheckout.getCheckout ~ res", res)
                         })
                     } else {
                         Utils.handleErrorResponse(result, 'Error with status code : 12074')
@@ -623,7 +620,7 @@ export default function checkoutScreen() {
                 }, 2000);
             }
         })
-        ServiceCheckout.getShipping(reduxAuth).then(res => {
+        ServiceCheckout.getShipping(reduxAuth, 0).then(res => {
             if (res) {
                 dispatch({ type: 'SET_SHIPPING', payload: res })
             }

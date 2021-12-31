@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, ToastAndroid, StyleSheet, Alert } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { styles, colors, CardProduct, CheckSignal, ShimmerCardProduct, Utils } from '../../export'
+import { styles, colors, CardProduct, CheckSignal, ShimmerCardProduct, Utils, Wp } from '../../export'
 import EncryptedStorage from 'react-native-encrypted-storage';
 
 export default function RecomandedHobbyComponent(props) {
@@ -41,10 +41,11 @@ export default function RecomandedHobbyComponent(props) {
             redirect: 'follow'
         };
         let loadingFetch = true
-        fetch(`https://jaja.id/backend/product/recommendation?page=${page + 1}&limit=20`, requestOptions)
+        fetch(`https://jaja.id/backend/product/recommendation?page=${page + 1}&limit=16`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 loadingFetch = false
+                dispatch({ 'type': 'SET_LOADMORE', payload: false })
                 if (result.status.code === 200) {
                     dispatch({ type: 'SET_DASHRECOMMANDED', payload: reduxdashRecommanded.concat(result.data.items) })
                     dispatch({ 'type': 'SET_MAX_RECOMMANDED', payload: false })
@@ -61,14 +62,10 @@ export default function RecomandedHobbyComponent(props) {
             });
         setTimeout(() => {
             if (loadingFetch) {
-                ToastAndroid.show("Sedang memuat..", ToastAndroid.SHORT, ToastAndroid.TOP)
+                Utils.alertPopUp("Sedang memuat..")
                 setTimeout(() => {
-                    Utils.CheckSignal().then(res => {
-                        if (!res.connect) {
-                            ToastAndroid.show("Koneksi terputus, periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.TOP)
-                            dispatch({ 'type': 'SET_LOADMORE', payload: false })
-                        }
-                    })
+                    Utils.handleSignal()
+                    dispatch({ type: 'SET_LOADMORE', payload: false })
                 }, 7000);
             } else {
                 dispatch({ 'type': 'SET_LOADMORE', payload: false })
@@ -85,18 +82,20 @@ export default function RecomandedHobbyComponent(props) {
     }
 
     return (
-        <View style={[styles.column, styles.p_3]}>
-            <View style={[styles.row, styles.mb_3]}>
+        <View style={[styles.column]}>
+            <View style={[styles.row, styles.mb_3, styles.px_3]}>
                 <Text style={[styles.titleDashboard, { color: props.color ? props.color : colors.BlueJaja }]}>
                     Rekomendasi Hobby
                 </Text>
             </View>
             {reduxdashRecommanded && reduxdashRecommanded.length || storagedashRecommanded && storagedashRecommanded.length ?
-                <View style={styles.column}>
+                <View style={[styles.column_center_start, { width: Wp('100%') }]}>
                     <CardProduct data={reduxdashRecommanded && reduxdashRecommanded.length ? reduxdashRecommanded : storagedashRecommanded && storagedashRecommanded.length ? storagedashRecommanded : []} />
                 </View>
                 :
-                <ShimmerCardProduct />
+                <View style={[styles.column_center_start, { width: Wp('100%') }]}>
+                    {/* <ShimmerCardProduct /> */}
+                </View>
             }
             {reduxmaxRecommanded ? <Text style={[styles.font_14, styles.mt_5, { alignSelf: 'center', color: colors.BlueJaja }]}>Semua produk berhasil ditampilkan.</Text> : <ShimmerCardProduct />}
             {/* {reduxLoadmore ?

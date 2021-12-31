@@ -181,7 +181,6 @@ export default function ProductScreen(props) {
 
 
             } else {
-                alert('masuk sini')
                 setLoading(false)
                 setRefreshing(false)
             }

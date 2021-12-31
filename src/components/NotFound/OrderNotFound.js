@@ -2,8 +2,7 @@ import React from 'react'
 import { SafeAreaView, Text, Image, StatusBar, StyleSheet } from 'react-native'
 import { colors, Hp, useNavigation, Wp } from '../../export'
 import { Paragraph, Button } from 'react-native-paper'
-console.disableYellowBox = true;
-
+    
 export default function OrderNotFound() {
     const navigation = useNavigation()
     const handleOpen = () => {

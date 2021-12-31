@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, SafeAreaView, Dimensions, Image, ScrollView } from 'react-native'
 import { TouchableRipple } from 'react-native-paper'
-import { useDispatch } from 'react-redux'
-import { Appbar, colors, styles, Wp, useNavigation, CardProduct, ServiceProduct } from '../../export'
+import { useDispatch, useSelector } from 'react-redux'
+import { Appbar, colors, styles, Wp, useNavigation, CardProduct, ServiceProduct, Utils, ShimmerCardProduct } from '../../export'
 const { width } = Dimensions.get('screen')
 
 
 export default function GiftScreen() {
     const navigation = useNavigation();
     const dispatch = useDispatch()
-    const [state, setstate] = useState([{ name: 'PAKET GIFT 100 RIBU', uri: `${require('../../assets/icons/gift/tshirt.png')}`, price: 100 }, { name: 'PAKET GIFT 200 RIBU', uri: `${require('../../assets/icons/gift/summer.png')}`, price: 200 }, { name: 'PAKET GIFT 300 RIBU', uri: `${require('../../assets/icons/gift/shoes.png')}`, price: 300 }, { name: 'PAKET GIFT 400 RIBU', uri: `${require('../../assets/icons/gift/watch.png')}`, price: 400 },])
+    const [state, setstate] = useState([{ name: 'PAKET GIFT 300 RIBU', uri: `${require('../../assets/icons/gift/tshirt.png')}`, price: '0 - 399999' }, { name: 'PAKET GIFT 500 RIBU', uri: `${require('../../assets/icons/gift/summer.png')}`, price: '400000 - 599999' }, { name: 'PAKET GIFT 700 RIBU', uri: `${require('../../assets/icons/gift/shoes.png')}`, price: '600000 - 799999' }, { name: 'PAKET GIFT 1 JUTA', uri: `${require('../../assets/icons/gift/watch.png')}`, price: '800000' },])
     const [data, setdata] = useState([
         {
             name: 'Apple iPhone 12 256GB Red',
@@ -76,25 +76,45 @@ export default function GiftScreen() {
 
         },
     ])
+    const productGiftHome = useSelector(state => state.gift.productGiftHome)
+
 
     useEffect(() => {
 
         try {
-            ServiceProduct.getStoreProduct({ gift: 1 }).then(res => {
-                console.log("🚀 ~ file: GiftScreen.js ~ line 890 ~ ServiceProduct.getProducts ~ res", res.data.sorts)
-                dispatch({ type: "SET_PRODUCT_GIFT", payload: res?.data?.items })
-                dispatch({ type: "SET_FILTER_GIFT", payload: res?.data?.filters })
-                dispatch({ type: "SET_SORT_GIFT", payload: res?.data?.sorts })
-            }).catch(err => console.log(String(err)))
+         
         } catch (error) {
 
         }
 
     }, [])
 
+    const handleFilter = (item) => {
+        console.log("🚀 ~ file: GiftScreen.js ~ line 97 ~ handleFilter ~ item", item)
+        navigation.navigate('GiftSearch', { price: item.price })
+        dispatch({ type: "SET_GIFT_LOADING", payload: true })
+        let error = true
+        ServiceProduct.getStoreProduct({ gift: 1, price: item.price }).then(res => {
+            console.log("🚀 ~ file: GiftScreen.js ~ line 100 ~ ServiceProduct.getStoreProduct ~ res", res)
+            dispatch({ type: "SET_PRODUCT_GIFT", payload: res?.data?.items })
+            dispatch({ type: "SET_PRODUCT_GIFT_SAVE", payload: res?.data?.items })
+            dispatch({ type: "SET_GIFT_LOADING", payload: false })
+            error = false
+        }).catch(err => {
+            error = false
+            dispatch({ type: "SET_GIFT_LOADING", payload: false })
+        })
+        setTimeout(() => {
+            if (error) {
+                Utils.handleSignal()
+                dispatch({ type: "SET_GIFT_LOADING", payload: false })
+            }
+        }, 15000);
+    }
+
     return (
         <SafeAreaView style={styles.container}>
-            <Appbar back={true} title="Gift" Bg={colors.BlueJaja} />
+            <Appbar back={true} title="Jaja Gift" Bg={colors.BlueJaja} />
             <ScrollView>
                 {/* <View> */}
                 <Image style={{ width: width, height: width * 0.5 }} source={require('../../assets/icons/gift/bannerGif.jpeg')} />
@@ -104,7 +124,7 @@ export default function GiftScreen() {
                 <View style={[styles.row_start_center, styles.mt_2, { flexWrap: 'wrap', width: '100%' }]}>
                     {state.map((item, idx) => {
                         return (
-                            <TouchableRipple key={String(idx) + 'QW'} onPress={() => navigation.navigate('GiftSearch', { price: item.price })} style={[styles.column_center, styles.p_5, { marginRight: idx == 0 || idx == 2 ? '1.5%' : '0%', width: Wp('49%'), height: Wp('49%'), backgroundColor: colors.BlueJaja, marginBottom: '1.5%' }]}>
+                            <TouchableRipple key={String(idx) + 'QW'} onPress={() => handleFilter(item)} style={[styles.column_center, styles.p_5, { marginRight: idx == 0 || idx == 2 ? '1.5%' : '0%', width: Wp('49%'), height: Wp('49%'), backgroundColor: colors.BlueJaja, marginBottom: '1.5%' }]}>
                                 <>
                                     <Image style={[{ width: '90%', height: '90%', tintColor: colors.White, marginBottom: '5%' }]} source={item.uri} />
                                     <Text style={[styles.font_14, styles.T_medium, { color: colors.White }]}>{item.name}</Text>
@@ -121,7 +141,10 @@ export default function GiftScreen() {
                 </View>
 
                 <View style={[styles.p_3, { width: Wp('100%') }]}>
-                    <CardProduct gift={true} data={data} />
+                    {productGiftHome && productGiftHome.length ?
+                        <CardProduct gift={true} data={productGiftHome} />
+                        :
+                        <ShimmerCardProduct />}
                 </View>
                 {/* <View style={[styles.row_start_center, styles.mt_2, styles.px_3, styles.py, { width: "85%", backgroundColor: colors.BlueJaja, borderBottomRightRadius: 100 }]}>
                 <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.White }]}>Pilih hadiah sesuai keinginan kamu!</Text>

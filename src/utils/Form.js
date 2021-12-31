@@ -1,6 +1,5 @@
 import { Alert, ToastAndroid, Platform, AlertIOS } from 'react-native'
 import NetInfo from "@react-native-community/netinfo";
-import { Utils } from '../export';
 import Toast from 'react-native-simple-toast';
 
 export function regexEmail(e) {
@@ -20,7 +19,6 @@ export function alertPopUp(text) {
             ToastAndroid.show(text, ToastAndroid.LONG, ToastAndroid.CENTER)
         } else {
             Toast.show(text);
-
         }
     } catch (error) {
 
@@ -58,12 +56,28 @@ export async function CheckSignal() {
     return signalInfo
 }
 
+export async function handleSignal() {
+    try {
+        let signalInfo = {}
+        let signal = await NetInfo.fetch().then(state => {
+            signalInfo.type = state.type
+            signalInfo.connect = state.isConnected
+        });
+        if (signal.connect) {
+            alertPopUp('Tidak dapat memuat ke server')
+        } else {
+            alertPopUp("Tidak dapat terhubung, periksa kembali koneksi internet anda!")
+        }
+    } catch (error) {
+
+    }
+}
 
 export function handleErrorResponse(error, errorCode) {
     if (error?.status?.code !== 200 && error?.status?.code !== 204) {
         if (!!error?.status?.message) {
-            Utils.alertPopUp(String(error.status.message))
-        } else {    
+            alertPopUp(String(error.status.message))
+        } else {
             Alert.alert(
                 errorCode,
                 String(errorCode) + " => " + String(error),
@@ -95,7 +109,7 @@ export function handleErrorResponse(error, errorCode) {
 
 export function handleError(error, name) {
     if (String(error).slice(11, String(error).length) === "Network request failed") {
-        Utils.alertPopUp("Tidak dapat terhubung, periksa kembali koneksi internet anda!")
+        alertPopUp("Tidak dapat terhubung, periksa kembali koneksi internet anda!")
     } else {
         if (Platform.OS === 'android') {
             Alert.alert(

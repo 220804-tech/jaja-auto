@@ -106,7 +106,7 @@ export default function ProductSearchScreen() {
         setSort('')
         setPage(1)
 
-        fetch(`https://jaja.id/backend/product/search/result?page=1&limit=10&keyword=${keyword}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
+        fetch(`https://jaja.id/backend/product/search/result?page=1&limit=10&keyword=${keyword}&filter_category=${categoryName}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 console.log("🚀 ~ file: productSearchScreen.js ~ line 12112 ~ handleFetch ~ result", result)
@@ -120,32 +120,33 @@ export default function ProductSearchScreen() {
                 // dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
             })
             .catch(error => {
-                Utils.CheckSignal().then(res => {
-                    if (res.connect == false) {
-                        ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda", ToastAndroid.LONG, ToastAndroid.CENTER)
-                    } else {
-                        console.log("saa")
-                        ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)
-                    }
-                })
+                Utils.handleError('Error with status code : 130001')
             });
 
     }
 
-    const handleFilter = (res, name) => {
-        console.log("🚀 ~ file: productSearchScreen.js ~ line 62 ~ handleFilter ~ res", res)
-        let newArr = selectedFilter
-        selectedFilter.map(item => {
-            if (item.status !== "name") {
-                newArr.push({
-                    'name': res.name,
-                    'value': res.value,
-                    'status': name
-                })
-            }
-        })
-        setselectedFilter(newArr)
-        setcount(count + 1)
+    const handleFilter = () => {
+        if (reduxFilters && reduxFilters.length) {
+            setLoading(false)
+            actionSheetRef.current?.setModalVisible(true)
+        } else {
+            setLoading(true)
+            setTimeout(() => {
+                if (reduxFilters && reduxFilters.length) {
+                    setLoading(false)
+                    actionSheetRef.current?.setModalVisible(true)
+                } else {
+                    setLoading(true)
+                    setTimeout(() => {
+                        if (reduxFilters && reduxFilters.length) {
+                            setLoading(false)
+                            actionSheetRef.current?.setModalVisible(true)
+                        }
+                    }, 2500);
+                }
+            }, 2500);
+        }
+
     }
 
     const handleShowDetail = item => {
@@ -233,7 +234,7 @@ export default function ProductSearchScreen() {
             }, 2000);
         } else {
             // handleReset()
-        }   
+        }
     }, []);
 
     return (
@@ -251,7 +252,7 @@ export default function ProductSearchScreen() {
                             <Text numberOfLines={1} style={[styles.font_14, { width: '93%' }]}>{keyword}</Text>
                             : null}
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => actionSheetRef.current?.setModalVisible()} style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: '1%', backgroundColor: colors.BlueJaja, height: '100%', width: '15%', borderTopRightRadius: 10, borderBottomRightRadius: 10 }}>
+                    <TouchableOpacity onPress={handleFilter} style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: '1%', backgroundColor: colors.BlueJaja, height: '100%', width: '15%', borderTopRightRadius: 10, borderBottomRightRadius: 10 }}>
                         <Image source={require('../../assets/icons/filter.png')} style={[styles.icon_25, { tintColor: colors.White }]} />
                     </TouchableOpacity>
                 </View>

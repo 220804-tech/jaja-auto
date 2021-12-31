@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native'
+import { View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Dimensions } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { colors, FastImage, Ps, ServiceProduct, styles, useNavigation, Wp } from '../../export'
-import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
-import LinearGradient from 'react-native-linear-gradient';
-import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
-export default function CardProductComponent(props) {
+const { height: hg } = Dimensions.get('screen')
+
+export default function CardProduct(props) {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const [img, setImg] = useState(require('../../assets/images/JajaId.png'))
     const reduxAuth = useSelector(state => state.auth.auth)
+    const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
 
     const handleShowDetail = item => {
         console.log("🚀 ~ file: CardProductComponent.js ~ line 15 ~ CardProductComponent ~ item", item)
@@ -41,8 +41,6 @@ export default function CardProductComponent(props) {
     }
 
     useEffect(() => {
-        FastImage.cacheControl.immutable
-        FastImage.preload([{ uri: 'https://cf.shopee.co.id/file/19ea449dcd69e70b2d22bc9e98581655' }])
         // dispatch({ type: 'SET_DASHRECOMMANDED', payload: [] })
     }, [])
 
@@ -50,7 +48,7 @@ export default function CardProductComponent(props) {
         return (
             <TouchableOpacity
                 onPress={() => handleShowDetail(item)}
-                style={[Ps.cardProduct]}
+                style={[Ps.cardProduct, { marginRight: '3.5%' }]}
                 key={index}>
                 {item.isDiscount ? <Text adjustsFontSizeToFit style={Ps.textDiscount}>{item.discount}%</Text> : null}
                 <View style={[styles.column, { height: Wp('44%'), width: Wp('44%'), borderTopLeftRadius: 3, borderTopRightRadius: 3 }]}>
@@ -120,22 +118,51 @@ export default function CardProductComponent(props) {
         )
 
     }
-
+    const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+        return layoutMeasurement.height + contentOffset.y >=
+            contentSize.height - (hg * 0.80) || layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 0.05)
+    }
+    const loadMoreData = () => {
+        if (reduxLoadmore === false) {
+            dispatch({ 'type': 'SET_LOADMORE', payload: true })
+        }
+    }
     console.log("🚀 ~ file: CardProductComponent.js ~ line 55 ~ CardProductComponent ~ props.data", props.data.length)
     return (
         <FlatList
-            // removeClippedSubvigPeriod={100} // Increase time between renders
-            removeClippedSubviews={true} // Unmount components when outside of window 
-            initialNumToRender={3} // Reduce initial render amount
-            maxToRenderPerBatch={8} // Reduce number in each render batch
-            updateCellsBatchingPeriod={50}
+            // removeClippedSubviews={true} // Unmount components when outside of window 
+            initialNumToRender={6} // Reduce initial render amount
+            // maxToRenderPerBatch={1} // Reduce number in each render batch
+            // updateCellsBatchingPeriod={100} // Increase time between renders
             windowSize={7}
             data={props.data}
             numColumns={2}
             scrollEnabled={true}
             keyExtractor={(item, index) => String(item.id) + index + "XH"}
-            contentContainerStyle={{ flex: 0, width: Wp('100%'), justifyContent: 'center', alignSelf: 'center' }}
-            renderItem={renderItem}
+            contentContainerStyle={{ justifyContent: 'space-between' }}
+            // renderItem={renderItem}
+            scrollViewProps={{
+                refreshControl: <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />,
+                onScroll: Animated.event(
+                    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                    Platform.OS === "android" ?
+                        {
+                            useNativeDriver: false,
+                            listener: event => {
+                                if (isCloseToBottom(event.nativeEvent)) {
+                                    loadMoreData()
+                                }
+                            }
+                        }
+                        : null
+                ),
+                onMomentumScrollEnd: ({ nativeEvent }) => {
+                    if (isCloseToBottom(nativeEvent)) {
+                        loadMoreData()
+                    }
+                }
+
+            }}
         />
     )
 }

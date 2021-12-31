@@ -191,9 +191,10 @@ export default function TrolleyScreen() {
             redirect: 'follow'
         };
 
-        fetch(`https://jaja.id/backend/checkout?isCoin=0&fromCart=1`, requestOptions)
+        fetch(`https://jaja.id/backend/checkout?isCoin=0&fromCart=1&is_gift=${cartStatus === 1 ? 1 : 0}`, requestOptions)
             .then(response => response.text())
             .then(res => {
+                console.log("🚀 ~ file: TrolleyScreen.js ~ line 197 ~ handleGetCheckout ~ res", res)
                 try {
                     let result = JSON.parse(res)
                     if (result.status.code === 200) {
@@ -203,14 +204,14 @@ export default function TrolleyScreen() {
                         Utils.alertPopUp('Silahkan tambah alamat terlebih dahulu!')
                         navigation.navigate('Address', { data: "checkout" })
                     } else {
-                        Utils.handleErrorResponse(result, 'Error with status code : 12056')
+                        Utils.handleErrorResponse(result, 'Error with status code : 12156')
                         return null
                     }
                 } catch (error) {
-                    alert(error + ': 19002\n\n' + res)
+                    Utils.alertPopUp(JSON.stringify(res) + ' : 12157\n\n' + res)
                 }
             })
-            .catch(error => Utils.handleError(error, 'Error with status code : 12057'));
+            .catch(error => Utils.handleError(error, 'Error with status code : 12158'));
     }
 
     const handleCheckout = () => {
@@ -230,8 +231,7 @@ export default function TrolleyScreen() {
                 // })
                 handleGetCheckout()
 
-                ServiceCheckout.getShipping(reduxAuth).then(res => {
-                    console.log("🚀 ~ file: TrolleyScreen.js ~ line 234 ~ ServiceCheckout.getShipping ~ res", res)
+                ServiceCheckout.getShipping(reduxAuth, cartStatus).then(res => {
                     if (res) {
                         dispatch({ type: 'SET_SHIPPING', payload: res })
                     }
@@ -248,7 +248,7 @@ export default function TrolleyScreen() {
                 setDisableCheckout(true)
             }
         } catch (error) {
-            alert(error)
+            console.log("🚀 ~ file: TrolleyScreen.js ~ line 251 ~ handleCheckout ~ error", error)
         }
 
     }

@@ -8,17 +8,16 @@ import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 export const style = StyleSheet.create({
     cardProduct: {
         borderRadius: 3,
-        width: Wp("45%"),
-        // minHeight: wp('70%'),
+        width: Wp("44%"),
+        marginLeft: Wp('4%'),
         height: Hp("41%"),
-        marginLeft: 1,
-        marginTop: 5,
-        marginBottom: 5,
+        marginVertical: 5,
         justifyContent: "flex-start",
         elevation: 2,
         backgroundColor: colors.White,
         flexDirection: 'column',
-        alignItems: 'flex-start',
+        alignSelf: 'center',
+        resizeMode: 'contain'
     },
     textDiscount: {
         position: 'absolute', fontSize: RFValue(7, 480), zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '5%', paddingHorizontal: '2%', top: 0, right: 5, borderBottomRightRadius: 5, borderBottomLeftRadius: 5,
@@ -27,7 +26,7 @@ export const style = StyleSheet.create({
         width: '100%',
         height: '100%',
         borderTopLeftRadius: 3,
-        borderTopRightRadius: 3
+        borderTopRightRadius: 3,
     },
     bottomCard: {
         flex: 0, flexDirection: 'column', padding: '3%'

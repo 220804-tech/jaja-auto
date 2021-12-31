@@ -48,7 +48,6 @@ export default function SearchScreen() {
     }
 
     const handleSearch = (text) => {
-        console.log(`https://jaja.id/backend/product/search?limit=10&keyword=${text}`)
         if (text) {
             var myHeaders = new Headers();
             myHeaders.append("Cookie", "ci_session=bk461otlv7le6rfqes5eim0h9cf99n3u");

@@ -4,7 +4,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp, } from 'react-na
 import Swiper from 'react-native-swiper'
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage'
-import { ServiceOrder, colors, styles, useNavigation, ServiceCore, Utils } from '../../export';
+import { ServiceOrder, colors, styles, useNavigation, ServiceCore, Utils, ServiceProduct } from '../../export';
 import database from '@react-native-firebase/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -36,7 +36,6 @@ export default function SplashScreen() {
     useEffect(() => {
         try {
             AsyncStorage.getItem('token').then(auth => {
-                console.log("🚀 ~ file: SplashScreen.js ~ line 39 ~ AsyncStorage.getItem ~ auth", auth)
                 getItem(auth)
                 getData()
                 getFlashsale()
@@ -56,7 +55,6 @@ export default function SplashScreen() {
         }
         setTimeout(() => {
             navigation.replace('Beranda')
-
         }, 4000);
 
     }, [])
@@ -124,9 +122,9 @@ export default function SplashScreen() {
             fetch("https://jaja.id/backend/home", requestOptions)
                 .then(response => response.text())
                 .then(respp => {
+                    hasil = true;
                     try {
                         let resp = JSON.parse(respp)
-                        hasil = true;
                         if (resp.status.code == 200 || resp.status.code == 204) {
                             if (resp.data.categoryChoice) {
                                 dispatch({ type: 'SET_DASHCATEGORY', payload: resp.data.categoryChoice })
@@ -144,16 +142,18 @@ export default function SplashScreen() {
                             handleError(resp.status.message + " => " + resp.status.code)
                         }
                     } catch (error) {
+                        hasil = true;
                         Utils.alertPopUp(JSON.stringify(respp))
                     }
                 })
                 .catch(error => {
+                    hasil = true;
                     Utils.handleError(String(error), 'Error with status code : 19021')
                     handleError(error)
                 })
             setTimeout(() => {
                 if (!hasil) {
-                    return ToastAndroid.show("Tidak dapat tehubung, periksa kembali koneksi anda", ToastAndroid.LONG, ToastAndroid.TOP)
+                    Utils.handleSignal()
                 }
             }, 15000);
         } catch (error) {
@@ -178,9 +178,6 @@ export default function SplashScreen() {
                     dispatch({ type: 'SET_DASHHOBYAVERAGE', payload: JSON.parse(result) })
                 }
             })
-            if (String(error).slice(11, String(error).length) === "Network request failed") {
-                ToastAndroid.show("Tidak dapat terhubung, periksa koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
-            }
             // else {
             //     Alert.alert(
             //         "Error with status 12001",
@@ -197,46 +194,50 @@ export default function SplashScreen() {
     }
 
     const getData = () => {
+        try {
+            ServiceProduct.getRecommendation(dispatch);
+        } catch (error) {
 
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow'
-        };
+        }
+        // var requestOptions = {
+        //     method: 'GET',
+        //     redirect: 'follow'
+        // };
 
-        fetch("https://jaja.id/backend/product/recommendation?page=1&limit=20", requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                try {
-                    // let result = JSON.parse(res)
-                    if (result.status.code == 200 || result.status.code == 204) {
-                        dispatch({ type: 'SET_DASHRECOMMANDED', payload: result.data.items })
-                        EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))
-                    } else {
-                        EncryptedStorage.getItem('dashrecommanded').then(res => {
-                            if (res) {
-                                dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(res) })
-                            }
-                            ToastAndroid.show(result.status.message + " : " + result.status.code, ToastAndroid.LONG, ToastAndroid.CENTER)
-                        })
+        // fetch("https://jaja.id/backend/product/recommendation?page=1&limit=100", requestOptions)
+        //     .then(response => response.json())
+        //     .then(res => {
+        //         try {
+        //             let result = JSON.parse(res)
+        //             if (result.status.code == 200 || result.status.code == 204) {
+        //                 dispatch({ type: 'SET_DASHRECOMMANDED', payload: result.data.items })
+        //                 EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))
+        //             } else {
+        //                 EncryptedStorage.getItem('dashrecommanded').then(res => {
+        //                     if (res) {
+        //                         dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(res) })
+        //                     }
+        //                     Utils.alertPopUp(result.status.message + " : " + result.status.code)
+        //                 })
 
-                    }
-                } catch (error) {
-                    Utils.alertPopUp(error + '120023 \n\n ' + JSON.stringify(result))
-                    EncryptedStorage.getItem('dashrecommanded').then(store => {
-                        if (store) {
-                            dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(store) })
-                        }
-                    })
-                }
-            })
-            .catch(error => {
-                EncryptedStorage.getItem('dashrecommanded').then(store => {
-                    if (store) {
-                        dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(store) })
-                    }
-                })
-                // Utils.handleError(error, 'Error with status code : 12002')
-            });
+        //             }
+        //         } catch (error) {
+        //             alert(String(error) + ' : 120023 \n\n ' + JSON.stringify(res))
+        //             EncryptedStorage.getItem('dashrecommanded').then(store => {
+        //                 if (store) {
+        //                     dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(store) })
+        //                 }
+        //             })
+        //         }
+        //     })
+        //     .catch(error => {
+        //         EncryptedStorage.getItem('dashrecommanded').then(store => {
+        //             if (store) {
+        //                 dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(store) })
+        //             }
+        //         })
+        //         Utils.handleError(error, 'Error with status code : 12002')
+        //     });
     }
 
     const getOrders = (token) => {
