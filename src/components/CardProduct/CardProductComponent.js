@@ -127,7 +127,7 @@ export default function CardProductComponent(props) {
             // removeClippedSubvigPeriod={100} // Increase time between renders
             removeClippedSubviews={true} // Unmount components when outside of window 
             initialNumToRender={3} // Reduce initial render amount
-            maxToRenderPerBatch={8} // Reduce number in each render batch
+            maxToRenderPerBatch={3} // Reduce number in each render batch
             updateCellsBatchingPeriod={50}
             windowSize={7}
             data={props.data}

@@ -17,7 +17,6 @@ export default function ProductSearchScreen() {
     const reduxSorts = useSelector(state => state.search.sorts)
     const reduxmaxProduct = useSelector(state => state.search.maxProduct)
     const reduxSearch = useSelector(state => state.search)
-    console.log("🚀 ~ file: productSearchScreen.js ~ line 14 ~ ProductSearchScreen ~ keyword", categoryName)
 
     const dispatch = useDispatch()
     const [scrollY, setscrollY] = useState(new Animated.Value(0))
@@ -32,12 +31,14 @@ export default function ProductSearchScreen() {
     const [stock, setStock] = useState('');
     const [sort, setSort] = useState('');
     const [refreshing, setRefreshing] = useState(false);
+    const searchLoading = useSelector(state => state.search.searchLoading)
 
 
     useEffect(() => {
-        setLoading(true)
-        setTimeout(() => setLoading(false), 1500);
-    }, [])
+        // setLoading(true)
+        // setTimeout(() => setLoading(false), 1500);
+
+    }, [searchLoading])
 
 
 
@@ -58,12 +59,10 @@ export default function ProductSearchScreen() {
         };
         setPage(1)
 
-        console.log("🚀 ~ file: productSearchScreen.js ~ line 90 ~ handleFetch ~ keyword", keyword + " " + categoryName + " " + location + " " + stock + " " + condition + " " + sort)
 
         fetch(`https://jaja.id/backend/product/search/result?page=1&limit=100&keyword=${keyword}&filter_category=${categoryName}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: productSearchScreen.js ~ line 12112 ~ handleFetch ~ result", result.data.items)
                 if (result.status.code === 200 || result.status.code === 204) {
                     dispatch({ type: 'SET_SEARCH', payload: result.data.items })
                 }
@@ -281,7 +280,7 @@ export default function ProductSearchScreen() {
                     </TouchableOpacity> */}
                 {/* </ScrollView> */}
                 {/* </View> */}
-                {loading ? <Loading /> : null}
+                {searchLoading ? <Loading /> : null}
                 {data && data.length ?
                     <View style={[styles.column, { flex: 1, justifyContent: "center", alignItems: 'flex-start' }]}>
                         <ScrollView

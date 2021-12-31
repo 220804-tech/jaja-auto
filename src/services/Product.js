@@ -136,6 +136,7 @@ export async function getStoreProduct(params) {
         headers: myHeaders,
         redirect: 'follow'
     };
+    console.log("🚀 ~ file: Product.js ~ line 161 ~ getStoreProduct ~}", `https://jaja.id/backend/product/store/jaja-gift?page=1&limit=${params.gift ? 750 : 250}&keyword=${params.keyword ? params.keyword : ''}&filter_price=${params.price ? params.price : ''}&filter_location=&filter_condition=&filter_preorder=${params.preorder ? params.preorder : ''}&filter_brand=${params.brand ? params.brand : ''}&sort=&is_gift=${params.gift ? params.gift : 0}`)
 
     return await fetch(`https://jaja.id/backend/product/store/jaja-gift?page=1&limit=${params.gift ? 750 : 250}&keyword=${params.keyword ? params.keyword : ''}&filter_price=${params.price ? params.price : ''}&filter_location=&filter_condition=&filter_preorder=${params.preorder ? params.preorder : ''}&filter_brand=${params.brand ? params.brand : ''}&sort=&is_gift=${params.gift ? params.gift : 0}`, requestOptions)
         .then(response => response.text())

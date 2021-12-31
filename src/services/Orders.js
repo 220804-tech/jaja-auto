@@ -61,7 +61,7 @@ export async function getWaitConfirm(auth) {
                         return null
                     }
                 } catch (error) {
-                    Utils.alertPopUp('Error with status code : 12203\n' + JSON.stringify(res) + '\n' + String(error))
+                    Utils.alertPopUp('Error with status code : 12203\n' + String(error) + '\n\n' + JSON.stringify(res))
                 }
             })
             .catch(error => {

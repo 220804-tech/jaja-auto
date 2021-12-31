@@ -3,14 +3,15 @@ const initialState = {
     filters: [],
     sorts: [],
     keywordSearch: "",
-    productDetail: {},
     slug: "",
     maxProduct: false,
     flashsale: false,
     reviewProducts: [],
     categoryName: '',
     productLoad: false,
-    productTemporary: {}
+    productTemporary: {},
+    searchLoading: false
+
 }
 export default function storeSearch(state = initialState, action) {
     const { type, payload } = action;
@@ -28,10 +29,10 @@ export default function storeSearch(state = initialState, action) {
             return { ...state, sorts: payload }
         case 'SET_KEYWORD':
             return { ...state, keywordSearch: payload }
-        // case 'SET_DETAIL_PRODUCT':
-        //     return { ...state, productDetail: payload }
-        // case 'SET_PRODUCT_LOAD':
-        //     return { ...state, productLoad: payload }
+        case 'SET_SEARCH_BY':
+            return { ...state, searchBy: payload }
+        case 'SET_SEARCH_LOADING':
+            return { ...state, searchLoading: payload }
         // case 'SET_PRODUCT_TEMPORARY':
         //     return { ...state, productTemporary: payload }
         // case 'SET_REVIEW_PRODUCT':

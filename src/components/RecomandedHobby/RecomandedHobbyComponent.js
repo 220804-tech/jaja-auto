@@ -122,6 +122,5 @@ const style = StyleSheet.create({
         padding: 8,
         backgroundColor: 'white',
         borderRadius: 100,
-
     }
 })

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, StyleSheet, StatusBar, Animated, Platform, Dimensions, LogBox, ToastAndroid, RefreshControl, Alert, TextInput } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
-import { Button, TouchableRipple, Checkbox } from 'react-native-paper'
+import { Button, TouchableRipple, Checkbox, IconButton } from 'react-native-paper'
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 import { styles, colors, useNavigation, Hp, Wp, Ps, useFocusEffect, FastImage, RecomandedHobby, Utils, ServiceProduct, ServiceCart, ServiceUser, } from '../../export'
 const IS_IPHONE_X = SCREEN_HEIGHT === 812 || SCREEN_HEIGHT === 896;
@@ -56,6 +56,8 @@ export default function GiftDetailScreen(props) {
     const [catatan, setcatatan] = useState('')
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [dateSelected, setdateSelected] = useState(null)
+    const [dateSelect, setdateSelect] = useState(null)
+
 
     const [dateMin, setdateMin] = useState({
         year: 0,
@@ -496,10 +498,10 @@ export default function GiftDetailScreen(props) {
                                 </TouchableRipple>
                             </View>
 
-                            <View style={[styles.column, styles.p_2, styles.mt_2, { width: '100%', backgroundColor: colors.White }]}>
+                            <View style={[styles.column, styles.p_2, styles.mt_2, styles.mb, { width: '100%', backgroundColor: colors.White }]}>
                                 {cardUse ?
                                     <View style={[styles.mt_2, styles.p_2, { width: '100%', backgroundColor: colors.White }]}>
-                                        <Text style={styles.font_13}>Masukan catatan untuk kartu ucapanmu disini :</Text>
+                                        <Text style={styles.font_13}>Masukkan catatan untuk kartu ucapanmu disini :</Text>
                                         <TextInput
                                             value={catatan}
                                             numberOfLines={3}
@@ -515,10 +517,19 @@ export default function GiftDetailScreen(props) {
                                 {dateSelected ?
                                     <View style={[styles.column, styles.p_2, styles.mb, { backgroundColor: colors.White, paddingBottom: '5%' }]}>
                                         <View style={styles.row_between_center}>
-                                            <Text style={{ textDecorationLine: 'underline', fontSize: 14, fontFamily: 'Poppins-Medium', color: colors.BlackGrayScale, marginBottom: '3%' }}>Tanggal Pengiriman</Text>
-                                            <TouchableRipple onPress={() => setDatePickerVisibility(true)} style={[styles.px_2, styles.mb_3]}>
+                                            <Text style={styles.font_13}>Masukkan tanggal pengiriman :</Text>
+
+                                            {/* <Text style={{ textDecorationLine: 'underline', fontSize: 14, fontFamily: 'Poppins-Medium', color: colors.BlackGrayScale, marginBottom: '3%' }}>Tanggal Pengiriman</Text> */}
+                                            <IconButton
+                                                icon="delete"
+                                                style={{ padding: 0, margin: 0, backgroundColor: colors.Red }}
+                                                color={colors.White}
+                                                size={17}
+                                                onPress={() => handleDelete(res.id)}
+                                            />
+                                            {/* <TouchableRipple onPress={() => setDatePickerVisibility(true)} style={[styles.px_2, styles.mb_3]}>
                                                 <Text style={{ fontSize: 14, fontFamily: 'Poppins-Medium', color: colors.BlueJaja }}>Ubah</Text>
-                                            </TouchableRipple>
+                                            </TouchableRipple> */}
 
                                         </View>
                                         <Text style={[styles.font_14, styles.mb_3]}>Paket akan dikirim tanggal {String(dateSelected)}</Text>
@@ -793,7 +804,12 @@ export default function GiftDetailScreen(props) {
             let monthUpdate = date.getMonth() + 1
             let month = monthUpdate === 1 ? 'Januari' : monthUpdate === 2 ? 'Februari' : monthUpdate === 3 ? 'Maret' : monthUpdate === 4 ? 'April' : monthUpdate === 5 ? 'Mei' : monthUpdate === 6 ? 'Juni' : monthUpdate === 7 ? 'Juli' : monthUpdate === 8 ? 'Agustus' : monthUpdate === 9 ? 'September' : monthUpdate === 10 ? 'Oktober' : monthUpdate === 11 ? 'November' : 'Desember'
             let result = String(date.getDate()) + ' ' + String(month) + ' ' + String(date.getFullYear())
+            let dateNumber = String(date.getDate()) + '-' + monthUpdate + '-' + String(date.getFullYear())
+            console.log("🚀 ~ file: GiftDetailScreenjs. ~ line 797 ~ handleConfirmDate ~ dateNumber", dateNumber)
+
+
             setdateSelected(result)
+            setdateSelect(result)
             setDatePickerVisibility(false)
         } catch (error) {
 
@@ -801,7 +817,6 @@ export default function GiftDetailScreen(props) {
     }
 
     const handleAddCart = (name) => {
-        console.log("masuk sini kann")
         setdisableCart(true)
         if (reduxAuth) {
             if (giftDetails.variant && giftDetails.variant.length) {
@@ -812,7 +827,6 @@ export default function GiftDetailScreen(props) {
                     Utils.alertPopUp('Anda belum memilih variasi produk ini!')
                 }
             } else {
-                console.log("keluarrrr")
                 handleApiCart(name)
             }
         } else {
@@ -839,15 +853,22 @@ export default function GiftDetailScreen(props) {
     const handleApiCart = async (name) => {
         console.log("🚀 ~ file: GiftDetailScreen.js ~ line 814 ~ handleApiCart ~ name", name)
         try {
-            var credentials = { "productId": giftDetails.id, "flashSaleId": flashsale ? flashsaleData.id_flashsale : "", "lelangId": "", "variantId": variasiPressed, "qty": 1 };
+            var credentials = {
+                "productId": giftDetails.id,
+                "flashSaleId": flashsale ? flashsaleData.id_flashsale : "",
+                "lelangId": "",
+                "variantId": variasiPressed,
+                "qty": 1,
+                "dateSendTime": dateSelect,
+                "greetingCardGift": catatan
+            };
+            console.log("🚀 ~ file: GiftDetailScreen.js ~ line 856 ~ handleApiCart ~ credentials", credentials)
             let result = await ServiceProduct.addCart(reduxAuth, credentials)
             if (result && result.status.code === 200) {
                 Utils.alertPopUp('Produk berhasil ditambahkan!')
                 if (name === "buyNow") {
-                    console.log('masuk sini yaa');
                     handleTrolley()
                 } else {
-                    console.log('keluar');
                     handleGetCart()
                 }
             } else if (result.status.code === 400 && result.status.message === 'quantity cannot more than stock') {

@@ -62,11 +62,17 @@ export default function HomeScreen() {
             color: "#68b0c8"
         },
         {
+            title: "JajaGift",
+            image: require('../../assets/icons/gift/bannerGif.jpeg'),
+            router: "GiftScreen",
+            color: "#68b0c8"
+        },
+        {
             title: "Sport & Outdoor",
             image: "https://nimda.jaja.id/asset/front/images/file/835df82b3973315acf6cbbfc42773558.png",
             loading: require("../../assets/gifs/splashscreen/loading_page.gif"),
             router: "KategoriSport",
-            color: "#fdb94c"
+            color: "#fdb94c",
         },
         {
             title: "Toys",
@@ -217,7 +223,25 @@ export default function HomeScreen() {
 
     const title = () => {
         return (
-            <></>
+            <Swiper
+                autoplayTimeout={3}
+                horizontal={true}
+                loop={false}
+                dotColor={colors.White}
+                activeDotColor={colors.BlueJaja}
+                paginationStyle={{ bottom: 10 }}
+                autoplay={true}
+                loop={true}
+            >
+                {images.map((item, key) => {
+                    return (
+                        <Image key={String(key)} style={style.swiperBanner}
+                            resizeMode={item.image ? "contain" : "cover"}
+                            source={key === 1 ? item.image : { uri: item.image }}
+                        />
+                    );
+                })}
+            </Swiper>
         );
     };
 
@@ -228,7 +252,9 @@ export default function HomeScreen() {
             dispatch({ type: "SET_FILTER_GIFT", payload: res?.data?.filters })
             dispatch({ type: "SET_SORT_GIFT", payload: res?.data?.sorts })
         })
+
     }
+
     const renderContent = () => {
         return (
             <View style={[styles.column, { backgroundColor: colors.White, alignSelf: 'center', justifyContent: 'center', width: Wp('100%') }]}>
@@ -260,15 +286,18 @@ export default function HomeScreen() {
             </View>
         );
     };
+
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
         return layoutMeasurement.height + contentOffset.y >=
             contentSize.height - (hg * 0.80) || layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 0.05)
     }
+
     const loadMoreData = () => {
         if (reduxLoadmore === false) {
             dispatch({ 'type': 'SET_LOADMORE', payload: true })
         }
     }
+    
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         getItem()

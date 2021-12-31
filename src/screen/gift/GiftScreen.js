@@ -9,7 +9,7 @@ const { width } = Dimensions.get('screen')
 export default function GiftScreen() {
     const navigation = useNavigation();
     const dispatch = useDispatch()
-    const [state, setstate] = useState([{ name: 'PAKET GIFT 300 RIBU', uri: `${require('../../assets/icons/gift/tshirt.png')}`, price: '0 - 399999' }, { name: 'PAKET GIFT 500 RIBU', uri: `${require('../../assets/icons/gift/summer.png')}`, price: '400000 - 599999' }, { name: 'PAKET GIFT 700 RIBU', uri: `${require('../../assets/icons/gift/shoes.png')}`, price: '600000 - 799999' }, { name: 'PAKET GIFT 1 JUTA', uri: `${require('../../assets/icons/gift/watch.png')}`, price: '800000' },])
+    const [state, setstate] = useState([{ name: 'PAKET GIFT 300 RIBU', uri: `${require('../../assets/icons/gift/tshirt.png')}`, price: '0-399999' }, { name: 'PAKET GIFT 500 RIBU', uri: `${require('../../assets/icons/gift/summer.png')}`, price: '400000-599999' }, { name: 'PAKET GIFT 700 RIBU', uri: `${require('../../assets/icons/gift/shoes.png')}`, price: '600000-999999' }, { name: 'PAKET GIFT 1 JUTA', uri: `${require('../../assets/icons/gift/watch.png')}`, price: '800000' },])
     const [data, setdata] = useState([
         {
             name: 'Apple iPhone 12 256GB Red',
@@ -82,7 +82,7 @@ export default function GiftScreen() {
     useEffect(() => {
 
         try {
-         
+
         } catch (error) {
 
         }

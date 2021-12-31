@@ -218,7 +218,7 @@ export default function ProductScreen(props) {
                 if (flashsale.stokFlash <= 0) {
                     setdisableCart(true)
                 } else {
-                    setdisableCart(false)
+                    setdisableCart(false)   
                 }
             } else if (status != 'live') {
                 setFlashsale(false)

@@ -10,6 +10,8 @@ export default function CategoryComponent() {
     const navigation = useNavigation();
     const dispatch = useDispatch()
     const reduxDashboard = useSelector(state => state.dashboard.category)
+
+
     const [shimmerData] = useState(['1X', '2X', '3X', '4X', '5X'])
     const [storageDashboard, setstorageDashboard] = useState([])
 
@@ -48,19 +50,21 @@ export default function CategoryComponent() {
         })
     }
 
-    const handleCategory = (value) => {
-        dispatch({ type: 'SET_CATEGORY_STATUS', payload: value })
+    const handleCategory = () => {
+        // dispatch({ type: 'SET_CATEGORY_STATUS', payload: value })
         navigation.navigate('Category');
     }
     const handleSelected = (res) => {
         handleFetch(res)
         handleSaveKeyword(res.name)
-        dispatch({ type: 'SET_CATEGORY_NAME', payload: res.name })
+        dispatch({ type: 'SET_CATEGORY_NAME', payload: String(res.slug) })
     }
 
     const handleFetch = (item) => {
-
         if (item) {
+            navigation.navigate('ProductSearch')
+            dispatch({ type: 'SET_SEARCH_LOADING', payload: true })
+            let error = true
             var myHeaders = new Headers();
             myHeaders.append("Cookie", "ci_session=akeeif474rkhuhqgj7ah24ksdljm0248");
             var requestOptions = {
@@ -72,38 +76,50 @@ export default function CategoryComponent() {
             fetch(`https://jaja.id/backend/product/category/${item.slug}?page=1&limit=100&keyword=&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    if (result && Object.keys(result).length && result.status.code == 200) {
+                    error = false
+                    if (result?.status?.code === 200) {
                         dispatch({ type: 'SET_SEARCH', payload: result.data.items })
                         dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
                         dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
-                        dispatch({ type: 'SET_KEYWORD', payload: item.name })
-
+                        dispatch({ type: 'SET_KEYWORD', payload: String(item.name).toLocaleLowerCase() })
                     } else {
                         dispatch({ type: 'SET_SEARCH', payload: [] })
                         dispatch({ type: 'SET_FILTERS', payload: [] })
                         dispatch({ type: 'SET_SORTS', payload: [] })
-                        // Utils.handleErrorResponse(result, 'Error with status 130012')
+                        Utils.handleErrorResponse(result, 'Error with status 130012')
                     }
+                    dispatch({ type: 'SET_SEARCH_LOADING', payload: false })
                 })
-                .catch(error => {
+                .catch(err => {
+                    error = false
                     dispatch({ type: 'SET_SEARCH', payload: [] })
                     dispatch({ type: 'SET_FILTERS', payload: [] })
                     dispatch({ type: 'SET_SORTS', payload: [] })
-                    Utils.handleError(error, 'Error with status 13001')
+                    dispatch({ type: 'SET_SEARCH_LOADING', payload: true })
+                    Utils.handleError(String(err), 'Error with status 13001')
                 });
 
             setTimeout(() => {
-                navigation.navigate('ProductSearch')
-            }, 500);
+                if (error) {
+                    Utils.handleSignal()
+                    dispatch({ type: 'SET_SEARCH_LOADING', payload: false })
+                }
+            }, 15000);
+
         }
     }
 
     const handleSaveKeyword = (keyword) => {
         EncryptedStorage.getItem('historySearching').then(res => {
+            console.log("🚀 ~ file: CategoryComponent.js ~ line 102 ~ EncryptedStorage.getItem ~ res", res)
             if (res) {
                 let data = JSON.parse(res);
-                data.push(keyword)
-                EncryptedStorage.setItem("historySearching", JSON.stringify(data))
+                let newKeyword = String(keyword).toLocaleLowerCase()
+                console.log("🚀 ~ file: CategoryComponent.js ~ line 105 ~ EncryptedStorage.getItem ~ data.includes(keyword)", data.includes(newKeyword))
+                if (!data.includes(newKeyword)) {
+                    data.push(String(keyword).toLocaleLowerCase())
+                    EncryptedStorage.setItem("historySearching", JSON.stringify(data))
+                }
             }
         })
     }
@@ -114,7 +130,7 @@ export default function CategoryComponent() {
                 <Text style={[styles.titleDashboard, styles.mb_3]}>
                     Kategori Pilihan
                 </Text>
-                <TouchableOpacity onPress={() => handleCategory('Art Shop')}>
+                <TouchableOpacity onPress={handleCategory}>
                     <Text style={[{ fontSize: 13, fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>
                         Lihat Semua <Image source={require('../../assets/icons/play.png')} style={[styles.icon_10, { tintColor: colors.BlueJaja }]} />
                     </Text>
