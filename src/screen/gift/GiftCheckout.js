@@ -19,19 +19,21 @@ export default function checkoutScreen() {
     const reduxCoin = useSelector(state => state.user.user.coinFormat)
     const reduxUseCoin = useSelector(state => state.checkout.useCoin)
 
+
     const reduxShipping = useSelector(state => state.checkout.shipping)
     const reduxListPayment = useSelector(state => state.checkout.listPayment)
-    const cartStatus = useSelector(state => state.cart.cartStatus)
-
     const [refreshControl, setRefreshControl] = useState(false)
     const [showModal, setModalShow] = useState(false);
+
     const actionSheetVoucher = createRef();
     const actionSheetDelivery = createRef();
     const actionSheetPayment = createRef();
+
     const [storePressed, setstorePressed] = useState({})
     const [loading, setLoading] = useState(false)
     const [load, setLoad] = useState(false)
     const [loadAs, setloadAs] = useState(false)
+
     const [selectedPayment, setselectedPayment] = useState('')
     const [selectedSubPayment, setselectedSubPayment] = useState('')
     const [subPayment, setsubPayment] = useState([])
@@ -65,7 +67,6 @@ export default function checkoutScreen() {
         month: 0,
         date: 0,
     });
-
     useEffect(() => {
         setRefreshControl(false)
         setLoad(false)
@@ -93,6 +94,7 @@ export default function checkoutScreen() {
         }
     }, [selectedSubPayment])
 
+
     useEffect(() => {
         var future = new Date();
         future.setDate(future.getDate() + 2);
@@ -109,6 +111,8 @@ export default function checkoutScreen() {
             date: future.getDate()
         })
     }, [])
+
+
 
     const getCheckout = (coin) => {
         if (coin) {
@@ -330,7 +334,7 @@ export default function checkoutScreen() {
             redirect: 'follow'
         };
 
-        fetch(`https://jaja.id/backend/checkout/selectedShipping?is_gift=${cartStatus === 1 ? 1 : 0}`, requestOptions)
+        fetch("https://jaja.id/backend/checkout/selectedShipping", requestOptions)
             .then(response => response.text())
             .then(res => {
                 console.log("🚀 ~ file: CheckoutScreen.js ~ line 340 ~ deliverySelected ~ res", res)
@@ -338,15 +342,11 @@ export default function checkoutScreen() {
                     let result = JSON.parse(res)
                     if (result.status.code === 200) {
                         setTimeout(() => actionSheetVoucher.current?.setModalVisible(false), 1000);
-                        if (cartStatus === 1) {
-                            handleGetCheckout()
-                        } else {
-                            ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then(res => {
-                                if (res) {
-                                    dispatch({ type: 'SET_CHECKOUT', payload: res })
-                                }
-                            })
-                        }
+                        ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then(res => {
+                            if (res) {
+                                dispatch({ type: 'SET_CHECKOUT', payload: res })
+                            }
+                        })
                     } else {
                         Utils.handleErrorResponse(result, 'Error with status code : 12074')
                     }
@@ -502,6 +502,7 @@ export default function checkoutScreen() {
                                 'cart': newArr,
                                 'koin': reduxUseCoin
                             });
+                            console.log("🚀 ~ file: CheckoutScreen.js ~ line 532 ~ setTimeout ~ reduxUseCoin", reduxUseCoin)
                             var requestOptions = {
                                 method: 'POST',
                                 headers: myHeaders,
@@ -509,7 +510,7 @@ export default function checkoutScreen() {
                                 redirect: 'follow'
                             };
 
-                            fetch(`https://jaja.id/backend/checkout?is_gift=${cartStatus === 1 ? 1 : 0}`, requestOptions)
+                            fetch("https://jaja.id/backend/checkout", requestOptions)
                                 .then(response => response.text())
                                 .then(result => {
                                     error = false
@@ -519,8 +520,11 @@ export default function checkoutScreen() {
                                             dispatch({ type: 'SET_INVOICE', payload: data.data })
                                             dispatch({ type: 'SET_ORDER_STATUS', payload: null })
                                             navigation.replace('OrderDetails')
-                                            ServiceCart.getTrolley(reduxAuth, cartStatus === 1 ? 1 : 0, dispatch)
-
+                                            ServiceCart.getCart(reduxAuth).then(res => {
+                                                if (res) {
+                                                    dispatch({ type: 'SET_CART', payload: res })
+                                                }
+                                            })
                                             ServiceUser.getBadges(reduxAuth).then(res => {
                                                 if (res) {
                                                     dispatch({ type: "SET_BADGES", payload: res })
@@ -593,6 +597,7 @@ export default function checkoutScreen() {
 
     }
 
+
     const handleShowPayment = (item) => {
         console.log("🚀 ~ file: CheckoutScreen.js ~ line 571 ~ handleShowPayment ~ item", item)
         setselectedPayment(item)
@@ -604,24 +609,18 @@ export default function checkoutScreen() {
             actionSheetPayment.current?.setModalVisible(true)
         }
     }
-    
     const onRefresh = useCallback(() => {
         setRefreshControl(true)
-        if (cartStatus === 1) {
-            console.log('masuk sini')
-            handleGetCheckout()
-        } else {
-            ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then(res => {
-                if (res) {
-                    dispatch({ type: 'SET_CHECKOUT', payload: res })
-                    ToastAndroid.show("Updated", ToastAndroid.LONG, ToastAndroid.CENTER)
-                    setTimeout(() => {
-                        setRefreshControl(false)
-                    }, 2000);
-                }
-            })
-        }
-        ServiceCheckout.getShipping(reduxAuth, cartStatus === 1 ? 1 : 0).then(res => {
+        ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then(res => {
+            if (res) {
+                dispatch({ type: 'SET_CHECKOUT', payload: res })
+                ToastAndroid.show("Updated", ToastAndroid.LONG, ToastAndroid.CENTER)
+                setTimeout(() => {
+                    setRefreshControl(false)
+                }, 2000);
+            }
+        })
+        ServiceCheckout.getShipping(reduxAuth, 0).then(res => {
             if (res) {
                 dispatch({ type: 'SET_SHIPPING', payload: res })
             }
@@ -631,38 +630,6 @@ export default function checkoutScreen() {
         }, 5000);
     }, []);
 
-    const handleGetCheckout = () => {
-        var myHeaders = new Headers();
-        myHeaders.append("Authorization", reduxAuth);
-        myHeaders.append("Cookie", "ci_session=r59c24ad1race70f8lc0h1v5lniiuhei");
-        var requestOptions = {
-            method: 'GET',
-            headers: myHeaders,
-            redirect: 'follow'
-        };
-
-        fetch(`https://jaja.id/backend/checkout?isCoin=0&fromCart=1&is_gift=${cartStatus === 1 ? 1 : 0}`, requestOptions)
-            .then(response => response.text())
-            .then(res => {
-                console.log("🚀 ~ file: TrolleyScreen.js ~ line 197 ~ handleGetCheckout ~ res", res)
-                try {
-                    let result = JSON.parse(res)
-                    if (result.status.code === 200) {
-                        dispatch({ type: 'SET_CHECKOUT', payload: result.data })
-                        navigation.navigate('Checkout')
-                    } else if (result.status.code == 404 && result.status.message == 'alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu') {
-                        Utils.alertPopUp('Silahkan tambah alamat terlebih dahulu!')
-                        navigation.navigate('Address', { data: "checkout" })
-                    } else {
-                        Utils.handleErrorResponse(result, 'Error with status code : 12156')
-                        return null
-                    }
-                } catch (error) {
-                    Utils.alertPopUp(JSON.stringify(res) + ' : 12157\n\n' + res)
-                }
-            })
-            .catch(error => Utils.handleError(error, 'Error with status code : 12158'));
-    }
 
     const handleUseCoin = (coin) => {
         setUseCoin(coin)
@@ -1260,3 +1227,4 @@ export default function checkoutScreen() {
     )
 }
 
+        

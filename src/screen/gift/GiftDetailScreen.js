@@ -96,8 +96,9 @@ export default function GiftDetailScreen(props) {
             }
 
 
-        }, []),
+        }, [Object.keys(giftDetails)]),
     );
+
     useFocusEffect(
         useCallback(() => {
             let dataSeller = {
@@ -521,11 +522,11 @@ export default function GiftDetailScreen(props) {
 
                                             {/* <Text style={{ textDecorationLine: 'underline', fontSize: 14, fontFamily: 'Poppins-Medium', color: colors.BlackGrayScale, marginBottom: '3%' }}>Tanggal Pengiriman</Text> */}
                                             <IconButton
-                                                icon="delete"
-                                                style={{ padding: 0, margin: 0, backgroundColor: colors.Red }}
-                                                color={colors.White}
+                                                icon="calendar-text-outline"
+                                                style={{ padding: 0, margin: 0, backgroundColor: colors.White }}
+                                                color={colors.BlueJaja}
                                                 size={17}
-                                                onPress={() => handleDelete(res.id)}
+                                                onPress={() => setDatePickerVisibility(true)}
                                             />
                                             {/* <TouchableRipple onPress={() => setDatePickerVisibility(true)} style={[styles.px_2, styles.mb_3]}>
                                                 <Text style={{ fontSize: 14, fontFamily: 'Poppins-Medium', color: colors.BlueJaja }}>Ubah</Text>
@@ -809,7 +810,7 @@ export default function GiftDetailScreen(props) {
 
 
             setdateSelected(result)
-            setdateSelect(result)
+            setdateSelect(dateNumber)
             setDatePickerVisibility(false)
         } catch (error) {
 
@@ -851,7 +852,6 @@ export default function GiftDetailScreen(props) {
     }
 
     const handleApiCart = async (name) => {
-        console.log("🚀 ~ file: GiftDetailScreen.js ~ line 814 ~ handleApiCart ~ name", name)
         try {
             var credentials = {
                 "productId": giftDetails.id,

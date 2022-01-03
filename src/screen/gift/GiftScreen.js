@@ -90,7 +90,6 @@ export default function GiftScreen() {
     }, [])
 
     const handleFilter = (item) => {
-        console.log("🚀 ~ file: GiftScreen.js ~ line 97 ~ handleFilter ~ item", item)
         navigation.navigate('GiftSearch', { price: item.price })
         dispatch({ type: "SET_GIFT_LOADING", payload: true })
         let error = true
