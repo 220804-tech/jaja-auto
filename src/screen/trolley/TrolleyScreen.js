@@ -175,7 +175,6 @@ export default function TrolleyScreen() {
     }
 
     const handleApiCart = () => {
-        console.log("🚀 ~ file: TrolleyScreen.js ~ line 179 ~ handleApiCart ~ cartStatus", cartStatus)
         ServiceCart.getTrolley(reduxAuth, cartStatus === 1 ? 1 : 0, dispatch)
         setTimeout(() => setLoading(false), 1000);
 
@@ -188,13 +187,12 @@ export default function TrolleyScreen() {
         var requestOptions = {
             method: 'GET',
             headers: myHeaders,
-            redirect: 'follow'
+            redirect: 'follow'  
         };
 
         fetch(`https://jaja.id/backend/checkout?isCoin=0&fromCart=1&is_gift=${cartStatus === 1 ? 1 : 0}`, requestOptions)
             .then(response => response.text())
             .then(res => {
-                console.log("🚀 ~ file: TrolleyScreen.js ~ line 197 ~ handleGetCheckout ~ res", res)
                 try {
                     let result = JSON.parse(res)
                     if (result.status.code === 200) {

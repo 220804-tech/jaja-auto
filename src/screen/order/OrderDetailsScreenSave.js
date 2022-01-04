@@ -82,7 +82,6 @@ export default function OrderDetailsScreen() {
         fetch(`https://jaja.id/backend/order/${reduxOrderInvoice}`, requestOptions)
             .then(response => response.text())
             .then(data => {
-                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 85 ~ getItem ~ data", data)
                 try {
                     let result = JSON.parse(data)
                     setRefreshing(false)
@@ -226,7 +225,6 @@ export default function OrderDetailsScreen() {
     }
 
     const handleOpenLink = async (url) => {
-        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 219 ~ handleOpenLink ~ url", url)
         // const supported = await Linking.canOpenURL(url);
 
         // if (supported) {

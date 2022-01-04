@@ -69,7 +69,6 @@ export async function getProduct(auth, slug) {
 
 }
 
-
 export async function addCart(auth, crendentials) {
     var config = {
         method: 'post',
@@ -90,7 +89,6 @@ export async function addCart(auth, crendentials) {
         });
 
 }
-
 
 export async function getProducts(params) {
     var myHeaders = new Headers();
@@ -136,7 +134,6 @@ export async function getStoreProduct(params) {
         headers: myHeaders,
         redirect: 'follow'
     };
-    console.log("🚀 ~ file: Product.js ~ line 161 ~ getStoreProduct ~}", `https://jaja.id/backend/product/store/jaja-gift?page=1&limit=${params.gift ? 750 : 250}&keyword=${params.keyword ? params.keyword : ''}&filter_price=${params.price ? params.price : ''}&filter_location=&filter_condition=&filter_preorder=${params.preorder ? params.preorder : ''}&filter_brand=${params.brand ? params.brand : ''}&sort=&is_gift=${params.gift ? params.gift : 0}`)
 
     return await fetch(`https://jaja.id/backend/product/store/jaja-gift?page=1&limit=${params.gift ? 750 : 250}&keyword=${params.keyword ? params.keyword : ''}&filter_price=${params.price ? params.price : ''}&filter_location=&filter_condition=&filter_preorder=${params.preorder ? params.preorder : ''}&filter_brand=${params.brand ? params.brand : ''}&sort=&is_gift=${params.gift ? params.gift : 0}`, requestOptions)
         .then(response => response.text())
@@ -150,7 +147,6 @@ export async function getStoreProduct(params) {
                     return []
                 }
             } catch (error) {
-                console.log("🚀 ~ file: Product.js ~ line 121 ~ getProducts ~ error", error)
                 Utils.handleError("Error with status code : 12525 \n" + String(error) + '\n' + JSON.stringify(result))
                 return null
             }
@@ -194,4 +190,31 @@ export async function getRecommendation(dispatch) {
             }
         });
     }
+}
+
+export async function handleUpdateGift(auth, credentials) {
+
+    var config = {
+        method: 'put',
+        url: 'https://jaja.id/backend/checkout/changeDetailGift',
+        headers: {
+            'Authorization': auth,
+            'Content-Type': 'application/json',
+            'Cookie': 'ci_session=hnmfki7ujbu8ta0u4m64hdhp5f0dch1a'
+        },
+        data: credentials
+    };
+
+    return await axios(config)
+        .then(function (response) {
+            if (response.data?.status?.code !== 200) {
+                Utils.handleErrorResponse(error, 'Error with status code : 15001')
+            }
+            return true 
+        })
+        .catch(function (error) {
+            Utils.handleError(error, 'Error with status code : 15002')
+            return true
+        });
+
 }

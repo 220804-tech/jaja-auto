@@ -151,7 +151,6 @@ export default function OrderDetailsScreen() {
                 getPayment(details.orderId);
             } else {
                 dispatch({ type: 'SET_INVOICE', payload: details.items[0].invoice })
-                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 153 ~ useEffect ~ details.orderId ", details.orderId)
             }
 
         }
@@ -651,6 +650,7 @@ export default function OrderDetailsScreen() {
         fetch(`https://jaja.id/backend/order/${reduxOrderInvoice}`, requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 653 ~ getItem ~ result", result)
                 if (result.status.code === 200 || result.status.code === 204) {
                     setDetails(result.data)
                     let status = result.data.status;
@@ -916,7 +916,6 @@ export default function OrderDetailsScreen() {
         // // }
         // setDetails(details.items[idxStore] = newOrderDetail)
         // setproductsComplain(newProductComplain)
-        // console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 880 ~ handleComplain ~ newProductComplain", newProductComplain)
         // setcount(count + 1)
     }
     return (
@@ -950,7 +949,6 @@ export default function OrderDetailsScreen() {
                                         <Text style={[styles.font_12]}>#{details.items[0].invoice}</Text>
                                     </View>
                                     <TouchableOpacity onPress={() => setdownloadInvoice(details.downloadOrderPdf)}
-                                        // console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 843 ~ Linking.canOpenURL ~ details.downloadOrderPdf", details.downloadOrderPdf)
                                         // navigation.navigate('DownloadInvoice', { url: details.downloadOrderPdf })
                                         // Linking.canOpenURL(details.downloadOrderPdf).then(supported => {
                                         //     if (supported) {

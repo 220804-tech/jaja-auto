@@ -4,7 +4,7 @@
 
 import React, { useEffect, useState, createRef, useRef, useCallback } from 'react'
 import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, Alert, StatusBar, FlatList, ToastAndroid, TextInput, RefreshControl, Modal } from 'react-native'
-import { Appbar, colors, styles, Wp, Hp, useNavigation, ServiceCheckout, Loading, Utils, ServiceCart, ServiceUser, ServiceOrder } from '../../export'
+import { Appbar, colors, styles, Wp, Hp, useNavigation, ServiceCheckout, Loading, Utils, ServiceCart, ServiceUser, ServiceOrder, ServiceProduct } from '../../export'
 import { Button, TouchableRipple, Checkbox } from 'react-native-paper'
 import ActionSheet from "react-native-actions-sheet";
 import CheckBox from '@react-native-community/checkbox';
@@ -25,6 +25,11 @@ export default function checkoutScreen() {
 
     const [refreshControl, setRefreshControl] = useState(false)
     const [showModal, setModalShow] = useState(false);
+    const [showModal2, setModalShow2] = useState(false);
+    const [giftSelected, setgiftSelected] = useState('');
+    const [dateSendTime, setdateSendTime] = useState('');
+
+
     const actionSheetVoucher = createRef();
     const actionSheetDelivery = createRef();
     const actionSheetPayment = createRef();
@@ -53,18 +58,19 @@ export default function checkoutScreen() {
     const [rangeDate, setrangeDate] = useState([])
     const [listMonth, setlistMonth] = useState(["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "September", "Desember"])
     const [useCoin, setUseCoin] = useState(false)
-
     const [dateMin, setdateMin] = useState({
         year: 0,
         month: 0,
         date: 0,
     });
-
     const [dateMax, setdateMax] = useState({
         year: 0,
         month: 0,
         date: 0,
     });
+
+
+    const [textGift, settextGift] = useState('')
 
     useEffect(() => {
         setRefreshControl(false)
@@ -89,25 +95,40 @@ export default function checkoutScreen() {
     useEffect(() => {
         if (selectedSubPayment) {
             setTimeout(() => actionSheetPayment.current?.setModalVisible(false), 750);
-
         }
     }, [selectedSubPayment])
 
     useEffect(() => {
         var future = new Date();
-        future.setDate(future.getDate() + 2);
-        setdateMin({
-            year: future.getFullYear(),
-            month: future.getMonth(),
-            date: future.getDate()
-        })
-        future.setDate(future.getDate() + 5);
+        if (cartStatus === 1) {
+            future.setDate(future.getDate() + 3);
+            setdateMin({
+                year: future.getFullYear(),
+                month: future.getMonth(),
+                date: future.getDate()
+            })
+            future.setMonth(future.getMonth() + 4);
+            setdateMax({
+                year: future.getFullYear(),
+                month: future.getMonth(),
+                date: future.getDate()
+            })
+        } else {
 
-        setdateMax({
-            year: future.getFullYear(),
-            month: future.getMonth(),
-            date: future.getDate()
-        })
+            future.setDate(future.getDate() + 2);
+            setdateMin({
+                year: future.getFullYear(),
+                month: future.getMonth(),
+                date: future.getDate()
+            })
+            future.setDate(future.getDate() + 5);
+
+            setdateMax({
+                year: future.getFullYear(),
+                month: future.getMonth(),
+                date: future.getDate()
+            })
+        }
     }, [])
 
     const getCheckout = (coin) => {
@@ -396,21 +417,24 @@ export default function checkoutScreen() {
         console.log("🚀 ~ file: CheckoutScreen.js ~ line 399 ~ handleConfirmDate ~ dateSelected", dateSelected)
 
         try {
-            let mont = new Date()
-            // let year = new 399().getFullYear()
-            let str = JSON.stringify(date);
-            let dateDay = str.slice(9, 11);
-            let dateMonth = str.slice(6, 8);
-            setdeliveryDate(str.slice(1, 11))
-            let min = str.slice(6, 8) - JSON.stringify(mont).slice(6, 8)
-            if (str.slice(1, 8) === JSON.stringify(mont).slice(1, 8) && parseInt(min) <= 1) {
+            if (cartStatus !== 1) {
+                let mont = new Date()
+                // let year = new 399().getFullYear()
+                let str = JSON.stringify(date);
+                let dateDay = str.slice(9, 11);
+                let dateMonth = str.slice(6, 8);
                 setdeliveryDate(str.slice(1, 11))
-                let string = listMonth[parseInt(dateMonth) - 1];
-                setSendDate(dateSelected)
+                let min = str.slice(6, 8) - JSON.stringify(mont).slice(6, 8)
+                if (str.slice(1, 8) === JSON.stringify(mont).slice(1, 8) && parseInt(min) <= 1) {
+                    setdeliveryDate(str.slice(1, 11))
+                    let string = listMonth[parseInt(dateMonth) - 1];
+                    setSendDate(dateSelected)
+                } else {
+                    Utils.alertPopUp(`Minimal tanggal pengiriman ${sendDate} sampai seterusnya`)
+                    Utils.alertPopUp(`Maksimal tanggal pengiriman 1 bulan setelah barang sampai`)
+                }
             } else {
-                ToastAndroid.show(`Minimal tanggal pengiriman ${sendDate} sampai seterusnya`, ToastAndroid.LONG, ToastAndroid.CENTER)
-                ToastAndroid.show(`Maksimal tanggal pengiriman 1 bulan setelah barang sampai`, ToastAndroid.LONG, ToastAndroid.CENTER)
-
+                setSendDate(dateSelected)
             }
         } catch (error) {
             console.log("errorrr  ", error)
@@ -467,7 +491,6 @@ export default function checkoutScreen() {
     }
 
     const handleCheckout = () => {
-        console.log("🚀 ~ file: CheckoutScreen.js ~ line 433 ~ handleCheckout ~ reduxCheckout.total", reduxCheckout.total)
         Alert.alert(
             `${reduxCheckout.total > 0 ? "Pilih Pembayaran" : 'Buat Pesanan'}`,
             `${reduxCheckout.total > 0 ? 'Pesanan kamu akan dilanjutkan ke menu pembayaran!.' : 'Pesanan kamu akan dibuat!'}`,
@@ -496,7 +519,6 @@ export default function checkoutScreen() {
                             var myHeaders = new Headers();
                             myHeaders.append("Authorization", reduxAuth);
                             myHeaders.append("Content-Type", "application/json");
-                            console.log("🚀 ~ file: CheckoutScreen.js ~ line 530 ~ setTimeout ~ reduxUseCoin", reduxUseCoin)
 
                             var raw = JSON.stringify({
                                 'cart': newArr,
@@ -542,7 +564,6 @@ export default function checkoutScreen() {
                                             })
                                         } else {
                                             setLoad(false)
-
                                             Utils.handleErrorResponse(data, "Error with status code : 12048")
                                             return null
                                         }
@@ -604,7 +625,7 @@ export default function checkoutScreen() {
             actionSheetPayment.current?.setModalVisible(true)
         }
     }
-    
+
     const onRefresh = useCallback(() => {
         setRefreshControl(true)
         if (cartStatus === 1) {
@@ -641,10 +662,9 @@ export default function checkoutScreen() {
             redirect: 'follow'
         };
 
-        fetch(`https://jaja.id/backend/checkout?isCoin=0&fromCart=1&is_gift=${cartStatus === 1 ? 1 : 0}`, requestOptions)
+        fetch(`https://jaja.id/backend/checkout?fromCart=1&is_gift=${cartStatus === 1 ? 1 : 0}&isCoin=${reduxUseCoin ? 1 : 0}`, requestOptions)
             .then(response => response.text())
             .then(res => {
-                console.log("🚀 ~ file: TrolleyScreen.js ~ line 197 ~ handleGetCheckout ~ res", res)
                 try {
                     let result = JSON.parse(res)
                     if (result.status.code === 200) {
@@ -678,6 +698,33 @@ export default function checkoutScreen() {
         }).catch(res => {
             return false
         })
+    }
+
+    const handleGiftCard = async () => {
+        setModalShow2(false)
+        setLoad(true)
+
+        var credentials = JSON.stringify({
+            "cartId": giftSelected,
+            "dateSendTime": dateSendTime,
+            "greetingCardGift": textGift
+        });
+        let res = await ServiceProduct.handleUpdateGift(reduxAuth, credentials);
+
+        if (res) {
+            setTimeout(() => {
+                setLoad(false)
+            }, 2000);
+            handleGetCheckout()
+        } else {
+            setTimeout(() => {
+                handleGetCheckout()
+                if (!res) {
+                    setLoad(false)
+                }
+            }, 10000);
+        }
+
     }
 
     return (
@@ -731,8 +778,8 @@ export default function checkoutScreen() {
                                     </View>
                                     {item.products.map((child, idx) => {
                                         return (
-                                            <View key={String(idx) + "s"} style={[styles.column, styles.py_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}>
-                                                <View style={[styles.row_start_center, styles.p_2, { width: '100%', height: Wp('25%') }]}>
+                                            <View key={String(idx) + "s"} style={[styles.column, styles.p_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}>
+                                                <View style={[styles.row_start_center, styles.py_2, { width: '100%', height: Wp('25%') }]}>
                                                     <Image style={{ width: Wp('18%'), height: '90%', borderRadius: 5, backgroundColor: colors.BlackGrey }}
                                                         resizeMethod={"scale"}
                                                         resizeMode="cover"
@@ -761,8 +808,19 @@ export default function checkoutScreen() {
                                                         </View>
                                                     </View>
                                                 </View>
-                                                <View style={[styles.row_end_center, styles.px_2]}>
+                                                <View style={[styles.row_end_center]}>
                                                     <Text numberOfLines={1} style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja }]}> {child.subTotalCurrencyFormat}</Text>
+                                                </View>
+                                                <View style={[styles.mt_2, styles.p_2, { width: '99%', borderRadius: 3, alignSelf: 'center', backgroundColor: colors.White, elevation: 1 }]}>
+                                                    <View style={styles.row_between_center}>
+                                                        <Text style={styles.font_12}>Kartu ucapan :</Text>
+                                                        <Text onPress={() => {
+                                                            setgiftSelected(child.cartId)
+                                                            setModalShow2(true)
+                                                            settextGift(child.greetingCardGift)
+                                                        }} style={[styles.font_12, { color: colors.BlueJaja }]}>Ubah</Text>
+                                                    </View>
+                                                    <Text numberOfLines={2} style={styles.font_12}>{child.greetingCardGift}</Text>
                                                 </View>
                                             </View>
                                         )
@@ -806,13 +864,14 @@ export default function checkoutScreen() {
                                                 <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/vehicle-yellow.png')} />
                                                 <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pengiriman</Text>
                                             </View>
-                                            {console.log("🚀 ~ file: CheckoutScreen.js ~ line 780 ~ reduxCheckout.cart.map ~ item.shippingSelected", item.shippingSelected)}
                                             {item.shippingSelected.name ?
                                                 <TouchableOpacity onPress={() => {
-                                                    console.log("cok")
                                                     checkedValue(idxStore)
                                                     setstorePressed(item.store)
                                                     setindexStore(idxStore)
+                                                    if (item.shippingSelected?.dateSendTime) {
+                                                        setSendDate(item.shippingSelected.dateSendTime)
+                                                    }
                                                 }}
                                                     style={[styles.column, styles.p_3, { width: '100%' }]}>
                                                     <View style={styles.row_between_center}>
@@ -859,6 +918,9 @@ export default function checkoutScreen() {
                                                             checkedValue(idxStore)
                                                             setstorePressed(item.store)
                                                             setindexStore(idxStore)
+                                                            if (item.shippingSelected?.dateSendTime) {
+                                                                setSendDate(item.shippingSelected.dateSendTime)
+                                                            }
                                                             actionSheetDelivery.current?.setModalVisible()
                                                         }}>
                                                             <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Pilih</Text>
@@ -894,7 +956,6 @@ export default function checkoutScreen() {
                                     <Text numberOfLines={1} style={[styles.font_12, styles.mt_2]}>Berakhir dalam {reduxCheckout.voucherJajaSelected.endDate}</Text>
                                     <View style={[styles.p, { backgroundColor: colors.RedFlashsale, borderRadius: 3 }]}>
                                         <Text numberOfLines={1} style={[styles.font_12, { color: colors.White }]}>- {reduxCheckout.voucherJajaSelected.discountText}</Text>
-                                        {console.log("🚀 ~ file: CheckoutScreen.js ~ line 823 ~ checkoutScreen ~ reduxCheckout.voucherJajaSelected.discountText", reduxCheckout.voucherJajaSelected)}
                                     </View>
                                 </View>
                             </View>
@@ -1073,12 +1134,11 @@ export default function checkoutScreen() {
             </ActionSheet>
             <ActionSheet ref={actionSheetDelivery} delayActionSheetDraw={false} containerStyle={{ width: Wp('100%') }} containerStyle={{ padding: '2%' }}>
                 <View style={[styles.row_between_center, styles.py_2, styles.px_4, styles.mb_3]}>
-                    <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.BlueJaja }]}>Pilih Ekspedisi</Text>
+                    <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.BlueJaja }]}>{cartStatus === 1 ? 'Pilih Tanggal Pengiriman' : 'Pilih Ekspedisi'}</Text>
                     <TouchableOpacity style={{ backgroundColor: 'transparent', paddingVertical: '2%', paddingHorizontal: '3%' }} onPressIn={() => actionSheetDelivery.current?.setModalVisible()}>
                         <Image style={[styles.icon_12, { tintColor: colors.BlueJaja }]} source={require('../../assets/icons/close.png')} />
                     </TouchableOpacity>
                 </View>
-
                 <View style={{ flexDirection: 'column', minHeight: Hp('20%'), maxHeight: Hp('60%'), width: '100%', paddingBottom: '5%' }}>
 
                     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ width: '100%' }}>
@@ -1086,6 +1146,25 @@ export default function checkoutScreen() {
                             {/* <Text style={[styles.font_14, styles.mb_3, { color: colors.BlueJaja, fontFamily: 'Poppins-SemiBold', borderBottomWidth: 0.5, borderBottomColor: colors.BlueJaja }]}>{item.title}</Text> */}
                             {reduxShipping && reduxShipping.length ?
                                 <View style={styles.column}>
+                                    {cartStatus === 1 ?
+                                        <>
+                                            <View style={[styles.column_center_start, styles.mb_2, styles.py_2, styles.px_2, { width: '100%' }]}>
+                                                <TouchableOpacity style={[styles.column, styles.px_2, { width: '100%' }]} onPress={() => setDatePickerVisibility(true)}>
+                                                    <View style={styles.row_between_center}>
+                                                        <Text style={styles.font_14}>{sendDate}</Text>
+                                                        <Image source={require('../../assets/icons/calendar.png')} style={[styles.icon_19, { tintColor: colors.BlueJaja }]} />
+                                                    </View>
+                                                    <View style={{ width: '100%', borderTopWidth: 1, borderTopColor: colors.Silver, marginTop: '2%' }}>
+                                                        <Text style={[styles.font_12, styles.T_italic]}>Pilih tanggal pengiriman dari penjual</Text>
+                                                    </View>
+                                                </TouchableOpacity>
+                                            </View>
+                                            <View style={[styles.row_between_center, styles.py_2, styles.px_4, styles.mb]}>
+                                                <Text style={[styles.font_14, styles.mt_3, styles.T_semi_bold, { color: colors.BlueJaja }]}>Pilih Ekspedisi</Text>
+                                            </View>
+
+                                        </>
+                                        : null}
                                     <FlatList
                                         data={reduxShipping[indexStore].items}
                                         keyExtractor={(item, index) => String(index) + "d"}
@@ -1119,52 +1198,57 @@ export default function checkoutScreen() {
                                             )
                                         }}
                                     />
-                                    <View style={[styles.row_between_center, styles.py_2, styles.px_4, styles.mb]}>
-                                        <Text style={[styles.font_14, styles.mt_3, styles.T_semi_bold, { color: colors.BlueJaja }]}>Pilih Waktu Pengiriman</Text>
-                                    </View>
-                                    <View style={[styles.column_center_start, styles.mb_2, styles.py_2, styles.px_2, { width: '100%' }]}>
-                                        <FlatList
-                                            inverted
-                                            data={reduxShipping[0].sendTime}
-                                            keyExtractor={(item, index) => String(index)}
-                                            style={{ width: '100%' }}
-                                            renderItem={({ item }) => {
-                                                return (
-                                                    <View style={[styles.column, styles.mb_3, styles.py_2, { width: '100%' }]}>
-                                                        <TouchableOpacity onPress={() => setsendTime(item.value)} style={styles.row_start_center}>
-                                                            <CheckBox
-                                                                disabled={false}
-                                                                value={sendTime === item.value ? true : false}
-                                                                onValueChange={() => {
-                                                                    if (item.value !== "pilih tanggal") {
-                                                                        setSendDate("")
-                                                                    }
-                                                                    setsendTime(item.value)
-                                                                }}
-                                                            />
-                                                            <View style={styles.row_between_center}>
-                                                                <Text style={[styles.font_14, styles.T_medium, { flex: 1 }]}>{item.name}</Text>
-                                                                <Text style={[styles.font_14, styles.T_medium]}>{item.priceCurrencyFormat}</Text>
-                                                            </View>
-                                                        </TouchableOpacity>
-                                                        {
-                                                            sendTime === "pilih tanggal" && item.value === "pilih tanggal" ?
-                                                                <TouchableOpacity style={[styles.column, styles.px_2, { width: '100%' }]} onPress={() => setDatePickerVisibility(true)}>
+                                    {cartStatus !== 1 ?
+                                        <>
+                                            <View style={[styles.row_between_center, styles.py_2, styles.px_4, styles.mb]}>
+                                                <Text style={[styles.font_14, styles.mt_3, styles.T_semi_bold, { color: colors.BlueJaja }]}>Pilih Waktu Pengiriman</Text>
+                                            </View>
+                                            <View style={[styles.column_center_start, styles.mb_2, styles.py_2, styles.px_2, { width: '100%' }]}>
+                                                <FlatList
+                                                    inverted
+                                                    data={reduxShipping[0].sendTime}
+                                                    keyExtractor={(item, index) => String(index)}
+                                                    style={{ width: '100%' }}
+                                                    renderItem={({ item }) => {
+                                                        return (
+                                                            <View style={[styles.column, styles.mb_3, styles.py_2, { width: '100%' }]}>
+                                                                <TouchableOpacity onPress={() => setsendTime(item.value)} style={styles.row_start_center}>
+                                                                    <CheckBox
+                                                                        disabled={false}
+                                                                        value={sendTime === item.value ? true : false}
+                                                                        onValueChange={() => {
+                                                                            if (item.value !== "pilih tanggal") {
+                                                                                setSendDate("")
+                                                                            }
+                                                                            setsendTime(item.value)
+                                                                        }}
+                                                                    />
                                                                     <View style={styles.row_between_center}>
-                                                                        <Text style={styles.font_14}>{sendDate}</Text>
-                                                                        <Image source={require('../../assets/icons/calendar.png')} style={[styles.icon_19, { tintColor: colors.BlueJaja }]} />
-                                                                    </View>
-                                                                    <View style={{ width: '100%', borderTopWidth: 1, borderTopColor: colors.Silver, marginTop: '2%' }}>
-                                                                        <Text style={[styles.font_12, styles.T_italic]}>Pilih tanggal pengiriman dari penjual</Text>
+                                                                        <Text style={[styles.font_14, styles.T_medium, { flex: 1 }]}>{item.name}</Text>
+                                                                        <Text style={[styles.font_14, styles.T_medium]}>{item.priceCurrencyFormat}</Text>
                                                                     </View>
                                                                 </TouchableOpacity>
-                                                                : null
-                                                        }
-                                                    </View>
-                                                )
-                                            }}
-                                        />
-                                    </View>
+                                                                {
+                                                                    sendTime === "pilih tanggal" && item.value === "pilih tanggal" ?
+                                                                        <TouchableOpacity style={[styles.column, styles.px_2, { width: '100%' }]} onPress={() => setDatePickerVisibility(true)}>
+                                                                            <View style={styles.row_between_center}>
+                                                                                <Text style={styles.font_14}>{sendDate}</Text>
+                                                                                <Image source={require('../../assets/icons/calendar.png')} style={[styles.icon_19, { tintColor: colors.BlueJaja }]} />
+                                                                            </View>
+                                                                            <View style={{ width: '100%', borderTopWidth: 1, borderTopColor: colors.Silver, marginTop: '2%' }}>
+                                                                                <Text style={[styles.font_12, styles.T_italic]}>Pilih tanggal pengiriman dari penjual</Text>
+                                                                            </View>
+                                                                        </TouchableOpacity>
+                                                                        : null
+                                                                }
+                                                            </View>
+                                                        )
+                                                    }}
+                                                />
+                                            </View>
+
+                                        </>
+                                        : null}
                                 </View> :
                                 <Text style={[styles.font_14, styles.mt_5, { alignSelf: 'center' }]}>Sedang memuat..</Text>}
                         </View>
@@ -1238,6 +1322,28 @@ export default function checkoutScreen() {
                         <View style={[styles.row_end, styles.p_2, { width: '100%' }]}>
                             <Button mode="contained" onPress={() => setModalShow(false)} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} style={{ height: '100%', width: '30%' }} color={colors.BlueJaja}>
                                 OK
+                            </Button>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={showModal2}
+                onRequestClose={() => {
+                    setModalShow(!showModal2);
+                }}>
+                <View style={{ flex: 1, width: Wp('100%'), height: Hp('100%'), backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={[styles.column_start, styles.pt_s, { width: Wp('95%'), height: Wp('50%'), backgroundColor: colors.White, elevation: 11, zIndex: 999 }]}>
+                        <View style={[styles.column_center_start, styles.px_4, styles.pt_3, { width: '100%' }]}>
+                            <Text style={[styles.font_14, styles.T_semi_bold, styles.mb_5, { color: colors.BlueJaja }]}>Kartu Ucapan</Text>
+                            <TextInput textAlignVertical='top' numberOfLines={4} style={[styles.font_12, styles.p_2, { borderRadius: 5, borderWidth: 0.5, borderColor: colors.BlackGrey, width: '100%' }]} value={textGift} onChangeText={text => settextGift(text)} />
+                        </View>
+
+                        <View style={[styles.row_end, styles.p_2, { width: '100%' }]}>
+                            <Button mode="contained" onPress={handleGiftCard} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} style={{ height: '100%', width: '30%' }} color={colors.BlueJaja}>
+                                Simpan
                             </Button>
                         </View>
                     </View>

@@ -105,19 +105,19 @@ export default function GiftDetailScreen(props) {
                 chat: reduxUser.user.uid + '5ff7b38436b51seller113'
             }
             dataSeller.id = dataSeller.uid
-            var future = new Date();
-            future.setDate(future.getDate() + 3);
-            setdateMin({
-                year: future.getFullYear(),
-                month: future.getMonth(),
-                date: future.getDate()
-            })
-            future.setMonth(future.getMonth() + 4);
-            setdateMax({
-                year: future.getFullYear(),
-                month: future.getMonth(),
-                date: future.getDate()
-            })
+                var future = new Date();
+                future.setDate(future.getDate() + 3);
+                setdateMin({
+                    year: future.getFullYear(),
+                    month: future.getMonth(),
+                    date: future.getDate()
+                })
+                future.setMonth(future.getMonth() + 4);
+                setdateMax({
+                    year: future.getFullYear(),
+                    month: future.getMonth(),
+                    date: future.getDate()
+                })
         }, []),
     );
 
@@ -878,7 +878,6 @@ export default function GiftDetailScreen(props) {
             }
         } catch (error) {
             console.log("🚀 ~ file: GiftDetailScreen.js ~ line 834 ~ handleApiCart ~ error", error)
-
         }
     }
     return (
