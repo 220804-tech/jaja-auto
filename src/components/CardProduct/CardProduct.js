@@ -130,10 +130,10 @@ export default function CardProduct(props) {
     console.log("🚀 ~ file: CardProductComponent.js ~ line 55 ~ CardProductComponent ~ props.data", props.data.length)
     return (
         <FlatList
-            // removeClippedSubviews={true} // Unmount components when outside of window 
-            initialNumToRender={6} // Reduce initial render amount
-            // maxToRenderPerBatch={1} // Reduce number in each render batch
-            // updateCellsBatchingPeriod={100} // Increase time between renders
+            removeClippedSubviews={true} // Unmount components when outside of window 
+            // initialNumToRender={1} // Reduce initial render amount
+            maxToRenderPerBatch={1} // Reduce number in each render batch
+            updateCellsBatchingPeriod={100} // Increase time between renders
             windowSize={7}
             data={props.data}
             numColumns={2}

@@ -10,7 +10,6 @@ export default function RecomandedHobbyComponent(props) {
     const [auth, setAuth] = useState("")
     const [page, setPage] = useState(1);
     const [storagedashRecommanded, setstoragedashRecommanded] = useState([])
-    const [loading, setLoading] = useState(false)
 
     const dispatch = useDispatch()
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
@@ -18,16 +17,17 @@ export default function RecomandedHobbyComponent(props) {
     const reduxmaxRecommanded = useSelector(state => state.dashboard.maxRecomandded)
 
     useEffect(() => {
-        getStorage()
+        console.log("🚀 ~=======================================> reduxLoadmore", reduxLoadmore)
         if (reduxLoadmore) {
             handleLoadMore()
-            setLoading(true)
-            setTimeout(() => {
-                setLoading(false)
-            }, 1000);
         }
     }, [reduxLoadmore])
 
+
+    useEffect(() => {
+        getStorage()
+
+    }, [])
     const getStorage = () => {
         EncryptedStorage.getItem('dashrecommanded').then(res => {
             if (res) {
@@ -41,16 +41,17 @@ export default function RecomandedHobbyComponent(props) {
             redirect: 'follow'
         };
         let loadingFetch = true
-        fetch(`https://jaja.id/backend/product/recommendation?page=${page + 1}&limit=16`, requestOptions)
+        fetch(`https://jaja.id/backend/product/recommendation?page=${page + 1}&limit=20`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 loadingFetch = false
+                console.log("🚀 ~ file: RecomandedHobbyComponent.js ~ line 52 ~ getData ~ result", result)
                 dispatch({ 'type': 'SET_LOADMORE', payload: false })
-                if (result.status.code === 200) {
+                if (result?.status?.code === 200) {
                     dispatch({ type: 'SET_DASHRECOMMANDED', payload: reduxdashRecommanded.concat(result.data.items) })
                     dispatch({ 'type': 'SET_MAX_RECOMMANDED', payload: false })
                     EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))
-                } else if (result.status.code === 204) {
+                } else if (result?.status?.code === 204) {
                     dispatch({ 'type': 'SET_MAX_RECOMMANDED', payload: true })
                 }
             })
@@ -88,25 +89,24 @@ export default function RecomandedHobbyComponent(props) {
                     Rekomendasi Hobby
                 </Text>
             </View>
+            {console.log("🚀 ~ file: RecomandedHobbyComponent.js ~ line 93 ~ RecomandedHobbyComponent ~ reduxdashRecommanded", reduxdashRecommanded.length)}
             {reduxdashRecommanded && reduxdashRecommanded.length || storagedashRecommanded && storagedashRecommanded.length ?
                 <View style={[styles.column_center_start, { width: Wp('100%') }]}>
-                    <CardProduct data={reduxdashRecommanded && reduxdashRecommanded.length ? reduxdashRecommanded : storagedashRecommanded && storagedashRecommanded.length ? storagedashRecommanded : []} />
+                    <CardProduct data={Array(reduxdashRecommanded).length ? reduxdashRecommanded : Array(storagedashRecommanded).length ? storagedashRecommanded : []} />
                 </View>
                 :
                 <View style={[styles.column_center_start, { width: Wp('100%') }]}>
-                    {/* <ShimmerCardProduct /> */}
+                    <ShimmerCardProduct />
                 </View>
             }
             {reduxmaxRecommanded ? <Text style={[styles.font_14, styles.mt_5, { alignSelf: 'center', color: colors.BlueJaja }]}>Semua produk berhasil ditampilkan.</Text> : <ShimmerCardProduct />}
             {/* {reduxLoadmore ?
-                loading ?
-                    <View style={style.content}>
-                        <View style={style.loading}>
-                            <Progress.CircleSnail duration={550} size={30} color={[colors.BlueJaja, colors.YellowJaja]} />
-                        </View>
+                <View style={style.content}>
+                    <View style={style.loading}>
+                        <Progress.CircleSnail duration={550} size={30} color={[colors.BlueJaja, colors.YellowJaja]} />
                     </View>
-                    : */}
-            {/* : null} */}
+                </View> 
+                : null} */}
         </View>
     )
 }

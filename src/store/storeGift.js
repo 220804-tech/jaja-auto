@@ -5,7 +5,9 @@ const initialState = {
 
     filterGift: [],
     sortGift: [],
-    giftLoading: ''
+    giftLoading: '',
+    textGift: '',
+
 
 }
 export default function storeCart(state = initialState, action) {
@@ -23,7 +25,9 @@ export default function storeCart(state = initialState, action) {
             return { ...state, sortGift: payload }
         case 'SET_GIFT_LOADING':
             return { ...state, giftLoading: payload }
+        case 'SET_TEXT_GIFT':
+            return { ...state, textGift: payload }
         default:
             return state;
     }
-}
+} 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, createRef } from 'react'
-import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Linking, ToastAndroid, Alert, RefreshControl, Modal, FlatList, ActivityIndicator, BackHandler } from 'react-native'
+import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Linking, ToastAndroid, Alert, RefreshControl, Modal, FlatList, ActivityIndicator, BackHandler, DynamicColorIOS } from 'react-native'
 import { Appbar, colors, styles, Wp, Hp, useNavigation, useFocusEffect, Loading, Utils, ServiceStore, ServiceCheckout, ServiceOrder } from '../../export'
 import Clipboard from '@react-native-community/clipboard';
 import { useDispatch, useSelector } from "react-redux";
@@ -650,7 +650,6 @@ export default function OrderDetailsScreen() {
         fetch(`https://jaja.id/backend/order/${reduxOrderInvoice}`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 653 ~ getItem ~ result", result)
                 if (result.status.code === 200 || result.status.code === 204) {
                     setDetails(result.data)
                     let status = result.data.status;
@@ -742,7 +741,6 @@ export default function OrderDetailsScreen() {
         };
 
         var url = "https://jaja.id/backend/payment/getPayment/" + orderId;
-        console.log('getPaymentUrl', url);
         fetch(url, requestOptions)
             .then(response => response.json())
             .then(result => {
@@ -751,8 +749,8 @@ export default function OrderDetailsScreen() {
                 setOrderPaymentRecent(result.orderPaymentRecent);
                 setMidtrans(result.midtrans);
                 setLoadingOrderPaymentRecent(false);
-                console.log("resultGetPayment", result.orderPaymentRecent);
-                console.log("resultMidtrans", result.midtrans);
+                // console.log("resultGetPayment", result.orderPaymentRecent);
+                // console.log("resultMidtrans", result.midtrans);
 
             })
             .catch(error => {
@@ -984,6 +982,9 @@ export default function OrderDetailsScreen() {
                                 <Text numberOfLines={1} style={[styles.font_12]}>{details.address.phoneNumber}</Text>
                                 <Text numberOfLines={3} style={[styles.font_11, styles.mt_2]}>{details.address.address.replace(/<br>/g, "\n")}</Text>
                                 <Text numberOfLines={1} style={[styles.font_12]}>Catatan : {details.items[0].note}</Text>
+                                {details.items[0].shippingSelected?.dateSendTime ?
+                                    <Text numberOfLines={1} style={[styles.font_12]}>Akan Dikirim : {details.items[0].shippingSelected.dateSendTime}</Text>
+                                    : null}
 
                             </View>
                         </View>
@@ -991,6 +992,7 @@ export default function OrderDetailsScreen() {
                     }
                     {details && details.items.length ?
                         details.items.map((item, idxStore) => {
+
                             return (
                                 <View key={String(idxStore) + 'AL'} style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]} >
                                     <View style={[styles.row_between_center, styles.px_3, styles.py_2, { width: '100%', borderBottomWidth: 0.2, borderBottomColor: colors.WhiteSilver }]}>
@@ -1012,7 +1014,12 @@ export default function OrderDetailsScreen() {
                                                 <View key={String(idx) + "SV"} style={[styles.column, styles.px_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver, width: '100%' }]}>
                                                     <View style={[styles.row_start_center, { width: '100%', height: Wp('25%') }]}>
                                                         <TouchableOpacity onPress={() => handleShowDetail(child)}>
-                                                            <Image style={{ width: Wp('15%'), height: Wp('15%'), borderRadius: 5, backgroundColor: colors.BlackGrey }}
+                                                            <Image style={{
+                                                                width: Wp('15%'), height: Wp('15%'), borderRadius: 5, backgroundColor: colors.White,
+                                                                borderWidth: 0.2,
+                                                                borderColor: colors.Silver,
+                                                                alignSelf: 'center'
+                                                            }}
                                                                 resizeMethod={"scale"}
                                                                 resizeMode="cover"
                                                                 source={{ uri: child.image }}
@@ -1047,6 +1054,15 @@ export default function OrderDetailsScreen() {
                                                         {/* <Text style={[styles.font_13, { fontStyle: 'italic' }]}>Subtotal </Text> */}
                                                         <Text numberOfLines={1} style={[styles.font_13, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}> {child.subTotalCurrencyFormat}</Text>
                                                     </View>
+                                                    {child.greetingCardGift ?
+                                                        <>
+                                                            <Text numberOfLines={4} style={[styles.font_12, styles.px_3, styles.mb_2]}>Kartu Ucapan :</Text>
+                                                            <View style={[styles.mb_3, styles.p_3, { width: '95%', elevation: 2, borderRadius: 2, backgroundColor: colors.WhiteGrey, alignSelf: 'center' }]}>
+                                                                <Text numberOfLines={4} style={[styles.font_12, { alignSelf: 'center' }]}>{child.greetingCardGift}</Text>
+                                                            </View>
+                                                        </>
+                                                        : null
+                                                    }
                                                 </View>
                                             )
                                         })
@@ -1369,7 +1385,12 @@ export default function OrderDetailsScreen() {
                                                     <View style={styles.row_between_center}>
                                                         <View style={[styles.row_start_center, { flex: 1, height: Wp('25%') }]}>
                                                             <TouchableOpacity >
-                                                                <Image style={{ width: Wp('15%'), height: Wp('15%'), borderRadius: 5, backgroundColor: colors.BlackGrey }}
+                                                                <Image style={{
+                                                                    width: Wp('15%'), height: Wp('15%'), borderRadius: 5, backgroundColor: colors.White,
+                                                                    borderWidth: 0.2,
+                                                                    borderColor: colors.Silver,
+                                                                    alignSelf: 'center'
+                                                                }}
                                                                     resizeMethod={"scale"}
                                                                     resizeMode="cover"
                                                                     source={{ uri: child.image }}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { colors, FastImage, Ps, ServiceProduct, styles, useNavigation, Wp } from '../../export'
@@ -8,11 +8,9 @@ import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 export default function CardProductComponent(props) {
     const navigation = useNavigation()
     const dispatch = useDispatch()
-    const [img, setImg] = useState(require('../../assets/images/JajaId.png'))
     const reduxAuth = useSelector(state => state.auth.auth)
 
     const handleShowDetail = item => {
-        console.log("🚀 ~ file: CardProductComponent.js ~ line 15 ~ CardProductComponent ~ item", item)
         dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
         if (!props.gift) {
             navigation.navigate("Product")
@@ -40,11 +38,6 @@ export default function CardProductComponent(props) {
 
     }
 
-    useEffect(() => {
-        FastImage.cacheControl.immutable
-        FastImage.preload([{ uri: 'https://cf.shopee.co.id/file/19ea449dcd69e70b2d22bc9e98581655' }])
-        // dispatch({ type: 'SET_DASHRECOMMANDED', payload: [] })
-    }, [])
 
     const renderItem = ({ item, index }) => {
         return (
@@ -108,6 +101,7 @@ export default function CardProductComponent(props) {
                         <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
                         <Text adjustsFontSizeToFit style={[Ps.locarionName]}>{item.location}</Text>
                     </View>
+
                     {/* {item.freeOngkir == 'Y' ?
                                 <View style={{ width: Wp('6%'), height: Wp('6%'), justifyContent: 'center' }}>
                                     <Image style={[{ width: '100%', height: '100%', margin: 0 }]} source={require('../../assets/icons/free-delivery.png')} />
@@ -115,27 +109,31 @@ export default function CardProductComponent(props) {
                                 : null} */}
 
                 </View>
-            </TouchableOpacity>
+            </TouchableOpacity >
 
         )
 
     }
 
-    console.log("🚀 ~ file: CardProductComponent.js ~ line 55 ~ CardProductComponent ~ props.data", props.data.length)
+
+    const keyExtractor = useCallback((item, index) => index + 'XD', [])
+    const ITEM_HEIGHT = Wp('41%')
+    const getItemLayout = (data, index) => (
+        { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
+    );
     return (
         <FlatList
-            // removeClippedSubvigPeriod={100} // Increase time between renders
-            removeClippedSubviews={true} // Unmount components when outside of window 
-            initialNumToRender={3} // Reduce initial render amount
-            maxToRenderPerBatch={3} // Reduce number in each render batch
-            updateCellsBatchingPeriod={50}
-            windowSize={7}
+            getItemLayout={getItemLayout}
+            initialNumToRender={10}
+            maxToRenderPerBatch={20}
+            windowSize={10}
             data={props.data}
             numColumns={2}
             scrollEnabled={true}
-            keyExtractor={(item, index) => String(item.id) + index + "XH"}
+            keyExtractor={keyExtractor}
             contentContainerStyle={{ flex: 0, width: Wp('100%'), justifyContent: 'center', alignSelf: 'center' }}
             renderItem={renderItem}
+            extraData={props.data}
         />
     )
 }

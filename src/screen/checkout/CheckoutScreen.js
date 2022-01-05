@@ -709,6 +709,7 @@ export default function checkoutScreen() {
             "dateSendTime": dateSendTime,
             "greetingCardGift": textGift
         });
+
         let res = await ServiceProduct.handleUpdateGift(reduxAuth, credentials);
 
         if (res) {
@@ -735,8 +736,8 @@ export default function checkoutScreen() {
                 barStyle='default'
                 showHideTransition="fade"
             />
-            <Appbar back={true} title="Checkout" />
             {load ? <Loading /> : null}
+            <Appbar back={true} title="Checkout" />
             {Object.keys(reduxCheckout).length == 0 ? <Loading /> : null}
             <ScrollView contentContainerStyle={{ flex: 0, flexDirection: 'column', paddingBottom: Hp('7%'), backgroundColor: colors.White }} refreshControl={<RefreshControl refreshing={refreshControl} onRefresh={onRefresh} />}>
                 <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
@@ -780,7 +781,12 @@ export default function checkoutScreen() {
                                         return (
                                             <View key={String(idx) + "s"} style={[styles.column, styles.p_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}>
                                                 <View style={[styles.row_start_center, styles.py_2, { width: '100%', height: Wp('25%') }]}>
-                                                    <Image style={{ width: Wp('18%'), height: '90%', borderRadius: 5, backgroundColor: colors.BlackGrey }}
+                                                    <Image style={{
+                                                        width: Wp('18%'), height: '90%', borderRadius: 5, backgroundColor: colors.White,
+                                                        borderWidth: 0.2,
+                                                        borderColor: colors.Silver,
+                                                        alignSelf: 'center'
+                                                    }}
                                                         resizeMethod={"scale"}
                                                         resizeMode="cover"
                                                         source={{ uri: child.image }}

@@ -139,6 +139,7 @@ export default function HomeScreen() {
         }, []),
     );
     useEffect(() => {
+        setLoading(true)
         try {
             dispatch({ 'type': 'SET_LOADMORE', payload: false })
 
@@ -159,7 +160,7 @@ export default function HomeScreen() {
         }
         console.log('xfcygvhbjknqlw jhgcfygv')
 
-        setTimeout(() => setLoading(false), 5000);
+        setTimeout(() => setLoading(false), 3000);
     }, [])
 
     const getBadges = () => {
@@ -289,7 +290,7 @@ export default function HomeScreen() {
 
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
         return layoutMeasurement.height + contentOffset.y >=
-            contentSize.height - (hg * 0.80) || layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 0.05)
+            contentSize.height - (hg * 0.80) || layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 2)
     }
 
     const loadMoreData = () => {
@@ -297,7 +298,7 @@ export default function HomeScreen() {
             dispatch({ 'type': 'SET_LOADMORE', payload: true })
         }
     }
-    
+
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         getItem()

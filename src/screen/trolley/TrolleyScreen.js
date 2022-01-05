@@ -187,7 +187,7 @@ export default function TrolleyScreen() {
         var requestOptions = {
             method: 'GET',
             headers: myHeaders,
-            redirect: 'follow'  
+            redirect: 'follow'
         };
 
         fetch(`https://jaja.id/backend/checkout?isCoin=0&fromCart=1&is_gift=${cartStatus === 1 ? 1 : 0}`, requestOptions)
@@ -354,7 +354,10 @@ export default function TrolleyScreen() {
                                             width: Hp('5%'),
                                             height: Hp('5%'),
                                             borderRadius: 7,
-                                            backgroundColor: colors.Silver,
+                                            backgroundColor: colors.White,
+                                            borderWidth: 0.2,
+                                            borderColor: colors.Silver,
+                                            alignSelf: 'center',
                                             marginRight: '3%'
                                         }}
                                             resizeMethod={"scale"}
@@ -405,7 +408,10 @@ export default function TrolleyScreen() {
                                                                 height: Wp('24%'),
                                                                 marginHorizontal: '3%',
                                                                 borderRadius: 5,
-                                                                backgroundColor: colors.BlackGrey
+                                                                backgroundColor: colors.White,
+                                                                borderWidth: 0.2,
+                                                                borderColor: colors.Silver,
+                                                                alignSelf: 'center'
                                                             }}
                                                                 resizeMethod={"scale"}
                                                                 resizeMode={item.image ? "cover" : "center"}

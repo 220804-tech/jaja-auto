@@ -6,8 +6,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 
 export default function CardProduct() {
-    const [shimmerData] = useState(['1X', '2X', '3X', '4X', '5X', '6X', '7X', '8X'])
-
+    const [shimmerData] = useState(['1X', '2X', '3X', '4X'])
     const renderItem = ({ item }) => {
         return (
             <TouchableOpacity

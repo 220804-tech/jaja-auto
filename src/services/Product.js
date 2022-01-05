@@ -162,7 +162,7 @@ export async function getStoreProduct(params) {
 export async function getRecommendation(dispatch) {
     var config = {
         method: 'get',
-        url: 'https://jaja.id/backend/product/recommendation?page=1&limit=50',
+        url: 'https://jaja.id/backend/product/recommendation?page=1&limit=25',
         headers: {
             'Cookie': 'ci_session=3ocrqec6u5otqek055fej001v7vk1hp6'
         },
@@ -210,11 +210,10 @@ export async function handleUpdateGift(auth, credentials) {
             if (response.data?.status?.code !== 200) {
                 Utils.handleErrorResponse(error, 'Error with status code : 15001')
             }
-            return true 
+            return true
         })
         .catch(function (error) {
             Utils.handleError(error, 'Error with status code : 15002')
             return true
         });
-
 }

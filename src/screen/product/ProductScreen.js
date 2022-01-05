@@ -70,8 +70,8 @@ export default function ProductScreen(props) {
 
     useEffect(() => {
         setmodal(false)
+        setLoading(true)
         if (props.route.params && reduxProduct.slug) {
-            setLoading(true)
             // getItem(reduxProduct.slug)
             if (showFlashsale) {
                 setFlashsale(true)
@@ -79,6 +79,7 @@ export default function ProductScreen(props) {
                 setFlashsale(false)
             }
         }
+        setTimeout(() => setLoading(false), 3000);
         dynamicLink()
 
     }, [])
@@ -104,17 +105,18 @@ export default function ProductScreen(props) {
         const link_URL = await dynamicLinks().buildShortLink({
             link: `https://jajaid.page.link/product?slug=${reduxProduct.slug}`,
             domainUriPrefix: 'https://jajaid.page.link',
-            // ios: {
-            //     bundleId: 'com.jajabuyer',
-            //     appStoreId: 'id1547981332',
-            //     fallbackUrl: 'https://apps.apple.com/id/app/jaja-id-marketplace-hobbies/id1547981332?l=id',
-            // },
+            ios: {
+                bundleId: 'com.jaja.customer',
+                appStoreId: '1547981332',
+                fallbackUrl: 'https://apps.apple.com/id/app/jaja-id-marketplace-hobbies/id1547981332?l=id',
+            },
             android: {
                 packageName: 'com.jajaidbuyer',
                 fallbackUrl: 'https://play.google.com/store/apps/details?id=com.jajaidbuyer',
-            }            // navigation: {
-            //     forcedRedirectEnabled: true,
-            // }
+            },
+            navigation: {
+                forcedRedirectEnabled: true,
+            }
         });
         setlink(link_URL)
     }
@@ -218,7 +220,7 @@ export default function ProductScreen(props) {
                 if (flashsale.stokFlash <= 0) {
                     setdisableCart(true)
                 } else {
-                    setdisableCart(false)   
+                    setdisableCart(false)
                 }
             } else if (status != 'live') {
                 setFlashsale(false)

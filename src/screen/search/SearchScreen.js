@@ -231,6 +231,7 @@ export default function SearchScreen() {
         }
 
         ServiceStore.getStoreProduct(obj).then(res => {
+            console.log("🚀 ~ file: SearchScreen.js ~ line 234 ~ ServiceStore.getStoreProduct ~ res", res)
             if (res) {
                 dispatch({ "type": 'SET_NEW_PRODUCT', payload: res.items })
             }
