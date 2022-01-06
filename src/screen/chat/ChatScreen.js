@@ -93,7 +93,7 @@ export default function ChatScreen({ route }) {
                 .ref("/people/" + data.id + "/token")
                 .once('value')
                 .then(snapshot => setTarget(String(snapshot.val())))
-            setTimeout(() => setLoading(false), 2000);
+            setTimeout(() => setLoading(false), 3000);
         } catch (error) {
 
         }
@@ -154,6 +154,8 @@ export default function ChatScreen({ route }) {
                 }
                 if (data && reduxAuth) {
                     try {
+
+                        setLoading(false)
                         if (selectedOrder) {
                             message.order = selectedOrder
                         }
@@ -275,7 +277,7 @@ export default function ChatScreen({ route }) {
                             //     <Image source={{ uri: item.image }} style={{ width: '96%', height: '96%', resizeMode: 'cover', alignSelf: 'center', justifyContent: 'center', alignItems: 'center', borderRadius: 2 }} />
                             // </View>
                             <View style={[{ width: Wp('70%'), height: Wp('70%'), alignSelf: 'flex-end', alignItems: 'flex-end', justifyContent: 'flex-end', paddingHorizontal: '0.5%', marginRight: '-3%' }]}>
-                                <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%', resizeMode: 'contain', alignSelf: 'center' }} />
+                                <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%', resizeMode: 'contain', alignSelf: 'center', borderWidth: 0.5, borderColor: colors.Silver }} />
                             </View>
                             :
                             <>
@@ -472,7 +474,7 @@ export default function ChatScreen({ route }) {
                                         }}
                                     >
                                         <View style={[{ width: Wp('70%'), height: Wp('70%'), alignSelf: 'flex-end', alignItems: 'flex-end', justifyContent: 'flex-end' }]}>
-                                            <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%', resizeMode: 'contain', alignSelf: 'flex-end', padding: "0.2%" }} />
+                                            <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%', resizeMode: 'contain', alignSelf: 'flex-end', padding: "0.2%", borderWidth: 0.5, borderColor: colors.Silver }} />
                                         </View>
                                     </View>
                                     : null}

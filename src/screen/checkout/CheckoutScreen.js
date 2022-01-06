@@ -817,17 +817,23 @@ export default function checkoutScreen() {
                                                 <View style={[styles.row_end_center]}>
                                                     <Text numberOfLines={1} style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja }]}> {child.subTotalCurrencyFormat}</Text>
                                                 </View>
-                                                <View style={[styles.mt_2, styles.p_2, { width: '99%', borderRadius: 3, alignSelf: 'center', backgroundColor: colors.White, elevation: 1 }]}>
-                                                    <View style={styles.row_between_center}>
-                                                        <Text style={styles.font_12}>Kartu ucapan :</Text>
-                                                        <Text onPress={() => {
-                                                            setgiftSelected(child.cartId)
-                                                            setModalShow2(true)
-                                                            settextGift(child.greetingCardGift)
-                                                        }} style={[styles.font_12, { color: colors.BlueJaja }]}>Ubah</Text>
-                                                    </View>
-                                                    <Text numberOfLines={2} style={styles.font_12}>{child.greetingCardGift}</Text>
-                                                </View>
+                                                <TouchableRipple onPress={() => {
+                                                    setgiftSelected(child.cartId)
+                                                    setModalShow2(true)
+                                                    settextGift(child.greetingCardGift)
+                                                }} rippleColor={colors.White} style={[styles.column_center_start, styles.mt_2, styles.p_2, { width: '99%', borderRadius: 3, alignSelf: 'center', backgroundColor: colors.White, borderWidth: 1, borderColor: colors.RedFlashsale, borderRadius: 10 }]}>
+                                                    {/* <View style={styles.row_between_center}> */}
+                                                    <>
+                                                        <View style={[styles.row_center, { width: '100%' }]}>
+                                                            <Text style={[styles.font_10, { alignSelf: 'center', width: '33.3%', textAlign: 'center' }]}></Text>
+
+                                                            <Text style={[styles.font_10, { color: colors.RedFlashsale, alignSelf: 'center', width: '33.3%', textAlign: 'center' }]}>Kartu ucapan</Text>
+                                                            <Text style={[styles.font_10, { color: colors.BlueJaja, width: '33.3%', textAlign: 'right' }]}>Ubah</Text>
+                                                        </View>
+
+                                                        <Text numberOfLines={2} style={[styles.font_12, styles.T_medium, { color: colors.RedFlashsale, alignSelf: 'center', textAlign: 'center' }]}>{child.greetingCardGift ? child.greetingCardGift : 'Ubah kartu ucapan!'}</Text>
+                                                    </>
+                                                </TouchableRipple>
                                             </View>
                                         )
                                     })}

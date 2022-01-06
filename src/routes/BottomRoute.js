@@ -170,7 +170,7 @@ export default function BottomRoute() {
                         return (
                             <View style={[style.column, style.mx]}>
                                 <FAIcon name="rocket" size={size} color={focused ? colors.YellowJaja : colors.BlueJaja} style={{ marginBottom: '-2%' }} />
-                                {reduxUserNotif.totalNotifUnread ?
+                                {parseInt(reduxUserNotif.totalNotifUnread) ?
                                     <View style={style.countNotif}><Text style={[style.textNotif, { marginBottom: '-1%' }]}>{parseInt(reduxUserNotif.totalNotifUnread) > 99 ? "99+" : parseInt(reduxUserNotif.totalNotifUnread)}</Text></View> : null
                                 }
                             </View>
@@ -211,7 +211,7 @@ export default function BottomRoute() {
                         return (
                             <View style={[style.column, style.mx]}>
                                 <Image style={{ width: size, height: size, tintColor: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '-2%' }} source={require(`../assets/icons/chat.png`)} />
-                                {reduxnotifCount && reduxnotifCount.chat ?
+                                {reduxnotifCount && parseInt(reduxnotifCount.chat) ?
                                     <View style={style.countNotif}><Text style={[style.textNotif]}>{parseInt(reduxnotifCount.chat) > 99 ? "99+" : reduxnotifCount.chat}</Text></View> : null
                                     // <View style={style.countNotif}><Text style={style.textNotif}>{parseInt(reduxnotifCount.chat) > 99 ? "99+" : reduxnotifCount.chat}</Text></View> : null
 
@@ -230,7 +230,7 @@ export default function BottomRoute() {
                     tabBarIcon: ({ size, focused }) => (
                         <View style={style.column}>
                             <Image style={{ width: size, height: size, tintColor: focused ? colors.YellowJaja : colors.BlueJaja, marginBottom: '-2%' }} source={require(`../assets/icons/traffic-blue.png`)} />
-                            {reduxnotifCount && reduxnotifCount.orders ?
+                            {reduxnotifCount && parseInt(reduxnotifCount.orders) ?
                                 <View style={style.countNotif}><Text style={style.textNotif}>{parseInt(reduxnotifCount.orders) > 99 ? "99+" : reduxnotifCount.orders}</Text></View> : null
                             }
                         </View>
