@@ -206,7 +206,7 @@ class RegisterScreen extends Component {
                             <View style={[styles.viewInput, style.mr_2, { width: Wp('45%') }]}>
                                 <TextInput
                                     name="firstName"
-                                    style={styles.inputBox}
+                                    style={[styles.inputBox, style.font_13]}
                                     type="text"
                                     onChange={this.handleFirstName}
                                     outlineColor={colors.WhiteSilver}
@@ -317,7 +317,7 @@ class RegisterScreen extends Component {
                     </View>
                     <View style={styles.viewInput}>
                         <Button
-                            labelStyle={{ color: 'white' }}
+                            labelStyle={[style.font_13, style.T_semi_bold, { color: 'white' }]}
                             onPress={this.onRegistrasi}
                             mode="contained"
                             contentStyle={styles.contentButton}
@@ -374,8 +374,9 @@ const styles = StyleSheet.create({
         color: '#FFF',
     },
     inputBox: {
-        height: Hp('5.7%'),
-        backgroundColor: colors.White
+        // height: Hp('6.2%'),
+        backgroundColor: colors.White,
+        padding: 0,
     },
     iconMarket: { alignSelf: "center", width: Wp('80%'), height: Hp('40%') },
     textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 18, fontFamily: 'Poppins-SemiBold', color: colors.black, fontFamily: 'Poppins-Regular', marginVertical: Hp('2%') },
@@ -387,7 +388,7 @@ const styles = StyleSheet.create({
     },
     contentButton: {
         width: Wp('90%'),
-        height: Hp('5.3%')
+        // height: Hp('5.3%')
     },
     scrollView: {
         flex: 1,

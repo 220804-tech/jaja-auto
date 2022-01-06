@@ -152,6 +152,7 @@ export default function ChatScreen({ route }) {
                     image: imageUrl,
                     order: null
                 }
+                console.log("🚀 ~ file: ChatScreen.js ~ line 155 ~ handleSend ~ message", message)
                 if (data && reduxAuth) {
                     try {
 
@@ -614,7 +615,6 @@ export default function ChatScreen({ route }) {
                                             source={require('../../assets/icons/close.png')}
                                         />
                                     </View>
-                                    {console.log("🚀 ~ file: ChatScreen.js ~ line 599 ~ ChatScreen ~ product", selectedProduct.priceDiscount)}
                                     {product.isDiscount ?
                                         <View style={{ flex: 0, flexDirection: 'column' }}>
                                             <View style={{ flexDirection: 'row' }}>

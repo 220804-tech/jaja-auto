@@ -215,7 +215,6 @@ export default function index(props) {
         );
     }
 
-
     const rightButtons = [
         <TouchableOpacity onPress={() => status === "checkout" ? handleChangePrimary(item.id) : navigation.navigate("AddAddress", { data: itemSelected, edit: true })} style={[styles.card, style.column_center, { height: '100%', width: '20%', backgroundColor: colors.BlueJaja }]}>
             <Image style={[style.icon_25, { tintColor: colors.White }]} source={require('../../assets/icons/edit_pen.png')} />
@@ -224,6 +223,7 @@ export default function index(props) {
         //     <Image style={[style.icon_25, { tintColor: colors.White }]} source={require('../../assets/icons/delete.png')} />
         // </TouchableOpacity>
     ]
+    
     const renderItem = ({ item, index }) => {
         return (
             // <Swipeable

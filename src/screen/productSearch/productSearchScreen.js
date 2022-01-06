@@ -60,7 +60,7 @@ export default function ProductSearchScreen() {
         setPage(1)
 
 
-        fetch(`https://jaja.id/backend/product/search/result?page=1&limit=100&keyword=${keyword}&filter_category=${categoryName}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
+        fetch(`https://jaja.id/backend/product/${categoryName ? 'category/' + categoryName : 'search/result'}?page=1&limit=100&keyword=${categoryName ? '' : keyword}&filter_category=${categoryName}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.status.code === 200 || result.status.code === 204) {
@@ -73,16 +73,8 @@ export default function ProductSearchScreen() {
                 // dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
             })
             .catch(error => {
-                Utils.CheckSignal().then(res => {
-                    if (res.connect == false) {
-                        ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda", ToastAndroid.LONG, ToastAndroid.CENTER)
-                    } else {
-                        console.log("saa")
-                        ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)
-                    }
-                })
+                Utils.handleError(error, 'Error with status code : 16001')
             });
-
     }
 
     const handleReset = () => {
@@ -105,7 +97,7 @@ export default function ProductSearchScreen() {
         setSort('')
         setPage(1)
 
-        fetch(`https://jaja.id/backend/product/search/result?page=1&limit=10&keyword=${keyword}&filter_category=${categoryName}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
+        fetch(`https://jaja.id/backend/product/${categoryName ? 'category/' + categoryName : 'search/result'}?page=1&limit=50&keyword=${categoryName ? '' : keyword}&filter_category=${categoryName}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 console.log("🚀 ~ file: productSearchScreen.js ~ line 12112 ~ handleFetch ~ result", result)

@@ -11,30 +11,34 @@ export default function CardProductComponent(props) {
     const reduxAuth = useSelector(state => state.auth.auth)
 
     const handleShowDetail = item => {
-        dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
-        if (!props.gift) {
-            navigation.navigate("Product")
-        } else {
-            dispatch({ type: 'SET_GIFT', payload: item })
-            dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: {} })
-            dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-            navigation.navigate("GiftDetails")
-        }
-        dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: item })
-        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-        dispatch({ type: 'SET_SLUG', payload: item.slug })
-
-        ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
-            if (res && res?.status?.code === 400) {
-                Utils.alertPopUp('Sepertinya data tidak ditemukan!')
-                dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
-                navigation.goBack()
+        try {
+            dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+            if (!props.gift) {
+                navigation.navigate("Product")
             } else {
-                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
-                setTimeout(() => dispatch({ type: 'SET_PRODUCT_LOAD', payload: false }), 500);
-                dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                dispatch({ type: 'SET_GIFT', payload: item })
+                dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: {} })
+                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+                navigation.navigate("GiftDetails")
             }
-        })
+            dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: item })
+            dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+            dispatch({ type: 'SET_SLUG', payload: item.slug })
+
+            ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+                if (res?.status?.code === 400) {
+                    Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                    navigation.goBack()
+                } else {
+                    dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                    setTimeout(() => dispatch({ type: 'SET_PRODUCT_LOAD', payload: false }), 500);
+                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                }
+            })
+        } catch (error) {
+
+        }
 
     }
 
@@ -121,6 +125,7 @@ export default function CardProductComponent(props) {
     const getItemLayout = (data, index) => (
         { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
     );
+
     return (
         <FlatList
             getItemLayout={getItemLayout}

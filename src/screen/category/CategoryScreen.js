@@ -117,7 +117,7 @@ export default function CategoryScreen() {
                                         }}
                                         resizeMode={FastImage.resizeMode.contain}
                                     />
-                                    <Text adjustsFontSizeToFit style={[styles.font_12, { color: colors.BlueJaja, textAlign: 'center' }]}>
+                                    <Text adjustsFontSizeToFit style={[styles.font_11, { color: colors.BlueJaja, textAlign: 'center' }]}>
                                         {item.name}
                                     </Text>
                                 </TouchableOpacity>
@@ -127,7 +127,7 @@ export default function CategoryScreen() {
                 </View>
                 <View style={[styles.column_start_center, styles.py_2, styles.p_2, { width: Wp('73%'), backgroundColor: colors.White }]}>
                     <TouchableOpacity onPress={() => handleSelected(reduxCategory.category[pressed])} style={{ backgroundColor: colors.YellowJaja, padding: '5%', width: '100%', borderRadius: 7, marginBottom: '5%' }}>
-                        <Text adjustsFontSizeToFit style={[styles.font_16, { fontFamily: 'Poppins-SemiBold', color: colors.White, alignSelf: 'center' }]}>{reduxCategory.category[pressed].name}</Text>
+                        <Text adjustsFontSizeToFit style={[styles.font_14, styles.T_semi_bold, { color: colors.White, alignSelf: 'center' }]}>{reduxCategory.category[pressed].name}</Text>
                     </TouchableOpacity>
                     {reduxCategory.category[pressed].children.length ?
                         <FlatList
