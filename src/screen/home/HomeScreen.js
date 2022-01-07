@@ -86,21 +86,52 @@ export default function HomeScreen() {
     const handleDynamicLink = link => {
         try {
             const parsed = queryString.parseUrl(link.url);
+            console.log("🚀 ~ file: HomeScreen.js ~ line 89 ~ HomeScreen ~ parsed", parsed)
+            setLoading(true)
+            let slug = Object.values(parsed.query)
             if ('https://jajaid.page.link/product?' === String(link.url).slice(0, 33)) {
-                setLoading(true)
-                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-                let slug = Object.values(parsed.query)
-                dispatch({ type: 'SET_SLUG', payload: slug[0] })
-                setTimeout(() => {
-                    navigation.push("Product", { slug: slug[0], image: null })
-                    setLoading(false)
-                }, 500);
+                handleShowDetail('product', slug[0])
+            } else {
+                handleShowDetail('gift', slug[0])
             }
+            setTimeout(() => setLoading(false), 1000);
         } catch (error) {
 
         }
     };
+
+    const handleShowDetail = (status, slug) => {
+        try {
+            dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+            if (status !== 'gift') {
+                navigation.navigate("Product")
+            } else {
+                // dispatch({ type: 'SET_GIFT', payload: item })
+                dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: {} })
+                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+                navigation.navigate("GiftDetails")
+            }
+            // dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: item })
+            dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+            dispatch({ type: 'SET_SLUG', payload: slug })
+
+            ServiceProduct.getProduct(reduxAuth, slug).then(res => {
+                if (res?.status?.code === 400) {
+                    Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                    navigation.goBack()
+                } else {
+                    dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                    setTimeout(() => dispatch({ type: 'SET_PRODUCT_LOAD', payload: false }), 500);
+                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                }
+            })
+        } catch (error) {
+
+        }
+
+    }
+
 
     useFocusEffect(
         useCallback(() => {
@@ -138,6 +169,7 @@ export default function HomeScreen() {
             }
         }, []),
     );
+
     useEffect(() => {
         setLoading(true)
         try {
@@ -158,8 +190,6 @@ export default function HomeScreen() {
         } catch (error) {
 
         }
-        console.log('xfcygvhbjknqlw jhgcfygv')
-
         setTimeout(() => setLoading(false), 3000);
     }, [])
 

@@ -140,11 +140,11 @@ export default function StoreScreen() {
                     <View style={styles.row_between_center}>
                         {Object.keys(reduxStore).length !== 0 ?
                             <View style={styles.row_start_center}>
-                                <View style={{ width: Wp('14.5%'), height: Wp('14.5%'), borderRadius: 5, marginRight: '5%', borderWidth: 0.5, borderColor: '#f5f5f5', backgroundColor: colors.BlueJaja, alignItems: 'center', justifyContent: 'center' }}>
-                                    {reduxStore.image.profile ?
+                                <View style={{ width: Wp('14.5%'), height: Wp('14.5%'), borderRadius: 5, marginRight: '5%', borderWidth: 0.5, borderColor: colors.Silver, backgroundColor: colors.White, alignItems: 'center', justifyContent: 'center' }}>
+                                    {!reduxStore.image.profile ?
                                         <Image source={{ uri: reduxStore.image.profile ? reduxStore.image.profile : null }} style={{ width: '100%', height: '100%', resizeMode: 'contain', borderRadius: 5 }} />
                                         :
-                                        <Text style={[styles.font_26, styles.T_semi_bold, { color: colors.White, alignSelf: 'center' }]}>{String(reduxStore.name).slice(0, 1)}</Text>
+                                        <Text style={[styles.font_26, styles.T_semi_bold, { color: colors.BlueJaja, alignSelf: 'center', marginBottom: Platform.OS === 'android' ? '-1%' : 0 }]}>{String(reduxStore.name).slice(0, 1)}</Text>
                                     }
                                 </View>
                                 <View style={[styles.column_around_center, { height: Wp('14.5%'), alignItems: 'flex-start' }]}>

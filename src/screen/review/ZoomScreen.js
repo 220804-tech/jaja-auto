@@ -7,7 +7,7 @@ import VideoPlayer from 'react-native-video-player';
 import Swiper from 'react-native-swiper'
 
 export default function ZoomScreen(props) {
-    const reduxReview = useSelector(state => state.search.productDetail.review)
+    const reduxReview = useSelector(state => state.product.productDetail.review)
 
     const [reviewPressed, setreviewPressed] = useState(null)
     const [review, setReview] = useState([])
@@ -45,7 +45,7 @@ export default function ZoomScreen(props) {
                 barStyle='default'
                 showHideTransition="fade"
             />
-            <Appbar back={true} Bg="transparent" />
+            <Appbar back={true} Bg="transparent" bgTop={colors.Black} />
             {/* <View style={{ backgroundColor: colors.Black, justifyContent: 'center', alignItems: 'center', width: Wp('100%'), height: Hp('100%') }}> */}
             <Swiper showsButtons={true} >
                 {review.map((item, index) => {

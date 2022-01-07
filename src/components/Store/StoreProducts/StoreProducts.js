@@ -136,10 +136,10 @@ export default function StoreProducts() {
             limit: 20,
             keyword: '',
             price: '',
-            condition: condition,
-            preorder: stock,
+            condition: '',
+            preorder: '',
             brand: '',
-            sort: sort,
+            sort: '',
             category: ''
         }
         if (name !== 'reset') {
@@ -150,13 +150,14 @@ export default function StoreProducts() {
             obj.category = category
             setFocus(2)
         } else {
+            setCondition('')
+            setSort('')
+            setStock('')
+            setCategory('')
             setFocus(1)
-            console.log("🚀 ~ file: simpan")
         }
-        console.log("🚀 ~ file: StoreProducts.js ~ line 157 ~ ServiceStore.getStoreProduct ~ obj", obj)
         ServiceStore.getStoreProduct(obj).then(res => {
             if (res) {
-                console.log("🚀 ~ file: StoreProducts.js ~ line 165 ~ ServiceStore.getStoreProduct ~ res", res.items.length)
                 dispatch({ type: 'SET_STORE_PRODUCT', payload: res.items })
                 setcount(count + 1)
                 setTimeout(() => setLoading(false), 1000);

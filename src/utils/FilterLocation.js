@@ -3,6 +3,7 @@ import { getDistance, getPreciseDistance } from 'geolib';
 
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { Utils } from '../export';
+import { Alert } from 'react-native';
 export default async function FilterLocation(locations, user, category, auth) {
     // console.log("🚀 ~ file: FilterLocation.js ~ line 7 ~ FilterLocation ~ auth", auth)
     // console.log("🚀 ~ file: FilterLocation.js ~ line 7 ~ FilterLocation ~ category", category)

@@ -979,11 +979,11 @@ export default function OrderDetailsScreen() {
                                 <View style={styles.row_between_center}>
                                     <Text numberOfLines={1} style={[styles.font_12, { width: '70%' }]}>{details.address.receiverName}</Text>
                                 </View>
-                                <Text numberOfLines={1} style={[styles.font_12]}>{details.address.phoneNumber}</Text>
-                                <Text numberOfLines={3} style={[styles.font_11, styles.mt_2]}>{details.address.address.replace(/<br>/g, "\n")}</Text>
-                                <Text numberOfLines={1} style={[styles.font_12]}>Catatan : {details.items[0].note}</Text>
-                                {details.items[0].shippingSelected?.dateSendTime ?
-                                    <Text numberOfLines={1} style={[styles.font_12]}>Akan Dikirim : {details.items[0].shippingSelected.dateSendTime}</Text>
+                                <Text numberOfLines={1} style={[styles.font_11]}>{details.address.phoneNumber}</Text>
+                                <Text numberOfLines={3} style={[styles.font_12, styles.mt_2]}>{details.address.address.replace(/<br>/g, "\n")}</Text>
+                                <Text numberOfLines={4} style={[styles.font_12, styles.mt_2]}>Catatan untuk penjual : {details.items[0].note ? details.items[0].note : 'Tidak ada catatan'}</Text>
+                                {details.items[0].shippingSelected?.sendTime === 'pilih tanggal' ?
+                                    < Text numberOfLines={1} style={[styles.font_12]}>Akan Dikirim : {details.items[0].shippingSelected.dateSendTime}</Text>
                                     : null}
 
                             </View>

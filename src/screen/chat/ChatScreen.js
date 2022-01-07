@@ -8,6 +8,7 @@ import { colors, Hp, Wp, Appbar, ServiceFirebase as Firebase, styles as style, L
 import { useDispatch, useSelector } from 'react-redux'
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { utils } from "@react-native-firebase/app";
+import { useAndroidBackHandler } from "react-navigation-backhandler";
 
 export default function ChatScreen({ route }) {
     const reduxUser = useSelector(state => state.user.user)
@@ -28,6 +29,7 @@ export default function ChatScreen({ route }) {
     const [loadChat, setloadChat] = useState(true)
     const [sellerImage, setesellerImage] = useState(null)
     const [target, setTarget] = useState(null)
+    const [keyboardFocus, setkeyboardFocus] = useState(5)
 
     const [nameChat, setnameChat] = useState("")
     const [dataFriend, setdataFriend] = useState("")
@@ -42,6 +44,7 @@ export default function ChatScreen({ route }) {
 
     const dispatch = useDispatch()
     const listChat = [{ id: '1SX', text: 'Halo!' }, { id: '1SX', text: 'Halo, apakah barang ini ready?' }, { id: '2SX', text: 'Halo, apakah bisa dikirim hari ini?' }, { id: '3SX', text: 'Terima kasih!' }, { id: '4SX', text: 'Sama-sama!' },]
+
     useEffect(() => {
         setnameChat(data.name);
         firebaseDatabase().ref('/messages/' + data.chat).on('value', function (snapshoot) {
@@ -93,7 +96,7 @@ export default function ChatScreen({ route }) {
                 .ref("/people/" + data.id + "/token")
                 .once('value')
                 .then(snapshot => setTarget(String(snapshot.val())))
-            setTimeout(() => setLoading(false), 3000);
+            setTimeout(() => setLoading(false), 1000);
         } catch (error) {
 
         }
@@ -104,6 +107,7 @@ export default function ChatScreen({ route }) {
         try {
             let imageUrl = ''
             if (image) {
+                console.log('fetch kamera')
                 var myHeaders = new Headers();
                 myHeaders.append("Authorization", reduxAuth);
                 myHeaders.append("Content-Type", "application/json");
@@ -123,10 +127,12 @@ export default function ChatScreen({ route }) {
                 await fetch("https://jaja.id/backend/chat/image", requestOptions)
                     .then(response => response.text())
                     .then(res => {
+                        console.log('done kamera')
                         try {
                             let result = JSON.parse(res)
                             if (result.status.code === 200) {
                                 imageUrl = result.data.url
+                                console.log('result kamera')
 
                             } else {
                                 imageUrl = false
@@ -527,10 +533,14 @@ export default function ChatScreen({ route }) {
 
     const handleOpenCamera = () => {
         galeryRef.current?.setModalVisible(false)
+        setLoading(true)
+        console.log('masuk kamera')
+
         ImagePicker.openCamera({
-            compressImageQuality: 0.8,
+            compressImageQuality: 1,
             includeBase64: true
         }).then(image => {
+            console.log('keluar kamera')
             handleSend(image.data)
         });
     }
@@ -540,7 +550,7 @@ export default function ChatScreen({ route }) {
         ImagePicker.openCamera({
             mediaType: "video",
             compressVideoPreset: '640x480',
-            compressImageQuality: 0.8,
+            compressImageQuality: 1,
             maxFiles: 1,
             includeBase64: true,
         }).then(async video => {
@@ -558,13 +568,25 @@ export default function ChatScreen({ route }) {
     }
     const handlePickImage = () => {
         galeryRef.current?.setModalVisible(false)
+        setLoading(true)
         ImagePicker.openPicker({
-            compressImageQuality: 0.8,
+            compressImageQuality: 1,
             includeBase64: true
         }).then(image => {
             handleSend(image.data)
         });
     }
+
+    useAndroidBackHandler(() => {
+        if (keyboardFocus === 5) {
+            console.log('masuk')
+            return false;
+        } else {
+            setkeyboardFocus(5)
+            console.log('masu sink')
+            return true
+        }
+    });
 
     return (
         <SafeAreaView style={style.container}>
@@ -689,14 +711,21 @@ export default function ChatScreen({ route }) {
                             keyExtractor={(item, index) => String(index)}
                         />
                     </View>
-                    <View style={[style.row_around_center, style.px_2, style.mb_2, { height: Hp('7%'), backgroundColor: 'transparent', }]}>
+                    <View style={[style.row_around_center, style.px_2, { height: Hp('7%'), marginBottom: keyboardFocus, backgroundColor: 'transparent', }]}>
                         <View style={[style.row_start_center, {
                             width: "80%", height: '77%', borderRadius: 100, backgroundColor: colors.White, opacity: 0.9, borderWidth: 0.2,
                             borderColor: colors.BlueJaja,
                         }]}>
                             <TextInput
-                                style={[style.font_14, { width: isiChat.length ? '90%' : '82%', borderColor: "gray", borderBottomLeftRadius: 100, borderTopLeftRadius: 100, paddingHorizontal: 20, marginBottom: '-1%' }]}
-                                underlineColorAndroid="transparent"
+                                onFocus={() => setkeyboardFocus(300)}
+                                // onBlur={() => setkeyboardFocus(5)}
+                                // onPressOut={() => setkeyboardFocus(5)}
+                                onBlur={() => setkeyboardFocus(5)}
+                                onTouchCancel={() => setkeyboardFocus(5)}
+
+
+                                style={[style.font_12, { width: isiChat.length ? '90%' : '82%', borderColor: "gray", borderBottomLeftRadius: 100, borderTopLeftRadius: 100, paddingHorizontal: 20, paddingVertical: 0 }]}
+                                // underlineColorAndroid="transparent"
                                 onChangeText={(text) => setChat(text)} onSubmitEditing={() => handleSend(null)}
                                 value={isiChat}
                             />

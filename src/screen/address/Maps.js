@@ -1,5 +1,5 @@
 import React, { useState, createRef, useEffect } from 'react'
-import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, TextInput, FlatList, Alert, Dimensions, Modal } from 'react-native'
+import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, TextInput, FlatList, Alert, Dimensions, Modal, Platform } from 'react-native'
 import MapView from 'react-native-maps';
 import { Appbar, Button, TouchableRipple } from 'react-native-paper';
 import ActionSheet from 'react-native-actions-sheet';
@@ -235,7 +235,7 @@ export default function map(props) {
 
                         <TouchableOpacity style={[style.searchBar, { width: '87%' }]}>
                             <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
-                            <TextInput keyboardType="default" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={[style.font_13, { width: '91%', marginBottom: '-1%' }]} placeholder='Nama Jalan/Perumahan/Gedung' onChangeText={text => handleSearch(text)} onSubmitEditing={(value) => handleSearch(value.nativeEvent.text)}></TextInput>
+                            <TextInput keyboardType="default" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={[style.font_12, { width: '95%', marginBottom: Platform.OS === 'android' ? '-1%' : '0%' }]} placeholder='Nama Jalan/Perumahan/Gedung' onChangeText={text => handleSearch(text)} onSubmitEditing={(value) => handleSearch(value.nativeEvent.text)}></TextInput>
                         </TouchableOpacity>
                         <TouchableOpacity style={[style.row_center, { width: "11%" }]} onPress={() => actionSheetRef.current?.setModalVisible() & setModal(false)}>
                             <Image style={[style.appBarButton, { transform: [{ rotate: '270deg' }] }]} source={require('../../assets/icons/arrow.png')} />

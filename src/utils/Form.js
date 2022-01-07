@@ -108,7 +108,8 @@ export function handleErrorResponse(error, errorCode) {
 }
 
 export function handleError(error, name) {
-    if (String(error).slice(11, String(error).length) === "Network request failed") {
+    console.log("🚀 ~ file: Form.js ~ line 111 ~ handleError ~ error", String(error))
+    if (String(error).includes("request failed")) {
         alertPopUp("Tidak dapat terhubung, periksa kembali koneksi internet anda!")
     } else {
         if (Platform.OS === 'android') {

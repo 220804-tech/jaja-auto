@@ -114,14 +114,13 @@ export default function checkoutScreen() {
                 date: future.getDate()
             })
         } else {
-
-            future.setDate(future.getDate() + 2);
+            future.setDate(future.getDate() + 3);
             setdateMin({
                 year: future.getFullYear(),
                 month: future.getMonth(),
                 date: future.getDate()
             })
-            future.setDate(future.getDate() + 5);
+            future.setDate(future.getDate() + 7);
 
             setdateMax({
                 year: future.getFullYear(),
@@ -817,23 +816,25 @@ export default function checkoutScreen() {
                                                 <View style={[styles.row_end_center]}>
                                                     <Text numberOfLines={1} style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja }]}> {child.subTotalCurrencyFormat}</Text>
                                                 </View>
-                                                <TouchableRipple onPress={() => {
-                                                    setgiftSelected(child.cartId)
-                                                    setModalShow2(true)
-                                                    settextGift(child.greetingCardGift)
-                                                }} rippleColor={colors.White} style={[styles.column_center_start, styles.mt_2, styles.p_2, { width: '99%', borderRadius: 3, alignSelf: 'center', backgroundColor: colors.White, borderWidth: 1, borderColor: colors.RedFlashsale, borderRadius: 10 }]}>
-                                                    {/* <View style={styles.row_between_center}> */}
-                                                    <>
-                                                        <View style={[styles.row_center, { width: '100%' }]}>
-                                                            <Text style={[styles.font_10, { alignSelf: 'center', width: '33.3%', textAlign: 'center' }]}></Text>
+                                                {cartStatus === 1 ?
+                                                    <TouchableRipple onPress={() => {
+                                                        setgiftSelected(child.cartId)
+                                                        setModalShow2(true)
+                                                        settextGift(child.greetingCardGift)
+                                                    }} rippleColor={colors.White} style={[styles.column_center_start, styles.mt_2, styles.p_2, { width: '99%', borderRadius: 3, alignSelf: 'center', backgroundColor: colors.White, borderWidth: 1, borderColor: colors.RedFlashsale, borderRadius: 10 }]}>
+                                                        {/* <View style={styles.row_between_center}> */}
+                                                        <>
+                                                            <View style={[styles.row_center, { width: '100%' }]}>
+                                                                <Text style={[styles.font_10, { alignSelf: 'center', width: '33.3%', textAlign: 'center' }]}></Text>
 
-                                                            <Text style={[styles.font_10, { color: colors.RedFlashsale, alignSelf: 'center', width: '33.3%', textAlign: 'center' }]}>Kartu ucapan</Text>
-                                                            <Text style={[styles.font_10, { color: colors.BlueJaja, width: '33.3%', textAlign: 'right' }]}>Ubah</Text>
-                                                        </View>
+                                                                <Text style={[styles.font_10, { color: colors.RedFlashsale, alignSelf: 'center', width: '33.3%', textAlign: 'center' }]}>Kartu ucapan</Text>
+                                                                <Text style={[styles.font_10, { color: colors.BlueJaja, width: '33.3%', textAlign: 'right' }]}>Ubah</Text>
+                                                            </View>
 
-                                                        <Text numberOfLines={2} style={[styles.font_12, styles.T_medium, { color: colors.RedFlashsale, alignSelf: 'center', textAlign: 'center' }]}>{child.greetingCardGift ? child.greetingCardGift : 'Ubah kartu ucapan!'}</Text>
-                                                    </>
-                                                </TouchableRipple>
+                                                            <Text numberOfLines={2} style={[styles.font_12, styles.T_medium, { color: colors.RedFlashsale, alignSelf: 'center', textAlign: 'center' }]}>{child.greetingCardGift ? child.greetingCardGift : 'Ubah kartu ucapan!'}</Text>
+                                                        </>
+                                                    </TouchableRipple> : null
+                                                }
                                             </View>
                                         )
                                     })}
@@ -877,51 +878,54 @@ export default function checkoutScreen() {
                                                 <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pengiriman</Text>
                                             </View>
                                             {item.shippingSelected.name ?
-                                                <TouchableOpacity onPress={() => {
-                                                    checkedValue(idxStore)
-                                                    setstorePressed(item.store)
-                                                    setindexStore(idxStore)
-                                                    if (item.shippingSelected?.dateSendTime) {
-                                                        setSendDate(item.shippingSelected.dateSendTime)
-                                                    }
-                                                }}
+                                                <View
+
                                                     style={[styles.column, styles.p_3, { width: '100%' }]}>
-                                                    <View style={styles.row_between_center}>
-                                                        <View style={[styles.column_between_center, { alignItems: 'flex-start' }]}>
-                                                            <Text numberOfLines={1} style={[styles.font_14]}>{item.shippingSelected.name}</Text>
-                                                            <Text numberOfLines={1} style={[styles.font_12]}>{item.shippingSelected.type}</Text>
-                                                            <Text numberOfLines={1} style={[styles.font_12]}>Estimasi {item.shippingSelected.etdText}</Text>
-                                                            {item.shippingSelected.sendTime === 'pilih tanggal' ?
-                                                                <Text numberOfLines={1} style={[styles.font_12]}>Akan dikirim</Text>
-                                                                : null
-                                                            }
+                                                    <TouchableOpacity onPress={() => {
+                                                        checkedValue(idxStore)
+                                                        setstorePressed(item.store)
+                                                        setindexStore(idxStore)
+                                                        if (item.shippingSelected?.dateSendTime) {
+                                                            setSendDate(item.shippingSelected.dateSendTime)
+                                                        }
+                                                    }}>
+                                                        <View style={styles.row_between_center}>
+                                                            <View style={[styles.column_between_center, { alignItems: 'flex-start' }]}>
+                                                                <Text numberOfLines={1} style={[styles.font_14]}>{item.shippingSelected.name}</Text>
+                                                                <Text numberOfLines={1} style={[styles.font_12]}>{item.shippingSelected.type}</Text>
+                                                                <Text numberOfLines={1} style={[styles.font_12]}>Estimasi {item.shippingSelected.etdText}</Text>
+                                                                {item.shippingSelected.sendTime === 'pilih tanggal' ?
+                                                                    <Text numberOfLines={1} style={[styles.font_12]}>Akan dikirim</Text>
+                                                                    : null
+                                                                }
 
 
+                                                            </View>
+                                                            <View style={[styles.column_between_center, { alignItems: 'flex-end' }]}>
+                                                                <Text numberOfLines={1} style={[styles.font_12, styles.mb_2, { color: colors.BlueJaja }]}>Ubah</Text>
+
+                                                                {item.shippingSelected.priceNormal ?
+                                                                    <Text numberOfLines={1} style={[styles.priceBefore, styles.T_italic]}>{item.shippingSelected.priceCurrencyFormatNormal}</Text>
+                                                                    : <Text></Text>
+                                                                }
+
+                                                                <Text numberOfLines={1} style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja, }]}>{item.shippingSelected.priceCurrencyFormat}</Text>
+                                                                {item.shippingSelected.sendTime === 'pilih tanggal' ?
+                                                                    <Text numberOfLines={1} style={[styles.font_12]}>{item.shippingSelected.dateSendTime}</Text>
+                                                                    :
+                                                                    null
+
+                                                                }
+
+
+                                                            </View>
                                                         </View>
-                                                        <View style={[styles.column_between_center, { alignItems: 'flex-end' }]}>
-                                                            <Text numberOfLines={1} style={[styles.font_12, styles.mb_2, { color: colors.BlueJaja }]}>Ubah</Text>
-
-                                                            {item.shippingSelected.priceNormal ?
-                                                                <Text numberOfLines={1} style={[styles.priceBefore, styles.T_italic]}>{item.shippingSelected.priceCurrencyFormatNormal}</Text>
-                                                                : <Text></Text>
-                                                            }
-
-                                                            <Text numberOfLines={1} style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja, }]}>{item.shippingSelected.priceCurrencyFormat}</Text>
-                                                            {item.shippingSelected.sendTime === 'pilih tanggal' ?
-                                                                <Text numberOfLines={1} style={[styles.font_12]}>{item.shippingSelected.dateSendTime}</Text>
-                                                                :
-                                                                null
-
-                                                            }
-
-
-                                                        </View>
-                                                    </View>
+                                                    </TouchableOpacity>
                                                     <View style={[styles.column, styles.mb_3]}>
                                                         <TextInput onChangeText={(text) => handleNotes(text, idxStore)} pla placeholder="Masukkan catatan untuk penjual" style={{ fontSize: 13, color: colors.BlackGrayScale, paddingHorizontal: 0, paddingVertical: '2%', borderBottomWidth: 0.7, borderBottomColor: colors.Silver, width: '100%' }} />
-                                                        <Text style={[styles.font_12, { color: colors.BlackGrey }]}>Catatan untuk penjual </Text>
                                                     </View>
-                                                </TouchableOpacity>
+
+                                                </View>
                                                 :
                                                 <View style={[styles.column, styles.p_3]}>
                                                     <View style={styles.row_between_center}>
@@ -1146,13 +1150,12 @@ export default function checkoutScreen() {
             </ActionSheet>
             <ActionSheet ref={actionSheetDelivery} delayActionSheetDraw={false} containerStyle={{ width: Wp('100%') }} containerStyle={{ padding: '2%' }}>
                 <View style={[styles.row_between_center, styles.py_2, styles.px_4, styles.mb_3]}>
-                    <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.BlueJaja }]}>{cartStatus === 1 ? 'Pilih Tanggal Pengiriman' : 'Pilih Ekspedisi'}</Text>
+                    <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%' }]}>{cartStatus === 1 ? 'Pilih Tanggal Pengiriman' : 'Pilih Waktu Pengiriman'}</Text>
                     <TouchableOpacity style={{ backgroundColor: 'transparent', paddingVertical: '2%', paddingHorizontal: '3%' }} onPressIn={() => actionSheetDelivery.current?.setModalVisible()}>
                         <Image style={[styles.icon_12, { tintColor: colors.BlueJaja }]} source={require('../../assets/icons/close.png')} />
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'column', minHeight: Hp('20%'), maxHeight: Hp('60%'), width: '100%', paddingBottom: '5%' }}>
-
                     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ width: '100%' }}>
                         <View style={[styles.column, { width: '100%' }]}>
                             {/* <Text style={[styles.font_14, styles.mb_3, { color: colors.BlueJaja, fontFamily: 'Poppins-SemiBold', borderBottomWidth: 0.5, borderBottomColor: colors.BlueJaja }]}>{item.title}</Text> */}
@@ -1176,7 +1179,54 @@ export default function checkoutScreen() {
                                             </View>
 
                                         </>
-                                        : null}
+                                        :
+                                        <View style={[styles.column_center_start, styles.mb_2, styles.py_2, styles.px_2, { width: '100%' }]}>
+                                            <FlatList
+                                                inverted
+                                                data={reduxShipping[0].sendTime}
+                                                keyExtractor={(item, index) => String(index)}
+                                                style={{ width: '100%' }}
+                                                renderItem={({ item }) => {
+                                                    return (
+                                                        <View style={[styles.column, styles.mb_3, styles.py_2, { width: '100%' }]}>
+                                                            <TouchableOpacity onPress={() => setsendTime(item.value)} style={styles.row_start_center}>
+                                                                <CheckBox
+                                                                    disabled={false}
+                                                                    value={sendTime === item.value ? true : false}
+                                                                    onValueChange={() => {
+                                                                        if (item.value !== "pilih tanggal") {
+                                                                            setSendDate("")
+                                                                        }
+                                                                        setsendTime(item.value)
+                                                                    }}
+                                                                />
+                                                                <View style={styles.row_between_center}>
+                                                                    <Text style={[styles.font_14, styles.T_medium, { flex: 1 }]}>{item.name}</Text>
+                                                                    <Text style={[styles.font_14, styles.T_medium]}>{item.priceCurrencyFormat}</Text>
+                                                                </View>
+                                                            </TouchableOpacity>
+                                                            {
+                                                                sendTime === "pilih tanggal" && item.value === "pilih tanggal" ?
+                                                                    <TouchableOpacity style={[styles.column, styles.px_2, { width: '100%' }]} onPress={() => setDatePickerVisibility(true)}>
+                                                                        <View style={styles.row_between_center}>
+                                                                            <Text style={styles.font_14}>{sendDate}</Text>
+                                                                            <Image source={require('../../assets/icons/calendar.png')} style={[styles.icon_19, { tintColor: colors.BlueJaja }]} />
+                                                                        </View>
+                                                                        <View style={{ width: '100%', borderTopWidth: 1, borderTopColor: colors.Silver, marginTop: '2%' }}>
+                                                                            <Text style={[styles.font_12, styles.T_italic]}>Pilih tanggal pengiriman dari penjual</Text>
+                                                                        </View>
+                                                                    </TouchableOpacity>
+                                                                    : null
+                                                            }
+                                                        </View>
+                                                    )
+                                                }}
+                                            />
+                                        </View>
+                                    }
+                                    <View style={[styles.row_between_center, styles.py_2, styles.px_4, styles.mb_3]}>
+                                        <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.BlueJaja }]}>Pilih Ekpedisi</Text>
+                                    </View>
                                     <FlatList
                                         data={reduxShipping[indexStore].items}
                                         keyExtractor={(item, index) => String(index) + "d"}
@@ -1210,61 +1260,9 @@ export default function checkoutScreen() {
                                             )
                                         }}
                                     />
-                                    {cartStatus !== 1 ?
-                                        <>
-                                            <View style={[styles.row_between_center, styles.py_2, styles.px_4, styles.mb]}>
-                                                <Text style={[styles.font_14, styles.mt_3, styles.T_semi_bold, { color: colors.BlueJaja }]}>Pilih Waktu Pengiriman</Text>
-                                            </View>
-                                            <View style={[styles.column_center_start, styles.mb_2, styles.py_2, styles.px_2, { width: '100%' }]}>
-                                                <FlatList
-                                                    inverted
-                                                    data={reduxShipping[0].sendTime}
-                                                    keyExtractor={(item, index) => String(index)}
-                                                    style={{ width: '100%' }}
-                                                    renderItem={({ item }) => {
-                                                        return (
-                                                            <View style={[styles.column, styles.mb_3, styles.py_2, { width: '100%' }]}>
-                                                                <TouchableOpacity onPress={() => setsendTime(item.value)} style={styles.row_start_center}>
-                                                                    <CheckBox
-                                                                        disabled={false}
-                                                                        value={sendTime === item.value ? true : false}
-                                                                        onValueChange={() => {
-                                                                            if (item.value !== "pilih tanggal") {
-                                                                                setSendDate("")
-                                                                            }
-                                                                            setsendTime(item.value)
-                                                                        }}
-                                                                    />
-                                                                    <View style={styles.row_between_center}>
-                                                                        <Text style={[styles.font_14, styles.T_medium, { flex: 1 }]}>{item.name}</Text>
-                                                                        <Text style={[styles.font_14, styles.T_medium]}>{item.priceCurrencyFormat}</Text>
-                                                                    </View>
-                                                                </TouchableOpacity>
-                                                                {
-                                                                    sendTime === "pilih tanggal" && item.value === "pilih tanggal" ?
-                                                                        <TouchableOpacity style={[styles.column, styles.px_2, { width: '100%' }]} onPress={() => setDatePickerVisibility(true)}>
-                                                                            <View style={styles.row_between_center}>
-                                                                                <Text style={styles.font_14}>{sendDate}</Text>
-                                                                                <Image source={require('../../assets/icons/calendar.png')} style={[styles.icon_19, { tintColor: colors.BlueJaja }]} />
-                                                                            </View>
-                                                                            <View style={{ width: '100%', borderTopWidth: 1, borderTopColor: colors.Silver, marginTop: '2%' }}>
-                                                                                <Text style={[styles.font_12, styles.T_italic]}>Pilih tanggal pengiriman dari penjual</Text>
-                                                                            </View>
-                                                                        </TouchableOpacity>
-                                                                        : null
-                                                                }
-                                                            </View>
-                                                        )
-                                                    }}
-                                                />
-                                            </View>
-
-                                        </>
-                                        : null}
                                 </View> :
                                 <Text style={[styles.font_14, styles.mt_5, { alignSelf: 'center' }]}>Sedang memuat..</Text>}
                         </View>
-
                     </ScrollView>
                 </View>
             </ActionSheet>
@@ -1344,13 +1342,13 @@ export default function checkoutScreen() {
                 transparent={true}
                 visible={showModal2}
                 onRequestClose={() => {
-                    setModalShow(!showModal2);
+                    setModalShow2(!showModal2);
                 }}>
                 <View style={{ flex: 1, width: Wp('100%'), height: Hp('100%'), backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center' }}>
-                    <View style={[styles.column_start, styles.pt_s, { width: Wp('95%'), height: Wp('50%'), backgroundColor: colors.White, elevation: 11, zIndex: 999 }]}>
+                    <View style={[styles.column_start, styles.pt_s, { width: Wp('95%'), minHeight: Wp('50%'), maxHeight: Wp('100%'), backgroundColor: colors.White, elevation: 11, zIndex: 999 }]}>
                         <View style={[styles.column_center_start, styles.px_4, styles.pt_3, { width: '100%' }]}>
                             <Text style={[styles.font_14, styles.T_semi_bold, styles.mb_5, { color: colors.BlueJaja }]}>Kartu Ucapan</Text>
-                            <TextInput textAlignVertical='top' numberOfLines={4} style={[styles.font_12, styles.p_2, { borderRadius: 5, borderWidth: 0.5, borderColor: colors.BlackGrey, width: '100%' }]} value={textGift} onChangeText={text => settextGift(text)} />
+                            <TextInput textAlignVertical='top' numberOfLines={4} multiline={true} style={[styles.font_12, styles.p_2, { borderRadius: 5, borderWidth: 0.5, borderColor: colors.BlackGrey, width: '100%' }]} value={textGift} onChangeText={text => String(textGift).length < 500 ? settextGift(text) : ''} />
                         </View>
 
                         <View style={[styles.row_end, styles.p_2, { width: '100%' }]}>

@@ -42,13 +42,10 @@ export default function MainPage() {
     // }
 
     const handleVoucher = (val) => {
-        console.log("🚀 ~ file: MainPage.js ~ line 44 ~ handleVoucher ~ val",)
         if (!reduxAuth) {
             navigation.navigate('Login', { navigate: "Store" })
         } else if (val.isClaimed) {
-
             dispatch({ "type": 'SET_STORE_INDEX', payload: 1 })
-
         }
         else {
             var myHeaders = new Headers();
@@ -85,6 +82,7 @@ export default function MainPage() {
                 .catch(error => Utils.alertPopUp(String(error)));
         }
     }
+
     const handleDescription = voucher => {
         console.log("file: VoucherScreen.js ~ line 154 ~ VoucherScreen ~ voucher", voucher)
         Alert.alert(
@@ -108,7 +106,6 @@ export default function MainPage() {
             }
         );
     }
-
 
     return (
         <View style={[styles.column_start, { width: Wp('100%'), backgroundColor: colors.White }]}>

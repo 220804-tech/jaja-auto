@@ -83,6 +83,7 @@ export default function ProductScreen(props) {
         dynamicLink()
 
     }, [])
+
     useEffect(() => {
         try {
             // dynamicLink()
@@ -103,7 +104,7 @@ export default function ProductScreen(props) {
 
     const dynamicLink = async () => {
         const link_URL = await dynamicLinks().buildShortLink({
-            link: `https://jajaid.page.link/product?slug=${reduxProduct.slug}`,
+            link: `https://jajaid.page.link/product?slug=${slug}`,
             domainUriPrefix: 'https://jajaid.page.link',
             ios: {
                 bundleId: 'com.jaja.customer',
@@ -138,15 +139,15 @@ export default function ProductScreen(props) {
                         if (!reduxProduct.stock && reduxProduct.stock == '0') {
                             setdisableCart(true)
                         }
-                        let dataSeller = res.store
+                        let dataSeller = reduxProduct.store
                         dataSeller.chat = reduxUser.user.uid + dataSeller.uid
                         dataSeller.id = dataSeller.uid
                         setSeller(dataSeller)
-                        setLike(res.isWishlist)
+                        setLike(reduxProduct.isWishlist)
 
 
-                        if (reduxAuth && res.sellerTerdekat.length && Object.keys(reduxUser.user).length && Object.keys(res.category).length && res.category.slug) {
-                            FilterLocation(res.sellerTerdekat, reduxUser.user.location, res.category.slug, reduxAuth)
+                        if (reduxAuth && reduxProduct.sellerTerdekat.length && Object.keys(reduxUser.user).length && Object.keys(reduxProduct.category).length && reduxProduct.category.slug) {
+                            FilterLocation(reduxProduct.sellerTerdekat, reduxUser.user.location, reduxProduct.category.slug, reduxAuth)
                         }
                     }
                 }
@@ -212,6 +213,7 @@ export default function ProductScreen(props) {
             // alert('890' + String(error))
         }
     }
+
     const handleFlashsale = (flashsale, status) => {
         try {
             if (flashsale && Object.keys(flashsale).length) {
@@ -230,6 +232,7 @@ export default function ProductScreen(props) {
             alert('880' + 680)
         }
     }
+
     const getBadges = () => {
         ServiceUser.getBadges(reduxAuth).then(res => {
             if (res) {
@@ -379,7 +382,6 @@ export default function ProductScreen(props) {
         })
     }
 
-
     const handleTrolley = () => {
         handleGetCart()
         navigation.navigate("Trolley")
@@ -413,6 +415,7 @@ export default function ProductScreen(props) {
             handleLogin()
         }
     }
+
     const handleLogin = () => navigation.navigate('Login', { navigate: "Product" })
 
     const renderNavBar = () => (
@@ -602,7 +605,6 @@ export default function ProductScreen(props) {
         }, 1000);
 
     }
-
 
     const renderContent = () => {
         return (
@@ -843,7 +845,7 @@ export default function ProductScreen(props) {
                                                 </Text> : null
                                             }
                                             <View style={[styles.row, { flexWrap: 'wrap' }]}>
-                                                {item.image.concat(item.image).map((itm, idx) => {
+                                                {item.image.map((itm, idx) => {
                                                     return (
                                                         <TouchableOpacity onPress={() => navigation.navigate('ZoomReview', { data: index })} style={{ width: Wp('17%'), height: Wp('17%'), justifyContent: 'center', alignItems: 'center', backgroundColor: colors.BlackGrayScale, marginRight: '1%' }}>
                                                             <Image key={String(idx) + "i"} source={{ uri: itm }} style={{ width: '100%', height: '100%' }} />
@@ -1013,13 +1015,12 @@ export default function ProductScreen(props) {
 
     const handleChat = () => {
         if (reduxAuth) {
+            // console.log("🚀 ~ file: ProductScreen.js ~ line 1019 ~ handleChat ~ seller", seller)
+            // console.log("🚀 ~ file: ProductScreen.js ~ line 1020 ~ handleChat ~ reduxProduct", reduxProduct)
             navigation.navigate("IsiChat", { data: seller, product: reduxProduct })
         } else {
             handleLogin()
         }
-    }
-    const onCapture = uri => {
-        console.log("do something with ", uri);
     }
 
     return (

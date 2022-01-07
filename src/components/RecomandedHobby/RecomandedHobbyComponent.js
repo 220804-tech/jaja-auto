@@ -89,7 +89,6 @@ export default function RecomandedHobbyComponent(props) {
                     Rekomendasi Hobby
                 </Text>
             </View>
-            {console.log("🚀 ~ file: RecomandedHobbyComponent.js ~ line 93 ~ RecomandedHobbyComponent ~ reduxdashRecommanded", reduxdashRecommanded.length)}
             {reduxdashRecommanded && reduxdashRecommanded.length || storagedashRecommanded && storagedashRecommanded.length ?
                 <View style={[styles.column_center_start, { width: Wp('100%') }]}>
                     <CardProduct data={Array(reduxdashRecommanded).length ? reduxdashRecommanded : Array(storagedashRecommanded).length ? storagedashRecommanded : []} />

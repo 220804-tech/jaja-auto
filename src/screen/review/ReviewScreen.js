@@ -8,7 +8,8 @@ import VideoPlayer from 'react-native-video-player';
 export default function ReviewScreen(props) {
     const navigation = useNavigation()
     const dispatch = useDispatch()
-    const reduxReview = useSelector(state => state.search.reviewProducts)
+    const reduxReview = useSelector(state => state.product.productDetail.review)
+    // const reduxProduct = useSelector(state => state.product.productDetail)
 
     useEffect(() => {
         getItem();
@@ -48,7 +49,6 @@ export default function ReviewScreen(props) {
                 <ScrollView>
                     {reduxReview && reduxReview.length ?
                         reduxReview.map((item, index) => {
-                            console.log("🚀 ~ file: ReviewScreen.js ~ line 53 ~ reduxReview.map ~ item", item)
                             return (
                                 <View key={String(index)} style={[styles.column, styles.mb_3, styles.p_4, { backgroundColor: colors.White, }]}>
                                     <View style={styles.row_start_center}>

@@ -49,11 +49,10 @@ export async function getProduct(auth, slug) {
         .then(result => {
             try {
                 let data = JSON.parse(result)
-                if (data?.status?.code && data.status.code === 200 || data.status.code === 204) {
+                if (data?.status?.code === 200 || data?.status?.code === 204) {
                     return data;
                 } else {
                     Utils.handleErrorResponse(data, "Error with status code : 12151")
-
                     return null
                 }
             } catch (error) {
@@ -62,7 +61,6 @@ export async function getProduct(auth, slug) {
             }
         })
         .catch(error => {
-            console.log("🚀 ~ file: Product.js ~ line 32 ~ productDetail ~ error", error)
             Utils.handleError(String(error), "Error with status code : 12153")
             return null
         });

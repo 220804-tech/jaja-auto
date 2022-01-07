@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react'
-import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, StyleSheet, StatusBar, Animated, Platform, Dimensions, LogBox, ToastAndroid, RefreshControl, Alert, TextInput } from 'react-native'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
+import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, StyleSheet, StatusBar, Animated, Platform, Dimensions, LogBox, ToastAndroid, RefreshControl, Alert, TextInput, Modal } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { Button, TouchableRipple, Checkbox, IconButton } from 'react-native-paper'
@@ -17,9 +17,12 @@ import StarRating from 'react-native-star-rating';
 LogBox.ignoreAllLogs()
 import ImgToBase64 from 'react-native-image-base64';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import ViewShot from "react-native-view-shot";
 
 
 export default function GiftDetailScreen(props) {
+    const viewShotRef = useRef(null);
+
     const navigation = useNavigation()
     const reduxUser = useSelector(state => state.user)
     const reduxAuth = useSelector(state => state.auth.auth)
@@ -57,6 +60,8 @@ export default function GiftDetailScreen(props) {
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [dateSelected, setdateSelected] = useState(null)
     const [dateSelect, setdateSelect] = useState(null)
+    const [modal, setmodal] = useState(false)
+    const [link, setlink] = useState('')
 
 
     const [dateMin, setdateMin] = useState({
@@ -122,32 +127,10 @@ export default function GiftDetailScreen(props) {
     );
 
     useEffect(() => {
-        // let newData = giftDetails;
-        // if (cardUse) {
-        //     newData.priceInt = newData.priceInt + 7000
-        //     newData.price = 'Rp' + newData.priceInt
-        // } else {
-        //     newData.priceInt = newData.priceInt - 7000
-        //     if (newData.priceInt <= 0) {
-        //         newData.priceInt = 0
-        //     }
-        //     newData.price = 'Rp' + newData.priceInt
-        // }
-        // dispatch({ type: 'SET_GIFT', payload: newData })
+        dynamicLink()
+    }, [])
 
-    }, [cardUse, boxUse])
 
-    const getItem = () => {
-
-    }
-
-    const handlePrice = (name) => {
-        if (name == 'box') {
-            setboxUse(!boxUse)
-        } else {
-            setcardUse(!cardUse)
-        }
-    }
 
     function currencyFormat(num) {
         return 'Rp' + String(num).replace(/(\d)(?=(\d{3})+(?!\d))/g, '.')
@@ -279,73 +262,61 @@ export default function GiftDetailScreen(props) {
         }
     }
 
-    const handleShare = async () => {
-        try {
-            let link = await buildLink()
-            const shareOptions = {
-                title: 'Jaja',
-                message: `${giftDetails.name}\nDownload sekarang ${link}`,
-                url: image,
-            };
-
-            Share.open(shareOptions)
-                .then((res) => {
-                    console.log(res);
-                })
-                .catch((err) => {
-                    err && console.log(err);
-                });
-
-            // console.log("🚀 ~ file: ProductScreen.js ~ line 357 ~ handleShare ~ slug", slug)
-            // try {
-            //     const shareOptions = {
-            //         title: 'Jaja',
-            //         message: `Pakai kode referral saya  dan dapatkan 10.000 koin, untuk belanja di Jaja.id, instal sekarang https://play.google.com/store/apps/details?id=com.seller.jaja`, // Note that according to the documentation at least one of "message" or "url" fields is required
-            //         url: image,
-            //     };
-            //     console.log("file: ReferralScreen.js ~ line 33 ~ handleShare ~ shareOptions", shareOptions)
-
-            //     Share.open(shareOptions)
-            //         .then((res) => {
-            //             console.log(res);
-            //         })
-            //         .catch((err) => {
-            //             err && console.log(err);
-            //         });
-
-            //     // let link = await buildLink(slug);
-            //     // console.log("file: ReferralScreen.js ~ line 33 ~ handleShare ~ shareOptions", shareOptions)
-
-
-        } catch (error) {
-
-        }
-
-    }
-
-    const buildLink = async () => {
-        console.log("🚀 ~ file: ProductScreen.js ~ line 418 ~ buildLink ~ buildLink", buildLink)
-        // const link = `https:///m?sd=${giftDetails.slug}`
-        const link = await dynamicLinks().buildLink({
-            link: 'https://invertase.io',
-            // domainUriPrefix is created in your Firebase console
-            domainUriPrefix: 'https://1jajaid.page.link/m',
-            // optional setup which updates Firebase analytics campaign
-            // "banner". This also needs setting up before hand
-            fallbackUrl: 'string',
-
-            minimumVersion: 1,
+    const dynamicLink = async () => {
+        console.log("🚀 ~ file: ProductScreen.js ~ line 107 ~ constlink_URL=awaitdynamicLinks ~ slug", slug)
+        const link_URL = await dynamicLinks().buildShortLink({
+            link: `https://jajaid.page.link/gift?slug=${slug}`,
+            domainUriPrefix: 'https://jajaid.page.link',
+            ios: {
+                bundleId: 'com.jaja.customer',
+                appStoreId: '1547981332',
+                fallbackUrl: 'https://apps.apple.com/id/app/jaja-id-marketplace-hobbies/id1547981332?l=id',
+            },
             android: {
-                packageName: 'string',
+                packageName: 'com.jajaidbuyer',
+                fallbackUrl: 'https://play.google.com/store/apps/details?id=com.jajaidbuyer',
+            },
+            navigation: {
+                forcedRedirectEnabled: true,
             }
-        })
-        return link;
+        });
+        setlink(link_URL)
     }
 
-    const handleStore = () => {
-        navigation.navigate('Gift')
+
+    const handleShare = () => {
+        setmodal(true)
+        setTimeout(async () => {
+            try {
+                let img64 = ''
+                await viewShotRef.current.capture().then(async uri => {
+                    await ImgToBase64.getBase64String(uri)
+                        .then(base64String => {
+                            let urlString = 'data:image/jpeg;base64,' + base64String;
+                            img64 = urlString
+                        })
+                        .catch(err => console.log("cok"));
+                });
+                setmodal(false)
+                const shareOptions = {
+                    title: 'Jaja',
+                    message: `Dapatkan ${giftDetails.name} di Jaja.id \nDownload sekarang ${link}`,
+                    url: img64,
+                };
+                Share.open(shareOptions)
+                    .then((res) => {
+                        console.log(res);
+                    })
+                    .catch((err) => {
+                        err && console.log(err);
+                    });
+            } catch (error) {
+
+            }
+        }, 1000);
 
     }
+
     const renderContent = () => {
         return (
             <View style={[styles.column, { backgroundColor: reduxLoad ? colors.White : colors.BlackGround, paddingBottom: Hp('6%') }]}>
@@ -947,6 +918,61 @@ export default function GiftDetailScreen(props) {
                 }}
                 onCancel={() => setDatePickerVisibility(false)}
             />
+            {Object.keys(giftDetails).length ?
+                <Modal animationType="fade" transparent={true} visible={modal} onRequestClose={() => setmodal(!modal)}>
+                    <View style={{ height: Hp('50%'), width: Wp('100%'), backgroundColor: colors.White, opacity: 0.95, zIndex: 9999, elevation: 11 }}>
+                        <ViewShot ref={viewShotRef} options={{ format: "jpg" }}>
+                            <View style={{ width: Wp('100%'), height: Wp('100%'), backgroundColor: colors.White }}>
+                                <Image style={style.swiperProduct}
+                                    source={{ uri: giftDetails.image[0] }}
+                                />
+                            </View>
+                            <View style={{ flex: 0, flexDirection: 'column', backgroundColor: colors.White, padding: '3%', marginBottom: '1%' }}>
+                                <Text style={[styles.font_18, styles.mb_2]}>{giftDetails.name}</Text>
+                                {Object.keys(variasiSelected).length ?
+                                    <View style={[styles.row_start_center,]}>
+                                        <View style={[styles.row, { width: '87%', height: '100%' }]}>
+                                            {variasiSelected.isDiscount ?
+                                                <View style={styles.row}>
+                                                    <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 5 }]}>
+                                                        <Text style={[styles.font_16, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{giftDetails.discount}%</Text>
+                                                        \                                     </View>
+                                                    <View style={styles.column}>
+                                                        <Text style={Ps.priceBefore}>{variasiSelected.price}</Text>
+                                                        <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{variasiSelected.priceDiscount}</Text>
+                                                    </View>
+                                                </View>
+                                                :
+                                                <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{variasiSelected.price}</Text>
+                                            }
+                                        </View>
+                                    </View>
+                                    :
+                                    <View style={[styles.row_start_center,]}>
+                                        <View style={[styles.row_start_center, { width: '87%', }]}>
+                                            {giftDetails.isDiscount ?
+                                                <View style={[styles.row_start_center]}>
+                                                    <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1.5%', borderRadius: 5 }]}>
+                                                        <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{giftDetails.discount}%</Text>
+                                                    </View>
+                                                    <View style={[styles.column]}>
+                                                        <Text style={Ps.priceBefore}>{giftDetails.price}</Text>
+                                                        <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{giftDetails.priceDiscount}</Text>
+                                                    </View>
+                                                </View>
+                                                :
+                                                <View style={[styles.row_between_center, { width: '100%' }]}>
+                                                    <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{giftDetails.price}</Text>
+                                                </View>
+                                            }
+                                        </View>
+                                    </View>
+                                }
+                            </View>
+                        </ViewShot>
+                    </View>
+                </Modal > : null
+            }
         </SafeAreaView >
     )
 }
