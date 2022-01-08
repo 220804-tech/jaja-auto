@@ -15,6 +15,9 @@ export default function CardProductComponent(props) {
             dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
             if (!props.gift) {
                 navigation.navigate("Product")
+                if (props.refresh) {
+                    dispatch({ type: 'SET_PRODUCT_REFRESH', payload: true })
+                }
             } else {
                 dispatch({ type: 'SET_GIFT', payload: item })
                 dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: {} })
@@ -26,18 +29,16 @@ export default function CardProductComponent(props) {
             dispatch({ type: 'SET_SLUG', payload: item.slug })
 
             ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                 if (res?.status?.code === 400) {
                     Utils.alertPopUp('Sepertinya data tidak ditemukan!')
-                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
                     navigation.goBack()
                 } else {
                     dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
-                    setTimeout(() => dispatch({ type: 'SET_PRODUCT_LOAD', payload: false }), 500);
-                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
                 }
             })
         } catch (error) {
-
+            dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
         }
 
     }

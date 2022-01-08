@@ -32,6 +32,8 @@ export default function ProductScreen(props) {
     const reduxStore = useSelector(state => state.store.store)
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
     const showFlashsale = useSelector(state => state.product.flashsale)
+    const productRefresh = useSelector(state => state.product.productRefresh)
+
     const slug = useSelector(state => state.search.slug)
 
     const dispatch = useDispatch()
@@ -70,7 +72,7 @@ export default function ProductScreen(props) {
 
     useEffect(() => {
         setmodal(false)
-        setLoading(true)
+        // setLoading(true)
         if (props.route.params && reduxProduct.slug) {
             // getItem(reduxProduct.slug)
             if (showFlashsale) {
@@ -79,7 +81,7 @@ export default function ProductScreen(props) {
                 setFlashsale(false)
             }
         }
-        setTimeout(() => setLoading(false), 3000);
+        // setTimeout(() => setLoading(false), 3000);
         dynamicLink()
 
     }, [])
@@ -120,18 +122,14 @@ export default function ProductScreen(props) {
             }
         });
         setlink(link_URL)
-    }
+    }   
 
     useFocusEffect(
         useCallback(() => {
             try {
-
-                // setLoading(true)
-
                 if (!reduxLoad) {
                     if (!!reduxProduct?.id) {
                         handleVariasi(reduxProduct.variant)
-                        setLoading(false)
                         setRefreshing(false)
                         handleFlashsale(reduxProduct.flashsaleData, reduxProduct.statusProduk)
                         setLike(reduxProduct.isWishlist)
@@ -144,9 +142,7 @@ export default function ProductScreen(props) {
                         dataSeller.id = dataSeller.uid
                         setSeller(dataSeller)
                         setLike(reduxProduct.isWishlist)
-
-
-                        if (reduxAuth && reduxProduct.sellerTerdekat.length && Object.keys(reduxUser.user).length && Object.keys(reduxProduct.category).length && reduxProduct.category.slug) {
+                        if (reduxAuth && reduxProduct?.sellerTerdekat.length && reduxUser?.user?.id && reduxProduct?.category?.slug) {
                             FilterLocation(reduxProduct.sellerTerdekat, reduxUser.user.location, reduxProduct.category.slug, reduxAuth)
                         }
                     }
@@ -154,6 +150,7 @@ export default function ProductScreen(props) {
 
 
             } catch (error) {
+                console.log("🚀 ~ file: ProductScreen.js ~ line 159 ~ useCallback ~ error", error)
 
             }
             // if (showFlashsale) {
@@ -173,7 +170,6 @@ export default function ProductScreen(props) {
             } else if (res) {
                 dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res })
                 handleVariasi(res.variant)
-                setLoading(false)
                 setRefreshing(false)
                 handleFlashsale(res.flashsaleData, res.statusProduk)
                 setLike(res.isWishlist)
@@ -184,13 +180,11 @@ export default function ProductScreen(props) {
 
 
             } else {
-                setLoading(false)
                 setRefreshing(false)
             }
 
         }).catch(err => {
             Utils.alertPopUp(String(err), "Error with status code: 121222")
-            setLoading(false)
             setRefreshing(false)
             response = "clear"
 
@@ -998,8 +992,8 @@ export default function ProductScreen(props) {
                                 />
                             </View>
                             : null}
-                        <View style={[styles.column, { backgroundColor: colors.White }]}>
-                            <RecomandedHobby color={colors.BlackGrayScale} />
+                        <View style={[styles.column, styles.pt_3, { backgroundColor: colors.White }]}>
+                            <RecomandedHobby refresh={true} color={colors.BlackGrayScale} />
                         </View>
                     </View>
 
@@ -1025,7 +1019,7 @@ export default function ProductScreen(props) {
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
-            {loading ? <Loading /> : null}
+            {reduxLoad ? <Loading /> : null}
             <StatusBar translucent={Platform.OS === 'ios' ? false : true} backgroundColor="transparent" barStyle="light-content" />
 
             <ReactNativeParallaxHeader

@@ -6,11 +6,14 @@ const initialState = {
     productLoad: false,
     productTemporary: {},
     flashsale: false,
+    productRefresh: false
 
 }
 export default function storeProduct(state = initialState, action) {
     const { type, payload } = action;
     switch (type) {
+        case 'SET_PRODUCT_REFRESH':
+            return { ...state, productRefresh: payload }
         case 'SET_DETAIL_PRODUCT':
             return { ...state, productDetail: payload }
         case 'SET_PRODUCT_LOAD':

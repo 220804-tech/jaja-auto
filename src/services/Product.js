@@ -177,7 +177,8 @@ export async function getRecommendation(dispatch) {
             }
         })
         .catch(function (error) {
-            Utils.handleError(error, 'Error with status code : 120002')
+            // alert('toolllll')
+            // Utils.handleError(String(error), 'Error with status code : 120002')
             handleProductRecommanded()
         });
 

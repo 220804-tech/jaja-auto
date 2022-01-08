@@ -91,7 +91,7 @@ export default function RecomandedHobbyComponent(props) {
             </View>
             {reduxdashRecommanded && reduxdashRecommanded.length || storagedashRecommanded && storagedashRecommanded.length ?
                 <View style={[styles.column_center_start, { width: Wp('100%') }]}>
-                    <CardProduct data={Array(reduxdashRecommanded).length ? reduxdashRecommanded : Array(storagedashRecommanded).length ? storagedashRecommanded : []} />
+                    <CardProduct refresh={props.refresh ? true : false} data={Array(reduxdashRecommanded).length ? reduxdashRecommanded : Array(storagedashRecommanded).length ? storagedashRecommanded : []} />
                 </View>
                 :
                 <View style={[styles.column_center_start, { width: Wp('100%') }]}>

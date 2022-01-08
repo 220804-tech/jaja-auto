@@ -5,7 +5,6 @@ import EncryptedStorage from 'react-native-encrypted-storage'
 import { useSelector, useDispatch } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
-import { color } from 'react-native-reanimated'
 
 export default function FlashsaleComponent() {
     const navigation = useNavigation()

@@ -249,11 +249,16 @@ export default function LoginScreen(props) {
             try {
                 await GoogleSignin.hasPlayServices()
                 const userInfo = await GoogleSignin.signIn();
+                console.log("🚀 ~ file: LoginScreen.js ~ line 252 ~ onGoogleButtonPress ~ userInfo", userInfo)
                 setLoading(true)
                 handleCheckUser(userInfo)
                 setLoginGoogle(true)
             } catch (error) {
+                console.log("🚀 ~ file: LoginScreen.js ~ line 256 ~ onGoogleButtonPress ~ error", String(error))
                 setLoading(false)
+                if (String(error).includes === 'Sign-in in progress') {
+                    signOut()
+                }
                 if (error.code === statusCodes.SIGN_IN_CANCELLED) {
                     console.log("Sign In Cancelled : " + error.code);
                 } else if (error.code === statusCodes.SIGN_IN_REQUIRED) {

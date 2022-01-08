@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { SafeAreaView, View, Text, TouchableOpacity, Dimensions, ToastAndroid, Alert } from 'react-native'
-import { Button } from 'react-native-paper'
-import { min } from 'react-native-reanimated';
 import { colors, ServiceCore, styles, Wp } from '../../export';
 export default class CountdownComponent extends React.Component {
     constructor(props) {

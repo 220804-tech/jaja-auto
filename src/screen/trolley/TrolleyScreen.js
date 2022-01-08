@@ -285,8 +285,8 @@ export default function TrolleyScreen() {
                 navigation.goBack()
             } else {
                 dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
-                dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
             }
+            dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
         })
     }
 
