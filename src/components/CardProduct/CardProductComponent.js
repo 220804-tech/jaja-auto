@@ -9,36 +9,37 @@ export default function CardProductComponent(props) {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const reduxAuth = useSelector(state => state.auth.auth)
+    const reduxLoad = useSelector(state => state.product.productLoad)
 
     const handleShowDetail = item => {
         try {
-            dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
-            if (!props.gift) {
-                navigation.navigate("Product")
-                if (props.refresh) {
-                    dispatch({ type: 'SET_PRODUCT_REFRESH', payload: true })
-                }
-            } else {
-                dispatch({ type: 'SET_GIFT', payload: item })
-                dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: {} })
-                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-                navigation.navigate("GiftDetails")
-            }
-            dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: item })
-            dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-            dispatch({ type: 'SET_SLUG', payload: item.slug })
-
-            ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
-                dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
-                if (res?.status?.code === 400) {
-                    Utils.alertPopUp('Sepertinya data tidak ditemukan!')
-                    navigation.goBack()
+            if (!reduxLoad) {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                if (!props.gift) {
+                    navigation.push("Product")
                 } else {
-                    dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                    dispatch({ type: 'SET_GIFT', payload: item })
+                    dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: {} })
+                    dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+                    navigation.push("GiftDetails")
                 }
-            })
+                dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: item })
+                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+                dispatch({ type: 'SET_SLUG', payload: item.slug })
+
+                ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+                    setTimeout(() => dispatch({ type: 'SET_PRODUCT_LOAD', payload: false }), 500);
+                    if (res?.status?.code === 400) {
+                        Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                        navigation.goBack()
+                    } else {
+                        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                    }
+                })
+            }
         } catch (error) {
             dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+            alert(String(error))
         }
 
     }

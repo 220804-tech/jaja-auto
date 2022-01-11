@@ -327,7 +327,6 @@ export default function Lainnya() {
                     if (result.status.code === 200) {
                         setTimeout(() => {
                             setloading(false)
-                            console.log("awkaowkakwakwokawokwoawoakwo");
                             Alert.alert(
                                 "Jaja.id",
                                 "Kata sandi anda berhasil diubah!", [

@@ -69,7 +69,7 @@ export default function NearestStore() {
                     renderItem={({ item, index }) => {
                         return (
                             <TouchableOpacity
-                                style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('57%'), alignItems: 'center', elevation: 2 }]}
+                                style={[Ps.cardProduct, { marginLeft: 1, marginRight: 9, width: Wp('33%'), height: Wp('57%'), alignItems: 'center', elevation: 2 }]}
                                 onPress={() => handleShowDetail(item)} >
                                 <View style={[styles.column, { height: Wp('33%'), width: '100%' }]}>
                                     <FastImage

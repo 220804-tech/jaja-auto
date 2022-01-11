@@ -236,7 +236,7 @@ export default function ProfileScreen(props) {
           <View style={[styles.column, { height: Hp('15%') }]}>
             <View style={[styles.column, styles.px_2]}>
               <View style={[styles.row_start, styles.p_2, styles.mb_4]}>
-                <View style={{ height: Wp('17%'), width: Wp('17%'), backgroundColor: colors.White, borderRadius: 100, marginRight: '2%' }}>
+                <View style={{ height: Wp('19%'), width: Wp('19%'), backgroundColor: colors.White, borderRadius: 100, marginRight: '2%' }}>
                   <Image source={reduxAuth ? { uri: reduxProfile.image } : require('../../assets/images/JajaId.png')} style={{ resizeMode: 'contain', width: '100%', height: '100%', borderRadius: 100 }} />
                 </View>
                 {reduxAuth ?
@@ -251,10 +251,10 @@ export default function ProfileScreen(props) {
                   </View>
                   :
                   <View style={[styles.row_start, styles.mt_5, { height: Wp('17%'), width: '80%', justifyContent: 'flex-end' }]}>
-                    <Button onPress={() => handleAuth('Login')} color={colors.White} mode="contained" contentStyle={{ width: Wp('30%'), height: Wp('10%') }} style={{ width: Wp('30%'), height: Wp('10%') }} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.YellowJaja }]} uppercase={false} >
+                    <Button onPress={() => handleAuth('Login')} color={colors.White} mode="contained" contentStyle={{ width: Wp('31%'), height: Wp('10%') }} style={{ width: Wp('31%'), height: Wp('10%') }} labelStyle={[styles.font_11, styles.T_semi_bold, { color: colors.YellowJaja }]} uppercase={false} >
                       Login
                     </Button>
-                    <Button onPress={() => handleAuth('Register')} color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('30%'), height: Wp('10%') }} style={{ marginLeft: '3%', width: Wp('30%'), height: Wp('10%') }} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
+                    <Button onPress={() => handleAuth('Register')} color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('31%'), height: Wp('10%') }} style={{ marginLeft: '3%', width: Wp('31%'), height: Wp('10%') }} labelStyle={[styles.font_11, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
                       Daftar
                     </Button>
                   </View>

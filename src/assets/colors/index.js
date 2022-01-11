@@ -27,12 +27,16 @@ export default {
 
     Green: '#00ff00',
     GreenSuccess: '#34c38f',
-    YellowJaja: "#FDB93D",
+    // YellowJaja: "#FDB93D",
+    YellowJaja: "#FCB536",
+
     Yellow: "#ffff00",
     YellowWarning: '#FFB236',
     YellowNotif: '#f0e68c',
 
-    BlueJaja: "#64B0C9",
+    // BlueJaja: "#64B0C9",
+    BlueJaja: "#67AEC6",
+
     BlueLight: '#e1f4fa',
     Blue: '#0000ff',
     BluePrimary: '#556ee6',

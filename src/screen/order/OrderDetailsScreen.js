@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, createRef } from 'react'
 import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, Linking, ToastAndroid, Alert, RefreshControl, Modal, FlatList, ActivityIndicator, BackHandler, DynamicColorIOS } from 'react-native'
-import { Appbar, colors, styles, Wp, Hp, useNavigation, useFocusEffect, Loading, Utils, ServiceStore, ServiceCheckout, ServiceOrder } from '../../export'
+import { Appbar, colors, styles, Wp, Hp, useNavigation, useFocusEffect, Loading, Utils, ServiceStore, ServiceCheckout, ServiceOrder, ServiceProduct } from '../../export'
 import Clipboard from '@react-native-community/clipboard';
 import { useDispatch, useSelector } from "react-redux";
 import { Button, TouchableRipple, RadioButton } from 'react-native-paper'
@@ -135,6 +135,7 @@ export default function OrderDetailsScreen() {
     const [checkbox, setcheckbox] = useState(false)
     const [productsComplain, setproductsComplain] = useState([])
     const [count, setcount] = useState(0)
+    const reduxLoad = useSelector(state => state.product.productLoad)
 
     useEffect(() => {
         if (details && Object.keys(details).length) {
@@ -601,19 +602,18 @@ export default function OrderDetailsScreen() {
 
 
     const handleShowPayment = (item) => {
-        console.log("🚀 ~ file: CheckoutScreen.js ~ line 571 ~ handleShowPayment ~ item", item)
         setselectedPayment(item)
-        if (item.payment_type_label !== 'Bank Transfer') {
-            //setModalShow(true)
-            // setsubPayment('')
-            gotoPaymentDetail(item);
-            console.log('pilih');
-        } else {
-            //alert('sd');
-            console.log('selectedPayment', JSON.stringify(selectedPayment));
-            setsubPayment(item.subPayment)
-            actionSheetPayment.current?.setModalVisible(true)
-        }
+        // if (item.payment_type_label !== 'Bank Transfer') {
+        //setModalShow(true)
+        // setsubPayment('')
+        gotoPaymentDetail(item);
+        console.log('pilih');
+        // }
+        //  else {
+        //     //alert('sd');
+        //     setsubPayment(item.subPayment)
+        //     actionSheetPayment.current?.setModalVisible(true)
+        // }
     }
 
     const getListPayment = (total) => {
@@ -831,12 +831,49 @@ export default function OrderDetailsScreen() {
         );
     }
 
+    // const handleShowDetail = item => {
+    //     dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+    //     dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+    //     dispatch({ type: 'SET_SLUG', payload: item.slug })
+    //     navigation.navigate("Product", { slug: item.slug, image: item.image })
+    // }
     const handleShowDetail = item => {
-        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-        dispatch({ type: 'SET_SLUG', payload: item.slug })
-        navigation.navigate("Product", { slug: item.slug, image: item.image })
+        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 841 ~ OrderDetailsScreen ~ item", item)
+        try {
+            if (!reduxLoad) {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                if (!details.items[0].isGift) {
+                    navigation.push("Product")
+                    handleSaveKeyword(res.slug)
+                } else {
+                    dispatch({ type: 'SET_GIFT', payload: item })
+                    dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: {} })
+                    dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+                    navigation.push("GiftDetails")
+                }
+                dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: item })
+                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+                dispatch({ type: 'SET_SLUG', payload: item.slug })
+
+                ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+                    setTimeout(() => dispatch({ type: 'SET_PRODUCT_LOAD', payload: false }), 500);
+                    if (res?.status?.code === 400) {
+                        Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                        navigation.goBack()
+                    } else {
+                        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                    }
+                })
+            }
+        } catch (error) {
+            console.log("🚀 ~ file: SearchScreen.js ~ line 138 ~ SearchScreen ~ error", error)
+            alert(String(error))
+            dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+        }
+
     }
+
+
     const handleStore = (item) => {
         if (reduxStore && Object.keys(reduxStore).length) {
             if (reduxStore.name != item.name) {
@@ -981,7 +1018,7 @@ export default function OrderDetailsScreen() {
                                 </View>
                                 <Text numberOfLines={1} style={[styles.font_11]}>{details.address.phoneNumber}</Text>
                                 <Text numberOfLines={3} style={[styles.font_12, styles.mt_2]}>{details.address.address.replace(/<br>/g, "\n")}</Text>
-                                <Text numberOfLines={4} style={[styles.font_12, styles.mt_2]}>Catatan untuk penjual : {details.items[0].note ? details.items[0].note : 'Tidak ada catatan'}</Text>
+                                <Text numberOfLines={4} style={[styles.font_12, styles.mt_2]}>Catatan : {details.items[0].note ? details.items[0].note : 'Tidak ada catatan'}</Text>
                                 {details.items[0].shippingSelected?.sendTime === 'pilih tanggal' ?
                                     < Text numberOfLines={1} style={[styles.font_12]}>Akan Dikirim : {details.items[0].shippingSelected.dateSendTime}</Text>
                                     : null}
@@ -1000,9 +1037,9 @@ export default function OrderDetailsScreen() {
                                             <Image style={[styles.icon_19, { marginRight: '3%', tintColor: colors.BlueJaja }]} source={require('../../assets/icons/store.png')} />
                                             <Text onPress={() => handleStore(item.store)} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.store.name}</Text>
                                         </View>
-                                        <TouchableRipple onPress={() => handleChat(item)} style={[styles.row_center, styles.px_2, { backgroundColor: colors.BlueJaja, paddingVertical: '1.5%', elevation: 3, borderRadius: 2 }]}>
+                                        <TouchableRipple onPress={() => handleChat(item)} style={[styles.row_center, styles.px_3, { backgroundColor: colors.BlueJaja, paddingVertical: '1.5%', elevation: 3, borderRadius: 2 }]}>
                                             <View style={styles.row}>
-                                                <Text style={[styles.font_11, styles.T_medium, { color: colors.White }]}>
+                                                <Text style={[styles.font_10, styles.T_medium, { color: colors.White }]}>
                                                     Chat Penjual
                                                 </Text>
                                             </View>
@@ -1018,10 +1055,14 @@ export default function OrderDetailsScreen() {
                                                                 width: Wp('15%'), height: Wp('15%'), borderRadius: 5, backgroundColor: colors.White,
                                                                 borderWidth: 0.2,
                                                                 borderColor: colors.Silver,
-                                                                alignSelf: 'center'
+                                                                alignSelf: 'center',
+                                                                // resizeMode: 'stretchss'
+                                                                borderWidth: 0.2,
+                                                                borderColor: colors.Silver,
+                                                                borderRadius: 3
                                                             }}
                                                                 resizeMethod={"scale"}
-                                                                resizeMode="cover"
+                                                                resizeMode="contain"
                                                                 source={{ uri: child.image }}
                                                             />
                                                         </TouchableOpacity>
@@ -1052,7 +1093,7 @@ export default function OrderDetailsScreen() {
                                                     </View>
                                                     <View style={[styles.row_end_center]}>
                                                         {/* <Text style={[styles.font_13, { fontStyle: 'italic' }]}>Subtotal </Text> */}
-                                                        <Text numberOfLines={1} style={[styles.font_13, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}> {child.subTotalCurrencyFormat}</Text>
+                                                        <Text numberOfLines={1} style={[styles.font_13, styles.mt_3, styles.T_semi_bold, { color: colors.BlueJaja }]}> {child.subTotalCurrencyFormat}</Text>
                                                     </View>
                                                     {child.greetingCardGift ?
                                                         <>
@@ -1185,7 +1226,6 @@ export default function OrderDetailsScreen() {
                                                             <View style={styles.row_between_center}>
                                                                 <Text style={styles.font_12}>{item.payment_type_label === 'Card' ? 'Kartu Kredit' : item.payment_type_label == 'eWallet' ? item.payment_type_label + ' - ' + item.subPayment[0].payment_sub_label : item.payment_type_label}</Text>
                                                                 <Image fadeDuration={300} source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackGrey }]} />
-
                                                             </View>
                                                         </TouchableRipple>
                                                     )
@@ -1195,47 +1235,47 @@ export default function OrderDetailsScreen() {
                                                     <TouchableRipple
                                                         //onPress={() => console.log("change")} 
                                                         onPress={() => {
-                                                            Alert.alert(
-                                                                'Confirm',
-                                                                'Ingin mengganti metode pembayaran ?',
-                                                                [
-                                                                    { text: 'NO', onPress: () => console.warn('NO Pressed'), style: 'cancel' },
-                                                                    { text: 'YES', onPress: () => submitChange() },
-                                                                ]
-                                                            );
+                                                            submitChange()
+
+                                                            //     Alert.alert(
+                                                            //         'Ganti Metode',
+                                                            //         'Ingin mengganti metode pembayaran ?',
+                                                            //         [
+                                                            //             {text: 'NO', onPress: () => console.warn('NO Pressed'), style: 'cancel' },
+                                                            //             {text: 'YES', onPress: () => submitChange() },
+                                                            //         ]
+                                                            //     );
 
                                                         }}
-                                                        style={[styles.row_center, styles.py_2, { width: 100 / 2 + '%', backgroundColor: colors.YellowJaja }]}>
+                                                        style={[styles.row_center, styles.py_2, { width: 99 / 2 + '%', backgroundColor: colors.YellowJaja }]}>
                                                         <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
                                                             Ganti
                                                         </Text>
                                                     </TouchableRipple>
-                                                    {/* <TouchableRipple onPress={() => console.log("refresh")} style={[styles.row_center, styles.py_2, { width: 100 / 3 + '%', backgroundColor: colors.GreenSuccess }]}>
+                                                    {/* <TouchableRipple onPress={() => console.log("refresh")} style={[styles.row_center, styles.py_2, { width: 99 / 3 + '%', backgroundColor: colors.GreenSuccess }]}>
 <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
     Cek Bayar
 </Text>
 </TouchableRipple> */}
-                                                    <TouchableRipple onPress={handlePayment} style={[styles.row_center, styles.py_2, { width: 100 / 2 + '%', backgroundColor: colors.BlueJaja }]}>
+                                                    <TouchableRipple onPress={handlePayment} style={[styles.row_center, styles.py_2, { width: 99 / 2 + '%', backgroundColor: colors.BlueJaja }]}>
                                                         <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
                                                             Bayar Sekarang
                                                         </Text>
                                                     </TouchableRipple>
-
-
                                                 </View>
                                     }
-
-
                                 </>
                                 : null}
 
-                            <View style={[styles.row_center, styles.mb_2, { width: '95%', alignSelf: 'center' }]}>
+
+                            <View style={[styles.row_center, styles.mb_2, { width: '99%', alignSelf: 'center' }]}>
                                 <TouchableRipple onPress={() => navigation.navigate('OrderCancel')} style={[styles.row_center, styles.py_2, { width: '95%', backgroundColor: colors.Red, alignSelf: 'center' }]}>
                                     <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
                                         Batalkan Pesanan
                                     </Text>
                                 </TouchableRipple>
                             </View>
+
 
                         </View>
                         : null}
@@ -1249,12 +1289,20 @@ export default function OrderDetailsScreen() {
                     {details && Object.keys(details).length ?
                         reduxOrderStatus === "Pengiriman" ?
                             <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'column', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
-                                <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%', marginBottom: '2%' }} contentStyle={{ width: '100%', height: '95%' }} color={colors.BlueJaja} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
-                                    Terima Pesanan
-                                </Button>
-                                <Button onPress={() => details.complain ? navigation.navigate('ResponseComplain', { invoice: details.items[0].invoice }) : setmodalComplain(true)} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
-                                    {details.complain ? "Sedang Dikomplain" : "Komplain"}
-                                </Button>
+                                {/* <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%', marginBottom: '2%' }} contentStyle={{ width: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_semi_bold, { color: colors.White }]} mode="contained" > */}
+                                <TouchableRipple onPress={handleDone} style={[styles.row_center, styles.py_2, { width: '99%', backgroundColor: colors.BlueJaja, alignSelf: 'center' }]}>
+                                    <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                        Terima Pesanan
+                                    </Text>
+                                </TouchableRipple>
+                                {/* </Button> */}
+                                <TouchableRipple onPress={() => details.complain ? navigation.navigate('ResponseComplain', { invoice: details.items[0].invoice }) : setmodalComplain(true)} style={[styles.row_center, styles.py_2, { width: '99%', backgroundColor: colors.YellowJaja, alignSelf: 'center' }]}>
+                                    {/* {details.complain ?  */}
+                                    <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                        Sedang Dikomplain
+                                    </Text>
+                                    {/* : "Komplain"} */}
+                                </TouchableRipple>
                             </View>
                             : reduxOrderStatus === "Pesanan Selesai" && details.items[0].isRating ?
                                 <View style={{ position: 'absolute', bottom: 0, zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center', marginBottom: '3%' }}>

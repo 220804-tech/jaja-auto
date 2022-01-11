@@ -137,45 +137,58 @@ export default function CategoryComponent() {
                 </TouchableOpacity>
             </View>
             {reduxDashboard && reduxDashboard.length || storageDashboard && storageDashboard.length ?
-                <FlatList
-                    showsHorizontalScrollIndicator={false}
-                    data={reduxDashboard && reduxDashboard.length ? reduxDashboard : storageDashboard && storageDashboard.length ? storageDashboard : []}
-                    horizontal={true}
-                    keyExtractor={(item, index) => String(index)}
-                    renderItem={({ item, index }) => {
-                        return (
-                            <TouchableOpacity
-                                style={{
-                                    borderRadius: 10,
-                                    width: Wp("19%"),
-                                    height: Wp("19%"),
-                                    marginLeft: 1,
-                                    marginRight: 11,
-                                    marginTop: 5,
-                                    marginBottom: 10,
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    elevation: 2,
-                                    backgroundColor: colors.White
-                                }}
-                                onPress={() => handleSelected(item)}
-                                key={index}
-                            >
-                                <FastImage
-                                    style={{ width: Wp("9%"), height: Wp("9%"), }}
-                                    source={{
-                                        uri: item.icon,
-                                        headers: { Authorization: 'someAuthToken' },
-                                        priority: FastImage.priority.normal,
-                                    }}
-                                    resizeMode={FastImage.resizeMode.contain}
-                                />
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    <View style={{ width: 2 * Wp('100%'), height: Wp("44%") }} >
+                        <FlatList
+                            showsHorizontalScrollIndicator={false}
+                            data={reduxDashboard && reduxDashboard.length ? reduxDashboard : storageDashboard && storageDashboard.length ? storageDashboard : []}
+                            // horizontal
+                            // numColumns={3}
+                            contentContainerStyle={{ flex: 0, width: '100%', justifyContent: 'flex-start', flexDirection: 'row', flexWrap: 'wrap' }}
 
-                                <Text numberOfLines={2} style={[styles.font_8, styles.mt_5, { color: colors.BlueJaja, alignSelf: 'center', textAlign: 'center' }]}>{item.name}</Text>
-                            </TouchableOpacity>
-                        )
-                    }}
-                />
+                            keyExtractor={(item, index) => String(index)}
+                            renderItem={({ item, index }) => {
+                                return (
+                                    <>
+                                        {item.name !== 'Lainnya' ?
+                                            <TouchableOpacity
+                                                style={{
+                                                    borderRadius: 10,
+                                                    width: Wp("19%"),
+                                                    height: Wp("19%"),
+                                                    marginLeft: 1,
+                                                    marginRight: 11,
+                                                    marginTop: 5,
+                                                    marginBottom: 10,
+                                                    justifyContent: "center",
+                                                    alignItems: "center",
+                                                    elevation: 0.5,
+                                                    backgroundColor: colors.White
+                                                }}
+                                                onPress={() => handleSelected(item)}
+                                                key={index}
+                                            >
+                                                <FastImage
+                                                    style={{ width: Wp("9%"), height: Wp("9%"), }}
+                                                    source={{
+                                                        uri: item.icon,
+                                                        headers: { Authorization: 'someAuthToken' },
+                                                        priority: FastImage.priority.normal,
+                                                    }}
+                                                    resizeMode={FastImage.resizeMode.contain}
+                                                />
+
+                                                <Text numberOfLines={2} style={[styles.font_8, styles.mt_5, { color: colors.BlueJaja, alignSelf: 'center', textAlign: 'center' }]}>{item.name}</Text>
+                                            </TouchableOpacity>
+                                            : null
+                                        }
+                                    </>
+                                )
+                            }}
+                        />
+                    </View>
+                </ScrollView>
+
                 :
                 <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
                     {shimmerData.map(item => {

@@ -235,7 +235,7 @@ export default function map(props) {
 
                         <TouchableOpacity style={[style.searchBar, { width: '87%' }]}>
                             <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
-                            <TextInput keyboardType="default" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={[style.font_12, { width: '95%', marginBottom: Platform.OS === 'android' ? '-1%' : '0%' }]} placeholder='Nama Jalan/Perumahan/Gedung' onChangeText={text => handleSearch(text)} onSubmitEditing={(value) => handleSearch(value.nativeEvent.text)}></TextInput>
+                            <TextInput keyboardType="default" returnKeyType="search" autoFocus={true} adjustsFontSizeToFit style={[style.font_11, { width: '95%', marginBottom: Platform.OS === 'android' ? '-1%' : '0%', padding: 0 }]} placeholder='Nama Jalan/Perumahan/Gedung' onChangeText={text => handleSearch(text)} onSubmitEditing={(value) => handleSearch(value.nativeEvent.text)}></TextInput>
                         </TouchableOpacity>
                         <TouchableOpacity style={[style.row_center, { width: "11%" }]} onPress={() => actionSheetRef.current?.setModalVisible() & setModal(false)}>
                             <Image style={[style.appBarButton, { transform: [{ rotate: '270deg' }] }]} source={require('../../assets/icons/arrow.png')} />
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular',
         color: colors.BlackGrayScale
     },
-    search: { flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.White, opacity: 0.3, paddingVertical: '2%', paddingHorizontal: '5%', marginBottom: '-1.9%' },
+    search: { flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.White, opacity: 0.3, paddingVertical: '1.75%', paddingHorizontal: '5%', marginBottom: '-1%', borderRadius: 3 },
     iconSearch: {
         width: 16, height: 16, tintColor: colors.White
     },

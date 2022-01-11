@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { View, Text, SafeAreaView, FlatList, TouchableOpacity } from 'react-native'
-import { styles, Wp, Hp, colors, Appbar, useFocusEffect, FastImage, CheckSignal, useNavigation, Utils } from '../../export'
+import { styles, Wp, Hp, colors, Appbar, useFocusEffect, FastImage, CheckSignal, useNavigation, Utils, ServiceCategory } from '../../export'
 import { useDispatch, useSelector } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage'
 export default function CategoryScreen() {
@@ -40,49 +40,13 @@ export default function CategoryScreen() {
     );
 
     const handleSelected = (res) => {
-        handleFetch(res.slug)
-        handleSaveKeyword(res.name)
-        dispatch({ type: 'SET_CATEGORY_NAME', payload: String(res.slug) })
-
+        navigation.navigate('ProductSearch')
+        ServiceCategory.getCategroys(res.slug, dispatch);
+        handleSaveKeyword(res.slug)
     }
-    const handleFetch = (text) => {
-        if (text) {
-            navigation.navigate('ProductSearch')
-            dispatch({ type: 'SET_SEARCH_LOADING', payload: true })
-            let error = true
-            var myHeaders = new Headers();
-            myHeaders.append("Cookie", "ci_session=akeeif474rkhuhqgj7ah24ksdljm0248");
-            var requestOptions = {
-                method: 'GET',
-                headers: myHeaders,
-                redirect: 'follow'
-            };
 
-            fetch(`https://jaja.id/backend/product/category/${text}?page=1&limit=100&keyword=&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
-                .then(response => response.json())
-                .then(result => {
-                    error = false
-                    dispatch({ type: 'SET_SEARCH_LOADING', payload: false })
-                    dispatch({ type: 'SET_SEARCH', payload: result.data.items })
-                    dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
-                    dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
-                })
-                .catch(error => {
-                    error = false
-                    dispatch({ type: 'SET_SEARCH_LOADING', payload: false })
-                    Utils.alertPopUp(String(error), 'Error with status code : 14001')
-                });
-            setTimeout(() => {
-                if (error) {
-                    Utils.handleSignal()
-                    dispatch({ type: 'SET_SEARCH_LOADING', payload: false })
-                }
-            }, 15000);
-        }
-    }
 
     const handleSaveKeyword = (keyword) => {
-        dispatch({ type: 'SET_KEYWORD', payload: String(keyword).toLocaleLowerCase() })
 
         EncryptedStorage.getItem('historySearching').then(res => {
             if (res) {
@@ -94,6 +58,7 @@ export default function CategoryScreen() {
             }
         })
     }
+
     return (
         <SafeAreaView style={styles.container}>
             <Appbar back={true} title="Kategori" />

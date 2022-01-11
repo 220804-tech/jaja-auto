@@ -703,9 +703,9 @@ export default function ChatScreen({ route }) {
                             showsHorizontalScrollIndicator={false}
                             renderItem={({ item }) => {
                                 return (
-                                    <TouchableRipple borderless={true} rippleColor={colors.Blackk} key={item.id} onPress={() => setChat(item.text)} style={[style.py, { flex: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.Blackk, borderRadius: 11, marginHorizontal: 3, paddingHorizontal: 11 }]}>
+                                    <TouchableOpacity key={item.id} onPress={() => setChat(item.text)} style={[style.py, { flex: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.Blackk, borderRadius: 9, marginHorizontal: 3, paddingHorizontal: 11 }]}>
                                         <Text style={[style.font_11, { color: colors.BlackGrayScale, textAlign: 'center', textAlignVertical: 'center' }]}>{item.text}</Text>
-                                    </TouchableRipple>
+                                    </TouchableOpacity>
                                 )
                             }}
                             keyExtractor={(item, index) => String(index)}
@@ -713,8 +713,7 @@ export default function ChatScreen({ route }) {
                     </View>
                     <View style={[style.row_around_center, style.px_2, { height: Hp('7%'), marginBottom: keyboardFocus, backgroundColor: 'transparent', }]}>
                         <View style={[style.row_start_center, {
-                            width: "80%", height: '77%', borderRadius: 100, backgroundColor: colors.White, opacity: 0.9, borderWidth: 0.2,
-                            borderColor: colors.BlueJaja,
+                            width: "80%", height: '77%', borderRadius: 100, backgroundColor: colors.White, opacity: 0.9, elevation: 1
                         }]}>
                             <TextInput
                                 onFocus={() => setkeyboardFocus(300)}
@@ -740,8 +739,8 @@ export default function ChatScreen({ route }) {
                         </View>
                         <IconButton
                             icon={require('../../assets/icons/send.png')}
-                            style={{ margin: 0, backgroundColor: colors.BlueJaja, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100 }}
-                            color={colors.White}
+                            style={{ margin: 0, backgroundColor: colors.White, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100, elevation: 1, opacity: 0.9 }}
+                            color={colors.BlueJaja}
                             onPress={() => handleSend(null)}
                         />
                     </View>

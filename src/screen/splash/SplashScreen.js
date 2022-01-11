@@ -4,7 +4,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp, } from 'react-na
 import Swiper from 'react-native-swiper'
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage'
-import { ServiceOrder, colors, styles, useNavigation, ServiceCore, Utils, ServiceProduct } from '../../export';
+import { ServiceOrder, colors, styles, useNavigation, ServiceCore, Utils, ServiceProduct, Wp, Hp } from '../../export';
 import database from '@react-native-firebase/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -20,14 +20,14 @@ export default function SplashScreen() {
         {
             title: "Sport & Outdoor",
             image: require("../../assets/images/splashscreen/splash_musics.jpg"),
-            loading: require("../../assets/gifs/splashscreen/loading_page.gif"),
+            loading: require("../../assets/gifs/splashscreen/splashscreen.gif"),
             router: "KategoriSport",
             color: "#68b0c8"
         },
         {
             title: "Toys",
             image: require("../../assets/images/splashscreen/splash_toys.jpg"),
-            loading: require("../../assets/gifs/splashscreen/loading_page.gif"),
+            loading: require("../../assets/gifs/splashscreen/splashscreen.gif"),
             router: "KategoriBuku",
             color: "#68b0c8"
         }
@@ -345,57 +345,49 @@ export default function SplashScreen() {
                 barStyle='default'
                 showHideTransition="fade"
             />
-            <Swiper
-                autoplayTimeout={1.5}
-                pagingEnabled={false}
-                showsPagination={false}
-                horizontal={true}
-                loop={false}
-                dotColor={colors.BlackGrayScale}
-                activeDotColor={colors.BlackGrayScale}
-                paginationStyle={{ bottom: 10 }}
-                autoplay={true}
+            <View style={[styles.column_center, { backgroundColor: colors.BlueJaja, width: Wp('100%'), height: Hp('100%') }]}>
+                {/* <View style={[styles.column_center, { backgroundColor: colors.YellowJaja, width: Wp('100%'), height: Hp('50%') }]}> */}
 
-            >
-                {images.map((item, key) => {
-                    return (
-                        <View
-                            key={String(key)}
-                            style={{
-                                width: wp("100%"),
-                                height: hp("100%"),
-                                alignItems: "center",
-                                justifyContent: "center",
-                                paddingVertical: hp("10%"),
-                                backgroundColor: item["color"],
-                            }}
-                        >
+                <Swiper
+                    autoplayTimeout={1.5}
+                    pagingEnabled={false}
+                    showsPagination={false}
+                    horizontal={true}
+                    loop={false}
+                    dotColor={colors.BlackGrayScale}
+                    activeDotColor={colors.BlackGrayScale}
+                    paginationStyle={{ bottom: 10 }}
+                    autoplay={true}
+                    containerStyle={[{ flex: 0, width: wp('100%'), height: wp('100%'), justifyContent: 'center', alignItems: 'center', backgroundColor: 'silver' }]}
+                // containerStyle={{ flex: 0, justifyContent: 'center', alignItems: 'center' }}
+
+                >
+                    {images.map((item, key) => {
+                        return (
                             <Image
                                 style={{
-                                    borderRadius: 15,
                                     width: wp("100%"),
                                     height: wp("100%"),
                                 }}
                                 resizeMode={item["image"] == '' ? "center" : "cover"}
                                 source={item["image"]}
                             />
-                            <View style={{ marginTop: 30, bottom: 0 }}>
-                                <Image
-                                    style={{
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        width: wp("40%"),
-                                        height: hp("15%"),
-                                    }}
-                                    resizeMode={item["image"] == '' ? "center" : "cover"}
-                                    source={item["loading"]}
-                                />
 
-                            </View>
-                        </View>
-                    );
-                })}
-            </Swiper>
-        </SafeAreaView>
+                        );
+                    })}
+                </Swiper>
+                {/* </View> */}
+                <Image
+                    style={{
+                        justifyContent: "center",
+                        alignItems: "center",
+                        width: wp("35%"),
+                        height: hp("10%"),
+                    }}
+                    source={require("../../assets/gifs/splashscreen/splashscreen.gif")}
+                />
+
+            </View>
+        </SafeAreaView >
     )
 }

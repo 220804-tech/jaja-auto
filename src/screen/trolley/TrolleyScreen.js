@@ -411,10 +411,11 @@ export default function TrolleyScreen() {
                                                                 backgroundColor: colors.White,
                                                                 borderWidth: 0.2,
                                                                 borderColor: colors.Silver,
-                                                                alignSelf: 'center'
+                                                                alignSelf: 'center',
+                                                                resizeMode: 'contain'
                                                             }}
                                                                 resizeMethod={"scale"}
-                                                                resizeMode={item.image ? "cover" : "center"}
+                                                                // resizeMode={item.image ? "cover" : "center"}
                                                                 source={{ uri: item.image }}
                                                             />
                                                         </TouchableWithoutFeedback>

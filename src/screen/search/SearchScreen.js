@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, FlatList, ToastAndroid } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
-import { useNavigation, colors, styles, Wp, CheckSignal, ServiceStore, useFocusEffect, Utils, AppbarSecond, } from '../../export'
+import { useNavigation, colors, styles, Wp, CheckSignal, ServiceStore, useFocusEffect, Utils, AppbarSecond, ServiceProduct, ServiceCategory, } from '../../export'
 import { useDispatch, useSelector } from 'react-redux'
-export default function SearchScreen() {
+export default function SearchScreen(props) {
     const navigation = useNavigation();
 
     const dispatch = useDispatch();
@@ -20,6 +20,7 @@ export default function SearchScreen() {
     const [slug, setSlug] = useState(['Badminton', 'Basketball', 'Cooking', 'Cycling', 'Fishing', 'Football', 'Photography', 'Reading'])
     const [focus, setFocus] = useState(true)
 
+    const reduxLoad = useSelector(state => state.product.productLoad)
 
     useEffect(() => {
         getItem();
@@ -96,26 +97,57 @@ export default function SearchScreen() {
         setCount(count + 1)
     }
 
-    const handleSelected = (res) => {
-        console.log("🚀 ~ file: SearchScreen.js ~ line 85 ~ handleSelected ~ res", res)
-        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        navigation.push("Product", { slug: res.slug, image: null })
-        handleSaveKeyword(res.name)
+
+
+    const handleShowDetail = item => {
+        console.log("🚀 ~ file: SearchScreen.js ~ line 106 ~ SearchScreen ~ item", item)
+        try {
+            if (!reduxLoad) {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                if (!props.gift) {
+                    navigation.push("Product")
+                    handleSaveKeyword(res.slug)
+                } else {
+                    dispatch({ type: 'SET_GIFT', payload: item })
+                    dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: {} })
+                    dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
+                    navigation.push("GiftDetails")
+                }
+                dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: item })
+                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+                dispatch({ type: 'SET_SLUG', payload: item.slug })
+
+                ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+                    setTimeout(() => dispatch({ type: 'SET_PRODUCT_LOAD', payload: false }), 500);
+                    if (res?.status?.code === 400) {
+                        Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                        navigation.goBack()
+                    } else {
+                        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                    }
+                })
+            }
+        } catch (error) {
+            console.log("🚀 ~ file: SearchScreen.js ~ line 138 ~ SearchScreen ~ error", error)
+            dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+        }
+
     }
 
-    const handleSaveKeyword = (text) => {
-        let newArr = historySearch;
-        let keyword = String(text).toLocaleLowerCase()
-        newArr.push(keyword)
+    const handleSaveKeyword = (keyword) => {
+        console.log("🚀 ~ file: SearchScreen.js ~ line 145 ~ handleSaveKeyword ~ keyword", keyword)
+        dispatch({ type: 'SET_KEYWORD', payload: String(keyword).toLocaleLowerCase() })
+
         EncryptedStorage.getItem('historySearching').then(res => {
+            console.log("🚀 ~ file: SearchScreen.js ~ line 149 ~ EncryptedStorage.getItem ~ res", res)
             if (res) {
-                const HashSet = new Set(JSON.parse(res))
-                HashSet.add(keyword)
-                sethistorySearch(Array.from(HashSet))
-                EncryptedStorage.setItem("historySearching", JSON.stringify(Array.from(HashSet)))
+                let data = JSON.parse(res);
+                if (!data.includes(keyword)) {
+                    data.push(String(keyword).toLocaleLowerCase())
+                    EncryptedStorage.setItem("historySearching", JSON.stringify(data))
+                }
             }
         })
-        sethistorySearch(newArr)
     }
     const handleSearchInput = (text) => {
         console.log("🚀 ~ file: SearchScreen.js ~ line 102 ~ handleSearchInput ~ text", text)
@@ -134,6 +166,8 @@ export default function SearchScreen() {
 
     const handleFetch = (keyword) => {
         let text = String(keyword).toLocaleLowerCase();
+        dispatch({ type: 'SET_SEARCH_LOADING', payload: true })
+        navigation.navigate('ProductSearch')
         var myHeaders = new Headers();
         myHeaders.append("Cookie", "ci_session=bk461otlv7le6rfqes5eim0h9cf99n3u");
 
@@ -155,12 +189,13 @@ export default function SearchScreen() {
                 dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
                 dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
                 dispatch({ type: 'SET_KEYWORD', payload: text })
+                dispatch({ type: 'SET_SEARCH_LOADING', payload: false })
             })
             .catch(error => {
+                dispatch({ type: 'SET_SEARCH_LOADING', payload: false })
                 Utils.handleError(error, "Error with status code : 12050")
             });
         dispatch({ type: 'SET_SLUG', payload: String(text).toLocaleLowerCase() })
-        navigation.navigate('ProductSearch')
         setTimeout(() => {
             CheckSignal().then(resp => {
                 handleLoopSignal(resp, text)
@@ -244,49 +279,12 @@ export default function SearchScreen() {
                 dispatch({ "type": 'SET_STORE_SORT', payload: res.sorts })
             }
         })
-
     }
 
-    const handleSelectedCategory = (item) => {
-        if (item) {
-            dispatch({ type: 'SET_KEYWORD', payload: item.name })
-            var myHeaders = new Headers();
-            myHeaders.append("Cookie", "ci_session=akeeif474rkhuhqgj7ah24ksdljm0248");
-            var requestOptions = {
-                method: 'GET',
-                headers: myHeaders,
-                redirect: 'follow'
-            };
-            dispatch({ type: 'SET_CATEGORY_NAME', payload: item.slug })
-
-            fetch(`https://jaja.id/backend/product/category/${item.slug}?page=1&limit=50&keyword=&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
-                .then(response => response.json())
-                .then(result => {
-                    console.log("🚀 ~ file: CategoryComponent.js ~ line 83 ~ handleFetch ~ result", result)
-                    if (result && Object.keys(result).length && result.status.code == 200) {
-                        dispatch({ type: 'SET_SEARCH', payload: result.data.items })
-                        dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
-                        dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
-                        dispatch({ type: 'SET_KEYWORD', payload: item.name })
-                    } else {
-                        dispatch({ type: 'SET_SEARCH', payload: [] })
-                        dispatch({ type: 'SET_FILTERS', payload: [] })
-                        dispatch({ type: 'SET_SORTS', payload: [] })
-                        // Utils.handleErrorResponse(result, 'Error with status 130012')
-                    }
-                })
-                .catch(error => {
-                    dispatch({ type: 'SET_SEARCH', payload: [] })
-                    dispatch({ type: 'SET_FILTERS', payload: [] })
-                    dispatch({ type: 'SET_SORTS', payload: [] })
-                    Utils.handleError(error, 'Error with status 13001')
-                });
-            dispatch({ type: 'SET_SLUG', payload: String(item).toLocaleLowerCase() })
-
-            setTimeout(() => {
-                navigation.navigate('ProductSearch')
-            }, 250);
-        }
+    const handleSelectedCategory = (res) => {
+        navigation.navigate('ProductSearch')
+        ServiceCategory.getCategroys(res.slug, dispatch);
+        handleSaveKeyword(res.slug)
     }
 
     return (
@@ -324,7 +322,7 @@ export default function SearchScreen() {
                                         return (
                                             <>
                                                 {Object.keys(item).length ?
-                                                    <TouchableOpacity onPress={() => handleSelected(item)} style={{ paddingVertical: '2.5%', marginBottom: '2%', backgroundColor: colors.White, borderBottomWidth: 0.5, borderColor: colors.Silver }}>
+                                                    <TouchableOpacity onPress={() => handleShowDetail(item)} style={{ paddingVertical: '2.5%', marginBottom: '2%', backgroundColor: colors.White, borderBottomWidth: 0.5, borderColor: colors.Silver }}>
                                                         <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlackGrey }]}>{item.name}</Text>
                                                     </TouchableOpacity>
                                                     : null}
@@ -357,7 +355,7 @@ export default function SearchScreen() {
                         historySearch.length ?
                             <View style={styles.column}>
                                 <View style={[styles.row_between_center, styles.mb_5]}>
-                                    <Text style={[styles.font_14, { color: colors.BlueJaja }]} >Riwayat Pencarian</Text>
+                                    <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Riwayat Pencarian</Text>
                                     <TouchableOpacity onPress={handleClear} style={{ width: '20%' }}>
                                         <Text style={[styles.font_14, { color: colors.BlueJaja, textAlign: 'center' }]} >Clear</Text>
                                     </TouchableOpacity>
@@ -370,7 +368,7 @@ export default function SearchScreen() {
                                         return (
                                             <TouchableOpacity onPress={() => handleSearchInput(item)} style={styles.row}>
                                                 <Image style={[styles.icon_24, styles.mr_3, styles.mb_4, { tintColor: colors.BlackGrey }]} source={require('../../assets/icons/history.png')} />
-                                                <Text style={[styles.font_14, { color: colors.BlackGrey }]}>{item}</Text>
+                                                <Text style={[styles.font_14, { color: colors.BlackGrey }]}>{String(String(item.replace("-", " ")).replace("-", " ")).replace("-", " ")}</Text>
                                             </TouchableOpacity>
                                         )
                                     }} />

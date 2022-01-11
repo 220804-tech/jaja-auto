@@ -17,6 +17,7 @@ export default function StoreProducts() {
 
     const reduxmaxProduct = useSelector(state => state.store.maxProduct)
     const data = useSelector(state => state.store.storeProduct)
+    console.log("🚀 ~ file: StoreProducts.js ~ line 20 ~ StoreProducts ~ data", data)
     const textSearch = useSelector(state => state.store.storeKeyword)
     const reduxStore = useSelector(state => state.store.store)
 

@@ -81,9 +81,9 @@ export default function OrdersUnpaid() {
                                                     </View>
                                                 </View>
                                                 <View style={[styles.row, styles.mb, styles.px_2, { width: '100%' }]}>
-                                                    <Image style={Os.image}
-                                                        resizeMethod={"scale"}
-                                                        resizeMode="cover"
+                                                    <Image style={[Os.image]}
+                                                        // resizeMethod={"scale"}
+                                                        // resizeMode="contain"
                                                         source={{ uri: child.products[0].image ? child.products[0].image : null }}
                                                     />
                                                     <View style={[styles.column_between_center, styles.px_2, { alignItems: 'flex-start', height: Wp('17%'), width: '83%' }]}>

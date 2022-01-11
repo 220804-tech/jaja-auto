@@ -13,7 +13,7 @@ export const style = StyleSheet.create({
         height: Hp("41%"),
         marginVertical: 5,
         justifyContent: "flex-start",
-        elevation: 2,
+        elevation: 1,
         backgroundColor: colors.White,
         flexDirection: 'column',
         alignSelf: 'center',

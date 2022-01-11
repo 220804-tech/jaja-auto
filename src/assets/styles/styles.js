@@ -171,7 +171,7 @@ export const styles = StyleSheet.create({
         // fontFamily: 'Poppins-Regular'
     },
     titleDashboard: {
-        fontSize: 16,
+        fontSize: 15,
         textAlign: "left",
         fontFamily: 'Poppins-Medium',
         color: colors.BlueJaja,

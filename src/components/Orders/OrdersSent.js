@@ -103,8 +103,8 @@ export default function OrdersSent() {
 
                                     <View style={[styles.row, styles.mb, styles.px_2, { width: '100%' }]}>
                                         <Image style={Os.image}
-                                            resizeMethod={"scale"}
-                                            resizeMode="cover"
+                                            // resizeMethod={"scalsssse"}
+                                            resizeMode="contain"
                                             source={{ uri: item.products[0].image ? item.products[0].image : null }}
                                         />
                                         <View style={[styles.column_between_center, styles.px_2, { alignItems: 'flex-start', height: Wp('17%'), width: '83%' }]}>

@@ -3,7 +3,7 @@ import { colors, Wp } from '../../export';
 
 export const style = StyleSheet.create({
     cardtrnding: {
-        borderRadius: 10,
+        borderRadius: 7,
         width: Wp("46%"),
         height: Wp("20%"),
         marginLeft: 2,
@@ -12,7 +12,7 @@ export const style = StyleSheet.create({
         marginBottom: 5,
         justifyContent: "flex-start",
         alignItems: "center",
-        elevation: 1,
+        elevation: 0.7,
         backgroundColor: colors.White,
         flexDirection: 'row'
     },

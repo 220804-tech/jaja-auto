@@ -17,7 +17,6 @@ export default function RecomandedHobbyComponent(props) {
     const reduxmaxRecommanded = useSelector(state => state.dashboard.maxRecomandded)
 
     useEffect(() => {
-        console.log("🚀 ~=======================================> reduxLoadmore", reduxLoadmore)
         if (reduxLoadmore) {
             handleLoadMore()
         }
@@ -45,7 +44,6 @@ export default function RecomandedHobbyComponent(props) {
             .then(response => response.json())
             .then(result => {
                 loadingFetch = false
-                console.log("🚀 ~ file: RecomandedHobbyComponent.js ~ line 52 ~ getData ~ result", result)
                 dispatch({ 'type': 'SET_LOADMORE', payload: false })
                 if (result?.status?.code === 200) {
                     dispatch({ type: 'SET_DASHRECOMMANDED', payload: reduxdashRecommanded.concat(result.data.items) })

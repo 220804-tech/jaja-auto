@@ -447,7 +447,7 @@ export default function ProductScreen(props) {
     const title = () => {
         return (
             <>
-                {!reduxLoad ?
+                {!reduxLoad && reduxProduct?.image?.length ?
                     // <View style={{ width: Wp('100%'), height: Hp('45%'), backgroundColor: colors.YellowJaja }}>
 
                     //     <Swiper

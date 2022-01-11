@@ -9,7 +9,7 @@ const { width } = Dimensions.get('screen')
 export default function GiftScreen() {
     const navigation = useNavigation();
     const dispatch = useDispatch()
-    const [state, setstate] = useState([{ name: 'PAKET GIFT 300 RIBU', uri: `${require('../../assets/icons/gift/tshirt.png')}`, price: '0-399999' }, { name: 'PAKET GIFT 500 RIBU', uri: `${require('../../assets/icons/gift/summer.png')}`, price: '400000-599999' }, { name: 'PAKET GIFT 700 RIBU', uri: `${require('../../assets/icons/gift/shoes.png')}`, price: '600000-999999' }, { name: 'PAKET GIFT 1 JUTA', uri: `${require('../../assets/icons/gift/watch.png')}`, price: '800000' },])
+    const [state, setstate] = useState([{ name: 'PAKET 100 RIBU', uri: `${require('../../assets/icons/gift/tshirt.png')}`, price: '0-199999' }, { name: 'PAKET 300 RIBU', uri: `${require('../../assets/icons/gift/summer.png')}`, price: '200000-399999' }, { name: 'PAKET 500 RIBU', uri: `${require('../../assets/icons/gift/shoes.png')}`, price: '400000-599999' }, { name: 'PAKET 700 RIBU', uri: `${require('../../assets/icons/gift/trousers.png')}`, price: '600000-799999' }, { name: 'PAKET 900 RIBU', uri: `${require('../../assets/icons/gift/watch.png')}`, price: '800000-999999' }, { name: 'PAKET 1 JUTA', uri: `${require('../../assets/icons/gift/makeover.png')}`, price: '1000000' },])
     const [data, setdata] = useState([
         {
             name: 'Apple iPhone 12 256GB Red',
@@ -117,16 +117,18 @@ export default function GiftScreen() {
             <ScrollView>
                 {/* <View> */}
                 <Image style={{ width: width, height: width * 0.5 }} source={require('../../assets/icons/gift/bannerGif.jpeg')} />
-                <View style={[styles.row_start_center, styles.mt_2, styles.px_3, styles.py, { width: "70%", backgroundColor: colors.RedFlashsale, borderBottomRightRadius: 100 }]}>
+                <View style={[styles.row_start_center, styles.mt_3, styles.px_3, styles.py, { width: "70%", backgroundColor: colors.RedFlashsale, borderBottomRightRadius: 100 }]}>
                     <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.White }]}>Beli Sekarang Kirim Nanti!</Text>
                 </View>
-                <View style={[styles.row_start_center, styles.mt_2, { flexWrap: 'wrap', width: '100%' }]}>
+                <View style={[styles.row_center, styles.mt_2, { flexWrap: 'wrap', width: '100%', alignSelf: 'center' }]}>
                     {state.map((item, idx) => {
                         return (
-                            <TouchableRipple key={String(idx) + 'QW'} onPress={() => handleFilter(item)} style={[styles.column_center, styles.p_5, { marginRight: idx == 0 || idx == 2 ? '1.5%' : '0%', width: Wp('49%'), height: Wp('49%'), backgroundColor: colors.BlueJaja, marginBottom: '1.5%' }]}>
+                            <TouchableRipple key={String(idx) + 'QW'} onPress={() => handleFilter(item)} style={[styles.column_center, styles.py_5, { marginRight: idx == 0 || idx == 1 || idx == 3 || idx == 4 ? Wp('1%') : '0%', width: Wp('31.5%'), height: Wp('31.5%'), backgroundColor: colors.BlueJaja, marginBottom: '1%', borderRadius: 4 }]}>
                                 <>
-                                    <Image style={[{ width: '90%', height: '90%', tintColor: colors.White, marginBottom: '5%' }]} source={item.uri} />
-                                    <Text style={[styles.font_14, styles.T_medium, { color: colors.White }]}>{item.name}</Text>
+                                    <View style={[styles.px_5, styles.mb_5, { width: '70%', height: '70%' }]}>
+                                        <Image style={[{ width: '100%', height: '100%', tintColor: colors.White, marginBottom: '5%' }]} source={item.uri} />
+                                    </View>
+                                    <Text style={[styles.font_11, styles.T_semi_bold, { color: colors.White, width: '90%', alignSelf: 'center', textAlign: 'center' }]}>{item.name}</Text>
                                 </>
                             </TouchableRipple>
                         )
@@ -135,7 +137,7 @@ export default function GiftScreen() {
                     }
                 </View>
 
-                <View style={[styles.row_start_center, styles.mt_2, styles.px_3, styles.py, { width: "70%", backgroundColor: colors.RedFlashsale, borderBottomRightRadius: 100 }]}>
+                <View style={[styles.row_start_center, styles.mt_3, styles.px_3, styles.py, { width: "70%", backgroundColor: colors.RedFlashsale, borderBottomRightRadius: 100 }]}>
                     <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.White }]}>Pilih Hadiah!</Text>
                 </View>
 

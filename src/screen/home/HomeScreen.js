@@ -289,6 +289,7 @@ export default function HomeScreen() {
     const renderContent = () => {
         return (
             <View style={[styles.column, { backgroundColor: colors.White, alignSelf: 'center', justifyContent: 'center', width: Wp('100%') }]}>
+
                 {/* <ScrollView
                     refreshControl={
                         <RefreshControl
@@ -300,7 +301,7 @@ export default function HomeScreen() {
                 <Category />
                 {reduxShowFlashsale ? <Flashsale /> : null}
                 <Trending />
-                <TouchableRipple onPress={handleShowGift} rippleColor={colors.White} style={[styles.row_center, styles.px, styles.py_3, styles.my_3, { backgroundColor: colors.RedFlashsale, borderRadius: 15, alignSelf: 'center', width: '95%', elevation: 2 }]} >
+                <TouchableRipple onPress={handleShowGift} rippleColor={colors.White} style={[styles.row_center, styles.px, styles.py_3, styles.my_3, { backgroundColor: colors.RedFlashsale, borderRadius: 11, alignSelf: 'center', width: '95%', elevation: 2 }]} >
                     <View style={[styles.row_around_center, { width: '100%' }]}>
                         <Text style={[styles.font_11, styles.T_semi_bold, { color: colors.White, marginBottom: '-0.5%' }]}>Berikan hadiah untuk teman spesial kamu disini!</Text>
                         <Image source={require('../../assets/icons/heart.png')} style={[styles.icon_27, { marginTop: '-1%' }]} />
@@ -472,7 +473,7 @@ export default function HomeScreen() {
     }
 
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : colors.White }]}>
+        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
             {loading ? <Loading /> : null}
             {/* <ScrollViews
                 refreshControl={
@@ -504,7 +505,7 @@ export default function HomeScreen() {
 
                 renderNavBar={() => renderNavBar('Cari hobimu sekarang')}
                 renderContent={renderContent}
-                containerStyle={[styles.container, { backgroundColor: colors.BlueJaja }]}
+                containerStyle={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.WhiteBack : null }]}
                 contentContainerStyle={style.contentContainer}
                 innerContainerStyle={style.container}
                 headerFixedBackgroundColor='transparent'

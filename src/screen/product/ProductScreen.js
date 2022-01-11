@@ -32,7 +32,6 @@ export default function ProductScreen(props) {
     const reduxStore = useSelector(state => state.store.store)
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
     const showFlashsale = useSelector(state => state.product.flashsale)
-    const productRefresh = useSelector(state => state.product.productRefresh)
 
     const slug = useSelector(state => state.search.slug)
 
@@ -122,7 +121,7 @@ export default function ProductScreen(props) {
             }
         });
         setlink(link_URL)
-    }   
+    }
 
     useFocusEffect(
         useCallback(() => {
@@ -333,7 +332,7 @@ export default function ProductScreen(props) {
     }
 
     const handleStore = () => {
-        navigation.navigate('Store')
+        navigation.push('Store')
 
         if (reduxStore && Object.keys(reduxStore).length) {
             if (reduxStore.name != seller.name) {
@@ -469,14 +468,14 @@ export default function ProductScreen(props) {
                                 autoplay={true}
                                 loop={true}
                             >
-                                {console.log("🚀 ~ file: ProductScreen.js ~ line 479 ~ {/*{reduxProduct.image.map ~ reduxProduct", reduxProduct)}
-                                {/* {reduxProduct.image.map((item, key) => {
+                                {/* {console.log("🚀 ~ file: ProductScreen.js ~ line 479 ~ {/*{reduxProduct.image.map ~ reduxProduct", reduxProduct)} */}
+                                {reduxProduct.image.map((item, key) => {
                                     return (
                                         <Image style={style.swiperProduct}
                                             source={{ uri: item }}
                                         />
                                     );
-                                })} */}
+                                })}
                             </Swiper>
                         </View>
                         :
@@ -532,12 +531,11 @@ export default function ProductScreen(props) {
 
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
         return layoutMeasurement.height + contentOffset.y >=
-            contentSize.height - (hg * 1.1) || layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 0.05)
+            contentSize.height - (hg * 0.80) || layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 4)
     }
 
     const loadMoreData = () => {
         if (reduxLoadmore === false) {
-            // console.log("masuk as")
             dispatch({ 'type': 'SET_LOADMORE', payload: true })
         }
     }
@@ -636,7 +634,7 @@ export default function ProductScreen(props) {
                                         {variasiSelected.isDiscount ?
                                             <View style={styles.row}>
                                                 <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 5 }]}>
-                                                    <Text style={[styles.font_16, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{reduxProduct.discount}%</Text>
+                                                    <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, { marginBottom: Platform.OS === 'ios' ? '-1%' : 0, color: colors.White }]}>{reduxProduct.discount}%</Text>
                                                 </View>
                                                 <View style={styles.column}>
                                                     <Text style={Ps.priceBefore}>{variasiSelected.price}</Text>
@@ -676,8 +674,8 @@ export default function ProductScreen(props) {
                                         <View style={[styles.row_start_center, { width: '87%', }]}>
                                             {reduxProduct.isDiscount ?
                                                 <View style={[styles.row_start_center]}>
-                                                    <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1.5%', borderRadius: 5 }]}>
-                                                        <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{reduxProduct.discount}%</Text>
+                                                    <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 5 }]}>
+                                                        <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, { marginBottom: Platform.OS === 'ios' ? '-1%' : 0, color: colors.White }]}>{reduxProduct.discount}%</Text>
                                                     </View>
                                                     <View style={[styles.column]}>
                                                         <Text style={Ps.priceBefore}>{reduxProduct.price}</Text>
@@ -974,7 +972,7 @@ export default function ProductScreen(props) {
                                                         <>
                                                             <View style={styles.row}>
                                                                 <Text style={[Ps.priceBefore, styles.mr_3,]}>{item.price}</Text>
-                                                                <Text style={[styles.font_10, styles.T_medium, { zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '1%', paddingHorizontal: '3%', borderRadius: 3 }]}>{item.discount}%</Text>
+                                                                <Text style={[styles.font_12, styles.T_medium, { zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '1%', paddingHorizontal: '3%', borderRadius: 3 }]}>{item.discount}1</Text>
                                                             </View>
                                                             <Text style={Ps.priceAfter}>{item.priceDiscount}</Text>
                                                         </>
@@ -1091,7 +1089,7 @@ export default function ProductScreen(props) {
                                             {variasiSelected.isDiscount ?
                                                 <View style={styles.row}>
                                                     <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 5 }]}>
-                                                        <Text style={[styles.font_16, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{reduxProduct.discount}%</Text>
+                                                        <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, { marginBottom: Platform.OS === 'ios' ? '-1%' : 0, color: colors.White }]}>{reduxProduct.discount}%</Text>
                                                     </View>
                                                     <View style={styles.column}>
                                                         <Text style={Ps.priceBefore}>{variasiSelected.price}</Text>
@@ -1121,8 +1119,8 @@ export default function ProductScreen(props) {
                                             <View style={[styles.row_start_center, { width: '87%', }]}>
                                                 {reduxProduct.isDiscount ?
                                                     <View style={[styles.row_start_center]}>
-                                                        <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1.5%', borderRadius: 5 }]}>
-                                                            <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{reduxProduct.discount}%</Text>
+                                                        <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 5 }]}>
+                                                            <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, { marginBottom: Platform.OS === 'ios' ? '-1%' : 0, color: colors.White }]}>{reduxProduct.discount}%</Text>
                                                         </View>
                                                         <View style={[styles.column]}>
                                                             <Text style={Ps.priceBefore}>{reduxProduct.price}</Text>
