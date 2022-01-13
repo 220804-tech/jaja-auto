@@ -44,6 +44,7 @@ export default function ChatScreen({ route }) {
 
     const dispatch = useDispatch()
     const listChat = [{ id: '1SX', text: 'Halo!' }, { id: '1SX', text: 'Halo, apakah barang ini ready?' }, { id: '2SX', text: 'Halo, apakah bisa dikirim hari ini?' }, { id: '3SX', text: 'Terima kasih!' }, { id: '4SX', text: 'Sama-sama!' },]
+    const reduxLoad = useSelector(state => state.product.productLoad)
 
     useEffect(() => {
         setnameChat(data.name);
@@ -107,7 +108,6 @@ export default function ChatScreen({ route }) {
         try {
             let imageUrl = ''
             if (image) {
-                console.log('fetch kamera')
                 var myHeaders = new Headers();
                 myHeaders.append("Authorization", reduxAuth);
                 myHeaders.append("Content-Type", "application/json");
@@ -244,26 +244,36 @@ export default function ChatScreen({ route }) {
     }
 
     const handleShowDetail = item => {
-        // dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        // dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-        // dispatch({ type: 'SET_SLUG', payload: item.productSlug })
-        // navigation.navigate("Product", { slug: item.productSlug, image: item.productImage })
-        dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
-        navigation.push("Product")
-        dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: { image: item.productImage, slug: item.productSlug } })
-        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-        dispatch({ type: 'SET_SLUG', payload: item.productSlug })
 
-        ServiceProduct.getProduct(reduxAuth, item.productSlug).then(res => {
-            if (res && res?.status?.code === 400) {
-                utils.alertPopUp('Sepertinya data tidak ditemukan!')
-                navigation.goBack()
-            } else {
-                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
-                dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+        try {
+            if (!reduxLoad) {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                let newItem = { ...item }
+                let img = newItem.image;
+                newItem.image = [img]
+                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: newItem })
+                if (!props.gift) {
+                    navigation.push("Product")
+                } else {
+                    navigation.push("GiftDetails")
+                }
+                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+                dispatch({ type: 'SET_SLUG', payload: item.slug })
+
+                ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+                    if (res?.status?.code === 400) {
+                        Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                        navigation.goBack()
+                    } else {
+                        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                    }
+                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                })
             }
-        })
-
+        } catch (error) {
+            dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+            alert(String(error.message))
+        }
     }
     const renderRow = ({ item, index }) => {
         let dateNow = String(item.date).slice(0, 3);
@@ -525,7 +535,6 @@ export default function ChatScreen({ route }) {
             </View >
         );
     }
-
 
     function setChat(value) {
         setIsiChat(value)

@@ -358,7 +358,7 @@ export default function SplashScreen() {
                     activeDotColor={colors.BlackGrayScale}
                     paginationStyle={{ bottom: 10 }}
                     autoplay={true}
-                    containerStyle={[{ flex: 0, width: wp('100%'), height: wp('100%'), justifyContent: 'center', alignItems: 'center', backgroundColor: 'silver' }]}
+                    containerStyle={[{ flex: 0, width: wp('100%'), height: wp('100%'), justifyContent: 'center', alignItems: 'center', backgroundColor: colors.BlueJaja }]}
                 // containerStyle={{ flex: 0, justifyContent: 'center', alignItems: 'center' }}
 
                 >

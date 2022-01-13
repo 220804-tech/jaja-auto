@@ -171,7 +171,7 @@ export default function GiftDetailScreen(props) {
     );
 
     const title = () => {
-        let arr = [reduxTemporary.image]
+        let arr = [giftDetails.image]
         return (
             <>
                 {
@@ -182,23 +182,23 @@ export default function GiftDetailScreen(props) {
                                 dotColor={colors.White}
                                 activeDotColor={colors.BlueJaja}
                                 paginationStyle={{ bottom: 10 }}>
-                                {
-                                    reduxLoad ?
-                                        arr.map((item, key) => {
-                                            return (
-                                                <Image style={style.swiperProduct}
-                                                    source={{ uri: item }}
-                                                />
-                                            );
-                                        })
-                                        :
-                                        giftDetails.image.map((item, key) => {
-                                            return (
-                                                <Image style={style.swiperProduct}
-                                                    source={{ uri: item }}
-                                                />
-                                            );
-                                        })
+                                {reduxLoad ?
+
+                                    arr.map((item, key) => {
+                                        return (
+                                            <Image key={String(key)} style={style.swiperProduct}
+                                                source={{ uri: item }}
+                                            />
+                                        );
+                                    })
+                                    :
+                                    giftDetails.image.map((item, key) => {
+                                        return (
+                                            <Image key={String(key)} style={style.swiperProduct}
+                                                source={{ uri: item }}
+                                            />
+                                        );
+                                    })
 
                                 }
                             </Swiper>
@@ -244,10 +244,35 @@ export default function GiftDetailScreen(props) {
     };
 
     const handleShowDetail = item => {
-        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-        dispatch({ type: 'SET_SLUG', payload: item.slug })
-        navigation.push("Product", { slug: item.slug, image: item.image })
+        try {
+            if (!reduxLoad) {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                let newItem = { ...item }
+                let img = newItem.image;
+                newItem.image = [img]
+                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: newItem })
+                if (!props.gift) {
+                    navigation.push("Product")
+                } else {
+                    navigation.push("GiftDetails")
+                }
+                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+                dispatch({ type: 'SET_SLUG', payload: item.slug })
+
+                ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+                    if (res?.status?.code === 400) {
+                        Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                        navigation.goBack()
+                    } else {
+                        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                    }
+                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                })
+            }
+        } catch (error) {
+            dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+            alert(String(error.message))
+        }
     }
 
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
@@ -314,6 +339,16 @@ export default function GiftDetailScreen(props) {
 
             }
         }, 1000);
+
+    }
+
+    const handleStore = () => {
+        navigation.navigate('Gift')
+        ServiceProduct.getStoreProduct({ gift: 1 }).then(res => {
+            dispatch({ type: "SET_PRODUCT_GIFT_HOME", payload: res?.data?.items })
+            dispatch({ type: "SET_FILTER_GIFT", payload: res?.data?.filters })
+            dispatch({ type: "SET_SORT_GIFT", payload: res?.data?.sorts })
+        })
 
     }
 
@@ -429,7 +464,7 @@ export default function GiftDetailScreen(props) {
                                             : null}
                                     </View>
                                 </View>
-                                <TouchableOpacity style={[styles.row_center, styles.py_2, styles.px_3, { borderWidth: 1, borderColor: flashsale ? colors.RedFlashsale : colors.BlueJaja, borderRadius: 100 }]} onPress={() => navigation.navigate('Gift')}>
+                                <TouchableOpacity style={[styles.row_center, styles.py_2, styles.px_3, { borderWidth: 1, borderColor: flashsale ? colors.RedFlashsale : colors.BlueJaja, borderRadius: 100 }]} onPress={handleStore}>
                                     <Text style={[styles.font_10, styles.T_semi_bold, { color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>Cari Hadiah</Text>
                                 </TouchableOpacity>
                             </View>

@@ -100,38 +100,35 @@ export default function SearchScreen(props) {
 
 
     const handleShowDetail = item => {
-        console.log("🚀 ~ file: SearchScreen.js ~ line 106 ~ SearchScreen ~ item", item)
         try {
             if (!reduxLoad) {
                 dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                let newItem = { ...item }
+                let img = newItem.image;
+                newItem.image = [img]
+                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: newItem })
                 if (!props.gift) {
                     navigation.push("Product")
-                    handleSaveKeyword(res.slug)
                 } else {
-                    dispatch({ type: 'SET_GIFT', payload: item })
-                    dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: {} })
-                    dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
                     navigation.push("GiftDetails")
                 }
-                dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: item })
                 dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
                 dispatch({ type: 'SET_SLUG', payload: item.slug })
 
                 ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
-                    setTimeout(() => dispatch({ type: 'SET_PRODUCT_LOAD', payload: false }), 500);
                     if (res?.status?.code === 400) {
                         Utils.alertPopUp('Sepertinya data tidak ditemukan!')
                         navigation.goBack()
                     } else {
                         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
                     }
+                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                 })
             }
         } catch (error) {
-            console.log("🚀 ~ file: SearchScreen.js ~ line 138 ~ SearchScreen ~ error", error)
             dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+            alert(String(error.message))
         }
-
     }
 
     const handleSaveKeyword = (keyword) => {

@@ -51,12 +51,9 @@ export default function ListChat() {
                         let countChat = 0
                         sortedObj.map(item => countChat += item.amount)
                         dispatch({ type: 'SET_NOTIF_COUNT', payload: { home: reduxnotifCount.home, chat: countChat, orders: reduxnotifCount.orders } })
-                        // database().ref(`/people/${reduxUser.uid}/`).update({ notif: { home: reduxnotifCount.home, chat: countChat, orders: reduxnotifCount.orders } })
-
                         setUsers(sortedObj);
                     }
                 });
-                // return returnArray;
             });
         }
     }

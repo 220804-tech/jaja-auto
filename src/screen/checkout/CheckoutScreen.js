@@ -1046,12 +1046,14 @@ export default function checkoutScreen() {
             </ScrollView>
             <View style={{ position: 'absolute', bottom: 0, zIndex: 100, elevation: 3, height: Hp('7%'), width: Wp('100%'), backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
                 <View style={{ width: '50%', height: '100%', justifyContent: 'center', paddingHorizontal: '2%', paddingLeft: '4%', paddingVertical: '1%' }}>
-                    <Text style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja, marginBottom: '-2%' }]}>Total pembayaran :</Text>
-                    <Text numberOfLines={1} style={[styles.font_18, styles.T_semi_bold, { color: colors.BlueJaja }]}>{reduxCheckout.totalCurrencyFormat}</Text>
+                    <Text style={[styles.font_12, styles.T_medium, { color: colors.BlueJaja, marginBottom: '-2%' }]}>Total pembayaran :</Text>
+                    <Text numberOfLines={1} style={[styles.font_17, styles.T_semi_bold, { color: colors.BlueJaja }]}>{reduxCheckout.totalCurrencyFormat}</Text>
                 </View>
-                <Button onPress={handleCheckout} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_14, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
-                    {reduxCheckout.total > 0 ? 'Pilih pembayaran' : 'Buat Pesanan'}
-                </Button>
+                {/* <Button  style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
+                </Button> */}
+                <TouchableRipple style={{ backgroundColor: colors.BlueJaja, width: "50%", height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={handleCheckout}>
+                    <Text numberOfLines={1} style={[styles.font_13, styles.T_semi_bold, { color: colors.White }]}>{reduxCheckout.total > 0 ? 'PILIH PEMBAYARAN' : 'BUAT PESANAN'}</Text>
+                </TouchableRipple>
             </View>
             <ActionSheet ref={actionSheetVoucher} onOpen={() => setloadAs(false)} onClose={() => setvoucherOpen("")} delayActionSheetDraw={false} containerStyle={{ padding: '4%', }}>
                 <View style={[styles.row_between_center, styles.py_2, styles.mb_5]}>

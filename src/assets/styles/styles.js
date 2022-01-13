@@ -106,6 +106,8 @@ export const styles = StyleSheet.create({
     py_4: { paddingVertical: '4%' },
     py_5: { paddingVertical: '5%' },
 
+
+    font_6: { fontSize: RFValue(5, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_7: { fontSize: RFValue(6, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
 
     font_8: { fontSize: RFValue(6.5, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
@@ -115,8 +117,9 @@ export const styles = StyleSheet.create({
     font_12: { fontSize: RFValue(8.5, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_13: { fontSize: RFValue(9.5, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_14: { fontSize: 14, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_15: { fontSize: 15, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
+    font_15: { fontSize: RFValue(10.5, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_16: { fontSize: 16, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
+    font_17: { fontSize: 17, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_18: { fontSize: 18, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_20: { fontSize: 20, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
     font_22: { fontSize: 22, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },

@@ -12,6 +12,7 @@ export default function NewProduct() {
     const reduxdashNearestStore = useSelector(state => state.dashboard.nearestStore)
     const products = useSelector(state => state.store.newProduct)
     const reduxAuth = useSelector(state => state.user.auth)
+    const reduxLoad = useSelector(state => state.product.productLoad)
 
     useEffect(() => {
     }, [])
@@ -34,26 +35,33 @@ export default function NewProduct() {
 
     const handleShowDetail = item => {
         try {
-            dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
-            navigation.navigate("Product")
-            dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: item })
-            dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-            dispatch({ type: 'SET_SLUG', payload: item.slug })
-
-            ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
-                if (res?.status?.code === 400) {
-                    Utils.alertPopUp('Sepertinya data tidak ditemukan!')
-                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
-                    navigation.goBack()
+            if (!reduxLoad) {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                let newItem = { ...item }
+                let img = newItem.image;
+                newItem.image = [img]
+                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: newItem })
+                if (!props.gift) {
+                    navigation.push("Product")
                 } else {
-                    dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
-                    setTimeout(() => dispatch({ type: 'SET_PRODUCT_LOAD', payload: false }), 500);
-                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                    navigation.push("GiftDetails")
                 }
-            })
-        } catch (error) {
-            console.log("🚀 ~ file: NewProduct.js ~ line 55 ~ NewProduct ~ error", error)
+                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+                dispatch({ type: 'SET_SLUG', payload: item.slug })
 
+                ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+                    if (res?.status?.code === 400) {
+                        Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                        navigation.goBack()
+                    } else {
+                        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                    }
+                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                })
+            }
+        } catch (error) {
+            dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+            alert(String(error.message))
         }
 
     }

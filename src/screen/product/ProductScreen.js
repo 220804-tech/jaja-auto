@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react'
-import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, StyleSheet, StatusBar, Animated, Platform, Dimensions, LogBox, ToastAndroid, RefreshControl, Alert, ScrollView, Modal } from 'react-native'
+import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, StyleSheet, StatusBar, Animated, Platform, Dimensions, LogBox, ToastAndroid, RefreshControl, Alert, RFValue, Modal } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { Button } from 'react-native-paper'
@@ -82,23 +82,6 @@ export default function ProductScreen(props) {
         }
         // setTimeout(() => setLoading(false), 3000);
         dynamicLink()
-
-    }, [])
-
-    useEffect(() => {
-        try {
-            // dynamicLink()
-            // if (reduxProduct && Object.keys(reduxProduct).length) {
-            //     ImgToBase64.getBase64String(reduxProduct.image[0])
-            //         .then(async base64String => {
-            //             let urlString = 'data:image/jpeg;base64,' + base64String;
-            //             setImage(urlString)
-            //         })
-            //         .catch(err => console.log("cok"));
-            // }
-        } catch (error) {
-
-        }
 
     }, [])
 
@@ -434,28 +417,6 @@ export default function ProductScreen(props) {
         return (
             <>
                 {
-                    // !reduxLoad ?
-                    // <View style={{ width: Wp('100%'), height: Hp('45%'), backgroundColor: colors.YellowJaja }}>
-
-                    //     <Swiper
-                    //         horizontal={true}
-                    //         dotColor={colors.White}
-                    //         activeDotColor={colors.BlueJaja}
-                    //         style={{ backgroundColor: colors.WhiteBack }}
-                    //     >
-                    //         {
-                    //             reduxProduct.image.map((item, key) => {
-                    //                 return (
-                    //                     <View key={String(key)} style={{ width: '90%', height: '90%', backgroundColor: colors.WhiteBack }}>
-                    //                         <Image style={style.swiperProduct}
-                    //                             source={{ uri: item }}
-                    //                         />
-                    //                     </View>
-                    //                 );
-                    //             })
-                    //         }
-                    //     </Swiper>
-                    // </View>
                     Platform.OS === 'ios' ?
                         <View style={{ width: Wp('100%'), height: Hp('45%'), backgroundColor: colors.White, marginTop: '-11%' }}>
                             <Swiper
@@ -468,14 +429,15 @@ export default function ProductScreen(props) {
                                 autoplay={true}
                                 loop={true}
                             >
-                                {/* {console.log("🚀 ~ file: ProductScreen.js ~ line 479 ~ {/*{reduxProduct.image.map ~ reduxProduct", reduxProduct)} */}
-                                {reduxProduct.image.map((item, key) => {
-                                    return (
-                                        <Image style={style.swiperProduct}
-                                            source={{ uri: item }}
-                                        />
-                                    );
-                                })}
+                                {
+                                    reduxProduct.image.map((item, key) => {
+                                        return (
+                                            <Image style={style.swiperProduct}
+                                                source={{ uri: item }}
+                                            />
+                                        );
+                                    })}
+
                             </Swiper>
                         </View>
                         :
@@ -484,13 +446,7 @@ export default function ProductScreen(props) {
                             dotColor={colors.White}
                             activeDotColor={colors.BlueJaja}
                             style={{ backgroundColor: colors.WhiteBack }}>
-                            {reduxLoad ?
-                                <View style={{ width: Wp('100%'), height: Wp('100%') }}>
-                                    <Image style={style.swiperProduct}
-                                        source={{ uri: reduxTemporary.image }}
-                                    />
-                                </View>
-                                :
+                            {
                                 reduxProduct.image.map((item, key) => {
                                     return (
                                         <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%') }}>
@@ -508,25 +464,31 @@ export default function ProductScreen(props) {
     };
 
     const handleShowDetail = item => {
-        // dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        // dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-        // dispatch({ type: 'SET_SLUG', payload: item.slug })
-        // navigation.push("Product", { slug: item.slug, image: item.image })
-        dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
-        navigation.push("Product")
-        dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: item })
-        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-        dispatch({ type: 'SET_SLUG', payload: item.slug })
+        try {
+            if (!reduxLoad) {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                if (!props.gift) {
+                    navigation.push("Product")
+                } else {
+                    navigation.push("GiftDetails")
+                }
+                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+                dispatch({ type: 'SET_SLUG', payload: slug })
 
-        ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
-            if (res && res?.status?.code === 400) {
-                Utils.alertPopUp('Sepertinya data tidak ditemukan!')
-                navigation.goBack()
-            } else {
-                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
-                dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                ServiceProduct.getProduct(reduxAuth, slug).then(res => {
+                    if (res?.status?.code === 400) {
+                        Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                        navigation.goBack()
+                    } else {
+                        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                    }
+                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                })
             }
-        })
+        } catch (error) {
+            dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+            alert(String(error.message))
+        }
     }
 
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
@@ -905,7 +867,7 @@ export default function ProductScreen(props) {
                             </View>
                             : null}
                         {reduxProduct.otherProduct && reduxProduct.otherProduct.length ?
-                            <View style={[styles.column, styles.p_4, styles.mb_2, { backgroundColor: colors.White, paddingBottom: '5%' }]}>
+                            <View style={[styles.column, styles.py_4, styles.px_3, styles.mb_2, { backgroundColor: colors.White, paddingBottom: '5%' }]}>
                                 <Text style={[styles.font_14, styles.T_medium]}>Produk Lainnya Di {reduxProduct.store.name}</Text>
                                 <FlatList
                                     horizontal={true}
@@ -917,6 +879,7 @@ export default function ProductScreen(props) {
                                     scrollEnabled={true}
                                     keyExtractor={(item, index) => String(index)}
                                     showsHorizontalScrollIndicator={false}
+                                    contentContainerStyle={{ flex: 0, justifyContent: 'flex-start' }}
                                     renderItem={({ item, index }) => {
                                         return (
                                             // <TouchableOpacity
@@ -949,8 +912,44 @@ export default function ProductScreen(props) {
                                             //         }
                                             //     </View>
                                             // </TouchableOpacity>
+                                            // <TouchableOpacity
+                                            //     style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('57%'), alignItems: 'center', elevation: 2 }]}
+                                            //     onPress={() => handleShowDetail(item)} >
+                                            //     <View style={[styles.column, { height: Wp('33%'), width: '100%' }]}>
+                                            //         <FastImage
+                                            //             style={[Ps.imageProduct, { height: '100%', width: '100%' }]}
+                                            //             source={{
+                                            //                 uri: item.image,
+                                            //                 headers: { Authorization: 'someAuthToken' },
+                                            //                 priority: FastImage.priority.normal,
+                                            //             }}
+                                            //             resizeMode={FastImage.resizeMode.contain}
+                                            //         />
+                                            //         {/* <View style={[styles.font_14, styles.px_5, styles.py, { position: 'absolute', bottom: 0, backgroundColor: colors.BlueJaja, borderTopRightRadius: 11, alignItems: 'center', justifyContent: 'center' }]}>
+                                            //             <Text style={[styles.font_8, { marginBottom: '-2%', color: colors.White }]}>Seller Terdekat</Text>
+                                            //         </View> */}
+                                            //     </View>
+                                            //     <View style={[Ps.bottomCard, { alignSelf: 'flex-start', width: '100%', height: Wp('18%'), justifyContent: 'flex-start', alignItems: 'flex-start' }]}>
+                                            //         <Text numberOfLines={1} style={[Ps.nameProductSmall,]}>{item.name}</Text>
+                                            //         {item.isDiscount ?
+                                            //             <>
+                                            //                 <View style={styles.row}>
+                                            //                     <Text style={[Ps.priceBefore, styles.mr_3,]}>{item.price}</Text>
+                                            //                     <Text style={[styles.font_12, styles.T_medium, { zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '1%', paddingHorizontal: '3%', borderRadius: 3 }]}>{item.discount}1</Text>
+                                            //                 </View>
+                                            //                 <Text style={Ps.priceAfter}>{item.priceDiscount}</Text>
+                                            //             </>
+                                            //             :
+                                            //             <Text style={[Ps.price, { color: colors.BlueJaja }]}>{item.price}</Text>
+                                            //         }
+                                            //     </View>
+                                            //     <View style={[Ps.location, { width: '94%' }]}>
+                                            //         <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
+                                            //         <Text numberOfLines={1} style={[Ps.locarionName, { fontSize: 10, width: '85%' }]}>{item.location}</Text>
+                                            //     </View>
+                                            // </TouchableOpacity>
                                             <TouchableOpacity
-                                                style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('57%'), alignItems: 'center', elevation: 2 }]}
+                                                style={[Ps.cardProduct, { marginLeft: 1, marginRight: 7, width: Wp('33%'), height: Wp('57%'), alignItems: 'center', elevation: 2 }]}
                                                 onPress={() => handleShowDetail(item)} >
                                                 <View style={[styles.column, { height: Wp('33%'), width: '100%' }]}>
                                                     <FastImage
@@ -962,27 +961,26 @@ export default function ProductScreen(props) {
                                                         }}
                                                         resizeMode={FastImage.resizeMode.contain}
                                                     />
-                                                    {/* <View style={[styles.font_14, styles.px_5, styles.py, { position: 'absolute', bottom: 0, backgroundColor: colors.BlueJaja, borderTopRightRadius: 11, alignItems: 'center', justifyContent: 'center' }]}>
-                                                        <Text style={[styles.font_8, { marginBottom: '-2%', color: colors.White }]}>Seller Terdekat</Text>
-                                                    </View> */}
                                                 </View>
                                                 <View style={[Ps.bottomCard, { alignSelf: 'flex-start', width: '100%', height: Wp('18%'), justifyContent: 'flex-start', alignItems: 'flex-start' }]}>
-                                                    <Text numberOfLines={1} style={[Ps.nameProductSmall,]}>{item.name}</Text>
+                                                    <Text numberOfLines={1} style={[Ps.nameProductSmall]}>{item.name}</Text>
                                                     {item.isDiscount ?
                                                         <>
-                                                            <View style={styles.row}>
-                                                                <Text style={[Ps.priceBefore, styles.mr_3,]}>{item.price}</Text>
-                                                                <Text style={[styles.font_12, styles.T_medium, { zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '1%', paddingHorizontal: '3%', borderRadius: 3 }]}>{item.discount}1</Text>
+                                                            <View style={styles.row_center}>
+                                                                <Text style={[Ps.priceBeforeSmall, styles.mr_3,]}>{item.price}</Text>
+                                                                <View style={{ zIndex: 1, backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 3, justifyContent: 'center', alignItems: 'center', marginBottom: '1%' }}>
+                                                                    <Text style={[styles.font_6, { textAlignVertical: 'center', textAlign: 'center', marginBottom: Platform.OS === 'android' ? '-1%' : 0, color: colors.White, }]}>{item.discount}%</Text>
+                                                                </View>
                                                             </View>
-                                                            <Text style={Ps.priceAfter}>{item.priceDiscount}</Text>
+                                                            <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.priceDiscount}</Text>
                                                         </>
                                                         :
-                                                        <Text style={[Ps.price, { color: colors.BlueJaja }]}>{item.price}</Text>
+                                                        <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.price}</Text>
                                                     }
                                                 </View>
                                                 <View style={[Ps.location, { width: '94%' }]}>
                                                     <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
-                                                    <Text numberOfLines={1} style={[Ps.locarionName, { fontSize: 10, width: '85%' }]}>{item.location}</Text>
+                                                    <Text numberOfLines={1} style={[Ps.locarionNameSmall, { width: '85%' }]}>{item.location}</Text>
                                                 </View>
                                             </TouchableOpacity>
                                         )
@@ -1017,7 +1015,7 @@ export default function ProductScreen(props) {
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
-            {reduxLoad ? <Loading /> : null}
+            {/* {reduxLoad ? <Loading /> : null} */}
             <StatusBar translucent={Platform.OS === 'ios' ? false : true} backgroundColor="transparent" barStyle="light-content" />
 
             <ReactNativeParallaxHeader

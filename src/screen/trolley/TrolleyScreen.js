@@ -421,7 +421,7 @@ export default function TrolleyScreen() {
                                                         </TouchableWithoutFeedback>
                                                         <View style={[styles.column_between_center, { alignItems: 'flex-start', height: Wp('23%'), width: '60%' }]}>
                                                             <View style={styles.column_center_start}>
-                                                                <Text onPress={() => handleSelected(item)} numberOfLines={1} style={[styles.font_13, styles.T_medium, { flex: 0, color: colors.BlueJaja }]}>{item.name}</Text>
+                                                                <Text onPress={() => handleSelected(item)} numberOfLines={1} style={[styles.font_12, styles.T_medium, { flex: 0, color: colors.BlueJaja }]}>{item.name}</Text>
                                                                 <Text numberOfLines={1} style={[styles.font_10, { flex: 0, color: colors.BlackGrayScale }]}>{item.variant ? "Variant " + item.variant : ""}</Text>
                                                             </View>
                                                             {item.isDiscount ?
@@ -487,10 +487,10 @@ export default function TrolleyScreen() {
                 </View> */}
                     <View style={[styles.row, { height: Hp('7%') }]}>
                         <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '2%', paddingLeft: '4%', paddingVertical: '1%' }}>
-                            <Text style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja, marginBottom: '-2%' }]}>Total Harga :</Text>
-                            <Text numberOfLines={1} style={[styles.font_18, styles.T_semi_bold, { color: colors.BlueJaja }]}>{reduxCart.cart.totalCartCurrencyFormat ? reduxCart.cart.totalCartCurrencyFormat : 'Rp0'}</Text>
+                            <Text style={[styles.font_12, styles.T_medium, { color: colors.BlueJaja, marginBottom: '-2%' }]}>Total Harga :</Text>
+                            <Text numberOfLines={1} style={[styles.font_17, styles.T_semi_bold, { color: colors.BlueJaja }]}>{reduxCart.cart.totalCartCurrencyFormat ? reduxCart.cart.totalCartCurrencyFormat : 'Rp0'}</Text>
                         </View>
-                        <Button disabled={disableCheckout} onPress={handleCheckout} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_14, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
+                        <Button disabled={disableCheckout} onPress={handleCheckout} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                             Checkout
                         </Button>
                     </View>

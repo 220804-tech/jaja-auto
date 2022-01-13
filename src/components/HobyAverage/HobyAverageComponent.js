@@ -4,16 +4,43 @@ import colors from '../../assets/colors'
 import { styles } from '../../assets/styles/styles'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useSelector, useDispatch } from 'react-redux'
+import { ServiceProduct } from '../../export';
 
 export default function RecomandedHobbyComponent() {
     const reduxDashboard = useSelector(state => state.dashboard.hobyAverage)
     const dispatch = useDispatch()
+    const reduxLoad = useSelector(state => state.product.productLoad)
 
     const handleShowDetail = item => {
-        navigation.navigate("Product")
-        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-        dispatch({ type: 'SET_SLUG', payload: item.slug })
+        try {
+            if (!reduxLoad) {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                let newItem = { ...item }
+                let img = newItem.image;
+                newItem.image = [img]
+                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: newItem })
+                if (!props.gift) {
+                    navigation.push("Product")
+                } else {
+                    navigation.push("GiftDetails")
+                }
+                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+                dispatch({ type: 'SET_SLUG', payload: item.slug })
+
+                ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+                    if (res?.status?.code === 400) {
+                        Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                        navigation.goBack()
+                    } else {
+                        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                    }
+                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                })
+            }
+        } catch (error) {
+            dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+            alert(String(error.message))
+        }
     }
     return (
         <View style={styles.p_3}>

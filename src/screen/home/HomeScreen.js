@@ -28,6 +28,7 @@ export default function HomeScreen() {
     const reduxShowFlashsale = useSelector(state => state.dashboard.flashsaleLive)
     const reduxShowNearest = useSelector(state => state.dashboard.showNearestStore)
     const reduxBadges = useSelector(state => state.user.badges)
+    const reduxLoad = useSelector(state => state.product.productLoad)
 
     useAndroidBackHandler(() => {
         if (out) {
@@ -100,32 +101,36 @@ export default function HomeScreen() {
         }
     };
 
-    const handleShowDetail = (status, slug) => {
+    const handleShowDetail = slug => {
         try {
-            dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
-            if (status !== 'gift') {
-                navigation.navigate("Product")
-            } else {
-                // dispatch({ type: 'SET_GIFT', payload: item })
-                dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: {} })
-                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-                navigation.navigate("GiftDetails")
-            }
-            // dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: item })
-            dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-            dispatch({ type: 'SET_SLUG', payload: slug })
-
-            ServiceProduct.getProduct(reduxAuth, slug).then(res => {
-                if (res?.status?.code === 400) {
-                    Utils.alertPopUp('Sepertinya data tidak ditemukan!')
-                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
-                    navigation.goBack()
+            if (!reduxLoad) {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                if (!props.gift) {
+                    navigation.push("Product")
                 } else {
-                    dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
-                    setTimeout(() => dispatch({ type: 'SET_PRODUCT_LOAD', payload: false }), 500);
-                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                    navigation.push("GiftDetails")
                 }
-            })
+                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
+                dispatch({ type: 'SET_SLUG', payload: slug })
+
+                ServiceProduct.getProduct(reduxAuth, slug).then(res => {
+                    if (res?.status?.code === 400) {
+                        Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                        navigation.goBack()
+                    } else {
+                        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                    }
+                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                })
+            }
+        } catch (error) {
+            dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+            alert(String(error.message))
+        }
+        try {
+            if (reduxAuth) {
+                getBadges()
+            }
         } catch (error) {
 
         }
@@ -136,38 +141,18 @@ export default function HomeScreen() {
     useFocusEffect(
         useCallback(() => {
             try {
-                if (Platform.OS == 'ios') {
+                if (Platform.OS === 'ios') {
                     StatusBar.setBarStyle('light-content', true);	//<<--- add this
                     StatusBar.setBackgroundColor(colors.BlueJaja, true)
-
                 }
                 dispatch({ type: 'SET_CART_STATUS', payload: '' })
                 setOut(false)
-                if (reduxAuth) {
-                    getBadges()
-                }
+
 
             } catch (error) {
 
             }
         }, [reduxAuth]),
-    );
-
-
-    useFocusEffect(
-        useCallback(() => {
-            // const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
-            // setLoading(false)
-            // console.log("🚀 ~ file: HomeScreen.js ~ line 134 ~ useEffect ~ unsubscribe", unsubscribe)
-            // return () => unsubscribe();
-            dynamicLinks().getInitialLink().then(link => {
-                handleDynamicLink(link)
-            })
-            const linkingListener = dynamicLinks().onLink(handleDynamicLink)
-            return () => {
-                linkingListener()
-            }
-        }, []),
     );
 
     useEffect(() => {
@@ -192,6 +177,23 @@ export default function HomeScreen() {
         }
         setTimeout(() => setLoading(false), 3000);
     }, [])
+
+    useEffect(() => {
+        dynamicLinks().getInitialLink().then(link => {
+            handleDynamicLink(link)
+        })
+        const linkingListener = dynamicLinks().onLink(handleDynamicLink)
+        return () => {
+            linkingListener()
+        }
+    }, [])
+
+
+    useEffect(() => {
+        if (reduxAuth) {
+            getBadges()
+        }
+    }, [reduxAuth])
 
     const getBadges = () => {
         ServiceUser.getBadges(reduxAuth).then(result => {
