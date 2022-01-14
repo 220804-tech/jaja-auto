@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { View, Text, FlatList, Image, TouchableOpacity, ScrollView, Alert } from 'react-native'
-import { styles, Ps, Language, useNavigation, FastImage, colors, Wp, useFocusEffect, Hp, ServiceCore, Countdown } from '../../export'
+import { styles, Ps, Language, useNavigation, FastImage, colors, Wp, useFocusEffect, Hp, ServiceCore, Countdown, ServiceProduct, Utils } from '../../export'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { useSelector, useDispatch } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient';
@@ -66,12 +66,41 @@ export default function FlashsaleComponent() {
 
 
 
-    const handleShowDetail = item => {
-        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: true })
-        dispatch({ type: 'SET_SLUG', payload: item.slug })
-
-        navigation.push("Product", { slug: item.slug, image: item.image })
+    const handleShowDetail = async (item, status) => {
+        let error = true;
+        try {
+            if (!reduxLoad) {
+                !status ? await navigation.push(!props.gift ? "Product" : "GiftDetails") : null
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+                    error = false
+                    if (res === 404) {
+                        Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                        navigation.goBack()
+                    } else if (res?.data) {
+                        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                        setTimeout(() => dispatch({ type: 'SET_FILTER_LOCATION', payload: true }), 7000);
+                    }
+                })
+            } else {
+                error = false
+            }
+        } catch (error) {
+            dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+            alert(String(error.message))
+            error = false
+        }
+        setTimeout(() => {
+            if (error) {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                Utils.handleSignal()
+                setTimeout(() => Utils.alertPopUp('Sedang memuat ulang..'), 2000);
+                error = false
+                handleShowDetail(item, true)
+            }
+        }, 20000);
     }
 
     const [shimmerData] = useState(['1X', '2X', '3X'])
@@ -123,7 +152,7 @@ export default function FlashsaleComponent() {
                                     return (
                                         <TouchableOpacity
                                             style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('57%'), alignItems: 'center', elevation: 0 }]}
-                                            onPress={() => handleShowDetail(item)} >
+                                            onPress={() => handleShowDetail(item, false)} >
                                             <FastImage
                                                 style={[Ps.imageProduct, { height: Wp('33%'), width: '100%' }]}
                                                 source={{

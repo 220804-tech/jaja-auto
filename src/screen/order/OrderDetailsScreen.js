@@ -837,35 +837,42 @@ export default function OrderDetailsScreen() {
     //     dispatch({ type: 'SET_SLUG', payload: item.slug })
     //     navigation.navigate("Product", { slug: item.slug, image: item.image })
     // }
-    const handleShowDetail = item => {
-
+    const handleShowDetail = async (item, status, gift) => {
+        let error = true;
         try {
             if (!reduxLoad) {
+                !status ? await navigation.push(!gift ? "Product" : "GiftDetails") : null
                 dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
-                if (!props.gift) {
-                    navigation.push("Product")
-                } else {
-                    navigation.push("GiftDetails")
-                }
-                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-                dispatch({ type: 'SET_SLUG', payload: slug })
-
-                ServiceProduct.getProduct(reduxAuth, slug).then(res => {
-                    if (res?.status?.code === 400) {
+                ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+                    error = false
+                    if (res === 404) {
                         Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                         navigation.goBack()
-                    } else {
+                    } else if (res?.data) {
                         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                        setTimeout(() => dispatch({ type: 'SET_FILTER_LOCATION', payload: true }), 7000);
                     }
-                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                 })
+            } else {
+                error = false
             }
         } catch (error) {
             dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
             alert(String(error.message))
+            error = false
         }
+        setTimeout(() => {
+            if (error) {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                Utils.handleSignal()
+                setTimeout(() => Utils.alertPopUp('Sedang memuat ulang..'), 2000);
+                error = false
+                handleShowDetail(item, true, gift)
+            }
+        }, 15000);
     }
-
 
     const handleStore = (item) => {
         if (reduxStore && Object.keys(reduxStore).length) {
@@ -1043,7 +1050,7 @@ export default function OrderDetailsScreen() {
                                             return (
                                                 <View key={String(idx) + "SV"} style={[styles.column, styles.px_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver, width: '100%' }]}>
                                                     <View style={[styles.row_start_center, { width: '100%', height: Wp('25%') }]}>
-                                                        <TouchableOpacity onPress={() => handleShowDetail(child)}>
+                                                        <TouchableOpacity onPress={() => handleShowDetail(child, false, item.isGift)}>
                                                             <Image style={{
                                                                 width: Wp('15%'), height: Wp('15%'), borderRadius: 5, backgroundColor: colors.White,
                                                                 borderWidth: 0.2,
@@ -1060,7 +1067,7 @@ export default function OrderDetailsScreen() {
                                                             />
                                                         </TouchableOpacity>
                                                         <View style={[styles.column, styles.ml_2, { height: Wp('15%'), width: Wp('85%') }]}>
-                                                            <Text onPress={() => handleShowDetail(child)} numberOfLines={1} style={[styles.font_13, styles.T_semi_bold, { color: colors.BlueJaja, width: '95%' }]}>{child.name}</Text>
+                                                            <Text onPress={() => handleShowDetail(child, false, item.isGift)} numberOfLines={1} style={[styles.font_13, styles.T_semi_bold, { color: colors.BlueJaja, width: '95%' }]}>{child.name}</Text>
                                                             <View style={[styles.row_between_center, styles.pr_2, { width: '95%', alignItems: 'flex-start' }]}>
                                                                 <Text numberOfLines={1} style={[styles.font_12, { color: colors.BlackGrayScale, }]}>{child.variant ? child.variant : ""}</Text>
                                                                 <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>

@@ -4,7 +4,7 @@ import { getDistance, getPreciseDistance } from 'geolib';
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { Utils } from '../export';
 import { Alert } from 'react-native';
-export default async function FilterLocation(locations, user, category, auth) {
+export default async function FilterLocation(locations, user, category, auth, dispatch) {
     // console.log("🚀 ~ file: FilterLocation.js ~ line 7 ~ FilterLocation ~ auth", auth)
     // console.log("🚀 ~ file: FilterLocation.js ~ line 7 ~ FilterLocation ~ category", category)
     // console.log("🚀 ~ file: FilterLocation.js ~ line 7 ~ FilterLocation ~ user", user)
@@ -74,9 +74,13 @@ export default async function FilterLocation(locations, user, category, auth) {
                 }
 
             }
-
+            setTimeout(() => dispatch({ type: 'SET_FILTER_LOCATION', payload: false }), 3000);
         })
-        .catch(error => Utils.handleError(error, 'Error with status code : 12026'));
+        .catch(error => {
+            Utils.handleError(error, 'Error with status code : 12026')
+            setTimeout(() => dispatch({ type: 'SET_FILTER_LOCATION', payload: false }), 3000);
+
+        });
 
 
 }

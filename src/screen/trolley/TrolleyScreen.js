@@ -275,7 +275,6 @@ export default function TrolleyScreen() {
         // navigation.navigate("Product", { slug: item.slug, image: item.image })
         dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
         navigation.push("Product")
-        dispatch({ type: 'SET_PRODUCT_TEMPORARY', payload: { image: item.productImage, slug: item.slug } })
         dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
         dispatch({ type: 'SET_SLUG', payload: item.slug })
 

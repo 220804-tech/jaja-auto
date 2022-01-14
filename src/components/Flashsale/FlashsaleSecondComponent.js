@@ -2,18 +2,51 @@ import React from 'react'
 import { View, Text, FlatList, TouchableOpacity } from 'react-native'
 import { Button } from 'react-native-paper'
 import { useDispatch, useSelector } from 'react-redux'
-import { colors, FastImage, Ps, styles, Wp, Countdown, Hp, useNavigation } from '../../export'
+import { colors, FastImage, Ps, styles, Wp, Countdown, Utils, useNavigation, ServiceProduct } from '../../export'
 
 export default function FlashsaleSecondComponent() {
     const reduxFlashsale = useSelector(state => state.dashboard.flashsale)
     const dispatch = useDispatch()
     const navigation = useNavigation()
-    const handleShowDetail = item => {
-        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: true })
-        dispatch({ type: 'SET_SLUG', payload: item.slug })
-        navigation.navigate("Product", { slug: item.slug, image: item.image })
+    const reduxLoad = useSelector(state => state.product.productLoad)
+
+    const handleShowDetail = async (item, status) => {
+        let error = true;
+        try {
+            if (!reduxLoad) {
+                !status ? await navigation.push("Product") : null
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+                    error = false
+                    if (res === 404) {
+                        Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                        navigation.goBack()
+                    } else if (res?.data) {
+                        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                        setTimeout(() => dispatch({ type: 'SET_FILTER_LOCATION', payload: true }), 7000);
+                    }
+                })
+            } else {
+                error = false
+            }
+        } catch (error) {
+            dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+            alert(String(error.message))
+            error = false
+        }
+        setTimeout(() => {
+            if (error) {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                Utils.handleSignal()
+                setTimeout(() => Utils.alertPopUp('Sedang memuat ulang..'), 2000);
+                error = false
+                handleShowDetail(item, true)
+            }
+        }, 20000);
     }
+
     return (
         <View style={[styles.container]}>
             <FlatList
@@ -24,7 +57,7 @@ export default function FlashsaleSecondComponent() {
 
                     if (String(item.time_live) === '18:00') {
                         return (
-                            <View onPress={() => handleShowDetail(item)} style={[styles.row_start_center, styles.mb_2, styles.px_2, { height: Wp('31.5%'), width: Wp('100%'), borderBottomWidth: 0.5, borderBottomColor: colors.Silver, backgroundColor: colors.White }]}>
+                            <View onPress={() => handleShowDetail(item, false)} style={[styles.row_start_center, styles.mb_2, styles.px_2, { height: Wp('31.5%'), width: Wp('100%'), borderBottomWidth: 0.5, borderBottomColor: colors.Silver, backgroundColor: colors.White }]}>
                                 <View style={[styles.row_center, { position: 'absolute', left: 0, top: 0, zIndex: 999, width: Wp('8%'), height: Wp('6.5%'), backgroundColor: colors.RedFlashsale, padding: '2%', borderBottomRightRadius: 5 }]}>
                                     <Text style={{ fontSize: 10, color: colors.White, fontFamily: 'Poppins-SemiBold', backgroundColor: colors.RedFlashsale }}>{item.discountFlash}%</Text>
                                 </View>
@@ -83,7 +116,7 @@ export default function FlashsaleSecondComponent() {
                                                 >{item.amountSold} Terjual</Text>
                                             </View>
                                         </View>
-                                        <Button onPress={() => handleShowDetail(item)} mode="contained" color={colors.RedFlashsale} style={{ width: '25%', height: Wp('9%') }} labelStyle={[styles.font_10, styles.T_semi_bold, { color: colors.White, padding: 0 }]}>
+                                        <Button onPress={() => handleShowDetail(item, false)} mode="contained" color={colors.RedFlashsale} style={{ width: '25%', height: Wp('9%') }} labelStyle={[styles.font_10, styles.T_semi_bold, { color: colors.White, padding: 0 }]}>
                                             Beli
                                         </Button>
                                     </View>

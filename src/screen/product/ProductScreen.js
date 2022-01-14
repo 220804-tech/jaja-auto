@@ -16,6 +16,8 @@ import { useDispatch, useSelector } from "react-redux";
 import StarRating from 'react-native-star-rating';
 import ImgToBase64 from 'react-native-image-base64';
 import ViewShot from "react-native-view-shot";
+import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
+import LinearGradient from 'react-native-linear-gradient';
 LogBox.ignoreAllLogs()
 
 export default function ProductScreen(props) {
@@ -25,6 +27,8 @@ export default function ProductScreen(props) {
     const reduxProduct = useSelector(state => state.product.productDetail)
     const reduxLoad = useSelector(state => state.product.productLoad)
     const reduxTemporary = useSelector(state => state.product.productTemporary)
+    const filterLocation = useSelector(state => state.product.filterLocation)
+
 
 
     const reduxUser = useSelector(state => state.user)
@@ -64,25 +68,23 @@ export default function ProductScreen(props) {
 
     const onRefresh = useCallback(() => {
         // setLoading(true);
-        getItem(reduxProduct.slug)
-        Utils.alertPopUp('Refreshing..')
+        if (!reduxLoad && !filterLocation) {
+            getItem(reduxProduct.slug)
+            Utils.alertPopUp('Refreshing..')
+        }
 
     }, []);
 
     useEffect(() => {
         setmodal(false)
-        // setLoading(true)
         if (props.route.params && reduxProduct.slug) {
-            // getItem(reduxProduct.slug)
             if (showFlashsale) {
                 setFlashsale(true)
             } else {
                 setFlashsale(false)
             }
         }
-        // setTimeout(() => setLoading(false), 3000);
         dynamicLink()
-
     }, [])
 
 
@@ -106,41 +108,37 @@ export default function ProductScreen(props) {
         setlink(link_URL)
     }
 
-    useFocusEffect(
-        useCallback(() => {
-            try {
-                if (!reduxLoad) {
-                    if (!!reduxProduct?.id) {
-                        handleVariasi(reduxProduct.variant)
-                        setRefreshing(false)
-                        handleFlashsale(reduxProduct.flashsaleData, reduxProduct.statusProduk)
-                        setLike(reduxProduct.isWishlist)
-                        setidProduct(reduxProduct.id)
-                        if (!reduxProduct.stock && reduxProduct.stock == '0') {
-                            setdisableCart(true)
-                        }
-                        let dataSeller = reduxProduct.store
-                        dataSeller.chat = reduxUser.user.uid + dataSeller.uid
-                        dataSeller.id = dataSeller.uid
-                        setSeller(dataSeller)
-                        setLike(reduxProduct.isWishlist)
-                        if (reduxAuth && reduxProduct?.sellerTerdekat.length && reduxUser?.user?.id && reduxProduct?.category?.slug) {
-                            FilterLocation(reduxProduct.sellerTerdekat, reduxUser.user.location, reduxProduct.category.slug, reduxAuth)
-                        }
+    useEffect(() => {
+
+        try {
+            if (filterLocation) {
+                if (!!reduxProduct?.id) {
+                    handleVariasi(reduxProduct.variant)
+                    setRefreshing(false)
+                    handleFlashsale(reduxProduct.flashsaleData, reduxProduct.statusProduk)
+                    setLike(reduxProduct.isWishlist)
+                    setidProduct(reduxProduct.id)
+                    if (!reduxProduct.stock && reduxProduct.stock === '0') {
+                        setdisableCart(true)
+                    }
+                    let dataSeller = reduxProduct.store
+                    dataSeller.chat = reduxUser.user.uid + dataSeller.uid
+                    dataSeller.id = dataSeller.uid
+                    setSeller(dataSeller)
+                    setLike(reduxProduct.isWishlist)
+                    if (reduxAuth && reduxProduct?.sellerTerdekat.length && reduxUser?.user?.id && reduxProduct?.category?.slug) {
+                        FilterLocation(reduxProduct.sellerTerdekat, reduxUser.user.location, reduxProduct.category.slug, reduxAuth, dispatch)
                     }
                 }
-
-
-            } catch (error) {
-                console.log("🚀 ~ file: ProductScreen.js ~ line 159 ~ useCallback ~ error", error)
-
+            } else {
+                console.log('outtt')
             }
-            // if (showFlashsale) {
-            //     getItem(reduxProduct.slug)
-            // }
 
-        }, [reduxLoad]),
-    );
+
+        } catch (error) {
+            console.log("🚀 ~ file: ProductScreen.js ~ line 159 ~ useCallback ~ error", error)
+        }
+    }, [filterLocation])
 
     const getItem = (slg) => {
         let response;
@@ -230,7 +228,6 @@ export default function ProductScreen(props) {
                     Utils.alertPopUp('Anda belum memilih variasi produk ini!')
                 }
             } else {
-                console.log("keluar")
                 handleApiCart(name)
             }
         } else {
@@ -248,10 +245,8 @@ export default function ProductScreen(props) {
             if (result && result.status.code === 200) {
                 Utils.alertPopUp('Produk berhasil ditambahkan!')
                 if (name === "buyNow") {
-                    console.log('masuk sini');
                     handleTrolley()
                 } else {
-                    console.log('keluar');
                     handleGetCart()
                 }
             } else if (result.status.code === 400 && result.status.message === 'quantity cannot more than stock') {
@@ -414,6 +409,7 @@ export default function ProductScreen(props) {
     );
 
     const title = () => {
+        let arrImage = [require('../../assets/images/JajaId.png')]
         return (
             <>
                 {
@@ -427,16 +423,26 @@ export default function ProductScreen(props) {
                                 activeDotColor={colors.BlueJaja}
                                 paginationStyle={{ bottom: 10 }}
                                 autoplay={true}
-                                loop={true}
-                            >
+                                loop={true}>
                                 {
-                                    reduxProduct.image.map((item, key) => {
-                                        return (
-                                            <Image style={style.swiperProduct}
-                                                source={{ uri: item }}
-                                            />
-                                        );
-                                    })}
+                                    reduxLoad || !reduxProduct?.image?.[0] ?
+                                        arrImage.map((item, key) => {
+                                            return (
+                                                <Image key={String(key)} style={[style.swiperProduct, { tintColor: colors.Silver }]}
+                                                    source={item}
+                                                />
+                                            );
+                                        })
+
+                                        :
+
+                                        reduxProduct.image.map((item, key) => {
+                                            return (
+                                                <Image key={String(key)} style={style.swiperProduct}
+                                                    source={{ uri: item }}
+                                                />
+                                            );
+                                        })}
 
                             </Swiper>
                         </View>
@@ -447,15 +453,26 @@ export default function ProductScreen(props) {
                             activeDotColor={colors.BlueJaja}
                             style={{ backgroundColor: colors.WhiteBack }}>
                             {
-                                reduxProduct.image.map((item, key) => {
-                                    return (
-                                        <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%') }}>
-                                            <Image style={style.swiperProduct}
-                                                source={{ uri: item }}
-                                            />
-                                        </View>
-                                    );
-                                })
+                                reduxLoad || !reduxProduct?.image?.[0] ?
+                                    arrImage.map((item, key) => {
+                                        return (
+                                            <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%'), }}>
+                                                <Image style={[style.swiperProduct, { tintColor: colors.Silver }]}
+                                                    source={item}
+                                                />
+                                            </View>
+                                        );
+                                    })
+                                    :
+                                    reduxProduct.image.map((item, key) => {
+                                        return (
+                                            <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%') }}>
+                                                <Image style={style.swiperProduct}
+                                                    source={{ uri: item }}
+                                                />
+                                            </View>
+                                        );
+                                    })
                             }
                         </Swiper>
                 }
@@ -463,32 +480,41 @@ export default function ProductScreen(props) {
         );
     };
 
-    const handleShowDetail = item => {
+    const handleShowDetail = async (item, status) => {
+        let error = true;
         try {
             if (!reduxLoad) {
+                !status ? await navigation.push("Product") : null
                 dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
-                if (!props.gift) {
-                    navigation.push("Product")
-                } else {
-                    navigation.push("GiftDetails")
-                }
-                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-                dispatch({ type: 'SET_SLUG', payload: slug })
-
-                ServiceProduct.getProduct(reduxAuth, slug).then(res => {
-                    if (res?.status?.code === 400) {
+                ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+                    error = false
+                    if (res === 404) {
                         Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                         navigation.goBack()
-                    } else {
+                    } else if (res?.data) {
                         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                        setTimeout(() => dispatch({ type: 'SET_FILTER_LOCATION', payload: true }), 7000);
                     }
-                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                 })
+            } else {
+                error = false
             }
         } catch (error) {
             dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
             alert(String(error.message))
+            error = false
         }
+        setTimeout(() => {
+            if (error) {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                Utils.handleSignal()
+                setTimeout(() => Utils.alertPopUp('Sedang memuat ulang..'), 2000);
+                error = false
+                handleShowDetail(item, true)
+            }
+        }, 20000);
     }
 
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
@@ -503,9 +529,9 @@ export default function ProductScreen(props) {
     }
 
     const handleShare = () => {
-        console.log("🚀 ~ file: ProductScreen.js ~ line 536 ~ handleShare ~ link", variasiSelected)
         setmodal(true)
         setTimeout(async () => {
+
             try {
                 let img64 = ''
                 await viewShotRef.current.capture().then(async uri => {
@@ -524,23 +550,6 @@ export default function ProductScreen(props) {
                     message: `Dapatkan ${reduxProduct.name} di Jaja.id \nDownload sekarang ${link}`,
                     url: img64,
                 };
-                // Share.open(shareOptions)
-                //     .then((res) => {
-                //         console.log(res);
-                //     })
-                //     .catch((err) => {
-                //         err && console.log(err);
-                //     });
-
-                // console.log("🚀 ~ file: ProductScreen.js ~ line 357 ~ handleShare ~ slug", slug)
-                // try {
-                //     const shareOptions = {
-                //         title: 'Jaja',
-                //         message: `Pakai kode referral saya  dan dapatkan 10.000 koin, untuk belanja di Jaja.id, instal sekarang https://play.google.com/store/apps/details?id=com.seller.jaja`, // Note that according to the documentation at least one of "message" or "url" fields is required
-                //         url: image,
-                //     };
-                //     console.log("file: ReferralScreen.js ~ line 33 ~ handleShare ~ shareOptions", shareOptions)
-
                 Share.open(shareOptions)
                     .then((res) => {
                         console.log(res);
@@ -548,15 +557,10 @@ export default function ProductScreen(props) {
                     .catch((err) => {
                         err && console.log(err);
                     });
-
-                //     // let link = await buildLink(slug);
-                //     // console.log("file: ReferralScreen.js ~ line 33 ~ handleShare ~ shareOptions", shareOptions)
-
-
             } catch (error) {
 
             }
-        }, 1000);
+        }, 1500);
 
     }
 
@@ -564,7 +568,7 @@ export default function ProductScreen(props) {
         return (
             <View style={[styles.column, { backgroundColor: '#e8e8e8', paddingBottom: Hp('6%') }]}>
 
-                {reduxProduct && Object.keys(reduxProduct).length ?
+                {!reduxLoad ?
                     <View style={styles.column}>
                         {flashsale ?
                             <View style={[styles.row_between_center, { backgroundColor: colors.RedFlashsale, width: Wp('100%'), paddingHorizontal: '3%', paddingVertical: '2%' }]}>
@@ -698,7 +702,7 @@ export default function ProductScreen(props) {
                         }
 
                         {reduxProduct.store ?
-                            <View style={[styles.row_between_center, styles.p_3, styles.mb_3, { backgroundColor: colors.White }]}>
+                            <View style={[styles.row_between_center, styles.p_3, styles.mb_2, { backgroundColor: colors.White }]}>
                                 <View style={[styles.row, { width: '67%' }]}>
                                     <TouchableOpacity onPress={handleStore} style={{ height: Wp('15%'), width: Wp('15%'), borderRadius: 5, marginRight: '3%', backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.Silver }}>
                                         <Image style={{ height: '100%', width: '100%', resizeMode: 'contain', borderRadius: 5 }} source={Object.keys(reduxProduct).length && reduxProduct.store.image ? { uri: reduxProduct.store.image } : require('../../assets/images/JajaId.png')} />
@@ -950,7 +954,7 @@ export default function ProductScreen(props) {
                                             // </TouchableOpacity>
                                             <TouchableOpacity
                                                 style={[Ps.cardProduct, { marginLeft: 1, marginRight: 7, width: Wp('33%'), height: Wp('57%'), alignItems: 'center', elevation: 2 }]}
-                                                onPress={() => handleShowDetail(item)} >
+                                                onPress={() => handleShowDetail(item, false)} >
                                                 <View style={[styles.column, { height: Wp('33%'), width: '100%' }]}>
                                                     <FastImage
                                                         style={[Ps.imageProduct, { height: '100%', width: '100%' }]}
@@ -994,7 +998,137 @@ export default function ProductScreen(props) {
                     </View>
 
 
-                    : null
+                    :
+                    <View style={[styles.column,]}>
+                        <View style={[styles.column_around_center, styles.px_3, styles.py_4, styles.mb_2, { alignItems: 'flex-start', width: Wp('100%'), height: Wp('33%'), backgroundColor: colors.White }]}>
+                            <ShimmerPlaceholder
+                                LinearGradient={LinearGradient}
+                                width={Wp('85%')}
+                                height={Wp("4.5%")}
+                                style={{ borderRadius: 1 }}
+                                shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                            />
+                            <ShimmerPlaceholder
+                                LinearGradient={LinearGradient}
+                                width={Wp('30%')}
+                                height={Wp("4%")}
+                                style={{ borderRadius: 1, marginTop: '1%' }}
+                                shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                            />
+                        </View>
+                        <View style={[styles.row_start_center, styles.px_3, styles.py_4, styles.mb_2, { width: Wp('100%'), height: Wp('23%'), backgroundColor: colors.White }]}>
+                            <ShimmerPlaceholder
+                                LinearGradient={LinearGradient}
+                                width={Wp('15%')}
+                                height={Wp("15%")}
+                                style={{ borderRadius: 100, marginRight: "4%" }}
+                                shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                            />
+                            <View style={[styles.column_around_center, { alignItems: "flex-start", height: Wp('15%') }]}>
+                                <ShimmerPlaceholder
+                                    LinearGradient={LinearGradient}
+                                    width={Wp('50%')}
+                                    height={Wp("3.5%")}
+                                    style={{ borderRadius: 1 }}
+                                    shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                />
+                                <ShimmerPlaceholder
+                                    LinearGradient={LinearGradient}
+                                    width={Wp('20%')}
+                                    height={Wp("3%")}
+                                    style={{ borderRadius: 1 }}
+                                    shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                />
+                            </View>
+                        </View>
+                        <View style={[styles.column_start, styles.px_3, styles.py_4, { width: Wp('100%'), height: Wp('45%'), backgroundColor: colors.White, borderTopRightRadius: 20, borderTopLeftRadius: 20, }]}>
+                            <ShimmerPlaceholder
+                                LinearGradient={LinearGradient}
+                                width={Wp('31%')}
+                                height={Wp("3.5%")}
+                                style={{ borderRadius: 1 }}
+                                shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                            />
+
+                            <View style={[styles.row_start, styles.mt_5, { alignItems: "flex-start" }]}>
+                                <View style={[styles.column, styles.mt_2, styles.mb_5, { marginRight: '11%' }]}>
+                                    <ShimmerPlaceholder
+                                        LinearGradient={LinearGradient}
+                                        width={Wp('19%')}
+                                        height={Wp("3.5%")}
+                                        style={{ borderRadius: 1, marginBottom: '25%', marginTop: '11%' }}
+                                        shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                    />
+                                    <ShimmerPlaceholder
+                                        LinearGradient={LinearGradient}
+                                        width={Wp('19%')}
+                                        height={Wp("3%")}
+                                        style={{ borderRadius: 1, marginBottom: '25%' }}
+                                        shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                    />
+                                    <ShimmerPlaceholder
+                                        LinearGradient={LinearGradient}
+                                        width={Wp('19%')}
+                                        height={Wp("3%")}
+                                        style={{ borderRadius: 1, marginBottom: '25%' }}
+                                        shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                    />
+                                    <ShimmerPlaceholder
+                                        LinearGradient={LinearGradient}
+                                        width={Wp('19%')}
+                                        height={Wp("3%")}
+                                        style={{ borderRadius: 1, marginBottom: '25%' }}
+                                        shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                    />
+                                    <ShimmerPlaceholder
+                                        LinearGradient={LinearGradient}
+                                        width={Wp('19%')}
+                                        height={Wp("3%")}
+                                        style={{ borderRadius: 1, marginBottom: '25%' }}
+                                        shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                    />
+                                </View>
+                                <View style={[styles.column, styles.mt_2, styles.mb_5, styles.ml_5]}>
+                                    <ShimmerPlaceholder
+                                        LinearGradient={LinearGradient}
+                                        width={Wp('19%')}
+                                        height={Wp("3.5%")}
+                                        style={{ borderRadius: 1, marginBottom: '25%', marginTop: '11%' }}
+                                        shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                    />
+                                    <ShimmerPlaceholder
+                                        LinearGradient={LinearGradient}
+                                        width={Wp('19%')}
+                                        height={Wp("3%")}
+                                        style={{ borderRadius: 1, marginBottom: '25%' }}
+                                        shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                    />
+                                    <ShimmerPlaceholder
+                                        LinearGradient={LinearGradient}
+                                        width={Wp('19%')}
+                                        height={Wp("3%")}
+                                        style={{ borderRadius: 1, marginBottom: '25%' }}
+                                        shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                    />
+                                    <ShimmerPlaceholder
+                                        LinearGradient={LinearGradient}
+                                        width={Wp('19%')}
+                                        height={Wp("3%")}
+                                        style={{ borderRadius: 1, marginBottom: '25%' }}
+                                        shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                    />
+                                    <ShimmerPlaceholder
+                                        LinearGradient={LinearGradient}
+                                        width={Wp('19%')}
+                                        height={Wp("3%")}
+                                        style={{ borderRadius: 1, marginBottom: '25%' }}
+                                        shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                    />
+                                </View>
+
+                            </View>
+                        </View>
+                    </View>
                 }
 
 
@@ -1005,8 +1139,6 @@ export default function ProductScreen(props) {
 
     const handleChat = () => {
         if (reduxAuth) {
-            // console.log("🚀 ~ file: ProductScreen.js ~ line 1019 ~ handleChat ~ seller", seller)
-            // console.log("🚀 ~ file: ProductScreen.js ~ line 1020 ~ handleChat ~ reduxProduct", reduxProduct)
             navigation.navigate("IsiChat", { data: seller, product: reduxProduct })
         } else {
             handleLogin()
@@ -1044,7 +1176,6 @@ export default function ProductScreen(props) {
                                 useNativeDriver: false,
                                 listener: event => {
                                     if (isCloseToBottom(event.nativeEvent)) {
-                                        console.log("oNSCROLL ");
                                         loadMoreData()
                                     }
                                 }

@@ -25,37 +25,43 @@ export default function NearestStore() {
 
 
 
-    const handleShowDetail = item => {
+    const handleShowDetail = async (item, status) => {
+        let error = true;
         try {
             if (!reduxLoad) {
+                !status ? await navigation.push("Product") : null
                 dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
-                let newItem = { ...item }
-                let img = newItem.image;
-                newItem.image = [img]
-                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: newItem })
-                if (!props.gift) {
-                    navigation.push("Product")
-                } else {
-                    navigation.push("GiftDetails")
-                }
-                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-                dispatch({ type: 'SET_SLUG', payload: item.slug })
-
                 ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
-                    if (res?.status?.code === 400) {
+                    error = false
+                    if (res === 404) {
                         Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                         navigation.goBack()
-                    } else {
+                    } else if (res?.data) {
                         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                        setTimeout(() => dispatch({ type: 'SET_FILTER_LOCATION', payload: true }), 7000);
                     }
-                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                 })
+            } else {
+                error = false
             }
         } catch (error) {
             dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
             alert(String(error.message))
+            error = false
         }
+        setTimeout(() => {
+            if (error) {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                Utils.handleSignal()
+                setTimeout(() => Utils.alertPopUp('Sedang memuat ulang..'), 2000);
+                error = false
+                handleShowDetail(item, true)
+            }
+        }, 20000);
     }
+
     const [shimmerData] = useState(['1X', '2X', '3X'])
 
     return (
@@ -80,7 +86,7 @@ export default function NearestStore() {
                         return (
                             <TouchableOpacity
                                 style={[Ps.cardProduct, { marginLeft: 1, marginRight: 9, width: Wp('33%'), height: Wp('57%'), alignItems: 'center', elevation: 2 }]}
-                                onPress={() => handleShowDetail(item)} >
+                                onPress={() => handleShowDetail(item, false)} >
                                 <View style={[styles.column, { height: Wp('33%'), width: '100%' }]}>
                                     <FastImage
                                         style={[Ps.imageProduct, { height: '100%', width: '100%' }]}

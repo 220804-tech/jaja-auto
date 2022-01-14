@@ -59,17 +59,16 @@ export async function CheckSignal() {
 export async function handleSignal() {
     try {
         let signalInfo = {}
-        let signal = await NetInfo.fetch().then(state => {
-            signalInfo.type = state.type
-            signalInfo.connect = state.isConnected
+        await NetInfo.fetch().then(state => {
+            if (state.isConnected) {
+                alertPopUp('Tidak dapat memuat ke server')
+            } else {
+                alertPopUp("Tidak dapat terhubung, periksa kembali koneksi internet anda!")
+            }
         });
-        if (signal.connect) {
-            alertPopUp('Tidak dapat memuat ke server')
-        } else {
-            alertPopUp("Tidak dapat terhubung, periksa kembali koneksi internet anda!")
-        }
-    } catch (error) {
 
+    } catch (error) {
+        console.log("🚀 ~ file: Form.js ~ line 71 ~ handleSignal ~ error", error)
     }
 }
 

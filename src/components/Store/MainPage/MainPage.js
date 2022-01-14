@@ -25,11 +25,41 @@ export default function MainPage() {
 
     }, [vouchers, reduxAuth, reduxStore])
 
-    const handleShowDetail = item => {
-        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: {} })
-        dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-        dispatch({ type: 'SET_SLUG', payload: item.slug })
-        navigation.push("Product", { slug: item.slug, image: item.image })
+    const handleShowDetail = async (item, status) => {
+        let error = true;
+        try {
+            if (!reduxLoad) {
+                !status ? await navigation.push("Product") : null
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+                    error = false
+                    if (res === 404) {
+                        Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                        navigation.goBack()
+                    } else if (res?.data) {
+                        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                        setTimeout(() => dispatch({ type: 'SET_FILTER_LOCATION', payload: true }), 7000);
+                    }
+                })
+            } else {
+                error = false
+            }
+        } catch (error) {
+            dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+            alert(String(error.message))
+            error = false
+        }
+        setTimeout(() => {
+            if (error) {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                Utils.handleSignal()
+                setTimeout(() => Utils.alertPopUp('Sedang memuat ulang..'), 2000);
+                error = false
+                handleShowDetail(item, true)
+            }
+        }, 20000);
     }
 
     // const handleLoadMore = () => {

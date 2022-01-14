@@ -91,9 +91,9 @@ export default function HomeScreen() {
             setLoading(true)
             let slug = Object.values(parsed.query)
             if ('https://jajaid.page.link/product?' === String(link.url).slice(0, 33)) {
-                handleShowDetail('product', slug[0])
+                handleShowDetail('product', false, slug[0])
             } else {
-                handleShowDetail('gift', slug[0])
+                handleShowDetail('gift', false, slug[0])
             }
             setTimeout(() => setLoading(false), 1000);
         } catch (error) {
@@ -101,32 +101,43 @@ export default function HomeScreen() {
         }
     };
 
-    const handleShowDetail = slug => {
+    const handleShowDetail = async (slug, status, gift) => {
+        let error = true;
         try {
             if (!reduxLoad) {
+                !status ? await navigation.push(!gift ? "Product" : "GiftDetails") : null
                 dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
-                if (!props.gift) {
-                    navigation.push("Product")
-                } else {
-                    navigation.push("GiftDetails")
-                }
-                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-                dispatch({ type: 'SET_SLUG', payload: slug })
-
                 ServiceProduct.getProduct(reduxAuth, slug).then(res => {
-                    if (res?.status?.code === 400) {
+                    error = false
+                    if (res === 404) {
                         Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                         navigation.goBack()
-                    } else {
+                    } else if (res?.data) {
                         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                        setTimeout(() => dispatch({ type: 'SET_FILTER_LOCATION', payload: true }), 7000);
                     }
-                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                 })
+            } else {
+                error = false
             }
         } catch (error) {
             dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
             alert(String(error.message))
+            error = false
         }
+        setTimeout(() => {
+            if (error) {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                Utils.handleSignal()
+                setTimeout(() => Utils.alertPopUp('Sedang memuat ulang..'), 2000);
+                error = false
+                handleShowDetail(item, true)
+            }
+        }, 20000);
+
+
         try {
             if (reduxAuth) {
                 getBadges()

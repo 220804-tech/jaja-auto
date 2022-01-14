@@ -4,7 +4,7 @@ import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { Button, TouchableRipple, Checkbox, IconButton } from 'react-native-paper'
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-import { styles, colors, useNavigation, Hp, Wp, Ps, useFocusEffect, FastImage, RecomandedHobby, Utils, ServiceProduct, ServiceCart, ServiceUser, } from '../../export'
+import { styles, colors, useNavigation, Hp, Wp, Ps, useFocusEffect, FastImage, RecomandedHobby, Utils, ServiceProduct, ServiceCart, ServiceUser, CardProduct, } from '../../export'
 const IS_IPHONE_X = SCREEN_HEIGHT === 812 || SCREEN_HEIGHT === 896;
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
@@ -35,6 +35,7 @@ export default function GiftDetailScreen(props) {
     const reduxLoad = useSelector(state => state.product.productLoad)
     const reduxTemporary = useSelector(state => state.product.productTemporary)
     const dispatch = useDispatch()
+    const productGiftHome = useSelector(state => state.gift.productGiftHome)
 
     const [scrollY, setscrollY] = useState(new Animated.Value(0))
 
@@ -171,36 +172,41 @@ export default function GiftDetailScreen(props) {
     );
 
     const title = () => {
-        let arr = [giftDetails.image]
+        let arrImage = [require('../../assets/images/JajaId.png')]
         return (
             <>
                 {
                     Platform.OS === 'ios' ?
                         <View style={{ width: Wp('100%'), height: Hp('45%'), backgroundColor: colors.White, marginTop: '-11%' }}>
                             <Swiper
+                                autoplayTimeout={4}
                                 horizontal={true}
+                                loop={false}
                                 dotColor={colors.White}
                                 activeDotColor={colors.BlueJaja}
-                                paginationStyle={{ bottom: 10 }}>
-                                {reduxLoad ?
+                                paginationStyle={{ bottom: 10 }}
+                                autoplay={true}
+                                loop={true}>
+                                {
+                                    reduxLoad || !giftDetails?.image?.[0] ?
+                                        arrImage.map((item, key) => {
+                                            return (
+                                                <Image key={String(key)} style={[style.swiperProduct, { tintColor: colors.Silver }]}
+                                                    source={item}
+                                                />
+                                            );
+                                        })
 
-                                    arr.map((item, key) => {
-                                        return (
-                                            <Image key={String(key)} style={style.swiperProduct}
-                                                source={{ uri: item }}
-                                            />
-                                        );
-                                    })
-                                    :
-                                    giftDetails.image.map((item, key) => {
-                                        return (
-                                            <Image key={String(key)} style={style.swiperProduct}
-                                                source={{ uri: item }}
-                                            />
-                                        );
-                                    })
+                                        :
 
-                                }
+                                        giftDetails.image.map((item, key) => {
+                                            return (
+                                                <Image key={String(key)} style={style.swiperProduct}
+                                                    source={{ uri: item }}
+                                                />
+                                            );
+                                        })}
+
                             </Swiper>
                         </View>
                         :
@@ -209,71 +215,73 @@ export default function GiftDetailScreen(props) {
                             dotColor={colors.White}
                             activeDotColor={colors.BlueJaja}
                             style={{ backgroundColor: colors.WhiteBack }}>
-                            {reduxLoad ?
-                                arr.map((item, key) => {
-                                    return (
-                                        <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%'), backgroundColor: colors.White }}>
-                                            <Image style={style.swiperProduct}
-                                                source={{ uri: item }}
-                                            />
-                                        </View>
-                                    );
-                                })
-                                :
-                                giftDetails.image.map((item, key) => {
-                                    return (
-                                        <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%') }}>
-                                            <Image style={style.swiperProduct}
-                                                source={{ uri: item }}
-                                            />
-                                        </View>
-                                    );
-                                })
-
+                            {
+                                reduxLoad || !giftDetails?.image?.[0] ?
+                                    arrImage.map((item, key) => {
+                                        return (
+                                            <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%'), }}>
+                                                <Image style={[style.swiperProduct, { tintColor: colors.Silver }]}
+                                                    source={item}
+                                                />
+                                            </View>
+                                        );
+                                    })
+                                    :
+                                    giftDetails.image.map((item, key) => {
+                                        return (
+                                            <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%') }}>
+                                                <Image style={style.swiperProduct}
+                                                    source={{ uri: item }}
+                                                />
+                                            </View>
+                                        );
+                                    })
                             }
                         </Swiper>
-                    // :
-                    // <View style={{ width: Wp('100%'), height: Wp('100%') }}>
-                    //     <Image style={style.swiperProduct}
-                    //         source={{ uri: reduxTemporary.image }}
-                    //     />
-                    // </View>
                 }
             </>
         );
     };
 
-    const handleShowDetail = item => {
+
+    const handleShowDetail = async (item, status) => {
+        let error = true;
         try {
             if (!reduxLoad) {
+                !status ? await navigation.push("GiftDetails") : null
                 dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
-                let newItem = { ...item }
-                let img = newItem.image;
-                newItem.image = [img]
-                dispatch({ type: 'SET_DETAIL_PRODUCT', payload: newItem })
-                if (!props.gift) {
-                    navigation.push("Product")
-                } else {
-                    navigation.push("GiftDetails")
-                }
-                dispatch({ type: 'SET_SHOW_FLASHSALE', payload: false })
-                dispatch({ type: 'SET_SLUG', payload: item.slug })
-
                 ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
-                    if (res?.status?.code === 400) {
+                    error = false
+                    if (res === 404) {
                         Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                         navigation.goBack()
-                    } else {
+                    } else if (res?.data) {
                         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                        setTimeout(() => dispatch({ type: 'SET_FILTER_LOCATION', payload: true }), 7000);
                     }
-                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                 })
+            } else {
+                error = false
             }
         } catch (error) {
             dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
             alert(String(error.message))
+            error = false
         }
+        setTimeout(() => {
+            if (error) {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                Utils.handleSignal()
+                setTimeout(() => Utils.alertPopUp('Sedang memuat ulang..'), 2000);
+                error = false
+                handleShowDetail(item, true)
+            }
+        }, 20000);
     }
+
+
 
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
         return layoutMeasurement.height + contentOffset.y >=
@@ -338,7 +346,7 @@ export default function GiftDetailScreen(props) {
             } catch (error) {
 
             }
-        }, 1000);
+        }, 1500);
 
     }
 
@@ -748,7 +756,7 @@ export default function GiftDetailScreen(props) {
                                             // </TouchableOpacity>
                                             <TouchableOpacity
                                                 style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('57%'), alignItems: 'center', elevation: 2 }]}
-                                                onPress={() => handleShowDetail(item)} >
+                                                onPress={() => handleShowDetail(item, false)} >
                                                 <View style={[styles.column, { height: Wp('33%'), width: '100%' }]}>
                                                     <FastImage
                                                         style={[Ps.imageProduct, { height: '100%', width: '100%' }]}
@@ -788,7 +796,7 @@ export default function GiftDetailScreen(props) {
                             </View>
                             : null}
                         <View style={[styles.column, { backgroundColor: colors.White }]}>
-                            <RecomandedHobby color={colors.BlackGrayScale} />
+                            <CardProduct gift={true} data={productGiftHome} />
                         </View>
                     </View>
                     : null

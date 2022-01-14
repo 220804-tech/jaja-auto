@@ -51,6 +51,8 @@ export async function getProduct(auth, slug) {
                 let data = JSON.parse(result)
                 if (data?.status?.code === 200 || data?.status?.code === 204) {
                     return data;
+                } else if (data?.status?.message === 'data not found') {
+                    return 404
                 } else {
                     Utils.handleErrorResponse(data, "Error with status code : 12151")
                     return null
