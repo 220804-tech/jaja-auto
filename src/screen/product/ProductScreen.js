@@ -68,7 +68,7 @@ export default function ProductScreen(props) {
 
     const onRefresh = useCallback(() => {
         // setLoading(true);
-        if (!reduxLoad && !filterLocation) {
+        if (!reduxLoad && !filterLocation && reduxProduct?.length === 0) {
             getItem(reduxProduct.slug)
             Utils.alertPopUp('Refreshing..')
         }
@@ -309,8 +309,9 @@ export default function ProductScreen(props) {
 
     }
 
-    const handleStore = () => {
-        navigation.push('Store')
+    const handleStore = async () => {
+        await navigation.push('Store')
+        dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: true })
 
         if (reduxStore && Object.keys(reduxStore).length) {
             if (reduxStore.name != seller.name) {
@@ -336,21 +337,23 @@ export default function ProductScreen(props) {
             brand: '',
             sort: 'produk.id_produk-desc',
         }
-
         ServiceStore.getStoreProduct(obj).then(res => {
             if (res) {
                 dispatch({ "type": 'SET_NEW_PRODUCT', payload: res.items })
+                dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: false })
+
             }
         })
+
         obj.sort = ''
         ServiceStore.getStoreProduct(obj).then(res => {
             if (res) {
                 dispatch({ type: 'SET_STORE_PRODUCT', payload: res.items })
                 dispatch({ type: 'SET_STORE_FILTER', payload: res.filters })
                 dispatch({ type: 'SET_STORE_SORT', payload: res.sorts })
-
             }
         })
+        setTimeout(() => dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: false }), 20000);
     }
 
     const handleTrolley = () => {
@@ -360,20 +363,18 @@ export default function ProductScreen(props) {
 
     const handleWishlist = () => {
         if (reduxAuth) {
+            setLike(!like)
             var myHeaders = new Headers();
             myHeaders.append("Authorization", reduxAuth);
             myHeaders.append("Content-Type", "application/json");
             myHeaders.append("Cookie", "ci_session=t3uc2fb7opug4n91n18e70tcpjvdb12u");
-
             var raw = JSON.stringify({ "id_produk": reduxProduct.id });
-
             var requestOptions = {
                 method: 'POST',
                 headers: myHeaders,
                 body: raw,
                 redirect: 'follow'
             };
-
             fetch("https://jaja.id/backend/user/addWishlist", requestOptions)
                 .then(response => response.json())
                 .then(result => {

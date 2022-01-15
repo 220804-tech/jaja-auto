@@ -4,13 +4,14 @@ import { styles, Ps, useNavigation, FastImage, colors, Wp, useFocusEffect, Servi
 import { useSelector, useDispatch } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
-import TextTicker from 'react-native-text-ticker'
 
 export default function NewProduct() {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const reduxdashNearestStore = useSelector(state => state.dashboard.nearestStore)
     const products = useSelector(state => state.store.newProduct)
+    const loadingProduct = useSelector(state => state.store.loadNewProduct)
+
     const reduxAuth = useSelector(state => state.user.auth)
     const reduxLoad = useSelector(state => state.product.productLoad)
 
@@ -80,7 +81,7 @@ export default function NewProduct() {
                 </Text>
             </View> */}
 
-            {products && products.length ?
+            {!loadingProduct ?
                 <FlatList
                     showsHorizontalScrollIndicator={false}
                     data={products.slice(0, 20)}

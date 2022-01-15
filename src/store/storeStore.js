@@ -2,6 +2,7 @@ const initialState = {
     store: {},
     storeProduct: [],
     newProduct: [],
+    loadNewProduct: [],
     storeKeyword: '',
     maxProduct: false,
     positionIndex: 1,
@@ -19,6 +20,8 @@ export default function storeStore(state = initialState, action) {
             return { ...state, storeProduct: payload }
         case 'SET_NEW_PRODUCT':
             return { ...state, newProduct: payload }
+        case 'SET_NEW_PRODUCT_LOAD':
+            return { ...state, loadNewProduct: payload }
         case 'SET_STORE_KEYWORD':
             return { ...state, storeKeyword: payload }
         case 'SET_MAX_STORE':

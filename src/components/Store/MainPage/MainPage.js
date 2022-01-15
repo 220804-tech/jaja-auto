@@ -15,6 +15,8 @@ export default function MainPage() {
     const greeting = useSelector(state => state.store.store.description)
     const vouchers = useSelector(state => state.store.store.voucher)
     const products = useSelector(state => state.store.newProduct)
+    const loadProduct = useSelector(state => state.store.loadNewProduct)
+
     const reduxStore = useSelector(state => state.store)
     const [count, setCount] = useState(0)
     const reduxAuth = useSelector(state => state.auth.auth)
@@ -138,7 +140,7 @@ export default function MainPage() {
     }
 
     return (
-        <View style={[styles.column_start, { width: Wp('100%'), backgroundColor: colors.White }]}>
+        <View style={[styles.column_start, { flex: 1, width: Wp('100%'), backgroundColor: colors.White }]}>
             <ScrollView contentContainerStyle={{ alignItems: 'flex-start' }}>
                 <View style={[styles.column, { width: Wp('100%') }]}>
                     {vouchers && vouchers.length !== 0 ?
@@ -297,14 +299,20 @@ export default function MainPage() {
 
                         : null}
                 </View>
-                <View style={[styles.column, styles.mt_3, styles.pb_5]}>
+                <View style={[styles.column, styles.mt_3, styles.pb_5, { width: Wp('100%') }]}>
 
                     <View style={styles.column}>
-                        <View style={[styles.px_4, { paddingVertical: '0.2%', backgroundColor: colors.BlueJaja, width: Wp('60%'), borderBottomRightRadius: 100, }]}>
-                            <Text style={[styles.font_14, styles.T_medium, { color: colors.White, width: '80%' }]}>
-                                Produk terbaru
-                            </Text>
-                        </View>
+                        {products?.length ?
+                            <View style={[styles.px_4, { paddingVertical: '0.2%', backgroundColor: colors.BlueJaja, width: Wp('60%'), borderBottomRightRadius: 100, }]}>
+                                <Text style={[styles.font_14, styles.T_medium, { color: colors.White, width: '80%' }]}>
+                                    Produk terbaru
+                                </Text>
+                            </View>
+                            :
+
+                            <Text style={[styles.font_12, styles.mt_5, { textAlign: 'center' }]}>
+                                Produk tidak ditemukan!
+                            </Text>}
                         {reduxStore.store.flashSale && reduxStore.store.flashSale.length ?
                             <View style={{ width: Wp('100%') }}>
                                 <FlashsaleToko data={reduxStore.store.flashSale} />

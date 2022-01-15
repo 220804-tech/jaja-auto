@@ -148,7 +148,30 @@ export default function GiftDetailScreen(props) {
     }
 
     const handleWishlist = () => {
-        setLike(!like)
+        if (reduxAuth) {
+            setLike(!like)
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", reduxAuth);
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("Cookie", "ci_session=t3uc2fb7opug4n91n18e70tcpjvdb12u");
+            var raw = JSON.stringify({ "id_produk": reduxProduct.id });
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+            fetch("https://jaja.id/backend/user/addWishlist", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status.code === 200) {
+                        setLike(!like)
+                    }
+                })
+                .catch(error => Utils.handleError(error, "Error with status code : 12025"));
+        } else {
+            handleLogin()
+        }
     }
 
     const handleLogin = () => navigation.navigate('Login', { navigate: "GiftDetails" })

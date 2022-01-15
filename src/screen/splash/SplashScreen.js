@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Image, SafeAreaView, StatusBar, ToastAndroid, Alert } from 'react-native'
+import { View, Image, SafeAreaView, StatusBar, ToastAndroid, Alert, Text } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp, } from 'react-native-responsive-screen';
 import Swiper from 'react-native-swiper'
 import { useSelector, useDispatch } from 'react-redux'
@@ -349,7 +349,7 @@ export default function SplashScreen() {
                 {/* <View style={[styles.column_center, { backgroundColor: colors.YellowJaja, width: Wp('100%'), height: Hp('50%') }]}> */}
 
                 <Swiper
-                    autoplayTimeout={1.5}
+                    autoplayTimeout={2}
                     pagingEnabled={false}
                     showsPagination={false}
                     horizontal={true}
@@ -377,7 +377,9 @@ export default function SplashScreen() {
                     })}
                 </Swiper>
                 {/* </View> */}
-                <Image
+                {/* <Text style={styles.font_12}>Sedang memuat..</Text> */}
+
+                {/* <Image
                     style={{
                         justifyContent: "center",
                         alignItems: "center",
@@ -385,7 +387,7 @@ export default function SplashScreen() {
                         height: hp("10%"),
                     }}
                     source={require("../../assets/gifs/splashscreen/splashscreen.gif")}
-                />
+                /> */}
 
             </View>
         </SafeAreaView >

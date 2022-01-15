@@ -563,10 +563,10 @@ export default function Lainnya() {
                         </TouchableWithoutFeedback>
 
                         {showButton ? <Button onPress={handleSimpan} color={colors.BlueJaja} mode="contained" labelStyle={[style.font_13, style.T_semi_bold, { color: colors.White }]} style={style.mb_5}>Simpan</Button> : null}
-
+                        {/* 
                         <TouchableWithoutFeedback onPress={() => Linking.openURL("market://details?id=com.seller.jaja")}>
                             <Text adjustsFontSizeToFit style={[style.font_14, style.my_5, { alignSelf: 'center', color: colors.BlueJaja }]}>Mulai Berjualan?</Text>
-                        </TouchableWithoutFeedback>
+                        </TouchableWithoutFeedback> */}
                     </View>
                 </ScrollView>
             }
