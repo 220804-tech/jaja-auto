@@ -29,6 +29,7 @@ export default function HomeScreen() {
     const reduxShowNearest = useSelector(state => state.dashboard.showNearestStore)
     const reduxBadges = useSelector(state => state.user.badges)
     const reduxLoad = useSelector(state => state.product.productLoad)
+    const [translucent, settranslucent] = useState(false)
 
     useAndroidBackHandler(() => {
         if (out) {
@@ -152,6 +153,7 @@ export default function HomeScreen() {
     useFocusEffect(
         useCallback(() => {
             try {
+                settranslucent(false)
                 if (Platform.OS === 'ios') {
                     StatusBar.setBarStyle('light-content', true);	//<<--- add this
                     StatusBar.setBackgroundColor(colors.BlueJaja, true)
@@ -507,7 +509,7 @@ export default function HomeScreen() {
                     }
                 )}
             > */}
-            <StatusBar translucent={false} backgroundColor={colors.BlueJaja} />
+            <StatusBar translucent={translucent} backgroundColor={colors.BlueJaja} />
             <ReactNativeParallaxHeader
                 headerMinHeight={Platform.OS === 'ios' ? Hp('5.5%') : Hp('7%')}
                 headerMaxHeight={Hp('30%')}

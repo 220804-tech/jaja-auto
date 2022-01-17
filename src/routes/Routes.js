@@ -37,9 +37,30 @@ export default function Routes() {
             // navigation.navigate('Pesanan')
         }
     };
+
+    const config = {
+        animation: 'spring',
+        config: {
+            stiffness: 1000,
+            damping: 500,
+            mass: 3,
+            overshootClamping: true,
+            restDisplacementThreshold: 0.01,
+            restSpeedThreshold: 1,
+        },
+    };
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
+            <Stack.Navigator
+
+                initialRouteName="Splash" screenOptions={{
+                    headerShown: false,
+                    gestureEnabled: true,
+                    transitionSpec: {
+                        open: config,
+                        close: config
+                    }
+                }}>
                 <Stack.Screen name="Splash" component={Splash} />
                 <Stack.Screen name="Beranda" component={BottomRoutes} />
                 <Stack.Screen name="Search" component={Search} />

@@ -18,6 +18,7 @@ import ImgToBase64 from 'react-native-image-base64';
 import ViewShot from "react-native-view-shot";
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
+import { useAndroidBackHandler } from 'react-navigation-backhandler';
 LogBox.ignoreAllLogs()
 
 export default function ProductScreen(props) {
@@ -49,7 +50,9 @@ export default function ProductScreen(props) {
     const [like, setLike] = useState(false)
     const [alert, setalert] = useState("")
     const [idProduct, setidProduct] = useState("")
-    const [image, setImage] = useState('')
+    const [translucent, settranslucent] = useState(true)
+    const [bgBar, setbgBar] = useState('transparent')
+
 
     const [deskripsiLenght, setdeskripsiLenght] = useState(200)
 
@@ -65,6 +68,12 @@ export default function ProductScreen(props) {
     const [seller, setSeller] = useState("")
     const [disableCart, setdisableCart] = useState(false)
     const [link, setlink] = useState('')
+
+    useAndroidBackHandler(() => {
+        settranslucent(false)
+        setbgBar(colors.BlueJaja)
+        return false;
+    });
 
     const onRefresh = useCallback(() => {
         // setLoading(true);
@@ -1149,7 +1158,7 @@ export default function ProductScreen(props) {
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
             {/* {reduxLoad ? <Loading /> : null} */}
-            <StatusBar translucent={Platform.OS === 'ios' ? false : true} backgroundColor="transparent" barStyle="light-content" />
+            <StatusBar translucent={Platform.OS === 'ios' ? false : translucent} backgroundColor={bgBar} barStyle="light-content" />
 
             <ReactNativeParallaxHeader
                 headerMinHeight={Platform.OS === 'ios' ? Hp('4%') : Hp('9%')}

@@ -40,16 +40,15 @@ export default function KoinJaja() {
                         </View>
                         <View style={[styles.row_center, styles.p_5]}>
                             <Text style={[styles.font_13, { textAlign: 'center' }]}>Tidak ada data</Text>
-
                         </View>
                     </View>
                 </View>
             </View>
 
 
-            <Text>
+                <Text>
 
-            </Text>
+                </Text>
         </SafeAreaView >
     )
 }
