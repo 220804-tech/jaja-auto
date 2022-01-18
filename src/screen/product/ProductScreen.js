@@ -734,7 +734,7 @@ export default function ProductScreen(props) {
                             : null}
 
                         <View style={[styles.column, styles.p_4, styles.mb_2, { backgroundColor: colors.White, borderTopRightRadius: 20, borderTopLeftRadius: 20, paddingBottom: '5%' }]}>
-                            <Text style={{ textDecorationLine: 'underline', fontSize: 14, fontFamily: 'Poppins-Medium', color: colors.BlackGrayScale, marginBottom: '3%' }}>Informasi Produk</Text>
+                            <Text style={[styles.font_13, styles.T_medium, styles.mr_3, styles.mb_2, { textDecorationLine: 'underline', color: colors.BlackGrayScale }]}>Informasi Produk</Text>
                             <View style={[styles.row_around_center, styles.mb_5, { alignSelf: 'flex-start' }]}>
                                 <View style={[styles.column, { width: '40%' }]}>
                                     <Text style={[styles.font_14, styles.mb_3]}>Berat</Text>
@@ -759,7 +759,7 @@ export default function ProductScreen(props) {
                                     <Text style={[styles.font_14, styles.mb_3, styles.T_light]}>{reduxProduct.stock && reduxProduct.stock > 0 ? reduxProduct.stock : 0}</Text>
                                 </View>
                             </View>
-                            <Text style={{ textDecorationLine: 'underline', fontSize: 13, fontFamily: 'Poppins-Medium', color: colors.BlackGrayScale, marginBottom: '3%' }}>Deskripsi Produk</Text>
+                            <Text style={[styles.font_13, styles.T_medium, styles.mr_3, styles.mb_2, { textDecorationLine: 'underline', color: colors.BlackGrayScale }]}>Deskripsi Produk</Text>
                             <View style={[styles.row_around_center, styles.mb_3, { alignSelf: 'flex-start' }]}>
                                 {reduxProduct.description ?
                                     <>

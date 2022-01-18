@@ -86,18 +86,21 @@ export default function ListChat() {
                     <TouchableOpacity
                         onPress={() => {
                             navigation.navigate("IsiChat", { data: item, newData: null })
-                            try {
-                                let newItem = item
-                                newItem.amount = 0
+                            setTimeout(() => {
+                                try {
+                                    let newItem = item
+                                    newItem.amount = 0
+                                    database().ref('friend/' + reduxUser.uid + "/" + item.id).set(newItem);
+                                } catch (error) {
+                                }
+                                try {
+                                    database().ref(`/people/${reduxUser.uid}/`).set({ notif: { home: reduxnotifCount.home, chat: reduxnotifCount.chat - item.amount, orders: reduxnotifCount.orders } })
+                                } catch (error) {
 
-                                database().ref('friend/' + reduxUser.uid + "/" + item.id).set(newItem);
-                            } catch (error) {
-                            }
-                            try {
-                                database().ref(`/people/${reduxUser.uid}/`).set({ notif: { home: reduxnotifCount.home, chat: reduxnotifCount.chat - item.amount, orders: reduxnotifCount.orders } })
-                            } catch (error) {
+                                }
 
-                            }
+                            }, 500);
+
                         }}
                         style={{
                             paddingHorizontal: '1%',

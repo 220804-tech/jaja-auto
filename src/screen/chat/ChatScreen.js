@@ -734,8 +734,6 @@ export default function ChatScreen({ route }) {
                                 // onPressOut={() => setkeyboardFocus(5)}
                                 onBlur={() => setkeyboardFocus(5)}
                                 onTouchCancel={() => setkeyboardFocus(5)}
-
-
                                 style={[style.font_12, { width: isiChat.length ? '90%' : '82%', borderColor: "gray", borderBottomLeftRadius: 100, borderTopLeftRadius: 100, paddingHorizontal: 20, paddingVertical: 0 }]}
                                 // underlineColorAndroid="transparent"
                                 onChangeText={(text) => setChat(text)} onSubmitEditing={() => handleSend(null)}
@@ -759,8 +757,6 @@ export default function ChatScreen({ route }) {
                     </View>
                     {/* </KeyboardAvoidingView> */}
                 </ImageBackground>
-
-
                 <ActionSheet containerStyle={{ flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.White, marginBottom: '10%' }} ref={galeryRef}>
                     <View style={[style.column, style.pb_5, { backgroundColor: '#ededed' }]}>
                         <TouchableOpacity onPress={handleOpenCamera} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%', marginBottom: '0.5%' }}>
@@ -774,9 +770,7 @@ export default function ChatScreen({ route }) {
                             <Text style={[styles.font_16, { alignSelf: 'center', color: colors.RedNotif }]}>Batal</Text>
                         </TouchableOpacity>
                     </View >
-                </ActionSheet >
-
-
+                </ActionSheet>
             </SafeAreaProvider >
         </SafeAreaView >
     );
