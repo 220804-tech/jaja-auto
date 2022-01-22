@@ -19,11 +19,15 @@ export default function CardProductComponent(props) {
     //     }, []),
     // );
 
-    const handleShowDetail = async (item, status) => {
+    const handleShowDetail = (item, status) => {
         let error = true;
         try {
             if (!reduxLoad) {
-                !status ? await navigation.push(!props.gift ? "Product" : "GiftDetails") : null
+                if (!props.gift) {
+                    navigation.push("Product")
+                } else {
+                    navigation.push("GiftDetails")
+                }
                 dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
                 ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
                     error = false
@@ -36,6 +40,8 @@ export default function CardProductComponent(props) {
                         dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                         setTimeout(() => dispatch({ type: 'SET_FILTER_LOCATION', payload: true }), 7000);
                     }
+                }).catch(err => {
+                    error = false
                 })
             } else {
                 error = false
@@ -113,12 +119,12 @@ export default function CardProductComponent(props) {
                 <View style={[Ps.cardBottom, styles.py]}>
                     {item.amountSold && item.amountSold > 0 ?
                         <View style={[Ps.location]}>
-                            <Text adjustsFontSizeToFit style={[Ps.locarionName]}>Terjual {item.amountSold}</Text>
+                            <Text adjustsFontSizeToFit numberOfLines={1} style={[Ps.locarionNameSmall]}>Terjual {item.amountSold}</Text>
                         </View> : null
                     }
                     <View style={[Ps.location]}>
                         <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
-                        <Text adjustsFontSizeToFit style={[Ps.locarionName]}>{item.location}</Text>
+                        <Text adjustsFontSizeToFit numberOfLines={1} style={[Ps.locarionNameSmall]}>{item.location}</Text>
                     </View>
 
                     {/* {item.freeOngkir == 'Y' ?

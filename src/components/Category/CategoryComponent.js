@@ -16,21 +16,25 @@ export default function CategoryComponent() {
     const [storageDashboard, setstorageDashboard] = useState([])
 
     useEffect(() => {
-        setTimeout(() => {
-            if (!reduxDashboard || reduxDashboard.length == 0) {
-                EncryptedStorage.getItem('dashcategory').then(result => {
-                    if (result) {
-                        dispatch({ type: 'SET_DASHCATEGORY', payload: JSON.parse(result) })
-                    }
-                }).catch(err => {
-                    console.log("🚀 ~ file: CategoryComponent.js ~ line 63 ~ EncryptedStorage.getItem ~ err", err)
-                })
-            }
-        }, 10000);
         getData()
         getStorage()
     }, [reduxDashboard])
 
+    // const handleCategory = () => {
+    //     setTimeout(() => {
+    //         if (!reduxDashboard || reduxDashboard.length == 0) {
+    //             EncryptedStorage.getItem('dashcategory').then(result => {
+    //                 if (result) {
+    //                     dispatch({ type: 'SET_DASHCATEGORY', payload: JSON.parse(result) })
+    //                 }
+    //             }).catch(err => {
+    //                 console.log("🚀 ~ file: CategoryComponent.js ~ line 63 ~ EncryptedStorage.getItem ~ err", err)
+    //             })
+    //         }
+    //     }, 10000);
+    //     getData()
+    //     getStorage()
+    // }
     const getStorage = () => {
         EncryptedStorage.getItem('dashcategory').then(res => {
             if (res) {

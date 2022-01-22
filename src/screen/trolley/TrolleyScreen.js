@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, createRef } from 'react'
 import { View, Text, SafeAreaView, Image, TouchableOpacity, FlatList, StatusBar, RefreshControl, TouchableWithoutFeedback, Alert, Platform } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
-import { styles, Hp, Wp, colors, useNavigation, Appbar, ServiceCart, Loading, ServiceCheckout, useFocusEffect, DefaultNotFound, Utils, ServiceProduct, } from '../../export'
+import { styles, Hp, Wp, colors, useNavigation, Appbar, ServiceCart, Loading, ServiceCheckout, DefaultNotFound, Utils, ServiceProduct, } from '../../export'
 import { Button, Checkbox } from 'react-native-paper'
 import { useDispatch, useSelector } from "react-redux";
 import Swipeable from 'react-native-swipeable';
@@ -28,7 +28,11 @@ export default function TrolleyScreen() {
 
     if (swipeRef && !Object.keys(swipeRef).length) swipeRef[idx] = createRef();
 
-    useEffect(() => setLoading(false), [reduxCart.cart])
+    useEffect(() => {
+        return () => {
+            setLoading(false)
+        }
+    }, [reduxCart.cart])
 
     const handleCheckbox = (name, indexParent, indexChild) => {
         try {

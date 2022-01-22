@@ -349,7 +349,7 @@ export default function SplashScreen() {
                 {/* <View style={[styles.column_center, { backgroundColor: colors.YellowJaja, width: Wp('100%'), height: Hp('50%') }]}> */}
 
                 <Swiper
-                    autoplayTimeout={2}
+                    autoplayTimeout={3}
                     pagingEnabled={false}
                     showsPagination={false}
                     horizontal={true}

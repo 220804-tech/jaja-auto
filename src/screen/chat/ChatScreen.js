@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createRef } from "react";
-import { View, Text, SafeAreaView, TextInput, TouchableOpacity, Image, FlatList, StyleSheet, ImageBackground, Platform, ScrollView, AlertIOS, ToastAndroid } from "react-native";
+import { View, Text, SafeAreaView, TextInput, TouchableOpacity, Image, FlatList, StyleSheet, ImageBackground } from "react-native";
 import { IconButton, TouchableRipple } from 'react-native-paper'
 import ImagePicker from "react-native-image-crop-picker";
 import firebaseDatabase from '@react-native-firebase/database';
@@ -47,7 +47,15 @@ export default function ChatScreen({ route }) {
     const reduxLoad = useSelector(state => state.product.productLoad)
 
     useEffect(() => {
-        setnameChat(data.name);
+        handleFirebase()
+        // return () => firebaseDatabase().ref('/messages/' + data.chat).off('value', onValueChange);
+        return () => {
+            setnameChat(data.name);
+
+        }
+    }, [data.name]);
+
+    const handleFirebase = () => {
         firebaseDatabase().ref('/messages/' + data.chat).on('value', function (snapshoot) {
             if (snapshoot.val() !== null) {
                 let key = snapshoot.val()
@@ -72,12 +80,16 @@ export default function ChatScreen({ route }) {
                 })
             }
         })
-
-        // return () => firebaseDatabase().ref('/messages/' + data.chat).off('value', onValueChange);
-    }, [data]);
+    }
 
     useEffect(() => {
-        setLoading(true)
+        handleFirebase2()
+        return () => {
+            setLoading(true)
+        }
+    }, [selectedOrder])
+
+    const handleFirebase2 = () => {
         try {
             if (product && Object.keys(product).length && selectedProduct !== null) {
                 setSelectedProduct(product)
@@ -102,7 +114,7 @@ export default function ChatScreen({ route }) {
 
         }
 
-    }, [selectedOrder])
+    }
 
     const handleSend = async (image) => {
         try {
@@ -112,11 +124,9 @@ export default function ChatScreen({ route }) {
                 myHeaders.append("Authorization", reduxAuth);
                 myHeaders.append("Content-Type", "application/json");
                 myHeaders.append("Cookie", "ci_session=3jj2gelqr7k1pgt00mekej9msvt8evts");
-
                 var raw = JSON.stringify({
                     "image": image
                 });
-
                 var requestOptions = {
                     method: 'POST',
                     headers: myHeaders,
@@ -161,7 +171,6 @@ export default function ChatScreen({ route }) {
                 console.log("🚀 ~ file: ChatScreen.js ~ line 155 ~ handleSend ~ message", message)
                 if (data && reduxAuth) {
                     try {
-
                         setLoading(false)
                         if (selectedOrder) {
                             message.order = selectedOrder
@@ -188,17 +197,23 @@ export default function ChatScreen({ route }) {
                         }
 
                     } catch (error) {
+
                         // alert(error)
+                        setLoading(false)
+
 
                     }
+                } else {
+                    setLoading(false)
                 }
                 setIsiChat('')
                 setGambar("")
             }
         } catch (error) {
-
+            setLoading(false)
         }
     }
+
     const handleSendProduct = (msg) => {
         try {
             if (selectedProduct && Object.keys(selectedProduct).length) {
@@ -726,7 +741,7 @@ export default function ChatScreen({ route }) {
                     </View>
                     <View style={[style.row_around_center, style.px_2, { height: Hp('7%'), marginBottom: keyboardFocus, backgroundColor: 'transparent', }]}>
                         <View style={[style.row_start_center, {
-                            width: "80%", height: '77%', borderRadius: 100, backgroundColor: colors.White, opacity: 0.9, elevation: 1
+                            width: "80%", height: '77%', borderRadius: 100, backgroundColor: colors.White
                         }]}>
                             <TextInput
                                 onFocus={() => setkeyboardFocus(300)}
@@ -750,7 +765,7 @@ export default function ChatScreen({ route }) {
                         </View>
                         <IconButton
                             icon={require('../../assets/icons/send.png')}
-                            style={{ margin: 0, backgroundColor: colors.White, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100, elevation: 1, opacity: 0.9 }}
+                            style={{ margin: 0, backgroundColor: colors.White, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100, }}
                             color={colors.BlueJaja}
                             onPress={() => handleSend(null)}
                         />

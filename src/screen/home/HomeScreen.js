@@ -152,23 +152,45 @@ export default function HomeScreen() {
 
     useFocusEffect(
         useCallback(() => {
-            try {
-                settranslucent(false)
-                if (Platform.OS === 'ios') {
-                    StatusBar.setBarStyle('light-content', true);	//<<--- add this
-                    StatusBar.setBackgroundColor(colors.BlueJaja, true)
+            return () => {
+                try {
+                    settranslucent(false)
+                    if (Platform.OS === 'ios') {
+                        StatusBar.setBarStyle('light-content', true);	//<<--- add this
+                        StatusBar.setBackgroundColor(colors.BlueJaja, true)
+                    }
+                    dispatch({ type: 'SET_CART_STATUS', payload: '' })
+                    setOut(false)
+
+
+                } catch (error) {
+
                 }
-                dispatch({ type: 'SET_CART_STATUS', payload: '' })
-                setOut(false)
-
-
-            } catch (error) {
-
             }
         }, [reduxAuth]),
     );
 
     useEffect(() => {
+        handleContent()
+    }, [])
+
+    useEffect(() => {
+        dynamicLinks().getInitialLink().then(link => {
+            handleDynamicLink(link)
+        })
+        const linkingListener = dynamicLinks().onLink(handleDynamicLink)
+        return () => {
+            linkingListener()
+        }
+    }, [])
+
+
+    useEffect(() => {
+        if (reduxAuth) {
+            getBadges()
+        }
+    }, [reduxAuth])
+    const handleContent = () => {
         setLoading(true)
         try {
             dispatch({ 'type': 'SET_LOADMORE', payload: false })
@@ -189,25 +211,7 @@ export default function HomeScreen() {
 
         }
         setTimeout(() => setLoading(false), 3000);
-    }, [])
-
-    useEffect(() => {
-        dynamicLinks().getInitialLink().then(link => {
-            handleDynamicLink(link)
-        })
-        const linkingListener = dynamicLinks().onLink(handleDynamicLink)
-        return () => {
-            linkingListener()
-        }
-    }, [])
-
-
-    useEffect(() => {
-        if (reduxAuth) {
-            getBadges()
-        }
-    }, [reduxAuth])
-
+    }
     const getBadges = () => {
         ServiceUser.getBadges(reduxAuth).then(result => {
             if (result) {

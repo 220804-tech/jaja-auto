@@ -24,8 +24,7 @@ export default function RecomandedHobbyComponent(props) {
 
 
     useEffect(() => {
-        getStorage()
-
+        // getStorage()
     }, [])
     const getStorage = () => {
         EncryptedStorage.getItem('dashrecommanded').then(res => {

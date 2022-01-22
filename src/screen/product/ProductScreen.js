@@ -77,7 +77,7 @@ export default function ProductScreen(props) {
 
     const onRefresh = useCallback(() => {
         // setLoading(true);
-        if (!reduxLoad && !filterLocation && reduxProduct?.length === 0) {
+        if (!reduxLoad && !reduxProduct?.id) {
             getItem(reduxProduct.slug)
             Utils.alertPopUp('Refreshing..')
         }
@@ -85,15 +85,17 @@ export default function ProductScreen(props) {
     }, []);
 
     useEffect(() => {
-        setmodal(false)
-        if (props.route.params && reduxProduct.slug) {
-            if (showFlashsale) {
-                setFlashsale(true)
-            } else {
-                setFlashsale(false)
+        dynamicLink()
+        return () => {
+            setmodal(false)
+            if (props.route.params && reduxProduct.slug) {
+                if (showFlashsale) {
+                    setFlashsale(true)
+                } else {
+                    setFlashsale(false)
+                }
             }
         }
-        dynamicLink()
     }, [])
 
 
@@ -116,38 +118,41 @@ export default function ProductScreen(props) {
         });
         setlink(link_URL)
     }
-
-    useEffect(() => {
-
+    const handleProduct = () => {
         try {
-            if (filterLocation) {
-                if (!!reduxProduct?.id) {
-                    handleVariasi(reduxProduct.variant)
-                    setRefreshing(false)
-                    handleFlashsale(reduxProduct.flashsaleData, reduxProduct.statusProduk)
-                    setLike(reduxProduct.isWishlist)
-                    setidProduct(reduxProduct.id)
-                    if (!reduxProduct.stock && reduxProduct.stock === '0') {
-                        setdisableCart(true)
-                    }
-                    let dataSeller = reduxProduct.store
-                    dataSeller.chat = reduxUser.user.uid + dataSeller.uid
-                    dataSeller.id = dataSeller.uid
-                    setSeller(dataSeller)
-                    setLike(reduxProduct.isWishlist)
-                    if (reduxAuth && reduxProduct?.sellerTerdekat.length && reduxUser?.user?.id && reduxProduct?.category?.slug) {
-                        FilterLocation(reduxProduct.sellerTerdekat, reduxUser.user.location, reduxProduct.category.slug, reduxAuth, dispatch)
-                    }
+            if (!!reduxProduct?.id) {
+                handleVariasi(reduxProduct.variant)
+                setRefreshing(false)
+                handleFlashsale(reduxProduct.flashsaleData, reduxProduct.statusProduk)
+                setLike(reduxProduct.isWishlist)
+                setidProduct(reduxProduct.id)
+                if (!reduxProduct.stock && reduxProduct.stock === '0') {
+                    setdisableCart(true)
                 }
-            } else {
-                console.log('outtt')
+                let dataSeller = reduxProduct.store
+                dataSeller.chat = reduxUser.user.uid + dataSeller.uid
+                dataSeller.id = dataSeller.uid
+                setSeller(dataSeller)
+                setLike(reduxProduct.isWishlist)
             }
-
 
         } catch (error) {
             console.log("🚀 ~ file: ProductScreen.js ~ line 159 ~ useCallback ~ error", error)
         }
-    }, [filterLocation])
+    }
+    useEffect(() => {
+        handleProduct()
+    }, [reduxProduct?.id])
+
+    useEffect(() => {
+        if (filterLocation) {
+            if (reduxAuth && reduxProduct?.sellerTerdekat.length && reduxUser?.user?.id && reduxProduct?.category?.slug) {
+                FilterLocation(reduxProduct.sellerTerdekat, reduxUser.user.location, reduxProduct.category.slug, reduxAuth, dispatch)
+            }
+
+        }
+    }, [filterLocation]);
+
 
     const getItem = (slg) => {
         let response;
@@ -178,11 +183,11 @@ export default function ProductScreen(props) {
             response = "clear"
 
         })
-        setTimeout(() => {
-            if (response !== 'clear') {
-                return Utils.alertPopUp("Sedang memuat..")
-            }
-        }, 10000);
+        // setTimeout(() => {
+        //     if (response !== 'clear') {
+        //         return Utils.alertPopUp("Sedang memuat..")
+        //     }
+        // }, 10000);
 
     }
 
@@ -418,6 +423,7 @@ export default function ProductScreen(props) {
         </View >
     );
 
+    { console.log("🚀 ~ file: ProductScreen.js ~ line 472 ~ title ~ reduxProduct", reduxProduct.image) }
     const title = () => {
         let arrImage = [require('../../assets/images/JajaId.png')]
         return (
@@ -466,8 +472,9 @@ export default function ProductScreen(props) {
                                 reduxLoad || !reduxProduct?.image?.[0] ?
                                     arrImage.map((item, key) => {
                                         return (
-                                            <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%'), }}>
-                                                <Image style={[style.swiperProduct, { tintColor: colors.Silver }]}
+                                            <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%'), justifyContent: 'center', alignItems: 'center' }}>
+                                                {console.log('masuk satu')}
+                                                <Image style={[style.swiperProduct, { width: "70%", height: "70%", tintColor: colors.Silver }]}
                                                     source={item}
                                                 />
                                             </View>
@@ -475,12 +482,12 @@ export default function ProductScreen(props) {
                                     })
                                     :
                                     reduxProduct.image.map((item, key) => {
+                                        console.log("🚀 ~ file: ProductScreen.js ~ line 485 ~ reduxProduct.image.map ~ item", item)
                                         return (
-                                            <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%') }}>
-                                                <Image style={style.swiperProduct}
-                                                    source={{ uri: item }}
-                                                />
-                                            </View>
+                                            <Image style={{ width: Wp('100%'), height: Wp('100%'), resizeMode: 'contain' }}
+                                                source={{ uri: item }
+                                                }
+                                            />
                                         );
                                     })
                             }
@@ -494,7 +501,6 @@ export default function ProductScreen(props) {
         let error = true;
         try {
             if (!reduxLoad) {
-                !status ? await navigation.push("Product") : null
                 dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
                 ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
                     error = false
@@ -891,6 +897,8 @@ export default function ProductScreen(props) {
                                     windowSize={7}
                                     data={reduxProduct.otherProduct}
                                     scrollEnabled={true}
+
+                                    nestedScrollEnabled={true}
                                     keyExtractor={(item, index) => String(index)}
                                     showsHorizontalScrollIndicator={false}
                                     contentContainerStyle={{ flex: 0, justifyContent: 'flex-start' }}
@@ -1201,7 +1209,7 @@ export default function ProductScreen(props) {
             />
 
             <View style={{ position: 'absolute', bottom: 0, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row', elevation: 3 }}>
-                <TouchableOpacity onPress={handleChat} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
+                <TouchableOpacity disabled={Object.keys(seller).length ? false : true} onPress={handleChat} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
                     <Image source={require('../../assets/icons/chats.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: colors.RedFlashsale }} />
                 </TouchableOpacity>
                 <TouchableOpacity disabled={disableCart} onPress={() => handleAddCart("trolley")} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>

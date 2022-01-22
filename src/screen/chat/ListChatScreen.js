@@ -18,10 +18,13 @@ export default function ListChat() {
     const [refreshing, setRefreshing] = useState(false);
     const reduxnotifCount = useSelector(state => state.notification.notifCount)
     const dispatch = useDispatch()
+
     useEffect(() => {
         loadList()
-        setRefreshing(false)
         readChat()
+        return () => {
+            setRefreshing(false)
+        }
     }, [reduxUser]);
 
 
