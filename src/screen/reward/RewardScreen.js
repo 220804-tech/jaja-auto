@@ -394,12 +394,13 @@ export default function RewardScreen() {
 
 
     return (
-        <SafeAreaView style={styles.container}>
-            <Appbar back={true} title="Koin Jaja" />
+        <SafeAreaView style={styles.containerFix}>
             {loading ? <Loading /> : null}
-            <View style={[styles.column, styles.p, { flex: 1 }]}>
+            <Appbar back={true} title="Koin Jaja" />
+            <View style={[styles.containerIn, styles.p, { flex: 1 }]}>
 
                 <ScrollView
+                    showsHorizontalScrollIndicator={false}
                     nestedScrollEnabled={true}
                     refreshControl={
                         <RefreshControl
@@ -492,7 +493,7 @@ export default function RewardScreen() {
                             </View>
 
                         </View>
-                        <View style={[styles.row_center, styles.mb_2, { width: '98%', alignSelf: 'center' }]}>
+                        <View style={[styles.row_center, { width: '98%', alignSelf: 'center' }]}>
                             <TouchableRipple disabled={listBK && listBK.length ? true : false} onPress={() => navigation.navigate('AddAccount')} style={[styles.row_center, styles.py_2, { width: '50%', backgroundColor: listBK && listBK.length ? colors.Silver : colors.GreenSuccess }]}>
                                 <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>Tambah Rekening</Text>
                             </TouchableRipple>
@@ -505,7 +506,7 @@ export default function RewardScreen() {
 
                     </View>
 
-                    <View style={[styles.container, { width: Wp('100%'), height: Hp('50%'), backgroundColor: colors.White }]}>
+                    <View style={[styles.container, styles.mb_3, { width: Wp('100%'), height: Hp('50%'), backgroundColor: colors.White }]}>
                         <TabView
                             tabBarPosition="top"
                             indicatorStyle={{ backgroundColor: 'white' }}

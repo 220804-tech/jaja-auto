@@ -82,7 +82,7 @@ export default function GiftDetailScreen(props) {
     const onRefresh = React.useCallback(() => {
         setRefreshing(true)        // setLoading(true);
         if (slug) {
-            ToastAndroid.show("Refreshing..", ToastAndroid.LONG, ToastAndroid.CENTER)
+            Utils.alertPopUp('Refreshing..')
         }
         setTimeout(() => setRefreshing(false), 2000);
     }, []);
@@ -178,7 +178,8 @@ export default function GiftDetailScreen(props) {
 
     const renderNavBar = () => (
         <View style={style.navContainer}>
-            <View style={style.statusBar} />
+            {Platform.OS === 'ios' ? null : <View style={styles.statusBar} />}
+
             <View style={style.navBar}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, padding: '3%', backgroundColor: colors.BlueJaja, justifyContent: 'center', alignItems: 'center', borderRadius: 100 }}>
                     <Image source={require('../../assets/icons/arrow.png')} style={{ width: 25, height: 25, marginRight: '3%', tintColor: colors.White }} />
@@ -197,7 +198,7 @@ export default function GiftDetailScreen(props) {
     const title = () => {
         let arrImage = [require('../../assets/images/JajaId.png')]
         return (
-            <>
+            <View style={{ width: Wp('100%'), height: Wp('100%'), backgroundColor: colors.White, marginTop: '-11%' }}>
                 {
                     Platform.OS === 'ios' ?
                         <View style={{ width: Wp('100%'), height: Hp('45%'), backgroundColor: colors.White, marginTop: '-11%' }}>
@@ -262,7 +263,7 @@ export default function GiftDetailScreen(props) {
                             }
                         </Swiper>
                 }
-            </>
+            </View>
         );
     };
 
@@ -919,21 +920,22 @@ export default function GiftDetailScreen(props) {
         }
     }
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
             {loading ? <Loading /> : null}
             <StatusBar translucent={true} backgroundColor="transparent" barStyle="light-content" />
             <ReactNativeParallaxHeader
-                headerMinHeight={Hp('10%')}
-                headerMaxHeight={Wp('100%')}
+                headerMinHeight={Platform.OS === 'ios' ? Hp('4%') : Hp('9%')}
+                headerMaxHeight={Platform.OS === 'ios' ? Hp('45%') : Wp('100%')}
                 extraScrollHeight={20}
                 statusBarColor='transparent'
                 navbarColor={colors.BlueJaja}
-
-                titleStyle={{ height: Wp('100%') }}
+                titleStyle={style.titleStyle}
                 title={title()}
                 backgroundImageScale={1.2}
                 renderNavBar={renderNavBar}
                 renderContent={renderContent}
+                containerStyle={[styles.container, { backgroundColor: colors.WhiteGrey }]}
+                innerContainerStyle={{ backgroundColor: colors.WhiteGrey }}
                 headerFixedBackgroundColor={colors.BlueJaja}
                 alwaysShowTitle={false}
                 scrollViewProps={{
@@ -1044,24 +1046,38 @@ export default function GiftDetailScreen(props) {
 }
 
 const style = StyleSheet.create({
-    navContainer: {
-        height: Hp('10%'),
-        justifyContent: 'flex-end',
-        marginHorizontal: 10,
-        backgroundColor: 'transparent',
-    },
+
     statusBar: {
         height: STATUS_BAR_HEIGHT,
         backgroundColor: 'transparent',
     },
+    navContainer: {
+        height: Platform.OS === 'ios' ? Hp('5.6%') : Hp('10%'),
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        paddingHorizontal: '4%',
+        paddingBottom: Platform.OS === "ios" ? '3.5%' : '2.5%',
+        // paddingTop: '3.5%',
+        backgroundColor: 'transparent',
+    },
+    // statusBar: {
+    //     height: STATUS_BAR_HEIGHT,
+    //     backgroundColor: 'transparent',
+    // },
     navBar: {
-        height: '100%',
+        height: NAV_BAR_HEIGHT,
+        width: '100%',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingTop: '5%',
         flexDirection: 'row',
         backgroundColor: 'transparent',
-        paddingHorizontal: '1%'
+        // paddingHorizontal: '1%'
+    },
+    titleStyle: {
+        color: 'white',
+        fontFamily: 'Poppins-SemiBold',
+        fontSize: 18,
+        backgroundColor: colors.BlueJaja
     },
     swiperProduct: { width: '100%', height: '100%', resizeMode: 'contain' },
     searchBar: { flexDirection: 'row', backgroundColor: colors.White, borderRadius: 12, height: NAV_BAR_HEIGHT / 1.7, width: '70%', alignItems: 'center', paddingHorizontal: '4%' }

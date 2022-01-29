@@ -3,6 +3,9 @@ import { Wp, Hp, colors, RFValue } from '../../export';
 
 export const styles = StyleSheet.create({
     container: { flex: 1 },
+    containerFix: { flex: 1, backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null },
+    containerIn: { flex: 1, backgroundColor: Platform.OS === 'ios' ? colors.WhiteBack : null },
+
     row: { flex: 0, flexDirection: 'row' },
     row_center: { flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
     row_center_start: { flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start' },
@@ -162,7 +165,7 @@ export const styles = StyleSheet.create({
 
     countNotif: { position: 'absolute', height: 15, width: 15, backgroundColor: colors.RedNotif, right: -3, top: 0, borderRadius: 100, alignItems: 'center', justifyContent: 'center' },
     textNotif: {
-        fontSize: 9, color: colors.White, textAlign: 'center'
+        fontSize: Platform.OS === 'ios' ? 8 : 9, color: colors.White, textAlign: 'center'
     },
     cardProduct: { flex: 0, flexDirection: 'column', marginRight: 11, width: Wp('33%'), height: Wp('53%'), borderRadius: 4, backgroundColor: colors.White, alignItems: 'center' },
     flashsale: {

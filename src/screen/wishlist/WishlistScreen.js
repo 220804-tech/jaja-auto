@@ -168,10 +168,10 @@ export default function WishlistScreen() {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.containerFix}>
             <AppbarSecond handleSearch={(e) => getItem(e)} title='Cari di sini..' />
             {loading ? <Loading /> : null}
-            <View style={[styles.column, styles.pb_5, { backgroundColor: colors.White }]}>
+            <View style={[styles.containerIn, styles.pb_5, { backgroundColor: colors.White }]}>
                 <View style={[styles.column_center, { width: Wp('100%'), height: showChild ? index === 3 ? Hp('25%') : Hp('13%') : Hp('7%'), backgroundColor: colors.White, elevation: 2, position: 'absolute', zIndex: 9999 }]}>
                     <View style={[styles.row_between_center, styles.px_2, { width: '100%', backgroundColor: colors.White, height: Hp('7%') }]}>
                         <TouchableOpacity onPress={() => handleIndex(0, null, null)} style={[styles.row_center, styles.py_2, styles.mr_2, { width: Wp('22%'), borderWidth: 0.5, borderColor: colors.BlueJaja, backgroundColor: index === 0 ? colors.BlueJaja : colors.White, borderRadius: 5 }]}>
@@ -258,10 +258,10 @@ export default function WishlistScreen() {
                             : null
                     }
                 </View>
-                <ScrollView contentContainerStyle={styles.pb_5} style={{ marginTop: Hp('7%') }}>
+                <ScrollView contentContainerStyle={styles.pb_5} style={{ marginTop: Hp('7%'), width: Wp('100%') }}>
                     {reduxWistlist && reduxWistlist.length ?
                         <View style={[styles.column, styles.px_3, styles.mb_5]}>
-                            <CardProduct data={reduxWistlist} />
+                            <CardProduct scroll={1} data={reduxWistlist} />
                         </View>
                         : <Text style={[styles.font_14, styles.py_5, { height: Hp('100%'), alignSelf: 'center', marginTop: Hp('7%') }]}>Favorit kamu masih kosong!</Text>
                     }

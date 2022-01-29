@@ -172,7 +172,7 @@ export default function map(props) {
                 </View>
                 <TouchableRipple onPressIn={() => setModal(true)} onPress={() => actionSheetRef.current?.setModalVisible(true)} style={styles.search}>
                     <>
-                        <Text onPress={() => actionSheetRef.current?.setModalVisible(true) & setModal(true)} style={{ color: colors.White, fontFamily: 'Poppins-Regular' }}>Cari lokasi...</Text>
+                        <Text onPress={() => actionSheetRef.current?.setModalVisible(true) & setModal(true)} style={[style.font_12, { color: Platform.OS === 'android' ? colors.White : null }]}>Cari lokasi...</Text>
                         <TouchableOpacity onPress={() => actionSheetRef.current?.setModalVisible(true)}>
                             <Image style={styles.iconSearch} source={require('../../assets/icons/loupe.png')} />
                         </TouchableOpacity>
@@ -230,7 +230,7 @@ export default function map(props) {
             {/* </ScrollView> */}
             {/* <ActionSheet ref={actionSheetRef} containerStyle={{ flex: 1, backgroundColor: colors.BlueJaja }}> */}
             <Modal animationType="slide" transparent={true} visible={modal} onRequestClose={() => setModal(!modal)}>
-                <View style={{ flex: 1, height: Hp('100%'), width: Wp('100%'), backgroundColor: colors.White, opacity: 0.95, zIndex: 999 }}>
+                <View style={{ flex: 1, marginTop: Platform.OS === 'ios' ? '6x%' : '1%', height: Platform.OS === 'android' ? Hp('100%') : Hp('80%'), width: Wp('100%'), backgroundColor: colors.White, opacity: 0.95, zIndex: 999 }}>
                     <View style={[style.row_between_center, style.py_2, style.px_4, { height: Hp('9%'), backgroundColor: colors.BlueJaja }]}>
 
                         <TouchableOpacity style={[style.searchBar, { width: '87%' }]}>
@@ -242,7 +242,7 @@ export default function map(props) {
                         </TouchableOpacity>
 
                     </View>
-                    <ScrollView style={{ flex: 0, paddingHorizontal: '4%', height: Hp('93%') }}>
+                    <ScrollView style={{ flex: 0, paddingHorizontal: '4%', height: Hp('73%') }}>
                         <FlatList
                             data={dataSearch}
                             showsHorizontalScrollIndicator={false}

@@ -134,33 +134,36 @@ function NotifikasiScreen(props) {
         })
     }
     return (
-        <SafeAreaView style={style.container}>
+        <SafeAreaView style={style.containerFix}>
             <Appbar back={true} title="Notifikasi" />
-            {notifData && notifData.length ?
-                <FlatList
-                    data={notifData.sort((a, b) => (parseInt(String(a.created_date.slice(14, 16))) > parseInt(String(b.created_date.slice(14, 16))) ? 1 : -1)).reverse()}
-                    // inverted={-1}
-                    keyExtractor={(item, index) => index + 'SF'}
-                    renderItem={({ item, index }) => {
-                        return (
-                            <TouchableRipple key={index} style={[styles.card, { backgroundColor: item.read == 'T' ? colors.BlueLight : colors.White, }]} onPress={() => handleRead(item)}>
-                                <>
-                                    <View style={[style.row_between_center, { flex: 0 }]}>
-                                        <Text style={styles.textDate}>{item.invoice}</Text>
-                                        <Text style={styles.textDate}>{String(item.created_date).slice(0, 16)}</Text>
-                                    </View>
-                                    <View style={styles.bodyCard}>
-                                        <Text style={styles.textTitle}>{item.title}</Text>
-                                        <Text style={styles.textBody}>{item.text}</Text>
-                                    </View>
-                                </>
-                            </TouchableRipple>
-                        )
-                    }}
-                />
-                : <DefaultNotFound textHead="Ups.." textBody="Tampaknya belum ada informasi untukmu.." ilustration={require('../../assets/ilustrations/empty.png')} />
+            <View style={style.containerIn}>
+                {notifData && notifData.length ?
+                    <FlatList
+                        data={notifData.sort((a, b) => (parseInt(String(a.created_date.slice(14, 16))) > parseInt(String(b.created_date.slice(14, 16))) ? 1 : -1)).reverse()}
+                        // inverted={-1}
 
-            }
+                        keyExtractor={(item, index) => index + 'SF'}
+                        renderItem={({ item, index }) => {
+                            return (
+                                <TouchableRipple key={index} style={[styles.card, { backgroundColor: item.read == 'T' ? colors.BlueLight : colors.White, }]} onPress={() => handleRead(item)}>
+                                    <>
+                                        <View style={[style.row_between_center, { flex: 0 }]}>
+                                            <Text style={styles.textDate}>{item.invoice}</Text>
+                                            <Text style={styles.textDate}>{String(item.created_date).slice(0, 16)}</Text>
+                                        </View>
+                                        <View style={styles.bodyCard}>
+                                            <Text style={styles.textTitle}>{item.title}</Text>
+                                            <Text style={styles.textBody}>{item.text}</Text>
+                                        </View>
+                                    </>
+                                </TouchableRipple>
+                            )
+                        }}
+                    />
+                    : <DefaultNotFound textHead="Ups.." textBody="Tampaknya belum ada informasi untukmu.." ilustration={require('../../assets/ilustrations/empty.png')} />
+
+                }
+            </View>
         </SafeAreaView >
     );
 }

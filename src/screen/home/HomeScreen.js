@@ -57,31 +57,16 @@ export default function HomeScreen() {
 
     const images = [
         {
-            title: "Sport & Outdoor",
-            image: "https://nimda.jaja.id/asset/front/images/file/aee601e2b447abd891ae9c74f1bd5021.jpg",
-            loading: require("../../assets/gifs/splashscreen/loading_page.gif"),
-            router: "KategoriSport",
-            color: "#68b0c8"
-        },
-        {
-            title: "JajaGift",
             image: require('../../assets/icons/gift/bannerGif.jpeg'),
             router: "GiftScreen",
-            color: "#68b0c8"
         },
         {
-            title: "Sport & Outdoor",
-            image: "https://nimda.jaja.id/asset/front/images/file/835df82b3973315acf6cbbfc42773558.png",
-            loading: require("../../assets/gifs/splashscreen/loading_page.gif"),
+            image: require('../../assets/banner/home/banner1.png'),
             router: "KategoriSport",
-            color: "#fdb94c",
         },
         {
-            title: "Toys",
-            image: "https://nimda.jaja.id/asset/front/images/file/5e177ef22d9e286155e8a3c2cd9e00aa.png",
-            loading: require("../../assets/gifs/splashscreen/loading_page.gif"),
+            image: require('../../assets/banner/home/banner2.png'),
             router: "KategoriBuku",
-            color: "#68b0c8"
         }
     ]
 
@@ -190,6 +175,7 @@ export default function HomeScreen() {
             getBadges()
         }
     }, [reduxAuth])
+
     const handleContent = () => {
         setLoading(true)
         try {
@@ -282,12 +268,14 @@ export default function HomeScreen() {
                 paginationStyle={{ bottom: 10 }}
                 autoplay={true}
                 loop={true}
+                style={{ backgroundColor: colors.BlueJaja, flex: 0, justifyContent: 'center', alignItems: 'center' }}
             >
                 {images.map((item, key) => {
+                    console.log("🚀 ~ file: HomeScreen.js ~ line 274 ~ {images.map ~ key", key)
                     return (
                         <Image key={String(key)} style={style.swiperBanner}
                             resizeMode={item.image ? "contain" : "cover"}
-                            source={key === 1 ? item.image : { uri: item.image }}
+                            source={item.image}
                         />
                     );
                 })}
@@ -513,7 +501,7 @@ export default function HomeScreen() {
                     }
                 )}
             > */}
-            <StatusBar translucent={translucent} backgroundColor={colors.BlueJaja} />
+            <StatusBar translucent={translucent} backgroundColor={colors.BlueJaja} barStyle="light-content" />
             <ReactNativeParallaxHeader
                 headerMinHeight={Platform.OS === 'ios' ? Hp('5.5%') : Hp('7%')}
                 headerMaxHeight={Hp('30%')}
@@ -621,7 +609,7 @@ const style = StyleSheet.create({
         paddingHorizontal: '4%',
         paddingBottom: '2.5%',
         paddingTop: '2.2%',
-        backgroundColor: 'transparent',
+        backgroundColor: Platform.OS === 'android' ? 'transparent' : colors.BlueJaja,
     },
     statusBar: {
         height: STATUS_BAR_HEIGHT,
@@ -643,9 +631,10 @@ const style = StyleSheet.create({
         color: 'white',
         fontFamily: 'Poppins-SemiBold',
         fontSize: 18,
-        backgroundColor: colors.BlueJaja
+        backgroundColor: colors.BlueJaja,
+        width: Wp('100%'), height: Wp('75%'),
     },
     touchIcon: { width: '14%', justifyContent: 'center', alignItems: 'center' },
-    swiperBanner: { width: "100%", height: Hp('30%'), resizeMode: 'contain', backgroundColor: colors.BlueJaja },
+    swiperBanner: { width: '100%', height: '100%', resizeMode: 'contain', backgroundColor: 'transparent' },
     searchBar: { flex: 0, width: '77%', flexDirection: 'row', backgroundColor: colors.White, borderRadius: 11, height: NAV_BAR_HEIGHT / (Platform.OS === 'android' ? 1.8 : 1.2), alignItems: 'center', paddingHorizontal: '4.5%', marginRight: '3%' }
 });

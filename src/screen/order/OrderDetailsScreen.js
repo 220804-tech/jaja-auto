@@ -138,23 +138,26 @@ export default function OrderDetailsScreen() {
     const reduxLoad = useSelector(state => state.product.productLoad)
 
     useEffect(() => {
-        if (details && Object.keys(details).length) {
-            setLoading(false)
-            let status = details.status;
-            dispatch({ type: 'SET_ORDER_STATUS', payload: status === 'notPaid' ? "Menunggu Pembayaran" : status === 'waitConfirm' ? 'Menunggu Konfirmasi' : status === 'prepared' ? 'Sedang Disiapkan' : status === 'canceled' ? 'Pesanan Dibatalkan' : status === 'done' ? 'Pesanan Selesai' : status === 'sent' ? 'Pengiriman' : null })
-            if (status === 'notPaid') {
-                dispatch({ type: 'SET_INVOICE', payload: details.orderId })
-                ServiceCheckout.getListPayment().then(res => {
-                    if (res) {
-                        dispatch({ type: 'SET_LIST_PAYMENT', payload: details })
-                    }
-                })
-                getPayment(details.orderId);
-            } else {
-                dispatch({ type: 'SET_INVOICE', payload: details.items[0].invoice })
-            }
+        return () => {
+            if (details && Object.keys(details).length) {
+                setLoading(false)
+                let status = details.status;
+                dispatch({ type: 'SET_ORDER_STATUS', payload: status === 'notPaid' ? "Menunggu Pembayaran" : status === 'waitConfirm' ? 'Menunggu Konfirmasi' : status === 'prepared' ? 'Sedang Disiapkan' : status === 'canceled' ? 'Pesanan Dibatalkan' : status === 'done' ? 'Pesanan Selesai' : status === 'sent' ? 'Pengiriman' : null })
+                if (status === 'notPaid') {
+                    dispatch({ type: 'SET_INVOICE', payload: details.orderId })
+                    ServiceCheckout.getListPayment().then(res => {
+                        if (res) {
+                            dispatch({ type: 'SET_LIST_PAYMENT', payload: details })
+                        }
+                    })
+                    getPayment(details.orderId);
+                } else {
+                    dispatch({ type: 'SET_INVOICE', payload: details.items[0].invoice })
+                }
 
-        }
+            }
+        };
+
     }, [details, count])
 
     useEffect(() => {
@@ -1196,7 +1199,7 @@ export default function OrderDetailsScreen() {
                         </View>
                         <View style={[styles.px_3]}>
                             {reduxOrderStatus === 'Pesanan Dibatalkan' && details ?
-                                <Text style={[styles.font_11, styles.T_italic, { marginBottom: '2%', color: colors.RedMaroon, }]}>*{details.cancelBy} {details.cancelReason ? ' - ' + details.cancelReason : ' - Qui officia ea incididunt mollit cillum dolore aliquip aliqua sint pariatur.'}</Text>
+                                <Text style={[styles.font_11, styles.T_italic, { marginBottom: '2%', color: colors.RedMaroon, }]}>*{details.cancelBy} {details.cancelReason ? ' - ' + details.cancelReason : ''}</Text>
                                 : null
                             }
                         </View>

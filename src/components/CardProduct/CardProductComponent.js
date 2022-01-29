@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { colors, FastImage, Ps, ServiceProduct, styles, useNavigation, Wp, useFocusEffect, Utils } from '../../export'
@@ -29,15 +29,15 @@ export default function CardProductComponent(props) {
                     navigation.push("GiftDetails")
                 }
                 dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
-                ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+                ServiceProduct.getProduct(reduxAuth, item.slug).then(async res => {
                     error = false
                     if (res === 404) {
                         Utils.alertPopUp('Sepertinya data tidak ditemukan!')
                         dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                         navigation.goBack()
                     } else if (res?.data) {
-                        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
-                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                        await dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                        await dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                         setTimeout(() => dispatch({ type: 'SET_FILTER_LOCATION', payload: true }), 7000);
                     }
                 }).catch(err => {
@@ -155,7 +155,7 @@ export default function CardProductComponent(props) {
             windowSize={10}
             data={props.data}
             numColumns={2}
-            scrollEnabled={true}
+            scrollEnabled={props?.scroll === 1 ? false : true}
             keyExtractor={keyExtractor}
             contentContainerStyle={{ flex: 0, width: Wp('100%'), justifyContent: 'center', alignSelf: 'center' }}
             renderItem={renderItem}

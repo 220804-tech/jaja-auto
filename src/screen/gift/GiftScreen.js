@@ -112,15 +112,15 @@ export default function GiftScreen() {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
             <Appbar back={true} title="Jaja Gift" Bg={colors.BlueJaja} />
-            <ScrollView>
+            <ScrollView stickyHeaderIndices={[3]} nestedScrollEnabled={true} showsVerticalScrollIndicator={false} style={{ backgroundColor: Platform.OS === 'ios' ? colors.WhiteBack : null }}>
                 {/* <View> */}
                 <Image style={{ width: width, height: width * 0.5 }} source={require('../../assets/icons/gift/bannerGif.jpeg')} />
                 <View style={[styles.row_start_center, styles.mt_3, styles.px_3, styles.py, { width: "70%", backgroundColor: colors.RedFlashsale, borderBottomRightRadius: 100 }]}>
                     <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.White }]}>Beli Sekarang Kirim Nanti!</Text>
                 </View>
-                <View style={[styles.row_center, styles.mt_2, { flexWrap: 'wrap', width: '100%', alignSelf: 'center' }]}>
+                <View style={[styles.row_center, styles.mt_2, { flexWrap: 'wrap', width: Wp('100%'), alignSelf: 'center' }]}>
                     {state.map((item, idx) => {
                         return (
                             <TouchableRipple key={String(idx) + 'QW'} onPress={() => handleFilter(item)} style={[styles.column_center, styles.py_5, { marginRight: idx == 0 || idx == 1 || idx == 3 || idx == 4 ? Wp('1%') : '0%', width: Wp('31.5%'), height: Wp('31.5%'), backgroundColor: colors.BlueJaja, marginBottom: '1%', borderRadius: 4 }]}>
@@ -143,7 +143,7 @@ export default function GiftScreen() {
 
                 <View style={[styles.p_3, { width: Wp('100%') }]}>
                     {productGiftHome && productGiftHome.length ?
-                        <CardProduct gift={true} data={productGiftHome} />
+                        <CardProduct scroll={1} gift={true} data={productGiftHome} />
                         :
                         <ShimmerCardProduct />}
                 </View>

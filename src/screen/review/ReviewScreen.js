@@ -36,7 +36,7 @@ export default function ReviewScreen(props) {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
             <StatusBar
                 translucent={false}
                 animated={true}
@@ -44,7 +44,7 @@ export default function ReviewScreen(props) {
                 barStyle='default'
                 showHideTransition="fade"
             />
-            <View style={[styles.column, { paddingBottom: Hp('7%') }]}>
+            <View style={[styles.column, { flex: 1, paddingBottom: Hp('7%'), backgroundColor: Platform.OS === 'ios' ? colors.WhiteGrey : null }]}>
                 <Appbar title="Penilaian Produk" back={true} />
                 <ScrollView>
                     {reduxReview && reduxReview.length ?
@@ -77,7 +77,7 @@ export default function ReviewScreen(props) {
                                         </Text> : null
                                     }
                                     <View style={[styles.row, { flexWrap: 'wrap' }]}>
-                                        {item.image.concat(item.image).map((itm, idx) => {
+                                        {item.image.map((itm, idx) => {
                                             return (
                                                 <TouchableOpacity onPress={() => navigation.navigate('ZoomReview', { data: index })} style={{ width: Wp('17%'), height: Wp('17%'), justifyContent: 'center', alignItems: 'center', backgroundColor: colors.BlackGrayScale, marginRight: '1%' }}>
                                                     <Image key={String(idx) + "i"} source={{ uri: itm }} style={{ width: '100%', height: '100%' }} />

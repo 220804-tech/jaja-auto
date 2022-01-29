@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, createRef } from 'reac
 import { View, Text, SafeAreaView, Image, TouchableOpacity, FlatList, StatusBar, RefreshControl, TouchableWithoutFeedback, Alert, Platform } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { styles, Hp, Wp, colors, useNavigation, Appbar, ServiceCart, Loading, ServiceCheckout, DefaultNotFound, Utils, ServiceProduct, } from '../../export'
-import { Button, Checkbox } from 'react-native-paper'
+import { Button, Checkbox, TouchableRipple } from 'react-native-paper'
 import { useDispatch, useSelector } from "react-redux";
 import Swipeable from 'react-native-swipeable';
 import CheckBox from '@react-native-community/checkbox'
@@ -493,9 +493,12 @@ export default function TrolleyScreen() {
                             <Text style={[styles.font_12, styles.T_medium, { color: colors.BlueJaja, marginBottom: '-2%' }]}>Total Harga :</Text>
                             <Text numberOfLines={1} style={[styles.font_17, styles.T_semi_bold, { color: colors.BlueJaja }]}>{reduxCart.cart.totalCartCurrencyFormat ? reduxCart.cart.totalCartCurrencyFormat : 'Rp0'}</Text>
                         </View>
-                        <Button disabled={disableCheckout} onPress={handleCheckout} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
-                            Checkout
-                        </Button>
+                        <TouchableRipple disabled={disableCheckout} style={{ backgroundColor: colors.BlueJaja, width: "50%", height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={handleCheckout}>
+                            <Text numberOfLines={1} style={[styles.font_13, styles.T_semi_bold, { color: colors.White }]}>Checkout</Text>
+                        </TouchableRipple>
+                        {/* <Button disabled={disableCheckout} onPress={handleCheckout} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
+                            
+                        </Button> */}
                     </View>
                 </View>
             </View>

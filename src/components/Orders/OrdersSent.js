@@ -15,7 +15,9 @@ export default function OrdersSent() {
     const [complain, setComplain] = useState(false);
 
     useEffect(() => {
-        setComplain(false)
+        return () => {
+            setComplain(false)
+        }
     }, [])
 
     const onRefresh = useCallback(() => {
@@ -77,7 +79,7 @@ export default function OrdersSent() {
     }
     return (
         <View style={[styles.container, styles.pt_2]}>
-            {reduxSent && reduxSent.length && !complain ?
+            {reduxSent && reduxSent?.length && !complain ?
                 <FlatList
                     data={reduxSent}
                     refreshControl={
@@ -86,7 +88,7 @@ export default function OrdersSent() {
                             onRefresh={onRefresh}
                         />
                     }
-                    keyExtractor={item => item.invoice}
+                    keyExtractor={(item, index) => String(index) + 'HJ'}
                     renderItem={({ item }) => {
                         if (!item.complain) {
                             return (

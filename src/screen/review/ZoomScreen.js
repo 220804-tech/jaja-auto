@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 const screen = Dimensions.get('screen');
 import VideoPlayer from 'react-native-video-player';
 import Swiper from 'react-native-swiper'
+import { SafeAreaView } from 'react-native';
 
 export default function ZoomScreen(props) {
     const reduxReview = useSelector(state => state.product.productDetail.review)
@@ -37,17 +38,18 @@ export default function ZoomScreen(props) {
         setReview(arr)
     }
     return (
-        <View style={[{ flex: 1, backgroundColor: colors.Black }]}>
+        <SafeAreaView style={[{ flex: 1, backgroundColor: colors.Black }]}>
             <StatusBar
                 translucent={false}
-                animated={true}
                 backgroundColor={colors.Black}
                 barStyle='default'
                 showHideTransition="fade"
             />
+            {/* <View style={{ position: 'absolute', top: 100 }}> */}
             <Appbar back={true} Bg="transparent" bgTop={colors.Black} />
+            {/* </View> */}
             {/* <View style={{ backgroundColor: colors.Black, justifyContent: 'center', alignItems: 'center', width: Wp('100%'), height: Hp('100%') }}> */}
-            <Swiper showsButtons={true} >
+            <Swiper showsButtons={false} showsPagination={review?.length > 1 ? true : false} >
                 {review.map((item, index) => {
                     console.log("🚀 ~ file: ZoomScreen.js ~ line 73 ~ {reduxReview[props.route.params.data].image.map ~ item", item)
                     return (
@@ -73,6 +75,6 @@ export default function ZoomScreen(props) {
                 })
                 }
             </Swiper>
-        </View >
+        </SafeAreaView >
     )
 }

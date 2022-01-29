@@ -23,6 +23,11 @@ export default function BottomRoute() {
     const dispatch = useDispatch()
 
     useEffect(() => {
+        handleWillMount()
+        // return () => database().ref(`/people/${uid}`).off('value', onValueChange);
+    }, [])
+
+    const handleWillMount = () => {
         try {
             if (uid && reduxAuth) {
                 database()
@@ -60,9 +65,7 @@ export default function BottomRoute() {
         } catch (error) {
 
         }
-        // return () => database().ref(`/people/${uid}`).off('value', onValueChange);
-    }, [])
-
+    }
     const getOrders = () => {
         if (reduxAuth) {
             ServiceOrder.getUnpaid(reduxAuth).then(resUnpaid => {

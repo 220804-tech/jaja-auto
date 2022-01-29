@@ -13,11 +13,19 @@ export const style = StyleSheet.create({
         height: Hp("41%"),
         marginVertical: 5,
         justifyContent: "flex-start",
-        elevation: 1,
         backgroundColor: colors.White,
         flexDirection: 'column',
         alignSelf: 'center',
-        resizeMode: 'contain'
+        resizeMode: 'contain',
+        shadowColor: colors.BlackGrayScale,
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.17,
+        shadowRadius: 0.9,
+
+        elevation: 1,
     },
     textDiscount: {
         position: 'absolute', fontSize: RFValue(7, 480), zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '5%', paddingHorizontal: '2%', top: 0, right: 5, borderBottomRightRadius: 5, borderBottomLeftRadius: 5,

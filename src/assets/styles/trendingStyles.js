@@ -12,9 +12,17 @@ export const style = StyleSheet.create({
         marginBottom: 5,
         justifyContent: "flex-start",
         alignItems: "center",
-        elevation: 0.7,
         backgroundColor: colors.White,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        shadowColor: colors.BlackGrayScale,
+        shadowOffset: {
+            width: 0,
+            height: 0.8,
+        },
+        shadowOpacity: 0.11,
+        shadowRadius: 0.75,
+
+        elevation: 0.5,
     },
     trendingImage: {
         width: "45%",

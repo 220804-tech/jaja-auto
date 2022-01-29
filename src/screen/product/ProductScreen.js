@@ -46,7 +46,7 @@ export default function ProductScreen(props) {
     const [modal, setmodal] = useState(false)
 
     const [refreshing, setRefreshing] = useState(false)
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [like, setLike] = useState(false)
     const [alert, setalert] = useState("")
     const [idProduct, setidProduct] = useState("")
@@ -68,7 +68,6 @@ export default function ProductScreen(props) {
     const [seller, setSeller] = useState("")
     const [disableCart, setdisableCart] = useState(false)
     const [link, setlink] = useState('')
-
     useAndroidBackHandler(() => {
         settranslucent(false)
         setbgBar(colors.BlueJaja)
@@ -76,13 +75,21 @@ export default function ProductScreen(props) {
     });
 
     const onRefresh = useCallback(() => {
-        // setLoading(true);
         if (!reduxLoad && !reduxProduct?.id) {
             getItem(reduxProduct.slug)
             Utils.alertPopUp('Refreshing..')
         }
 
     }, []);
+
+
+    useFocusEffect(
+        useCallback(() => {
+            setTimeout(() => {
+                setLoading(false)
+            }, 1000);
+        }, []),
+    );
 
     useEffect(() => {
         dynamicLink()
@@ -324,50 +331,43 @@ export default function ProductScreen(props) {
     }
 
     const handleStore = async () => {
-        await navigation.push('Store')
-        dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: true })
+        try {
+            await navigation.push('Store')
+            dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: true })
 
-        if (reduxStore && Object.keys(reduxStore).length) {
-            if (reduxStore.name != seller.name) {
-                dispatch({ "type": 'SET_STORE', payload: {} })
-                dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
-                // dispatch({ "type": 'SET_NEW_PRODUCT', payload: [] })
+            if (reduxStore && Object.keys(redxfuxStore).length) {
+                if (reduxStore.name != seller.name) {
+                    dispatch({ "type": 'SET_STORE', payload: {} })
+                    dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
+                }
             }
+            let slg = reduxProduct.store.slug
+            ServiceStore.getStore(slg, reduxAuth).then(res => {
+                if (res) {
+                    dispatch({ "type": 'SET_STORE', payload: res })
+                }
+            })
+            let obj = {
+                slug: slg,
+                page: 1,
+                limit: 10,
+                keyword: '',
+                price: '',
+                condition: '',
+                preorder: '',
+                brand: '',
+                sort: 'produk.id_produk-desc',
+            }
+            ServiceStore.getStoreProduct(obj).then(res => {
+                if (res) {
+                    dispatch({ "type": 'SET_NEW_PRODUCT', payload: res.items })
+                    dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: false })
+
+                }
+            })
+        } catch (error) {
+
         }
-        let slg = reduxProduct.store.slug
-        ServiceStore.getStore(slg, reduxAuth).then(res => {
-            if (res) {
-                dispatch({ "type": 'SET_STORE', payload: res })
-            }
-        })
-        let obj = {
-            slug: slg,
-            page: 1,
-            limit: 10,
-            keyword: '',
-            price: '',
-            condition: '',
-            preorder: '',
-            brand: '',
-            sort: 'produk.id_produk-desc',
-        }
-        ServiceStore.getStoreProduct(obj).then(res => {
-            if (res) {
-                dispatch({ "type": 'SET_NEW_PRODUCT', payload: res.items })
-                dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: false })
-
-            }
-        })
-
-        obj.sort = ''
-        ServiceStore.getStoreProduct(obj).then(res => {
-            if (res) {
-                dispatch({ type: 'SET_STORE_PRODUCT', payload: res.items })
-                dispatch({ type: 'SET_STORE_FILTER', payload: res.filters })
-                dispatch({ type: 'SET_STORE_SORT', payload: res.sorts })
-            }
-        })
-        setTimeout(() => dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: false }), 20000);
     }
 
     const handleTrolley = () => {
@@ -406,9 +406,9 @@ export default function ProductScreen(props) {
 
     const renderNavBar = () => (
         <View style={style.navContainer}>
-            {Platform.OS === 'ios' ? null : <View style={style.statusBar} />}
+            {Platform.OS === 'ios' ? null : <View style={styles.statusBar} />}
 
-            <View style={[style.navBar, { paddingTop: Platform.OS === 'ios' ? '3%' : '5%' }]}>
+            <View style={[style.navBar, { paddingTop: Platform.OS === 'ios' ? '0%' : '5%' }]}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, padding: '3%', backgroundColor: colors.BlueJaja, justifyContent: 'center', alignItems: 'center', borderRadius: 100 }}>
                     <Image source={require('../../assets/icons/arrow.png')} style={{ width: 25, height: 25, marginRight: '3%', tintColor: colors.White }} />
                 </TouchableOpacity>
@@ -423,45 +423,43 @@ export default function ProductScreen(props) {
         </View >
     );
 
-    { console.log("🚀 ~ file: ProductScreen.js ~ line 472 ~ title ~ reduxProduct", reduxProduct.image) }
     const title = () => {
         let arrImage = [require('../../assets/images/JajaId.png')]
         return (
-            <>
+            <View style={{ width: Wp('100%'), height: Wp('100%'), backgroundColor: colors.White, marginTop: '-11%' }}>
                 {
                     Platform.OS === 'ios' ?
-                        <View style={{ width: Wp('100%'), height: Hp('45%'), backgroundColor: colors.White, marginTop: '-11%' }}>
+                        <View style={{
+                            width: '100%', height: '100%', backgroundColor: colors.White, marginTop: -STATUS_BAR_HEIGHT, justifyContent: 'center', alignItems: 'center'
+                        }}>
                             <Swiper
-                                autoplayTimeout={4}
+                                // autoplayTimeout={4}
                                 horizontal={true}
                                 loop={false}
                                 dotColor={colors.White}
                                 activeDotColor={colors.BlueJaja}
                                 paginationStyle={{ bottom: 10 }}
-                                autoplay={true}
-                                loop={true}>
+                            >
                                 {
-                                    reduxLoad || !reduxProduct?.image?.[0] ?
-                                        arrImage.map((item, key) => {
-                                            return (
-                                                <Image key={String(key)} style={[style.swiperProduct, { tintColor: colors.Silver }]}
-                                                    source={item}
-                                                />
-                                            );
-                                        })
-
-                                        :
-
+                                    reduxLoad === false && reduxProduct?.image?.length > 0 ?
                                         reduxProduct.image.map((item, key) => {
                                             return (
-                                                <Image key={String(key)} style={style.swiperProduct}
+                                                <Image key={String(key)} style={[style.swiperProduct, { alignSelf: 'center' }]}
                                                     source={{ uri: item }}
                                                 />
                                             );
-                                        })}
-
+                                        })
+                                        :
+                                        arrImage.map((item, key) => {
+                                            return (
+                                                <Image key={String(key)} style={style.loadingProduct}
+                                                    source={require('../../assets/images/JajaId.png')}
+                                                />
+                                            );
+                                        })
+                                }
                             </Swiper>
-                        </View>
+                        </View >
                         :
                         <Swiper
                             horizontal={true}
@@ -482,7 +480,6 @@ export default function ProductScreen(props) {
                                     })
                                     :
                                     reduxProduct.image.map((item, key) => {
-                                        console.log("🚀 ~ file: ProductScreen.js ~ line 485 ~ reduxProduct.image.map ~ item", item)
                                         return (
                                             <Image style={{ width: Wp('100%'), height: Wp('100%'), resizeMode: 'contain' }}
                                                 source={{ uri: item }
@@ -493,7 +490,7 @@ export default function ProductScreen(props) {
                             }
                         </Swiper>
                 }
-            </>
+            </View >
         );
     };
 
@@ -549,6 +546,8 @@ export default function ProductScreen(props) {
         setTimeout(async () => {
 
             try {
+                // await setmodal(false)
+
                 let img64 = ''
                 await viewShotRef.current.capture().then(async uri => {
                     console.log('do something with ', typeof uri);
@@ -560,7 +559,6 @@ export default function ProductScreen(props) {
                         })
                         .catch(err => console.log("cok"));
                 });
-                setmodal(false)
                 const shareOptions = {
                     title: 'Jaja',
                     message: `Dapatkan ${reduxProduct.name} di Jaja.id \nDownload sekarang ${link}`,
@@ -1098,13 +1096,13 @@ export default function ProductScreen(props) {
                                         style={{ borderRadius: 1, marginBottom: '25%' }}
                                         shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
                                     />
-                                    <ShimmerPlaceholder
+                                    {/* <ShimmerPlaceholder
                                         LinearGradient={LinearGradient}
                                         width={Wp('19%')}
                                         height={Wp("3%")}
                                         style={{ borderRadius: 1, marginBottom: '25%' }}
                                         shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
-                                    />
+                                    /> */}
                                 </View>
                                 <View style={[styles.column, styles.mt_2, styles.mb_5, styles.ml_5]}>
                                     <ShimmerPlaceholder
@@ -1135,13 +1133,13 @@ export default function ProductScreen(props) {
                                         style={{ borderRadius: 1, marginBottom: '25%' }}
                                         shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
                                     />
-                                    <ShimmerPlaceholder
+                                    {/* <ShimmerPlaceholder
                                         LinearGradient={LinearGradient}
                                         width={Wp('19%')}
                                         height={Wp("3%")}
                                         style={{ borderRadius: 1, marginBottom: '25%' }}
                                         shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
-                                    />
+                                    /> */}
                                 </View>
 
                             </View>
@@ -1165,8 +1163,8 @@ export default function ProductScreen(props) {
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
-            {/* {reduxLoad ? <Loading /> : null} */}
-            <StatusBar translucent={Platform.OS === 'ios' ? false : translucent} backgroundColor={bgBar} barStyle="light-content" />
+            {loading ? <Loading /> : null}
+            <StatusBar translucent={Platform.OS === 'ios' ? true : translucent} backgroundColor={Platform.OS === 'ios' ? colors.BlueJaja : bgBar} barStyle="light-content" />
 
             <ReactNativeParallaxHeader
                 headerMinHeight={Platform.OS === 'ios' ? Hp('4%') : Hp('9%')}
@@ -1177,12 +1175,12 @@ export default function ProductScreen(props) {
                 titleStyle={style.titleStyle}
                 title={title()}
                 backgroundImageScale={1.2}
+
                 renderNavBar={renderNavBar}
                 renderContent={renderContent}
                 containerStyle={[styles.container, { backgroundColor: colors.WhiteGrey }]}
-                contentContainerStyle={style.contentContainer}
                 innerContainerStyle={{ backgroundColor: colors.WhiteGrey }}
-                headerFixedBackgroundColor={Platform.OS === 'ios' ? 'transparent' : colors.BlueJaja}
+                headerFixedBackgroundColor={colors.BlueJaja}
                 alwaysShowTitle={false}
                 scrollViewProps={{
                     nestedScrollEnabled: true,
@@ -1316,11 +1314,11 @@ const style = StyleSheet.create({
     // },
 
     navContainer: {
-        height: Platform.OS === 'ios' ? Hp('5.5%') : Hp('10%'),
+        height: Platform.OS === 'ios' ? Hp('5.6%') : Hp('10%'),
         justifyContent: 'flex-end',
         alignItems: 'center',
         paddingHorizontal: '4%',
-        paddingBottom: '2.5%',
+        paddingBottom: Platform.OS === "ios" ? '3.5%' : '2.5%',
         // paddingTop: '3.5%',
         backgroundColor: 'transparent',
     },
@@ -1344,6 +1342,8 @@ const style = StyleSheet.create({
         backgroundColor: colors.BlueJaja
     },
 
-    swiperProduct: { width: '100%', height: '100%', resizeMode: 'contain' },
+    swiperProduct: { width: '100%', height: '100%', resizeMode: 'contain', backgroundColor: colors.White },
+    loadingProduct: { width: '75%', height: '100%', resizeMode: 'contain', backgroundColor: colors.White, alignSelf: 'center', tintColor: colors.Silver },
+
     searchBar: { flexDirection: 'row', backgroundColor: colors.White, borderRadius: 12, height: NAV_BAR_HEIGHT / 1.7, width: '70%', alignItems: 'center', paddingHorizontal: '4%' }
 });

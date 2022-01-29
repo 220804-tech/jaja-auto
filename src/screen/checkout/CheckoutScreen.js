@@ -10,6 +10,7 @@ import ActionSheet from "react-native-actions-sheet";
 import CheckBox from '@react-native-community/checkbox';
 import { useDispatch, useSelector } from "react-redux";
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { Platform } from 'react-native';
 
 export default function checkoutScreen() {
     const navigation = useNavigation()
@@ -424,14 +425,9 @@ export default function checkoutScreen() {
                 let dateMonth = str.slice(6, 8);
                 setdeliveryDate(str.slice(1, 11))
                 let min = str.slice(6, 8) - JSON.stringify(mont).slice(6, 8)
-                if (str.slice(1, 8) === JSON.stringify(mont).slice(1, 8) && parseInt(min) <= 1) {
-                    setdeliveryDate(str.slice(1, 11))
-                    let string = listMonth[parseInt(dateMonth) - 1];
-                    setSendDate(dateSelected)
-                } else {
-                    Utils.alertPopUp(`Minimal tanggal pengiriman ${sendDate} sampai seterusnya`)
-                    Utils.alertPopUp(`Maksimal tanggal pengiriman 1 bulan setelah barang sampai`)
-                }
+                setdeliveryDate(str.slice(1, 11))
+                let string = listMonth[parseInt(dateMonth) - 1];
+                setSendDate(dateSelected)
             } else {
                 setSendDate(dateSelected)
             }
@@ -446,12 +442,10 @@ export default function checkoutScreen() {
         let dateNow = new Date()
         let mothSelected = parseInt(dateNow.getMonth()) < 12 ? dateNow.getMonth() + 1 : '01'
         let string = new Date().getDate() + parseInt(reduxShipping[index].items[0].type[0].etd.slice(2, 3))
-        console.log("🚀 ~ file: CheckoutScreen.js ~ line 160 ~ handleListDate ~ string", string)
         setmaxSendDate(string)
         setSendDate(dateNow.getFullYear() + '-' + mothSelected + "-" + string)
 
         let range = new Date().getDate() + parseInt(reduxShipping[index].items[0].type[0].etd.slice(2, 3));
-        console.log("🚀 ~ file: CheckoutScreen.js ~ line 158 ~ handleListDate ~ range", range)
         let arrNewRange = [];
         for (let idx = 0; idx < range; idx++) {
             arrNewRange.push(range + idx)
@@ -471,7 +465,6 @@ export default function checkoutScreen() {
                     handleListDate(index)
                 } else {
                     setTimeout(() => {
-                        console.log("🚀 ~ file: CheckoutScreen.js ~ line 186 ~ setTimeout ~ reduxShipping", reduxShipping)
                         if (reduxShipping.length) {
                             handleListDate(index)
                         } else {
@@ -738,198 +731,150 @@ export default function checkoutScreen() {
             {load ? <Loading /> : null}
             <Appbar back={true} title="Checkout" />
             {Object.keys(reduxCheckout).length == 0 ? <Loading /> : null}
-            <ScrollView contentContainerStyle={{ flex: 0, flexDirection: 'column', paddingBottom: Hp('7%'), backgroundColor: colors.White }} refreshControl={<RefreshControl refreshing={refreshControl} onRefresh={onRefresh} />}>
-                <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                    <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                        <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/google-maps.png')} />
-                        <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Alamat Pengiriman</Text>
-                    </View>
-                    {reduxCheckout.address && Object.keys(reduxCheckout.address).length ?
-                        <View style={[styles.column, styles.p_3]}>
-                            <View style={styles.row_between_center}>
-                                <Text numberOfLines={1} style={[styles.font_14, { width: '70%' }]}>{reduxCheckout.address.receiverName}</Text>
-                                <TouchableOpacity style={{ width: '25%', paddingVertical: 5 }} onPress={() => navigation.navigate('Address', { data: "checkout" })}>
-                                    <Text style={[styles.font_12, { color: colors.BlueJaja, alignSelf: 'flex-end' }]}>Ubah</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <Text numberOfLines={1} style={[styles.font_12, styles.mt]}>{reduxCheckout.address.phoneNumber}</Text>
+            <View style={{ flex: 1, backgroundColor: 'white' }}>
+                <ScrollView contentContainerStyle={{ flex: 0, flexDirection: 'column', paddingBottom: Hp('7%'), backgroundColor: colors.White }} refreshControl={<RefreshControl refreshing={refreshControl} onRefresh={onRefresh} />}>
+                    <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                        <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
+                            <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/google-maps.png')} />
+                            <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Alamat Pengiriman</Text>
+                        </View>
+                        {reduxCheckout.address && Object.keys(reduxCheckout.address).length ?
+                            <View style={[styles.column, styles.p_3]}>
+                                <View style={styles.row_between_center}>
+                                    <Text numberOfLines={1} style={[styles.font_14, { width: '70%' }]}>{reduxCheckout.address.receiverName}</Text>
+                                    <TouchableOpacity style={{ width: '25%', paddingVertical: 5 }} onPress={() => navigation.navigate('Address', { data: "checkout" })}>
+                                        <Text style={[styles.font_12, { color: colors.BlueJaja, alignSelf: 'flex-end' }]}>Ubah</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <Text numberOfLines={1} style={[styles.font_12, styles.mt]}>{reduxCheckout.address.phoneNumber}</Text>
 
-                            <Text numberOfLines={3} style={[styles.font_12]}>{reduxCheckout.address.address}</Text>
-                        </View>
-                        :
-                        <View style={[styles.column, styles.p_3]}>
-                            <View style={styles.row_between_center}>
-                                <Text numberOfLines={1} style={[styles.font_14]}>Masukkan Alamat Baru</Text>
-                                <TouchableOpacity onPress={() => navigation.navigate('Address', { data: "checkout" })}>
-                                    <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Tambah</Text>
-                                </TouchableOpacity>
+                                <Text numberOfLines={3} style={[styles.font_12]}>{reduxCheckout.address.address}</Text>
                             </View>
-                        </View>
-                    }
-                </View>
-                {
-                    reduxCheckout.cart && reduxCheckout.cart.length ?
-                        reduxCheckout.cart.map((item, idxStore) => {
-                            return (
-                                <View key={String(idxStore)} style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                                    <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                                        <Image style={[styles.icon_21, { marginRight: '2%', tintColor: colors.BlueJaja }]} source={require('../../assets/icons/store.png')} />
-                                        <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.store.name}</Text>
-                                    </View>
-                                    {item.products.map((child, idx) => {
-                                        return (
-                                            <View key={String(idx) + "s"} style={[styles.column, styles.p_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}>
-                                                <View style={[styles.row_start_center, styles.py_2, { width: '100%', height: Wp('25%') }]}>
-                                                    <Image style={{
-                                                        width: Wp('18%'), height: '90%', borderRadius: 5, backgroundColor: colors.White,
-                                                        borderWidth: 0.2,
-                                                        borderColor: colors.Silver,
-                                                        alignSelf: 'center'
-                                                    }}
-                                                        resizeMethod={"scale"}
-                                                        resizeMode="cover"
-                                                        source={{ uri: child.image }}
-                                                    />
-                                                    <View style={[styles.column_between_center, { alignItems: 'flex-start', height: '90%', width: Wp('82%'), paddingHorizontal: '3%' }]}>
-                                                        <View style={[styles.column, { width: '100%' }]}>
-                                                            <Text numberOfLines={1} style={[styles.font_14, styles.T_medium]}>{child.name}</Text>
-                                                            <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlackGrayScale }]}>{child.variant ? child.variant : ""}</Text>
-                                                        </View>
-                                                        <View style={{ flexDirection: 'column', width: '100%', alignItems: 'flex-end', paddingHorizontal: '2%' }}>
-                                                            {child.isDiscount ?
-                                                                <>
-                                                                    <Text numberOfLines={1} style={[styles.priceBefore, styles.T_italic]}>{child.priceCurrencyFormat}</Text>
+                            :
+                            <View style={[styles.column, styles.p_3]}>
+                                <View style={styles.row_between_center}>
+                                    <Text numberOfLines={1} style={[styles.font_14]}>Masukkan Alamat Baru</Text>
+                                    <TouchableOpacity onPress={() => navigation.navigate('Address', { data: "checkout" })}>
+                                        <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Tambah</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        }
+                    </View>
+                    {
+                        reduxCheckout.cart && reduxCheckout.cart.length ?
+                            reduxCheckout.cart.map((item, idxStore) => {
+                                return (
+                                    <View key={String(idxStore)} style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                                        <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
+                                            <Image style={[styles.icon_21, { marginRight: '2%', tintColor: colors.BlueJaja }]} source={require('../../assets/icons/store.png')} />
+                                            <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.store.name}</Text>
+                                        </View>
+                                        {item.products.map((child, idx) => {
+                                            return (
+                                                <View key={String(idx) + "s"} style={[styles.column, styles.p_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}>
+                                                    <View style={[styles.row_start_center, styles.py_2, { width: '100%', height: Wp('25%') }]}>
+                                                        <Image style={{
+                                                            width: Wp('18%'), height: '90%', borderRadius: 5, backgroundColor: colors.White,
+                                                            borderWidth: 0.2,
+                                                            borderColor: colors.Silver,
+                                                            alignSelf: 'center'
+                                                        }}
+                                                            resizeMethod={"scale"}
+                                                            resizeMode="cover"
+                                                            source={{ uri: child.image }}
+                                                        />
+                                                        <View style={[styles.column_between_center, { alignItems: 'flex-start', height: '90%', width: Wp('82%'), paddingHorizontal: '3%' }]}>
+                                                            <View style={[styles.column, { width: '100%' }]}>
+                                                                <Text numberOfLines={1} style={[styles.font_14, styles.T_medium]}>{child.name}</Text>
+                                                                <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlackGrayScale }]}>{child.variant ? child.variant : ""}</Text>
+                                                            </View>
+                                                            <View style={{ flexDirection: 'column', width: '100%', alignItems: 'flex-end', paddingHorizontal: '2%' }}>
+                                                                {child.isDiscount ?
+                                                                    <>
+                                                                        <Text numberOfLines={1} style={[styles.priceBefore, styles.T_italic]}>{child.priceCurrencyFormat}</Text>
+                                                                        <View style={styles.row}>
+                                                                            <Text numberOfLines={1} style={[styles.font_14]}>{child.qty} x</Text>
+                                                                            <Text numberOfLines={1} style={[styles.priceAfter, { color: colors.BlackGrayScale }]}> {child.priceDiscountCurrencyFormat}</Text>
+                                                                        </View>
+                                                                    </>
+                                                                    :
                                                                     <View style={styles.row}>
                                                                         <Text numberOfLines={1} style={[styles.font_14]}>{child.qty} x</Text>
-                                                                        <Text numberOfLines={1} style={[styles.priceAfter, { color: colors.BlackGrayScale }]}> {child.priceDiscountCurrencyFormat}</Text>
+                                                                        <Text numberOfLines={1} style={[styles.priceAfter, { color: colors.BlackGrayScale }]}> {child.priceCurrencyFormat}</Text>
                                                                     </View>
-                                                                </>
-                                                                :
-                                                                <View style={styles.row}>
-                                                                    <Text numberOfLines={1} style={[styles.font_14]}>{child.qty} x</Text>
-                                                                    <Text numberOfLines={1} style={[styles.priceAfter, { color: colors.BlackGrayScale }]}> {child.priceCurrencyFormat}</Text>
-                                                                </View>
-                                                            }
+                                                                }
+                                                            </View>
                                                         </View>
                                                     </View>
-                                                </View>
-                                                <View style={[styles.row_end_center]}>
-                                                    <Text numberOfLines={1} style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja }]}> {child.subTotalCurrencyFormat}</Text>
-                                                </View>
-                                                {cartStatus === 1 ?
-                                                    <TouchableRipple onPress={() => {
-                                                        setgiftSelected(child.cartId)
-                                                        setModalShow2(true)
-                                                        settextGift(child.greetingCardGift)
-                                                    }} rippleColor={colors.White} style={[styles.column_center_start, styles.mt_2, styles.p_2, { width: '99%', borderRadius: 3, alignSelf: 'center', backgroundColor: colors.White, borderWidth: 1, borderColor: colors.RedFlashsale, borderRadius: 10 }]}>
-                                                        {/* <View style={styles.row_between_center}> */}
-                                                        <>
-                                                            <View style={[styles.row_center, { width: '100%' }]}>
-                                                                <Text style={[styles.font_10, { alignSelf: 'center', width: '33.3%', textAlign: 'center' }]}></Text>
-
-                                                                <Text style={[styles.font_10, { color: colors.RedFlashsale, alignSelf: 'center', width: '33.3%', textAlign: 'center' }]}>Kartu ucapan</Text>
-                                                                <Text style={[styles.font_10, { color: colors.BlueJaja, width: '33.3%', textAlign: 'right' }]}>Ubah</Text>
-                                                            </View>
-
-                                                            <Text numberOfLines={2} style={[styles.font_12, styles.T_medium, { color: colors.RedFlashsale, alignSelf: 'center', textAlign: 'center' }]}>{child.greetingCardGift ? child.greetingCardGift : 'Ubah kartu ucapan!'}</Text>
-                                                        </>
-                                                    </TouchableRipple> : null
-                                                }
-                                            </View>
-                                        )
-                                    })}
-                                    {item.voucherDiscount ?
-                                        <View style={styles.column}>
-                                            <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                                                <TouchableOpacity style={[styles.row_between_center, styles.pr_2, styles.pl_3, styles.py_2]} onPress={() => {
-                                                    setvoucherOpen('store')
-                                                    setVouchers(item.voucherStore)
-                                                    setindexStore(idxStore)
-                                                }}>
-                                                    {/* <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/offer.png')} /> */}
-                                                    <Text style={[styles.font_14, styles.T_medium]}>Voucher Toko</Text>
-                                                    <View style={[styles.p, { backgroundColor: colors.RedFlashsale, borderRadius: 3 }]}>
-                                                        <Text numberOfLines={1} style={[styles.font_12, { color: colors.White }]}>- {item.voucherStoreSelected.discountText}</Text>
+                                                    <View style={[styles.row_end_center]}>
+                                                        <Text numberOfLines={1} style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja }]}> {child.subTotalCurrencyFormat}</Text>
                                                     </View>
-                                                </TouchableOpacity>
-                                            </View>
-                                            <View style={[styles.row_end_center, styles.px_2]}>
-                                                <Text style={[styles.font_13,]}>Subtotal </Text>
-                                                <Text numberOfLines={1} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}> {item.totalDiscountCurrencyFormat}</Text>
-                                            </View>
-                                        </View>
-                                        :
-                                        item.voucherStore.length ?
-                                            <View style={[styles.p_2, styles.mb_2]}>
-                                                <Button onPress={() => {
-                                                    setvoucherOpen('store')
-                                                    setVouchers(item.voucherStore)
-                                                    setindexStore(idxStore)
-                                                }} icon="arrow-right" color={colors.RedFlashsale} uppercase={false} labelStyle={{ fontFamily: 'Poppins-Regular', color: colors.RedFlashsale }} style={{ borderColor: colors.RedFlashsale, borderWidth: 1, borderRadius: 10 }} contentStyle={{ borderColor: colors.BlueJaja }} mode="outlined">
-                                                    Pakai voucher toko
-                                                </Button>
-                                            </View>
-                                            : null
-                                    }
-                                    {reduxCheckout.address && Object.keys(reduxCheckout.address).length ?
-                                        <>
-                                            <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                                                <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/vehicle-yellow.png')} />
-                                                <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pengiriman</Text>
-                                            </View>
-                                            {item.shippingSelected.name ?
-                                                <View
+                                                    {cartStatus === 1 ?
+                                                        <TouchableRipple onPress={() => {
+                                                            setgiftSelected(child.cartId)
+                                                            setModalShow2(true)
+                                                            settextGift(child.greetingCardGift)
+                                                        }} rippleColor={colors.White} style={[styles.column_center_start, styles.mt_2, styles.p_2, { width: '99%', borderRadius: 3, alignSelf: 'center', backgroundColor: colors.White, borderWidth: 1, borderColor: colors.RedFlashsale, borderRadius: 10 }]}>
+                                                            {/* <View style={styles.row_between_center}> */}
+                                                            <>
+                                                                <View style={[styles.row_center, { width: '100%' }]}>
+                                                                    <Text style={[styles.font_10, { alignSelf: 'center', width: '33.3%', textAlign: 'center' }]}></Text>
 
-                                                    style={[styles.column, styles.p_3, { width: '100%' }]}>
-                                                    <TouchableOpacity onPress={() => {
-                                                        checkedValue(idxStore)
-                                                        setstorePressed(item.store)
+                                                                    <Text style={[styles.font_10, { color: colors.RedFlashsale, alignSelf: 'center', width: '33.3%', textAlign: 'center' }]}>Kartu ucapan</Text>
+                                                                    <Text style={[styles.font_10, { color: colors.BlueJaja, width: '33.3%', textAlign: 'right' }]}>Ubah</Text>
+                                                                </View>
+
+                                                                <Text numberOfLines={2} style={[styles.font_12, styles.T_medium, { color: colors.RedFlashsale, alignSelf: 'center', textAlign: 'center' }]}>{child.greetingCardGift ? child.greetingCardGift : 'Ubah kartu ucapan!'}</Text>
+                                                            </>
+                                                        </TouchableRipple> : null
+                                                    }
+                                                </View>
+                                            )
+                                        })}
+                                        {item.voucherDiscount ?
+                                            <View style={styles.column}>
+                                                <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                                                    <TouchableOpacity style={[styles.row_between_center, styles.pr_2, styles.pl_3, styles.py_2]} onPress={() => {
+                                                        setvoucherOpen('store')
+                                                        setVouchers(item.voucherStore)
                                                         setindexStore(idxStore)
-                                                        if (item.shippingSelected?.dateSendTime) {
-                                                            setSendDate(item.shippingSelected.dateSendTime)
-                                                        }
                                                     }}>
-                                                        <View style={styles.row_between_center}>
-                                                            <View style={[styles.column_between_center, { alignItems: 'flex-start' }]}>
-                                                                <Text numberOfLines={1} style={[styles.font_14]}>{item.shippingSelected.name}</Text>
-                                                                <Text numberOfLines={1} style={[styles.font_12]}>{item.shippingSelected.type}</Text>
-                                                                <Text numberOfLines={1} style={[styles.font_12]}>Estimasi {item.shippingSelected.etdText}</Text>
-                                                                {item.shippingSelected.sendTime === 'pilih tanggal' ?
-                                                                    <Text numberOfLines={1} style={[styles.font_12]}>Akan dikirim</Text>
-                                                                    : null
-                                                                }
-
-
-                                                            </View>
-                                                            <View style={[styles.column_between_center, { alignItems: 'flex-end' }]}>
-                                                                <Text numberOfLines={1} style={[styles.font_12, styles.mb_2, { color: colors.BlueJaja }]}>Ubah</Text>
-
-                                                                {item.shippingSelected.priceNormal ?
-                                                                    <Text numberOfLines={1} style={[styles.priceBefore, styles.T_italic]}>{item.shippingSelected.priceCurrencyFormatNormal}</Text>
-                                                                    : <Text></Text>
-                                                                }
-
-                                                                <Text numberOfLines={1} style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja, }]}>{item.shippingSelected.priceCurrencyFormat}</Text>
-                                                                {item.shippingSelected.sendTime === 'pilih tanggal' ?
-                                                                    <Text numberOfLines={1} style={[styles.font_12]}>{item.shippingSelected.dateSendTime}</Text>
-                                                                    :
-                                                                    null
-
-                                                                }
-
-
-                                                            </View>
+                                                        {/* <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/offer.png')} /> */}
+                                                        <Text style={[styles.font_14, styles.T_medium]}>Voucher Toko</Text>
+                                                        <View style={[styles.p, { backgroundColor: colors.RedFlashsale, borderRadius: 3 }]}>
+                                                            <Text numberOfLines={1} style={[styles.font_12, { color: colors.White }]}>- {item.voucherStoreSelected.discountText}</Text>
                                                         </View>
                                                     </TouchableOpacity>
-                                                    <View style={[styles.column, styles.mb_3]}>
-                                                        <TextInput onChangeText={(text) => handleNotes(text, idxStore)} pla placeholder="Masukkan catatan untuk penjual" style={{ fontSize: 13, color: colors.BlackGrayScale, paddingHorizontal: 0, paddingVertical: '2%', borderBottomWidth: 0.7, borderBottomColor: colors.Silver, width: '100%' }} />
-                                                    </View>
-
                                                 </View>
-                                                :
-                                                <View style={[styles.column, styles.p_3]}>
-                                                    <View style={styles.row_between_center}>
-                                                        <Text numberOfLines={1} style={[styles.font_14]}>Pilih Ekspedisi</Text>
+                                                <View style={[styles.row_end_center, styles.px_2]}>
+                                                    <Text style={[styles.font_13,]}>Subtotal </Text>
+                                                    <Text numberOfLines={1} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}> {item.totalDiscountCurrencyFormat}</Text>
+                                                </View>
+                                            </View>
+                                            :
+                                            item.voucherStore.length ?
+                                                <View style={[styles.p_2, styles.mb_2]}>
+                                                    <Button onPress={() => {
+                                                        setvoucherOpen('store')
+                                                        setVouchers(item.voucherStore)
+                                                        setindexStore(idxStore)
+                                                    }} icon="arrow-right" color={colors.RedFlashsale} uppercase={false} labelStyle={{ fontFamily: 'Poppins-Regular', color: colors.RedFlashsale }} style={{ borderColor: colors.RedFlashsale, borderWidth: 1, borderRadius: 10 }} contentStyle={{ borderColor: colors.BlueJaja }} mode="outlined">
+                                                        Pakai voucher toko
+                                                </Button>
+                                                </View>
+                                                : null
+                                        }
+                                        {reduxCheckout.address && Object.keys(reduxCheckout.address).length ?
+                                            <>
+                                                <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
+                                                    <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/vehicle-yellow.png')} />
+                                                    <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pengiriman</Text>
+                                                </View>
+                                                {item.shippingSelected.name ?
+                                                    <View
+
+                                                        style={[styles.column, styles.p_3, { width: '100%' }]}>
                                                         <TouchableOpacity onPress={() => {
                                                             checkedValue(idxStore)
                                                             setstorePressed(item.store)
@@ -937,93 +882,148 @@ export default function checkoutScreen() {
                                                             if (item.shippingSelected?.dateSendTime) {
                                                                 setSendDate(item.shippingSelected.dateSendTime)
                                                             }
-                                                            actionSheetDelivery.current?.setModalVisible()
                                                         }}>
-                                                            <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Pilih</Text>
-                                                        </TouchableOpacity>
-                                                    </View>
+                                                            <View style={styles.row_between_center}>
+                                                                <View style={[styles.column_between_center, { alignItems: 'flex-start' }]}>
+                                                                    <Text numberOfLines={1} style={[styles.font_14]}>{item.shippingSelected.name}</Text>
+                                                                    <Text numberOfLines={1} style={[styles.font_12]}>{item.shippingSelected.type}</Text>
+                                                                    <Text numberOfLines={1} style={[styles.font_12]}>Estimasi {item.shippingSelected.etdText}</Text>
+                                                                    {item.shippingSelected.sendTime === 'pilih tanggal' ?
+                                                                        <Text numberOfLines={1} style={[styles.font_12]}>Akan dikirim</Text>
+                                                                        : null
+                                                                    }
 
-                                                </View>
-                                            }
-                                        </>
-                                        : null
-                                    }
+
+                                                                </View>
+                                                                <View style={[styles.column_between_center, { alignItems: 'flex-end' }]}>
+                                                                    <Text numberOfLines={1} style={[styles.font_12, styles.mb_2, { color: colors.BlueJaja }]}>Ubah</Text>
+
+                                                                    {item.shippingSelected.priceNormal ?
+                                                                        <Text numberOfLines={1} style={[styles.priceBefore, styles.T_italic]}>{item.shippingSelected.priceCurrencyFormatNormal}</Text>
+                                                                        : <Text></Text>
+                                                                    }
+
+                                                                    <Text numberOfLines={1} style={[styles.font_14, styles.T_medium, { color: colors.BlueJaja, }]}>{item.shippingSelected.priceCurrencyFormat}</Text>
+                                                                    {item.shippingSelected.sendTime === 'pilih tanggal' ?
+                                                                        <Text numberOfLines={1} style={[styles.font_12]}>{item.shippingSelected.dateSendTime}</Text>
+                                                                        :
+                                                                        null
+
+                                                                    }
+
+
+                                                                </View>
+                                                            </View>
+                                                        </TouchableOpacity>
+                                                        <View style={[styles.column, styles.mb_3]}>
+                                                            <TextInput onChangeText={(text) => handleNotes(text, idxStore)} placeholder="Masukkan catatan untuk penjual" style={[styles.font_12, styles.py_2, { color: colors.BlackGrayScale, paddingHorizontal: 0, borderBottomWidth: 0.7, borderBottomColor: colors.Silver, width: '100%' }]} />
+                                                        </View>
+
+                                                    </View>
+                                                    :
+                                                    <View style={[styles.column, styles.p_3]}>
+                                                        <View style={styles.row_between_center}>
+                                                            <Text numberOfLines={1} style={[styles.font_14]}>Pilih Ekspedisi</Text>
+                                                            <TouchableOpacity onPress={() => {
+                                                                checkedValue(idxStore)
+                                                                setstorePressed(item.store)
+                                                                setindexStore(idxStore)
+                                                                if (item.shippingSelected?.dateSendTime) {
+                                                                    setSendDate(item.shippingSelected.dateSendTime)
+                                                                }
+                                                                actionSheetDelivery.current?.setModalVisible()
+                                                            }}>
+                                                                <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Pilih</Text>
+                                                            </TouchableOpacity>
+                                                        </View>
+
+                                                    </View>
+                                                }
+                                            </>
+                                            : null
+                                        }
+                                    </View>
+                                )
+                            })
+                            :
+                            null
+                    }
+                    {
+                        reduxCheckout.voucherJajaSelected && Object.keys(reduxCheckout.voucherJajaSelected).length ?
+                            <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                                <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
+                                    <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/offer.png')} />
+                                    <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Voucher Diskon</Text>
                                 </View>
-                            )
-                        })
-                        :
-                        null
-                }
-                {
-                    reduxCheckout.voucherJajaSelected && Object.keys(reduxCheckout.voucherJajaSelected).length ?
-                        <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                            <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                                <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/offer.png')} />
-                                <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Voucher Diskon</Text>
-                            </View>
-                            <View style={[styles.column, styles.p_3]}>
-                                <View style={[styles.row_between_center, styles.mb]}>
-                                    <Text numberOfLines={1} style={[styles.font_13]}>{reduxCheckout.voucherJajaSelected.name}</Text>
-                                    <TouchableOpacity onPress={() => setvoucherOpen("jaja")}>
-                                        <Text style={[styles.font_12, { color: colors.BlueJaja }]}>Ubah</Text>
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={styles.row_between_center}>
-                                    <Text numberOfLines={1} style={[styles.font_12, styles.mt_2]}>Berakhir dalam {reduxCheckout.voucherJajaSelected.endDate}</Text>
-                                    <View style={[styles.p, { backgroundColor: colors.RedFlashsale, borderRadius: 3 }]}>
-                                        <Text numberOfLines={1} style={[styles.font_12, { color: colors.White }]}>- {reduxCheckout.voucherJajaSelected.discountText}</Text>
+                                <View style={[styles.column, styles.p_3]}>
+                                    <View style={[styles.row_between_center, styles.mb]}>
+                                        <Text numberOfLines={1} style={[styles.font_13]}>{reduxCheckout.voucherJajaSelected.name}</Text>
+                                        <TouchableOpacity onPress={() => setvoucherOpen("jaja")}>
+                                            <Text style={[styles.font_12, { color: colors.BlueJaja }]}>Ubah</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View style={styles.row_between_center}>
+                                        <Text numberOfLines={1} style={[styles.font_12, styles.mt_2]}>Berakhir dalam {reduxCheckout.voucherJajaSelected.endDate}</Text>
+                                        <View style={[styles.p, { backgroundColor: colors.RedFlashsale, borderRadius: 3 }]}>
+                                            <Text numberOfLines={1} style={[styles.font_12, { color: colors.White }]}>- {reduxCheckout.voucherJajaSelected.discountText}</Text>
+                                        </View>
                                     </View>
                                 </View>
                             </View>
-                        </View>
-                        :
-                        <View style={[styles.p_2, styles.mb_2]}>
-                            <Button onPress={() => {
-                                setVouchers(reduxCheckout.voucherJaja)
-                                setvoucherOpen('jaja')
-                            }} icon="arrow-right" color={colors.RedFlashsale} uppercase={false} labelStyle={{ fontFamily: 'Poppins-Regular', color: colors.RedFlashsale }} style={{ borderColor: colors.RedFlashsale, borderWidth: 1, borderRadius: 10 }} contentStyle={{ borderColor: colors.BlueJaja }} mode="outlined">
-                                Makin hemat pakai promo
+                            :
+                            <View style={[styles.p_2, styles.mb_2]}>
+                                <Button onPress={() => {
+                                    setVouchers(reduxCheckout.voucherJaja)
+                                    setvoucherOpen('jaja')
+                                }} icon="arrow-right" color={colors.RedFlashsale} uppercase={false} labelStyle={{ fontFamily: 'Poppins-Regular', color: colors.RedFlashsale }} style={{ borderColor: colors.RedFlashsale, borderWidth: 1, borderRadius: 10 }} contentStyle={{ borderColor: colors.BlueJaja }} mode="outlined">
+                                    Makin hemat pakai promo
                             </Button>
-                        </View>
-                }
-                <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                    <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                        <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
-                        <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Ringkasan Belanja</Text>
-                    </View>
-
-                    <View style={[styles.row_between_center, styles.p_3]}>
-                        <View style={styles.column_center_start}>
-                            <Text style={[styles.font_13, { marginBottom: '2%' }]}>Total Belanja</Text>
-                            {reduxCheckout.voucherJajaType === "diskon" ? <Text style={[styles.font_13, { marginBottom: '2%' }]}>Diskon Belanja</Text> : null}
-                            <Text style={[styles.font_13, { marginBottom: '2%' }]}>Biaya Pengiriman</Text>
-                            {reduxCheckout.voucherJajaType === "ongkir" ? <Text style={[styles.font_13, { marginBottom: '2%' }]}>Diskon Pengiriman</Text> : null}
-                            <Text style={[styles.font_13, { marginBottom: '2%' }]}>Biaya penanganan</Text>
-                            {reduxCheckout.coinUsed ? <Text style={[styles.font_13, { marginBottom: '2%' }]}>Koin Digunakan</Text> : null}
-                            <View style={[styles.row_start_center, { width: Wp('50%'), marginLeft: '-6.5%', paddingLeft: '-2%', opacity: reduxCoin == 0 ? 0.4 : 1 }]}>
-                                <Checkbox
-                                    disabled={reduxCoin == 0 ? true : false}
-                                    theme={{ mode: 'adaptive' }}
-                                    color={colors.BlueJaja}
-                                    status={useCoin ? 'checked' : 'unchecked'}
-                                    onPress={() => handleUseCoin(!useCoin)}
-                                />
-                                <Text numberOfLines={1} style={[styles.font_13, { textAlignVertical: 'center', marginBottom: '-1%' }]}>Koin dimiliki</Text>
                             </View>
-
+                    }
+                    <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                        <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
+                            <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
+                            <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Ringkasan Belanja</Text>
                         </View>
-                        <View style={styles.column_center_end}>
-                            <Text style={[styles.font_13, { marginBottom: '2%' }]}>{reduxCheckout.subTotalCurrencyFormat}</Text>
-                            {reduxCheckout.voucherJajaType === "diskon" ? <Text style={[styles.font_13, { marginBottom: '2%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountJajaCurrencyFormat}</Text> : null}
-                            <Text style={[styles.font_13, { marginBottom: '2%' }]}>{reduxCheckout.shippingCostCurrencyFormat}</Text>
-                            {reduxCheckout.voucherJajaType === "ongkir" ? <Text style={[styles.font_13, { marginBottom: '2%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountJajaCurrencyFormat}</Text> : null}
-                            <Text style={[styles.font_13, { marginBottom: '2%' }]}>Rp0</Text>
-                            {reduxCheckout.coinUsed ? <Text style={[styles.font_13, { color: colors.RedFlashsale, marginBottom: '2%' }]}>[-{reduxCheckout.coinUsedFormat}]</Text> : null}
-                            <Text numberOfLines={1} style={[styles.font_13, styles.py_2, { textAlignVertical: 'center', marginBottom: "-2%", opacity: reduxCoin == 0 ? 0.4 : 1, backgroundColor: colors.White }]}>({reduxCoin})</Text>
+
+                        <View style={[styles.row_between_center, styles.p_3]}>
+                            <View style={styles.column_center_start}>
+                                <Text style={[styles.font_13, { marginBottom: '2%' }]}>Total Belanja</Text>
+                                {reduxCheckout.voucherJajaType === "diskon" ? <Text style={[styles.font_13, { marginBottom: '2%' }]}>Diskon Belanja</Text> : null}
+                                <Text style={[styles.font_13, { marginBottom: '2%' }]}>Biaya Pengiriman</Text>
+                                {reduxCheckout.voucherJajaType === "ongkir" ? <Text style={[styles.font_13, { marginBottom: '2%' }]}>Diskon Pengiriman</Text> : null}
+                                <Text style={[styles.font_13, { marginBottom: '2%' }]}>Biaya penanganan</Text>
+                                {reduxCheckout.coinUsed ? <Text style={[styles.font_13, { marginBottom: '2%' }]}>Koin Digunakan</Text> : null}
+                                <View style={[styles.row_start_center, { width: Wp('50%'), marginLeft: Platform.OS === 'android' ? '-6.5%' : 0, marginTop: Platform.OS === 'android' ? 0 : '3%', paddingLeft: '-2%', opacity: reduxCoin == 0 ? 0.4 : 1 }]}>
+                                    {Platform.OS === 'android' ? <Checkbox
+                                        disabled={reduxCoin == 0 ? true : false}
+                                        theme={{ mode: 'adaptive' }}
+                                        color={colors.BlueJaja}
+                                        status={useCoin ? 'checked' : 'unchecked'}
+                                        onPress={() => handleUseCoin(!useCoin)}
+                                    /> :
+                                        <CheckBox
+                                            disabled={reduxCoin == 0 ? true : false}
+                                            value={useCoin ? true : false}
+                                            onValueChange={() => handleUseCoin(!useCoin)}
+                                            style={[styles.mr_4]}
+                                        />}
+                                    <Text numberOfLines={1} style={[styles.font_13, { textAlignVertical: 'center', marginBottom: '-1%' }]}>Koin dimiliki</Text>
+                                </View>
+
+                            </View>
+                            <View style={styles.column_center_end}>
+                                <Text style={[styles.font_13, { marginBottom: '2%' }]}>{reduxCheckout.subTotalCurrencyFormat}</Text>
+                                {reduxCheckout.voucherJajaType === "diskon" ? <Text style={[styles.font_13, { marginBottom: '2%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountJajaCurrencyFormat}</Text> : null}
+                                <Text style={[styles.font_13, { marginBottom: '2%' }]}>{reduxCheckout.shippingCostCurrencyFormat}</Text>
+                                {reduxCheckout.voucherJajaType === "ongkir" ? <Text style={[styles.font_13, { marginBottom: '2%', color: colors.RedFlashsale }]}>{reduxCheckout.voucherDiscountJajaCurrencyFormat}</Text> : null}
+                                <Text style={[styles.font_13, { marginBottom: '2%' }]}>Rp0</Text>
+                                {reduxCheckout.coinUsed ? <Text style={[styles.font_13, { color: colors.RedFlashsale, marginBottom: '2%' }]}>[-{reduxCheckout.coinUsedFormat}]</Text> : null}
+                                <Text numberOfLines={1} style={[styles.font_13, styles.py_2, { textAlignVertical: 'center', marginBottom: "-2%", opacity: reduxCoin == 0 ? 0.4 : 1, backgroundColor: colors.White }]}>({reduxCoin})</Text>
+                            </View>
                         </View>
                     </View>
-                </View>
-                {/* <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                    {/* <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                     <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
                         <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/invoice.png')} />
                         <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pembayaran</Text>
@@ -1043,17 +1043,18 @@ export default function checkoutScreen() {
                         )
                     })}
                 </View> */}
-            </ScrollView>
-            <View style={{ position: 'absolute', bottom: 0, zIndex: 100, elevation: 3, height: Hp('7%'), width: Wp('100%'), backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
-                <View style={{ width: '50%', height: '100%', justifyContent: 'center', paddingHorizontal: '2%', paddingLeft: '4%', paddingVertical: '1%' }}>
-                    <Text style={[styles.font_12, styles.T_medium, { color: colors.BlueJaja, marginBottom: '-2%' }]}>Total pembayaran :</Text>
-                    <Text numberOfLines={1} style={[styles.font_17, styles.T_semi_bold, { color: colors.BlueJaja }]}>{reduxCheckout.totalCurrencyFormat}</Text>
-                </View>
-                {/* <Button  style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
+                </ScrollView>
+                <View style={{ position: 'absolute', bottom: 0, zIndex: 100, elevation: 3, height: Hp('7%'), width: Wp('100%'), backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
+                    <View style={{ width: '50%', height: '100%', justifyContent: 'center', paddingHorizontal: '2%', paddingLeft: '4%', paddingVertical: '1%' }}>
+                        <Text style={[styles.font_12, styles.T_medium, { color: colors.BlueJaja, marginBottom: '-2%' }]}>Total pembayaran :</Text>
+                        <Text numberOfLines={1} style={[styles.font_17, styles.T_semi_bold, { color: colors.BlueJaja }]}>{reduxCheckout.totalCurrencyFormat}</Text>
+                    </View>
+                    {/* <Button  style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                 </Button> */}
-                <TouchableRipple style={{ backgroundColor: colors.BlueJaja, width: "50%", height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={handleCheckout}>
-                    <Text numberOfLines={1} style={[styles.font_13, styles.T_semi_bold, { color: colors.White }]}>{reduxCheckout.total > 0 ? 'PILIH PEMBAYARAN' : 'BUAT PESANAN'}</Text>
-                </TouchableRipple>
+                    <TouchableRipple style={{ backgroundColor: colors.BlueJaja, width: "50%", height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={handleCheckout}>
+                        <Text numberOfLines={1} style={[styles.font_13, styles.T_semi_bold, { color: colors.White }]}>{reduxCheckout.total > 0 ? 'PILIH PEMBAYARAN' : 'BUAT PESANAN'}</Text>
+                    </TouchableRipple>
+                </View>
             </View>
             <ActionSheet ref={actionSheetVoucher} onOpen={() => setloadAs(false)} onClose={() => setvoucherOpen("")} delayActionSheetDraw={false} containerStyle={{ padding: '4%', }}>
                 <View style={[styles.row_between_center, styles.py_2, styles.mb_5]}>
@@ -1069,7 +1070,7 @@ export default function checkoutScreen() {
                             <View>
                                 <FlatList
                                     data={voucherOpen === "store" ? vouchers : reduxCheckout.voucherJaja.filter(item => item.isValid === true)}
-                                    keyExtractor={(item) => item.id}
+                                    keyExtractor={(item) => item.id + 'ES'}
                                     extraData={voucherOpen === "store" ? vouchers : reduxCheckout.voucherJaja.filter(item => item.isValid === true)}
                                     renderItem={({ item, index }) => {
                                         return (
@@ -1106,7 +1107,7 @@ export default function checkoutScreen() {
                                 {/* <Text numberOfLines={2} style={[styles.font_13, styles.T_semi_bold, styles.my_3, { color: colors.BlackGrey }]}>* Voucher yang belum sesuai dengan S&K</Text> */}
                                 <FlatList
                                     data={voucherOpen === "store" ? vouchers : reduxCheckout.voucherJaja.filter(item => item.isValid === false)}
-                                    keyExtractor={(item) => item.id}
+                                    keyExtractor={(item) => item.id + 'JH'}
                                     extraData={voucherOpen === "store" ? vouchers : reduxCheckout.voucherJaja.filter(item => item.isValid === false)}
                                     renderItem={({ item, index }) => {
                                         console.log("🚀 ~ file: CheckoutScreen.js ~ line 961 ~ checkoutScreen ~ item", item.isValid)
@@ -1186,7 +1187,7 @@ export default function checkoutScreen() {
                                             <FlatList
                                                 inverted
                                                 data={reduxShipping[0].sendTime}
-                                                keyExtractor={(item, index) => String(index)}
+                                                keyExtractor={(item, index) => String(index + 'SA')}
                                                 style={{ width: '100%' }}
                                                 renderItem={({ item }) => {
                                                     return (
@@ -1202,14 +1203,19 @@ export default function checkoutScreen() {
                                                                         setsendTime(item.value)
                                                                     }}
                                                                 />
-                                                                <View style={styles.row_between_center}>
+                                                                <View style={[styles.row_between_center, Platform.OS === 'ios' ? styles.ml_3 : styles.ml_2]}>
                                                                     <Text style={[styles.font_14, styles.T_medium, { flex: 1 }]}>{item.name}</Text>
                                                                     <Text style={[styles.font_14, styles.T_medium]}>{item.priceCurrencyFormat}</Text>
                                                                 </View>
                                                             </TouchableOpacity>
                                                             {
                                                                 sendTime === "pilih tanggal" && item.value === "pilih tanggal" ?
-                                                                    <TouchableOpacity style={[styles.column, styles.px_2, { width: '100%' }]} onPress={() => setDatePickerVisibility(true)}>
+                                                                    <TouchableOpacity style={[styles.column, styles.px_2, { width: '100%' }]} onPress={() => {
+                                                                        actionSheetDelivery.current?.setModalVisible(false)
+                                                                        setTimeout(() => {
+                                                                            setDatePickerVisibility(true)
+                                                                        }, 500);
+                                                                    }}>
                                                                         <View style={styles.row_between_center}>
                                                                             <Text style={styles.font_14}>{sendDate}</Text>
                                                                             <Image source={require('../../assets/icons/calendar.png')} style={[styles.icon_19, { tintColor: colors.BlueJaja }]} />
@@ -1231,7 +1237,7 @@ export default function checkoutScreen() {
                                     </View>
                                     <FlatList
                                         data={reduxShipping[indexStore].items}
-                                        keyExtractor={(item, index) => String(index) + "d"}
+                                        keyExtractor={(item, index) => String(index) + "KJ"}
                                         style={{ width: '100%' }}
                                         renderItem={({ item }) => {
                                             let code = item.code;
@@ -1241,7 +1247,7 @@ export default function checkoutScreen() {
                                                     <Text style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>{Ename}</Text>
                                                     <FlatList
                                                         data={item.type}
-                                                        keyExtractor={(item, index) => String(index) + "a"}
+                                                        keyExtractor={(item, index) => String(index) + "AL"}
                                                         style={{ width: '100%' }}
                                                         renderItem={({ item }) => {
                                                             return (
@@ -1284,7 +1290,7 @@ export default function checkoutScreen() {
                     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 80 }}>
                         <FlatList
                             data={subPayment}
-                            keyExtractor={(item) => item.id}
+                            keyExtractor={(item) => item.id + "GF"}
                             renderItem={({ item, index }) => {
                                 console.log("🚀 ~ file: CheckoutScreen.js ~ line 1057 ~ checkoutScreen ~ item", item)
                                 return (
@@ -1364,15 +1370,27 @@ export default function checkoutScreen() {
             <DateTimePickerModal
                 isVisible={isDatePickerVisible}
                 mode="date"
+
                 minimumDate={new Date(dateMin.year, dateMin.month, dateMin.date)}
                 maximumDate={new Date(dateMax.year, dateMax.month, dateMax.date)}
-                onDateChange={() => setDatePickerVisibility(false)}
+                onHide={() => {
+                    setTimeout(() => {
+                        actionSheetDelivery.current?.setModalVisible()
+                    }, 500);
+                }}
+                onDateChange={() => {
+                    setDatePickerVisibility(false)
+
+                }}
                 onConfirm={(text) => {
                     setTimeout(() => {
                         handleConfirmDate(text)
                     }, 200);
+
                 }}
-                onCancel={() => setDatePickerVisibility(false)}
+                onCancel={() => {
+                    setDatePickerVisibility(false)
+                }}
             />
         </SafeAreaView >
     )

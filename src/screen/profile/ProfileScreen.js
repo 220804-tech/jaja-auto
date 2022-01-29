@@ -29,16 +29,20 @@ export default function ProfileScreen(props) {
 
 
   useEffect(() => {
-    if (reduxProfile && Object.keys(reduxProfile).length == 0) {
-      EncryptedStorage.getItem('user').then(res => {
-        if (res) {
-          dispatch({ type: 'SET_USER', payload: JSON.parse(res) })
-        }
-      })
+    if (reduxProfile && Object.keys(reduxProfile).length === 0) {
+      getStorage()
     }
     getAccount()
   }, [props, reduxAuth, reduxProfile])
 
+  const getStorage = () => {
+    EncryptedStorage.getItem('user').then(res => {
+      if (res) {
+        dispatch({ type: 'SET_USER', payload: JSON.parse(res) })
+      }
+    })
+
+  }
   useFocusEffect(
     useCallback(() => {
       getItem()

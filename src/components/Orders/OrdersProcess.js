@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useState, useCallback } from 'react'
 import { View, Text, FlatList, Image, RefreshControl, ToastAndroid, ScrollView, TouchableOpacity } from 'react-native'
 import { colors, styles, Wp, ServiceOrder, useNavigation, Os, DefaultNotFound } from '../../export';
 import { useSelector, useDispatch } from 'react-redux'

@@ -9,6 +9,7 @@ import EncryptedStorage from "react-native-encrypted-storage";
 import { useSelector, useDispatch } from 'react-redux'
 import { colors, styles as style, Wp, useNavigation, Loading, Hp, Appbar, Utils } from "../../export";
 import { WebView } from 'react-native-webview';
+import { set } from "react-native-reanimated";
 
 export default function Lainnya() {
     const reduxAuth = useSelector(state => state.auth.auth)
@@ -34,7 +35,7 @@ export default function Lainnya() {
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [checked, setChecked] = useState('');
     const [showButton, setshowButton] = useState(false);
-    const [loading, setloading] = useState(false);
+    const [loading, setloading] = useState(true);
     const [view, setview] = useState(false);
     const [open, setOpen] = useState("Nama Lengkap");
     const [textInputColor, settextInputColor] = useState("#C0C0C0");
@@ -69,8 +70,7 @@ export default function Lainnya() {
             fetch("https://jaja.id/backend/user/profile", requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    if (result.status.code === 200) {
-                        EncryptedStorage.setItem('user', JSON.stringify(result.data))
+                    if (result?.status.code === 200) {
                         dispatch({ type: 'SET_USER', payload: result.data })
                         dispatch({ type: 'SET_VERIFIKASI', payload: result.data.isVerified })
                         let image = { "path": result.data.image }
@@ -82,15 +82,19 @@ export default function Lainnya() {
                         setphoto(image)
                         setemail(result.data.email)
                         setview(result.data.havePassword)
+                        EncryptedStorage.setItem('user', JSON.stringify(result.data))
                     } else {
                         Utils.handleErrorResponse(result, 'Error with status code : 12044')
                     }
+                    setloading(false)
 
                 })
                 .catch(error => {
+                    setloading(false)
                     Utils.handleError(error, "Error with status code : 12045")
                 });
         } catch (error) {
+            setloading(false)
         }
     }
 
@@ -101,11 +105,17 @@ export default function Lainnya() {
     // }, []);
 
     useEffect(() => {
-        setloading(false)
         getItem();
         getData();
         getAccount()
     }, []);
+
+    useEffect(() => {
+
+        return () => {
+            setloading(true)
+        }
+    }, [])
 
 
     const getAccount = () => {
@@ -434,7 +444,7 @@ export default function Lainnya() {
         }
     }
     return (
-        <SafeAreaView style={style.container}>
+        <SafeAreaView style={style.containerFix}>
             {loading ? <Loading /> : null}
             {/* <View style={styles.header}> */}
             <Appbar back={true} title="Pengaturan Akun" />
@@ -442,15 +452,16 @@ export default function Lainnya() {
             {/* </View> */}
             {/* </View> */}
             {/* <Image loadingIndicatorSource={<ActivityIndicator />} style={styles.avatar} source={{ uri: photo.path === null ? 'https://bootdey.com/img/Content/avatar/avatar6.png' : photo.path }} /> */}
-            {showWebView ?
-                <WebView
-                    source={{ uri: 'market://details?id=com.seller.jaja' }}
-                    // onLoadEnd={() => { setIsLoading(false) }}
-                    style={{ flex: 1 }}
-                /> :
-                <ScrollView>
-                    <View style={styles.card}>
-                        {/* <View style={{ flex: 0, justifyContent: 'center', alignItems: 'center', marginBottom: '11%' }}>
+            <View style={style.containerIn}>
+                {showWebView ?
+                    <WebView
+                        source={{ uri: 'market://details?id=com.seller.jaja' }}
+                        // onLoadEnd={() => { setIsLoading(false) }}
+                        style={{ flex: 1 }}
+                    /> :
+                    <ScrollView>
+                        <View style={styles.card}>
+                            {/* <View style={{ flex: 0, justifyContent: 'center', alignItems: 'center', marginBottom: '11%' }}>
                             <View style={{ width: Wp('32%'), height: Wp('32%'), borderRadius: 100, backgroundColor: colors.Silver, borderWidth: 0.5, borderColor: colors.White }}>
                                 <Image style={{ width: '100%', height: '100%', borderRadius: 100 }} source={{ uri: photo && photo.path ? photo.path : null }} />
                                 <TouchableOpacity onPress={() => imageRef.current?.setModalVisible()} style={{ position: 'absolute', bottom: 10, right: 0, backgroundColor: colors.BlueJaja, height: Wp('8%'), width: Wp('8%'), borderRadius: 100, justifyContent: 'center', alignItems: 'center' }}>
@@ -458,144 +469,245 @@ export default function Lainnya() {
                                 </TouchableOpacity>
                             </View>
                         </View> */}
-                        {
-                            Platform.OS == 'android' ?
-                                <View style={{ flex: 0, justifyContent: 'center', alignItems: 'center', marginBottom: '11%' }}>
-                                    <View style={{ width: Wp('32%'), height: Wp('32%'), borderRadius: 100, backgroundColor: colors.Silver, borderWidth: 0.5, borderColor: colors.White }}>
-                                        <Image style={{ width: '100%', height: '100%', borderRadius: 100 }} source={{ uri: photo && photo.path ? photo.path : null }} />
-                                        <TouchableOpacity onPress={() => imageRef.current?.setModalVisible()} style={{ position: 'absolute', bottom: 10, right: 0, backgroundColor: colors.BlueJaja, height: Wp('8%'), width: Wp('8%'), borderRadius: 100, justifyContent: 'center', alignItems: 'center' }}>
-                                            <Image style={{ width: '50%', height: '50%', tintColor: colors.White }} source={require('../../assets/icons/camera.png')} />
-                                        </TouchableOpacity>
+                            {
+                                Platform.OS == 'android' ?
+                                    <View style={{ flex: 0, justifyContent: 'center', alignItems: 'center', marginBottom: '11%' }}>
+                                        <View style={{ width: Wp('32%'), height: Wp('32%'), borderRadius: 100, backgroundColor: colors.Silver, borderWidth: 0.5, borderColor: colors.White }}>
+                                            <Image style={{ width: '100%', height: '100%', borderRadius: 100 }} source={{ uri: photo && photo.path ? photo.path : null }} />
+                                            <TouchableOpacity onPress={() => imageRef.current?.setModalVisible()} style={{ position: 'absolute', bottom: 10, right: 0, backgroundColor: colors.BlueJaja, height: Wp('8%'), width: Wp('8%'), borderRadius: 100, justifyContent: 'center', alignItems: 'center' }}>
+                                                <Image style={{ width: '50%', height: '50%', tintColor: colors.White }} source={require('../../assets/icons/camera.png')} />
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                    :
+                                    <View />
+                            }
+                            <TouchableWithoutFeedback onPress={() => handleEdit("Nama Lengkap")}>
+                                <View style={styles.form}>
+                                    <Text adjustsFontSizeToFit style={[style.font_14]}>Nama Lengkap</Text>
+                                    <View style={styles.formItem}>
+                                        <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{name ? name : ""}</Text>
+                                        <Text adjustsFontSizeToFit style={styles.ubah}>{name ? "Ubah" : "Tambah"}</Text>
                                     </View>
                                 </View>
-                                :
-                                <View />
-                        }
-                        <TouchableWithoutFeedback onPress={() => handleEdit("Nama Lengkap")}>
-                            <View style={styles.form}>
-                                <Text adjustsFontSizeToFit style={[style.font_14]}>Nama Lengkap</Text>
-                                <View style={styles.formItem}>
-                                    <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{name ? name : ""}</Text>
-                                    <Text adjustsFontSizeToFit style={styles.ubah}>{name ? "Ubah" : "Tambah"}</Text>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback>
+                                <View style={styles.form}>
+                                    <Text adjustsFontSizeToFit style={[style.font_14]}>Email</Text>
+                                    <View style={styles.formItem}>
+                                        <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{email ? email : ""}</Text>
+                                    </View>
                                 </View>
-                            </View>
-                        </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback>
-                            <View style={styles.form}>
-                                <Text adjustsFontSizeToFit style={[style.font_14]}>Email</Text>
-                                <View style={styles.formItem}>
-                                    <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{email ? email : ""}</Text>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={() => profile.birthDate ? showDatePicker('start') : null}>
+                                <View style={styles.form}>
+                                    <Text adjustsFontSizeToFit style={[style.font_14]}>Tanggal Lahir</Text>
+                                    <View style={styles.formItem}>
+                                        <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{date ? date : "Pilih Tanggal Lahir"}</Text>
+                                        {!date ?
+                                            <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text>
+                                            : null}
+                                    </View>
                                 </View>
-                            </View>
-                        </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback onPress={() => profile.birthDate ? showDatePicker('start') : null}>
-                            <View style={styles.form}>
-                                <Text adjustsFontSizeToFit style={[style.font_14]}>Tanggal Lahir</Text>
-                                <View style={styles.formItem}>
-                                    <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{date ? date : "Pilih Tanggal Lahir"}</Text>
-                                    {!date ?
-                                        <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text>
-                                        : null}
-                                </View>
-                            </View>
-                        </TouchableWithoutFeedback>
-                        <View style={[styles.form, { flexDirection: 'column' }]}>
-                            <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{gender ? gender == "pria" ? "Laki - Laki" : "Perempuan" : "Pilih Jenis Kelamin"}</Text>
-                            <View style={[style.row_between_center, style.mt]}>
-                                <View style={{ flex: 0, alignItems: 'center', flexDirection: 'row', marginLeft: '-2.5%' }}>
-                                    <RadioButton
-                                        color={colors.BlueJaja}
-                                        value="first"
-                                        status={gender === "pria" ? 'checked' : 'unchecked'}
-                                        onPress={() => {
-                                            setgender("pria")
-                                            setshowButton(true)
-                                        }}
-                                    />
-                                    <Text adjustsFontSizeToFit style={style.font14}>Laki - Laki</Text>
-                                </View>
-                                <View style={{ flex: 0, alignItems: 'center', flexDirection: 'row' }}>
-                                    <RadioButton
-                                        color={colors.BlueJaja}
-                                        value="second"
-                                        status={gender === "wanita" ? 'checked' : 'unchecked'}
-                                        onPress={() => {
-                                            setgender("wanita")
-                                            setshowButton(true)
+                            </TouchableWithoutFeedback>
+                            <View style={[styles.form, { flexDirection: 'column' }]}>
+                                <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{gender ? gender == "pria" ? "Laki - Laki" : "Perempuan" : "Pilih Jenis Kelamin"}</Text>
+                                <View style={[style.row_between_center, style.mt]}>
+                                    <View style={{ flex: 0, alignItems: 'center', flexDirection: 'row', marginLeft: '-2.5%' }}>
+                                        <RadioButton
+                                            color={colors.BlueJaja}
+                                            value="first"
+                                            status={gender === "pria" ? 'checked' : 'unchecked'}
+                                            onPress={() => {
+                                                setgender("pria")
+                                                setshowButton(true)
+                                            }}
+                                        />
+                                        <Text adjustsFontSizeToFit style={style.font14}>Laki - Laki</Text>
+                                    </View>
+                                    <View style={{ flex: 0, alignItems: 'center', flexDirection: 'row' }}>
+                                        <RadioButton
+                                            color={colors.BlueJaja}
+                                            value="second"
+                                            status={gender === "wanita" ? 'checked' : 'unchecked'}
+                                            onPress={() => {
+                                                setgender("wanita")
+                                                setshowButton(true)
 
-                                        }}
-                                    />
-                                    <Text adjustsFontSizeToFit style={style.font14}>Perempuan</Text>
+                                            }}
+                                        />
+                                        <Text adjustsFontSizeToFit style={style.font14}>Perempuan</Text>
+                                    </View>
                                 </View>
-                            </View>
-                            {/* <Text adjustsFontSizeToFit style={[style.font_14]}>Jenis Kelamin</Text>
+                                {/* <Text adjustsFontSizeToFit style={[style.font_14]}>Jenis Kelamin</Text>
                             <View style={styles.formItem}>
                                 <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{gender ? gender == "pria" ? "Laki - Laki" : "Perempuan" : "Pilih Jenis Kelamin"}</Text>
                                 {!gender ? <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text> : null}
                             </View> */}
-                        </View>
-                        <TouchableWithoutFeedback onPress={() => handleEdit("Nomor Telephone")}>
-                            <View style={styles.form}>
-                                <Text adjustsFontSizeToFit style={[style.font_14]}>Telephone</Text>
-                                <View style={styles.formItem}>
-                                    <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{telephone ? telephone : 'Input Telephone'}</Text>
-                                    <Text adjustsFontSizeToFit style={styles.ubah}>{telephone ? "Ubah" : "Tambah"}</Text>
-                                </View>
                             </View>
-                        </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback onPress={() => handleEdit("Password")}>
-                            <View style={styles.form}>
-                                <Text adjustsFontSizeToFit style={[style.font_14]}>Password</Text>
-                                <View style={styles.formItem}>
-                                    <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{view ? "********" : "-"}</Text>
-                                    <Text adjustsFontSizeToFit style={styles.ubah}>{view ? "Ubah" : "Tambah"}</Text>
+                            <TouchableWithoutFeedback onPress={() => handleEdit("Nomor Telephone")}>
+                                <View style={styles.form}>
+                                    <Text adjustsFontSizeToFit style={[style.font_14]}>Telephone</Text>
+                                    <View style={styles.formItem}>
+                                        <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{telephone ? telephone : 'Input Telephone'}</Text>
+                                        <Text adjustsFontSizeToFit style={styles.ubah}>{telephone ? "Ubah" : "Tambah"}</Text>
+                                    </View>
                                 </View>
-                            </View>
-                        </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback onPress={() => accountShow ? null : navigation.navigate('AddAccount')}>
-                            <View style={styles.form}>
-                                <Text adjustsFontSizeToFit style={[style.font_14]}>Rekening</Text>
-                                <View style={styles.formItem}>
-                                    <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{accountShow ? accountBank : 'Tambah Rekening'}</Text>
-                                    {!accountShow ? <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text> : null}
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={() => handleEdit("Password")}>
+                                <View style={styles.form}>
+                                    <Text adjustsFontSizeToFit style={[style.font_14]}>Password</Text>
+                                    <View style={styles.formItem}>
+                                        <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{view ? "********" : "-"}</Text>
+                                        <Text adjustsFontSizeToFit style={styles.ubah}>{view ? "Ubah" : "Tambah"}</Text>
+                                    </View>
                                 </View>
-                            </View>
-                        </TouchableWithoutFeedback>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={() => accountShow ? null : navigation.navigate('AddAccount')}>
+                                <View style={styles.form}>
+                                    <Text adjustsFontSizeToFit style={[style.font_14]}>Rekening</Text>
+                                    <View style={styles.formItem}>
+                                        <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{accountShow ? accountBank : 'Tambah Rekening'}</Text>
+                                        {!accountShow ? <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text> : null}
+                                    </View>
+                                </View>
+                            </TouchableWithoutFeedback>
 
-                        {showButton ? <Button onPress={handleSimpan} color={colors.BlueJaja} mode="contained" labelStyle={[style.font_13, style.T_semi_bold, { color: colors.White }]} style={style.mb_5}>Simpan</Button> : null}
-                        {/* 
+                            {showButton ? <Button onPress={handleSimpan} color={colors.BlueJaja} mode="contained" labelStyle={[style.font_13, style.T_semi_bold, { color: colors.White }]} style={style.mb_5}>Simpan</Button> : null}
+                            {/* 
                         <TouchableWithoutFeedback onPress={() => Linking.openURL("market://details?id=com.seller.jaja")}>
                             <Text adjustsFontSizeToFit style={[style.font_14, style.my_5, { alignSelf: 'center', color: colors.BlueJaja }]}>Mulai Berjualan?</Text>
                         </TouchableWithoutFeedback> */}
+                        </View>
+                    </ScrollView>
+
+                }
+                <ActionSheet onClose={() => handleUpdate(date, photo)} footerHeight={80} containerStyle={{ paddingHorizontal: '4%', paddingTop: '1%' }}
+                    ref={actionSheetRef}>
+                    <View style={[style.row_between_center, style.my_2]}>
+                        <Text adjustsFontSizeToFit style={style.actionSheetTitle}>Atur Profile</Text>
+                        <TouchableOpacity onPress={() => actionSheetRef.current?.setModalVisible(false)}  >
+                            <Image
+                                style={[style.icon_16, { tintColor: colors.BlackGrey }]}
+                                source={require('../../assets/icons/close.png')}
+                            />
+                        </TouchableOpacity>
                     </View>
-                </ScrollView>
-            }
-            <ActionSheet onClose={() => handleUpdate(date, photo)} footerHeight={80} containerStyle={{ paddingHorizontal: '4%', paddingTop: '1%' }}
-                ref={actionSheetRef}>
-                <View style={[style.row_between_center, style.my_2]}>
-                    <Text adjustsFontSizeToFit style={style.actionSheetTitle}>Atur Profile</Text>
-                    <TouchableOpacity onPress={() => actionSheetRef.current?.setModalVisible(false)}  >
-                        <Image
-                            style={[style.icon_16, { tintColor: colors.BlackGrey }]}
-                            source={require('../../assets/icons/close.png')}
-                        />
-                    </TouchableOpacity>
-                </View>
-                <View style={[style.column, style.pb_5, style.mb_5]}>
-                    {open === "Nama Lengkap" ?
+                    <View style={[style.column, style.pb_5, style.mb_5]}>
+                        {open === "Nama Lengkap" ?
+                            <View style={styles.form}>
+                                <Text adjustsFontSizeToFit style={[style.font_14]}>{open}</Text>
+                                <View style={[styles.formItem, { paddingBottom: '1%', borderBottomColor: textInputColor, borderBottomWidth: 1 }]}>
+                                    {/* <Text adjustsFontSizeToFit style={styles.formPlaceholder}>Testing toko</Text> */}
+                                    <TextInput
+                                        style={styles.inputbox}
+                                        placeholder=""
+                                        value={name}
+                                        onFocus={() => settextInputColor(colors.BlueJaja)}
+                                        onBlur={() => settextInputColor('#C0C0C0')}
+                                        keyboardType="default"
+                                        maxLength={25}
+                                        onChangeText={(text) => setname(text)}
+                                        theme={{
+                                            colors: {
+                                                primary: colors.BlueJaja,
+                                            },
+                                        }}
+                                    />
+                                    {/* <Image /> */}
+                                </View>
+                            </View>
+                            : open === "Nomor Telephone" ?
+                                <View style={styles.form}>
+                                    <Text adjustsFontSizeToFit style={[style.font_14]}>{open}</Text>
+                                    <View style={[styles.formItem, { paddingBottom: '1%', borderBottomColor: textInputColor, borderBottomWidth: 1 }]}>
+                                        {/* <Text adjustsFontSizeToFit style={styles.formPlaceholder}>Testing toko</Text> */}
+                                        <TextInput
+                                            style={styles.inputbox}
+                                            placeholder="Input nomor telephone"
+                                            value={telephone}
+                                            onFocus={() => settextInputColor(colors.BlueJaja)}
+                                            onBlur={() => settextInputColor('#C0C0C0')}
+                                            keyboardType="numeric"
+                                            maxLength={13}
+                                            onChangeText={(text) => settelephone(text)}
+                                            theme={{
+                                                colors: {
+                                                    primary: colors.BlueJaja,
+                                                },
+                                            }}
+                                        />
+                                    </View>
+                                </View>
+                                : open === "Jenis Kelamin" ?
+                                    <View style={{ flex: 0, justifyContent: 'space-around', alignItems: 'center', flexDirection: 'row' }}>
+                                        < View style={{ flex: 0, alignItems: 'center', flexDirection: 'row' }}>
+                                            <RadioButton
+                                                value="first"
+                                                status={checked === 'pria' ? 'checked' : 'unchecked'}
+                                                onPress={() => {
+                                                    setgender("pria")
+                                                }}
+                                            />
+                                            <Text adjustsFontSizeToFit style={style.font14}>Laki - Laki</Text>
+                                        </View>
+                                        <View style={{ flex: 0, alignItems: 'center', flexDirection: 'row' }}>
+                                            <RadioButton
+                                                value="second"
+                                                status={gender === 'wanita' ? 'checked' : 'unchecked'}
+                                                onPress={() => {
+                                                    setgender("wanita")
+                                                }}
+                                            />
+                                            <Text adjustsFontSizeToFit style={style.font14}>Perempuan</Text>
+                                        </View>
+                                    </View>
+                                    : null
+                        }
+
+                    </View>
+                </ActionSheet >
+                <ActionSheet onClose={() => handleUpdate(date, photo)} footerHeight={80} containerStyle={{ paddingHorizontal: '4%', paddingTop: '1%' }}
+                    ref={passwordRef}>
+                    <View style={[style.row_between_center, style.my_2]}>
+                        <Text adjustsFontSizeToFit style={style.actionSheetTitle}>Atur Pofile</Text>
+                        <TouchableOpacity onPress={() => passwordRef.current?.setModalVisible(false)}  >
+                            <Image
+                                style={[style.icon_16, { tintColor: colors.BlackGrey }]}
+                                source={require('../../assets/icons/close.png')}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                    {/* <View style={styles.actionSheetBody}> */}
+                    {view ?
                         <View style={styles.form}>
-                            <Text adjustsFontSizeToFit style={[style.font_14]}>{open}</Text>
-                            <View style={[styles.formItem, { paddingBottom: '1%', borderBottomColor: textInputColor, borderBottomWidth: 1 }]}>
-                                {/* <Text adjustsFontSizeToFit style={styles.formPlaceholder}>Testing toko</Text> */}
+                            <Text adjustsFontSizeToFit style={[style.font_14]}>Kata sandi lama</Text>
+                            <View style={[styles.formItem, { paddingBottom: '0%', borderBottomColor: oldcolor, borderBottomWidth: 1, marginBottom: '5%' }]}>
                                 <TextInput
                                     style={styles.inputbox}
-                                    placeholder=""
-                                    value={name}
-                                    onFocus={() => settextInputColor(colors.BlueJaja)}
-                                    onBlur={() => settextInputColor('#C0C0C0')}
+                                    placeholder="Input kata sandi lama"
+                                    onChangeText={(text) => setoldpassword(text)}
+                                    onFocus={() => setoldcolor(colors.BlueJaja)}
+                                    onBlur={() => setoldcolor('#C0C0C0')}
                                     keyboardType="default"
-                                    maxLength={25}
-                                    onChangeText={(text) => setname(text)}
+                                    maxLength={20}
+                                    theme={{
+                                        colors: {
+                                            primary: colors.BlueJaja,
+                                        },
+                                    }}
+                                />
+                            </View>
+                            <Text adjustsFontSizeToFit style={[style.font_14]}>Kata sandi baru</Text>
+                            <View style={[styles.formItem, { paddingBottom: '0%', borderBottomColor: passwordcolor, borderBottomWidth: 1 }]}>
+                                <TextInput
+                                    style={styles.inputbox}
+                                    placeholder="Input kata sandi baru"
+                                    secureTextEntry
+                                    onFocus={() => setpasswordcolor(colors.BlueJaja)}
+                                    onBlur={() => setpasswordcolor('#C0C0C0')}
+                                    keyboardType="default"
+                                    onChange={handlePassword}
                                     theme={{
                                         colors: {
                                             primary: colors.BlueJaja,
@@ -604,201 +716,102 @@ export default function Lainnya() {
                                 />
                                 {/* <Image /> */}
                             </View>
-                        </View>
-                        : open === "Nomor Telephone" ?
-                            <View style={styles.form}>
-                                <Text adjustsFontSizeToFit style={[style.font_14]}>{open}</Text>
-                                <View style={[styles.formItem, { paddingBottom: '1%', borderBottomColor: textInputColor, borderBottomWidth: 1 }]}>
-                                    {/* <Text adjustsFontSizeToFit style={styles.formPlaceholder}>Testing toko</Text> */}
-                                    <TextInput
-                                        style={styles.inputbox}
-                                        placeholder="Input nomor telephone"
-                                        value={telephone}
-                                        onFocus={() => settextInputColor(colors.BlueJaja)}
-                                        onBlur={() => settextInputColor('#C0C0C0')}
-                                        keyboardType="numeric"
-                                        maxLength={13}
-                                        onChangeText={(text) => settelephone(text)}
-                                        theme={{
-                                            colors: {
-                                                primary: colors.BlueJaja,
-                                            },
-                                        }}
-                                    />
-                                </View>
+                            <Text adjustsFontSizeToFit style={{ color: 'red', marginBottom: '5%', fontSize: 12 }}>{alertTextPassword1}</Text>
+                            <Text adjustsFontSizeToFit style={[style.font_14]}>Konfirmasi kata sandi baru</Text>
+                            <View style={[styles.formItem, { paddingBottom: '0%', borderBottomColor: confirmcolor, borderBottomWidth: 1 }]}>
+                                <TextInput
+                                    style={styles.inputbox}
+                                    placeholder="Konfirmasi kata sandi baru"
+                                    secureTextEntry
+                                    onFocus={() => setconfrimcolor(colors.BlueJaja)}
+                                    onBlur={() => setconfrimcolor('#C0C0C0')}
+                                    keyboardType="default"
+                                    maxLength={13}
+                                    onChange={confirmPassword}
+                                    theme={{
+                                        colors: {
+                                            primary: colors.BlueJaja,
+                                        },
+                                    }}
+                                />
+                                {/* <Image /> */}
                             </View>
-                            : open === "Jenis Kelamin" ?
-                                <View style={{ flex: 0, justifyContent: 'space-around', alignItems: 'center', flexDirection: 'row' }}>
-                                    < View style={{ flex: 0, alignItems: 'center', flexDirection: 'row' }}>
-                                        <RadioButton
-                                            value="first"
-                                            status={checked === 'pria' ? 'checked' : 'unchecked'}
-                                            onPress={() => {
-                                                setgender("pria")
-                                            }}
-                                        />
-                                        <Text adjustsFontSizeToFit style={style.font14}>Laki - Laki</Text>
-                                    </View>
-                                    <View style={{ flex: 0, alignItems: 'center', flexDirection: 'row' }}>
-                                        <RadioButton
-                                            value="second"
-                                            status={gender === 'wanita' ? 'checked' : 'unchecked'}
-                                            onPress={() => {
-                                                setgender("wanita")
-                                            }}
-                                        />
-                                        <Text adjustsFontSizeToFit style={style.font14}>Perempuan</Text>
-                                    </View>
-                                </View>
-                                : null
+                            <Text adjustsFontSizeToFit style={{ color: 'red', marginBottom: '5%', fontSize: 12 }}>{alertTextPassword}</Text>
+
+                            <Button color={colors.BlueJaja} mode="contained" onPress={handleReset}>
+                                Simpan
+                        </Button>
+                        </View> :
+                        <View style={styles.form}>
+                            <Text adjustsFontSizeToFit style={[style.font_14]}>Kata sandi baru</Text>
+                            <View style={[styles.formItem, { paddingBottom: '0%', borderBottomColor: passwordcolor, borderBottomWidth: 1 }]}>
+                                <TextInput
+                                    style={styles.inputbox}
+                                    placeholder="Input kata sandi baru"
+                                    secureTextEntry
+                                    onFocus={() => setpasswordcolor(colors.BlueJaja)}
+                                    onBlur={() => setpasswordcolor('#C0C0C0')}
+                                    keyboardType="default"
+                                    onChange={handlePassword}
+                                    theme={{
+                                        colors: {
+                                            primary: colors.BlueJaja,
+                                        },
+                                    }}
+                                />
+                                {/* <Image /> */}
+                            </View>
+                            <Text adjustsFontSizeToFit style={{ color: 'red', marginBottom: '5%', fontSize: 12 }}>{alertTextPassword1}</Text>
+                            <Text adjustsFontSizeToFit style={[style.font_14]}>Konfirmasi kata sandi baru</Text>
+                            <View style={[styles.formItem, { paddingBottom: '0%', borderBottomColor: confirmcolor, borderBottomWidth: 1 }]}>
+                                <TextInput
+                                    style={styles.inputbox}
+                                    placeholder="Konfirmasi kata sandi baru"
+                                    secureTextEntry
+                                    onFocus={() => setconfrimcolor(colors.BlueJaja)}
+                                    onBlur={() => setconfrimcolor('#C0C0C0')}
+                                    keyboardType="default"
+                                    maxLength={13}
+                                    onChange={confirmPassword}
+                                    theme={{
+                                        colors: {
+                                            primary: colors.BlueJaja,
+                                        },
+                                    }}
+                                />
+                                {/* <Image /> */}
+                            </View>
+                            <Text adjustsFontSizeToFit style={{ color: 'red', marginBottom: '5%', fontSize: 12 }}>{alertTextPassword}</Text>
+
+                            <Button color={colors.BlueJaja} mode="contained" onPress={handleAdd}>
+                                Simpan
+                        </Button>
+                        </View>
+
                     }
+                    {/* </View> */}
+                </ActionSheet>
+                <ActionSheetCamera containerStyle={{ flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.White }} ref={imageRef}>
+                    <View style={[styles.column, { backgroundColor: '#ededed' }]}>
+                        <TouchableOpacity onPress={goToPicFromCameras} style={{ borderBottomWidth: 0.5, borderBottomColor: colors.Silver, alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%' }}>
+                            <Text style={[styles.font_16, { alignSelf: 'center' }]}>Ambil Foto</Text>
+                        </TouchableOpacity>
 
-                </View>
-            </ActionSheet >
-            <ActionSheet onClose={() => handleUpdate(date, photo)} footerHeight={80} containerStyle={{ paddingHorizontal: '4%', paddingTop: '1%' }}
-                ref={passwordRef}>
-                <View style={[style.row_between_center, style.my_2]}>
-                    <Text adjustsFontSizeToFit style={style.actionSheetTitle}>Atur Pofile</Text>
-                    <TouchableOpacity onPress={() => passwordRef.current?.setModalVisible(false)}  >
-                        <Image
-                            style={[style.icon_16, { tintColor: colors.BlackGrey }]}
-                            source={require('../../assets/icons/close.png')}
-                        />
-                    </TouchableOpacity>
-                </View>
-                {/* <View style={styles.actionSheetBody}> */}
-                {view ?
-                    <View style={styles.form}>
-                        <Text adjustsFontSizeToFit style={[style.font_14]}>Kata sandi lama</Text>
-                        <View style={[styles.formItem, { paddingBottom: '0%', borderBottomColor: oldcolor, borderBottomWidth: 1, marginBottom: '5%' }]}>
-                            <TextInput
-                                style={styles.inputbox}
-                                placeholder="Input kata sandi lama"
-                                onChangeText={(text) => setoldpassword(text)}
-                                onFocus={() => setoldcolor(colors.BlueJaja)}
-                                onBlur={() => setoldcolor('#C0C0C0')}
-                                keyboardType="default"
-                                maxLength={20}
-                                theme={{
-                                    colors: {
-                                        primary: colors.BlueJaja,
-                                    },
-                                }}
-                            />
-                        </View>
-                        <Text adjustsFontSizeToFit style={[style.font_14]}>Kata sandi baru</Text>
-                        <View style={[styles.formItem, { paddingBottom: '0%', borderBottomColor: passwordcolor, borderBottomWidth: 1 }]}>
-                            <TextInput
-                                style={styles.inputbox}
-                                placeholder="Input kata sandi baru"
-                                secureTextEntry
-                                onFocus={() => setpasswordcolor(colors.BlueJaja)}
-                                onBlur={() => setpasswordcolor('#C0C0C0')}
-                                keyboardType="default"
-                                onChange={handlePassword}
-                                theme={{
-                                    colors: {
-                                        primary: colors.BlueJaja,
-                                    },
-                                }}
-                            />
-                            {/* <Image /> */}
-                        </View>
-                        <Text adjustsFontSizeToFit style={{ color: 'red', marginBottom: '5%', fontSize: 12 }}>{alertTextPassword1}</Text>
-                        <Text adjustsFontSizeToFit style={[style.font_14]}>Konfirmasi kata sandi baru</Text>
-                        <View style={[styles.formItem, { paddingBottom: '0%', borderBottomColor: confirmcolor, borderBottomWidth: 1 }]}>
-                            <TextInput
-                                style={styles.inputbox}
-                                placeholder="Konfirmasi kata sandi baru"
-                                secureTextEntry
-                                onFocus={() => setconfrimcolor(colors.BlueJaja)}
-                                onBlur={() => setconfrimcolor('#C0C0C0')}
-                                keyboardType="default"
-                                maxLength={13}
-                                onChange={confirmPassword}
-                                theme={{
-                                    colors: {
-                                        primary: colors.BlueJaja,
-                                    },
-                                }}
-                            />
-                            {/* <Image /> */}
-                        </View>
-                        <Text adjustsFontSizeToFit style={{ color: 'red', marginBottom: '5%', fontSize: 12 }}>{alertTextPassword}</Text>
-
-                        <Button color={colors.BlueJaja} mode="contained" onPress={handleReset}>
-                            Simpan
-                        </Button>
-                    </View> :
-                    <View style={styles.form}>
-                        <Text adjustsFontSizeToFit style={[style.font_14]}>Kata sandi baru</Text>
-                        <View style={[styles.formItem, { paddingBottom: '0%', borderBottomColor: passwordcolor, borderBottomWidth: 1 }]}>
-                            <TextInput
-                                style={styles.inputbox}
-                                placeholder="Input kata sandi baru"
-                                secureTextEntry
-                                onFocus={() => setpasswordcolor(colors.BlueJaja)}
-                                onBlur={() => setpasswordcolor('#C0C0C0')}
-                                keyboardType="default"
-                                onChange={handlePassword}
-                                theme={{
-                                    colors: {
-                                        primary: colors.BlueJaja,
-                                    },
-                                }}
-                            />
-                            {/* <Image /> */}
-                        </View>
-                        <Text adjustsFontSizeToFit style={{ color: 'red', marginBottom: '5%', fontSize: 12 }}>{alertTextPassword1}</Text>
-                        <Text adjustsFontSizeToFit style={[style.font_14]}>Konfirmasi kata sandi baru</Text>
-                        <View style={[styles.formItem, { paddingBottom: '0%', borderBottomColor: confirmcolor, borderBottomWidth: 1 }]}>
-                            <TextInput
-                                style={styles.inputbox}
-                                placeholder="Konfirmasi kata sandi baru"
-                                secureTextEntry
-                                onFocus={() => setconfrimcolor(colors.BlueJaja)}
-                                onBlur={() => setconfrimcolor('#C0C0C0')}
-                                keyboardType="default"
-                                maxLength={13}
-                                onChange={confirmPassword}
-                                theme={{
-                                    colors: {
-                                        primary: colors.BlueJaja,
-                                    },
-                                }}
-                            />
-                            {/* <Image /> */}
-                        </View>
-                        <Text adjustsFontSizeToFit style={{ color: 'red', marginBottom: '5%', fontSize: 12 }}>{alertTextPassword}</Text>
-
-                        <Button color={colors.BlueJaja} mode="contained" onPress={handleAdd}>
-                            Simpan
-                        </Button>
-                    </View>
-
-                }
-                {/* </View> */}
-            </ActionSheet>
-            <ActionSheetCamera containerStyle={{ flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.White }} ref={imageRef}>
-                <View style={[styles.column, { backgroundColor: '#ededed' }]}>
-                    <TouchableOpacity onPress={goToPicFromCameras} style={{ borderBottomWidth: 0.5, borderBottomColor: colors.Silver, alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%' }}>
-                        <Text style={[styles.font_16, { alignSelf: 'center' }]}>Ambil Foto</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={goToPickImage} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%', marginBottom: '1%' }}>
-                        <Text style={[styles.font_16, { alignSelf: 'center' }]}>Buka Galeri</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => galeryRef.current?.setModalVisible(false)} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '2%' }}>
-                        <Text style={[styles.font_16, { alignSelf: 'center', color: colors.RedNotif }]}>Batal</Text>
-                    </TouchableOpacity>
-                </View >
-            </ActionSheetCamera >
-            <DateTimePickerModal
-                isVisible={isDatePickerVisible}
-                mode="date"
-                onConfirm={(text) => handleConfirmDate(text)}
-                onCancel={() => hideDatePicker()}
-            />
+                        <TouchableOpacity onPress={goToPickImage} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%', marginBottom: '1%' }}>
+                            <Text style={[styles.font_16, { alignSelf: 'center' }]}>Buka Galeri</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => galeryRef.current?.setModalVisible(false)} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '2%' }}>
+                            <Text style={[styles.font_16, { alignSelf: 'center', color: colors.RedNotif }]}>Batal</Text>
+                        </TouchableOpacity>
+                    </View >
+                </ActionSheetCamera >
+                <DateTimePickerModal
+                    isVisible={isDatePickerVisible}
+                    mode="date"
+                    onConfirm={(text) => handleConfirmDate(text)}
+                    onCancel={() => hideDatePicker()}
+                />
+            </View>
         </SafeAreaView >
     );
 }

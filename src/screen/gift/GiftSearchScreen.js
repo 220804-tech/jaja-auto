@@ -128,7 +128,7 @@ export default function GiftSearchScreen(props) {
 
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
             <AppbarSecond gift={true} handleSearch={handleSearch} title='Cari hadiah disini..' handleSubmit={handleSearch} />
             {/*      <View style={[styles.row_around_center, styles.p_2,]}>
                 {props.route?.params?.price ?
@@ -150,6 +150,7 @@ export default function GiftSearchScreen(props) {
                 </TouchableRipple> 
               </View> */}
             <ScrollView
+                style={{ backgroundColor: Platform.OS === 'ios' ? colors.WhiteBack : null }}
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}

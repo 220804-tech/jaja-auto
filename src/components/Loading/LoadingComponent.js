@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
         elevation: 7,
     },
     container: {
-        zIndex: 999,
+        zIndex: 9999,
         backgroundColor: 'white',
         bottom: 0,
         flex: 1,

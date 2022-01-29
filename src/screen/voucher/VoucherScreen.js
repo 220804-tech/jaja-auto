@@ -169,62 +169,64 @@ export default function VoucherScreen() {
     }
 
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: colors.White }]}>
-            <Appbar back={true} title="Voucher Jaja.id" />
+        <SafeAreaView style={styles.containerFix}>
+            <Appbar back={true} title="Voucher" />
             {loading ? <Loading /> : null}
-            {vouchers && vouchers.length ?
-                <ScrollView>
-                    <View style={[styles.row_start_center, styles.px_3, styles.mt_3, styles.mb]}>
-                        {/* <Image source={require('../../assets/icons/coupon.png')} style={[styles.icon_21, styles.mr_2, { tintColor: colors.YellowJaja }]} /> */}
-                        {/* <Text style={[styles.font_16, { color: colors.YellowJaja, fontFamily: 'Poppins-SemiBold' }]}>Voucher Jaja Untukmu</Text> */}
-                    </View>
-                    <FlatList
-                        refreshControl={
-                            <RefreshControl
-                                refreshing={refreshing}
-                                onRefresh={onRefresh}
-                            />
-                        }
-                        showsVerticalScrollIndicator={false}
-                        style={styles.pt_3}
-                        contentContainerStyle={styles.pb_5}
-                        data={vouchers}
-                        renderItem={({ item, index }) => {
-                            return (
-                                <View style={[styles.row_center, styles.mb_3]}>
-                                    <View style={[styles.row, { width: '95%', height: Wp('27%'), backgroundColor: colors.White, borderTopWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, borderColor: colors.YellowJaja }]}>
-                                        <View style={{ position: 'absolute', height: '100%', width: Wp('5%'), backgroundColor: colors.YellowJaja, flexDirection: 'column', justifyContent: 'center' }}>
-                                            <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                            <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                            <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                            <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                            <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                            <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
-                                        </View>
-                                        <View style={[styles.column_center, styles.p, { height: '100%', width: '30%', marginLeft: Wp('3%'), backgroundColor: colors.YellowJaja }]}>
-                                            <Text style={[styles.font_12, styles.mb_2, { color: colors.White, fontFamily: 'Poppins-SemiBold', alignSelf: 'center' }]}>{item.category === "ongkir" ? 'GRATIS BIAYA PENGIRIMAN' : String(item.category).toUpperCase() + " " + item.discountText}</Text>
-                                        </View>
-                                        <View style={[styles.column_around_center, styles.px_2, { width: '44%' }]}>
-                                            <Text numberOfLines={3} style={[styles.font_12, styles.mb_2, styles.T_semi_bold, { color: colors.YellowJaja, width: '100%', marginBottom: '-7%' }]}>{item.name} MIN 50</Text>
-                                            <Text style={[styles.font_8, { color: colors.YellowJaja, width: '100%', marginBottom: "-5%" }]}>Berakhir dalam {item.endDate} {item.type}</Text>
-                                        </View>
-                                        <View style={[styles.column_center, { width: '22%' }]}>
-                                            <TouchableOpacity onPress={() => handleVoucher(item, index)} style={{ width: '90%', height: '30%', backgroundColor: item.isClaimed ? colors.White : colors.YellowJaja, padding: '2%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.YellowJaja, borderRadius: 5 }}>
-                                                <Text style={[styles.font_10, { color: item.isClaimed ? colors.YellowJaja : colors.White, fontFamily: 'Poppins-SemiBold' }]}>{item.isClaimed ? item.isSelected ? "TERPAKAI" : "PAKAI" : "KLAIM"}</Text>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity onPress={() => handleDescription(item)} style={{ position: 'absolute', bottom: 5 }}>
-                                                <Text style={[styles.font_12, { color: colors.BlueLink }]}>S&K</Text>
-                                            </TouchableOpacity>
+            <View style={styles.containerIn}>
+                {vouchers && vouchers.length ?
+                    <ScrollView>
+                        <View style={[styles.row_start_center, styles.px_3, styles.mt_3, styles.mb]}>
+                            {/* <Image source={require('../../assets/icons/coupon.png')} style={[styles.icon_21, styles.mr_2, { tintColor: colors.YellowJaja }]} /> */}
+                            {/* <Text style={[styles.font_16, { color: colors.YellowJaja, fontFamily: 'Poppins-SemiBold' }]}>Voucher Jaja Untukmu</Text> */}
+                        </View>
+                        <FlatList
+                            refreshControl={
+                                <RefreshControl
+                                    refreshing={refreshing}
+                                    onRefresh={onRefresh}
+                                />
+                            }
+                            showsVerticalScrollIndicator={false}
+                            style={styles.pt_3}
+                            contentContainerStyle={styles.pb_5}
+                            data={vouchers}
+                            renderItem={({ item, index }) => {
+                                return (
+                                    <View style={[styles.row_center, styles.mb_3]}>
+                                        <View style={[styles.row, { width: '95%', height: Wp('27%'), backgroundColor: colors.White, borderTopWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, borderColor: colors.YellowJaja }]}>
+                                            <View style={{ position: 'absolute', height: '100%', width: Wp('5%'), backgroundColor: colors.YellowJaja, flexDirection: 'column', justifyContent: 'center' }}>
+                                                <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                                <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
+                                            </View>
+                                            <View style={[styles.column_center, styles.p, { height: '100%', width: '30%', marginLeft: Wp('3%'), backgroundColor: colors.YellowJaja }]}>
+                                                <Text style={[styles.font_12, styles.mb_2, { color: colors.White, fontFamily: 'Poppins-SemiBold', alignSelf: 'center' }]}>{item.category === "ongkir" ? 'GRATIS BIAYA PENGIRIMAN' : String(item.category).toUpperCase() + " " + item.discountText}</Text>
+                                            </View>
+                                            <View style={[styles.column_around_center, styles.px_2, { width: '44%' }]}>
+                                                <Text numberOfLines={3} style={[styles.font_12, styles.mb_2, styles.T_semi_bold, { color: colors.YellowJaja, width: '100%', marginBottom: '-7%' }]}>{item.name} MIN 50</Text>
+                                                <Text style={[styles.font_8, { color: colors.YellowJaja, width: '100%', marginBottom: "-5%" }]}>Berakhir dalam {item.endDate} {item.type}</Text>
+                                            </View>
+                                            <View style={[styles.column_center, { width: '22%' }]}>
+                                                <TouchableOpacity onPress={() => handleVoucher(item, index)} style={{ width: '90%', height: '30%', backgroundColor: item.isClaimed ? colors.White : colors.YellowJaja, padding: '2%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.YellowJaja, borderRadius: 5 }}>
+                                                    <Text style={[styles.font_10, { color: item.isClaimed ? colors.YellowJaja : colors.White, fontFamily: 'Poppins-SemiBold' }]}>{item.isClaimed ? item.isSelected ? "TERPAKAI" : "PAKAI" : "KLAIM"}</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity onPress={() => handleDescription(item)} style={{ position: 'absolute', bottom: 5 }}>
+                                                    <Text style={[styles.font_12, { color: colors.BlueLink }]}>S&K</Text>
+                                                </TouchableOpacity>
+                                            </View>
                                         </View>
                                     </View>
-                                </View>
-                            )
-                        }}
-                    />
+                                )
+                            }}
+                        />
 
-                </ScrollView>
-                : <Text style={[styles.font_14, styles.my_5, { alignSelf: 'center' }]}>Sepertinya belum ada voucher</Text>
-            }
+                    </ScrollView>
+                    : <Text style={[styles.font_14, styles.my_5, { alignSelf: 'center' }]}>Sepertinya belum ada voucher</Text>
+                }
+            </View>
         </SafeAreaView >
     )
 }

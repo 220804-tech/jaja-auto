@@ -129,7 +129,7 @@ export default function CategoryComponent() {
     }
 
     return (
-        <View style={styles.p_3}>
+        <View style={[styles.column, styles.p_3]}>
             <View style={styles.row_between_center}>
                 <Text style={[styles.titleDashboard, styles.mb_3]}>
                     Kategori Pilihan
@@ -149,25 +149,33 @@ export default function CategoryComponent() {
                             // horizontal
                             // numColumns={3}
                             contentContainerStyle={{ flex: 0, width: '100%', justifyContent: 'flex-start', flexDirection: 'row', flexWrap: 'wrap' }}
-
+                            scrollEnabled={false}
                             keyExtractor={(item, index) => String(index)}
                             renderItem={({ item, index }) => {
                                 return (
                                     <>
-                                        {item.name !== 'Lainnya' ?
+                                        {item.name !== 'Lainnya' && item.name !== 'Gift' ?
                                             <TouchableOpacity
                                                 style={{
                                                     borderRadius: 10,
-                                                    width: Wp("19%"),
-                                                    height: Wp("19%"),
+                                                    width: Wp("18%"),
+                                                    height: Wp("18%"),
                                                     marginLeft: 1,
                                                     marginRight: 11,
                                                     marginTop: 5,
                                                     marginBottom: 10,
                                                     justifyContent: "center",
                                                     alignItems: "center",
+                                                    backgroundColor: colors.White,
+                                                    shadowColor: colors.BlackGrayScale,
+                                                    shadowOffset: {
+                                                        width: 0,
+                                                        height: 0.8,
+                                                    },
+                                                    shadowOpacity: 0.11,
+                                                    shadowRadius: 0.75,
+
                                                     elevation: 0.5,
-                                                    backgroundColor: colors.White
                                                 }}
                                                 onPress={() => handleSelected(item)}
                                                 key={index}
