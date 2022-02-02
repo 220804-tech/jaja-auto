@@ -29,15 +29,15 @@ export default function CardProductComponent(props) {
                     navigation.push("GiftDetails")
                 }
                 dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
-                ServiceProduct.getProduct(reduxAuth, item.slug).then(async res => {
+                ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
                     error = false
                     if (res === 404) {
                         Utils.alertPopUp('Sepertinya data tidak ditemukan!')
                         dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                         navigation.goBack()
                     } else if (res?.data) {
-                        await dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
-                        await dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                         setTimeout(() => dispatch({ type: 'SET_FILTER_LOCATION', payload: true }), 7000);
                     }
                 }).catch(err => {
@@ -108,7 +108,7 @@ export default function CardProductComponent(props) {
                         <>
                             <Text adjustsFontSizeToFit style={Ps.priceBefore}>{item.price}</Text>
                             <View style={styles.row_start_center}>
-                                <Text adjustsFontSizeToFit style={Ps.priceAfter}>{item.priceDiscount}</Text>
+                                <Text adjustsFontSizeToFit style={[Ps.price, { color: colors.BlueJaja }]}>{item.priceDiscount}</Text>
                                 {item.isFlashsale ? <Image style={[styles.icon_16, { tintColor: colors.RedFlashsale, marginTop: '-1.5%', marginLeft: '2%' }]} source={require('../../assets/icons/flash.png')} /> : null}
                             </View>
                         </>

@@ -56,7 +56,7 @@ export default function CategoryComponent() {
 
     const handleCategory = () => {
         // dispatch({ type: 'SET_CATEGORY_STATUS', payload: value })
-        navigation.navigate('Category');
+        navigation.navigate('Category');        
     }
     const handleSelected = (res) => {
         handleFetch(res)

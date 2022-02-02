@@ -134,7 +134,6 @@ export default function HomeScreen() {
 
     }
 
-
     useFocusEffect(
         useCallback(() => {
             return () => {
@@ -506,6 +505,8 @@ export default function HomeScreen() {
                 headerMinHeight={Platform.OS === 'ios' ? Hp('5.5%') : Hp('7%')}
                 headerMaxHeight={Hp('30%')}
                 extraScrollHeight={20}
+                // statusBarColor='transparent'
+                backgroundColor='#fcfcfc'
                 navbarColor={colors.BlueJaja}
                 titleStyle={style.titleStyle}
                 title={title()}

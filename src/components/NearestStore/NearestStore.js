@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useState } from 'react'
 import { View, Text, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native'
 import { styles, Ps, useNavigation, FastImage, colors, Wp, useFocusEffect, RFValue, ServiceProduct, Utils } from '../../export'
 import { useSelector, useDispatch } from 'react-redux'
@@ -12,17 +12,6 @@ export default function NearestStore() {
     const reduxdashNearestStore = useSelector(state => state.dashboard.nearestStore)
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxLoad = useSelector(state => state.product.productLoad)
-
-
-    useEffect(() => {
-    }, [])
-
-
-    useFocusEffect(
-        useCallback(() => {
-        }, []),
-    );
-
 
 
     const handleShowDetail = async (item, status) => {
@@ -85,7 +74,7 @@ export default function NearestStore() {
                     renderItem={({ item, index }) => {
                         return (
                             <TouchableOpacity
-                                style={[Ps.cardProduct, { marginLeft: 1, marginRight: 9, width: Wp('33%'), height: Wp('57%'), alignItems: 'center' }]}
+                                style={[Ps.cardProductSmall]}
                                 onPress={() => handleShowDetail(item, false)} >
                                 <View style={[styles.column, { height: Wp('33%'), width: '100%' }]}>
                                     <FastImage
@@ -105,10 +94,10 @@ export default function NearestStore() {
                                             <View style={styles.row_center}>
                                                 <Text style={[Ps.priceBeforeSmall, styles.mr_3,]}>{item.price}</Text>
                                                 <View style={{ zIndex: 1, backgroundColor: colors.RedFlashsale, paddingVertical: '1%', paddingHorizontal: '2%', borderRadius: 3, justifyContent: 'center', alignItems: 'center' }}>
-                                                    <Text style={[styles.font_10, { fontSize: RFValue(5, 480), textAlignVertical: 'center', textAlign: 'center', marginBottom: '-1%', color: colors.White, }]}>{item.discount}%</Text>
+                                                    <Text style={[Ps.discountSmall, { fontSize: RFValue(5, 480), textAlignVertical: 'center', textAlign: 'center', marginBottom: '-1%', color: colors.White, }]}>{item.discount}%</Text>
                                                 </View>
                                             </View>
-                                            <Text style={Ps.priceAfter}>{item.priceDiscount}</Text>
+                                            <Text style={Ps.priceSmall}>{item.priceDiscount}</Text>
                                         </>
                                         :
                                         <Text style={[Ps.priceSmall, { color: colors.BlueJaja }]}>{item.price}</Text>

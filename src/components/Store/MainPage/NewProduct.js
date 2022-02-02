@@ -15,15 +15,6 @@ export default function NewProduct() {
     const reduxAuth = useSelector(state => state.user.auth)
     const reduxLoad = useSelector(state => state.product.productLoad)
 
-    useEffect(() => {
-    }, [])
-
-
-    useFocusEffect(
-        useCallback(() => {
-        }, []),
-    );
-
 
 
     // const handleShowDetail = item => {
@@ -90,7 +81,7 @@ export default function NewProduct() {
                     renderItem={({ item, index }) => {
                         return (
                             <TouchableOpacity
-                                style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('57%'), alignItems: 'center', elevation: 2 }]}
+                                style={[Ps.cardProductSmall]}
                                 onPress={() => handleShowDetail(item, false)} >
                                 <View style={[styles.column, { height: Wp('33%'), width: '100%' }]}>
                                     <FastImage
@@ -108,13 +99,13 @@ export default function NewProduct() {
                                     {item.isDiscount ?
                                         <>
                                             <View style={styles.row}>
-                                                <Text style={[Ps.priceBefore, styles.mr_3,]}>{item.price}</Text>
-                                                <Text style={[styles.font_10, styles.T_medium, { zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '1%', paddingHorizontal: '3%', borderRadius: 3 }]}>{item.discount}%</Text>
+                                                <Text style={[Ps.priceBeforeSmall, styles.mr_3,]}>{item.price}</Text>
+                                                <Text style={[Ps.discountSmall, styles.T_medium,]}>{item.discount}%</Text>
                                             </View>
-                                            <Text style={Ps.priceAfter}>{item.priceDiscount}</Text>
+                                            <Text style={Ps.priceSmall}>{item.priceDiscount}</Text>
                                         </>
                                         :
-                                        <Text style={[Ps.price, { color: colors.BlueJaja }]}>{item.price}</Text>
+                                        <Text style={[Ps.priceSmall, { color: colors.BlueJaja }]}>{item.price}</Text>
                                     }
                                 </View>
                                 <View style={[Ps.location, { width: '94%' }]}>

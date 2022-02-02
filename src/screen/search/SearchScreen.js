@@ -10,6 +10,7 @@ export default function SearchScreen(props) {
     const reduxSlug = useSelector(state => state.search.slug)
     const reduxStore = useSelector(state => state.store.store)
     const reduxAuth = useSelector(state => state.auth.auth)
+    const loadStore = useSelector(state => state.store.loadStore)
 
     const [count, setCount] = useState(0)
     const [historySearch, sethistorySearch] = useState([])
@@ -32,6 +33,7 @@ export default function SearchScreen(props) {
             setFocus(true)
         }, []),
     );
+
     const getItem = () => {
         try {
             EncryptedStorage.getItem('historySearching').then(res => {
@@ -49,45 +51,46 @@ export default function SearchScreen(props) {
     }
 
     const handleSearch = (text) => {
-        if (text) {
-            var myHeaders = new Headers();
-            myHeaders.append("Cookie", "ci_session=bk461otlv7le6rfqes5eim0h9cf99n3u");
+        try {
+            if (text) {
+                var myHeaders = new Headers();
+                myHeaders.append("Cookie", "ci_session=bk461otlv7le6rfqes5eim0h9cf99n3u");
 
-            var requestOptions = {
-                method: 'GET',
-                headers: myHeaders,
-                redirect: 'follow'
-            };
+                var requestOptions = {
+                    method: 'GET',
+                    headers: myHeaders,
+                    redirect: 'follow'
+                };
 
-            fetch(`https://jaja.id/backend/product/search?limit=5&keyword=${text}`, requestOptions)
-                .then(response => response.json())
-                .then(result => {
-                    setproductSearch([])
-                    if (result.status.code == 200 || result.status.code == 204) {
-                        setstoreSearch(result.data.store)
-                        if (result.data.product.length) {
-                            setproductSearch(result.data.product)
-                        } else {
-                            setproductSearch([])
+                fetch(`https://jaja.id/backend/product/search?limit=5&keyword=${text}`, requestOptions)
+                    .then(response => response.json())
+                    .then(result => {
+                        setproductSearch([])
+                        if (result.status.code == 200 || result.status.code == 204) {
+                            setstoreSearch(result.data.store)
+                            if (result.data.product.length) {
+                                setproductSearch(result.data.product)
+                            } else {
+                                setproductSearch([])
+                            }
+
+                            if (result.data.category.length) {
+                                setcategorySearch(result.data.category)
+                            } else {
+                                setcategorySearch([])
+                            }
+                            setCount(count + 1)
                         }
-
-                        if (result.data.category.length) {
-                            setcategorySearch(result.data.category)
-                        } else {
-                            setcategorySearch([])
-                        }
-                        setCount(count + 1)
-                    }
-                }).catch(error => console.log('error', error));
-        } else {
-            console.log("test")
-            setproductSearch([])
-            setstoreSearch([])
-            setCount(0)
+                    }).catch(error => console.log('error', error));
+            } else {
+                console.log("test")
+                setproductSearch([])
+                setstoreSearch([])
+                setCount(0)
+            }
+        } catch (error) {
+            Utils.handleError(error, 'Error with status code : 21091')
         }
-
-
-
     }
 
     const handleClear = () => {
@@ -96,8 +99,6 @@ export default function SearchScreen(props) {
         sethistorySearch(data)
         setCount(count + 1)
     }
-
-
 
     const handleShowDetail = async (item, status) => {
         let error = true;
@@ -135,28 +136,31 @@ export default function SearchScreen(props) {
             }
         }, 20000);
     }
-    const handleSaveKeyword = (keyword) => {
-        console.log("🚀 ~ file: SearchScreen.js ~ line 145 ~ handleSaveKeyword ~ keyword", keyword)
-        dispatch({ type: 'SET_KEYWORD', payload: String(keyword).toLocaleLowerCase() })
 
-        EncryptedStorage.getItem('historySearching').then(res => {
-            console.log("🚀 ~ file: SearchScreen.js ~ line 149 ~ EncryptedStorage.getItem ~ res", res)
-            if (res) {
-                let data = JSON.parse(res);
-                if (!data.includes(keyword)) {
-                    data.push(String(keyword).toLocaleLowerCase())
-                    EncryptedStorage.setItem("historySearching", JSON.stringify(data))
+    const handleSaveKeyword = (keyword) => {
+        try {
+            dispatch({ type: 'SET_KEYWORD', payload: String(keyword).toLocaleLowerCase() })
+
+            EncryptedStorage.getItem('historySearching').then(res => {
+                if (res) {
+                    let data = JSON.parse(res);
+                    if (!data.includes(keyword)) {
+                        data.push(String(keyword).toLocaleLowerCase())
+                        EncryptedStorage.setItem("historySearching", JSON.stringify(data))
+                    }
                 }
-            }
-        })
+            })
+        } catch (error) {
+            Utils.handleError(error, 'Error with status code : 21093')
+
+        }
     }
+
     const handleSearchInput = (text) => {
-        console.log("🚀 ~ file: SearchScreen.js ~ line 102 ~ handleSearchInput ~ text", text)
         if (text && String(text).length >= 1) {
             handleFetch(text)
             handleSaveKeyword(text)
         } else {
-            console.log('handleSearchInputt', text.length)
             setproductSearch([])
             setstoreSearch([])
             setCount(0)
@@ -166,53 +170,10 @@ export default function SearchScreen(props) {
     }
 
     const handleFetch = (keyword) => {
-        let text = String(keyword).toLocaleLowerCase();
-        dispatch({ type: 'SET_SEARCH_LOADING', payload: true })
-        navigation.navigate('ProductSearch')
-        var myHeaders = new Headers();
-        myHeaders.append("Cookie", "ci_session=bk461otlv7le6rfqes5eim0h9cf99n3u");
-
-        var requestOptions = {
-            method: 'GET',
-            headers: myHeaders,
-            redirect: 'follow'
-        };
-        dispatch({ type: 'SET_CATEGORY_NAME', payload: null })
-
-        dispatch({ type: 'SET_SEARCH', payload: [] })
-        dispatch({ type: 'SET_FILTERS', payload: [] })
-        dispatch({ type: 'SET_SORTS', payload: [] })
-        dispatch({ type: 'SET_KEYWORD', payload: '' })
-        fetch(`https://jaja.id/backend/product/search/result?page=1&limit=50&keyword=${text}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                dispatch({ type: 'SET_SEARCH', payload: result.data.items })
-                dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
-                dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
-                dispatch({ type: 'SET_KEYWORD', payload: text })
-                dispatch({ type: 'SET_SEARCH_LOADING', payload: false })
-            })
-            .catch(error => {
-                dispatch({ type: 'SET_SEARCH_LOADING', payload: false })
-                Utils.handleError(error, "Error with status code : 12050")
-            });
-        dispatch({ type: 'SET_SLUG', payload: String(text).toLocaleLowerCase() })
-        setTimeout(() => {
-            CheckSignal().then(resp => {
-                handleLoopSignal(resp, text)
-                if (resp.connect === false) {
-                    setTimeout(() => {
-                        CheckSignal().then(respo => {
-                            handleLoopSignal(respo, text)
-                        })
-                    }, 7000);
-                }
-            })
-        }, 7000);
-    }
-
-    const handleLoopSignal = (signal, text) => {
-        if (signal.connect === true) {
+        try {
+            let text = String(keyword).toLocaleLowerCase();
+            dispatch({ type: 'SET_SEARCH_LOADING', payload: true })
+            navigation.navigate('ProductSearch')
             var myHeaders = new Headers();
             myHeaders.append("Cookie", "ci_session=bk461otlv7le6rfqes5eim0h9cf99n3u");
 
@@ -221,65 +182,150 @@ export default function SearchScreen(props) {
                 headers: myHeaders,
                 redirect: 'follow'
             };
-            fetch(`https://jaja.id/backend/product/search/result?page=1&limit=20&keyword=${text}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
+            dispatch({ type: 'SET_CATEGORY_NAME', payload: null })
+
+            dispatch({ type: 'SET_SEARCH', payload: [] })
+            dispatch({ type: 'SET_FILTERS', payload: [] })
+            dispatch({ type: 'SET_SORTS', payload: [] })
+            dispatch({ type: 'SET_KEYWORD', payload: '' })
+            fetch(`https://jaja.id/backend/product/search/result?page=1&limit=50&keyword=${text}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    console.log("🚀 ~ file: SearchScreen.js ~ line 127 ~ handleFetch ~ result", result.data)
                     dispatch({ type: 'SET_SEARCH', payload: result.data.items })
                     dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
                     dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
                     dispatch({ type: 'SET_KEYWORD', payload: text })
+                    dispatch({ type: 'SET_SEARCH_LOADING', payload: false })
                 })
                 .catch(error => {
+                    dispatch({ type: 'SET_SEARCH_LOADING', payload: false })
                     Utils.handleError(error, "Error with status code : 12050")
                 });
-        } else {
-            ToastAndroid.show("Periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.CENTER)
+            dispatch({ type: 'SET_SLUG', payload: String(text).toLocaleLowerCase() })
+            setTimeout(() => {
+                CheckSignal().then(resp => {
+                    handleLoopSignal(resp, text)
+                    if (resp.connect === false) {
+                        setTimeout(() => {
+                            CheckSignal().then(respo => {
+                                handleLoopSignal(respo, text)
+                            })
+                        }, 7000);
+                    }
+                })
+            }, 7000);
+
+        } catch (error) {
+            Utils.handleError(error, 'Error with status code : 21092')
+
         }
     }
 
+    const handleLoopSignal = (signal, text) => {
+        try {
+            if (signal.connect === true) {
+                var myHeaders = new Headers();
+                myHeaders.append("Cookie", "ci_session=bk461otlv7le6rfqes5eim0h9cf99n3u");
 
-    const handleSelectedToko = (item) => {
-        if (reduxStore && Object.keys(reduxStore).length) {
-            if (reduxStore.name != item.name) {
+                var requestOptions = {
+                    method: 'GET',
+                    headers: myHeaders,
+                    redirect: 'follow'
+                };
+                fetch(`https://jaja.id/backend/product/search/result?page=1&limit=20&keyword=${text}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
+                    .then(response => response.json())
+                    .then(result => {
+                        dispatch({ type: 'SET_SEARCH', payload: result.data.items })
+                        dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
+                        dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
+                        dispatch({ type: 'SET_KEYWORD', payload: text })
+                    })
+                    .catch(error => {
+                        Utils.handleError(error, "Error with status code : 12050")
+                    });
+            } else {
+                Utils.alertPopUp("Periksa kembali koneksi internet anda!")
+            }
+
+        } catch (error) {
+            Utils.handleError(error, 'Error with status code : 21092')
+
+        }
+
+
+    }
+
+
+    const handleSelectedToko = async (item) => {
+        try {
+            if (!loadStore) {
+                navigation.push('Store', { slug: item.slug })
+                dispatch({ "type": 'SET_STORE_LOAD', payload: true })
+                dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: true })
                 dispatch({ "type": 'SET_STORE', payload: {} })
-                dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
-            }
-        }
-        ServiceStore.getStore(item.slug, reduxAuth).then(res => {
-            if (res) {
-                dispatch({ "type": 'SET_STORE', payload: res })
-                navigation.navigate('Store')
-            }
-        })
-        dispatch({ type: 'SET_CATEGORY_NAME', payload: null })
 
-        let obj = {
-            slug: item.slug,
-            page: 1,
-            limit: 100,
-            keyword: '',
-            price: '',
-            condition: '',
-            preorder: '',
-            brand: '',
-            sort: 'produk.id_produk-desc',
-        }
 
-        ServiceStore.getStoreProduct(obj).then(res => {
-            console.log("🚀 ~ file: SearchScreen.js ~ line 234 ~ ServiceStore.getStoreProduct ~ res", res)
-            if (res) {
-                dispatch({ "type": 'SET_NEW_PRODUCT', payload: res.items })
+                let slg = item.slug
+                ServiceStore.getStore(slg, reduxAuth).then(res => {
+                    if (res) {
+                        dispatch({ "type": 'SET_STORE', payload: res })
+                    }
+                    dispatch({ "type": 'SET_STORE_LOAD', payload: false })
+                }).catch(err => [
+                    dispatch({ "type": 'SET_STORE_LOAD', payload: false })
+
+                ])
             }
-        })
-        obj.sort = ''
-        ServiceStore.getStoreProduct(obj).then(res => {
-            if (res) {
-                dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
-                dispatch({ "type": 'SET_STORE_FILTER', payload: res.filters })
-                dispatch({ "type": 'SET_STORE_SORT', payload: res.sorts })
-            }
-        })
+        } catch (error) {
+            dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: false })
+            dispatch({ "type": 'SET_STORE_LOAD', payload: false })
+
+            Utils.handleError(error, 'Error with status code : 31001')
+        }
+        // try {
+        //     if (reduxStore && Object.keys(reduxStore).length) {
+        //         if (reduxStore.name != item.name) {
+        //             dispatch({ "type": 'SET_STORE', payload: {} })
+        //             dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
+        //         }
+        //     }
+        //     ServiceStore.getStore(item.slug, reduxAuth).then(res => {
+        //         if (res) {
+        //             dispatch({ "type": 'SET_STORE', payload: res })
+        //             navigation.navigate('Store')
+        //         }
+        //     })
+        //     dispatch({ type: 'SET_CATEGORY_NAME', payload: null })
+
+        //     let obj = {
+        //         slug: item.slug,
+        //         page: 1,
+        //         limit: 100,
+        //         keyword: '',
+        //         price: '',
+        //         condition: '',
+        //         preorder: '',
+        //         brand: '',
+        //         sort: 'produk.id_produk-desc',
+        //     }
+
+        //     ServiceStore.getStoreProduct(obj).then(res => {
+        //         console.log("🚀 ~ file: SearchScreen.js ~ line 234 ~ ServiceStore.getStoreProduct ~ res", res)
+        //         if (res) {
+        //             dispatch({ "type": 'SET_NEW_PRODUCT', payload: res.items })
+        //         }
+        //     })
+        //     obj.sort = ''
+        //     ServiceStore.getStoreProduct(obj).then(res => {
+        //         if (res) {
+        //             dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
+        //             dispatch({ "type": 'SET_STORE_FILTER', payload: res.filters })
+        //             dispatch({ "type": 'SET_STORE_SORT', payload: res.sorts })
+        //         }
+        //     })
+        // } catch (error) {
+        //     Utils.handleError(error, 'Error with status code : 21092')
+        // }
     }
 
     const handleSelectedCategory = (res) => {

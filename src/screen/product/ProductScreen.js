@@ -29,6 +29,7 @@ export default function ProductScreen(props) {
     const reduxLoad = useSelector(state => state.product.productLoad)
     const reduxTemporary = useSelector(state => state.product.productTemporary)
     const filterLocation = useSelector(state => state.product.filterLocation)
+    const loadStore = useSelector(state => state.store.loadStore)
 
 
 
@@ -153,7 +154,7 @@ export default function ProductScreen(props) {
 
     useEffect(() => {
         if (filterLocation) {
-            if (reduxAuth && reduxProduct?.sellerTerdekat.length && reduxUser?.user?.id && reduxProduct?.category?.slug) {
+            if (reduxAuth && reduxProduct?.sellerTerdekat?.length && reduxUser?.user?.id && reduxProduct?.category?.slug) {
                 FilterLocation(reduxProduct.sellerTerdekat, reduxUser.user.location, reduxProduct.category.slug, reduxAuth, dispatch)
             }
 
@@ -330,43 +331,30 @@ export default function ProductScreen(props) {
 
     }
 
-    const handleStore = async () => {
+    const handleStore = () => {
         try {
-            await navigation.push('Store')
-            dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: true })
+            if (!loadStore) {
+                navigation.push('Store', { slug: reduxProduct.store.slug })
+                dispatch({ "type": 'SET_STORE_LOAD', payload: true })
 
-            if (reduxStore && Object.keys(redxfuxStore).length) {
-                if (reduxStore.name != seller.name) {
-                    dispatch({ "type": 'SET_STORE', payload: {} })
-                    dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
-                }
-            }
-            let slg = reduxProduct.store.slug
-            ServiceStore.getStore(slg, reduxAuth).then(res => {
-                if (res) {
-                    dispatch({ "type": 'SET_STORE', payload: res })
-                }
-            })
-            let obj = {
-                slug: slg,
-                page: 1,
-                limit: 10,
-                keyword: '',
-                price: '',
-                condition: '',
-                preorder: '',
-                brand: '',
-                sort: 'produk.id_produk-desc',
-            }
-            ServiceStore.getStoreProduct(obj).then(res => {
-                if (res) {
-                    dispatch({ "type": 'SET_NEW_PRODUCT', payload: res.items })
-                    dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: false })
+                dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: true })
+                dispatch({ "type": 'SET_STORE', payload: {} })
 
-                }
-            })
+                let slg = reduxProduct.store.slug
+                ServiceStore.getStore(slg, reduxAuth).then(res => {
+                    if (res) {
+                        dispatch({ "type": 'SET_STORE', payload: res })
+                    }
+                    dispatch({ "type": 'SET_STORE_LOAD', payload: false })
+                }).catch(err => [
+                    dispatch({ "type": 'SET_STORE_LOAD', payload: false })
+                ])
+            }
         } catch (error) {
+            dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: false })
+            dispatch({ "type": 'SET_STORE_LOAD', payload: false })
 
+            Utils.handleError(error, 'Error with status code : 31001')
         }
     }
 
@@ -426,7 +414,7 @@ export default function ProductScreen(props) {
     const title = () => {
         let arrImage = [require('../../assets/images/JajaId.png')]
         return (
-            <View style={{ width: Wp('100%'), height: Wp('100%'), backgroundColor: colors.White, marginTop: '-11%' }}>
+            <View style={{ width: Wp('100%'), height: Wp('100%'), backgroundColor: colors.White, marginTop: Platform.OS === 'ios' ? '-11%' : 0 }}>
                 {
                     Platform.OS === 'ios' ?
                         <View style={{
@@ -439,6 +427,7 @@ export default function ProductScreen(props) {
                                 dotColor={colors.White}
                                 activeDotColor={colors.BlueJaja}
                                 paginationStyle={{ bottom: 10 }}
+                            // style={{ backgroundColor: colors.BlueJaja, flex: 0, justifyContent: 'center', alignItems: 'center' }}
                             >
                                 {
                                     reduxLoad === false && reduxProduct?.image?.length > 0 ?
@@ -1171,6 +1160,7 @@ export default function ProductScreen(props) {
                 headerMaxHeight={Platform.OS === 'ios' ? Hp('45%') : Wp('100%')}
                 extraScrollHeight={20}
                 statusBarColor='transparent'
+                backgroundColor='#FFFF'
                 navbarColor={colors.BlueJaja}
                 titleStyle={style.titleStyle}
                 title={title()}
@@ -1214,7 +1204,11 @@ export default function ProductScreen(props) {
                     <Image source={require('../../assets/icons/cart.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: flashsale ? colors.RedFlashsale : colors.BlueJaja }} />
                 </TouchableOpacity>
                 <Button disabled={disableCart} onPress={() => handleAddCart("buyNow")} style={{ width: '50%', height: '100%', backgroundColor: disableCart ? colors.BlackGrey : flashsale ? colors.RedFlashsale : colors.BlueJaja }} contentStyle={{ width: '100%', height: '100%' }} color={disableCart ? colors.BlackGrayScale : flashsale ? colors.RedFlashsale : colors.BlueJaja} labelStyle={[styles.font_14, styles.T_semi_bold, { color: colors.White }]} mode="contained">
-                    {reduxProduct.stock == '0' ? 'Stok Habis' : reduxProduct.statusProduk != 'live' ? 'Diarsipkan' : 'Beli Sekarang'}
+                    {reduxProduct?.statusProduk ?
+                        reduxProduct.stock == '0' ? 'Stok Habis' : reduxProduct.statusProduk != 'live' ? 'Diarsipkan' : 'Beli Sekarang' :
+
+                        'Beli Sekarang'
+                    }
                 </Button>
             </View>
             {Object.keys(reduxProduct).length ?

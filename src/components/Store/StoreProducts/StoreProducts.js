@@ -13,11 +13,11 @@ export default function StoreProducts() {
     // const data = useSelector(state => state.search.searchProduct)
     const keyword = useSelector(state => state.search.keywordSearch)
     const reduxFilters = useSelector(state => state.store.storeFilter)
+    console.log("🚀 ~ file: StoreProducts.js ~ line 16 ~ StoreProducts ~ reduxFilters", reduxFilters)
     const reduxSorts = useSelector(state => state.store.storeSort)
 
     const reduxmaxProduct = useSelector(state => state.store.maxProduct)
     const data = useSelector(state => state.store.storeProduct)
-    console.log("🚀 ~ file: StoreProducts.js ~ line 20 ~ StoreProducts ~ data", data)
     const textSearch = useSelector(state => state.store.storeKeyword)
     const reduxStore = useSelector(state => state.store.store)
 
@@ -204,12 +204,12 @@ export default function StoreProducts() {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: colors.White }]}>
             {loading ? <Loading /> : null}
 
             {
-                data && data.length ?
-                    <View style={[styles.column, { flex: 1, backgroundColor: colors.White }]}>
+                data?.length ?
+                    <View style={[styles.column, styles.pb_5, { flex: 1, backgroundColor: colors.White }]}>
 
                         <View style={[styles.row_around_center, { width: '100%', elevation: 1 }]}>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -232,37 +232,14 @@ export default function StoreProducts() {
 
                         </View>
 
-                        <View style={[styles.column, styles.px_3, { flex: 1, justifyContent: "center", alignItems: 'flex-start' }]}>
-                            <ScrollView
-                                refreshControl={
-                                    <RefreshControl
-                                        refreshing={refreshing}
-                                        onRefresh={onRefresh}
-                                    />
-                                }
-                                onScroll={Animated.event(
-                                    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                                    {
-                                        useNativeDriver: false,
-                                        listener: event => {
-                                            if (isCloseToBottom(event.nativeEvent)) {
-                                                handleLoadMore()
-                                            }
-                                        }
-                                    }
-                                )}
-                                onMomentumScrollEnd={({ nativeEvent }) => {
-                                    if (isCloseToBottom(nativeEvent)) {
-                                        handleLoadMore()
-                                    }
-                                }}
-                            >
-                                <CardProduct data={data} />
+                        <ScrollView nestedScrollEnabled={true} style={[styles.column, styles.px_3]}>
 
-                                {reduxmaxProduct || data.length < 2 ? <Text style={[styles.font_14, styles.my_5, { alignSelf: 'center', color: colors.BlueJaja, width: Wp('100%'), textAlign: 'center' }]}>Semua produk berhasil ditampilkan.</Text> : <ShimmerCardProduct />}
-                            </ScrollView>
+                            <CardProduct data={data} />
 
-                        </View>
+                            {reduxmaxProduct && data.length < 1 ? <Text style={[styles.font_14, styles.my_5, { alignSelf: 'center', color: colors.BlueJaja, width: Wp('100%'), textAlign: 'center' }]}>Semua produk berhasil ditampilkan.</Text> : null}
+                            {/* </ScrollView> */}
+
+                        </ScrollView>
 
                     </View >
                     : <Text style={[styles.font_14, styles.mt_5, { alignSelf: 'center' }]}>Produk tidak ditemukan!</Text>
@@ -282,7 +259,7 @@ export default function StoreProducts() {
                 </View>
 
                 <ScrollView style={styles.mb_5}>
-                    {reduxFilters && reduxFilters.length ?
+                    {reduxFilters?.length ?
                         reduxFilters.map((item, index) => {
                             return (
                                 <View key={String(index) + "XP"} style={[styles.mb_4]}>

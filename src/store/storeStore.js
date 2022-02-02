@@ -7,8 +7,8 @@ const initialState = {
     maxProduct: false,
     positionIndex: 1,
     storeFilter: [],
-    storeSort: []
-
+    storeSort: [],
+    loadStore: false
 
 }
 export default function storeStore(state = initialState, action) {
@@ -18,6 +18,8 @@ export default function storeStore(state = initialState, action) {
             return { ...state, store: payload }
         case 'SET_STORE_PRODUCT':
             return { ...state, storeProduct: payload }
+        case 'SET_STORE_LOAD':
+            return { ...state, loadStore: payload }
         case 'SET_NEW_PRODUCT':
             return { ...state, newProduct: payload }
         case 'SET_NEW_PRODUCT_LOAD':

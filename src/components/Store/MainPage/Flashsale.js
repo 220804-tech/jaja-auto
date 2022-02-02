@@ -17,10 +17,6 @@ export default function NewProduct(props) {
     }, [])
 
 
-    useFocusEffect(
-        useCallback(() => {
-        }, []),
-    );
 
 
     const reduxLoad = useSelector(state => state.product.productLoad)

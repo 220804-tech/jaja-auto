@@ -23,10 +23,6 @@ export default function MainPage() {
 
     const image = useSelector(state => state.store.store.image)
 
-    useEffect(() => {
-
-    }, [vouchers, reduxAuth, reduxStore])
-
     const handleShowDetail = async (item, status) => {
         let error = true;
         try {
@@ -63,6 +59,8 @@ export default function MainPage() {
             }
         }, 20000);
     }
+
+
 
     // const handleLoadMore = () => {
     //     if (reduxLoadmore) {
@@ -141,7 +139,7 @@ export default function MainPage() {
 
     return (
         <View style={[styles.column_start, { flex: 1, width: Wp('100%'), backgroundColor: colors.White }]}>
-            <ScrollView contentContainerStyle={{ alignItems: 'flex-start' }}>
+            <ScrollView nestedScrollEnabled={true} contentContainerStyle={{ alignItems: 'flex-start' }}>
                 <View style={[styles.column, { width: Wp('100%') }]}>
                     {vouchers && vouchers.length !== 0 ?
                         <View style={[styles.column_center_start, styles.my_2]}>
@@ -153,8 +151,6 @@ export default function MainPage() {
                                     keyExtractor={(item) => item.id}
                                     data={vouchers}
                                     renderItem={({ item }) => {
-                                        console.log("🚀 ~ file: MainPage.js ~ line 126 ~ MainPage ~ item", item)
-
                                         return (
                                             <View style={[styles.row_start_center, styles.my_3, { width: Wp('45%'), height: Wp('17%'), marginRight: 10 }]}>
                                                 <View style={[styles.row_between_center, styles.pr_2, { width: '100%', height: '100%', backgroundColor: colors.BlueJaja }]}>
@@ -181,7 +177,6 @@ export default function MainPage() {
 
                                     }}
                                 />
-                                {console.log("🚀 ~~~~~~~~~~~~~~~~~ \n\n")}
                             </ScrollView> */}
                             <View style={[styles.px_4, { paddingVertical: '0.2%', backgroundColor: colors.BlueJaja, width: Wp('60%'), borderBottomRightRadius: 100, }]}>
                                 <Text style={[styles.font_14, styles.T_medium, { color: colors.White, width: '80%' }]}>
@@ -236,7 +231,7 @@ export default function MainPage() {
                         </View>
                         : null
                     }
-                    {image && image.promoBanner && image.promoBanner.length ?
+                    {image?.promoBanner?.length ?
                         <View style={[styles.column_center_start, { width: Wp('100%'), height: Wp('50%'), backgroundColor: 'white' }]}>
                             <Swiper
                                 autoplayTimeout={3}
@@ -255,10 +250,7 @@ export default function MainPage() {
                                                 <Image key={String(key) + 'y'} style={{ width: Wp('100%'), height: Wp('50%'), opacity: 0.9 }}
                                                     source={{ uri: item }}
                                                 />
-                                                :
-                                                <Image key={String(key) + 'z'} style={{ width: Wp('100%'), height: Wp('50%'), resizeMode: 'center', tintColor: colors.Silver }}
-                                                    source={require('../../../assets/images/JajaId.png')}
-                                                />}
+                                                : null}
                                         </View>
                                     );
                                 })}
@@ -266,24 +258,30 @@ export default function MainPage() {
                         </View>
                         : null
                     }
+                    {image?.mainBanner || image?.promoBanner?.length || products?.length ?
+                        <View style={styles.column}>
+                            {image?.mainBanner ?
 
-                    {image && image.mainBanner ?
-                        // <View style={[styles.column_center_start, { width: Wp('100%'), height: Wp('30%'), backgroundColor: 'grey' }]}>
-                        <Image style={{ width: Wp('100%'), height: Wp('50%'), resizeMode: 'cover' }} source={{ uri: image.mainBanner }} />
-                        // </View>
-                        : null
-                    }
-                    {image && image.promoBanner && image.promoBanner.length ?
-                        <>
-                            <View style={[styles.row, { width: Wp('100%'), height: Wp('50%') }]}>
-                                <View style={{ width: Wp('50%'), height: '100%' }}>
-                                    <Image style={{ width: Wp('50%'), height: '100%', resizeMode: 'cover' }} source={{ uri: image.promoBanner[3] ? image.promoBanner[3] : null }} />
-                                </View>
-                                <View style={{ width: Wp('50%'), height: Wp('50%') }}>
-                                    <Image style={{ width: Wp('50%'), height: Wp('50%'), resizeMode: 'cover' }} source={{ uri: image.promoBanner[5] ? image.promoBanner[4] : null }} />
-                                </View>
-                            </View>
-                            {/* <View style={[styles.row, styles.mb_2, { width: Wp('100%'), height: Wp('33.3%') }]}>
+                                // <View style={[styles.column_center_start, { width: Wp('100%'), height: Wp('30%'), backgroundColor: 'grey' }]}>
+                                <Image style={{ width: Wp('100%'), height: Wp('50%'), resizeMode: 'cover' }} source={{ uri: image.mainBanner }} />
+                                // </View>
+                                : null}
+
+                            {image?.promoBanner?.length ?
+                                <>
+                                    <View style={[styles.row, { width: Wp('100%'), height: Wp('50%') }]}>
+                                        {image.promoBanner[3] ?
+                                            <View style={{ width: Wp('50%'), height: '100%' }}>
+                                                <Image style={{ width: Wp('50%'), height: '100%', resizeMode: 'cover' }} source={{ uri: image.promoBanner[3] ? image.promoBanner[3] : null }} />
+                                            </View>
+                                            : null}
+                                        {image.promoBanner[5] ?
+                                            <View style={{ width: Wp('50%'), height: Wp('50%') }}>
+                                                <Image style={{ width: Wp('50%'), height: Wp('50%'), resizeMode: 'cover' }} source={{ uri: image.promoBanner[5] ? image.promoBanner[4] : null }} />
+                                            </View>
+                                            : null}
+                                    </View>
+                                    {/* <View style={[styles.row, styles.mb_2, { width: Wp('100%'), height: Wp('33.3%') }]}>
                                 <View style={{ width: Wp('33.3%'), height: Wp('33.3%') }}>
                                     <Image style={{ width: Wp('33.3%'), height: Wp('33.3%'), resizeMode: 'cover' }} source={{ uri: image.promoBanner[2] ? image.promoBanner[2] : null }} />
                                 </View>
@@ -295,32 +293,32 @@ export default function MainPage() {
                                 </View>
                             </View> */}
 
-                        </>
+                                </>
 
-                        : null}
+                                : null}
+                        </View>
+                        : <Text style={[styles.font_14, styles.mt_5, { alignSelf: 'center' }]}>Tidak ada data!</Text>}
                 </View>
                 <View style={[styles.column, styles.mt_3, styles.pb_5, { width: Wp('100%') }]}>
 
-                    <View style={styles.column}>
-                        {products?.length ?
+                    {products?.length ?
+                        <View style={styles.column}>
                             <View style={[styles.px_4, { paddingVertical: '0.2%', backgroundColor: colors.BlueJaja, width: Wp('60%'), borderBottomRightRadius: 100, }]}>
                                 <Text style={[styles.font_14, styles.T_medium, { color: colors.White, width: '80%' }]}>
                                     Produk terbaru
                                 </Text>
                             </View>
-                            :
+                            <NewProduct />
 
-                            <Text style={[styles.font_12, styles.mt_5, { textAlign: 'center' }]}>
-                                Produk tidak ditemukan!
-                            </Text>}
-                        {reduxStore.store.flashSale && reduxStore.store.flashSale.length ?
-                            <View style={{ width: Wp('100%') }}>
-                                <FlashsaleToko data={reduxStore.store.flashSale} />
-                            </View>
-                            : null
-                        }
-                        <NewProduct />
-                    </View>
+                            {reduxStore.store.flashSale && reduxStore.store.flashSale.length ?
+                                <View style={{ width: Wp('100%') }}>
+                                    <FlashsaleToko data={reduxStore.store.flashSale} />
+                                </View>
+                                : null
+                            }
+                        </View>
+                        :
+                        null}
                     {/* <FlatList
                         removeClippedSubviews={true} // Unmount components when outside of window 
                         initialNumToRender={2} // Reduce initial render amount
@@ -363,7 +361,7 @@ export default function MainPage() {
                                             <Text style={Ps.price}>{item.price}</Text>
                                         }
                                         <View style={Ps.location}>
-                                            <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
+                                            <Image style={Ps.locationIcon} source={require('../../../assets/icons/google-maps.png')} />
                                             <Text style={Ps.locarionName}>{item.location}</Text>
                                         </View>
                                     </View>

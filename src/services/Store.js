@@ -18,7 +18,6 @@ export async function getStore(slug, auth) {
             if (result.status.code === 200 || result.status.code === 204) {
                 return result.data;
             } else {
-
                 return null
             }
         })
@@ -41,17 +40,16 @@ export async function getStoreProduct(data) {
     return await fetch(`https://jaja.id/backend/product/store/${data.slug ? data.slug : ""}?page=${data.page}&limit=${data.limit}&keyword=${data.keyword ? data.keyword : ""}&filter_price=&filter_location=&filter_condition=${data.condition ? data.condition : ""}&filter_preorder=${data.preorder ? data.preorder : ""}&filter_brand=${data.brand ? data.brand : ""}&filter_category=${data.category ? data.category : ""}&sort=${data.sort ? data.sort : ""} `, requestOptions)
         .then(response => response.json())
         .then(result => {
-            console.log("🚀 ~ file: Store.js ~ line 44 ~ getStoreProduct ~ result", result.data)
             if (result.status.code === 200 || result.status.code === 204) {
                 return result.data;
             } else {
                 return null
-            }
+            }   
         })
         .catch(error => Utils.handleError(error, 'Error with status code : 12020'));
 }
 
-export async function gePtroductStore(data, dispatch) {
+export async function getProductStore(data, dispatch, newProduct) {
     try {
         var myHeaders = new Headers();
         myHeaders.append("Cookie", "ci_session=l1pjct5fi76ke1irrounf7lc3c5g81iv");
@@ -65,11 +63,16 @@ export async function gePtroductStore(data, dispatch) {
         return await fetch(`https://jaja.id/backend/product/store/${data.slug ? data.slug : ""}?page=${data.page}&limit=${data.limit}&keyword=${data.keyword ? data.keyword : ""}&filter_price=&filter_location=&filter_condition=${data.condition ? data.condition : ""}&filter_preorder=${data.preorder ? data.preorder : ""}&filter_brand=${data.brand ? data.brand : ""}&filter_category=${data.category ? data.category : ""}&sort=${data.sort ? data.sort : ""} `, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: Store.js ~ line 44 ~ getStoreProduct ~ result", result.data)
-                if (result.status.code === 200 || result.status.code === 204) {
-                    dispatch({ type: 'SET_STORE_PRODUCT', payload: result.items })
-                    dispatch({ type: 'SET_STORE_FILTER', payload: result.filters })
-                    dispatch({ type: 'SET_STORE_SORT', payload: result.sorts })
+                console.log("🚀 ~ file: Store.js ~ line 66 ~ getProductStore ~ result", result.data.items.length)
+                if (result?.status?.code === 200 || result?.status?.code === 204) {
+                    if (newProduct) {
+                        dispatch({ type: 'SET_STORE_PRODUCT', payload: result.data.items })
+                    } else {
+                        dispatch({ type: 'SET_NEW_PRODUCT', payload: result.data.items })
+
+                    }
+                    dispatch({ type: 'SET_STORE_FILTER', payload: result.data.filters })
+                    dispatch({ type: 'SET_STORE_SORT', payload: result.data.sorts })
                     return true
                 } else {
                     return null

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createRef, useCallback } from 'react'
+import React, { useState, createRef, useCallback } from 'react'
 import { SafeAreaView, View, Text, Image, TouchableOpacity, ToastAndroid, StyleSheet, ScrollView, Animated, RefreshControl, Dimensions, StatusBar } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import ActionSheet from "react-native-actions-sheet";
@@ -34,86 +34,88 @@ export default function ProductSearchScreen() {
     const searchLoading = useSelector(state => state.search.searchLoading)
 
 
-    useEffect(() => {
-        // setLoading(true)
-        // setTimeout(() => setLoading(false), 1500);
-
-    }, [searchLoading])
-
 
 
 
     const handleFetch = () => {
-        actionSheetRef.current?.setModalVisible(false)
-        dispatch({ type: 'SET_MAX_SEARCH', payload: false })
-        setTimeout(() => {
-            setLoading(true)
-        }, 200);
-        var myHeaders = new Headers();
-        myHeaders.append("Cookie", "ci_session=bk461otlv7le6rfqes5eim0h9cf99n3u");
+        try {
+            actionSheetRef.current?.setModalVisible(false)
+            dispatch({ type: 'SET_MAX_SEARCH', payload: false })
+            setTimeout(() => {
+                setLoading(true)
+            }, 200);
+            var myHeaders = new Headers();
+            myHeaders.append("Cookie", "ci_session=bk461otlv7le6rfqes5eim0h9cf99n3u");
 
-        var requestOptions = {
-            method: 'GET',
-            headers: myHeaders,
-            redirect: 'follow'
-        };
-        setPage(1)
+            var requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
+            setPage(1)
 
 
-        fetch(`https://jaja.id/backend/product/${categoryName ? 'category/' + categoryName : 'search/result'}?page=1&limit=100&keyword=${categoryName ? '' : keyword}&filter_category=${categoryName}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                if (result.status.code === 200 || result.status.code === 204) {
-                    dispatch({ type: 'SET_SEARCH', payload: result.data.items })
-                }
-                setTimeout(() => {
-                    setLoading(false)
-                }, 500);
-                // dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
-                // dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
-            })
-            .catch(error => {
-                Utils.handleError(error, 'Error with status code : 16001')
-            });
+            fetch(`https://jaja.id/backend/product/${categoryName ? 'category/' + categoryName : 'search/result'}?page=1&limit=100&keyword=${categoryName ? '' : keyword}&filter_category=${categoryName}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status.code === 200 || result.status.code === 204) {
+                        dispatch({ type: 'SET_SEARCH', payload: result.data.items })
+                    }
+                    setTimeout(() => {
+                        setLoading(false)
+                    }, 500);
+                    // dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
+                    // dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
+                })
+                .catch(error => {
+                    Utils.handleError(error, 'Error with status code : 16001')
+                });
+        } catch (error) {
+            Utils.handleError(error, 'Error with status code : 21087')
+        }
     }
 
     const handleReset = () => {
-        actionSheetRef.current?.setModalVisible(false)
-        dispatch({ type: 'SET_MAX_SEARCH', payload: false })
-        setTimeout(() => {
-            setLoading(true)
-        }, 200);
-        var myHeaders = new Headers();
-        myHeaders.append("Cookie", "ci_session=bk461otlv7le6rfqes5eim0h9cf99n3u");
+        try {
+            actionSheetRef.current?.setModalVisible(false)
+            dispatch({ type: 'SET_MAX_SEARCH', payload: false })
+            setTimeout(() => {
+                setLoading(true)
+            }, 200);
+            var myHeaders = new Headers();
+            myHeaders.append("Cookie", "ci_session=bk461otlv7le6rfqes5eim0h9cf99n3u");
 
-        var requestOptions = {
-            method: 'GET',
-            headers: myHeaders,
-            redirect: 'follow'
-        };
-        setLocation("")
-        setCondition("")
-        setStock("")
-        setSort('')
-        setPage(1)
+            var requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
+            setLocation("")
+            setCondition("")
+            setStock("")
+            setSort('')
+            setPage(1)
 
-        fetch(`https://jaja.id/backend/product/${categoryName ? 'category/' + categoryName : 'search/result'}?page=1&limit=50&keyword=${categoryName ? '' : keyword}&filter_category=${categoryName}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                console.log("🚀 ~ file: productSearchScreen.js ~ line 12112 ~ handleFetch ~ result", result)
-                if (result.status.code === 200 || result.status.code === 204) {
-                    dispatch({ type: 'SET_SEARCH', payload: result.data.items })
-                }
-                setTimeout(() => {
-                    setLoading(false)
-                }, 500);
-                // dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
-                // dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
-            })
-            .catch(error => {
-                Utils.handleError('Error with status code : 130001')
-            });
+            fetch(`https://jaja.id/backend/product/${categoryName ? 'category/' + categoryName : 'search/result'}?page=1&limit=50&keyword=${categoryName ? '' : keyword}&filter_category=${categoryName}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    console.log("🚀 ~ file: productSearchScreen.js ~ line 12112 ~ handleFetch ~ result", result)
+                    if (result.status.code === 200 || result.status.code === 204) {
+                        dispatch({ type: 'SET_SEARCH', payload: result.data.items })
+                    }
+                    setTimeout(() => {
+                        setLoading(false)
+                    }, 500);
+                    // dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
+                    // dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
+                })
+                .catch(error => {
+                    Utils.handleError('Error with status code : 130001')
+                });
 
+        } catch (error) {
+            Utils.handleError(error, 'Error with status code : 21088')
+        }
     }
 
     const handleFilter = () => {
@@ -192,23 +194,28 @@ export default function ProductSearchScreen() {
     }
 
     const fetchLoadmore = () => {
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow'
-        };
+        try {
+            var requestOptions = {
+                method: 'GET',
+                redirect: 'follow'
+            };
 
-        fetch(`https://jaja.id/backend/product/search/result?page=${page + 1}&limit=50&keyword=${keyword}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                if (result.status.code === 200) {
-                    if (result.data.items && result.data.items.length) {
-                        dispatch({ type: 'SET_SEARCH', payload: data.concat(result.data.items) })
-                    } else {
-                        dispatch({ type: 'SET_MAX_SEARCH', payload: true })
+            fetch(`https://jaja.id/backend/product/search/result?page=${page + 1}&limit=50&keyword=${keyword}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status.code === 200) {
+                        if (result.data.items && result.data.items.length) {
+                            dispatch({ type: 'SET_SEARCH', payload: data.concat(result.data.items) })
+                        } else {
+                            dispatch({ type: 'SET_MAX_SEARCH', payload: true })
+                        }
                     }
-                }
-            })
-            .catch(error => Utils.alertPopUp(String(error)) & setLoadmore(false));
+                })
+                .catch(error => Utils.alertPopUp(String(error)) & setLoadmore(false));
+        } catch (error) {
+            Utils.handleError(error, 'Error with status code : 21090')
+
+        }
     }
     const onRefresh = useCallback(() => {
         if (data && data.length) {
