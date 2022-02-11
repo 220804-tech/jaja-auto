@@ -70,22 +70,28 @@ export default function CategoryScreen() {
                         keyExtractor={(item, index) => String(index)}
                         renderItem={({ item, index }) => {
                             return (
-                                <TouchableOpacity
-                                    style={{ width: Wp('25%'), height: Wp('25%'), justifyContent: "center", alignItems: "center", elevation: 2, backgroundColor: pressed === index ? colors.White : '#f2f2f2', alignSelf: 'center' }}
-                                    onPress={() => setPressed(index)}>
-                                    <FastImage
-                                        style={{ width: Hp("5%"), height: Hp("5%"), }}
-                                        source={{
-                                            uri: item.icon,
-                                            headers: { Authorization: 'someAuthToken' },
-                                            priority: FastImage.priority.normal,
-                                        }}
-                                        resizeMode={FastImage.resizeMode.contain}
-                                    />
-                                    <Text adjustsFontSizeToFit style={[styles.font_11, { color: colors.BlueJaja, textAlign: 'center' }]}>
-                                        {item.name}
-                                    </Text>
-                                </TouchableOpacity>
+                                <>
+                                    {
+                                        item.name !== 'Gift' ?
+                                            <TouchableOpacity
+                                                style={{ width: Wp('25%'), height: Wp('25%'), justifyContent: "center", alignItems: "center", elevation: 2, backgroundColor: pressed === index ? colors.White : '#f2f2f2', alignSelf: 'center' }}
+                                                onPress={() => setPressed(index)}>
+                                                <FastImage
+                                                    style={{ width: Hp("5%"), height: Hp("5%"), }}
+                                                    source={{
+                                                        uri: item.icon,
+                                                        headers: { Authorization: 'someAuthToken' },
+                                                        priority: FastImage.priority.normal,
+                                                    }}
+                                                    resizeMode={FastImage.resizeMode.contain}
+                                                />
+                                                <Text adjustsFontSizeToFit style={[styles.font_11, { color: colors.BlueJaja, textAlign: 'center' }]}>
+                                                    {item.name}
+                                                </Text>
+                                            </TouchableOpacity>
+                                            : null
+                                    }
+                                </>
                             )
                         }}
                     />
@@ -117,7 +123,7 @@ export default function CategoryScreen() {
                                             }}
                                             resizeMode={FastImage.resizeMode.contain}
                                         />
-                                        <Text adjustsFontSizeToFit style={[styles.font_11, { color: colors.BlueJaja, textAlign: 'center' }]}>
+                                        <Text adjustsFontSizeToFit style={[styles.font_9, { color: colors.BlueJaja, textAlign: 'center' }]}>
                                             {item.name}
                                         </Text>
                                     </TouchableOpacity>
@@ -128,6 +134,6 @@ export default function CategoryScreen() {
                         <Text adjustsFontSizeToFit style={[styles.font_14, { marginTop: '2%' }]}>Kategori belum tersedia</Text>}
                 </View>
             </View>
-        </SafeAreaView>
+        </SafeAreaView >
     )
 }

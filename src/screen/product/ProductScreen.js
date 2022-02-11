@@ -353,9 +353,9 @@ export default function ProductScreen(props) {
         } catch (error) {
             dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: false })
             dispatch({ "type": 'SET_STORE_LOAD', payload: false })
-
             Utils.handleError(error, 'Error with status code : 31001')
         }
+        dispatch({ type: 'SET_KEYWORD', payload: '' })
     }
 
     const handleTrolley = () => {
@@ -539,14 +539,13 @@ export default function ProductScreen(props) {
 
                 let img64 = ''
                 await viewShotRef.current.capture().then(async uri => {
-                    console.log('do something with ', typeof uri);
                     await ImgToBase64.getBase64String(uri)
                         .then(base64String => {
                             let urlString = 'data:image/jpeg;base64,' + base64String;
                             img64 = urlString
-                            // console.log("🚀 ~ file: ProductScreen.js ~ line 545 ~ viewShotRef.current.capture ~ urlString", urlString)
                         })
                         .catch(err => console.log("cok"));
+                    setmodal(false)
                 });
                 const shareOptions = {
                     title: 'Jaja',
@@ -560,8 +559,10 @@ export default function ProductScreen(props) {
                     .catch((err) => {
                         err && console.log(err);
                     });
-            } catch (error) {
+                setmodal(false)
 
+            } catch (error) {
+                setmodal(false)
             }
         }, 1500);
 
@@ -1212,7 +1213,7 @@ export default function ProductScreen(props) {
                 </Button>
             </View>
             {Object.keys(reduxProduct).length ?
-                <Modal animationType="fade" transparent={true} visible={modal} onRequestClose={() => setmodal(!modal)}>
+                <Modal statusBarTranslucent={true} animationType="fade" transparent={true} visible={modal} onRequestClose={() => setmodal(!modal)}>
                     <View style={{ height: Hp('50%'), width: Wp('100%'), backgroundColor: colors.White, opacity: 0.95, zIndex: 9999, elevation: 11 }}>
                         <ViewShot ref={viewShotRef} options={{ format: "jpg" }}>
                             <View style={{ width: Wp('100%'), height: Wp('100%'), backgroundColor: colors.White }}>

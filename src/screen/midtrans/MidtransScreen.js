@@ -95,6 +95,7 @@ export default function MidtransScreen() {
         fetch(url, requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: MidtransScreen.js ~ line 98 ~ getPayment ~ result", result)
                 setTimeout(() => setloading(false), 3000);
                 console.log('payment_va_or_code_or_link', result.orderPaymentRecent.payment_va_or_code_or_link);
                 setView(result.orderPaymentRecent.payment_va_or_code_or_link);
@@ -177,7 +178,7 @@ export default function MidtransScreen() {
                             allowsFullscreenVideo={true}
                             scalesPageToFit={true}
                             originWhitelist={['*']}
-                            onLoad={(e) => console.log('asasasasas', e)}
+                            // onLoad={(e) => console.log('asasasasas', e)}
                             onMessage={(event) => onMessage(event)}
                             source={{ uri: view }}
                         />

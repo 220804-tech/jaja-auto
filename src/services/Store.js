@@ -44,7 +44,7 @@ export async function getStoreProduct(data) {
                 return result.data;
             } else {
                 return null
-            }   
+            }
         })
         .catch(error => Utils.handleError(error, 'Error with status code : 12020'));
 }
@@ -66,10 +66,9 @@ export async function getProductStore(data, dispatch, newProduct) {
                 console.log("🚀 ~ file: Store.js ~ line 66 ~ getProductStore ~ result", result.data.items.length)
                 if (result?.status?.code === 200 || result?.status?.code === 204) {
                     if (newProduct) {
-                        dispatch({ type: 'SET_STORE_PRODUCT', payload: result.data.items })
-                    } else {
                         dispatch({ type: 'SET_NEW_PRODUCT', payload: result.data.items })
-
+                    } else {
+                        dispatch({ type: 'SET_STORE_PRODUCT', payload: result.data.items })
                     }
                     dispatch({ type: 'SET_STORE_FILTER', payload: result.data.filters })
                     dispatch({ type: 'SET_STORE_SORT', payload: result.data.sorts })

@@ -1,9 +1,12 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Wp, Hp } from '../../export';
 import colors from '../colors';
-import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+const { height: SCREEN_HEIGHT, width } = Dimensions.get('window');
+console.log("🚀 ~ file: productStyles.js ~ line 6 ~ SCREEN_HEIGHT", SCREEN_HEIGHT)
 
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+const IS_6INCH = SCREEN_HEIGHT > 600 ? true : false
 // second argument is standardScreenHeight(optional),
 export const style = StyleSheet.create({
     cardProduct: {
@@ -61,7 +64,7 @@ export const style = StyleSheet.create({
         flex: 0, flexDirection: 'column', padding: '3%'
     },
     nameProduct: {
-        fontSize: RFValue(12),
+        fontSize: IS_6INCH ? RFValue(13) : RFValue(11),
         fontFamily: 'Poppins-Regular',
         alignSelf: 'flex-start',
         marginBottom: '2%',
@@ -70,7 +73,7 @@ export const style = StyleSheet.create({
         width: Wp("30%"),
     },
     nameProductSmall: {
-        fontSize: RFValue(11),
+        fontSize: IS_6INCH ? RFValue(11) : RFValue(9),
         fontFamily: 'Poppins-Regular',
         alignSelf: 'flex-start',
         marginBottom: '2%',
@@ -78,22 +81,22 @@ export const style = StyleSheet.create({
         // backgroundColor: 'red',
         width: Wp("30%"),
     },
-    priceBefore: { fontSize: RFValue(9), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale, textDecorationLine: 'line-through', },
-    priceBeforeSmall: { fontSize: RFValue(7), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale, textDecorationLine: 'line-through', },
+    priceBefore: { fontSize: IS_6INCH ? RFValue(9) : RFValue(8), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale, textDecorationLine: 'line-through', },
+    priceBeforeSmall: { fontSize: IS_6INCH ? RFValue(7) : RFValue(6), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale, textDecorationLine: 'line-through', },
 
-    priceAfter: { fontSize: RFValue(12, 480), fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja },
+    priceAfter: { fontSize: RFValue(13), fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja },
     priceAfterSmall: { fontSize: 13, fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja },
 
-    price: { fontSize: RFValue(13), fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale },
-    priceSmall: { fontSize: RFValue(11), fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja },
+    price: { fontSize: IS_6INCH ? RFValue(14) : RFValue(12), fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale },
+    priceSmall: { fontSize: IS_6INCH ? RFValue(12) : RFValue(10), fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja },
 
     discountSmall: { fontSize: RFValue(6), backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '1%', paddingHorizontal: '2%', borderRadius: 3 },
 
 
     cardBottom: { flex: 0, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', position: 'absolute', bottom: 3, width: '97%', paddingHorizontal: '3%' },
     location: { flex: 0, flexDirection: 'row', width: '75%', alignItems: 'center' },
-    locarionName: { fontSize: RFValue(7, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale, marginRight: '2%' },
-    locarionNameSmall: { fontSize: RFValue(8), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale, marginRight: '2%' },
+    locarionName: { fontSize: IS_6INCH ? RFValue(8) : RFValue(7), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale, marginRight: '2%' },
+    locarionNameSmall: { fontSize: IS_6INCH ? RFValue(8) : RFValue(7), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale, marginRight: '2%' },
 
     locationIcon: {
         width: 13,

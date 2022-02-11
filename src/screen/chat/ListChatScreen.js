@@ -97,8 +97,7 @@ export default function ListChat() {
                                 } catch (error) {
                                 }
                                 try {
-                                    database().ref(`/people/` + reduxUser.uid + `/`).set({ notif: { home: reduxnotifCount?.home, chat: reduxnotifCount?.chat - item?.amount, orders: reduxnotifCount?.orders } })
-                                    console.log("🚀 ~ file: ListChatScreen.js ~ line 101 ~ setTimeout ~ reduxnotifCount", reduxnotifCount)
+                                    database().ref(`/people/` + reduxUser?.uid + `/`).set({ notif: { home: reduxnotifCount?.home, chat: reduxnotifCount?.chat - item?.amount, orders: reduxnotifCount?.orders } })
                                 } catch (error) {
                                     console.log("🚀 ~ file: ListChatScreen.js ~ line 102 ~ setTimeout ~ error", error)
 

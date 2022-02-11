@@ -64,11 +64,11 @@ export default function RecomandedHobbyComponent(props) {
                 setTimeout(() => {
                     Utils.handleSignal()
                     dispatch({ type: 'SET_LOADMORE', payload: false })
-                }, 7000);
+                }, 10000);
             } else {
                 dispatch({ 'type': 'SET_LOADMORE', payload: false })
             }
-        }, 5000);
+        }, 7000);
 
     }
 

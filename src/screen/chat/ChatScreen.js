@@ -50,7 +50,6 @@ export default function ChatScreen({ route }) {
     const listChat = [{ id: '1SX', text: 'Halo!' }, { id: '1SX', text: 'Halo, apakah barang ini ready?' }, { id: '2SX', text: 'Halo, apakah bisa dikirim hari ini?' }, { id: '3SX', text: 'Terima kasih!' }, { id: '4SX', text: 'Sama-sama!' },]
     const reduxLoad = useSelector(state => state.product.productLoad)
     const [keyboardStatus, setKeyboardStatus] = useState(24);
-    console.log("🚀 ~ file: ChatScreen.js ~ line 53 ~ ChatScreen ~ keyboardStatus", keyboardStatus)
     useEffect(() => {
         handleFirebase()
         return () => {
@@ -164,8 +163,6 @@ export default function ChatScreen({ route }) {
                             let result = JSON.parse(res)
                             if (result.status.code === 200) {
                                 imageUrl = result.data.url
-                                console.log('result kamera')
-
                             } else {
                                 imageUrl = false
                             }
@@ -190,7 +187,6 @@ export default function ChatScreen({ route }) {
                     image: imageUrl,
                     order: null
                 }
-                console.log("🚀 ~ file: ChatScreen.js ~ line 155 ~ handleSend ~ message", message)
                 if (data && reduxAuth) {
                     try {
                         setLoading(false)
@@ -207,7 +203,6 @@ export default function ChatScreen({ route }) {
                                 firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: chat, time: new Date().toString() } });
                                 firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: { text: chat, time: new Date().toString() }, amount: amountNow ? amountNow + 1 : 1 });
                                 if (target) {
-                                    console.log("🚀 ~ file: ChatScreen.js ~ line 170 ~ setTimeout ~ target", typeof target)
                                     try {
                                         Firebase.notifChat(target, { body: chat, title: reduxUser.name })
                                         // await Firebase.buyerNotifications('chat', data.id)
@@ -587,7 +582,6 @@ export default function ChatScreen({ route }) {
             quality: 0.9,
             includeBase64: true
         }).then(res => {
-            console.log("🚀 ~ file: ChatScreen.js ~ line 593 ~ handleOpenCamera ~ res",)
             galeryRef.current?.setModalVisible(false)
             setLoading(true)
             handleSend(res?.assets?.[0]?.base64)

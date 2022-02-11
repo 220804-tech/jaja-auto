@@ -9,6 +9,7 @@ import MainPage from '../../components/Store/MainPage/MainPage'
 import { colors, Loading, ServiceCart, ServiceStore, styles, useNavigation, Wp, AppbarSecond, Hp, } from '../../export'
 const initialLayout = { width: Dimensions.get('window').width };
 const layout = Dimensions.get('screen').height
+import database from "@react-native-firebase/database";
 
 export default function StoreScreen({ route }) {
     const navigation = useNavigation();
@@ -22,20 +23,24 @@ export default function StoreScreen({ route }) {
     const [loading, setLoading] = useState(false)
     const [status, setStatus] = useState("first")
     const [seller, setSeller] = useState("")
+    const [count, setcount] = useState(0)
     const [index, setIndex] = useState(0)
     const [deskripsiLenght, setdeskripsiLenght] = useState(100)
     const loadStore = useSelector(state => state.store.loadStore)
+    const reduxnotifCount = useSelector(state => state.notification.notifCount)
 
     useEffect(() => {
         handleProduct()
     }, [])
 
     const handleProduct = () => {
+        dispatch({ type: 'SET_NEW_PRODUCT', payload: [] })
+        dispatch({ type: 'SET_STORE_PRODUCT', payload: [] })
         dispatch({ "type": 'STORE_PRODUCT_LOADING', payload: true })
         let obj = {
             slug: route.params.slug,
             page: 1,
-            limit: 20,
+            limit: 100,
             keyword: '',
             price: '',
             condition: '',
@@ -47,25 +52,26 @@ export default function StoreScreen({ route }) {
             dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: false })
         })
         obj.sort = ''
-
+        obj.limit = 100
         ServiceStore.getProductStore(obj, dispatch, false).then(res => {
             dispatch({ "type": 'STORE_PRODUCT_LOADING', payload: false })
         })
     }
 
     useEffect(() => {
-        return () => {
-            if (reduxStore) {
-                let dataSeller = {
-                    name: reduxStore.name,
-                    chat: reduxUser.user.uid + reduxStore.uid,
-                    id: reduxStore.uid
-                }
-                setSeller(dataSeller)
+        if (reduxStore?.uid) {
+            let dataSeller = {
+                name: reduxStore.name,
+                chat: reduxUser.user.uid + reduxStore.uid,
+                id: reduxStore.uid
             }
+            setSeller(dataSeller)
+        }
+        return () => {
+
         }
 
-    }, [reduxStore])
+    }, [reduxStore?.uid])
 
     const [routes] = useState([
         { key: 'first', title: 'Halaman Toko' },
@@ -103,6 +109,15 @@ export default function StoreScreen({ route }) {
     const handleChat = () => {
         if (reduxAuth) {
             navigation.navigate("IsiChat", { data: seller, product: null })
+            setTimeout(() => {
+                try {
+                    let newItem = seller
+                    newItem.amount = 0
+                    database().ref('friend/' + reduxUser.uid + "/" + seller.id).set(newItem);
+                } catch (error) {
+                }
+
+            }, 500);
         } else {
             navigation.navigate('Login', { navigate: "Store" })
         }
@@ -156,7 +171,7 @@ export default function StoreScreen({ route }) {
                                     </View>
                                     : null
                                 }
-                                <Button onPress={handleChat} mode="contained" icon="chat" labelStyle={[styles.font_11, styles.T_semi_bold, { color: colors.White }]} color={colors.BlueJaja} >
+                                <Button disabled={seller?.id ? false : true} onPress={handleChat} mode="contained" icon="chat" labelStyle={[styles.font_11, styles.T_semi_bold, { color: colors.White }]} color={colors.BlueJaja} >
                                     Chat
                                 </Button>
                             </View>

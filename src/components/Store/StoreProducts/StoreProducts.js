@@ -13,7 +13,6 @@ export default function StoreProducts() {
     // const data = useSelector(state => state.search.searchProduct)
     const keyword = useSelector(state => state.search.keywordSearch)
     const reduxFilters = useSelector(state => state.store.storeFilter)
-    console.log("🚀 ~ file: StoreProducts.js ~ line 16 ~ StoreProducts ~ reduxFilters", reduxFilters)
     const reduxSorts = useSelector(state => state.store.storeSort)
 
     const reduxmaxProduct = useSelector(state => state.store.maxProduct)
@@ -74,13 +73,15 @@ export default function StoreProducts() {
     }
 
     const fetchLoadmore = () => {
+        console.log("🚀 ~ file: StoreProducts.js ~ line 90 ~ fetchLoadmore ~ focus", focus)
+
         let error = true;
         try {
             let obj = {
                 // store: red,
                 slug: reduxStore.slug,
                 page: filter ? page : page + 1,
-                limit: filter ? 10 * parseInt(page) : 20,
+                limit: filter ? 100 * parseInt(page) : 20,
                 keyword: textSearch,
                 price: '',
                 condition: '',
@@ -158,6 +159,8 @@ export default function StoreProducts() {
             setFocus(1)
         }
         ServiceStore.getStoreProduct(obj).then(res => {
+            console.log("🚀 ~ file: StoreProducts.js ~ line 162 ~ ServiceStore.getStoreProduct ~ obj", obj)
+            console.log("🚀 ~ file: StoreProducts.js ~ line 162 ~ ServiceStore.getStoreProduct ~ res", res.items)
             if (res) {
                 dispatch({ type: 'SET_STORE_PRODUCT', payload: res.items })
                 setcount(count + 1)
@@ -207,31 +210,31 @@ export default function StoreProducts() {
         <SafeAreaView style={[styles.container, { backgroundColor: colors.White }]}>
             {loading ? <Loading /> : null}
 
-            {
-                data?.length ?
-                    <View style={[styles.column, styles.pb_5, { flex: 1, backgroundColor: colors.White }]}>
 
-                        <View style={[styles.row_around_center, { width: '100%', elevation: 1 }]}>
-                            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                <Button style={{ width: Wp('33.33%'), borderRadius: 0, borderRightWidth: 0 }} uppercase={false} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_medium, { color: focus == 1 || focus == 0 ? colors.BlueJaja : colors.BlackGrayScale }]} contentStyle={{ borderRadius: 0 }} onPress={() => setFocus(1) & setFilter(true)} mode="outlined">
-                                    Semua
-                                </Button>
-                                {/* <Button style={{ width: Wp('33.33%'), borderRadius: 0 }} uppercase={false} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_medium, { color: focus == 2 ? colors.BlueJaja : colors.BlackGrayScale }]} contentStyle={{ borderRadius: 0 }} onPress={() => setFocus(2) & setFilter(true)} mode="outlined">
+            <View style={[styles.column, styles.pb_5, { flex: 1, backgroundColor: colors.White }]}>
+
+                <View style={[styles.row_around_center, { width: '100%', elevation: 1 }]}>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                        <Button style={{ width: Wp('33.33%'), borderRadius: 0, borderRightWidth: 0 }} uppercase={false} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_medium, { color: focus == 1 || focus == 0 ? colors.BlueJaja : colors.BlackGrayScale }]} contentStyle={{ borderRadius: 0 }} onPress={() => setFocus(1) & setFilter(true)} mode="outlined">
+                            Semua
+                        </Button>
+                        {/* <Button style={{ width: Wp('33.33%'), borderRadius: 0 }} uppercase={false} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_medium, { color: focus == 2 ? colors.BlueJaja : colors.BlackGrayScale }]} contentStyle={{ borderRadius: 0 }} onPress={() => setFocus(2) & setFilter(true)} mode="outlined">
                                 Terlaris
                             </Button> */}
-                                <Button icon={focus == 3 ? require('../../../assets/icons/sort-up.png') : focus == 4 ? require('../../../assets/icons/sort-down.png') : null} style={{ width: Wp('33.33%'), borderRadius: 0 }} uppercase={false} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_medium, { color: focus == 3 || focus == 4 ? colors.BlueJaja : colors.BlackGrayScale }]} contentStyle={{ borderRadius: 0 }} onPress={() => {
-                                    focus == 3 ? setFocus(4) : setFocus(3)
-                                    setFilter(true)
-                                }} mode="outlined">
-                                    Harga
-                                </Button>
-                                <Button style={{ width: Wp('33.33%'), borderRadius: 0, borderLeftWidth: 0 }} uppercase={false} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_medium, { color: focus == 2 ? colors.BlueJaja : colors.BlackGrayScale }]} contentStyle={{ borderRadius: 0 }} onPress={() => actionSheetRef.current?.setModalVisible(true)} mode="outlined">
-                                    Filter
-                                </Button>
-                            </ScrollView>
+                        <Button icon={focus == 3 ? require('../../../assets/icons/sort-up.png') : focus == 4 ? require('../../../assets/icons/sort-down.png') : null} style={{ width: Wp('33.33%'), borderRadius: 0 }} uppercase={false} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_medium, { color: focus == 3 || focus == 4 ? colors.BlueJaja : colors.BlackGrayScale }]} contentStyle={{ borderRadius: 0 }} onPress={() => {
+                            focus == 3 ? setFocus(4) : setFocus(3)
+                            setFilter(true)
+                        }} mode="outlined">
+                            Harga
+                        </Button>
+                        <Button style={{ width: Wp('33.33%'), borderRadius: 0, borderLeftWidth: 0 }} uppercase={false} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_medium, { color: focus == 2 ? colors.BlueJaja : colors.BlackGrayScale }]} contentStyle={{ borderRadius: 0 }} onPress={() => actionSheetRef.current?.setModalVisible(true)} mode="outlined">
+                            Filter
+                        </Button>
+                    </ScrollView>
 
-                        </View>
-
+                </View>
+                {
+                    data?.length ?
                         <ScrollView nestedScrollEnabled={true} style={[styles.column, styles.px_3]}>
 
                             <CardProduct data={data} />
@@ -241,9 +244,9 @@ export default function StoreProducts() {
 
                         </ScrollView>
 
-                    </View >
-                    : <Text style={[styles.font_14, styles.mt_5, { alignSelf: 'center' }]}>Produk tidak ditemukan!</Text>
-            }
+                        : <Text style={[styles.font_14, styles.mt_5, { alignSelf: 'center' }]}>Produk tidak ditemukan!</Text>
+                }
+            </View >
             <ActionSheet ref={actionSheetRef} delayActionSheetDraw={false} containerStyle={{ height: Hp('60%'), padding: '4%' }}>
                 <View style={[styles.row_between_center, styles.mb_3, { width: '100%' }]}>
                     <Text adjustsFontSizeToFit style={[styles.font_16, styles.T_semi_bold, { width: '50%', color: colors.BlueJaja, }]}>Filter</Text>
