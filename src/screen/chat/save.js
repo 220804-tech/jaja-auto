@@ -169,13 +169,10 @@ export default function ChatScreen({ route }) {
                         } catch (error) {
                             imageUrl = false
                         }
-                        setLoading(false)
                     })
                     .catch(error => {
                         imageUrl = false
                         Utils.handleError(error, 'Error with status code : 12044')
-                        setLoading(false)
-
                     });
             }
 
@@ -636,93 +633,96 @@ export default function ChatScreen({ route }) {
         });
     }
     return (
-        <SafeAreaProvider style={[style.containerFix]}>
-            <StatusBar translucent={false} backgroundColor={colors.jaja} barStyle="light-content" />
-            <Appbar back={true} title={data && data.name ? data.name : ''} />
-            <ImageBackground source={require('../../assets/images/bgChat3.jpg')} style={{ width: '100%', height: '100%', paddingBottom: Math.max(insets.bottom, 50) }}>
-                {loading ? <Loading /> : null}
+        <SafeAreaProvider style={[style.container, { paddingTop: STATUS_BAR_HEIGHT, backgroundColor: colors.BlueJaja }]}>
+            {loading ? <Loading /> : null}
+            <ImageBackground source={require('../../assets/images/bgChat3.jpg')} style={[style.column, { flex: 1 }]}>
                 <StatusBar translucent={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
+                <Appbar back={true} title={data && data.name ? data.name : ''} />
+
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === "ios" ? "padding" : "height"}
+                    style={style.container}
+                >
 
 
-
-                <View style={[styles.inner, { paddingBottom: keyboardStatus }]}>
-                    {selectedProduct && Object.keys(selectedProduct).length ?
-                        <TouchableRipple style={{
-                            width: '100%',
-                            padding: '3%',
-                            borderRadius: 3,
-                            borderTopRightRadius: 0,
-                            flexDirection: "row",
-                            alignSelf: 'center',
-                            backgroundColor: colors.White,
-                            elevation: 0,
-                            marginBottom: '2%'
-                        }}
-                            rippleColor={colors.BlueJaja}>
-                            <>
-                                <View style={{ flex: 0 }}>
-                                    <Image style={{
-                                        alignSelf: "center",
-                                        width: Wp("15%"),
-                                        height: Wp("15%"),
-                                        marginRight: 10,
-                                        borderRadius: 2
-                                    }}
-                                        resizeMethod={"scale"}
-                                        resizeMode={"cover"}
-                                        source={{ uri: product.image[0] ? product.image[0] : null }}
-                                    />
-                                </View>
-
-                                <View style={{ flex: 1 }}>
-                                    <View style={style.row}>
-                                        <Text numberOfLines={1} style={[style.font_12, style.mr_2, { width: '90%' }]}>{product.name}</Text>
+                    <View style={[styles.inner, { paddingBottom: keyboardStatus }]}>
+                        {selectedProduct && Object.keys(selectedProduct).length ?
+                            <TouchableRipple style={{
+                                width: '100%',
+                                padding: '3%',
+                                borderRadius: 3,
+                                borderTopRightRadius: 0,
+                                flexDirection: "row",
+                                alignSelf: 'center',
+                                backgroundColor: colors.White,
+                                elevation: 0,
+                                marginBottom: '2%'
+                            }}
+                                rippleColor={colors.BlueJaja}>
+                                <>
+                                    <View style={{ flex: 0 }}>
                                         <Image style={{
                                             alignSelf: "center",
-                                            width: Wp("3.5%"),
-                                            height: Wp("3.5%"),
-                                            borderRadius: 2,
-                                            tintColor: colors.RedDanger
+                                            width: Wp("15%"),
+                                            height: Wp("15%"),
+                                            marginRight: 10,
+                                            borderRadius: 2
                                         }}
                                             resizeMethod={"scale"}
                                             resizeMode={"cover"}
-                                            source={require('../../assets/icons/close.png')}
+                                            source={{ uri: product.image[0] ? product.image[0] : null }}
                                         />
                                     </View>
-                                    {product.isDiscount ?
-                                        <View style={{ flex: 0, flexDirection: 'column' }}>
-                                            <View style={{ flexDirection: 'row' }}>
-                                                <Text adjustsFontSizeToFit style={[style.font_9, { textDecorationLine: 'line-through', marginRight: '3%' }]}>{product.price}</Text>
-                                                <View style={{ backgroundColor: colors.RedFlashsale, justifyContent: 'center', alignItems: 'center', borderRadius: 3, paddingHorizontal: '2%' }}>
-                                                    <Text adjustsFontSizeToFit style={[style.font_10, style.T_medium, { color: 'white' }]}>{product.discount + "%"}</Text>
-                                                </View>
-                                            </View>
-                                            <Text adjustsFontSizeToFit style={[style.font_12, { marginRight: '3%' }]}>{product.priceDiscount}</Text>
+
+                                    <View style={{ flex: 1 }}>
+                                        <View style={style.row}>
+                                            <Text numberOfLines={1} style={[style.font_12, style.mr_2, { width: '90%' }]}>{product.name}</Text>
+                                            <Image style={{
+                                                alignSelf: "center",
+                                                width: Wp("3.5%"),
+                                                height: Wp("3.5%"),
+                                                borderRadius: 2,
+                                                tintColor: colors.RedDanger
+                                            }}
+                                                resizeMethod={"scale"}
+                                                resizeMode={"cover"}
+                                                source={require('../../assets/icons/close.png')}
+                                            />
                                         </View>
+                                        {product.isDiscount ?
+                                            <View style={{ flex: 0, flexDirection: 'column' }}>
+                                                <View style={{ flexDirection: 'row' }}>
+                                                    <Text adjustsFontSizeToFit style={[style.font_9, { textDecorationLine: 'line-through', marginRight: '3%' }]}>{product.price}</Text>
+                                                    <View style={{ backgroundColor: colors.RedFlashsale, justifyContent: 'center', alignItems: 'center', borderRadius: 3, paddingHorizontal: '2%' }}>
+                                                        <Text adjustsFontSizeToFit style={[style.font_10, style.T_medium, { color: 'white' }]}>{product.discount + "%"}</Text>
+                                                    </View>
+                                                </View>
+                                                <Text adjustsFontSizeToFit style={[style.font_12, { marginRight: '3%' }]}>{product.priceDiscount}</Text>
+                                            </View>
 
-                                        :
-                                        <Text style={{ color: colors.RedFlashsale, fontFamily: 'Poppins-SemiBold', fontSize: Wp("4%") }}>
-                                            {product.price}
-                                        </Text>
-                                    }
-                                </View>
-                            </>
-                        </TouchableRipple>
-                        : null
-                    }
-                    <FlatList
-                        scrollEnabled={true}
-                        inverted={-1}
-                        ref={flatlist}
-                        style={[style.pt_2, style.px_3, { height: '92%', }]}
-                        data={messageList}
-                        renderItem={renderRow}
-                        keyExtractor={(item, index) => String(index)}
-                    />
+                                            :
+                                            <Text style={{ color: colors.RedFlashsale, fontFamily: 'Poppins-SemiBold', fontSize: Wp("4%") }}>
+                                                {product.price}
+                                            </Text>
+                                        }
+                                    </View>
+                                </>
+                            </TouchableRipple>
+                            : null
+                        }
+                        <FlatList
+                            scrollEnabled={true}
+                            inverted={-1}
+                            ref={flatlist}
+                            style={[style.pt_2, style.px_2]}
+                            data={messageList}
+                            renderItem={renderRow}
+                            keyExtractor={(item, index) => String(index)}
+                        />
 
 
-                    <View style={{ width: Wp('100%'), }}>
-                        {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                        <View style={{ width: Wp('100%'), }}>
+                            {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     {listChat.map((item, index) => {
                         return (
                             <TouchableRipple borderless={true} rippleColor={colors.BlueJaja} key={item.id} onPress={() => setChat(item.text)} style={[style.py, { backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.BlueJaja, borderRadius: 11, marginRight: 5, paddingHorizontal: '1%' }]}>
@@ -731,54 +731,56 @@ export default function ChatScreen({ route }) {
                         )
                     })}
                 </ScrollView> */}
-                        <FlatList
-                            horizontal={true}
-                            style={[{ width: Wp('100%'), backgroundColor: 'transparent', height: Hp('3.5%') }]}
-                            data={listChat}
-                            contentContainerStyle={[style.px_4]}
-                            showsHorizontalScrollIndicator={false}
-                            renderItem={({ item }) => {
-                                return (
-                                    <TouchableOpacity key={item.id} onPress={() => setChat(item.text)} style={[style.py, { flex: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.Blackk, borderRadius: 9, marginHorizontal: 3, paddingHorizontal: 11 }]}>
-                                        <Text style={[style.font_11, { color: colors.BlackGrayScale, textAlign: 'center', textAlignVertical: 'center' }]}>{item.text}</Text>
-                                    </TouchableOpacity>
-                                )
-                            }}
-                            keyExtractor={(item, index) => String(index)}
-                        />
-                    </View>
-
-                    <View style={[style.row_around_center, style.px_2, style.mb_2, { height: '7%', backgroundColor: 'transparent', }]}>
-                        <View style={[style.row_start_center, { width: "80%", height: '77%', borderRadius: 100, backgroundColor: colors.White, opacity: 0.9, elevation: 1 }]}>
-
-                            <TextInput
-                                // onFocus={() => setkeyboardFocus(300)}
-                                // onBlur={() => setkeyboardFocus(5)}
-                                // onPressOut={() => setkeyboardFocus(5)}
-                                // onBlur={() => setkeyboardFocus(5)}
-                                // onTouchCancel={() => setkeyboardFocus(5)}
-                                style={[style.font_14, { width: "82%", borderColor: "gray", borderBottomLeftRadius: 100, borderTopLeftRadius: 100, paddingHorizontal: 20, marginBottom: '-1%' }]}
-                                // underlineColorAndroid="transparent"
-                                onChangeText={(text) => setChat(text)} onSubmitEditing={() => handleSend(null)}
-                                value={isiChat}
+                            <FlatList
+                                horizontal={true}
+                                style={[{ width: Wp('100%'), backgroundColor: 'transparent', height: Hp('3.5%') }]}
+                                data={listChat}
+                                contentContainerStyle={[style.px_4]}
+                                showsHorizontalScrollIndicator={false}
+                                renderItem={({ item }) => {
+                                    return (
+                                        <TouchableOpacity key={item.id} onPress={() => setChat(item.text)} style={[style.py, { flex: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.Blackk, borderRadius: 9, marginHorizontal: 3, paddingHorizontal: 11 }]}>
+                                            <Text style={[style.font_11, { color: colors.BlackGrayScale, textAlign: 'center', textAlignVertical: 'center' }]}>{item.text}</Text>
+                                        </TouchableOpacity>
+                                    )
+                                }}
+                                keyExtractor={(item, index) => String(index)}
                             />
-                            {!isiChat.length ?
-                                <IconButton
-
-                                    icon={require('../../assets/icons/camera.png')}
-                                    style={{ margin: 0, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100 }}
-                                    color={colors.BlueJaja}
-                                    onPress={() => galeryRef.current?.setModalVisible(true)}
-                                /> : null}
                         </View>
-                        <IconButton
-                            icon={require('../../assets/icons/send.png')}
-                            style={{ margin: 0, backgroundColor: colors.White, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100, }}
-                            color={colors.BlueJaja}
-                            onPress={() => handleSend(null)}
-                        />
+
+                        <View style={[style.row_around_center, style.px_2, { backgroundColor: 'transparent' }]}>
+                            <View style={[style.row_start_center, {
+                                width: "80%", height: '77%', borderRadius: 100, backgroundColor: colors.White
+                            }]}>
+                                <TextInput
+                                    // onFocus={() => setkeyboardFocus(300)}
+                                    // onBlur={() => setkeyboardFocus(5)}
+                                    // onPressOut={() => setkeyboardFocus(5)}
+                                    // onBlur={() => setkeyboardFocus(5)}
+                                    // onTouchCancel={() => setkeyboardFocus(5)}
+                                    style={[style.font_12, { width: isiChat.length ? '90%' : '82%', borderColor: "gray", borderBottomLeftRadius: 100, borderTopLeftRadius: 100, paddingHorizontal: 20, paddingVertical: 0 }]}
+                                    // underlineColorAndroid="transparent"
+                                    onChangeText={(text) => setChat(text)} onSubmitEditing={() => handleSend(null)}
+                                    value={isiChat}
+                                />
+                                {!isiChat.length ?
+                                    <IconButton
+
+                                        icon={require('../../assets/icons/camera.png')}
+                                        style={{ margin: 0, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100 }}
+                                        color={colors.BlueJaja}
+                                        onPress={() => galeryRef.current?.setModalVisible(true)}
+                                    /> : null}
+                            </View>
+                            <IconButton
+                                icon={require('../../assets/icons/send.png')}
+                                style={{ margin: 0, backgroundColor: colors.White, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100, }}
+                                color={colors.BlueJaja}
+                                onPress={() => handleSend(null)}
+                            />
+                        </View>
                     </View>
-                </View>
+                </KeyboardAvoidingView>
             </ImageBackground>
             <ActionSheet containerStyle={{ flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.White, marginBottom: '10%' }} ref={galeryRef}>
                 <View style={[style.column, style.pb_5, { backgroundColor: '#ededed' }]}>

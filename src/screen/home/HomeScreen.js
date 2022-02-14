@@ -30,6 +30,7 @@ export default function HomeScreen() {
     const reduxBadges = useSelector(state => state.user.badges)
     const reduxLoad = useSelector(state => state.product.productLoad)
     const [translucent, settranslucent] = useState(false)
+    const reduxBanner = useSelector(state => state.dashboard.banner)
 
     useAndroidBackHandler(() => {
         if (out) {
@@ -222,6 +223,8 @@ export default function HomeScreen() {
 
         }
     }
+    console.log("🚀 ~ file: HomeScreen.js ~ line 275 ~ title ~ reduxBanner", reduxBanner)
+
     const renderNavBar = (text) => {
         return (
             <View style={style.navContainer} >
@@ -255,6 +258,7 @@ export default function HomeScreen() {
             </View >
         )
     }
+    console.log("🚀 ~ file: HomeScreen.js ~ line qwqwqw ~ title ~ reduxBanner", reduxBanner)
 
     const title = () => {
         return (
@@ -269,15 +273,25 @@ export default function HomeScreen() {
                 loop={true}
                 style={{ backgroundColor: colors.BlueJaja, flex: 0, justifyContent: 'center', alignItems: 'center' }}
             >
-                {images.map((item, key) => {
-                    console.log("🚀 ~ file: HomeScreen.js ~ line 274 ~ {images.map ~ key", key)
-                    return (
-                        <Image key={String(key)} style={style.swiperBanner}
-                            resizeMode={item.image ? "contain" : "cover"}
-                            source={item.image}
-                        />
-                    );
-                })}
+                {reduxBanner?.length ?
+                    reduxBanner.map((item, key) => {
+                        console.log("🚀 ~ file: HomeScreen.js ~ line 274 ~ {images.map ~ key", item)
+                        return (
+                            <Image key={String(key)} style={style.swiperBanner}
+                                resizeMode={item.image ? "contain" : "cover"}
+                                source={{ uri: item.image }}
+                            />
+                        );
+                    }) :
+                    images.map((item, key) => {
+                        console.log("🚀 ~ file: HomeScreen.js ~ line 274 ~ {images.map ~ key", key)
+                        return (
+                            <Image key={String(key)} style={style.swiperBanner}
+                                resizeMode={item.image ? "contain" : "cover"}
+                                source={item.image}
+                            />
+                        );
+                    })}
             </Swiper>
         );
     };
@@ -636,6 +650,6 @@ const style = StyleSheet.create({
         width: Wp('100%'), height: Wp('75%'),
     },
     touchIcon: { width: '14%', justifyContent: 'center', alignItems: 'center' },
-    swiperBanner: { width: '100%', height: '100%', resizeMode: 'contain', backgroundColor: 'transparent' },
+    swiperBanner: { width: '100%', height: '100%', resizeMode: 'contain', backgroundColor: 'transparent', marginTop: '4%' },
     searchBar: { flex: 0, width: '77%', flexDirection: 'row', backgroundColor: colors.White, borderRadius: 11, height: NAV_BAR_HEIGHT / (Platform.OS === 'android' ? 1.8 : 1.2), alignItems: 'center', paddingHorizontal: '4.5%', marginRight: '3%' }
 });

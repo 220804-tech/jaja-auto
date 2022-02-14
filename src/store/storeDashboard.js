@@ -11,11 +11,14 @@ const initialState = {
     loadmore: false,
     out: false,
     maxRecomandded: false,
-    flashsaleLive: false
+    flashsaleLive: false,
+    banner: []
 }
 export default function storeDashboard(state = initialState, action) {
     const { type, payload } = action;
     switch (type) {
+        case 'SET_DASH_BANNER':
+            return { ...state, banner: payload }
         case 'SET_DASHCATEGORY':
             return { ...state, category: payload }
         case 'SET_DASHFLASHSALE':

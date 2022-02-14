@@ -125,7 +125,11 @@ export default function SplashScreen() {
                     hasil = true;
                     try {
                         let resp = JSON.parse(respp)
-                        if (resp.status.code == 200 || resp.status.code == 204) {
+                        if (resp?.status?.code == 200 || resp?.status?.code == 204) {
+                            if (resp.data.banner) {
+                                dispatch({ type: 'SET_DASH_BANNER', payload: resp.data.banner })
+                                EncryptedStorage.setItem('dashbanner', JSON.stringify(resp.data.banner))
+                            }
                             if (resp.data.categoryChoice) {
                                 dispatch({ type: 'SET_DASHCATEGORY', payload: resp.data.categoryChoice })
                                 EncryptedStorage.setItem('dashcategory', JSON.stringify(resp.data.categoryChoice))
@@ -155,7 +159,7 @@ export default function SplashScreen() {
                 if (!hasil) {
                     Utils.handleSignal()
                 }
-            }, 15000);
+            }, 20000);
         } catch (error) {
             handleError(error)
         }
@@ -163,6 +167,11 @@ export default function SplashScreen() {
 
     const handleError = (error) => {
         try {
+            EncryptedStorage.getItem('dashbanner').then(result => {
+                if (result) {
+                    dispatch({ type: 'SET_DASH_BANNER', payload: JSON.parse(result) })
+                }
+            })
             EncryptedStorage.getItem('dashcategory').then(result => {
                 if (result) {
                     dispatch({ type: 'SET_DASHCATEGORY', payload: JSON.parse(result) })
@@ -178,18 +187,9 @@ export default function SplashScreen() {
                     dispatch({ type: 'SET_DASHHOBYAVERAGE', payload: JSON.parse(result) })
                 }
             })
-            // else {
-            //     Alert.alert(
-            //         "Error with status 12001",
-            //         String(error),
-            //         [
-            //             { text: "OK", onPress: () => console.log("OK Pressed") }
-            //         ],
-            //         { cancelable: false }
-            //     );
-            // }
-        } catch (err) {
-            return ToastAndroid.show("Handle Error " + String(err), ToastAndroid.LONG, ToastAndroid.TOP)
+
+        } catch (error) {
+            // return Utils.alertPopUp(String(err))
         }
     }
 
@@ -199,45 +199,7 @@ export default function SplashScreen() {
         } catch (error) {
 
         }
-        // var requestOptions = {
-        //     method: 'GET',
-        //     redirect: 'follow'
-        // };
 
-        // fetch("https://jaja.id/backend/product/recommendation?page=1&limit=100", requestOptions)
-        //     .then(response => response.json())
-        //     .then(res => {
-        //         try {
-        //             let result = JSON.parse(res)
-        //             if (result.status.code == 200 || result.status.code == 204) {
-        //                 dispatch({ type: 'SET_DASHRECOMMANDED', payload: result.data.items })
-        //                 EncryptedStorage.setItem('dashrecommanded', JSON.stringify(result.data.items))
-        //             } else {
-        //                 EncryptedStorage.getItem('dashrecommanded').then(res => {
-        //                     if (res) {
-        //                         dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(res) })
-        //                     }
-        //                     Utils.alertPopUp(result.status.message + " : " + result.status.code)
-        //                 })
-
-        //             }
-        //         } catch (error) {
-        //             alert(String(error) + ' : 120023 \n\n ' + JSON.stringify(res))
-        //             EncryptedStorage.getItem('dashrecommanded').then(store => {
-        //                 if (store) {
-        //                     dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(store) })
-        //                 }
-        //             })
-        //         }
-        //     })
-        //     .catch(error => {
-        //         EncryptedStorage.getItem('dashrecommanded').then(store => {
-        //             if (store) {
-        //                 dispatch({ type: 'SET_DASHRECOMMANDED', payload: JSON.parse(store) })
-        //             }
-        //         })
-        //         Utils.handleError(error, 'Error with status code : 12002')
-        //     });
     }
 
     const getOrders = (token) => {
