@@ -223,11 +223,11 @@ export default function index(props) {
         //     <Image style={[style.icon_25, { tintColor: colors.White }]} source={require('../../assets/icons/delete.png')} />
         // </TouchableOpacity>
     ]
-    
+
     const renderItem = ({ item, index }) => {
         return (
             // <Swipeable
-            //     rightButtons={rightButtons}
+            //     rightButtons={rightButtons}y
             //     onRightActionRelease={() => {
             //         setSelectedItem(item)
             //     }}

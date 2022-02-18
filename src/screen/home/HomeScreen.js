@@ -319,6 +319,21 @@ export default function HomeScreen() {
                         />
                     }> */}
                 <Category />
+                {/* <TouchableRipple onPress={handleShowGift} rippleColor={colors.BlueJaja} style={[styles.row_center, styles.px, styles.py_2, styles.my_2, {
+                    backgroundColor: colors.White, borderRadius: 7, alignSelf: 'center', width: '95%', shadowColor: "#000",
+                    shadowOffset: {
+                        width: 0,
+                        height: 1,
+                    },
+                    shadowOpacity: 0.20,
+                    shadowRadius: 1.41,
+
+                    elevation: 2,
+                }]} >
+                    <View style={[styles.row_center, { width: '100%' }]}>
+                        <Image source={require('../../assets/icons/gift/jajaGift.png')} style={[{ height: Hp('4%'), width: Hp('15%'), alignSelf: 'flex-start', marginBottom: '-1%', marginLeft: '-2.5%' }]} />
+                    </View>
+                </TouchableRipple> */}
                 {reduxShowFlashsale ? <Flashsale /> : null}
                 <Trending />
                 <TouchableRipple onPress={handleShowGift} rippleColor={colors.White} style={[styles.row_center, styles.px, styles.py_3, styles.my_3, { backgroundColor: colors.RedFlashsale, borderRadius: 11, alignSelf: 'center', width: '95%', elevation: 2 }]} >
@@ -327,6 +342,7 @@ export default function HomeScreen() {
                         <Image source={require('../../assets/icons/heart.png')} style={[styles.icon_27, { marginTop: '-1%' }]} />
                     </View>
                 </TouchableRipple>
+
                 {nearestProduct ? <NearestStore /> : null}
 
                 {/* <BasedOnSearch /> */}

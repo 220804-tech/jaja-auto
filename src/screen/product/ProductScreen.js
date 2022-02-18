@@ -359,8 +359,16 @@ export default function ProductScreen(props) {
     }
 
     const handleTrolley = () => {
-        handleGetCart()
-        navigation.navigate("Trolley")
+        if (reduxAuth) {
+            if (Platform.OS === 'ios') {
+                sethidden(false)
+            }
+            handleGetCart()
+            navigation.navigate("Trolley")
+        } else {
+            handleLogin()
+
+        }
     }
 
     const handleWishlist = () => {
