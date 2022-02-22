@@ -141,7 +141,7 @@ export default function StoreScreen({ route }) {
             <View style={[styles.container]}>
                 {/* <ImageBackground source={image && image.mainBanner ? { uri: image.mainBanner } : null} style={{ width: '100%', height: '100%' }}> */}
                 <AppbarSecond handleSearch={handleSearch} handleSubmit={handleSubmit} title={reduxStore && Object.keys(reduxStore).length && reduxStore.name ? `Cari di ${reduxStore.name}..` : 'Cari di toko..'} />
-                <ScrollView stickyHeaderIndices={[1]} nestedScrollEnabled={true} >
+                <ScrollView nestedScrollEnabled={true} >
 
                     {/* stickyHeaderIndices={[0]} */}
                     {index === 0 ?

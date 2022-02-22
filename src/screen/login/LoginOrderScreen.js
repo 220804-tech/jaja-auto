@@ -33,10 +33,12 @@ export default function LoginScreen(props) {
         if (props.route && props.route.params && props.route.params.navigate) {
             setNavigate(props.route.params.navigate)
         }
-        GoogleSignin.configure({
-            webClientId: "284366139562-tnj3641sdb4ia9om7bcp25vh3qn5vvo8.apps.googleusercontent.com",
-            offlineAccess: true
-        });
+        return () => {
+            GoogleSignin.configure({
+                webClientId: "284366139562-tnj3641sdb4ia9om7bcp25vh3qn5vvo8.apps.googleusercontent.com",
+                offlineAccess: true
+            });
+        }
     }, [props])
 
     useFocusEffect(
@@ -276,6 +278,7 @@ export default function LoginScreen(props) {
                     // ],
                     //     { cancelable: false }
                     // );
+
                 } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
                     console.log("Play Servie Not Available : " + error.code);
                 } else {

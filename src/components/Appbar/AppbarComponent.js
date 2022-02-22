@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { View, Text, TouchableOpacity, Image, Alert, StatusBar, Platform } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import { useSelector, useDispatch } from 'react-redux'
-import { useNavigation, styles, colors, Language, ServiceUser, ServiceCart } from '../../export'
+import { useNavigation, styles, colors, Language, ServiceUser, ServiceCart, Wp } from '../../export'
 
 export default function AppbarComponent(props) {
     let navigation = useNavigation()
@@ -68,7 +68,7 @@ export default function AppbarComponent(props) {
                             </TouchableOpacity>
                         : null}
                     {props.title ?
-                        <Text style={[styles.font_15, { fontFamily: 'Poppins-SemiBold', color: colors.White, width: '60%', marginBottom: '-0.8%' }]}>{Language(props.title)}</Text>
+                        <Text numberOfLines={1} style={[styles.font_15, { fontFamily: 'Poppins-SemiBold', color: colors.White, width: props.chat ? Wp('85%') : '60%', marginBottom: '-0.8%' }]}>{Language(props.title)}</Text>
                         : null
                     }
                 </View>

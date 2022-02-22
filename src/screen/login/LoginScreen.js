@@ -33,10 +33,12 @@ export default function LoginScreen(props) {
         if (props.route && props.route.params && props.route.params.navigate) {
             setNavigate(props.route.params.navigate)
         }
-        GoogleSignin.configure({
-            webClientId: "284366139562-tnj3641sdb4ia9om7bcp25vh3qn5vvo8.apps.googleusercontent.com",
-            offlineAccess: true
-        });
+        return () => {
+            GoogleSignin.configure({
+                webClientId: "284366139562-tnj3641sdb4ia9om7bcp25vh3qn5vvo8.apps.googleusercontent.com",
+                offlineAccess: true
+            });
+        }
     }, [props])
 
     useFocusEffect(
@@ -254,7 +256,7 @@ export default function LoginScreen(props) {
                 handleCheckUser(userInfo)
                 setLoginGoogle(true)
             } catch (error) {
-                console.log("🚀 ~ file: LoginScreen.js ~ line 256 ~ onGoogleButtonPress ~ error", String(error))
+                console.log("🚀 ~ file: LoginScreen.js ~ line 256 ~ onGoogleButtonPress ~ error", String(error.code))
                 setLoading(false)
                 if (String(error).includes === 'Sign-in in progress') {
                     signOut()
@@ -263,7 +265,9 @@ export default function LoginScreen(props) {
                     console.log("Sign In Cancelled : " + error.code);
                 } else if (error.code === statusCodes.SIGN_IN_REQUIRED) {
                     console.log("Sign In Required : " + error.code);
-                } else if (error.code == 12502 || error.code === statusCodes.IN_PROGRESS) {
+                } else if (String(error.code) === "12502" || error.code === statusCodes.IN_PROGRESS) {
+                    console.log('cokkkkkkkkkkkkkkk')
+                    signOut()
 
                     // Alert.alert(
                     //     "Sepertinya ada masalah!",
@@ -286,7 +290,7 @@ export default function LoginScreen(props) {
                 } else {
                     Alert.alert(
                         "Jaja.id",
-                        String(error) + String(error.code),
+                        String(error) + " => " + String(error.code),
                         [
                             {
                                 text: "Ok",

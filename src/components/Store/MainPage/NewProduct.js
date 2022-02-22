@@ -95,7 +95,7 @@ export default function NewProduct() {
                                     />
                                 </View>
                                 <View style={[Ps.bottomCard, { alignSelf: 'flex-start', width: '100%', height: Wp('18%'), justifyContent: 'flex-start', alignItems: 'flex-start' }]}>
-                                    <Text numberOfLines={1} style={[Ps.nameProduct, { fontSize: 13 }]}>{item.name}</Text>
+                                    <Text numberOfLines={1} style={[Ps.nameProductSmall]}>{item.name}</Text>
                                     {item.isDiscount ?
                                         <>
                                             <View style={styles.row}>
@@ -109,8 +109,8 @@ export default function NewProduct() {
                                     }
                                 </View>
                                 <View style={[Ps.location, { width: '94%' }]}>
-                                    <Image style={Ps.locationIcon} source={require('../../../assets/icons/google-maps.png')} />
-                                    <Text numberOfLines={1} style={[Ps.locarionName, { fontSize: 10, width: '85%' }]}>{item.location}</Text>
+                                    <Image style={Ps.locationIconSmall} source={require('../../../assets/icons/google-maps.png')} />
+                                    <Text numberOfLines={1} style={[Ps.locarionNameSmall, { width: '85%' }]}>{item.location}</Text>
                                 </View>
                             </TouchableOpacity>
                         )

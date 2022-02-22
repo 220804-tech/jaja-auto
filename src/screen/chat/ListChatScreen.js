@@ -85,26 +85,21 @@ export default function ListChat() {
     const renderItem = ({ item }) => {
         return (
             <>
-                {item.message && Object.keys(item.message).length && item.message.text ?
+                {item.message && Object.keys(item.message).length && item.message.text && item.name ?
                     <TouchableOpacity
                         onPress={() => {
                             navigation.navigate("IsiChat", { data: item, newData: null })
-                            setTimeout(() => {
-                                try {
-                                    let newItem = item
-                                    newItem.amount = 0
-                                    database().ref('friend/' + reduxUser.uid + "/" + item.id).set(newItem);
-                                } catch (error) {
-                                }
-                                try {
-                                    database().ref(`/people/` + reduxUser?.uid + `/`).set({ notif: { home: reduxnotifCount?.home, chat: reduxnotifCount?.chat - item?.amount, orders: reduxnotifCount?.orders } })
-                                } catch (error) {
-                                    console.log("🚀 ~ file: ListChatScreen.js ~ line 102 ~ setTimeout ~ error", error)
-
-                                }
-
-                            }, 500);
-
+                            try {
+                                let newItem = item
+                                newItem.amount = 0
+                                database().ref('friend/' + reduxUser.uid + "/" + item.id).set(newItem);
+                            } catch (error) {
+                            }
+                            try {
+                                database().ref(`/people/` + reduxUser?.uid + `/`).set({ notif: { home: reduxnotifCount?.home ? reduxnotifCount.home : 0, chat: reduxnotifCount?.chat ? reduxnotifCount.chat : 0 - item?.amount ? item?.amount : 0, orders: reduxnotifCount?.orders ? reduxnotifCount.orders : 0 } })
+                            } catch (error) {
+                                console.log("🚀 ~ file: ListChatScreen.js ~ line 102 ~ setTimeout ~ error", error)
+                            }
                         }}
                         style={{
                             paddingHorizontal: '1%',

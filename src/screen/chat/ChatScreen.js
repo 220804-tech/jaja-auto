@@ -156,7 +156,7 @@ export default function ChatScreen({ route }) {
                     redirect: 'follow'
                 };
 
-                fetch("https://jaja.id/backend/chat/image", requestOptions)
+                await fetch("https://jaja.id/backend/chat/image", requestOptions)
                     .then(response => response.text())
                     .then(res => {
                         try {
@@ -169,7 +169,7 @@ export default function ChatScreen({ route }) {
                         } catch (error) {
                             imageUrl = false
                         }
-                        setLoading(false)
+                        console.log('masuk sini nggk')
                     })
                     .catch(error => {
                         imageUrl = false
@@ -180,6 +180,7 @@ export default function ChatScreen({ route }) {
             }
 
             if (isiChat.length > 0 || image || selectedOrder || selectedProduct) {
+                setLoading(false)
                 let chat = isiChat.length > 0 ? isiChat : imageUrl ? 'Mengirim gambar' : selectedOrder && Object.keys(selectedOrder).length ? 'Pesanan No. ' + selectedOrder.invoice : selectedProduct.name
                 var message = {
                     message: isiChat,
@@ -332,8 +333,8 @@ export default function ChatScreen({ route }) {
                             // <View style={[style.row_center, { width: Wp('65%'), height: Wp('65%'), backgroundColor: colors.BlueJaja, alignSelf: 'flex-end', paddingRight: '5%', borderRadius: 5 }]}>
                             //     <Image source={{ uri: item.image }} style={{ width: '96%', height: '96%', resizeMode: 'cover', alignSelf: 'center', justifyContent: 'center', alignItems: 'center', borderRadius: 2 }} />
                             // </View>
-                            <View style={[{ width: Wp('70%'), height: Wp('70%'), alignSelf: 'flex-end', alignItems: 'flex-end', justifyContent: 'flex-end', paddingHorizontal: '0.5%', marginRight: '-3%' }]}>
-                                <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%', resizeMode: 'contain', alignSelf: 'center', borderWidth: 0.5, borderColor: colors.Silver }} />
+                            <View style={[{ width: Wp('65%'), height: Wp('70%'), alignSelf: 'flex-end', alignItems: 'flex-end', justifyContent: 'flex-end', paddingHorizontal: '0.5%', marginRight: '-3%' }]}>
+                                <Image resizeMode="contain" source={{ uri: item.image }} style={{ width: '100%', height: '100%', resizeMode: 'center', alignSelf: 'center', borderWidth: 0.5, borderColor: colors.Silver, backgroundColor: colors.Silver }} />
                             </View>
                             :
                             <>
@@ -530,7 +531,7 @@ export default function ChatScreen({ route }) {
                                         }}
                                     >
                                         <View style={[{ width: Wp('70%'), height: Wp('70%'), alignSelf: 'flex-end', alignItems: 'flex-end', justifyContent: 'flex-end' }]}>
-                                            <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%', resizeMode: 'contain', alignSelf: 'flex-end', padding: "0.2%", borderWidth: 0.5, borderColor: colors.Silver }} />
+                                            <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%', resizeMode: 'contain', alignSelf: 'flex-end', padding: "0.2%", borderWidth: 0.5, borderColor: colors.Silver, }} />
                                         </View>
                                     </View>
                                     : null}
@@ -597,7 +598,6 @@ export default function ChatScreen({ route }) {
 
 
     const handlePickImage = () => {
-
         launchImageLibrary({
             durationLimit: 61,
             quality: 0.9,
@@ -638,7 +638,7 @@ export default function ChatScreen({ route }) {
     return (
         <SafeAreaProvider style={[style.containerFix]}>
             <StatusBar translucent={false} backgroundColor={colors.jaja} barStyle="light-content" />
-            <Appbar back={true} title={data && data.name ? data.name : ''} />
+            <Appbar chat={true} back={true} title={data && data.name ? data.name : ''} />
             <ImageBackground source={require('../../assets/images/bgChat3.jpg')} style={{ width: '100%', height: '100%', paddingBottom: Math.max(insets.bottom, 50) }}>
                 {loading ? <Loading /> : null}
                 <StatusBar translucent={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
@@ -764,9 +764,8 @@ export default function ChatScreen({ route }) {
                             />
                             {!isiChat.length ?
                                 <IconButton
-
                                     icon={require('../../assets/icons/camera.png')}
-                                    style={{ margin: 0, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100 }}
+                                    style={{ margin: 0, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100, elevation: 1 }}
                                     color={colors.BlueJaja}
                                     onPress={() => galeryRef.current?.setModalVisible(true)}
                                 /> : null}

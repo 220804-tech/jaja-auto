@@ -4,6 +4,7 @@ import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { BasedOnSearch, Trending, Category, Flashsale, Loading, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect, NearestStore, ServiceCore, Utils, ServiceProduct } from '../../export'
 const { height: SCREEN_HEIGHT, width } = Dimensions.get('window');
+console.log("🚀 ~ file: HomeScreen.js ~ line 81000 ~ SCREEN_HEIGHT", SCREEN_HEIGHT)
 import DeviceInfo from 'react-native-device-info';
 import ParallaxScrollView from 'react-native-parallax-scrollview';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
@@ -66,7 +67,7 @@ export default function HomeScreen() {
             router: "KategoriSport",
         },
         {
-            image: require('../../assets/banner/home/banner2.png'),
+            image: require('../../assets/banner/home/banner1540x520-01.jpg'),
             router: "KategoriBuku",
         }
     ]
@@ -229,32 +230,32 @@ export default function HomeScreen() {
         return (
             <View style={style.navContainer} >
                 <View style={style.statusBar} />
-                <View style={style.navBar}>
+                {/* <View style={style.navBar}> */}
 
-                    <TouchableOpacity style={style.searchBar} onPress={() => navigation.navigate("Search")}>
-                        <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
-                        <Text style={styles.font_14}>{text}..</Text>
+                <TouchableOpacity style={[style.searchBar, styles.row_start_center]} onPress={() => navigation.navigate("Search")}>
+                    <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
+                    <Text style={styles.font_14}>{text}..</Text>
+                </TouchableOpacity>
+                <View style={[styles.row_between_center]}>
+
+                    <TouchableOpacity style={[styles.column, styles.mx]} onPress={handleGetCart}>
+                        <Image source={require('../../assets/icons/cart.png')} style={{ width: 25, height: 25, tintColor: colors.White }} />
+                        {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
+                            <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalProductInCart >= 100 ? "99+" : reduxUser.badges.totalProductInCart}</Text></View>
+                            : null
+                        }
                     </TouchableOpacity>
-                    <View style={[styles.row_between_center]}>
+                    <TouchableOpacity style={[styles.column, styles.mx_2]} onPress={() => reduxAuth ? navigation.navigate('Notification') : navigation.navigate('Login')}>
+                        <Image source={require('../../assets/icons/notif.png')} style={{ width: 24, height: 24, tintColor: colors.White }} />
+                        {Object.keys(reduxBadges).length && reduxBadges.totalNotifUnread ?
+                            <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxBadges.totalNotifUnread >= 100 ? "99+" : reduxBadges.totalNotifUnread}</Text></View>
 
-                        <TouchableOpacity style={[styles.column, styles.mx]} onPress={handleGetCart}>
-                            <Image source={require('../../assets/icons/cart.png')} style={{ width: 25, height: 25, tintColor: colors.White }} />
-                            {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
-                                <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalProductInCart >= 100 ? "99+" : reduxUser.badges.totalProductInCart}</Text></View>
-                                : null
-                            }
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[styles.column, styles.mx_2]} onPress={() => reduxAuth ? navigation.navigate('Notification') : navigation.navigate('Login')}>
-                            <Image source={require('../../assets/icons/notif.png')} style={{ width: 24, height: 24, tintColor: colors.White }} />
-                            {Object.keys(reduxBadges).length && reduxBadges.totalNotifUnread ?
-                                <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxBadges.totalNotifUnread >= 100 ? "99+" : reduxBadges.totalNotifUnread}</Text></View>
-
-                                // <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxBadges.totalNotifUnread >= 100 ? "99+" : reduxBadges.totalNotifUnread + ''}</Text></View>
-                                : null
-                            }
-                        </TouchableOpacity>
-                    </View>
+                            // <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxBadges.totalNotifUnread >= 100 ? "99+" : reduxBadges.totalNotifUnread + ''}</Text></View>
+                            : null
+                        }
+                    </TouchableOpacity>
                 </View>
+                {/* </View> */}
             </View >
         )
     }
@@ -267,8 +268,8 @@ export default function HomeScreen() {
                 horizontal={true}
                 loop={false}
                 dotColor={colors.White}
-                activeDotColor={colors.BlueJaja}
-                paginationStyle={{ bottom: 10 }}
+                activeDotColor={colors.YellowJaja}
+                paginationStyle={{ bottom: 0 }}
                 autoplay={true}
                 loop={true}
                 style={{ backgroundColor: colors.BlueJaja, flex: 0, justifyContent: 'center', alignItems: 'center' }}
@@ -286,7 +287,7 @@ export default function HomeScreen() {
                     images.map((item, key) => {
                         console.log("🚀 ~ file: HomeScreen.js ~ line 274 ~ {images.map ~ key", key)
                         return (
-                            <Image key={String(key)} style={style.swiperBanner}
+                            <Image key={String(key)} style={[style.swiperBanner, { resizeMode: 'contain' }]}
                                 resizeMode={item.image ? "contain" : "cover"}
                                 source={item.image}
                             />
@@ -533,7 +534,7 @@ export default function HomeScreen() {
             <StatusBar translucent={translucent} backgroundColor={colors.BlueJaja} barStyle="light-content" />
             <ReactNativeParallaxHeader
                 headerMinHeight={Platform.OS === 'ios' ? Hp('5.5%') : Hp('7%')}
-                headerMaxHeight={Hp('30%')}
+                headerMaxHeight={Wp('60%')}
                 extraScrollHeight={20}
                 // statusBarColor='transparent'
                 backgroundColor='#fcfcfc'
@@ -634,12 +635,11 @@ const style = StyleSheet.create({
 
     },
     navContainer: {
-        height: Platform.OS === 'ios' ? Hp('5.7%') : Hp('7%'),
-        justifyContent: Platform.OS === 'ios' ? 'flex-end' : 'center',
-        alignItems: 'center',
-        paddingHorizontal: '4%',
-        paddingBottom: '2.5%',
-        paddingTop: '2.2%',
+        // height: Platform.OS === 'ios' ? Hp('5.7%') : Hp('7%'),
+        // justifyContent: Platform.OS === 'ios' ? 'flex-end' : 'center',
+        zIndex: 1000, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#64B0C9', height: Platform.OS === 'ios' ? Hp('5.5%') : Hp('7%'), width: Wp('100%'), color: colors.siplahDefault, paddingHorizontal: '4%',
+        // paddingBottom: '2.5%',
+        // paddingTop: '2.2%',
         backgroundColor: Platform.OS === 'android' ? 'transparent' : colors.BlueJaja,
     },
     statusBar: {
@@ -663,9 +663,12 @@ const style = StyleSheet.create({
         fontFamily: 'Poppins-SemiBold',
         fontSize: 18,
         backgroundColor: colors.BlueJaja,
-        width: Wp('100%'), height: Wp('75%'),
+        width: Wp('100%'), height: Wp('60%'),
+        flex: 0,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     touchIcon: { width: '14%', justifyContent: 'center', alignItems: 'center' },
-    swiperBanner: { width: '100%', height: '100%', resizeMode: 'contain', backgroundColor: 'transparent', marginTop: '4%' },
-    searchBar: { flex: 0, width: '77%', flexDirection: 'row', backgroundColor: colors.White, borderRadius: 11, height: NAV_BAR_HEIGHT / (Platform.OS === 'android' ? 1.8 : 1.2), alignItems: 'center', paddingHorizontal: '4.5%', marginRight: '3%' }
-});
+    swiperBanner: { width: Wp('100%'), height: Wp('60%'), resizeMode: 'contain', backgroundColor: 'transparent', marginTop: '4%' },
+    searchBar: { flex: 0, backgroundColor: colors.White, borderRadius: 11, height: NAV_BAR_HEIGHT / (Platform.OS === 'android' ? 1.8 : 1.2), width: "77.5%", paddingHorizontal: '4.5%', marginRight: '3%' }
+})
