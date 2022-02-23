@@ -765,7 +765,7 @@ export default function ChatScreen({ route }) {
                             {!isiChat.length ?
                                 <IconButton
                                     icon={require('../../assets/icons/camera.png')}
-                                    style={{ margin: 0, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100, elevation: 1 }}
+                                    style={{ margin: 0, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100, }}
                                     color={colors.BlueJaja}
                                     onPress={() => galeryRef.current?.setModalVisible(true)}
                                 /> : null}

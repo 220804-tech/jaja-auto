@@ -25,6 +25,7 @@ export default function OrderScreen() {
     const reduxRefresh = useSelector(state => state.order.refresh)
     const reduxCompleted = useSelector(state => state.order.completed)
     const reduxUnpaid = useSelector(state => state.order.unPaid)
+    console.log("🚀 ~ file: OrderScreen.js ~ line 28 ~ OrderScreen ~ reduxUnpaid", reduxUnpaid.length)
     const reduxFailed = useSelector(state => state.order.failed)
     const reduxWaitConfirm = useSelector(state => state.order.waitConfirm)
 
@@ -38,12 +39,12 @@ export default function OrderScreen() {
     const [navigate, setNavigate] = useState("Pesanan")
 
     const [routes] = useState([
-        { key: 'first', title: 'Belum dibayar' },
-        { key: 'second', title: 'Diproses' },
-        { key: 'third', title: 'Dikirim' },
-        { key: 'fourth', title: 'Selesai' },
-        { key: 'fifth', title: 'Dibatalkan' },
-        { key: 'sixth', title: 'Pengembalian' },
+        { key: 'first', title: 'Belum dibayar', count: reduxUnpaid?.length ? reduxUnpaid?.length : 0 },
+        { key: 'second', title: 'Diproses', count: reduxProcess?.length ? reduxProcess?.length : 0 + reduxWaitConfirm?.length ? reduxWaitConfirm?.length : 0 },
+        { key: 'third', title: 'Dikirim', count: sent },
+        { key: 'fourth', title: 'Selesai', count: reduxCompleted?.length ? reduxCompleted?.length : 0 },
+        { key: 'fifth', title: 'Dibatalkan', count: reduxFailed?.length ? reduxFailed?.length : 0 },
+        { key: 'sixth', title: 'Pengembalian', count: complain },
     ]);
 
     const renderScene = SceneMap({
@@ -159,7 +160,6 @@ export default function OrderScreen() {
             }
         }
     }
-    console.log("🚀 ~ file: OrderScreen.js ~ line 202 ~ OrderScreen ~ reduxCompleted", reduxCompleted)
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : colors.White }]}>
             <Appbar title="Pesanan" trolley={true} notif={true} />
@@ -188,24 +188,16 @@ export default function OrderScreen() {
                             style={{ backgroundColor: colors.White }}
                             tabStyle={{ minHeight: 50, flex: 0, width: 120, borderBottomColor: colors.BlueJaja, borderRightColor: 'grey', justifyContent: 'center', alignSelf: 'center' }} // here
                             renderLabel={({ route, focused, color }) => {
+                                console.log("🚀 ~ file: OrderScreen.js ~ line 203 ~ OrderScreen ~ route", route)
+
                                 return (
                                     <View style={[styles.row_center, { width: 100, height: '100%' }]}>
                                         <View style={[styles.row_center, { width: '100%', textAlign: 'center' }]}>
                                             <Text style={{ color: colors.BlackGrayScale, fontSize: 12, textAlign: 'center', alignSelf: 'center' }}>{route.title} </Text>
-                                            {route.title === "Belum dibayar" && reduxUnpaid?.length ?
-                                                <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}>({reduxUnpaid.length > 9 ? "9+" : reduxUnpaid.length})</Text>
-                                                : route.title === "Diproses" && reduxWaitConfirm?.length && reduxProcess || reduxProcess?.length ?
-                                                    <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({reduxWaitConfirm.length + reduxProcess.length > 9 ? "9+" : reduxWaitConfirm.length + reduxProcess.length})</Text>
-                                                    : route.title === "Dikirim" && sent ?
-                                                        <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({sent > 9 ? "9+" : sent})</Text>
-                                                        : route.title == "Selesai" && reduxCompleted?.length ?
-                                                            <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({reduxCompleted.length > 9 ? "9+" : reduxCompleted.length})</Text>
-                                                            : route.title === "Dibatalkan" && reduxFailed?.length ?
-                                                                <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({reduxFailed.length > 9 ? "9+" : reduxFailed.length})</Text>
-                                                                : route.title === "Pengembalian" && complain ?
-                                                                    <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}> ({complain > 9 ? "9+" : complain})</Text>
-                                                                    : null
-                                            }
+                                            {route.count ?
+                                                <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}>({route.count > 9 ? "9+" : route.count})</Text>
+                                                : null}
+
                                         </View>
                                     </View>
                                 )

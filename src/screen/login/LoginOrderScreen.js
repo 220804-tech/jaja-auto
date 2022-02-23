@@ -29,11 +29,11 @@ export default function LoginScreen(props) {
 
 
     useEffect(() => {
-        setLoading(false)
-        if (props.route && props.route.params && props.route.params.navigate) {
-            setNavigate(props.route.params.navigate)
-        }
         return () => {
+            setLoading(false)
+            if (props.route && props.route.params && props.route.params.navigate) {
+                setNavigate(props.route.params.navigate)
+            }
             GoogleSignin.configure({
                 webClientId: "284366139562-tnj3641sdb4ia9om7bcp25vh3qn5vvo8.apps.googleusercontent.com",
                 offlineAccess: true
@@ -50,6 +50,10 @@ export default function LoginScreen(props) {
     );
 
     useEffect(() => {
+        handleEmail()
+    }, [])
+
+    const handleEmail = () => {
         EncryptedStorage.getItem('emailVerification').then(res => {
             if (res) {
                 let result = JSON.parse(res)
@@ -58,9 +62,7 @@ export default function LoginScreen(props) {
                 }
             }
         })
-
-    }, [])
-
+    }
 
     const signOut = async () => {
         try {

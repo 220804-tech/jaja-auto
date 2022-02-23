@@ -347,6 +347,7 @@ export default function TrolleyScreen() {
                                             :
                                             <Checkbox
                                                 color={colors.BlueJaja}
+                                                theme={{ mode: "adaptive" }}
                                                 status={item.isSelected ? 'checked' : 'unchecked'}
                                                 onPress={() => handleCheckbox("store", indexParent, "")}
                                                 style={styles.mr_2}
@@ -400,6 +401,7 @@ export default function TrolleyScreen() {
                                                             :
                                                             <Checkbox
                                                                 color={colors.BlueJaja}
+                                                                theme={{ mode: "adaptive" }}
                                                                 status={item.isSelected ? 'checked' : 'unchecked'}
                                                                 onPress={() => handleCheckbox("cart", indexParent, index)}
 

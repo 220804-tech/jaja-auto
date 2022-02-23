@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import Swipeable from 'react-native-swipeable';
 // import { StatusBar } from 'native-base';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import CheckBox from '@react-native-community/checkbox'
 export default function index(props) {
     const dispatch = useDispatch()
     const reduxUser = useSelector(state => state.user.user.location)
@@ -19,6 +19,8 @@ export default function index(props) {
     const [count2, setcount2] = useState(0)
     const [status, setStatus] = useState("Profile")
     const [itemSelected, setSelectedItem] = useState({})
+    const [selectedExtra, setselectedExtra] = useState([])
+
     const [loading, setLoading] = useState(false)
     const reduxUseCoin = useSelector(state => state.checkout.useCoin)
 
@@ -224,6 +226,19 @@ export default function index(props) {
         // </TouchableOpacity>
     ]
 
+    const handleCheckbox = (item, idx) => {
+        let newInPicks = selectedExtra
+        if (!!item && JSON.stringify(newInPicks).includes(item)) {
+            const found = newInPicks.find(element => element === item);
+            const filter = newInPicks.filter(element => element.indexOf(found) === -1)
+            setselectedExtra(filter)
+        } else {
+            newInPicks.push(item)
+            setselectedExtra(newInPicks)
+        }
+        setcount(count + 1)
+    }
+
     const renderItem = ({ item, index }) => {
         return (
             // <Swipeable
@@ -235,27 +250,41 @@ export default function index(props) {
             <TouchableRipple rippleColor={colors.BlueJaja} onPress={() => navigation.navigate("AddAddress", { data: item, edit: true })} style={[style.column_start_center, styles.card]}>
                 <View style={styles.body}>
                     <View style={style.row_between_center}>
-                        <Text numberOfLines={1} style={[styles.textName, { width: '55%' }]}>{item.nama_penerima ? item.nama_penerima : ""}</Text>
+                        <Text numberOfLines={1} style={[style.font_13, style.T_semi_bold, { color: colors.BlueJaja, width: '55%' }]}>{item.nama_penerima ? item.nama_penerima : ""}</Text>
                         {status === "checkout" ?
-                            <Button mode='contained' color={colors.BlueJaja} labelStyle={[style.font_10, style.T_semi_bold, { color: colors.White }]} onPress={() => handleChangePrimary(item.id)}>
+                            <Button mode='contained' color={colors.BlueJaja} labelStyle={[style.font_8, style.T_semi_bold, { color: colors.White }]} onPress={() => handleChangePrimary(item.id)}>
                                 Pilih Alamat
-                            </Button> :
-                            <View style={[style.row_end_center, { width: '40%' }]}>
-                                <Text adjustsFontSizeToFit numberOfLines={1} style={[style.font_12, { fontFamily: 'Poppins-Medium', color: item.is_primary ? colors.BlueJaja : colors.Silver, marginRight: Platform.OS === 'ios' ? '3%' : '0%' }]}>Alamat utama</Text>
-                                {reduxUser && reduxUser.length > 1 ?
-                                    <Switch
-                                        trackColor={{ false: "#767577", true: "#99e6ff" }}
-                                        thumbColor={item.is_primary ? colors.BlueJaja : "#f4f3f4"}
-                                        ios_backgroundColor="#ffff"
-                                        onValueChange={() => toggleSwitch(index)}
-                                        value={item.is_primary} />
-                                    : null
-                                }
-                            </View>
+                            </Button>
+
+                            : status === "extra" ?
+                                <CheckBox
+                                    onAnimationType='fill'
+                                    lineWidth={1.5}
+                                    onTintColor={colors.BlueJaja}
+                                    onCheckColor={colors.BlueJaja}
+                                    boxType='square'
+                                    disabled={false}
+                                    value={item.isSelected ? true : false}
+                                    onValueChange={(e) => handleCheckbox(item.id)}
+                                    style={styles.mr}
+                                />
+                                :
+                                <View style={[style.row_end_center, { width: '40%' }]}>
+                                    <Text adjustsFontSizeToFit numberOfLines={1} style={[style.font_12, { fontFamily: 'Poppins-Medium', color: item.is_primary ? colors.BlueJaja : colors.Silver, marginRight: Platform.OS === 'ios' ? '3%' : '0%' }]}>Alamat utama</Text>
+                                    {reduxUser && reduxUser.length > 1 ?
+                                        <Switch
+                                            trackColor={{ false: "#767577", true: "#99e6ff" }}
+                                            thumbColor={item.is_primary ? colors.BlueJaja : "#f4f3f4"}
+                                            ios_backgroundColor="#ffff"
+                                            onValueChange={() => toggleSwitch(index)}
+                                            value={item.is_primary} />
+                                        : null
+                                    }
+                                </View>
                         }
                     </View>
-                    <Text adjustsFontSizeToFit style={styles.textNum}>{item.no_telepon ? item.no_telepon : ""}</Text>
-                    <Paragraph numberOfLines={3} style={styles.textAlamat}>{item.provinsi + ", " + item.kota_kabupaten + ", " + item.kecamatan + ", " + item.kelurahan + ", " + item.kode_pos + ", " + item.alamat_lengkap}</Paragraph>
+                    <Text adjustsFontSizeToFit style={style.font_12}>{item.no_telepon ? item.no_telepon : ""}</Text>
+                    <Paragraph numberOfLines={3} style={style.font_12}>{item.provinsi + ", " + item.kota_kabupaten + ", " + item.kecamatan + ", " + item.kelurahan + ", " + item.kode_pos + ", " + item.alamat_lengkap}</Paragraph>
                     <View style={[style.row_between_center, style.mt_3]}>
                         <Text style={[style.font_12, { color: colors.BlueJaja, fontFamily: 'Poppins-Regular' }]}>{item.label}</Text>
                         <View style={{ flex: 0, justifyContent: 'flex-end', flexDirection: 'row' }}>
@@ -279,17 +308,45 @@ export default function index(props) {
             <StatusBar translucent={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
 
             {loading ? <Loading /> : null}
-            <Appbar.Header style={[style.appBar, { height: Platform.OS === 'ios' ? Hp('6%') : Hp('7%'), elevation: 0 }]}>
-                <View style={style.row_start_center}>
+            {/* <View style={[styles.appBar, { justifyContent: 'flex-start' }]}>
+                <View style={[styles.row_start_center, { flex: 1 }]}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Image style={style.appBarButton} source={require('../../assets/icons/arrow.png')} />
                     </TouchableOpacity>
-                    <Text adjustsFontSizeToFit style={style.appBarText}> Alamat</Text>
+                    <Text adjustsFontSizeToFit style={[style.appBarText, { textAlign: 'center' }]}> Alamat</Text>
                 </View>
-                <TouchableOpacity onPress={() => navigation.navigate('AddAddress')}>
-                    <Image style={style.appBarButton} source={require('../../assets/icons/more.png')} />
-                </TouchableOpacity>
-            </Appbar.Header>
+                <View style={[styles.row_between_center]}>
+                    {status === "extra" ?
+                        <TouchableOpacity onPress={() => navigation.navigate('AddAddress')}>
+                            <Image style={style.appBarButton} source={require('../../assets/icons/more.png')} />
+                        </TouchableOpacity>
+                        :
+                        <TouchableOpacity onPress={() => navigation.navigate('AddAddress')}>
+                            <Image style={style.appBarButton} source={require('../../assets/icons/more.png')} />
+                        </TouchableOpacity>
+                    }
+                </View>
+            </View> */}
+            <View style={[style.appBar, { backgroundColor: colors.BlueJaja }]}>
+                <View style={[style.row_start_center, { flex: 1 }]}>
+
+                    <TouchableOpacity style={[style.row_start_center, { marginRight: '2%' }]} onPress={() => navigation.goBack()}>
+                        <Image style={style.appBarButton} source={require('../../assets/icons/arrow.png')} />
+                    </TouchableOpacity>
+                    <Text numberOfLines={1} style={[style.font_15, { fontFamily: 'Poppins-SemiBold', color: colors.White, width: '60%', marginBottom: '-0.8%' }]}>Alamat</Text>
+                </View>
+                <View style={[style.row_end_center, { width: '50%' }]}>
+                    {status === "extra" ?
+                        <TouchableRipple style={[{ paddingHorizontal: '7%', paddingVertical: '1.5%', alignSelf: 'flex-end', backgroundColor: colors.White, borderRadius: 3 }]} onPress={() => navigation.navigate('Address', { data: "extra" })}>
+                            <Text style={[styles.font_10, style.T_medium, { color: colors.BlueJaja, width: '100%', textAlign: 'right' }]}>Simpan</Text>
+                        </TouchableRipple>
+                        :
+                        <TouchableOpacity onPress={() => navigation.navigate('AddAddress')}>
+                            <Image style={style.appBarButton} source={require('../../assets/icons/more.png')} />
+                        </TouchableOpacity>
+                    }
+                </View>
+            </View>
             <View style={style.container}>
                 <ScrollView
                     refreshControl={
@@ -307,7 +364,7 @@ export default function index(props) {
                     }
                 </ScrollView>
             </View>
-        </SafeAreaView>
+        </SafeAreaView >
     )
 }
 const styles = StyleSheet.create({
@@ -323,8 +380,8 @@ const styles = StyleSheet.create({
     buttonMaps: { flex: 0, borderRadius: 20 },
     body: { width: "100%", flex: 1, justifyContent: 'flex-start', paddingVertical: '4%', paddingHorizontal: '3%', marginBottom: '2%' },
     form: { flex: 0, flexDirection: 'column', paddingVertical: '1%', marginBottom: '3%' },
-    textAlamat: { fontSize: 14, color: colors.BlackGrayScale, margin: 0, fontFamily: 'Poppins-Regular' },
-    textName: { fontSize: 14, color: colors.BlueJaja, fontFamily: 'Poppins-SemiBold' },
+    textAlamat: { fontSize: 12, color: colors.BlackGrayScale, margin: 0, fontFamily: 'Poppins-Regular' },
+    textName: { fontSize: 13, color: colors.BlueJaja, fontFamily: 'Poppins-SemiBold' },
     textNum: { fontSize: 13, color: colors.BlueJaja, fontFamily: 'Poppins-Regular' },
 
 })

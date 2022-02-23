@@ -730,13 +730,20 @@ export default function checkoutScreen() {
             />
             {load ? <Loading /> : null}
             <Appbar back={true} title="Checkout" />
-            {Object.keys(reduxCheckout).length == 0 ? <Loading /> : null}
+            {Object.keys(reduxCheckout).length === 0 ? <Loading /> : null}
             <View style={{ flex: 1, backgroundColor: 'white' }}>
                 <ScrollView contentContainerStyle={{ flex: 0, flexDirection: 'column', paddingBottom: Hp('7%'), backgroundColor: colors.White }} refreshControl={<RefreshControl refreshing={refreshControl} onRefresh={onRefresh} />}>
                     <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                        <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                            <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/google-maps.png')} />
-                            <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Alamat Pengiriman</Text>
+                        <View style={[styles.row_between_center, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
+                            <View style={styles.row}>
+                                <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/google-maps.png')} />
+                                <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Alamat Pengiriman</Text>
+                            </View>
+                            {/* {reduxCheckout?.address && Object.keys(reduxCheckout.address).length ?
+                                <TouchableOpacity style={{ width: '49%', alignSelf: 'flex-end', justifyContent: 'flex-end' }} onPress={() => navigation.navigate('Address', { data: "extra" })}>
+                                    <Text style={[styles.font_12, { color: colors.BlueJaja, alignSelf: 'flex-end' }]}>+ Tambah Penerima</Text>
+                                </TouchableOpacity>
+                                : null} */}
                         </View>
                         {reduxCheckout.address && Object.keys(reduxCheckout.address).length ?
                             <View style={[styles.column, styles.p_3]}>
@@ -760,6 +767,30 @@ export default function checkoutScreen() {
                                 </View>
                             </View>
                         }
+                        {/* {reduxCheckout.address && Object.keys(reduxCheckout.address).length ?
+                            <View style={[styles.column, styles.py_3, styles.px_5,]}>
+                                <View style={styles.row_between_center}>
+                                    <Text numberOfLines={1} style={[styles.font_14, { width: '70%' }]}>{reduxCheckout.address.receiverName}</Text>
+                                    <View style={styles.row_end_center}>
+                                        <Text style={[styles.font_12, { color: colors.BlueJaja, alignSelf: 'flex-end', textAlignVertical: 'center' }]}>1+</Text>
+                                        <TouchableOpacity style={[styles.ml_4, { width: '25%', paddingVertical: 5 }]} onPress={() => navigation.navigate('Address', { data: "checkout" })}>
+                                            <Image style={[styles.icon_16, { tintColor: colors.RedNotif }]} source={require('../../assets/icons/delete.png')} />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                                <Text numberOfLines={1} style={[styles.font_12, styles.mt]}>{reduxCheckout.address.phoneNumber}</Text>
+                                <Text numberOfLines={3} style={[styles.font_12]}>{reduxCheckout.address.address}</Text>
+                            </View>
+                            :
+                            <View style={[styles.column, styles.p_3]}>
+                                <View style={styles.row_between_center}>
+                                    <Text numberOfLines={1} style={[styles.font_14]}>Masukkan Alamat Baru</Text>
+                                    <TouchableOpacity onPress={() => navigation.navigate('Address', { data: "checkout" })}>
+                                        <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Tambah</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        } */}
                     </View>
                     {
                         reduxCheckout.cart && reduxCheckout.cart.length ?
@@ -861,7 +892,7 @@ export default function checkoutScreen() {
                                                         setindexStore(idxStore)
                                                     }} icon="arrow-right" color={colors.RedFlashsale} uppercase={false} labelStyle={{ fontFamily: 'Poppins-Regular', color: colors.RedFlashsale }} style={{ borderColor: colors.RedFlashsale, borderWidth: 1, borderRadius: 10 }} contentStyle={{ borderColor: colors.BlueJaja }} mode="outlined">
                                                         Pakai voucher toko
-                                                </Button>
+                                                    </Button>
                                                 </View>
                                                 : null
                                         }
@@ -977,7 +1008,7 @@ export default function checkoutScreen() {
                                     setvoucherOpen('jaja')
                                 }} icon="arrow-right" color={colors.RedFlashsale} uppercase={false} labelStyle={{ fontFamily: 'Poppins-Regular', color: colors.RedFlashsale }} style={{ borderColor: colors.RedFlashsale, borderWidth: 1, borderRadius: 10 }} contentStyle={{ borderColor: colors.BlueJaja }} mode="outlined">
                                     Makin hemat pakai promo
-                            </Button>
+                                </Button>
                             </View>
                     }
                     <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
@@ -1110,8 +1141,6 @@ export default function checkoutScreen() {
                                     keyExtractor={(item) => item.id + 'JH'}
                                     extraData={voucherOpen === "store" ? vouchers : reduxCheckout.voucherJaja.filter(item => item.isValid === false)}
                                     renderItem={({ item, index }) => {
-                                        console.log("🚀 ~ file: CheckoutScreen.js ~ line 961 ~ checkoutScreen ~ item", item.isValid)
-
                                         if (!item.isValid) {
                                             return (
                                                 <View style={[styles.row_center, styles.mb_3]}>
