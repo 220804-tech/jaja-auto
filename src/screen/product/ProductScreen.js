@@ -93,7 +93,12 @@ export default function ProductScreen(props) {
     );
 
     useEffect(() => {
+    if (reduxProduct?.slug) {
         dynamicLink()
+    }
+    }, [reduxProduct?.slug])
+    
+    useEffect(() => {
         return () => {
             setmodal(false)
             if (props.route.params && reduxProduct.slug) {
@@ -108,23 +113,31 @@ export default function ProductScreen(props) {
 
 
     const dynamicLink = async () => {
-        const link_URL = await dynamicLinks().buildShortLink({
-            link: `https://jajaid.page.link/product?slug=${slug}`,
-            domainUriPrefix: 'https://jajaid.page.link',
-            ios: {
-                bundleId: 'com.jaja.customer',
-                appStoreId: '1547981332',
-                fallbackUrl: 'https://apps.apple.com/id/app/jaja-id-marketplace-hobbies/id1547981332?l=id',
-            },
-            android: {
-                packageName: 'com.jajaidbuyer',
-                fallbackUrl: 'https://play.google.com/store/apps/details?id=com.jajaidbuyer',
-            },
-            navigation: {
-                forcedRedirectEnabled: true,
-            }
-        });
-        setlink(link_URL)
+        console.log('masuk sini tol');
+        console.log("🚀 ~ file: ProductScreen.js ~ line 229 ~ constlink_URL=awaitdynamicLinks ~ reduxProduct.slug", reduxProduct.slug)
+        try {
+            const link_URL = await dynamicLinks().buildShortLink({
+                link: `https://jajaid.page.link/product?slug=${reduxProduct.slug}`,
+                domainUriPrefix: 'https://jajaid.page.link',
+                ios: {
+                    bundleId: 'com.jaja.customer',
+                    appStoreId: '1547981332',
+                    fallbackUrl: 'https://apps.apple.com/id/app/jaja-id-marketplace-hobbies/id1547981332?l=id',
+                },
+                android: {
+                    packageName: 'com.jajaidbuyer',
+                    fallbackUrl: 'https://play.google.com/store/apps/details?id=com.jajaidbuyer',
+                },
+                navigation: {
+                    forcedRedirectEnabled: true,
+                }
+            });
+            console.log("🚀 ~ file: ProductScreen.js ~ line 127 ~ constlink_URL=awaitdynamicLinks ~ link_URL", link_URL)
+            setlink(link_URL)
+        } catch (error) {
+        console.log("🚀 ~ file: ProductScreen.js ~ line 138 ~ dynamicLink ~ error", error)
+            
+        }
     }
     const handleProduct = () => {
         try {
@@ -555,6 +568,7 @@ export default function ProductScreen(props) {
                         .catch(err => console.log("cok"));
                     setmodal(false)
                 });
+                console.log("🚀 ~ file: ProductScreen.js ~ line 561 ~ setTimeout ~ link", link)
                 const shareOptions = {
                     title: 'Jaja',
                     message: `Dapatkan ${reduxProduct.name} di Jaja.id \nDownload sekarang ${link}`,
@@ -652,9 +666,12 @@ export default function ProductScreen(props) {
                                         <View style={[styles.row_start_center, { width: '87%', }]}>
                                             {reduxProduct.isDiscount ?
                                                 <View style={[styles.row_start_center]}>
+                                                     {reduxProduct.discount == 0?
+                                                   null:
                                                     <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 5 }]}>
                                                         <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, { marginBottom: Platform.OS === 'ios' ? '-1%' : 0, color: colors.White }]}>{reduxProduct.discount}%</Text>
                                                     </View>
+    }
                                                     <View style={[styles.column]}>
                                                         <Text style={Ps.priceBefore}>{reduxProduct.price}</Text>
                                                         <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{reduxProduct.priceDiscount}</Text>
@@ -1302,10 +1319,10 @@ const style = StyleSheet.create({
     //     marginHorizontal: 10,
     //     backgroundColor: 'transparent',
     // },
-    // statusBar: {
-    //     height: STATUS_BAR_HEIGHT,
-    //     backgroundColor: 'transparent',
-    // },
+   statusBar: {
+        height: STATUS_BAR_HEIGHT,
+        backgroundColor: 'transparent',
+    },
     // navBar: {
     //     height: '100%',
     //     justifyContent: 'space-between',

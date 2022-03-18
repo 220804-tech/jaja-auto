@@ -127,10 +127,12 @@ export default function GiftDetailScreen(props) {
         }, []),
     );
 
+ 
     useEffect(() => {
-        dynamicLink()
-    }, [])
-
+        if (giftDetails?.slug) {
+            dynamicLink()
+        }
+    }, [giftDetails?.slug])
 
 
     function currencyFormat(num) {
@@ -180,7 +182,7 @@ export default function GiftDetailScreen(props) {
         <View style={style.navContainer}>
             {Platform.OS === 'ios' ? null : <View style={styles.statusBar} />}
 
-            <View style={style.navBar}>
+            <View style={[style.navBar, { paddingTop: Platform.OS === 'ios' ? '0%' : '5%' }]}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, padding: '3%', backgroundColor: colors.BlueJaja, justifyContent: 'center', alignItems: 'center', borderRadius: 100 }}>
                     <Image source={require('../../assets/icons/arrow.png')} style={{ width: 25, height: 25, marginRight: '3%', tintColor: colors.White }} />
                 </TouchableOpacity>
@@ -198,72 +200,138 @@ export default function GiftDetailScreen(props) {
     const title = () => {
         let arrImage = [require('../../assets/images/JajaId.png')]
         return (
-            <View style={{ width: Wp('100%'), height: Wp('100%'), backgroundColor: colors.White, marginTop: '-11%' }}>
-                {
-                    Platform.OS === 'ios' ?
-                        <View style={{ width: Wp('100%'), height: Hp('45%'), backgroundColor: colors.White, marginTop: '-11%' }}>
-                            <Swiper
-                                autoplayTimeout={4}
-                                horizontal={true}
-                                loop={false}
-                                dotColor={colors.White}
-                                activeDotColor={colors.BlueJaja}
-                                paginationStyle={{ bottom: 10 }}
-                                autoplay={true}
-                                loop={true}>
-                                {
-                                    reduxLoad || !giftDetails?.image?.[0] ?
-                                        arrImage.map((item, key) => {
-                                            return (
-                                                <Image key={String(key)} style={[style.swiperProduct, { tintColor: colors.Silver }]}
-                                                    source={item}
-                                                />
-                                            );
-                                        })
-
-                                        :
-
-                                        giftDetails.image.map((item, key) => {
-                                            return (
-                                                <Image key={String(key)} style={style.swiperProduct}
-                                                    source={{ uri: item }}
-                                                />
-                                            );
-                                        })}
-
-                            </Swiper>
-                        </View>
-                        :
+            <View style={{ width: Wp('100%'), height: Wp('100%'), backgroundColor: colors.White, marginTop: Platform.OS === 'ios' ? '-11%' : 0 }}>
+            {
+                Platform.OS === 'ios' ?
+                    <View style={{
+                        width: '100%', height: '100%', backgroundColor: colors.White, marginTop: -STATUS_BAR_HEIGHT, justifyContent: 'center', alignItems: 'center'
+                    }}>
                         <Swiper
+                            // autoplayTimeout={4}
                             horizontal={true}
+                            loop={false}
                             dotColor={colors.White}
                             activeDotColor={colors.BlueJaja}
-                            style={{ backgroundColor: colors.WhiteBack }}>
+                            paginationStyle={{ bottom: 10 }}
+                        // style={{ backgroundColor: colors.BlueJaja, flex: 0, justifyContent: 'center', alignItems: 'center' }}
+                        >
                             {
-                                reduxLoad || !giftDetails?.image?.[0] ?
-                                    arrImage.map((item, key) => {
+                                reduxLoad === false && giftDetails?.image?.length > 0 ?
+                                    giftDetails.image.map((item, key) => {
                                         return (
-                                            <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%'), }}>
-                                                <Image style={[style.swiperProduct, { tintColor: colors.Silver }]}
-                                                    source={item}
-                                                />
-                                            </View>
+                                            <Image key={String(key)} style={[style.swiperProduct, { alignSelf: 'center' }]}
+                                                source={{ uri: item }}
+                                            />
                                         );
                                     })
                                     :
-                                    giftDetails.image.map((item, key) => {
+                                    arrImage.map((item, key) => {
                                         return (
-                                            <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%') }}>
-                                                <Image style={style.swiperProduct}
-                                                    source={{ uri: item }}
-                                                />
-                                            </View>
+                                            <Image key={String(key)} style={style.loadingProduct}
+                                                source={require('../../assets/images/JajaId.png')}
+                                            />
                                         );
                                     })
                             }
                         </Swiper>
-                }
-            </View>
+                    </View >
+                    :
+                    <Swiper
+                        horizontal={true}
+                        dotColor={colors.White}
+                        activeDotColor={colors.BlueJaja}
+                        style={{ backgroundColor: colors.WhiteBack }}>
+                        {
+                            reduxLoad || !giftDetails?.image?.[0] ?
+                                arrImage.map((item, key) => {
+                                    return (
+                                        <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%'), justifyContent: 'center', alignItems: 'center' }}>
+                                            {console.log('masuk satu')}
+                                            <Image style={[style.swiperProduct, { width: "70%", height: "70%", tintColor: colors.Silver }]}
+                                                source={item}
+                                            />
+                                        </View>
+                                    );
+                                })
+                                :
+                                giftDetails.image.map((item, key) => {
+                                    return (
+                                        <Image style={{ width: Wp('100%'), height: Wp('100%'), resizeMode: 'contain' }}
+                                            source={{ uri: item }
+                                            }
+                                        />
+                                    );
+                                })
+                        }
+                    </Swiper>
+            }
+        </View >
+            // <View style={{ width: Wp('100%'), height: Wp('100%'), backgroundColor: colors.White, marginTop: Platform.OS === 'ios' ? '-11%' : 0 }}>
+            //     {
+            //         Platform.OS === 'ios' ?
+            //                 width: '100%', height: '100%', backgroundColor: colors.White, marginTop: -STATUS_BAR_HEIGHT, justifyContent: 'center', alignItems: 'center'
+            //                 <Swiper
+            //                     autoplayTimeout={4}
+            //                     horizontal={true}
+            //                     dotColor={colors.White}
+            //                     activeDotColor={colors.BlueJaja}
+            //                     paginationStyle={{ bottom: 10 }}
+            //                     autoplay={true}
+            //                     loop={true}
+            //                     >
+            //                     {
+            //                         reduxLoad || !giftDetails?.image?.[0] ?
+            //                             arrImage.map((item, key) => {
+            //                                 return (
+            //                                     <Image key={String(key)} style={[style.swiperProduct, { tintColor: colors.Silver }]}
+            //                                         source={item}
+            //                                     />
+            //                                 );
+            //                             })
+
+            //                             :
+
+            //                             giftDetails.image.map((item, key) => {
+            //                                 return (
+            //                                     <Image key={String(key)} style={style.swiperProduct}
+            //                                         source={{ uri: item }}
+            //                                     />
+            //                                 );
+            //                             })}
+
+            //                 </Swiper>
+            //             </View>
+            //             :
+            //             <Swiper
+            //                 horizontal={true}
+            //                 dotColor={colors.White}
+            //                 activeDotColor={colors.BlueJaja}
+            //                 style={{ backgroundColor: colors.WhiteBack }}>
+            //                 {
+            //                     reduxLoad || !giftDetails?.image?.[0] ?
+            //                         arrImage.map((item, key) => {
+            //                             return (
+            //                                 <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%'), }}>
+            //                                     <Image style={[style.swiperProduct, { tintColor: colors.Silver }]}
+            //                                         source={item}
+            //                                     />
+            //                                 </View>
+            //                             );
+            //                         })
+            //                         :
+            //                         giftDetails.image.map((item, key) => {
+            //                             return (
+            //                                 <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%') }}>
+            //                                     <Image style={style.swiperProduct}
+            //                                         source={{ uri: item }}
+            //                                     />
+            //                                 </View>
+            //                             );
+            //                         })
+            //                 }
+            //             </Swiper>
+            //     }
+            // </View>
         );
     };
 
@@ -320,24 +388,29 @@ export default function GiftDetailScreen(props) {
     }
 
     const dynamicLink = async () => {
-        console.log("🚀 ~ file: ProductScreen.js ~ line 107 ~ constlink_URL=awaitdynamicLinks ~ slug", slug)
-        const link_URL = await dynamicLinks().buildShortLink({
-            link: `https://jajaid.page.link/gift?slug=${slug}`,
-            domainUriPrefix: 'https://jajaid.page.link',
-            ios: {
-                bundleId: 'com.jaja.customer',
-                appStoreId: '1547981332',
-                fallbackUrl: 'https://apps.apple.com/id/app/jaja-id-marketplace-hobbies/id1547981332?l=id',
-            },
-            android: {
-                packageName: 'com.jajaidbuyer',
-                fallbackUrl: 'https://play.google.com/store/apps/details?id=com.jajaidbuyer',
-            },
-            navigation: {
-                forcedRedirectEnabled: true,
-            }
-        });
-        setlink(link_URL)
+        try {
+            const link_URL = await dynamicLinks().buildShortLink({
+                link: `https://jajaid.page.link/gift?slug=${giftDetails.slug}`,
+                domainUriPrefix: 'https://jajaid.page.link',
+                ios: {
+                    bundleId: 'com.jaja.customer',
+                    appStoreId: '1547981332',
+                    fallbackUrl: 'https://apps.apple.com/id/app/jaja-id-marketplace-hobbies/id1547981332?l=id',
+                },
+                android: {
+                    packageName: 'com.jajaidbuyer',
+                    fallbackUrl: 'https://play.google.com/store/apps/details?id=com.jajaidbuyer',
+                },
+                navigation: {
+                    forcedRedirectEnabled: true,
+                }
+            });
+            console.log("🚀 ~ file: ProductScreen.js ~ line 127 ~ constlink_URL=awaitdynamicLinks ~ link_URL", link_URL)
+            setlink(link_URL)
+        } catch (error) {
+        console.log("🚀 ~ file: ProductScreen.js ~ line 138 ~ dynamicLink ~ error", error)
+            
+        }
     }
 
 
@@ -928,10 +1001,12 @@ export default function GiftDetailScreen(props) {
                 headerMaxHeight={Platform.OS === 'ios' ? Hp('45%') : Wp('100%')}
                 extraScrollHeight={20}
                 statusBarColor='transparent'
+                backgroundColor='#FFFF'
                 navbarColor={colors.BlueJaja}
                 titleStyle={style.titleStyle}
                 title={title()}
                 backgroundImageScale={1.2}
+
                 renderNavBar={renderNavBar}
                 renderContent={renderContent}
                 containerStyle={[styles.container, { backgroundColor: colors.WhiteGrey }]}
@@ -1079,6 +1154,6 @@ const style = StyleSheet.create({
         fontSize: 18,
         backgroundColor: colors.BlueJaja
     },
-    swiperProduct: { width: '100%', height: '100%', resizeMode: 'contain' },
+    swiperProduct: { width: '100%', height: '100%', resizeMode: 'contain', backgroundColor: colors.White },
     searchBar: { flexDirection: 'row', backgroundColor: colors.White, borderRadius: 12, height: NAV_BAR_HEIGHT / 1.7, width: '70%', alignItems: 'center', paddingHorizontal: '4%' }
 });

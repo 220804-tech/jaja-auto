@@ -15,11 +15,11 @@ import { Platform } from 'react-native';
 export default function checkoutScreen() {
     const navigation = useNavigation()
     const dispatch = useDispatch();
+
     const reduxCheckout = useSelector(state => state.checkout.checkout)
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxCoin = useSelector(state => state.user.user.coinFormat)
     const reduxUseCoin = useSelector(state => state.checkout.useCoin)
-
     const reduxShipping = useSelector(state => state.checkout.shipping)
     const reduxListPayment = useSelector(state => state.checkout.listPayment)
     const cartStatus = useSelector(state => state.cart.cartStatus)
@@ -29,8 +29,6 @@ export default function checkoutScreen() {
     const [showModal2, setModalShow2] = useState(false);
     const [giftSelected, setgiftSelected] = useState('');
     const [dateSendTime, setdateSendTime] = useState('');
-
-
     const actionSheetVoucher = createRef();
     const actionSheetDelivery = createRef();
     const actionSheetPayment = createRef();
@@ -42,20 +40,15 @@ export default function checkoutScreen() {
     const [selectedSubPayment, setselectedSubPayment] = useState('')
     const [subPayment, setsubPayment] = useState([])
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-
     const [voucherFilters, setvoucherFilters] = useState([])
     const [indexStore, setindexStore] = useState(0)
     const [sendTime, setsendTime] = useState("setiap saat")
-
     const [vouchers, setVouchers] = useState([])
     const [voucherOpen, setvoucherOpen] = useState("")
-
     const [maxSendDate, setmaxSendDate] = useState("")
-
     const [deliveryDate, setdeliveryDate] = useState("")
     const [notes, setNotes] = useState([])
     const [sendDate, setSendDate] = useState("")
-
     const [rangeDate, setrangeDate] = useState([])
     const [listMonth, setlistMonth] = useState(["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "September", "Desember"])
     const [useCoin, setUseCoin] = useState(false)
@@ -64,19 +57,22 @@ export default function checkoutScreen() {
         month: 0,
         date: 0,
     });
+
     const [dateMax, setdateMax] = useState({
         year: 0,
         month: 0,
         date: 0,
     });
 
-
     const [textGift, settextGift] = useState('')
+    const [voucherFocus, setvoucherFocus] = useState('1')
+    const [voucherCode, setvoucherCode] = useState('')
 
     useEffect(() => {
         setRefreshControl(false)
         setLoad(false)
         setLoading(false)
+        setloadAs(false)
         if (reduxAuth) {
             getVouchers(reduxAuth)
         } else {
@@ -84,6 +80,9 @@ export default function checkoutScreen() {
         }
         if (voucherOpen) {
             actionSheetVoucher.current?.setModalVisible(true)
+        }else{
+            actionSheetVoucher.current?.setModalVisible(false)
+
         }
         if (Object.keys(reduxCheckout).length) {
             setLoading(false)
@@ -108,6 +107,7 @@ export default function checkoutScreen() {
                 month: future.getMonth(),
                 date: future.getDate()
             })
+            setSendDate(String(future.getFullYear()+"-"+future.getMonth()+'-'+future.getDate()))
             future.setMonth(future.getMonth() + 4);
             setdateMax({
                 year: future.getFullYear(),
@@ -151,6 +151,7 @@ export default function checkoutScreen() {
         })
         // dispatch({ type: 'SET_ACTION_SHEET', payload: true })
     }
+
     const getVouchers = (token) => {
         // ServiceVoucher.getVouchers(token).then(res => {
         //     if (res) {
@@ -160,10 +161,10 @@ export default function checkoutScreen() {
         // })
     }
 
-    const handleVoucher = (val, index) => {
+    const handleVoucher = async (val, index) => {
         if (voucherOpen == "store") {
             if (val.isClaimed) {
-                actionSheetVoucher.current?.setModalVisible()
+                actionSheetVoucher.current?.setModalVisible(false)
                 setTimeout(() => setloadAs(true), 100);
                 var myHeaders = new Headers();
                 myHeaders.append("Authorization", reduxAuth);
@@ -184,7 +185,11 @@ export default function checkoutScreen() {
                         try {
                             let result = JSON.parse(res)
                             if (result.status.code === 200) {
-                                Utils.alertPopUp('Voucher berhasil digunakan!')
+                                if (result.status.message==='voucher berhasil digunakan') {
+                                    Utils.alertPopUp('Voucher berhasil digunakan!')
+                                }else if (result.status.message==='voucher tidak digunakan') {
+
+                                }
                                 getCheckout(reduxUseCoin);
                             } else {
                                 Utils.handleErrorResponse(result, 'Error with status code : 12060')
@@ -203,14 +208,16 @@ export default function checkoutScreen() {
             }
 
         } else if (voucherOpen == "jaja") {
-            if (val.isClaimed) {
-                actionSheetVoucher.current?.setModalVisible()
-                setTimeout(() => setLoad(true), 100);
+            if (val?.isClaimed || index==='khusus' ) {
+                actionSheetVoucher.current?.setModalVisible(false)
+                if (index!=='khusus' ) {
+                    setTimeout(() => setLoad(true), 200);
+                }
                 var headers = new Headers();
                 headers.append("Authorization", reduxAuth);
                 headers.append("Content-Type", "application/json");
                 headers.append("Cookie", "ci_session=h2pi6rhg4uma28jrsci9ium4tf7k8id4");
-                var row = JSON.stringify({ "voucherId": val.id });
+                var row = JSON.stringify({ "voucherId" :index==='khusus'? val.id_promo : val.id });
                 var rq = {
                     method: 'PUT',
                     headers: headers,
@@ -221,14 +228,23 @@ export default function checkoutScreen() {
                 fetch("https://jaja.id/backend/checkout/selectedVoucherJaja", rq)
                     .then(response => response.text())
                     .then(res => {
+                    console.log("🚀 ~ file: CheckoutScreen.js ~ line 233 ~ handleVoucher ~ res", res)
                         try {
                             let result = JSON.parse(res)
                             setTimeout(() => setLoad(false), 500);
                             if (result.status.code === 200) {
-                                // Utils.alertPopUp(item.isClaimed ? '' : 'Voucher berhasil digunakan!')
+                                if (index=='khusus') {
+                                    setvoucherOpen(null)
+                                    // Utils.alertPopUp('Kode voucher berhasil digunakan')
+                                }else {
+                                    Utils.alertPopUp('Voucher berhasil digunakan')
+                                }
                                 getCheckout(reduxUseCoin)
                             } else {
                                 Utils.handleErrorResponse(result, 'Error with status code 12063')
+                            }
+                            if (index==='khusus') {
+                                getCheckout(reduxUseCoin)
                             }
                         } catch (error) {
                             setLoad(false)
@@ -246,8 +262,11 @@ export default function checkoutScreen() {
         }
         setTimeout(() => setLoad(false), 5000);
     }
-    const handleClaimVoucher = (name, voucherId, index) => {
-        setloadAs(true)
+
+    const handleClaimVoucher = async (name, voucherId, index) => {
+        if (index!=='khusus') {
+            setloadAs(true)
+        }
         if (name === "store") {
             var myHeaders = new Headers();
             myHeaders.append("Authorization", reduxAuth);
@@ -266,13 +285,17 @@ export default function checkoutScreen() {
                     try {
                         let result = JSON.parse(res)
                         if (result.status.code === 200) {
-                            ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then(res => {
-                                if (res) {
-                                    setvoucherOpen('store')
-                                    setVouchers(res.cart[indexStore].voucherStore)
-                                    dispatch({ type: 'SET_CHECKOUT', payload: res })
-                                }
-                            })
+                            if (index=='khusus') {
+                               Utils.alertPopUp('Kode voucher berhasil diklaim') 
+                            }else {
+                                ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then(res => {
+                                    if (res) {
+                                        setvoucherOpen('store')
+                                        setVouchers(res.cart[indexStore].voucherStore)
+                                        dispatch({ type: 'SET_CHECKOUT', payload: res })
+                                    }
+                                })
+                            }
                         } else {
                             Utils.handleErrorResponse(result, 'Error with status code : 12067')
                         }
@@ -300,9 +323,10 @@ export default function checkoutScreen() {
                 redirect: 'follow'
             };
 
-            fetch("https://jaja.id/backend/voucher/claimVoucherJaja", requestOptions)
+           await fetch("https://jaja.id/backend/voucher/claimVoucherJaja", requestOptions)
                 .then(response => response.text())
                 .then(res => {
+
                     setTimeout(() => setloadAs(false), 500);
                     try {
                         let result = JSON.parse(res)
@@ -315,7 +339,16 @@ export default function checkoutScreen() {
                                 }
                             })
                         } else {
-                            setTimeout(() => Utils.handleErrorResponse(result, 'Error with status code : 12070'), 100);
+                            if (index !== 'khusus') {
+                                if (result.status.message === 'voucher has claim') {
+                                    Utils.alertPopUp('Kode voucher sudah pernah digunakan!')
+                                }else {
+                                    setTimeout(() => Utils.handleErrorResponse(result, 'Error with status code : 12070'), 100);
+                                }
+                            }else {
+                                actionSheetVoucher.current?.setModalVisible()
+                            }
+
                         }
                     } catch (error) {
                         Utils.handleErrorResponse(JSON.stringify(res + '\n\n' + error, 'Error with status code : 12071'))
@@ -439,21 +472,25 @@ export default function checkoutScreen() {
     };
 
     const handleListDate = (index) => {
-        let dateNow = new Date()
-        let mothSelected = parseInt(dateNow.getMonth()) < 12 ? dateNow.getMonth() + 1 : '01'
-        let string = new Date().getDate() + parseInt(reduxShipping[index].items[0].type[0].etd.slice(2, 3))
-        setmaxSendDate(string)
-        setSendDate(dateNow.getFullYear() + '-' + mothSelected + "-" + string)
-
-        let range = new Date().getDate() + parseInt(reduxShipping[index].items[0].type[0].etd.slice(2, 3));
-        let arrNewRange = [];
-        for (let idx = 0; idx < range; idx++) {
-            arrNewRange.push(range + idx)
-        }
-        setrangeDate(arrNewRange)
-        actionSheetDelivery.current?.setModalVisible(true)
-
+            let dateNow = new Date()
+            let mothSelected = parseInt(dateNow.getMonth()) < 12 ? dateNow.getMonth() + 1 : '01'
+            let string = new Date().getDate() + parseInt(reduxShipping?.[index]?.items[0]?.type[0]?.etd.toString().slice(2, 3))
+            if (!string || string==NaN) {
+                string = reduxShipping?.[index]?.items[0]?.type[0]?.etd
+            }
+            setmaxSendDate(string)
+            // setSendDate(dateNow.getFullYear() + '-' + mothSelected + "-" + string)
+    
+            // let range = new Date().getDate() + parseInt(String(reduxShipping?.[index]?.items[0]?.type[0]?.etd).slice(2, 3));
+            let arrNewRange = [];
+            for (let idx = 0; idx < string; idx++) {
+                arrNewRange.push(string + idx)
+            }
+            setrangeDate(arrNewRange)
+            actionSheetDelivery.current?.setModalVisible(true)
+    
     }
+
     const checkedValue = (index) => {
         if (reduxShipping.length) {
             handleListDate(index)
@@ -720,6 +757,60 @@ export default function checkoutScreen() {
 
     }
 
+    const handleCheckVoucher=()=> {
+        if (voucherCode) {
+            if (voucherCode.length > 5) {
+                setloadAs(true)
+                setvoucherOpen('jaja')
+                var myHeaders = new Headers();
+                myHeaders.append("Authorization", reduxAuth);
+                myHeaders.append("Cookie", "ci_session=vah7ivbaoqeus4qfh89d7c8o2q55216c");
+        
+        
+                var requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow'
+                };
+        
+                fetch(`https://jaja.id/backend/checkout/getDataVoucherTamiya/${voucherCode}`, requestOptions)
+                .then(response => response.json())
+                .then(async res => {
+                    if(res.status.code === 200) {
+                    	let id_promo = res.data.id_promo
+                            try {
+                              await handleClaimVoucher('jaja', id_promo, 'khusus')
+                            } catch (error) {
+                                
+                            }
+                            try {
+                              await handleVoucher(res.data, 'khusus')
+                            } catch (error) {
+                               
+                            }
+                            setTimeout(() => {
+                                setloadAs(false)
+                            },1000);
+                        } else {
+                            setloadAs(false)
+                            if (res.status.message === 'data not found') {
+                                Utils.alertPopUp('Kode voucher tidak ditemukan')
+                            }else {
+                                Utils.alertPopUp(res.status.message)
+                            }
+                        }
+                })
+                .catch(error =>{
+                    setloadAs(false)
+                     Utils.handleError(error)
+                })
+            }else {
+                setloadAs(false)
+                Utils.alertPopUp('Kode voucher tidak ditemukan')
+            }
+        }
+    }
+
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : colors.White }]}>
             <StatusBar
@@ -846,17 +937,18 @@ export default function checkoutScreen() {
                                                             setgiftSelected(child.cartId)
                                                             setModalShow2(true)
                                                             settextGift(child.greetingCardGift)
-                                                        }} rippleColor={colors.White} style={[styles.column_center_start, styles.mt_2, styles.p_2, { width: '99%', borderRadius: 3, alignSelf: 'center', backgroundColor: colors.White, borderWidth: 1, borderColor: colors.RedFlashsale, borderRadius: 10 }]}>
+                                                        }} rippleColor={colors.White} style={[styles.column_center_start, styles.mt_2, styles.p_2, { width: '99%', alignSelf: 'center', backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.BlueJaja, borderRadius: 5 }]}>
                                                             {/* <View style={styles.row_between_center}> */}
                                                             <>
-                                                                <View style={[styles.row_center, { width: '100%' }]}>
-                                                                    <Text style={[styles.font_10, { alignSelf: 'center', width: '33.3%', textAlign: 'center' }]}></Text>
-
-                                                                    <Text style={[styles.font_10, { color: colors.RedFlashsale, alignSelf: 'center', width: '33.3%', textAlign: 'center' }]}>Kartu ucapan</Text>
-                                                                    <Text style={[styles.font_10, { color: colors.BlueJaja, width: '33.3%', textAlign: 'right' }]}>Ubah</Text>
+                                                                <View style={[styles.row_between_center, { width: '100%'}]}>
+                                                                    <TouchableRipple style={{ width: '33.3%'}} onPress={handleGiftCard}>
+                                                                        <Text style={[styles.font_14, { color: colors.BlueJaja, alignSelf: 'flex-start', width: '100%', textAlign: 'left' }]}>Kartu ucapan : </Text>
+                                                                    </TouchableRipple>
+                                                                    <Text style={[styles.font_10, {color: colors.BlueJaja,  width: '33.3%', textAlign: 'right' }]}>Ubah</Text>
                                                                 </View>
+                                                                {/* <TextInput placeholder='Isi kartu ucapan' textAlignVertical='top' maxLength={1000} numberOfLines={3} multiline={true} style={[styles.font_12, styles.p_2, {  borderColor: colors.BlackGrey, width: '100%', maxHeight: Hp('33%') }]} value={textGift} onChangeText={text => settextGift(text)} /> */}
 
-                                                                <Text numberOfLines={2} style={[styles.font_12, styles.T_medium, { color: colors.RedFlashsale, alignSelf: 'center', textAlign: 'center' }]}>{child.greetingCardGift ? child.greetingCardGift : 'Ubah kartu ucapan!'}</Text>
+                                                                <Text numberOfLines={2} style={[styles.font_11, {  alignSelf: 'flex-start', textAlign: 'left', width:'100%'}]}>{child.greetingCardGift ? child.greetingCardGift : 'Ubah kartu ucapan!'}</Text>
                                                             </>
                                                         </TouchableRipple> : null
                                                     }
@@ -867,6 +959,8 @@ export default function checkoutScreen() {
                                             <View style={styles.column}>
                                                 <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                                                     <TouchableOpacity style={[styles.row_between_center, styles.pr_2, styles.pl_3, styles.py_2]} onPress={() => {
+                                                        setvoucherFocus('1')
+                                                        setvoucherFocus('1')
                                                         setvoucherOpen('store')
                                                         setVouchers(item.voucherStore)
                                                         setindexStore(idxStore)
@@ -887,6 +981,7 @@ export default function checkoutScreen() {
                                             item.voucherStore.length ?
                                                 <View style={[styles.p_2, styles.mb_2]}>
                                                     <Button onPress={() => {
+                                                        setvoucherFocus('1')
                                                         setvoucherOpen('store')
                                                         setVouchers(item.voucherStore)
                                                         setindexStore(idxStore)
@@ -946,7 +1041,7 @@ export default function checkoutScreen() {
                                                                 </View>
                                                             </View>
                                                         </TouchableOpacity>
-                                                        <View style={[styles.column, styles.mb_3]}>
+                                                        <View style={[styles.column,]}>
                                                             <TextInput onChangeText={(text) => handleNotes(text, idxStore)} placeholder="Masukkan catatan untuk penjual" style={[styles.font_12, styles.py_2, { color: colors.BlackGrayScale, paddingHorizontal: 0, borderBottomWidth: 0.7, borderBottomColor: colors.Silver, width: '100%' }]} />
                                                         </View>
 
@@ -982,7 +1077,7 @@ export default function checkoutScreen() {
                     {
                         reduxCheckout.voucherJajaSelected && Object.keys(reduxCheckout.voucherJajaSelected).length ?
                             <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
-                                <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
+                                <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey}]}>
                                     <Image style={[styles.icon_21, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/offer.png')} />
                                     <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Voucher Diskon</Text>
                                 </View>
@@ -996,20 +1091,23 @@ export default function checkoutScreen() {
                                     <View style={styles.row_between_center}>
                                         <Text numberOfLines={1} style={[styles.font_12, styles.mt_2]}>Berakhir dalam {reduxCheckout.voucherJajaSelected.endDate}</Text>
                                         <View style={[styles.p, { backgroundColor: colors.RedFlashsale, borderRadius: 3 }]}>
+                                            {console.log("🚀 ~ file: CheckoutScreen.js ~ line 1093 ~ checkoutScreen ~ reduxCheckout.voucherJajaSelected", reduxCheckout.voucherJajaSelected) }
                                             <Text numberOfLines={1} style={[styles.font_12, { color: colors.White }]}>- {reduxCheckout.voucherJajaSelected.discountText}</Text>
                                         </View>
                                     </View>
                                 </View>
                             </View>
                             :
-                            <View style={[styles.p_2, styles.mb_2]}>
-                                <Button onPress={() => {
-                                    setVouchers(reduxCheckout.voucherJaja)
-                                    setvoucherOpen('jaja')
-                                }} icon="arrow-right" color={colors.RedFlashsale} uppercase={false} labelStyle={{ fontFamily: 'Poppins-Regular', color: colors.RedFlashsale }} style={{ borderColor: colors.RedFlashsale, borderWidth: 1, borderRadius: 10 }} contentStyle={{ borderColor: colors.BlueJaja }} mode="outlined">
-                                    Makin hemat pakai promo
-                                </Button>
-                            </View>
+                         cartStatus=='1'?
+                         null :
+                         <View style={[styles.p_2, styles.mb_2]}>
+                         <Button onPress={() => {
+                             setVouchers(reduxCheckout.voucherJaja)
+                             setvoucherOpen('jaja')
+                         }} icon="arrow-right" color={colors.RedFlashsale} uppercase={false} labelStyle={{ fontFamily: 'Poppins-Regular', color: colors.RedFlashsale }} style={{ borderColor: colors.RedFlashsale, borderWidth: 1, borderRadius: 10 }} contentStyle={{ borderColor: colors.BlueJaja }} mode="outlined">
+                             Makin hemat pakai promo
+                         </Button>
+                     </View>
                     }
                     <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                         <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
@@ -1081,21 +1179,57 @@ export default function checkoutScreen() {
                         <Text numberOfLines={1} style={[styles.font_17, styles.T_semi_bold, { color: colors.BlueJaja }]}>{reduxCheckout.totalCurrencyFormat}</Text>
                     </View>
                     {/* <Button  style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
-                </Button> */}
+                        </Button> */}
                     <TouchableRipple style={{ backgroundColor: colors.BlueJaja, width: "50%", height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={handleCheckout}>
                         <Text numberOfLines={1} style={[styles.font_13, styles.T_semi_bold, { color: colors.White }]}>{reduxCheckout.total > 0 ? 'PILIH PEMBAYARAN' : 'BUAT PESANAN'}</Text>
                     </TouchableRipple>
                 </View>
             </View>
             <ActionSheet ref={actionSheetVoucher} onOpen={() => setloadAs(false)} onClose={() => setvoucherOpen("")} delayActionSheetDraw={false} containerStyle={{ padding: '4%', }}>
-                <View style={[styles.row_between_center, styles.py_2, styles.mb_5]}>
+                {/* <View style={[styles.row_between_center, styles.py_2, styles.mb_5]}>
                     <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja, width: '60%' }]}>Pilih Voucher</Text>
+                    <TouchableOpacity onPressIn={() => actionSheetVoucher.current?.setModalVisible()}>
+                        <Image style={[styles.icon_16, { tintColor: colors.BlueJaja }]} source={require('../../assets/icons/close.png')} />
+                    </TouchableOpacity>
+                </View> */}
+                  <View style={[styles.row_between_center, styles.py_2, styles.mb_5]}>
+                    <View style={[styles.row_start_center,{width:'70%'}]}>
+                        <TouchableRipple onPress={()=> setvoucherFocus(1)} style={[styles.px_2,styles.py,styles.mr_2,{flex:0, width:'50%', backgroundColor:voucherFocus=='1'? colors.BlueJaja: colors.White, borderWidth:0.2, borderColor: colors.BlueJaja, borderRadius: 3, }]}>
+                            <Text style={[styles.font_11, styles.T_semi_bold, {alignSelf:'center',textAlign:'center', color:voucherFocus=='1'? colors.White: colors.BlueJaja, width: '100%', 
+                                shadowColor: colors.BlueJaja,
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 1,
+                                },
+                                shadowOpacity: 0.18,
+                                shadowRadius: 1.00,
+                                elevation: 1,
+                        }]}>Pilih Voucher</Text>
+                        </TouchableRipple>
+                        {voucherOpen !=='store'?
+                        <TouchableRipple onPress={()=> setvoucherFocus(2)} style={[styles.px_2,styles.py,{flex:0, width:'50%', backgroundColor:voucherFocus=='2'? colors.BlueJaja: colors.White, borderWidth:0.2, borderColor: colors.BlueJaja, borderRadius: 3}]}>
+                            <Text style={[styles.font_11, styles.T_semi_bold, {alignSelf:'center',textAlign:'center', color:voucherFocus=='2'? colors.White: colors.BlueJaja, width: '100%', 
+                                shadowColor: "#000",
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 1,
+                                },
+                                shadowOpacity: 0.18,
+                                shadowRadius: 1.00,
+
+                                elevation: 1,
+                        }]}>Input Voucher</Text>
+                        </TouchableRipple>
+                        : null}
+                    </View>
                     <TouchableOpacity onPressIn={() => actionSheetVoucher.current?.setModalVisible()}>
                         <Image style={[styles.icon_16, { tintColor: colors.BlueJaja }]} source={require('../../assets/icons/close.png')} />
                     </TouchableOpacity>
                 </View>
                 {loadAs ? <Loading /> : null}
                 <View style={[styles.column, { minHeight: Hp('20%'), maxHeight: Hp('80%') }]}>
+                   
+                {voucherFocus=='1'?
                     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 80 }}>
                         {reduxCheckout.voucherJaja && reduxCheckout.voucherJaja.length || vouchers && vouchers.length ?
                             <View>
@@ -1120,7 +1254,7 @@ export default function checkoutScreen() {
                                                     </View>
                                                     <View style={[styles.column_around_center, styles.px_2, { width: '44%' }]}>
                                                         <Text numberOfLines={3} style={[styles.font_12, styles.mb_2, styles.T_semi_bold, { color: colors.BlueJaja, width: '100%', marginBottom: '-2%' }]}>{item.name}</Text>
-                                                        <Text style={[styles.font_8, styles.T_semi_bold, { color: colors.BlueJaja, width: '100%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
+                                                        <Text style={[styles.font_8, styles.T_semi_bold, { color: colors.BlueJaja, width: '100%' }]}>Akan berakhir {item.endDate}</Text>
                                                     </View>
                                                     <View style={[styles.column_center, { width: '22%' }]}>
                                                         <TouchableOpacity onPress={() => handleVoucher(item, index)} style={{ width: '90%', height: '30%', backgroundColor: item.isClaimed ? colors.White : colors.BlueJaja, padding: '2%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.BlueJaja, borderRadius: 5 }}>
@@ -1178,9 +1312,39 @@ export default function checkoutScreen() {
                             :
                             <Text style={[styles.font_14, styles.mt_5, { alignSelf: 'center' }]}>Kamu belum punya voucher</Text>}
                     </ScrollView>
+               :
+               <View style={[styles.row_between_center,{borderColor: colors.BlueJaja, borderWidth:0.2, borderColor: colors.BlueJaja, borderRadius: 3, borderTopRightRadius:3, borderBottomEndRadius: 3,alignItems:'center'}]}>
+               <TextInput
+                   onChangeText={text=> setvoucherCode(text.toLocaleUpperCase()) }
+                   maxLength={12}
+                   value={voucherCode}
+                   style={[styles.font_13,{width:'70%', padding:'2%',alignItems:'center'}]}
+                   placeholder='Masukkan kode voucher'
+               />
+                   <TouchableRipple 
+                       onPress={()=> handleCheckVoucher()}
+                       style={[styles.row_center, styles.px_2,styles.py,{flex:0, width:'26%',height:'100%', backgroundColor:voucherFocus=='2'? colors.BlueJaja: colors.White,
+                        shadowColor: colors.BlueJaja,
+                        shadowOffset: {
+                            width: 0,
+                            height: 1,
+                        },
+                        shadowOpacity: 0.18,
+                        shadowRadius: 1.00,
+                        borderTopRightRadius: 3,
+                        borderBottomRightRadius: 3,
+
+                        elevation: 1,
+                        alignItems:'center'
+                       }]}>
+                       <Text style={[styles.font_12, styles.T_semi_bold, { alignSelf:'center',textAlign:'center', color:voucherFocus=='2'? colors.White: colors.BlueJaja, width: '100%', }]}>Klaim</Text>
+                   </TouchableRipple>
+                </View>
+                } 
+               
                 </View>
             </ActionSheet>
-            <ActionSheet ref={actionSheetDelivery} delayActionSheetDraw={false} containerStyle={{ width: Wp('100%') }} containerStyle={{ padding: '2%' }}>
+            <ActionSheet ref={actionSheetDelivery} delayActionSheetDraw={false} containerStyle={{ padding: '2%' }}>
                 <View style={[styles.row_between_center, styles.py_2, styles.px_4, styles.mb_3]}>
                     <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%' }]}>{cartStatus === 1 ? 'Pilih Tanggal Pengiriman' : 'Pilih Waktu Pengiriman'}</Text>
                     <TouchableOpacity style={{ backgroundColor: 'transparent', paddingVertical: '2%', paddingHorizontal: '3%' }} onPressIn={() => actionSheetDelivery.current?.setModalVisible()}>
@@ -1206,9 +1370,9 @@ export default function checkoutScreen() {
                                                     </View>
                                                 </TouchableOpacity>
                                             </View>
-                                            <View style={[styles.row_between_center, styles.py_2, styles.px_4, styles.mb]}>
+                                            {/* <View style={[styles.row_between_center, styles.py_2, styles.px_4, styles.mb]}>
                                                 <Text style={[styles.font_14, styles.mt_3, styles.T_semi_bold, { color: colors.BlueJaja }]}>Pilih Ekspedisi</Text>
-                                            </View>
+                                            </View> */}
 
                                         </>
                                         :
@@ -1228,8 +1392,9 @@ export default function checkoutScreen() {
                                                                     onValueChange={() => {
                                                                         if (item.value !== "pilih tanggal") {
                                                                             setSendDate("")
+                                                                        }else {
+                                                                            setsendTime(item.value)
                                                                         }
-                                                                        setsendTime(item.value)
                                                                     }}
                                                                 />
                                                                 <View style={[styles.row_between_center, Platform.OS === 'ios' ? styles.ml_3 : styles.ml_2]}>
@@ -1382,10 +1547,10 @@ export default function checkoutScreen() {
                     setModalShow2(!showModal2);
                 }}>
                 <View style={{ flex: 1, width: Wp('100%'), height: Hp('100%'), backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center' }}>
-                    <View style={[styles.column_start, styles.pt_s, { width: Wp('95%'), minHeight: Wp('50%'), maxHeight: Wp('100%'), backgroundColor: colors.White, elevation: 11, zIndex: 999 }]}>
+                    <View style={[styles.column_start, styles.pt, { width: Wp('95%'), minHeight: Wp('50%'), maxHeight: Wp('100%'), backgroundColor: colors.White, elevation: 11, zIndex: 999 }]}>
                         <View style={[styles.column_center_start, styles.px_4, styles.pt_3, { width: '100%' }]}>
                             <Text style={[styles.font_14, styles.T_semi_bold, styles.mb_5, { color: colors.BlueJaja }]}>Kartu Ucapan</Text>
-                            <TextInput textAlignVertical='top' numberOfLines={4} multiline={true} style={[styles.font_12, styles.p_2, { borderRadius: 5, borderWidth: 0.5, borderColor: colors.BlackGrey, width: '100%' }]} value={textGift} onChangeText={text => String(textGift).length < 500 ? settextGift(text) : ''} />
+                            <TextInput maxLength={500} textAlignVertical='top' numberOfLines={4} multiline={true} style={[styles.font_12, styles.p_2, { borderRadius:4, borderWidth: 0.5, borderColor: colors.Silver, width: '100%' , maxHeight: Wp('45%')}]} value={textGift} onChangeText={text => String(text).length < 500 ? settextGift(text) : ''} />
                         </View>
 
                         <View style={[styles.row_end, styles.p_2, { width: '100%' }]}>

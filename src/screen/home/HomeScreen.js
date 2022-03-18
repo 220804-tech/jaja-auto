@@ -4,7 +4,6 @@ import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { BasedOnSearch, Trending, Category, Flashsale, Loading, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect, NearestStore, ServiceCore, Utils, ServiceProduct } from '../../export'
 const { height: SCREEN_HEIGHT, width } = Dimensions.get('window');
-console.log("🚀 ~ file: HomeScreen.js ~ line 81000 ~ SCREEN_HEIGHT", SCREEN_HEIGHT)
 import DeviceInfo from 'react-native-device-info';
 import ParallaxScrollView from 'react-native-parallax-scrollview';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
@@ -75,25 +74,45 @@ export default function HomeScreen() {
     const handleDynamicLink = link => {
         try {
             const parsed = queryString.parseUrl(link.url);
-            console.log("🚀 ~ file: HomeScreen.js ~ line 89 ~ HomeScreen ~ parsed", parsed)
+            console.log("🚀 ~ file: HomeScreen.js ~ line 900 ~ HomeScreen ~ parsed", parsed)
             setLoading(true)
             let slug = Object.values(parsed.query)
-            if ('https://jajaid.page.link/product?' === String(link.url).slice(0, 33)) {
+            console.log("🚀 ~ file: HomeScreen.js ~ line 800 ~ HomeScreen ~ slug", slug[0])
+            if (String(link.url).includes('product')) {
                 handleShowDetail('product', false, slug[0])
             } else {
+                console.log('masuk sini kan gift');
+
                 handleShowDetail('gift', false, slug[0])
             }
-            setTimeout(() => setLoading(false), 1000);
         } catch (error) {
-
+            setLoading(false)
         }
     };
 
-    const handleShowDetail = async (slug, status, gift) => {
+    const handleShowDetail =  (open, status, slug) => {
         let error = true;
         try {
             if (!reduxLoad) {
-                !status ? await navigation.push(!gift ? "Product" : "GiftDetails") : null
+                setLoading(true)
+                setTimeout(() => {
+                    setLoading(false)
+                    !status ? navigation.push(open==='product' ? "Product" : "GiftDetails") : null
+                }, 2000);
+                // dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
+                // ServiceProduct.getProduct(reduxAuth, slug).then(res => {
+                //     error = false
+                //     if (res === 404) {
+                //         Utils.alertPopUp('Sepertinya data tidak ditemukan!')
+                //         dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                //         navigation.goBack()
+                //     } else if (res?.data) {
+                //         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
+                //         dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                //         setTimeout(() => dispatch({ type: 'SET_FILTER_LOCATION', payload: true }), 7000);
+                //     }
+                // })
+                console.log("🚀 ~ file: HomeScreen.js ~ line 117 ~ ServiceProduct.getProduct ~ slug", slug)
                 dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
                 ServiceProduct.getProduct(reduxAuth, slug).then(res => {
                     error = false
@@ -106,14 +125,21 @@ export default function HomeScreen() {
                         dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                         setTimeout(() => dispatch({ type: 'SET_FILTER_LOCATION', payload: true }), 7000);
                     }
+                }).catch(err => {
+                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+                    setLoading(false)
+                    error = false
                 })
             } else {
+            setLoading(false)
                 error = false
             }
         } catch (error) {
             dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
             alert(String(error.message))
             error = false
+            setLoading(false)
+
         }
         setTimeout(() => {
             if (error) {
@@ -266,7 +292,6 @@ export default function HomeScreen() {
             <Swiper
                 autoplayTimeout={3}
                 horizontal={true}
-                loop={false}
                 dotColor={colors.White}
                 activeDotColor={colors.YellowJaja}
                 paginationStyle={{ bottom: 0 }}

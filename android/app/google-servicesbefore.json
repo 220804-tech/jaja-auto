@@ -8,66 +8,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:284366139562:android:70b0c4f804ad058ce1a0d3",
-        "android_client_info": {
-          "package_name": "com.jaja.buyer"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "284366139562-3p6c42mjksmo3o1trbuljvmjkb9qc78e.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.jaja.buyer",
-            "certificate_hash": "0cc56dd7db47e0e84c0b95248b67e5051311de9b"
-          }
-        },
-        {
-          "client_id": "284366139562-rb6e0ttjpjchmcfmbqkkm3mg5n79cqce.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.jaja.buyer",
-            "certificate_hash": "fa38922ddf1e9ffff9ca4890268912e810cf3cc6"
-          }
-        },
-        {
-          "client_id": "284366139562-sb5c78e2temmgbgqbtfgteonp0r70eo9.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.jaja.buyer",
-            "certificate_hash": "b8e88dd2c8a0946cacbf09cc6960b3a02828b1c3"
-          }
-        },
-        {
-          "client_id": "284366139562-tnj3641sdb4ia9om7bcp25vh3qn5vvo8.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBZOcKNXvDumSqi4LPt0YKJ5sgLEY-lAu0"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "284366139562-tnj3641sdb4ia9om7bcp25vh3qn5vvo8.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "284366139562-38kk2k0vfqh9g3b29mc3kabufk04026c.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.jaja.customer"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:284366139562:android:9e8c5931ad5fca7be1a0d3",
         "android_client_info": {
           "package_name": "com.jajaidbuyer"

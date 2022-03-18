@@ -727,8 +727,6 @@ export default function OrderDetailsScreen() {
             .catch(error => {
                 Utils.handleError(error, "Error with status code : 22004")
             });
-
-
     }
 
 

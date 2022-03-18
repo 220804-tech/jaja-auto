@@ -295,15 +295,21 @@ export default function ProfileScreen(props) {
               <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Koin Jaja</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => {
-              Linking.canOpenURL('https://jaja.id/bantuan/').then(supported => {
-                if (supported) {
-                  Linking.openURL('https://jaja.id/bantuan/')
-                } else {
-                  Utils.alertPopUp("Sepertinya ada masalah, coba lagi nanti.")
+               let url = "whatsapp://send?text=" +
+                'Halo, Jaja.id \n' +
+                "&phone=62" +'87888337555'
+                Linking.openURL(url)
+                  .then(data => {
+                    console.log("WhatsApp Opened successfully " + data);  //<---Success
+                  })
+                  .catch(() => {
+                    Utils.alertPopUp('Harap install whatsapp terlebih dahulu!')
+                    setTimeout(() => {
+                      Linking.openURL('https://jaja.id/bantuan/')
+                    }, 1500);
 
-                }
-              })
-            }}>
+                  });
+              }}>
               <Image style={[styles.icon_27, styles.mr_3]} source={require(`../../assets/icons/service.png`)} />
               <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Pusat Bantuan</Text>
 

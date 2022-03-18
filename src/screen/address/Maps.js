@@ -282,7 +282,7 @@ export default function map(props) {
                         rotateEnabled={false}
                         region={region}
                         onRegionChangeComplete={onRegionChange}
-                        showsUserLocation={true} >
+                        >
                         {/* <TouchableOpacity>
                             <Text>Cek Lokasi</Text>
                             </TouchableOpacity> */}

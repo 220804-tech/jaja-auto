@@ -36,6 +36,8 @@ export async function productDetail(auth, slug) {
 }
 
 export async function getProduct(auth, slug) {
+    console.log("🚀 ~ file: Product.js ~ line 39 ~ getProduct ~ slug", slug)
+    console.log("🚀 ~ file: Product.js ~ line 42 ~ getProduct ~ auth", auth)
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);
     myHeaders.append("Cookie", "ci_session=pkkgeivel5ftbi5a9eod0r8k5276f8v9");
