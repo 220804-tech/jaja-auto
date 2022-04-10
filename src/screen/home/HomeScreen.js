@@ -90,14 +90,14 @@ export default function HomeScreen() {
         }
     };
 
-    const handleShowDetail =  (open, status, slug) => {
+    const handleShowDetail = (open, status, slug) => {
         let error = true;
         try {
             if (!reduxLoad) {
                 setLoading(true)
                 setTimeout(() => {
                     setLoading(false)
-                    !status ? navigation.push(open==='product' ? "Product" : "GiftDetails") : null
+                    !status ? navigation.push(open === 'product' ? "Product" : "GiftDetails") : null
                 }, 2000);
                 // dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
                 // ServiceProduct.getProduct(reduxAuth, slug).then(res => {
@@ -131,7 +131,7 @@ export default function HomeScreen() {
                     error = false
                 })
             } else {
-            setLoading(false)
+                setLoading(false)
                 error = false
             }
         } catch (error) {
@@ -362,7 +362,18 @@ export default function HomeScreen() {
                 </TouchableRipple> */}
                 {reduxShowFlashsale ? <Flashsale /> : null}
                 <Trending />
-                <TouchableRipple onPress={handleShowGift} rippleColor={colors.White} style={[styles.row_center, styles.px, styles.py_3, styles.my_3, { backgroundColor: colors.RedFlashsale, borderRadius: 11, alignSelf: 'center', width: '95%', elevation: 2 }]} >
+                <TouchableRipple onPress={handleShowGift} rippleColor={colors.White} style={[styles.row_center, styles.px, styles.py_3, styles.my_3, {
+                    backgroundColor: colors.RedFlashsale, borderRadius: 7, alignSelf: 'center', width: '95%',
+                    shadowColor: colors.BlueJaja,
+                    shadowOffset: {
+                        width: 0,
+                        height: 2,
+                    },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3.84,
+
+                    elevation: 5,
+                }]} >
                     <View style={[styles.row_around_center, { width: '100%' }]}>
                         <Text style={[styles.font_11, styles.T_semi_bold, { color: colors.White, marginBottom: '-0.5%' }]}>Berikan hadiah untuk teman spesial kamu disini!</Text>
                         <Image source={require('../../assets/icons/heart.png')} style={[styles.icon_27, { marginTop: '-1%' }]} />
@@ -377,7 +388,7 @@ export default function HomeScreen() {
                 {/* </ScrollView> */}
 
 
-            </View>
+            </View >
         );
     };
 

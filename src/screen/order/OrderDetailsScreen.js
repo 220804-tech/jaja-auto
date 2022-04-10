@@ -15,6 +15,7 @@ export default function OrderDetailsScreen() {
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
     const [details, setDetails] = useState(null)
+    console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 18 ~ OrderDetailsScreen ~ details", details)
     const [refreshing, setRefreshing] = useState(null)
     const [selectedSubPayment, setselectedSubPayment] = useState('')
     const [selectedPayment, setselectedPayment] = useState('')
@@ -958,7 +959,7 @@ export default function OrderDetailsScreen() {
         <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
             <Appbar title="Detail Pesanan" back={true} />
             {loading ? <Loading /> : null}
-            <View style={[styles.container, { backgroundColor: colors.White }]}>
+            <View style={[styles.container, { backgroundColor: colors.WhiteBack }]}>
                 <ScrollView
                     refreshControl={
                         <RefreshControl
@@ -1007,7 +1008,7 @@ export default function OrderDetailsScreen() {
                             : null
                         }
                     </View>
-                    {details ?
+                    {/* {details ?
                         <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
                             <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
                                 <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '1%' }]} source={require('../../assets/icons/google-maps.png')} />
@@ -1027,13 +1028,31 @@ export default function OrderDetailsScreen() {
                             </View>
                         </View>
                         : null
-                    }
+                    } */}
                     {details && details.items.length ?
                         details.items.map((item, idxStore) => {
 
                             return (
-                                <View key={String(idxStore) + 'AL'} style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]} >
-                                    <View style={[styles.row_between_center, styles.px_3, styles.py_2, { width: '100%', borderBottomWidth: 0.2, borderBottomColor: colors.WhiteSilver }]}>
+                                <View key={String(idxStore) + 'AL'} style={[styles.column, styles.mb_3, { backgroundColor: colors.White }]} >
+                                    <View style={[styles.column, { backgroundColor: colors.White, marginBottom: '2%' }]}>
+                                        <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}>
+                                            <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '1%' }]} source={require('../../assets/icons/google-maps.png')} />
+                                            <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Alamat Pengiriman</Text>
+                                        </View>
+                                        <View style={[styles.column, styles.p_3]}>
+                                            <View style={styles.row_between_center}>
+                                                <Text numberOfLines={1} style={[styles.font_12, { width: '70%' }]}>{item.address.receiverName}</Text>
+                                            </View>
+                                            <Text numberOfLines={1} style={[styles.font_11]}>{item.address.phoneNumber}</Text>
+                                            <Text numberOfLines={3} style={[styles.font_12, styles.mt_2]}>{item.address.address.replace(/<br>/g, "\n")}</Text>
+                                            <Text numberOfLines={4} style={[styles.font_12, styles.mt_2]}>Catatan : {item.note ? item.note : 'Tidak ada catatan'}</Text>
+                                            {details.items[0].shippingSelected?.sendTime === 'pilih tanggal' ?
+                                                < Text numberOfLines={1} style={[styles.font_12]}>Akan Dikirim : {item.shippingSelected.dateSendTime}</Text>
+                                                : null}
+
+                                        </View>
+                                    </View>
+                                    <View style={[styles.row_between_center, styles.px_3, styles.py_2, { width: '100%', borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}>
                                         <View style={[styles.row]}>
                                             <Image style={[styles.icon_19, { marginRight: '3%', tintColor: colors.BlueJaja }]} source={require('../../assets/icons/store.png')} />
                                             <Text onPress={() => handleStore(item.store)} style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.store.name}</Text>
@@ -1049,7 +1068,7 @@ export default function OrderDetailsScreen() {
                                     {
                                         item.products.map((child, idx) => {
                                             return (
-                                                <View key={String(idx) + "SV"} style={[styles.column, styles.px_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver, width: '100%' }]}>
+                                                <View key={String(idx) + "SV"} style={[styles.column, styles.px_2, { width: '100%' }]}>
                                                     <View style={[styles.row_start_center, { width: '100%', height: Wp('25%') }]}>
                                                         <TouchableOpacity onPress={() => handleShowDetail(child, false, item.isGift)}>
                                                             <Image style={{
@@ -1098,9 +1117,9 @@ export default function OrderDetailsScreen() {
                                                     </View>
                                                     {child.greetingCardGift ?
                                                         <>
-                                                            <Text numberOfLines={4} style={[styles.font_12, styles.px_3, styles.mb_2]}>Kartu Ucapan :</Text>
-                                                            <View style={[styles.mb_3, styles.p_3, { width: '95%', elevation: 2, borderRadius: 2, backgroundColor: colors.WhiteGrey, alignSelf: 'center' }]}>
-                                                                <Text numberOfLines={4} style={[styles.font_12, { alignSelf: 'center' }]}>{child.greetingCardGift}</Text>
+                                                            <View style={[styles.mb_3, styles.p_3, { width: '95%', borderRadius: 3, backgroundColor: colors.WhiteGrey, alignSelf: 'center' }]}>
+                                                                {/* <Text numberOfLines={4} style={[styles.font_12, styles.px_3, styles.mb_2]}></Text> */}
+                                                                <Text numberOfLines={4} style={[styles.font_12, { alignSelf: 'flex-start' }]}>Kartu Ucapan : {child.greetingCardGift}</Text>
                                                             </View>
                                                         </>
                                                         : null
@@ -1136,7 +1155,7 @@ export default function OrderDetailsScreen() {
                                 <View style={[styles.column, styles.p_3, { width: '100%' }]}>
                                     <View style={styles.row_between_center}>
                                         <View style={[styles.column_between_center, { alignItems: 'flex-start' }]}>
-                                            <Text numberOfLines={1} style={[styles.font_14]}>{item.shippingSelected.name}</Text>
+                                            <Text numberOfLines={1} style={[styles.font_14]}>{item.shippingSelected.nam e}</Text>
                                             <Text numberOfLines={1} style={[styles.font_12]}>Regular</Text>
                                             <Text numberOfLines={1} style={[styles.font_12, styles.T_italic,]}>Estimasi {item.shippingSelected.etdText}</Text>
                                         </View>

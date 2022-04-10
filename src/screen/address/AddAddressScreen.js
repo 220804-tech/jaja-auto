@@ -454,8 +454,7 @@ export default function AddAddressScreen(props) {
             {loading ? <Loading /> : null}
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
-                style={style.container}
-            >
+                style={style.container}>
                 {status === "edit" ?
 
                     <ScrollView stickyHeaderIndices={[0]}>
@@ -463,11 +462,11 @@ export default function AddAddressScreen(props) {
                             <View style={{ flexDirection: 'row' }}>
                             </View>
                             <View style={[style.appBar, { flex: 2, flexDirection: 'row', backgroundColor: colors.BlueJaja, width: '100%', paddingBottom: '3%' }]}>
-                                <View style={[style.row_start_center, style.pb, { flex: 2, width: 100 }]}>
+                                <View style={[style.row_start_center, { flex: 2, width: 100 }]}>
                                     <TouchableOpacity onPress={() => navigation.goBack()}>
                                         <Image style={style.appBarButton} source={require('../../assets/icons/arrow.png')} />
                                     </TouchableOpacity>
-                                    <Text style={style.appBarText}>{props.route.params && props.route.params.edit ? " Ubah Alamat" : " Tambah Alamat"}</Text>
+                                    <Text style={[style.font_16, style.T_semi_bold, { color: colors.White, marginBottom: '-1%' }]}>{props.route.params && props.route.params.edit ? " Ubah Alamat" : " Tambah Alamat"}</Text>
                                 </View>
                                 {kcValue ?
                                     <TouchableRipple onPress={handleSave} rippleColor={colors.White} style={[style.row_center, style.px_2, style.py_2, style.mt_1, { flex: 1, backgroundColor: colors.YellowJaja, borderRadius: 7, width: Wp('20%') }]}>

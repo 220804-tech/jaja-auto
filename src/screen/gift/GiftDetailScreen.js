@@ -4,7 +4,7 @@ import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { Button, TouchableRipple, Checkbox, IconButton } from 'react-native-paper'
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-import { styles, colors, useNavigation, Hp, Wp, Ps, useFocusEffect, FastImage, RecomandedHobby, Utils, ServiceProduct, ServiceCart, ServiceUser, CardProduct, } from '../../export'
+import { styles, colors, useNavigation, Hp, Wp, Ps, useFocusEffect, FastImage, RecomandedHobby, Utils, ServiceProduct, ServiceCart, ServiceUser, CardProduct, Loading, } from '../../export'
 const IS_IPHONE_X = SCREEN_HEIGHT === 812 || SCREEN_HEIGHT === 896;
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
@@ -40,7 +40,7 @@ export default function GiftDetailScreen(props) {
     const [scrollY, setscrollY] = useState(new Animated.Value(0))
 
     const [refreshing, setRefreshing] = useState(false)
-    const [loading, setLoading] = useState(false)
+    const [loading, setloading] = useState(false)
     const [like, setLike] = useState(false)
     const [alert, setalert] = useState("")
     const [image, setImage] = useState('')
@@ -107,6 +107,7 @@ export default function GiftDetailScreen(props) {
 
     useFocusEffect(
         useCallback(() => {
+
             let dataSeller = {
                 chat: reduxUser.user.uid + '5ff7b38436b51seller113'
             }
@@ -127,7 +128,7 @@ export default function GiftDetailScreen(props) {
         }, []),
     );
 
- 
+
     useEffect(() => {
         if (giftDetails?.slug) {
             dynamicLink()
@@ -141,9 +142,9 @@ export default function GiftDetailScreen(props) {
 
     const handleTrolley = () => {
         if (reduxAuth) {
+            navigation.navigate("Trolley")
             ServiceCart.getTrolley(reduxAuth, 1, dispatch)
             dispatch({ type: 'SET_CART_STATUS', payload: 1 })
-            navigation.navigate("Trolley")
         } else {
             handleLogin()
         }
@@ -201,71 +202,71 @@ export default function GiftDetailScreen(props) {
         let arrImage = [require('../../assets/images/JajaId.png')]
         return (
             <View style={{ width: Wp('100%'), height: Wp('100%'), backgroundColor: colors.White, marginTop: Platform.OS === 'ios' ? '-11%' : 0 }}>
-            {
-                Platform.OS === 'ios' ?
-                    <View style={{
-                        width: '100%', height: '100%', backgroundColor: colors.White, marginTop: -STATUS_BAR_HEIGHT, justifyContent: 'center', alignItems: 'center'
-                    }}>
+                {
+                    Platform.OS === 'ios' ?
+                        <View style={{
+                            width: '100%', height: '100%', backgroundColor: colors.White, marginTop: -STATUS_BAR_HEIGHT, justifyContent: 'center', alignItems: 'center'
+                        }}>
+                            <Swiper
+                                // autoplayTimeout={4}
+                                horizontal={true}
+                                loop={false}
+                                dotColor={colors.White}
+                                activeDotColor={colors.BlueJaja}
+                                paginationStyle={{ bottom: 10 }}
+                            // style={{ backgroundColor: colors.BlueJaja, flex: 0, justifyContent: 'center', alignItems: 'center' }}
+                            >
+                                {
+                                    reduxLoad === false && giftDetails?.image?.length > 0 ?
+                                        giftDetails.image.map((item, key) => {
+                                            return (
+                                                <Image key={String(key)} style={[style.swiperProduct, { alignSelf: 'center' }]}
+                                                    source={{ uri: item }}
+                                                />
+                                            );
+                                        })
+                                        :
+                                        arrImage.map((item, key) => {
+                                            return (
+                                                <Image key={String(key)} style={style.loadingProduct}
+                                                    source={require('../../assets/images/JajaId.png')}
+                                                />
+                                            );
+                                        })
+                                }
+                            </Swiper>
+                        </View >
+                        :
                         <Swiper
-                            // autoplayTimeout={4}
                             horizontal={true}
-                            loop={false}
                             dotColor={colors.White}
                             activeDotColor={colors.BlueJaja}
-                            paginationStyle={{ bottom: 10 }}
-                        // style={{ backgroundColor: colors.BlueJaja, flex: 0, justifyContent: 'center', alignItems: 'center' }}
-                        >
+                            style={{ backgroundColor: colors.WhiteBack }}>
                             {
-                                reduxLoad === false && giftDetails?.image?.length > 0 ?
-                                    giftDetails.image.map((item, key) => {
+                                reduxLoad || !giftDetails?.image?.[0] ?
+                                    arrImage.map((item, key) => {
                                         return (
-                                            <Image key={String(key)} style={[style.swiperProduct, { alignSelf: 'center' }]}
-                                                source={{ uri: item }}
-                                            />
+                                            <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%'), justifyContent: 'center', alignItems: 'center' }}>
+                                                {console.log('masuk satu')}
+                                                <Image style={[style.swiperProduct, { width: "70%", height: "70%", tintColor: colors.Silver }]}
+                                                    source={item}
+                                                />
+                                            </View>
                                         );
                                     })
                                     :
-                                    arrImage.map((item, key) => {
+                                    giftDetails.image.map((item, key) => {
                                         return (
-                                            <Image key={String(key)} style={style.loadingProduct}
-                                                source={require('../../assets/images/JajaId.png')}
+                                            <Image style={{ width: Wp('100%'), height: Wp('100%'), resizeMode: 'contain' }}
+                                                source={{ uri: item }
+                                                }
                                             />
                                         );
                                     })
                             }
                         </Swiper>
-                    </View >
-                    :
-                    <Swiper
-                        horizontal={true}
-                        dotColor={colors.White}
-                        activeDotColor={colors.BlueJaja}
-                        style={{ backgroundColor: colors.WhiteBack }}>
-                        {
-                            reduxLoad || !giftDetails?.image?.[0] ?
-                                arrImage.map((item, key) => {
-                                    return (
-                                        <View key={String(key)} style={{ width: Wp('100%'), height: Wp('100%'), justifyContent: 'center', alignItems: 'center' }}>
-                                            {console.log('masuk satu')}
-                                            <Image style={[style.swiperProduct, { width: "70%", height: "70%", tintColor: colors.Silver }]}
-                                                source={item}
-                                            />
-                                        </View>
-                                    );
-                                })
-                                :
-                                giftDetails.image.map((item, key) => {
-                                    return (
-                                        <Image style={{ width: Wp('100%'), height: Wp('100%'), resizeMode: 'contain' }}
-                                            source={{ uri: item }
-                                            }
-                                        />
-                                    );
-                                })
-                        }
-                    </Swiper>
-            }
-        </View >
+                }
+            </View >
             // <View style={{ width: Wp('100%'), height: Wp('100%'), backgroundColor: colors.White, marginTop: Platform.OS === 'ios' ? '-11%' : 0 }}>
             //     {
             //         Platform.OS === 'ios' ?
@@ -408,8 +409,8 @@ export default function GiftDetailScreen(props) {
             console.log("🚀 ~ file: ProductScreen.js ~ line 127 ~ constlink_URL=awaitdynamicLinks ~ link_URL", link_URL)
             setlink(link_URL)
         } catch (error) {
-        console.log("🚀 ~ file: ProductScreen.js ~ line 138 ~ dynamicLink ~ error", error)
-            
+            console.log("🚀 ~ file: ProductScreen.js ~ line 138 ~ dynamicLink ~ error", error)
+
         }
     }
 
@@ -917,8 +918,9 @@ export default function GiftDetailScreen(props) {
             let month = monthUpdate === 1 ? 'Januari' : monthUpdate === 2 ? 'Februari' : monthUpdate === 3 ? 'Maret' : monthUpdate === 4 ? 'April' : monthUpdate === 5 ? 'Mei' : monthUpdate === 6 ? 'Juni' : monthUpdate === 7 ? 'Juli' : monthUpdate === 8 ? 'Agustus' : monthUpdate === 9 ? 'September' : monthUpdate === 10 ? 'Oktober' : monthUpdate === 11 ? 'November' : 'Desember'
             let result = String(date.getDate()) + ' ' + String(month) + ' ' + String(date.getFullYear())
             let dateNumber = String(date.getDate()) + '-' + monthUpdate + '-' + String(date.getFullYear())
-            console.log("🚀 ~ file: GiftDetailScreenjs. ~ line 797 ~ handleConfirmDate ~ dateNumber", dateNumber)
 
+            console.log("🚀 ~ file: GiftDetailScreen.js ~ line 923 ~ handleConfirmDate ~ result", result)
+            console.log("🚀 ~ file: GiftDetailScreen.js ~ line 924 ~ handleConfirmDate ~ result", dateNumber)
 
             setdateSelected(result)
             setdateSelect(dateNumber)
@@ -930,7 +932,7 @@ export default function GiftDetailScreen(props) {
 
     const handleAddCart = (name) => {
         setdisableCart(true)
-        if (reduxAuth) {
+        if (reduxAuth && !disableCart) {
             if (giftDetails.variant && giftDetails.variant.length) {
                 if (Object.keys(variasiSelected).length) {
                     handleApiCart(name)

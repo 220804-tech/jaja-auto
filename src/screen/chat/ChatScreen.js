@@ -503,6 +503,7 @@ export default function ChatScreen({ route }) {
                                 flexDirection: "row",
                             }}>
                                 <View style={{
+
                                     borderRadius: 50,
                                     width: Hp("6%"),
                                     height: Hp("6%"),
@@ -512,8 +513,8 @@ export default function ChatScreen({ route }) {
                                         style={{
                                             justifyContent: "center",
                                             alignItems: "center",
-                                            width: Hp("6%"),
-                                            height: Hp("6%"),
+                                            width: '100%',
+                                            height: '100%',
                                             borderRadius: 50,
                                             overflow: "hidden"
                                         }}
@@ -739,8 +740,18 @@ export default function ChatScreen({ route }) {
                             showsHorizontalScrollIndicator={false}
                             renderItem={({ item }) => {
                                 return (
-                                    <TouchableOpacity key={item.id} onPress={() => setChat(item.text)} style={[style.py, { flex: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.White, borderWidth: 0.5, borderColor: colors.Blackk, borderRadius: 9, marginHorizontal: 3, paddingHorizontal: 11 }]}>
-                                        <Text style={[style.font_11, { color: colors.BlackGrayScale, textAlign: 'center', textAlignVertical: 'center' }]}>{item.text}</Text>
+                                    <TouchableOpacity key={item.id} onPress={() => setChat(item.text)} style={[style.py, {
+                                        flex: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.White, borderRadius: 7, marginHorizontal: 3, paddingHorizontal: 11, shadowColor: colors.BlueJaja,
+                                        shadowOffset: {
+                                            width: 0,
+                                            height: 1,
+                                        },
+                                        shadowOpacity: 0.18,
+                                        shadowRadius: 1.00,
+
+                                        elevation: 1,
+                                    }]}>
+                                        <Text style={[style.font_10, { color: colors.BlackGrayScale, textAlign: 'center', textAlignVertical: 'center' }]}>{item.text}</Text>
                                     </TouchableOpacity>
                                 )
                             }}
@@ -749,7 +760,17 @@ export default function ChatScreen({ route }) {
                     </View>
 
                     <View style={[style.row_around_center, style.px_2, style.mb_2, { height: '7%', backgroundColor: 'transparent', }]}>
-                        <View style={[style.row_start_center, { width: "80%", height: '77%', borderRadius: 100, backgroundColor: colors.White, opacity: 0.9, elevation: 1 }]}>
+                        <View style={[style.row_start_center, {
+                            width: "80%", height: '77%', borderRadius: 100, backgroundColor: colors.White, opacity: 0.9, shadowColor: colors.BlueJaja,
+                            shadowOffset: {
+                                width: 0,
+                                height: 1,
+                            },
+                            shadowOpacity: 0.20,
+                            shadowRadius: 1.41,
+
+                            elevation: 2,
+                        }]}>
 
                             <TextInput
                                 // onFocus={() => setkeyboardFocus(300)}
@@ -772,7 +793,19 @@ export default function ChatScreen({ route }) {
                         </View>
                         <IconButton
                             icon={require('../../assets/icons/send.png')}
-                            style={{ margin: 0, backgroundColor: colors.White, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100, }}
+                            style={{
+                                margin: 0, backgroundColor: colors.White, height: Hp('5.5%'), width: Hp('5.5%'), borderRadius: 100,
+                                opacity: 0.9,
+                                shadowColor: colors.BlueJaja,
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 1,
+                                },
+                                shadowOpacity: 0.20,
+                                shadowRadius: 1.41,
+
+                                elevation: 2,
+                            }}
                             color={colors.BlueJaja}
                             onPress={() => handleSend(null)}
                         />

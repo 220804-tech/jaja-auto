@@ -112,9 +112,9 @@ export default function GiftScreen() {
     }
 
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
+        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : colors.White }]}>
             <Appbar back={true} title="Jaja Gift" Bg={colors.BlueJaja} />
-            <ScrollView stickyHeaderIndices={[3]} nestedScrollEnabled={true} showsVerticalScrollIndicator={false} style={{ backgroundColor: Platform.OS === 'ios' ? colors.WhiteBack : null }}>
+            <ScrollView stickyHeaderIndices={[3]} nestedScrollEnabled={true} showsVerticalScrollIndicator={false} style={{ backgroundColor: Platform.OS === 'ios' ? colors.White : null }}>
                 {/* <View> */}
                 <Image style={{ width: width, height: width * 0.5 }} source={require('../../assets/icons/gift/bannerGif.jpeg')} />
                 <View style={[styles.row_start_center, styles.mt_3, styles.px_3, styles.py, { width: "70%", backgroundColor: colors.RedFlashsale, borderBottomRightRadius: 100 }]}>

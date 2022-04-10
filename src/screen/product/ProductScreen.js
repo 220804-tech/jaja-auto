@@ -93,11 +93,11 @@ export default function ProductScreen(props) {
     );
 
     useEffect(() => {
-    if (reduxProduct?.slug) {
-        dynamicLink()
-    }
+        if (reduxProduct?.slug) {
+            dynamicLink()
+        }
     }, [reduxProduct?.slug])
-    
+
     useEffect(() => {
         return () => {
             setmodal(false)
@@ -135,8 +135,8 @@ export default function ProductScreen(props) {
             console.log("🚀 ~ file: ProductScreen.js ~ line 127 ~ constlink_URL=awaitdynamicLinks ~ link_URL", link_URL)
             setlink(link_URL)
         } catch (error) {
-        console.log("🚀 ~ file: ProductScreen.js ~ line 138 ~ dynamicLink ~ error", error)
-            
+            console.log("🚀 ~ file: ProductScreen.js ~ line 138 ~ dynamicLink ~ error", error)
+
         }
     }
     const handleProduct = () => {
@@ -278,9 +278,59 @@ export default function ProductScreen(props) {
             var credentials = { "productId": idProduct, "flashSaleId": flashsale ? flashsaleData.id_flashsale : "", "lelangId": "", "variantId": variasiPressed, "qty": qty };
             let result = await ServiceProduct.addCart(reduxAuth, credentials)
             if (result && result.status.code === 200) {
-                Utils.alertPopUp('Produk berhasil ditambahkan!')
                 if (name === "buyNow") {
-                    handleTrolley()
+                    if (reduxProduct.isNonPhysical) {
+                        Utils.alertPopUp('Produk berhasil ditambahkann!')
+                        navigation.navigate('Checkout', { isNonPhysical: true })
+                        try {
+                            var myHeaders = new Headers();
+                            myHeaders.append("Authorization", reduxAuth);
+                            myHeaders.append("Cookie", "ci_session=r59c24ad1race70f8lc0h1v5lniiuhei");
+                            var requestOptions = {
+                                method: 'GET',
+                                headers: myHeaders,
+                                redirect: 'follow'
+                            };
+                            fetch(`https://jaja.id/backend/checkout?isCoin=0&fromCart=1&is_gift=0&is_non_physical=1`, requestOptions)
+                                .then(response => response.text())
+                                .then(res => {
+                                    try {
+                                        let result = JSON.parse(res)
+                                        if (result.status.code === 200) {
+                                            dispatch({ type: 'SET_CHECKOUT', payload: result.data })
+
+                                        } else if (result.status.code === 404 && result.status.message === 'alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu') {
+                                            Utils.alertPopUp('Silahkan tambah alamat terlebih dahulu!')
+                                            navigation.navigate('Address', { data: "checkout" })
+                                        } else {
+                                            Utils.handleErrorResponse(result, 'Error with status code : 12156')
+                                            return null
+                                        }
+                                    } catch (error) {
+                                        console.log("🚀 ~ file: ProductScreen.js ~ line 311 ~ handleApiCart ~ error", error)
+                                        Utils.alertPopUp(JSON.stringify(res) + ' : 12157\n\n' + res)
+                                    }
+                                })
+                                .catch(error => {
+                                    console.log("🚀 ~ file: ProductScreen.js ~ line 316 ~ handleApiCart ~ error", error)
+                                    Utils.handleError(error, 'Error with status code : 12158')
+                                });
+                        } catch (error) {
+                            console.log("🚀 ~ file: ProductScreen.js ~ line 321 ~ handleApiCart ~ error", error)
+
+                        }
+                        // ServiceCart.getCart(reduxAuth).then(res => {
+                        //     res.items.map(item => {
+                        //         item.products.map(product => {
+                        //             if (product.slug === reduxProduct.slug) {
+                        //                 handleCheckoutOnline(product.cartId, item.store.id)
+                        //             }
+                        //         })
+                        //     })
+                        // })
+                    } else {
+                        handleTrolley()
+                    }
                 } else {
                     handleGetCart()
                 }
@@ -327,6 +377,70 @@ export default function ProductScreen(props) {
         //     .catch(error => {
         //         Utils.handleError(String(error), 'Error with status code : 12024')
         //     });
+    }
+
+    const handleCheckoutOnline = (cartId, storeId) => {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", reduxAuth);
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Cookie", "ci_session=sdvfphg27d6fhhbhh4ruftor53ppbcko");
+        var raw = JSON.stringify({ 'cartId': cartId, 'storeId': "" })
+
+        var requestOptions = {
+            method: 'PUT',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+        fetch(`https://jaja.id/backend/cart/selected?is_gift=0`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                console.log("🚀 ~ file: ProductScreen.js ~ line 361 ~ handleCheckoutOnline ~ result", result)
+                if (result.status.code === 200) {
+                    var myHeaders = new Headers();
+                    myHeaders.append("Authorization", reduxAuth);
+                    myHeaders.append("Cookie", "ci_session=r59c24ad1race70f8lc0h1v5lniiuhei");
+                    var requestOptions = {
+                        method: 'GET',
+                        headers: myHeaders,
+                        redirect: 'follow'
+                    };
+
+                    fetch(`https://jaja.id/backend/checkout?isCoin=0&fromCart=1&is_gift=0`, requestOptions)
+                        .then(response => response.text())
+                        .then(res => {
+                            try {
+                                let result = JSON.parse(res)
+                                if (result.status.code === 200) {
+                                    dispatch({ type: 'SET_CHECKOUT', payload: result.data })
+                                    navigation.navigate('Checkout', {
+                                        data: {
+                                            online: true,
+                                            cartId: cartId
+                                        }
+                                    })
+                                } else if (result.status.code === 404 && result.status.message === 'alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu') {
+                                    Utils.alertPopUp('Silahkan tambah alamat terlebih dahulu!')
+                                    navigation.navigate('Address', { data: "checkout" })
+                                } else {
+                                    Utils.handleErrorResponse(result, 'Error with status code : 12156')
+                                    return null
+                                }
+                            } catch (error) {
+                                Utils.alertPopUp(JSON.stringify(res) + ' : 12157\n\n' + res)
+                            }
+                        })
+                        .catch(error => Utils.handleError(error, 'Error with status code : 12158'));
+                } else {
+                    Utils.alertPopUp(String(result.status.message))
+                }
+
+            })
+            .catch(error => {
+                Utils.handleError(error, 'Error with status code : 12027')
+            })
+
     }
 
     const handleGetCart = () => {
@@ -377,7 +491,7 @@ export default function ProductScreen(props) {
                 sethidden(false)
             }
             handleGetCart()
-            navigation.navigate("Trolley")
+            navigation.push("Trolley")
         } else {
             handleLogin()
 
@@ -666,12 +780,12 @@ export default function ProductScreen(props) {
                                         <View style={[styles.row_start_center, { width: '87%', }]}>
                                             {reduxProduct.isDiscount ?
                                                 <View style={[styles.row_start_center]}>
-                                                     {reduxProduct.discount == 0?
-                                                   null:
-                                                    <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 5 }]}>
-                                                        <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, { marginBottom: Platform.OS === 'ios' ? '-1%' : 0, color: colors.White }]}>{reduxProduct.discount}%</Text>
-                                                    </View>
-    }
+                                                    {reduxProduct.discount == 0 ?
+                                                        null :
+                                                        <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 5 }]}>
+                                                            <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, { marginBottom: Platform.OS === 'ios' ? '-1%' : 0, color: colors.White }]}>{reduxProduct.discount}%</Text>
+                                                        </View>
+                                                    }
                                                     <View style={[styles.column]}>
                                                         <Text style={Ps.priceBefore}>{reduxProduct.price}</Text>
                                                         <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{reduxProduct.priceDiscount}</Text>
@@ -1319,7 +1433,7 @@ const style = StyleSheet.create({
     //     marginHorizontal: 10,
     //     backgroundColor: 'transparent',
     // },
-   statusBar: {
+    statusBar: {
         height: STATUS_BAR_HEIGHT,
         backgroundColor: 'transparent',
     },

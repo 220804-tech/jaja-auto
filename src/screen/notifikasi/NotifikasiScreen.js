@@ -133,13 +133,14 @@ function NotifikasiScreen(props) {
             }
         })
     }
+    // .sort((a, b) => (parseInt(String(a.created_date.slice(14, 16))) > parseInt(String(b.created_date.slice(14, 16))) ? 1 : -1)).reverse()
     return (
         <SafeAreaView style={style.containerFix}>
             <Appbar back={true} title="Notifikasi" />
             <View style={style.containerIn}>
                 {notifData && notifData.length ?
                     <FlatList
-                        data={notifData.sort((a, b) => (parseInt(String(a.created_date.slice(14, 16))) > parseInt(String(b.created_date.slice(14, 16))) ? 1 : -1)).reverse()}
+                        data={notifData}
                         // inverted={-1}
 
                         keyExtractor={(item, index) => index + 'SF'}

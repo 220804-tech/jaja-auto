@@ -107,7 +107,6 @@ export function handleErrorResponse(error, errorCode) {
 }
 
 export function handleError(error, name) {
-    console.log("🚀 ~ file: Form.js ~ line 111 ~ handleError ~ error", String(error))
     if (String(error).includes("request failed")) {
         alertPopUp("Tidak dapat terhubung, periksa kembali koneksi internet anda!")
     } else {

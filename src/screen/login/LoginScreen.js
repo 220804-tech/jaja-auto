@@ -31,7 +31,7 @@ export default function LoginScreen(props) {
     useEffect(() => {
         GoogleSignin.configure({
             // webClientId: "284366139562-tnj3641sdb4ia9om7bcp25vh3qn5vvo8.apps.googleusercontent.com",
-            
+
             webClientId: "284366139562-tnj3641sdb4ia9om7bcp25vh3qn5vvo8.apps.googleusercontent.com",
 
             offlineAccess: true
@@ -41,7 +41,7 @@ export default function LoginScreen(props) {
             if (props.route && props.route.params && props.route.params.navigate) {
                 setNavigate(props.route.params.navigate)
             }
-           
+
         }
     }, [props])
 

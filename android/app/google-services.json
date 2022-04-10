@@ -15,19 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "284366139562-3p6c42mjksmo3o1trbuljvmjkb9qc78e.apps.googleusercontent.com",
+          "client_id": "284366139562-a5men62obgi9eqd8f0a9j7ipa91f6lal.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.jaja.buyer",
-            "certificate_hash": "0cc56dd7db47e0e84c0b95248b67e5051311de9b"
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
           }
         },
         {
-          "client_id": "284366139562-rb6e0ttjpjchmcfmbqkkm3mg5n79cqce.apps.googleusercontent.com",
+          "client_id": "284366139562-ch0s8vfidtquiv7dvt6dlkrusnb6vpue.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.jaja.buyer",
-            "certificate_hash": "fa38922ddf1e9ffff9ca4890268912e810cf3cc6"
+            "certificate_hash": "9330dd5bcfa769ffbadd800de5dea84fe155faab"
           }
         },
         {
@@ -135,6 +135,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "284366139562-gnjh0vv99s6hr9vrl2feu7imscjjfioe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.seller.jaja",
+            "certificate_hash": "c195622973e88832ef62bc2a88aa5b9576d121f4"
+          }
+        },
+        {
           "client_id": "284366139562-k6opp1cdlefrseb113351t2l14v27c5d.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -143,19 +151,11 @@
           }
         },
         {
-          "client_id": "284366139562-lu0dfp2jikn3fsnephejv18mkaorg6p0.apps.googleusercontent.com",
+          "client_id": "284366139562-ltutt5vmt5dmjvltit9sne4p3meajtfr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.seller.jaja",
-            "certificate_hash": "38f951a976854c75fafba68cb745fe4eb95622ca"
-          }
-        },
-        {
-          "client_id": "284366139562-sqdnqnr8dgp5ihl16u63oi8odmntge9o.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.seller.jaja",
-            "certificate_hash": "c195622973e88832ef62bc2a88aa5b9576d121f4"
+            "certificate_hash": "9b9901b764d465435b4e224cba69f10666fc0ded"
           }
         },
         {

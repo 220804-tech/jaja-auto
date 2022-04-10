@@ -6,6 +6,7 @@ import { Button, Checkbox, TouchableRipple } from 'react-native-paper'
 import { useDispatch, useSelector } from "react-redux";
 import Swipeable from 'react-native-swipeable';
 import CheckBox from '@react-native-community/checkbox'
+import { useAndroidBackHandler } from "react-navigation-backhandler";
 
 export default function TrolleyScreen() {
     let navigation = useNavigation()
@@ -27,6 +28,12 @@ export default function TrolleyScreen() {
     const [update, setupdate] = useState(true)
 
     if (swipeRef && !Object.keys(swipeRef).length) swipeRef[idx] = createRef();
+
+    useAndroidBackHandler(() => {
+        navigation.replace(cartStatus === 1 ? 'GiftDetails' : 'Product')
+        return false;
+
+    });
 
     useEffect(() => {
         return () => {
@@ -64,6 +71,7 @@ export default function TrolleyScreen() {
                 myHeaders.append("Cookie", "ci_session=sdvfphg27d6fhhbhh4ruftor53ppbcko");
 
                 var raw = JSON.stringify({ 'cartId': name === "cart" ? arr.items[indexParent].products[indexChild].cartId : "", 'storeId': name === "store" ? arr.items[indexParent].store.id : "" })
+                console.log("🚀 ~ file: TrolleyScreen.js ~ line 67 ~ handleCheckbox ~ raw", raw)
 
                 var requestOptions = {
                     method: 'PUT',
@@ -201,11 +209,12 @@ export default function TrolleyScreen() {
                     let result = JSON.parse(res)
                     if (result.status.code === 200) {
                         dispatch({ type: 'SET_CHECKOUT', payload: result.data })
-                        navigation.navigate('Checkout')
+                        // navigation.navigate('Checkout')
                     } else if (result.status.code == 404 && result.status.message == 'alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu') {
                         Utils.alertPopUp('Silahkan tambah alamat terlebih dahulu!')
                         navigation.navigate('Address', { data: "checkout" })
-                    } else {
+                    }
+                    else {
                         Utils.handleErrorResponse(result, 'Error with status code : 12156')
                         return null
                     }
@@ -313,7 +322,7 @@ export default function TrolleyScreen() {
                 barStyle='light-content'
                 showHideTransition="fade"
             /> */}
-            <Appbar back={true} title="Keranjang" />
+            <Appbar replace={true} route={cartStatus === 1 ? 'GiftDetails' : 'Product'} back={true} title="Keranjang" />
             {loading ? <Loading /> : null}
             <View style={{ flex: 1, backgroundColor: Platform.OS === 'ios' ? colors.White : null }}>
                 {reduxCart.cart.items && reduxCart.cart.items.length ?

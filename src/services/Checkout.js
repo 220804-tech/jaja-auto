@@ -47,7 +47,6 @@ export async function getShipping(auth, gift) {
         redirect: 'follow'
     };
 
-    console.log(`https://jaja.id/backend/checkout/shipping?is_gift=${gift === 1 ? 1 : 0}`)
     return await fetch(`https://jaja.id/backend/checkout/shipping?is_gift=${gift === 1 ? 1 : 0}`, requestOptions)
         .then(response => response.json())
         .then(result => {

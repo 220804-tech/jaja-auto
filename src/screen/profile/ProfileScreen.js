@@ -267,49 +267,48 @@ export default function ProfileScreen(props) {
             </View>
           </View>
           <View style={{ flex: 0, flexDirection: 'column', zIndex: 998, backgroundColor: colors.White, height: Hp('90%'), marginTop: Hp('-1%'), borderTopRightRadius: 21, borderTopLeftRadius: 21, paddingHorizontal: '4%', paddingTop: '2%' }}>
-            <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Account' : 'Login')}>
+            <TouchableOpacity style={[styles.row_start_center, styles.mb, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver, }]} onPress={() => navigation.navigate(reduxAuth ? 'Account' : 'Login')}>
               <Image style={[styles.icon_27, styles.mr_3]} source={require(`../../assets/icons/customer.png`)} />
               <Text style={[styles.font_14, styles.T_medium, styles.my_4,]}>Pengaturan Akun</Text>
               {/* {!account === true ? null : <Text style={[styles.font_10, styles.T_italic, styles.ml_2, { color: colors.RedNotif }]}>( Masukkan rekening )</Text>} */}
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Address' : 'Login')}>
+            <TouchableOpacity style={[styles.row_start_center, styles.mb, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver, }]} onPress={() => navigation.navigate(reduxAuth ? 'Address' : 'Login')}>
               <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/google-maps.png`)} />
               <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Alamat</Text>
               {location && location.length ? null : <Text style={[styles.ml_2, { color: colors.RedNotif, fontStyle: 'italic', fontSize: 13 }]}>( Alamat belum lengkap )</Text>}
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Wishlist' : 'Login')}>
+            <TouchableOpacity style={[styles.row_start_center, styles.mb, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver, }]} onPress={() => navigation.navigate(reduxAuth ? 'Wishlist' : 'Login')}>
               <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/love.png`)} />
               <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Favorit</Text>
             </TouchableOpacity>
-
-            <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'HistoryProduct' : 'Login')}>
+            <TouchableOpacity style={[styles.row_start_center, styles.mb, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver, }]} onPress={() => navigation.navigate(reduxAuth ? 'HistoryProduct' : 'Login')}>
               <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/history.png`)} />
               <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Terakhir Dilihat</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Vouchers' : 'Login')}>
+            <TouchableOpacity style={[styles.row_start_center, styles.mb, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver, }]} onPress={() => navigation.navigate(reduxAuth ? 'Vouchers' : 'Login')}>
               <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/coupon.png`)} />
               <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Voucher</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => navigation.navigate(reduxAuth ? 'Reward' : 'Login')}>
+            <TouchableOpacity style={[styles.row_start_center, styles.mb, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver, }]} onPress={() => navigation.navigate(reduxAuth ? 'Reward' : 'Login')}>
               <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/star.png`)} />
               <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Koin Jaja</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.row_start_center, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={() => {
-               let url = "whatsapp://send?text=" +
+            <TouchableOpacity style={[styles.row_start_center, styles.mb, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver, }]} onPress={() => {
+              let url = "whatsapp://send?text=" +
                 'Halo, Jaja.id \n' +
-                "&phone=62" +'87888337555'
-                Linking.openURL(url)
-                  .then(data => {
-                    console.log("WhatsApp Opened successfully " + data);  //<---Success
-                  })
-                  .catch(() => {
-                    Utils.alertPopUp('Harap install whatsapp terlebih dahulu!')
-                    setTimeout(() => {
-                      Linking.openURL('https://jaja.id/bantuan/')
-                    }, 1500);
+                "&phone=62" + '87888337555'
+              Linking.openURL(url)
+                .then(data => {
+                  console.log("WhatsApp Opened successfully " + data);  //<---Success
+                })
+                .catch(() => {
+                  Utils.alertPopUp('Harap install whatsapp terlebih dahulu!')
+                  setTimeout(() => {
+                    Linking.openURL('https://jaja.id/bantuan/')
+                  }, 1500);
 
-                  });
-              }}>
+                });
+            }}>
               <Image style={[styles.icon_27, styles.mr_3]} source={require(`../../assets/icons/service.png`)} />
               <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Pusat Bantuan</Text>
 
@@ -318,7 +317,7 @@ export default function ProfileScreen(props) {
 
 
             {reduxAuth ?
-              <TouchableOpacity style={[styles.row_start_center, styles.mb_5, { borderBottomWidth: 0.3, borderBottomColor: colors.BlackGrey }]} onPress={handleLogout}>
+              <TouchableOpacity style={[styles.row_start_center, styles.mb_5, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver, }]} onPress={handleLogout}>
                 <Image style={[styles.icon_27, styles.mr_3]} source={require(`../../assets/icons/logout.png`)} />
                 <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Keluar</Text>
 

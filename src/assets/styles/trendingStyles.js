@@ -14,15 +14,16 @@ export const style = StyleSheet.create({
         alignItems: "center",
         backgroundColor: colors.White,
         flexDirection: 'row',
-        shadowColor: colors.BlackGrayScale,
+        shadowColor: colors.BlueJaja,
         shadowOffset: {
             width: 0,
-            height: 0.8,
+            height: 1,
         },
-        shadowOpacity: 0.11,
-        shadowRadius: 0.75,
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
 
-        elevation: 0.5,
+        elevation: 3,
+
     },
     trendingImage: {
         width: "45%",

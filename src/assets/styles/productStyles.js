@@ -10,7 +10,7 @@ console.log("🚀 ~ file: productStyles.js ~ line 12121 ~ SCREEN_HEIGHT", SCREEN
 // second argument is standardScreenHeight(optional),
 export const style = StyleSheet.create({
     cardProduct: {
-        borderRadius: 3,
+        borderRadius: 7,
         width: Wp("44%"),
         marginLeft: Wp('4%'),
         height: Hp("41%"),
@@ -20,15 +20,16 @@ export const style = StyleSheet.create({
         flexDirection: 'column',
         alignSelf: 'center',
         resizeMode: 'contain',
-        shadowColor: colors.BlackGrayScale,
+        shadowColor: colors.BlueJaja,
         shadowOffset: {
             width: 0,
             height: 1,
         },
-        shadowOpacity: 0.17,
-        shadowRadius: 0.9,
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
 
-        elevation: 1,
+        elevation: 3,
+
     },
 
     cardProductSmall: {
@@ -40,15 +41,16 @@ export const style = StyleSheet.create({
         flexDirection: 'column',
         alignSelf: 'center',
         resizeMode: 'contain',
-        shadowColor: colors.BlackGrayScale,
+        shadowColor: colors.BlueJaja,
         shadowOffset: {
             width: 0,
             height: 1,
         },
-        shadowOpacity: 0.17,
-        shadowRadius: 0.9,
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
 
-        elevation: 1,
+        elevation: 3,
+
     },
 
     textDiscount: {
