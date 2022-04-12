@@ -17,6 +17,7 @@ export default function CheckoutMultiDropScreen() {
     const reduxUseCoin = useSelector((state) => state.checkout.useCoin);
     // const reduxShipping = useSelector((state) => state.checkout.shipping);
     const [reduxShipping, setreduxShipping] = useState([])
+    console.log("🚀 ~ file: CheckoutMultiDropScreen.js ~ line 20 ~ CheckoutMultiDropScreen ~ reduxShipping", reduxShipping.length)
 
     const [dataCheckout, setdataCheckout] = useState('')
     const [loading, setloading] = useState(false)
@@ -43,7 +44,6 @@ export default function CheckoutMultiDropScreen() {
     );
 
     const handleGetShipping = () => {
-        console.log('masuk sini')
         try {
             var myHeaders = new Headers();
             myHeaders.append("Authorization", reduxAuth);
@@ -58,7 +58,6 @@ export default function CheckoutMultiDropScreen() {
             fetch(`https://jaja.id/backend/checkout/shipping?is_gift=0&is_multidrop=1`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    console.log("🚀 ~ file: CheckoutMultiDropScreen.js ~ line 56 ~ handleGetShipping ~ result", result)
                     if (result.status.code === 200) {
                         setreduxShipping(result.data)
                         setcount(count + 1)
@@ -73,9 +72,16 @@ export default function CheckoutMultiDropScreen() {
                         Utils.handleErrorResponse(result, 'Error with status code : 12056')
                         return null
                     }
+                    setloading(false)
                 })
-                .catch(error => Utils.alertPopUp(String(error)));
+                .catch(error => {
+                    Utils.alertPopUp(String(error))
+                    setloading(false)
+
+                });
         } catch (error) {
+            setloading(false)
+
             console.log("🚀 ~ file: CheckoutMultiDropScreen.js ~ line 70 ~ handleGetShipping ~ error", error)
 
         }
@@ -85,11 +91,11 @@ export default function CheckoutMultiDropScreen() {
     useEffect(() => {
         try {
             if (indexStore) {
-                let arr = reduxShipping?.filter(item => item.store.id === indexStore && item.addressId === addressId)
-                console.log("🚀 ~ file: CheckoutMultiDropScreen.js ~ line 822 ~ useEffect ~ arr", arr)
+                let arr = JSON.parse(JSON.stringify(reduxShipping?.filter(item => item.store.id === indexStore && addressId === item.addressId)))
                 if (arr[0]?.items.length) {
                     setshippingSelected(arr[0].items)
-                    actionSheetDelivery.current?.setModalVisible()
+                    setcount(count + 1)
+                    actionSheetDelivery.current?.setModalVisible(true)
                 } else {
                     setshippingSelected([])
                 }
@@ -125,7 +131,7 @@ export default function CheckoutMultiDropScreen() {
                 if (result?.status?.code === 200) {
                     handleGetShipping()
                     setdataCheckout(result?.data)
-                    setloading(false)
+                    // setloading(false)
                 } else if (result?.status?.code === 204) {
                     // navigation.replace('Trolley')
 
@@ -489,10 +495,11 @@ export default function CheckoutMultiDropScreen() {
         fetch(`https://jaja.id/backend/checkout/selectedShipping?is_gift=0&is_multidrop=1`, requestOptions)
             .then((response) => response.text())
             .then((res) => {
-                console.log("🚀 ~ file: CheckoutMultiDropScreen.js ~ line 476 ~ .then ~ res", res)
+                console.log("🚀 ~ file: CheckoutMultiDropScreen.js ~ line 500 ~ .then ~ res", res)
+                setloading(false);
                 try {
                     let result = JSON.parse(res);
-                    if (result.status.code === 200) {
+                    if (result?.status?.code === 200) {
                         setaddressId(null)
                         handleDataCheckout(useCoin)
                     } else {
@@ -501,13 +508,12 @@ export default function CheckoutMultiDropScreen() {
                 } catch (error) {
                     Utils.handleErrorResponse(JSON.stringify(res + "\n\n" + error, "Error with status code : 12102"));
                 }
-                setTimeout(() => setloading(false), 11000);
             })
             .catch((error) => {
                 Utils.handleError(error, "Error with status code : 12103");
                 setloading(false);
             });
-        setTimeout(() => setloading(false), 5000);
+        setTimeout(() => setloading(false), 15000);
     };
 
 
@@ -732,7 +738,7 @@ export default function CheckoutMultiDropScreen() {
                                         Total Belanja ({dataCheckout?.totalAllProduct} produk)
                                     </Text>
                                     {dataCheckout.voucherJajaType === "diskon" ? (
-                                        <Text style={[styles.font_13, { marginBottom: "2%" }]}>
+                                        <Text style={[xstyles.font_13, { marginBottom: "2%" }]}>
                                             Diskon Belanja
                                         </Text>
                                     ) : null}
@@ -970,6 +976,7 @@ export default function CheckoutMultiDropScreen() {
                         </TouchableRipple>
                     </View>
                 </View>
+
                 <ActionSheet
                     ref={actionSheetDelivery}
                     delayActionSheetDraw={false}
@@ -1007,6 +1014,7 @@ export default function CheckoutMultiDropScreen() {
                             />
                         </TouchableOpacity>
                     </View>
+
                     <View style={{ flexDirection: "column", minHeight: Hp("20%"), maxHeight: Hp("60%"), width: "100%", paddingBottom: "5%", }} >
                         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ width: "100%" }} >
                             <View style={[styles.column, { width: "100%" }]}>

@@ -25,7 +25,6 @@ export default function OrderScreen() {
     const reduxRefresh = useSelector(state => state.order.refresh)
     const reduxCompleted = useSelector(state => state.order.completed)
     const reduxUnpaid = useSelector(state => state.order.unPaid)
-    console.log("🚀 ~ file: OrderScreen.js ~ line 28 ~ OrderScreen ~ reduxUnpaid", reduxUnpaid.length)
     const reduxFailed = useSelector(state => state.order.failed)
     const reduxWaitConfirm = useSelector(state => state.order.waitConfirm)
 
@@ -188,8 +187,6 @@ export default function OrderScreen() {
                             style={{ backgroundColor: colors.White }}
                             tabStyle={{ minHeight: 50, flex: 0, width: 120, borderBottomColor: colors.BlueJaja, borderRightColor: 'grey', justifyContent: 'center', alignSelf: 'center' }} // here
                             renderLabel={({ route, focused, color }) => {
-                                console.log("🚀 ~ file: OrderScreen.js ~ line 203 ~ OrderScreen ~ route", route)
-
                                 return (
                                     <View style={[styles.row_center, { width: 100, height: '100%' }]}>
                                         <View style={[styles.row_center, { width: '100%', textAlign: 'center' }]}>

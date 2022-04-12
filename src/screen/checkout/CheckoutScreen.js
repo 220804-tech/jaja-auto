@@ -44,6 +44,7 @@ export default function checkoutScreen(props) {
     const [voucherFilters, setvoucherFilters] = useState([]);
     const [indexStore, setindexStore] = useState(0);
     const [sendTime, setsendTime] = useState("setiap saat");
+    console.log("🚀 ~ file: CheckoutScreen.js ~ line 47 ~ checkoutScreen ~ sendTime", sendTime)
 
     const [vouchers, setVouchers] = useState([]);
     const [voucherOpen, setvoucherOpen] = useState("");
@@ -442,17 +443,12 @@ export default function checkoutScreen(props) {
         myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("Cookie", "ci_session=f7mkmnsrubv4fb7flu6tfcv8uecmproe");
-        console.log(
-            "🚀 ~ file: CheckoutScreen.js ~ line 368 ~ deliverySelected ~ sendTime",
-            sendTime
-        );
 
         var raw = JSON.stringify({
             storeId: storePressed.id,
             shippingCode: code,
             shippingTypeCode: val.code,
-            sendTime:
-                sendTime === "pilih tangall" && sendDate ? sendTime : "setiap saat",
+            sendTime: sendTime,
             dateSendTime: sendDate,
         });
 
@@ -581,7 +577,7 @@ export default function checkoutScreen(props) {
                 setSendDate(dateNumber);
             }
         } catch (error) {
-            console.log("errorrr  ", error);
+            console.log("errorr  ", error);
         }
         setDatePickerVisibility(false);
     };
@@ -834,12 +830,9 @@ export default function checkoutScreen(props) {
             headers: myHeaders,
             redirect: "follow",
         };
-        // fetch(`https://jaja.id/backend/checkout?isCoin=0                      &fromCart=1&is_gift=                          0&is_non_physical=1`, requestOptions)
-
         fetch(`https://jaja.id/backend/checkout?isCoin=${reduxUseCoin ? 1 : 0}&fromCart=1&is_gift=${cartStatus === 1 ? 1 : 0}&is_non_physical=${isNonPhysical ? isNonPhysical ? 1 : 0 : 0}`, requestOptions)
             .then((response) => response.text())
             .then((res) => {
-                console.log("🚀 ~ file: CheckoutScreen.js ~ line 842 ~ .then ~ res", res)
                 try {
                     let result = JSON.parse(res);
                     if (result.status.code === 200) {
@@ -1442,7 +1435,6 @@ export default function checkoutScreen(props) {
                                                     Metode Pengiriman
                                                 </Text>
                                             </View>
-                                            {console.log("🚀 ~ file: CheckoutScreen.js ~ line 1539 ~ ?reduxCheckout.cart.map ~ item.shippingSelected.", item.shippingSelected)}
 
                                             {item.shippingSelected.name ? (
                                                 <View
@@ -1747,7 +1739,7 @@ export default function checkoutScreen(props) {
                         <View style={[styles.row_between_center, styles.p_3]}>
                             <View style={styles.column_center_start}>
                                 <Text style={[styles.font_13, { marginBottom: "2%" }]}>
-                                    Total Belanja
+                                    Total Belanja ({reduxCheckout?.totalAllProduct} produk)
                                 </Text>
                                 {reduxCheckout.voucherJajaType === "diskon" ? (
                                     <Text style={[styles.font_13, { marginBottom: "2%" }]}>
@@ -2683,7 +2675,10 @@ export default function checkoutScreen(props) {
                                                         styles.px_2,
                                                         { width: "100%" },
                                                     ]}
-                                                    onPress={() => setDatePickerVisibility(true)}
+                                                    onPress={() => {
+                                                        // console.log('test')
+                                                        setDatePickerVisibility(true)
+                                                    }}
                                                 >
                                                     <View style={styles.row_between_center}>
                                                         <Text style={styles.font_14}>
@@ -2763,12 +2758,7 @@ export default function checkoutScreen(props) {
                                                                 <CheckBox
                                                                     disabled={false}
                                                                     value={sendTime === item.value ? true : false}
-                                                                    onValueChange={() => {
-                                                                        if (item.value !== "pilih tanggal") {
-                                                                            setSendDate("");
-                                                                        }
-                                                                        setsendTime(item.value);
-                                                                    }}
+                                                                    onValueChange={() => setsendTime(item.value)}
                                                                 />
                                                                 <View
                                                                     style={[
@@ -2803,12 +2793,12 @@ export default function checkoutScreen(props) {
                                                                         { width: "100%" },
                                                                     ]}
                                                                     onPress={() => {
-                                                                        actionSheetDelivery.current?.setModalVisible(
-                                                                            false
-                                                                        );
-                                                                        setTimeout(() => {
-                                                                            setDatePickerVisibility(true);
-                                                                        }, 500);
+                                                                        // actionSheetDelivery.current?.setModalVisible(
+                                                                        //     false
+                                                                        // );
+                                                                        // setTimeout(() => {
+                                                                        setDatePickerVisibility(true)
+                                                                        // }, 500);
                                                                     }}
                                                                 >
                                                                     <View style={styles.row_between_center}>
@@ -2834,7 +2824,7 @@ export default function checkoutScreen(props) {
                                                                         <Text
                                                                             style={[styles.font_12, styles.T_italic]}
                                                                         >
-                                                                            Pilih tanggal pengiriman dari penjual
+                                                                            Pilih tanggal pengiriman dari penjuallll
                                                                         </Text>
                                                                     </View>
                                                                 </TouchableOpacity>
@@ -3291,9 +3281,7 @@ export default function checkoutScreen(props) {
                 minimumDate={new Date(dateMin.year, dateMin.month, dateMin.date)}
                 maximumDate={new Date(dateMax.year, dateMax.month, dateMax.date)}
                 onHide={() => {
-                    setTimeout(() => {
-                        actionSheetDelivery.current?.setModalVisible();
-                    }, 500);
+
                 }}
                 onDateChange={() => {
                     setDatePickerVisibility(false);
@@ -3306,6 +3294,9 @@ export default function checkoutScreen(props) {
                     setTimeout(() => {
                         handleConfirmDate(text);
                     }, 200);
+                    setTimeout(() => {
+                        actionSheetDelivery.current?.setModalVisible(true);
+                    }, 500);
                 }}
                 onCancel={() => {
                     setDatePickerVisibility(false);

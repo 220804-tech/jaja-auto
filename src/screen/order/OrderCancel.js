@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, StatusBar, ScrollView, Alert, Platform } from 'react-native'
-import { styles, Appbar, colors, Wp, Loading, useNavigation, Utils, ServiceOrder } from '../../export'
-import { Button, RadioButton } from 'react-native-paper';
+import { SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, StatusBar, ScrollView, Alert, Platform, Modal } from 'react-native'
+import { styles, Appbar, colors, Wp, Loading, useNavigation, Utils, ServiceOrder, Hp } from '../../export'
+import { Button, RadioButton, TouchableRipple } from 'react-native-paper';
 import Collapsible from 'react-native-collapsible';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -18,6 +18,7 @@ export default function OrderComplain(props) {
     const [textComplain, settextComplain] = useState('');
     const [alertText, setalertText] = useState('');
     const [loading, setLoading] = useState(false);
+    const [modalNext, setmodalNext] = useState(false);
 
     const [images, setImages] = useState([]);
 
@@ -33,75 +34,68 @@ export default function OrderComplain(props) {
     ]
 
     const handleSendCancel = () => {
-        if (!activeSections) {
-            setalertText('Pilih salah satu jenis pembatalan!')
+        // if (!activeSections) {
+        //     setalertText('Pilih salah satu jenis pembatalan!')
+        // } else {
+
+        setmodalNext(false)
+        setLoading(true)
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", reduxAuth);
+        myHeaders.append("Cookie", "ci_session=dek9j11bii7l7sqi5ujffskglpj315vc");
+        var raw = "";
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+        if (reduxOrderStatus == "Menunggu Pembayaran") {
+            console.log("🚀 ~ file: OrderCancel.js ~ line 74 ~ handleSendCancel ~ reduxOrderInvoice", reduxOrderInvoice)
+            fetch(`https://jaja.id/backend/order/batalBelumbayar?order_id=${reduxOrderInvoice}`, requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (result && Object.keys(result).length && result.status.code == 200) {
+                        handleFetchUnpaid()
+                        setTimeout(() => {
+                            setLoading(false)
+                            navigation.navigate('Pesanan')
+                        }, 3000);
+                    } else {
+                        setLoading(false)
+                        Utils.handleErrorResponse(result, "Error with status code : 12017")
+                    }
+                })
+                .catch(error => {
+                    setLoading(false)
+                    Utils.handleError(error, "Error with status code : 12018")
+                });
         } else {
-            setalertText('')
-            Alert.alert(
-                "Batalkan Pesanan",
-                `Kamu yakin ingin membatalkan pesanan?`,
-                [
+            fetch(`https://jaja.id/backend/order/batalMenungguKonfirmasi?invoice=${reduxOrderInvoice}`, requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (result && Object.keys(result).length && result.status.code == 200) {
+                        handleFetchProcess()
+                        setTimeout(() => {
+                            setLoading(false)
+                            navigation.navigate('Pesanan')
+                        }, 3000);
+                    } else {
+                        setLoading(false)
+                        Utils.handleErrorResponse(result, "Error with status code : 12019")
+                    }
+                })
+                .catch(error => {
+                    setLoading(false)
+                    Utils.handleError(error, "Error with status code : 12020")
+                });
+            //     }
+            // }
+            //         },
 
-                    { text: "Kembali", onPress: () => console.log("OK Pressed") },
-                    {
-                        text: "Batalkan", onPress: () => {
-                            setLoading(true)
-                            var myHeaders = new Headers();
-                            myHeaders.append("Authorization", reduxAuth);
-                            myHeaders.append("Cookie", "ci_session=dek9j11bii7l7sqi5ujffskglpj315vc");
-                            var raw = "";
-                            var requestOptions = {
-                                method: 'GET',
-                                headers: myHeaders,
-                                body: raw,
-                                redirect: 'follow'
-                            };
-                            if (reduxOrderStatus == "Menunggu Pembayaran") {
-                                console.log("🚀 ~ file: OrderCancel.js ~ line 74 ~ handleSendCancel ~ reduxOrderInvoice", reduxOrderInvoice)
-                                fetch(`https://jaja.id/backend/order/batalBelumbayar?order_id=${reduxOrderInvoice}`, requestOptions)
-                                    .then(response => response.json())
-                                    .then(result => {
-                                        if (result && Object.keys(result).length && result.status.code == 200) {
-                                            handleFetchUnpaid()
-                                            setTimeout(() => {
-                                                setLoading(false)
-                                                navigation.navigate('Pesanan')
-                                            }, 3000);
-                                        } else {
-                                            setLoading(false)
-                                            Utils.handleErrorResponse(result, "Error with status code : 12017")
-                                        }
-                                    })
-                                    .catch(error => {
-                                        setLoading(false)
-                                        Utils.handleError(error, "Error with status code : 12018")
-                                    });
-                            } else {
-                                fetch(`https://jaja.id/backend/order/batalMenungguKonfirmasi?invoice=${reduxOrderInvoice}`, requestOptions)
-                                    .then(response => response.json())
-                                    .then(result => {
-                                        if (result && Object.keys(result).length && result.status.code == 200) {
-                                            handleFetchProcess()
-                                            setTimeout(() => {
-                                                setLoading(false)
-                                                navigation.navigate('Pesanan')
-                                            }, 3000);
-                                        } else {
-                                            setLoading(false)
-                                            Utils.handleErrorResponse(result, "Error with status code : 12019")
-                                        }
-                                    })
-                                    .catch(error => {
-                                        setLoading(false)
-                                        Utils.handleError(error, "Error with status code : 12020")
-                                    });
-                            }
-                        }
-                    },
-
-                ],
-                { cancelable: false }
-            );
+            //     ],
+            //     { cancelable: false }
+            // );
         }
     }
     const handleFetchUnpaid = () => {
@@ -195,10 +189,65 @@ export default function OrderComplain(props) {
                             }}
                         />
                         <Text style={[styles.font_12, styles.my_5, { color: colors.RedNotif }]}>{alertText}</Text>
-                        <Button onPress={handleSendCancel} style={{ width: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} mode="contained">Batalkan Pesanan</Button>
+                        <Button onPress={() => {
+                            if (!activeSections) {
+                                setalertText('Pilih salah satu jenis pembatalan!')
+                            } else {
+                                setmodalNext(true)
+                            }
+                        }} style={{ width: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} mode="contained">Batalkan Pesanan</Button>
                     </View>
                 </ScrollView>
             </View>
+            <Modal
+                statusBarTranslucent={true}
+                animationType="fade"
+                transparent={true}
+                visible={modalNext}
+                onRequestClose={() => {
+                    setmodalNext(!modalNext);
+                }}
+            >
+                <View
+                    style={{
+                        flex: 1,
+                        width: Wp("100%"),
+                        height: Hp("100%"),
+                        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
+                >
+                    <View
+                        style={[
+                            styles.column_between_center,
+                            styles.p_4,
+                            {
+                                alignItems: 'flex-start',
+                                width: Wp("85%"),
+                                height: Wp("45%"),
+                                borderRadius: 7,
+                                backgroundColor: colors.White,
+                                elevation: 11,
+                                zIndex: 999,
+                            },
+                        ]}
+                    >
+
+                        <Text style={[styles.font_13, styles.T_semi_bold, { color: colors.BlueJaja }]} >Batalkan Pesanan</Text>
+                        <Text style={[styles.font_13, styles.T_medium, { marginTop: '-3%' }]} >Kamu yakin ingin membatalkan pesanan ini?</Text>
+
+                        <View style={[styles.row_end, { width: '100%' }]}>
+                            <TouchableRipple onPress={() => setmodalNext(false)} style={[styles.px_4, styles.py_2, { borderRadius: 3, backgroundColor: colors.YellowJaja }]}>
+                                <Text style={[styles.font_11, styles.T_semi_bold, { color: colors.White }]}>KEMBALI</Text>
+                            </TouchableRipple>
+                            <TouchableRipple onPress={handleSendCancel} style={[styles.px_4, styles.py_2, styles.ml_2, { borderRadius: 3, backgroundColor: colors.RedMaroon }]}>
+                                <Text style={[styles.font_11, styles.T_semi_bold, { color: colors.White }]}>BATALKAN</Text>
+                            </TouchableRipple>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView >
     )
 }

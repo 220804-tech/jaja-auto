@@ -272,7 +272,6 @@ export default function LoginScreen(props) {
                 } else if (error.code === statusCodes.SIGN_IN_REQUIRED) {
                     console.log("Sign In Required : " + error.code);
                 } else if (String(error.code) === "12502" || error.code === statusCodes.IN_PROGRESS) {
-                    console.log('cokkkkkkkkkkkkkkk')
                     signOut()
                     Utils.alertPopUp('Sepertinya ada masalah, dibutuhkan reload!')
                     navigation.reset({

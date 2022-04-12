@@ -75,7 +75,10 @@ export default function index(props) {
                         dispatch({ type: "SET_USER", payload: JSON.parse(resp) });
                     }
                 });
-        } catch (error) { }
+        } catch (error) {
+            console.log("🚀 ~ file: AddressScreen.js ~ line 79 ~ getData ~ error", error)
+
+        }
     };
 
     const handleBack = () => {
@@ -273,7 +276,8 @@ export default function index(props) {
                 rippleColor={colors.BlueJaja}
                 onPress={() => {
                     if (status !== "multidrop") {
-                        navigation.navigate("AddAddress", { data: item, edit: true });
+                        // navigation.navigate("AddAddress", { data: item, edit: true });
+                        console.log("🚀 ~ file: AddressScreen.js ~ line 280 ~ renderItem ~ item", item)
                     }
                 }}
                 style={[style.column_start_center, styles.card]}

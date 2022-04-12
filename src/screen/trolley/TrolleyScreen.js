@@ -322,7 +322,7 @@ export default function TrolleyScreen() {
                 barStyle='light-content'
                 showHideTransition="fade"
             /> */}
-            <Appbar replace={true} route={cartStatus === 1 ? 'GiftDetails' : 'Product'} back={true} title="Keranjang" />
+            <Appbar back={true} title="Keranjang" />
             {loading ? <Loading /> : null}
             <View style={{ flex: 1, backgroundColor: Platform.OS === 'ios' ? colors.White : null }}>
                 {reduxCart.cart.items && reduxCart.cart.items.length ?
