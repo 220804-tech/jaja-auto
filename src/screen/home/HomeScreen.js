@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, StyleSheet, RefreshControl, Platform, ScrollView, Dimensions, LogBox, Animated, StatusBar } from 'react-native'
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
-import { BasedOnSearch, Trending, Category, Flashsale, Loading, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect, NearestStore, ServiceCore, Utils, ServiceProduct } from '../../export'
+import { BasedOnSearch, Trending, Category, Flashsale, Loading, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect, NearestStore, ServiceCore, Utils, ServiceProduct, ServiceStore } from '../../export'
 const { height: SCREEN_HEIGHT, width } = Dimensions.get('window');
 import DeviceInfo from 'react-native-device-info';
 import ParallaxScrollView from 'react-native-parallax-scrollview';
@@ -74,15 +74,13 @@ export default function HomeScreen() {
     const handleDynamicLink = link => {
         try {
             const parsed = queryString.parseUrl(link.url);
-            console.log("🚀 ~ file: HomeScreen.js ~ line 900 ~ HomeScreen ~ parsed", parsed)
             setLoading(true)
             let slug = Object.values(parsed.query)
-            console.log("🚀 ~ file: HomeScreen.js ~ line 800 ~ HomeScreen ~ slug", slug[0])
             if (String(link.url).includes('product')) {
                 handleShowDetail('product', false, slug[0])
+            } else if (String(link.url).includes('product')) {
+                handleOpenStore(slug[0])
             } else {
-                console.log('masuk sini kan gift');
-
                 handleShowDetail('gift', false, slug[0])
             }
         } catch (error) {
@@ -99,20 +97,6 @@ export default function HomeScreen() {
                     setLoading(false)
                     !status ? navigation.push(open === 'product' ? "Product" : "GiftDetails") : null
                 }, 2000);
-                // dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
-                // ServiceProduct.getProduct(reduxAuth, slug).then(res => {
-                //     error = false
-                //     if (res === 404) {
-                //         Utils.alertPopUp('Sepertinya data tidak ditemukan!')
-                //         dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
-                //         navigation.goBack()
-                //     } else if (res?.data) {
-                //         dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
-                //         dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
-                //         setTimeout(() => dispatch({ type: 'SET_FILTER_LOCATION', payload: true }), 7000);
-                //     }
-                // })
-                console.log("🚀 ~ file: HomeScreen.js ~ line 117 ~ ServiceProduct.getProduct ~ slug", slug)
                 dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
                 ServiceProduct.getProduct(reduxAuth, slug).then(res => {
                     error = false
@@ -151,7 +135,6 @@ export default function HomeScreen() {
             }
         }, 20000);
 
-
         try {
             if (reduxAuth) {
                 getBadges()
@@ -159,9 +142,32 @@ export default function HomeScreen() {
         } catch (error) {
 
         }
-
     }
+    const handleOpenStore = (storeSlug) => {
+        try {
+            navigation.push("Store", { slug: storeSlug });
+            dispatch({ type: "SET_STORE_LOAD", payload: true });
+            dispatch({ type: "SET_NEW_PRODUCT_LOAD", payload: true });
+            dispatch({ type: "SET_STORE", payload: {} });
 
+            ServiceStore.getStore(storeSlug, reduxAuth)
+                .then((res) => {
+                    if (res) {
+                        dispatch({ type: "SET_STORE", payload: res });
+                    }
+                    dispatch({ type: "SET_STORE_LOAD", payload: false });
+                })
+                .catch((err) => [
+                    dispatch({ type: "SET_STORE_LOAD", payload: false }),
+                ]);
+
+        } catch (error) {
+            dispatch({ type: "SET_NEW_PRODUCT_LOAD", payload: false });
+            dispatch({ type: "SET_STORE_LOAD", payload: false });
+            Utils.handleError(error, "Error with status code : 31001");
+        }
+        dispatch({ type: "SET_KEYWORD", payload: "" });
+    }
     useFocusEffect(
         useCallback(() => {
             return () => {
