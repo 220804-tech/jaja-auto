@@ -49,7 +49,7 @@ export default function ListChat() {
                                 return new Date(b.message.time) - new Date(a.message.time);
                             });
                         } catch (error) {
-
+                            console.log("🚀 ~ file: ListChatScreen.js ~ line 52 ~ error", error)
                         }
                         let countChat = 0
                         sortedObj.map(item => countChat += item.amount)
@@ -101,19 +101,7 @@ export default function ListChat() {
                                 console.log("🚀 ~ file: ListChatScreen.js ~ line 102 ~ setTimeout ~ error", error)
                             }
                         }}
-                        style={{
-                            paddingHorizontal: '1%',
-                            paddingVertical: '4%',
-                            marginVertical: 3,
-                            borderBottomColor: colors.Silver,
-                            borderBottomWidth: 0.5,
-                            width: '95%',
-                            justifyContent: 'center',
-                            alignSelf: 'center',
-                            alignItems: 'flex-start'
-
-                        }}
-                    >
+                        style={[style.px_2, style.py_4, style.mb_3, style.column_center_start, { width: '100%', backgroundColor: item && item.amount ? colors.BlueLight : colors.White }]}>
                         <View style={[style.row_between_center, { width: '100%' }]}>
                             <View style={style.column}>
                                 <Text style={{ fontSize: 14, color: colors.BlackGrayScale, marginBottom: '1%' }}>{item.name}</Text>
@@ -159,6 +147,6 @@ export default function ListChat() {
 }
 
 const styles = StyleSheet.create({
-    textJajakan: { alignSelf: 'center', textAlign: 'center', width: wp('80%'), fontSize: 18, fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja, fontFamily: 'Poppins-Regular', marginVertical: hp('2%') },
+    textJajakan: { alignSelf: 'center', textAlign: 'center', width: wp('80%'), fontSize: 18, fontFamily: 'SignikaNegative-SemiBold', color: colors.BlueJaja, fontFamily: 'SignikaNegative-Regular', marginVertical: hp('2%') },
     iconMarket: { alignSelf: "center", width: wp('80%'), height: hp('40%') },
 })

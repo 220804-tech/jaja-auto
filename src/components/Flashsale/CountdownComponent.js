@@ -109,11 +109,11 @@ export default class CountdownComponent extends React.Component {
                 <View style={[styles.row_center, styles.mx_3, { borderRadius: 5, width: Wp(`${this.props.wrap}+"%`), height: Wp(`${this.props.wrap}+"%`), backgroundColor: this.props.home ? colors.White : colors.RedFlashsale }]}>
                     <Text style={[{ fontSize: this.props.size, color: this.props.home ? colors.RedFlashsale : colors.White }]}>{String(this.state.time.h).length === 1 ? "0" + this.state.time.h : this.state.time.h}</Text>
                 </View>
-                <Text style={[{ fontSize: this.props.sparator ? this.props.sparator : 20, textAlignVertical: 'center', height: '100%', color: this.props.home ? colors.White : colors.RedFlashsale, fontFamily: 'Poppins-SemiBold' }]}>:</Text>
+                <Text style={[{ fontSize: this.props.sparator ? this.props.sparator : 20, textAlignVertical: 'center', height: '100%', color: this.props.home ? colors.White : colors.RedFlashsale, fontFamily: 'SignikaNegative-SemiBold' }]}>:</Text>
                 <View style={[styles.row_center, styles.mx_3, { borderRadius: 5, width: Wp(`${this.props.wrap}+"%`), height: Wp(`${this.props.wrap}+"%`), backgroundColor: this.props.home ? colors.White : colors.RedFlashsale }]}>
                     <Text style={[{ fontSize: this.props.size, color: this.props.home ? colors.RedFlashsale : colors.White }]}>{String(this.state.time.m).length === 1 ? "0" + this.state.time.m : this.state.time.m}</Text>
                 </View>
-                <Text style={[{ fontSize: this.props.sparator ? this.props.sparator : 20, textAlignVertical: 'center', height: '100%', color: this.props.home ? colors.White : colors.RedFlashsale, fontFamily: 'Poppins-SemiBold' }]}>:</Text>
+                <Text style={[{ fontSize: this.props.sparator ? this.props.sparator : 20, textAlignVertical: 'center', height: '100%', color: this.props.home ? colors.White : colors.RedFlashsale, fontFamily: 'SignikaNegative-SemiBold' }]}>:</Text>
                 <View style={[styles.row_center, styles.mx_3, { borderRadius: 5, width: Wp(`${this.props.wrap}+"%`), height: Wp(`${this.props.wrap}+"%`), backgroundColor: this.props.home ? colors.White : colors.RedFlashsale }]}>
                     <Text style={[{ fontSize: this.props.size, color: this.props.home ? colors.RedFlashsale : colors.White }]}>{String(this.state.time.s).length === 1 ? "0" + this.state.time.s : this.state.time.s}</Text>
                 </View>

@@ -44,7 +44,6 @@ export default function checkoutScreen(props) {
     const [voucherFilters, setvoucherFilters] = useState([]);
     const [indexStore, setindexStore] = useState(0);
     const [sendTime, setsendTime] = useState("setiap saat");
-    console.log("🚀 ~ file: CheckoutScreen.js ~ line 47 ~ checkoutScreen ~ sendTime", sendTime)
 
     const [vouchers, setVouchers] = useState([]);
     const [voucherOpen, setvoucherOpen] = useState("");
@@ -54,6 +53,7 @@ export default function checkoutScreen(props) {
     const [deliveryDate, setdeliveryDate] = useState("");
     const [notes, setNotes] = useState([]);
     const [sendDate, setSendDate] = useState("");
+    const [voucherClaimed, setvoucherClaimed] = useState(false);
 
     const [rangeDate, setrangeDate] = useState([]);
     const [listMonth, setlistMonth] = useState([
@@ -274,7 +274,12 @@ export default function checkoutScreen(props) {
                                 setTimeout(() => setLoad(false), 500);
                                 if (result.status.code === 200) {
                                     if (index === "khusus") {
-                                        Utils.alertPopUp("Kode voucher berhasil digunakan");
+                                        if (!voucherClaimed) {
+                                            Utils.alertPopUp("Kode voucher berhasil digunakan");
+                                            setvoucherClaimed(true)
+                                        } else {
+                                            setvoucherClaimed(false)
+                                        }
                                     } else {
                                         Utils.alertPopUp("Voucher berhasil digunakan");
                                     }
@@ -838,7 +843,7 @@ export default function checkoutScreen(props) {
                     if (result.status.code === 200) {
                         dispatch({ type: "SET_CHECKOUT", payload: result.data });
                         // navigation.navigate("Checkout");
-                    } else if (result?.status?.code === 404 && result?.status?.message === "alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu") {
+                    } else if (result.status.code == 404 && String(result.status.message).includes('Alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu')) {
                         Utils.alertPopUp("Silahkan tambah alamat terlebih dahulu!");
                         navigation.navigate("Address", { data: "checkout" });
                     } else if (result?.status?.code === 404 && result?.status?.message === "Data tidak ditemukan") {
@@ -861,20 +866,25 @@ export default function checkoutScreen(props) {
     const handleUseCoin = (coin) => {
         setUseCoin(coin);
         dispatch({ type: "SET_USECOIN", payload: coin });
-        ServiceCheckout.getCheckout(reduxAuth, coin ? 1 : 0)
-            .then((res) => {
-                if (res) {
-                    dispatch({ type: "SET_CHECKOUT", payload: res });
-                    actionSheetVoucher.current?.setModalVisible(false);
-                    return res;
-                } else {
+        if (isNonPhysical) {
+            handleGetCheckout()
+        } else {
+            ServiceCheckout.getCheckout(reduxAuth, coin ? 1 : 0)
+                .then((res) => {
+                    if (res) {
+                        dispatch({ type: "SET_CHECKOUT", payload: res });
+                        actionSheetVoucher.current?.setModalVisible(false);
+                        return res;
+                    } else {
+                        return false;
+                    }
+                })
+                .catch((res) => {
                     return false;
-                }
-            })
-            .catch((res) => {
-                return false;
-            });
-    };
+                });
+        };
+    }
+
 
     const handleGiftCard = async () => {
         setModalShow2(false);
@@ -980,91 +990,93 @@ export default function checkoutScreen(props) {
                         <RefreshControl refreshing={refreshControl} onRefresh={onRefresh} />
                     }
                 >
-                    <View style={[styles.column, { backgroundColor: colors.White, marginBottom: "2%" },]}>
-                        <View style={[styles.row_between_center, styles.p_3, {
-                            borderBottomWidth: 0.5,
-                            borderBottomColor: colors.BlackGrey,
-                        },]}  >
-                            <View style={[styles.row]}>
-                                <Image
-                                    style={[
-                                        styles.icon_21,
-                                        { tintColor: colors.BlueJaja, marginRight: "2%" },
-                                    ]}
-                                    source={require("../../assets/icons/google-maps.png")}
-                                />
-                                <Text
-                                    style={[
-                                        styles.font_14,
-                                        styles.T_semi_bold,
-                                        { color: colors.BlueJaja },
-                                    ]}
-                                >
-                                    Alamat Pengiriman
-                                </Text>
-                            </View>
-                            {Object.keys(reduxCheckout).length && !isNonPhysical && cartStatus !== 1 ?
-                                <TouchableOpacity style={[styles.px_3, styles.py, { borderRadius: 5, backgroundColor: colors.YellowJaja }]} onPress={() => navigation.navigate("TrolleyMultiDrop", { data: "multidrop", address: reduxCheckout.address })}    >
-                                    <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.White }]}>
-                                        Multi Penerima
-                                    </Text>
-                                </TouchableOpacity>
-                                : null}
-                        </View>
-
-                        {reduxCheckout.address &&
-                            Object.keys(reduxCheckout.address).length ? (
-                            <View style={[styles.column, styles.p_3]}>
-                                <View style={styles.row_between_center}>
+                    {!isNonPhysical ?
+                        <View style={[styles.column, { backgroundColor: colors.White, marginBottom: "2%" },]}>
+                            <View style={[styles.row_between_center, styles.p_3, {
+                                borderBottomWidth: 0.2,
+                                borderBottomColor: colors.Silver,
+                            },]}  >
+                                <View style={[styles.row]}>
+                                    <Image
+                                        style={[
+                                            styles.icon_21,
+                                            { tintColor: colors.BlueJaja, marginRight: "2%" },
+                                        ]}
+                                        source={require("../../assets/icons/google-maps.png")}
+                                    />
                                     <Text
-                                        numberOfLines={1}
-                                        style={[styles.font_14, { width: "70%" }]}
+                                        style={[
+                                            styles.font_14,
+                                            styles.T_semi_bold,
+                                            { color: colors.BlueJaja },
+                                        ]}
                                     >
-                                        {reduxCheckout.address.receiverName}
+                                        Alamat Pengiriman
                                     </Text>
-                                    <TouchableOpacity
-                                        style={{ width: "25%", paddingVertical: 5 }}
-                                        onPress={() =>
-                                            navigation.navigate("Address", { data: "checkout" })
-                                        }
-                                    >
-                                        <Text
-                                            style={[
-                                                styles.font_12,
-                                                { color: colors.BlueJaja, alignSelf: "flex-end" },
-                                            ]}
-                                        >
-                                            Ubah
+                                </View>
+                                {Object.keys(reduxCheckout).length && !isNonPhysical && cartStatus !== 1 ?
+                                    <TouchableOpacity style={[styles.px_3, styles.py, { borderRadius: 5, backgroundColor: colors.YellowJaja }]} onPress={() => navigation.navigate("TrolleyMultiDrop", { data: "multidrop", address: reduxCheckout.address })}    >
+                                        <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.White }]}>
+                                            Multi Penerima
                                         </Text>
                                     </TouchableOpacity>
-                                </View>
-                                <Text numberOfLines={1} style={[styles.font_12, styles.mt]}>
-                                    {reduxCheckout.address.phoneNumber}
-                                </Text>
+                                    : null}
+                            </View>
 
-                                <Text numberOfLines={3} style={[styles.font_12]}>
-                                    {reduxCheckout.address.address}
-                                </Text>
-                            </View>
-                        ) : (
-                            <View style={[styles.column, styles.p_3]}>
-                                <View style={styles.row_between_center}>
-                                    <Text numberOfLines={1} style={[styles.font_14]}>
-                                        Masukkan Alamat Baru
-                                    </Text>
-                                    <TouchableOpacity
-                                        onPress={() =>
-                                            navigation.navigate("Address", { data: "checkout" })
-                                        }
-                                    >
-                                        <Text style={[styles.font_14, { color: colors.BlueJaja }]}>
-                                            Tambah
+                            {reduxCheckout.address &&
+                                Object.keys(reduxCheckout.address).length ? (
+                                <View style={[styles.column, styles.p_3]}>
+                                    <View style={styles.row_between_center}>
+                                        <Text
+                                            numberOfLines={1}
+                                            style={[styles.font_14, { width: "70%" }]}
+                                        >
+                                            {reduxCheckout.address.receiverName}
                                         </Text>
-                                    </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={{ width: "25%", paddingVertical: 5 }}
+                                            onPress={() =>
+                                                navigation.navigate("Address", { data: "checkout" })
+                                            }
+                                        >
+                                            <Text
+                                                style={[
+                                                    styles.font_12,
+                                                    { color: colors.BlueJaja, alignSelf: "flex-end" },
+                                                ]}
+                                            >
+                                                Ubah
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <Text numberOfLines={1} style={[styles.font_12, styles.mt]}>
+                                        {reduxCheckout.address.phoneNumber}
+                                    </Text>
+
+                                    <Text numberOfLines={3} style={[styles.font_12]}>
+                                        {reduxCheckout.address.address}
+                                    </Text>
                                 </View>
-                            </View>
-                        )}
-                    </View>
+                            ) : (
+                                <View style={[styles.column, styles.p_3]}>
+                                    <View style={styles.row_between_center}>
+                                        <Text numberOfLines={1} style={[styles.font_14]}>
+                                            Masukkan Alamat Baru
+                                        </Text>
+                                        <TouchableOpacity
+                                            onPress={() =>
+                                                navigation.navigate("Address", { data: "checkout" })
+                                            }
+                                        >
+                                            <Text style={[styles.font_14, { color: colors.BlueJaja }]}>
+                                                Tambah
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            )}
+                        </View>
+                        : null}
                     {reduxCheckout.cart && reduxCheckout.cart.length
                         ? reduxCheckout.cart.map((item, idxStore) => {
                             return (
@@ -1080,7 +1092,7 @@ export default function checkoutScreen(props) {
                                             styles.row,
                                             styles.p_3,
                                             {
-                                                borderBottomWidth: 0.5,
+                                                borderBottomWidth: 0.2,
                                                 borderBottomColor: colors.BlackGrey,
                                             },
                                         ]}
@@ -1110,7 +1122,7 @@ export default function checkoutScreen(props) {
                                                     styles.column,
                                                     styles.p_2,
                                                     {
-                                                        borderBottomWidth: 0.5,
+                                                        borderBottomWidth: 0.2,
                                                         borderBottomColor: colors.Silver,
                                                     },
                                                 ]}
@@ -1253,31 +1265,24 @@ export default function checkoutScreen(props) {
                                                         {/* <View style={styles.row_between_center}> */}
                                                         <>
                                                             <View
-                                                                style={[styles.row_center, { width: "100%" }]}
+                                                                style={[styles.row_between_center, { width: "100%" }]}
                                                             >
-                                                                <Text
-                                                                    style={[
-                                                                        styles.font_10,
-                                                                        {
-                                                                            alignSelf: "center",
-                                                                            width: "33.3%",
-                                                                            textAlign: "center",
-                                                                        },
-                                                                    ]}
-                                                                ></Text>
+
 
                                                                 <Text
+
                                                                     style={[
                                                                         styles.font_10,
                                                                         {
+
                                                                             color: colors.RedFlashsale,
-                                                                            alignSelf: "center",
+                                                                            alignSelf: "flex-start",
                                                                             width: "33.3%",
-                                                                            textAlign: "center",
+                                                                            textAlign: "left",
                                                                         },
                                                                     ]}
                                                                 >
-                                                                    Kartu ucapan
+                                                                    Kartu ucapan :
                                                                 </Text>
                                                                 <Text
                                                                     style={[
@@ -1294,14 +1299,14 @@ export default function checkoutScreen(props) {
                                                             </View>
 
                                                             <Text
-                                                                numberOfLines={2}
+                                                                numberOfLines={3}
                                                                 style={[
                                                                     styles.font_12,
-                                                                    styles.T_medium,
+
                                                                     {
                                                                         color: colors.RedFlashsale,
-                                                                        alignSelf: "center",
-                                                                        textAlign: "center",
+                                                                        alignSelf: "auto",
+                                                                        textAlign: "auto",
                                                                     },
                                                                 ]}
                                                             >
@@ -1391,7 +1396,7 @@ export default function checkoutScreen(props) {
                                                 color={colors.RedFlashsale}
                                                 uppercase={false}
                                                 labelStyle={{
-                                                    fontFamily: "Poppins-Regular",
+                                                    fontFamily: "SignikaNegative-Regular",
                                                     color: colors.RedFlashsale,
                                                 }}
                                                 style={{
@@ -1413,8 +1418,8 @@ export default function checkoutScreen(props) {
                                                     styles.row,
                                                     styles.p_3,
                                                     {
-                                                        borderBottomWidth: 0.5,
-                                                        borderBottomColor: colors.BlackGrey,
+                                                        borderBottomWidth: 0.2,
+                                                        borderBottomColor: colors.Silver,
                                                     },
                                                 ]}
                                             >
@@ -1558,7 +1563,7 @@ export default function checkoutScreen(props) {
                                                                 {
                                                                     color: colors.BlackGrayScale,
                                                                     paddingHorizontal: 0,
-                                                                    borderBottomWidth: 0.7,
+                                                                    borderBottomWidth: 0.2,
                                                                     borderBottomColor: colors.Silver,
                                                                     width: "100%",
                                                                 },
@@ -1603,7 +1608,7 @@ export default function checkoutScreen(props) {
                             );
                         })
                         : null}
-                    {cartStatus !== 1 && !isNonPhysical ? (
+                    {cartStatus !== 1 ? (
                         reduxCheckout.voucherJajaSelected &&
                             Object.keys(reduxCheckout.voucherJajaSelected).length ? (
                             <View
@@ -1617,8 +1622,8 @@ export default function checkoutScreen(props) {
                                         styles.row,
                                         styles.p_3,
                                         {
-                                            borderBottomWidth: 0.5,
-                                            borderBottomColor: colors.BlackGrey,
+                                            borderBottomWidth: 0.2,
+                                            borderBottomColor: colors.Silver,
                                         },
                                     ]}
                                 >
@@ -1689,7 +1694,7 @@ export default function checkoutScreen(props) {
                                     color={colors.RedFlashsale}
                                     uppercase={false}
                                     labelStyle={{
-                                        fontFamily: "Poppins-Regular",
+                                        fontFamily: "SignikaNegative-Regular",
                                         color: colors.RedFlashsale,
                                     }}
                                     style={{
@@ -1715,7 +1720,7 @@ export default function checkoutScreen(props) {
                             style={[
                                 styles.row,
                                 styles.p_3,
-                                { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey },
+                                { borderBottomWidth: 0.2, borderBottomColor: colors.Silver },
                             ]}
                         >
                             <Image
@@ -1757,53 +1762,53 @@ export default function checkoutScreen(props) {
                                 <Text style={[styles.font_13, { marginBottom: "2%" }]}>
                                     Biaya penanganan
                                 </Text>
-                                {!isNonPhysical ?
-                                    <>
-                                        {reduxCheckout.coinUsed ? (
-                                            <Text style={[styles.font_13, { marginBottom: "2%" }]}>
-                                                Koin Digunakan
-                                            </Text>
-                                        ) : null}
-                                        <View
+                                {/* {!isNonPhysical ? */}
+                                <>
+                                    {reduxCheckout.coinUsed ? (
+                                        <Text style={[styles.font_13, { marginBottom: "2%" }]}>
+                                            Koin Digunakan
+                                        </Text>
+                                    ) : null}
+                                    <View
+                                        style={[
+                                            styles.row_start_center,
+                                            {
+                                                width: Wp("50%"),
+                                                marginLeft: Platform.OS === "android" ? "-6.5%" : 0,
+                                                marginTop: Platform.OS === "android" ? 0 : "3%",
+                                                paddingLeft: "-2%",
+                                                opacity: reduxCoin == 0 ? 0.4 : 1,
+                                            },
+                                        ]}
+                                    >
+                                        {Platform.OS === "android" ? (
+                                            <Checkbox
+                                                disabled={reduxCoin == 0 ? true : false}
+                                                theme={{ mode: "adaptive" }}
+                                                color={colors.BlueJaja}
+                                                status={useCoin ? "checked" : "unchecked"}
+                                                onPress={() => handleUseCoin(!useCoin)}
+                                            />
+                                        ) : (
+                                            <CheckBox
+                                                disabled={reduxCoin == 0 ? true : false}
+                                                value={useCoin ? true : false}
+                                                onValueChange={() => handleUseCoin(!useCoin)}
+                                                style={[styles.mr_4]}
+                                            />
+                                        )}
+                                        <Text
+                                            numberOfLines={1}
                                             style={[
-                                                styles.row_start_center,
-                                                {
-                                                    width: Wp("50%"),
-                                                    marginLeft: Platform.OS === "android" ? "-6.5%" : 0,
-                                                    marginTop: Platform.OS === "android" ? 0 : "3%",
-                                                    paddingLeft: "-2%",
-                                                    opacity: reduxCoin == 0 ? 0.4 : 1,
-                                                },
+                                                styles.font_13,
+                                                { textAlignVertical: "center", marginBottom: "-1%" },
                                             ]}
                                         >
-                                            {Platform.OS === "android" ? (
-                                                <Checkbox
-                                                    disabled={reduxCoin == 0 ? true : false}
-                                                    theme={{ mode: "adaptive" }}
-                                                    color={colors.BlueJaja}
-                                                    status={useCoin ? "checked" : "unchecked"}
-                                                    onPress={() => handleUseCoin(!useCoin)}
-                                                />
-                                            ) : (
-                                                <CheckBox
-                                                    disabled={reduxCoin == 0 ? true : false}
-                                                    value={useCoin ? true : false}
-                                                    onValueChange={() => handleUseCoin(!useCoin)}
-                                                    style={[styles.mr_4]}
-                                                />
-                                            )}
-                                            <Text
-                                                numberOfLines={1}
-                                                style={[
-                                                    styles.font_13,
-                                                    { textAlignVertical: "center", marginBottom: "-1%" },
-                                                ]}
-                                            >
-                                                Koin dimiliki
-                                            </Text>
-                                        </View>
-                                    </>
-                                    : null}
+                                            Koin dimiliki
+                                        </Text>
+                                    </View>
+                                </>
+                                {/* : null} */}
                             </View>
                             <View style={styles.column_center_end}>
                                 <Text style={[styles.font_13, { marginBottom: "2%" }]}>
@@ -1845,23 +1850,23 @@ export default function checkoutScreen(props) {
                                         [-{reduxCheckout.coinUsedFormat}]
                                     </Text>
                                 ) : null}
-                                {!isNonPhysical ?
-                                    <Text
-                                        numberOfLines={1}
-                                        style={[
-                                            styles.font_13,
-                                            styles.py_2,
-                                            {
-                                                textAlignVertical: "center",
-                                                marginBottom: "-2%",
-                                                opacity: reduxCoin == 0 ? 0.4 : 1,
-                                                backgroundColor: colors.White,
-                                            },
-                                        ]}
-                                    >
-                                        ({reduxCoin})
-                                    </Text>
-                                    : null}
+                                {/* {!isNonPhysical ? */}
+                                <Text
+                                    numberOfLines={1}
+                                    style={[
+                                        styles.font_13,
+                                        styles.py_2,
+                                        {
+                                            textAlignVertical: "center",
+                                            marginBottom: "-2%",
+                                            opacity: reduxCoin == 0 ? 0.4 : 1,
+                                            backgroundColor: colors.White,
+                                        },
+                                    ]}
+                                >
+                                    ({reduxCoin})
+                                </Text>
+                                {/* : null} */}
                             </View>
                         </View>
                     </View>
@@ -1923,7 +1928,7 @@ export default function checkoutScreen(props) {
                             style={[
                                 styles.font_17,
                                 styles.T_semi_bold,
-                                { color: colors.BlueJaja },
+                                { color: colors.YellowJaja },
                             ]}
                         >
                             {reduxCheckout.totalCurrencyFormat}
@@ -2655,7 +2660,7 @@ export default function checkoutScreen(props) {
                         contentContainerStyle={{ width: "100%" }}
                     >
                         <View style={[styles.column, { width: "100%" }]}>
-                            {/* <Text style={[styles.font_14, styles.mb_3, { color: colors.BlueJaja, fontFamily: 'Poppins-SemiBold', borderBottomWidth: 0.5, borderBottomColor: colors.BlueJaja }]}>{item.title}</Text> */}
+                            {/* <Text style={[styles.font_14, styles.mb_3, { color: colors.BlueJaja, fontFamily: 'SignikaNegative-SemiBold', borderBottomWidth: 0.5, borderBottomColor: colors.BlueJaja }]}>{item.title}</Text> */}
                             {reduxShipping && reduxShipping.length ? (
                                 <View style={styles.column}>
                                     {cartStatus === 1 ? (
@@ -2676,10 +2681,9 @@ export default function checkoutScreen(props) {
                                                         { width: "100%" },
                                                     ]}
                                                     onPress={() => {
-                                                        // console.log('test')
-                                                        setDatePickerVisibility(true)
-                                                    }}
-                                                >
+                                                        actionSheetDelivery.current?.setModalVisible(false);
+                                                        setTimeout(() => setDatePickerVisibility(true), 500);
+                                                    }}>
                                                     <View style={styles.row_between_center}>
                                                         <Text style={styles.font_14}>
                                                             {sendDate ? sendDate : "Pilih Tanggal"}
@@ -2793,14 +2797,9 @@ export default function checkoutScreen(props) {
                                                                         { width: "100%" },
                                                                     ]}
                                                                     onPress={() => {
-                                                                        // actionSheetDelivery.current?.setModalVisible(
-                                                                        //     false
-                                                                        // );
-                                                                        // setTimeout(() => {
-                                                                        setDatePickerVisibility(true)
-                                                                        // }, 500);
-                                                                    }}
-                                                                >
+                                                                        actionSheetDelivery.current?.setModalVisible(false);
+                                                                        setTimeout(() => setDatePickerVisibility(true), 500);
+                                                                    }}>
                                                                     <View style={styles.row_between_center}>
                                                                         <Text style={styles.font_14}>
                                                                             {sendDate}
@@ -2824,7 +2823,7 @@ export default function checkoutScreen(props) {
                                                                         <Text
                                                                             style={[styles.font_12, styles.T_italic]}
                                                                         >
-                                                                            Pilih tanggal pengiriman dari penjuallll
+                                                                            Pilih tanggal pengiriman dari penjual
                                                                         </Text>
                                                                     </View>
                                                                 </TouchableOpacity>
@@ -2860,73 +2859,75 @@ export default function checkoutScreen(props) {
                                         renderItem={({ item }) => {
                                             let code = item.code;
                                             let Ename = item.name;
-                                            return (
-                                                <View
-                                                    style={[
-                                                        styles.column_center_start,
-                                                        styles.mb_2,
-                                                        styles.py_2,
-                                                        styles.px_4,
-                                                        {
-                                                            borderBottomWidth: 1,
-                                                            borderBottomColor: colors.Silver,
-                                                            width: "100%",
-                                                        },
-                                                    ]}
-                                                >
-                                                    <Text
+                                            if (Ename !== 'Jaja Express') {
+                                                return (
+                                                    <View
                                                         style={[
-                                                            styles.font_14,
+                                                            styles.column_center_start,
+                                                            styles.mb_2,
+                                                            styles.py_2,
+                                                            styles.px_4,
                                                             {
-                                                                fontFamily: "Poppins-SemiBold",
-                                                                color: colors.BlueJaja,
+                                                                borderBottomWidth: 1,
+                                                                borderBottomColor: colors.Silver,
+                                                                width: "100%",
                                                             },
                                                         ]}
                                                     >
-                                                        {Ename}
-                                                    </Text>
-                                                    <FlatList
-                                                        data={item.type}
-                                                        keyExtractor={(item, index) => String(index) + "AL"}
-                                                        style={{ width: "100%" }}
-                                                        renderItem={({ item }) => {
-                                                            return (
-                                                                <TouchableOpacity
-                                                                    onPress={() => deliverySelected(code, item)}
-                                                                    style={[
-                                                                        styles.column_center_start,
-                                                                        styles.mb_3,
-                                                                        styles.py_2,
-                                                                        { width: "100%" },
-                                                                    ]}
-                                                                >
-                                                                    <View style={styles.row_between_center}>
-                                                                        <Text
-                                                                            style={[
-                                                                                styles.font_14,
-                                                                                styles.T_medium,
-                                                                                { flex: 1 },
-                                                                            ]}
-                                                                        >
-                                                                            {item.name}
-                                                                        </Text>
-                                                                        <Text
-                                                                            style={[styles.font_14, styles.T_medium]}
-                                                                        >
-                                                                            {item.priceCurrencyFormat}
-                                                                        </Text>
-                                                                    </View>
-                                                                    <Text
-                                                                        style={[styles.font_12, styles.T_italic]}
+                                                        <Text
+                                                            style={[
+                                                                styles.font_14,
+                                                                {
+                                                                    fontFamily: "SignikaNegative-SemiBold",
+                                                                    color: colors.BlueJaja,
+                                                                },
+                                                            ]}
+                                                        >
+                                                            {Ename}
+                                                        </Text>
+                                                        <FlatList
+                                                            data={item.type}
+                                                            keyExtractor={(item, index) => String(index) + "AL"}
+                                                            style={{ width: "100%" }}
+                                                            renderItem={({ item }) => {
+                                                                return (
+                                                                    <TouchableOpacity
+                                                                        onPress={() => deliverySelected(code, item)}
+                                                                        style={[
+                                                                            styles.column_center_start,
+                                                                            styles.mb_3,
+                                                                            styles.py_2,
+                                                                            { width: "100%" },
+                                                                        ]}
                                                                     >
-                                                                        Estimasi {item.etdText}
-                                                                    </Text>
-                                                                </TouchableOpacity>
-                                                            );
-                                                        }}
-                                                    />
-                                                </View>
-                                            );
+                                                                        <View style={styles.row_between_center}>
+                                                                            <Text
+                                                                                style={[
+                                                                                    styles.font_14,
+                                                                                    styles.T_medium,
+                                                                                    { flex: 1 },
+                                                                                ]}
+                                                                            >
+                                                                                {item.name}
+                                                                            </Text>
+                                                                            <Text
+                                                                                style={[styles.font_14, styles.T_medium]}
+                                                                            >
+                                                                                {item.priceCurrencyFormat}
+                                                                            </Text>
+                                                                        </View>
+                                                                        <Text
+                                                                            style={[styles.font_12, styles.T_italic]}
+                                                                        >
+                                                                            Estimasi {item.etdText}
+                                                                        </Text>
+                                                                    </TouchableOpacity>
+                                                                );
+                                                            }}
+                                                        />
+                                                    </View>
+                                                );
+                                            }
                                         }}
                                     />
                                 </View>
@@ -3096,7 +3097,7 @@ export default function checkoutScreen(props) {
                         flex: 1,
                         width: Wp("100%"),
                         height: Hp("100%"),
-                        backgroundColor: "transparent",
+                        backgroundColor: 'rgba(0, 0, 0, 0.3)',
                         justifyContent: "center",
                         alignItems: "center",
                     }}
@@ -3199,7 +3200,7 @@ export default function checkoutScreen(props) {
                         flex: 1,
                         width: Wp("100%"),
                         height: Hp("100%"),
-                        backgroundColor: "transparent",
+                        backgroundColor: 'rgba(0, 0, 0, 0.3)',
                         justifyContent: "center",
                         alignItems: "center",
                     }}
@@ -3207,11 +3208,12 @@ export default function checkoutScreen(props) {
                     <View
                         style={[
                             styles.column_start,
-                            styles.pt_s,
+                            styles.py_3,
                             {
                                 width: Wp("95%"),
                                 minHeight: Wp("50%"),
                                 maxHeight: Wp("100%"),
+                                borderRadius: 7,
                                 backgroundColor: colors.White,
                                 elevation: 11,
                                 zIndex: 999,
@@ -3240,10 +3242,13 @@ export default function checkoutScreen(props) {
                                 textAlignVertical="top"
                                 numberOfLines={4}
                                 multiline={true}
+                                maxLength={500}
                                 style={[
                                     styles.font_12,
                                     styles.p_2,
                                     {
+                                        height: Wp("30%"),
+
                                         borderRadius: 5,
                                         borderWidth: 0.5,
                                         borderColor: colors.BlackGrey,
@@ -3251,9 +3256,7 @@ export default function checkoutScreen(props) {
                                     },
                                 ]}
                                 value={textGift}
-                                onChangeText={(text) =>
-                                    String(textGift).length < 500 ? settextGift(text) : ""
-                                }
+                                onChangeText={(text) => settextGift(text)}
                             />
                         </View>
 
@@ -3281,16 +3284,13 @@ export default function checkoutScreen(props) {
                 minimumDate={new Date(dateMin.year, dateMin.month, dateMin.date)}
                 maximumDate={new Date(dateMax.year, dateMax.month, dateMax.date)}
                 onHide={() => {
-
+                    actionSheetDelivery.current?.setModalVisible(true);
                 }}
                 onDateChange={() => {
                     setDatePickerVisibility(false);
                 }}
                 onConfirm={(text) => {
-                    console.log(
-                        "🚀 ~ file: CheckoutScreen.js ~ line 1521 ~ checkoutScreen ~ text",
-                        text
-                    );
+                    console.log("🚀 ~ file: CheckoutScreen.js ~ line 1521 ~ checkoutScreen ~ text", text);
                     setTimeout(() => {
                         handleConfirmDate(text);
                     }, 200);
@@ -3302,6 +3302,7 @@ export default function checkoutScreen(props) {
                     setDatePickerVisibility(false);
                 }}
             />
+
         </SafeAreaView >
     );
 }

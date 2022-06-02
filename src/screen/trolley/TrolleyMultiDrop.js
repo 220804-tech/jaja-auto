@@ -189,7 +189,7 @@ export default function TrolleyMultiDrop() {
           let result = JSON.parse(res);
           if (result.status.code === 200) {
             dispatch({ type: "SET_CHECKOUT", payload: result.data });
-          } else if (result.status.code == 404 && result.status.message == "alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu") {
+          } else if (result.status.code == 404 && String(result.status.message).includes('Alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu')) {
             Utils.alertPopUp("Silahkan tambah alamat terlebih dahulu!");
             // navigation.navigate("Address", { data: "checkout" });
           } else {
@@ -226,7 +226,7 @@ export default function TrolleyMultiDrop() {
         <View style={[styles.row, { height: Hp('7%') }]}>
           <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '2%', paddingLeft: '4%', paddingVertical: '1%' }}>
             <Text style={[styles.font_12, styles.T_medium, { color: colors.BlueJaja, marginBottom: '-2%' }]}>Total Harga :</Text>
-            <Text numberOfLines={1} style={[styles.font_17, styles.T_semi_bold, { color: colors.BlueJaja }]}>{data?.totalCartCurrencyFormat}</Text>
+            <Text numberOfLines={1} style={[styles.font_17, styles.T_semi_bold, { color: colors.YellowJaja }]}>{data?.totalCartCurrencyFormat}</Text>
           </View>
           <TouchableRipple onPress={() => navigation.navigate('CheckoutMultiDrop')} style={{ backgroundColor: colors.BlueJaja, width: "50%", height: '100%', justifyContent: 'center', alignItems: 'center' }}>
             <Text numberOfLines={1} style={[styles.font_13, styles.T_semi_bold, { color: colors.White }]}>Checkout</Text>

@@ -527,7 +527,7 @@ export default function GiftDetailScreen(props) {
                             <View style={[styles.column_between_center, styles.p_3, styles.mb, { backgroundColor: colors.White, alignItems: 'flex-start' }]}>
                                 <View style={[styles.row_center, styles.mb_3]}>
                                     <Text style={[styles.font_14]}>Variasi Produk</Text>
-                                    <Text style={[styles.font_12, { marginLeft: '3%', fontStyle: 'italic', color: colors.RedNotif, fontFamily: 'Poppins-Regular' }]}>{alert}</Text>
+                                    <Text style={[styles.font_12, { marginLeft: '3%', fontStyle: 'italic', color: colors.RedNotif, fontFamily: 'SignikaNegative-Regular' }]}>{alert}</Text>
                                 </View>
                                 {/* <View style={[styles.column, { width: Wp('100%') }]}> */}
                                 <FlatList
@@ -632,7 +632,7 @@ export default function GiftDetailScreen(props) {
                                         <View style={styles.row_between_center}>
                                             <Text style={styles.font_13}>Masukkan tanggal pengiriman :</Text>
 
-                                            {/* <Text style={{ textDecorationLine: 'underline', fontSize: 14, fontFamily: 'Poppins-Medium', color: colors.BlackGrayScale, marginBottom: '3%' }}>Tanggal Pengiriman</Text> */}
+                                            {/* <Text style={{ textDecorationLine: 'underline', fontSize: 14, fontFamily: 'SignikaNegative-Medium', color: colors.BlackGrayScale, marginBottom: '3%' }}>Tanggal Pengiriman</Text> */}
                                             <IconButton
                                                 icon="calendar-text-outline"
                                                 style={{ padding: 0, margin: 0, backgroundColor: colors.White }}
@@ -641,7 +641,7 @@ export default function GiftDetailScreen(props) {
                                                 onPress={() => setDatePickerVisibility(true)}
                                             />
                                             {/* <TouchableRipple onPress={() => setDatePickerVisibility(true)} style={[styles.px_2, styles.mb_3]}>
-                                                <Text style={{ fontSize: 14, fontFamily: 'Poppins-Medium', color: colors.BlueJaja }}>Ubah</Text>
+                                                <Text style={{ fontSize: 14, fontFamily: 'SignikaNegative-Medium', color: colors.BlueJaja }}>Ubah</Text>
                                             </TouchableRipple> */}
 
                                         </View>
@@ -660,7 +660,7 @@ export default function GiftDetailScreen(props) {
 
                         </View>
                         <View style={[styles.column, styles.p_4, styles.mb, { backgroundColor: colors.White, paddingBottom: '5%' }]}>
-                            <Text style={{ textDecorationLine: 'underline', fontSize: 14, fontFamily: 'Poppins-Medium', color: colors.BlackGrayScale, marginBottom: '3%' }}>Informasi Produk</Text>
+                            <Text style={{ textDecorationLine: 'underline', fontSize: 14, fontFamily: 'SignikaNegative-Medium', color: colors.BlackGrayScale, marginBottom: '3%' }}>Informasi Produk</Text>
                             <View style={[styles.row_around_center, styles.mb_5, { alignSelf: 'flex-start' }]}>
                                 <View style={[styles.column, { width: '40%' }]}>
                                     <Text style={[styles.font_14, styles.mb_3]}>Berat</Text>
@@ -685,7 +685,7 @@ export default function GiftDetailScreen(props) {
                                     <Text style={[styles.font_14, styles.mb_3, styles.T_light]}>{giftDetails.stock && giftDetails.stock > 0 ? giftDetails.stock : 0}</Text>
                                 </View>
                             </View>
-                            <Text style={{ textDecorationLine: 'underline', fontSize: 13, fontFamily: 'Poppins-Medium', color: colors.BlackGrayScale, marginBottom: '3%' }}>Deskripsi Produk</Text>
+                            <Text style={{ textDecorationLine: 'underline', fontSize: 13, fontFamily: 'SignikaNegative-Medium', color: colors.BlackGrayScale, marginBottom: '3%' }}>Deskripsi Produk</Text>
                             <View style={[styles.row_around_center, styles.mb_3, { alignSelf: 'flex-start' }]}>
                                 {giftDetails.description ?
                                     <>
@@ -710,7 +710,7 @@ export default function GiftDetailScreen(props) {
 
                         {giftDetails.review && giftDetails.review.length ?
                             <View style={[styles.column, styles.p_4, { backgroundColor: colors.White, paddingBottom: Hp('7%') }]}>
-                                <Text style={{ textDecorationLine: 'underline', fontSize: 16, fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale, marginBottom: '3%' }}>Penilaian Produk</Text>
+                                <Text style={{ textDecorationLine: 'underline', fontSize: 16, fontFamily: 'SignikaNegative-SemiBold', color: colors.BlackGrayScale, marginBottom: '3%' }}>Penilaian Produk</Text>
                                 {giftDetails.review.map((item, index) => {
                                     return (
                                         <View key={String(index)} style={[styles.column, styles.mb_3, styles.px_2, { backgroundColor: colors.White, }]}>
@@ -1152,7 +1152,7 @@ const style = StyleSheet.create({
     },
     titleStyle: {
         color: 'white',
-        fontFamily: 'Poppins-SemiBold',
+        fontFamily: 'SignikaNegative-SemiBold',
         fontSize: 18,
         backgroundColor: colors.BlueJaja
     },

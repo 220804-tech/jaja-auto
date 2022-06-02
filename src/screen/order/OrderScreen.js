@@ -181,7 +181,7 @@ export default function OrderScreen() {
                         <TabBar
                             {...props}
                             pressColor={colors.BlueJaja}
-                            indicatorStyle={{ backgroundColor: colors.BlueJaja }}
+                            indicatorStyle={{ backgroundColor: colors.YellowJaja }}
                             bounces={true}
                             scrollEnabled={true}
                             style={{ backgroundColor: colors.White }}

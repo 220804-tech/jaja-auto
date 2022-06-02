@@ -164,8 +164,8 @@ export default function MainPage() {
                                                         </View>
 
                                                         <View style={[styles.column_center_start, { height: '100%', width: '100%', paddingLeft: '15%' }]}>
-                                                            <Text style={[styles.font_14, styles.mb_2, { color: colors.White, fontFamily: 'Poppins-SemiBold' }]}>{item.name}</Text>
-                                                            <Text numberOfLines={2} style={[styles.font_8, { color: colors.White, fontFamily: 'Poppins-SemiBold', width: '80%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
+                                                            <Text style={[styles.font_14, styles.mb_2, { color: colors.White, fontFamily: 'SignikaNegative-SemiBold' }]}>{item.name}</Text>
+                                                            <Text numberOfLines={2} style={[styles.font_8, { color: colors.White, fontFamily: 'SignikaNegative-SemiBold', width: '80%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
                                                         </View>
                                                     </View>
                                                     <TouchableOpacity onPress={() => handleVoucher(item)} style={{ width: '30%', backgroundColor: item.isClaimed ? colors.Silver : colors.RedFlashsale, padding: '1%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: item.isClaimed ? colors.Silver : colors.RedFlashsale, borderRadius: 3 }}>
@@ -194,6 +194,7 @@ export default function MainPage() {
                                 style={styles.pt_3}
                                 contentContainerStyle={styles.pb_5}
                                 data={vouchers}
+                                keyExtractor={(item, index) => String(index + 'PY')}
                                 renderItem={({ item, index }) => {
                                     return (
                                         <View style={[styles.row_center, styles.mb_3]}>
@@ -207,16 +208,16 @@ export default function MainPage() {
                                                     <View style={{ height: Wp('4.2%'), width: Wp('3%'), backgroundColor: colors.White, borderTopRightRadius: 100, borderBottomRightRadius: 100 }}></View>
                                                 </View>
                                                 <View style={[styles.column_center, styles.p, { height: '100%', width: '30%', marginLeft: Wp('3%'), backgroundColor: colors.BlueJaja }]}>
-                                                    <Text style={[styles.font_12, styles.mb_2, { color: colors.White, fontFamily: 'Poppins-SemiBold', alignSelf: 'center', textAlign: 'center', width: '90%' }]}>{!item.category ? item.name : item.category === "ongkir" ? 'GRATIS BIAYA PENGIRIMAN' : String(item.category).toUpperCase() + " " + item.discountText}</Text>
+                                                    <Text style={[styles.font_12, styles.mb_2, { color: colors.White, fontFamily: 'SignikaNegative-SemiBold', alignSelf: 'center', textAlign: 'center', width: '90%' }]}>{!item.category ? item.name : item.category === "ongkir" ? 'GRATIS BIAYA PENGIRIMAN' : String(item.category).toUpperCase() + " " + item.discountText}</Text>
                                                 </View>
                                                 <View style={[styles.column_around_center, styles.px_2, styles.pt_3, { width: '44%' }]}>
-                                                    <Text numberOfLines={3} style={[styles.font_13, styles.mb_2, { color: colors.BlueJaja, fontFamily: 'Poppins-SemiBold', width: '100%' }]}>{item.discount}</Text>
-                                                    <Text style={[styles.font_8, { color: colors.BlueJaja, fontFamily: 'Poppins-SemiBold', width: '100%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
+                                                    <Text numberOfLines={3} style={[styles.font_13, styles.mb_2, { color: colors.BlueJaja, fontFamily: 'SignikaNegative-SemiBold', width: '100%' }]}>{item.discount}</Text>
+                                                    <Text style={[styles.font_8, { color: colors.BlueJaja, fontFamily: 'SignikaNegative-SemiBold', width: '100%' }]}>Berakhir dalam {item.endDate} {item.type}</Text>
                                                 </View>
                                                 <View style={[styles.column_center, { width: '22%' }]}>
                                                     {/* {item.isClaimed ? */}
                                                     <TouchableOpacity onPress={() => handleVoucher(item, index)} style={{ width: '90%', height: '30%', backgroundColor: item.isClaimed ? colors.White : colors.BlueJaja, padding: '2%', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderWidth: 1, borderColor: colors.BlueJaja, borderRadius: 5 }}>
-                                                        <Text style={[styles.font_10, { color: item.isClaimed ? colors.BlueJaja : colors.White, fontFamily: 'Poppins-SemiBold' }]}>{item.isClaimed ? item.isSelected ? "TERPAKAI" : "PAKAI" : "KLAIM"}</Text>
+                                                        <Text style={[styles.font_10, { color: item.isClaimed ? colors.BlueJaja : colors.White, fontFamily: 'SignikaNegative-SemiBold' }]}>{item.isClaimed ? item.isSelected ? "TERPAKAI" : "PAKAI" : "KLAIM"}</Text>
                                                     </TouchableOpacity>
                                                     {/* : null} */}
                                                     <TouchableOpacity onPress={() => handleDescription(item)} style={{ position: 'absolute', bottom: 5 }}>
@@ -245,7 +246,7 @@ export default function MainPage() {
                                 loop={true}>
                                 {image.promoBanner.map((item, key) => {
                                     return (
-                                        <View style={{ width: Wp('100%'), height: Wp('50%') }}>
+                                        <View key={String(key + 'DW')} style={{ width: Wp('100%'), height: Wp('50%') }}>
                                             {item ?
                                                 <Image key={String(key) + 'y'} style={{ width: Wp('100%'), height: Wp('50%'), opacity: 0.9 }}
                                                     source={{ uri: item }}
@@ -277,7 +278,7 @@ export default function MainPage() {
                                             : null}
                                         {image.promoBanner[5] ?
                                             <View style={{ width: Wp('50%'), height: Wp('50%') }}>
-                                                <Image style={{ width: Wp('50%'), height: Wp('50%'), resizeMode: 'cover' }} source={{ uri: image.promoBanner[5] ? image.promoBanner[4] : null }} />
+                                                <Image style={{ width: Wp('50%'), height: Wp('50%'), resizeMode: 'contain' }} source={{ uri: image.promoBanner[5] ? image.promoBanner[4] : null }} />
                                             </View>
                                             : null}
                                     </View>

@@ -61,7 +61,7 @@ export async function handleSignal() {
         let signalInfo = {}
         await NetInfo.fetch().then(state => {
             if (state.isConnected) {
-                alertPopUp('Tidak dapat memuat ke server')
+                // alertPopUp('Tidak dapat memuat ke server')
             } else {
                 alertPopUp("Tidak dapat terhubung, periksa kembali koneksi internet anda!")
             }

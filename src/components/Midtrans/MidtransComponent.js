@@ -16,7 +16,7 @@ export default function MidtransComponent() {
 
     const getItem = (val) => {
         if (reduxOrderId) {
-            console.log("🚀 ~ file: MidtransComponent.js ~ line 22 ~ getItem ~ reduxOrderId", reduxOrderId)
+            // console.log("🚀 ~ file: MidtransComponent.js ~ line 22 ~ getItem ~ reduxOrderId", reduxOrderId)
             ServiceCheckout.getPayment(val, reduxOrderId).then(res => {
                 setView(res)
             }).catch(error => ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER));

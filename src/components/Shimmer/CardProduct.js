@@ -65,8 +65,8 @@ export default function CardProduct() {
     return (
         <FlatList
             // removeClippedSubviews={true} // Unmount components when outside of window 
-            initialNumToRender={6} // Reduce initial render amount
-            windowSize={7}
+            initialNumToRender={2} // Reduce initial render amount
+            windowSize={10}
             data={shimmerData}
             numColumns={2}
             scrollEnabled={true}

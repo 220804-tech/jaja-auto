@@ -24,6 +24,7 @@ export default {
     // RedFlashsale: "#f24343",
     RedFlashsale: "#FB7181",
     RedFlashSoft: "#F9D7D6",
+    PinkLight: "#fc9cac",
 
     Green: '#00ff00',
     GreenSuccess: '#34c38f',

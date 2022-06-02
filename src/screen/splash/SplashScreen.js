@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Image, SafeAreaView, StatusBar, ToastAndroid, Alert, Text } from 'react-native'
-import { widthPercentageToDP as wp, heightPercentageToDP as hp, } from 'react-native-responsive-screen';
+import { View, Image, SafeAreaView, StatusBar, ToastAndroid, StyleSheet } from 'react-native'
 import Swiper from 'react-native-swiper'
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage'
@@ -55,7 +54,7 @@ export default function SplashScreen() {
         }
         setTimeout(() => {
             navigation.replace('Beranda')
-        }, 4000);
+        }, 3000);
 
     }, [])
 
@@ -142,18 +141,22 @@ export default function SplashScreen() {
                                 dispatch({ type: 'SET_DASHPOPULAR', payload: resp.data.basedOnSearch })
                                 EncryptedStorage.setItem('dashpopular', JSON.stringify(resp.data.basedOnSearch))
                             }
+                            dispatch({ type: 'SET_COUNT', payload: 21 })
                         } else {
                             handleError(resp.status.message + " => " + resp.status.code)
+                            dispatch({ type: 'SET_COUNT', payload: 23 })
                         }
                     } catch (error) {
                         hasil = true;
                         Utils.alertPopUp(JSON.stringify(respp))
+                        dispatch({ type: 'SET_COUNT', payload: 25 })
                     }
                 })
                 .catch(error => {
                     hasil = true;
                     Utils.handleError(String(error), 'Error with status code : 19021')
                     handleError(error)
+                    dispatch({ type: 'SET_COUNT', payload: 39 })
                 })
             setTimeout(() => {
                 if (!hasil) {
@@ -311,7 +314,8 @@ export default function SplashScreen() {
                 {/* <View style={[styles.column_center, { backgroundColor: colors.YellowJaja, width: Wp('100%'), height: Hp('50%') }]}> */}
 
                 <Swiper
-                    autoplayTimeout={3}
+                    style={{}}
+                    autoplayTimeout={2}
                     pagingEnabled={false}
                     showsPagination={false}
                     horizontal={true}
@@ -320,23 +324,44 @@ export default function SplashScreen() {
                     activeDotColor={colors.BlackGrayScale}
                     paginationStyle={{ bottom: 10 }}
                     autoplay={true}
-                    containerStyle={[{ flex: 0, width: wp('100%'), height: wp('100%'), justifyContent: 'center', alignItems: 'center', backgroundColor: colors.BlueJaja }]}
-                // containerStyle={{ flex: 0, justifyContent: 'center', alignItems: 'center' }}
+
 
                 >
-                    {images.map((item, key) => {
-                        return (
-                            <Image
-                                style={{
-                                    width: wp("100%"),
-                                    height: wp("100%"),
-                                }}
-                                resizeMode={item["image"] == '' ? "center" : "cover"}
-                                source={item["image"]}
-                            />
+                    <View style={localStyle.slide}>
+                        <Image
+                            style={{
+                                width: Wp("100%"),
+                                height: Wp("100%"),
+                            }}
+                            resizeMode="cover"
+                            source={images[0].image}
+                        />
+                    </View>
+                    <View style={localStyle.slide}>
+                        <Image
+                            style={{
+                                width: Wp("100%"),
+                                height: Wp("100%"),
+                            }}
+                            resizeMode="cover"
+                            source={images[1].image}
+                        />
 
-                        );
-                    })}
+                        {/* {images.map((item, key) => {
+                            return (
+                                <Image
+                                    key={String(key + 'JD')}
+                                    style={{
+                                        width: Wp("100%"),
+                                        height: Wp("100%"),
+                                    }}
+                                    resizeMode={item["image"] == '' ? "center" : "cover"}
+                                    source={item["image"]}
+                                />
+
+                            );
+                        })} */}
+                    </View>
                 </Swiper>
                 {/* </View> */}
                 {/* <Text style={styles.font_12}>Sedang memuat..</Text> */}
@@ -345,13 +370,21 @@ export default function SplashScreen() {
                     style={{
                         justifyContent: "center",
                         alignItems: "center",
-                        width: wp("35%"),
+                        width: Wp("35%"),
                         height: hp("10%"),
                     }}
                     source={require("../../assets/gifs/splashscreen/splashscreen.gif")}
                 /> */}
 
-            </View>
+            </View >
         </SafeAreaView >
     )
 }
+const localStyle = StyleSheet.create({
+    slide: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: colors.BlueJaja
+    }
+})

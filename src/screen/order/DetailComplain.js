@@ -52,7 +52,7 @@ export default function DetailComplain() {
         labelColor: '#999999',
         labelSize: 12,
         currentStepLabelColor: colors.RedNotif,
-        labelFontFamily: 'Poppins-Regular',
+        labelFontFamily: 'SignikaNegative-Regular',
     }
 
 

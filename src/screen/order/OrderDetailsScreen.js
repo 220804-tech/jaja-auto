@@ -7,6 +7,7 @@ import { Button, TouchableRipple, RadioButton } from 'react-native-paper'
 import ActionSheet from "react-native-actions-sheet";
 import { WebView } from 'react-native-webview';
 import CheckBox from '@react-native-community/checkbox';
+import { useAndroidBackHandler } from "react-navigation-backhandler";
 
 export default function OrderDetailsScreen() {
     const navigation = useNavigation();
@@ -15,7 +16,6 @@ export default function OrderDetailsScreen() {
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
     const [details, setDetails] = useState(null)
-    console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 18 ~ OrderDetailsScreen ~ details", details)
     const [refreshing, setRefreshing] = useState(null)
     const [selectedSubPayment, setselectedSubPayment] = useState('')
     const [selectedPayment, setselectedPayment] = useState('')
@@ -138,6 +138,12 @@ export default function OrderDetailsScreen() {
     const [count, setcount] = useState(0)
     const reduxLoad = useSelector(state => state.product.productLoad)
 
+    useAndroidBackHandler(() => {
+        navigation.reset({
+            routes: [{ name: 'Pesanan' }],
+        })
+    });
+
     useEffect(() => {
         return () => {
             if (details && Object.keys(details).length) {
@@ -163,6 +169,7 @@ export default function OrderDetailsScreen() {
 
     useEffect(() => {
         setLoading(true)
+        setdownloadInvoice('')
         const backAction = () => {
             getOrder()
             navigation.goBack()
@@ -210,7 +217,6 @@ export default function OrderDetailsScreen() {
     useFocusEffect(
         useCallback(() => {
             getItem()
-            setdownloadInvoice('')
         }, []),
     );
 
@@ -239,7 +245,7 @@ export default function OrderDetailsScreen() {
             id_order: orderPaymentRecent.order_id,
             dataPayment: dataPayment
         }
-        console.log('paramNosSub', JSON.stringify(param));
+        // console.log('paramNosSub', JSON.stringify(param));
 
 
         if (dataPayment.payment_form == "screenOther") {
@@ -343,9 +349,9 @@ export default function OrderDetailsScreen() {
 
 
         var url = midtrans.url_snap + "snap/v1/transactions";
-        console.log('url', url);
-        console.log('paramPay', JSON.stringify(paramPay));
-        console.log('midtrans', JSON.stringify(midtrans));
+        // console.log('url', url);
+        // console.log('paramPay', JSON.stringify(paramPay));
+        // console.log('midtrans', JSON.stringify(midtrans));
 
 
 
@@ -369,7 +375,7 @@ export default function OrderDetailsScreen() {
             .then(result => {
                 actionSheetPayment.current?.setModalVisible()
 
-                console.log('dataToken', JSON.stringify(result));
+                // console.log('dataToken', JSON.stringify(result));
 
                 var paramPayMD = {
                     "total_pembayaran": totalPembayaran,
@@ -380,7 +386,7 @@ export default function OrderDetailsScreen() {
                     "order_id": orderPaymentRecent.order_id,
                     "va_or_code_or_link": result.redirect_url
                 }
-                console.log('paramPayMD', JSON.stringify(paramPayMD));
+                // console.log('paramPayMD', JSON.stringify(paramPayMD));
 
                 if (dataPayment.payment_type == "gopay") {
                     var qr_code_url = snapCharge(result.token);
@@ -483,8 +489,8 @@ export default function OrderDetailsScreen() {
                 "bill_info2": "Masterdiskon"
             }
         }
-        console.log('parampay', JSON.stringify(paramPay));
-        console.log('midtrans', JSON.stringify(midtrans));
+        // console.log('parampay', JSON.stringify(paramPay));
+        // console.log('midtrans', JSON.stringify(midtrans));
 
 
         var url = midtrans.url + "v2/charge";
@@ -508,10 +514,10 @@ export default function OrderDetailsScreen() {
             .then(response => response.json())
             .then(result => {
                 actionSheetPayment.current?.setModalVisible()
-                console.log('charge', JSON.stringify(result));
+                // console.log('charge', JSON.stringify(result));
 
-                console.log('dataToken', JSON.stringify(result));
-                console.log('dataPayment', JSON.stringify(dataPayment));
+                // console.log('dataToken', JSON.stringify(result));
+                // console.log('dataPayment', JSON.stringify(dataPayment));
 
                 var va_or_code_or_link = "";
                 var token = "";
@@ -552,7 +558,7 @@ export default function OrderDetailsScreen() {
         var url = midtrans.url_base + 'payment/snap_token_update';
 
 
-        console.log('urlss', url, JSON.stringify(paramPayMD));
+        // console.log('urlss', url, JSON.stringify(paramPayMD));
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("Cookie", "ci_session=6mmg253sca0no2e0gqas59up68f6ljlo");
@@ -569,7 +575,7 @@ export default function OrderDetailsScreen() {
         fetch(url, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log('snapTokenUpdate', JSON.stringify(result));
+                // console.log('snapTokenUpdate', JSON.stringify(result));
 
 
                 if (paramPayMD.dataPayment.payment_form == "screenOther") {
@@ -955,10 +961,24 @@ export default function OrderDetailsScreen() {
         // setproductsComplain(newProductComplain)
         // setcount(count + 1)
     }
+    // navigation.reset({
+    //     routes: [{ name: 'Pesanan' }],
+    // })
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
-            <Appbar title="Detail Pesanan" back={true} />
+        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : '' }]}>
+            <Appbar reset='Pesanan' title="Detail Pesanan" back={true} />
             {loading ? <Loading /> : null}
+            {/* {
+                downloadInvoice ?
+                    <View style={{ flex: 1, backgroundColor: colors.White }} >
+                        <WebView source={{ uri: downloadInvoice }} />
+                        <TouchableRipple onPress={() => setdownloadInvoice(false)} style={[styles.row_center, styles.py_2, { width: '95%', backgroundColor: colors.Silver, alignSelf: 'center', borderRadius: 4, position: 'absolute', bottom: 11 }]}>
+                            <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                Tutup
+                            </Text>
+                        </TouchableRipple>
+                    </View > 
+            :*/}
             <View style={[styles.container, { backgroundColor: colors.WhiteBack }]}>
                 <ScrollView
                     refreshControl={
@@ -975,7 +995,7 @@ export default function OrderDetailsScreen() {
                                 <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}> Status Pesanan</Text>
                             </View>
                             {reduxOrderStatus ?
-                                <View style={[styles.px, styles.px_3, { backgroundColor: colors.YellowJaja, borderRadius: 3 }]}>
+                                <View style={[styles.px_3, { paddingVertical: '0.5%', backgroundColor: colors.YellowJaja, borderRadius: 3 }]}>
                                     <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>{reduxOrderStatus}</Text>
                                 </View> : null}
                         </View>
@@ -985,16 +1005,10 @@ export default function OrderDetailsScreen() {
                                     <View style={[styles.row]}>
                                         <Text style={[styles.font_12]}>#{details.items[0].invoice}</Text>
                                     </View>
-                                    <TouchableOpacity onPress={() => setdownloadInvoice(details.downloadOrderPdf)}
-                                        // navigation.navigate('DownloadInvoice', { url: details.downloadOrderPdf })
-                                        // Linking.canOpenURL(details.downloadOrderPdf).then(supported => {
-                                        //     if (supported) {
-                                        //         Linking.openURL(details.downloadOrderPdf)
-                                        //     } else {
-                                        //         ToastAndroid.show("Sepertinya ada masalah, coba lagi nanti.", ToastAndroid.LONG, ToastAndroid.TOP)
+                                    <TouchableOpacity onPress={() => {
+                                        setdownloadInvoice(details.downloadOrderPdf)
+                                    }}
 
-                                        //     }
-                                        // })
                                         // }}
                                         onLongPress={() => {
                                             Clipboard.setString(details.downloadOrderPdf)
@@ -1096,15 +1110,15 @@ export default function OrderDetailsScreen() {
                                                                             <Text></Text>
                                                                             <Text numberOfLines={1} style={[styles.priceBefore, { fontStyle: 'italic' }]}>{child.priceCurrencyFormat}</Text>
                                                                             <View style={styles.row}>
-                                                                                <Text numberOfLines={1} style={[styles.font_13]}>{child.qty} x</Text>
-                                                                                <Text numberOfLines={1} style={[styles.priceAfter, { color: colors.BlueJaja }]}> {child.priceDiscountCurrencyFormat}</Text>
+                                                                                <Text numberOfLines={1} style={[styles.font_12]}>{child.qty} x</Text>
+                                                                                <Text numberOfLines={1} style={[styles.font_12]}> {child.priceDiscountCurrencyFormat}</Text>
                                                                             </View>
                                                                         </>
                                                                         :
                                                                         <View style={styles.row}>
                                                                             <Text></Text>
-                                                                            <Text numberOfLines={1} style={[styles.font_13]}>{child.qty} x</Text>
-                                                                            <Text numberOfLines={1} style={[styles.priceAfter, { color: colors.BlueJaja }]}> {child.priceCurrencyFormat}</Text>
+                                                                            <Text numberOfLines={1} style={[styles.font_12]}>{child.qty} x</Text>
+                                                                            <Text numberOfLines={1} style={[styles.font_12]}> {child.priceCurrencyFormat}</Text>
                                                                         </View>
                                                                     }
                                                                 </View>
@@ -1113,7 +1127,7 @@ export default function OrderDetailsScreen() {
                                                     </View>
                                                     <View style={[styles.row_end_center]}>
                                                         {/* <Text style={[styles.font_13, { fontStyle: 'italic' }]}>Subtotal </Text> */}
-                                                        <Text numberOfLines={1} style={[styles.font_13, styles.mt_3, styles.T_semi_bold, { color: colors.BlueJaja }]}> {child.subTotalCurrencyFormat}</Text>
+                                                        <Text numberOfLines={1} style={[styles.font_13, styles.mt_3, styles.T_bold, { color: colors.YellowJaja }]}> {child.subTotalCurrencyFormat}</Text>
                                                     </View>
                                                     {child.greetingCardGift ?
                                                         <>
@@ -1142,7 +1156,7 @@ export default function OrderDetailsScreen() {
                                                 </View>
                                                 <View style={[styles.row_end_center, styles.px_2]}>
                                                     <Text style={[styles.font_14, { fontStyle: 'italic' }]}>Subtotal </Text>
-                                                    <Text numberOfLines={1} style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}> {item.totalDiscountCurrencyFormat}</Text>
+                                                    <Text numberOfLines={1} style={[styles.font_14, { fontFamily: 'SignikaNegative-SemiBold', color: colors.BlueJaja }]}> {item.totalDiscountCurrencyFormat}</Text>
                                                 </View>
                                             </View>
                                             : null
@@ -1184,7 +1198,7 @@ export default function OrderDetailsScreen() {
                         </View>
                         <View style={[styles.row_between_center, styles.p_3, {}]}>
                             <View style={styles.column}>
-                                <Text style={[styles.font_12, { marginBottom: '2%' }]}>Total belanja</Text>
+                                <Text style={[styles.font_12, { marginBottom: '2%' }]}>Total belanja ({details?.totalAllProduct} produk)</Text>
                                 <Text style={[styles.font_12, { marginBottom: '2%' }]}>Ongkos </Text>
                                 <Text style={[styles.font_12, { marginBottom: '2%' }]}>Biaya penanganan</Text>
                                 {/* <Text style={[styles.font_12 { marginBottom: '2%' }]}>Voucher Toko</Text> */}
@@ -1192,12 +1206,12 @@ export default function OrderDetailsScreen() {
                                 <Text style={[styles.font_12, { marginBottom: '2%' }]}>Koin digunakan</Text>
 
                                 {/* <Text style={[styles.font_12, styles.T_medium, { marginBottom: '2%' }]}>Fee</Text> */}
-                                <Text style={[styles.font_12, styles.T_medium, { marginBottom: '2%' }]}>Total pembayaran</Text>
+                                <Text style={[styles.font_13, styles.T_medium, { marginBottom: '2%' }]}>Total pembayaran</Text>
 
                             </View>
 
                             {details ?
-                                <View style={styles.column_center_end}>
+                                <View style={styles.column_end}>
                                     <Text style={[styles.font_12, { marginBottom: '2%' }]}>{details.subTotalCurrencyFormat}</Text>
                                     <Text style={[styles.font_12, { marginBottom: '2%' }]}>{details.shippingCostCurrencyFormat}</Text>
 
@@ -1208,7 +1222,7 @@ export default function OrderDetailsScreen() {
                                     {/* <Text style={[styles.font_12, styles.T_semi_bold, { marginBottom: '2%', color: colors.BlueJaja, }]}>{details ? details.totalCurrencyFormat : "Rp.0"}</Text> */}
                                     <Text style={[styles.font_12, { marginBottom: '2%', color: details.coin ? colors.RedFlashsale : colors.BlackGrayScale }]}>{details.coinCurrencyFormat}</Text>
 
-                                    <Text style={[styles.font_12, styles.T_semi_bold, { marginBottom: '2%', color: colors.BlueJaja, }]}>{reduxOrderStatus !== 'Menunggu Pembayaran' ? details.totalCurrencyFormat : 'Rp' + priceSplitter(orderPaymentRecent.grand_total)}</Text>
+                                    <Text style={[styles.font_13, styles.T_bold, { marginBottom: '2%', color: colors.YellowJaja, }]}>{reduxOrderStatus !== 'Menunggu Pembayaran' ? details.totalCurrencyFormat : 'Rp' + priceSplitter(orderPaymentRecent.grand_total)}</Text>
 
                                 </View>
                                 : null
@@ -1342,8 +1356,8 @@ export default function OrderDetailsScreen() {
                 props.route.params && reduxOrderStatus === "Menunggu Pembayaran" ?
                     <View style={{ position: 'absolute', bottom: 0, zIndex: 100, elevation: 1, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
                         <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '3%' }}>
-                            <Text style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>Total pembayaran :</Text>
-                            <Text numberOfLines={1} style={[styles.font_20, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>{details ? details.totalCurrencyFormat : "Rp.0"}</Text>
+                            <Text style={[styles.font_14, { fontFamily: 'SignikaNegative-SemiBold', color: colors.BlueJaja }]}>Total pembayaran :</Text>
+                            <Text numberOfLines={1} style={[styles.font_20, { fontFamily: 'SignikaNegative-SemiBold', color: colors.BlueJaja }]}>{details ? details.totalCurrencyFormat : "Rp.0"}</Text>
                         </View>
                         <Button onPress={handlePayment} style={{ width: '50%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                             Bayar Sekarang
@@ -1354,11 +1368,9 @@ export default function OrderDetailsScreen() {
             </View >
             {
                 downloadInvoice ?
-                    <View style={{ height: 1 }
-                    } >
+                    <View style={{ height: 1, backgroundColor: colors.White }} >
                         <WebView source={{ uri: downloadInvoice }} />
-                    </View >
-                    : null
+                    </View> : null
             }
             <ActionSheet closeOnPressBack={false} ref={actionSheetPayment} onClose={() => {
                 if (!selectedSubPayment && selectedSubPayment == '') {

@@ -1,8 +1,8 @@
 import React, { useState, createRef, useCallback } from 'react'
-import { SafeAreaView, View, Text, Image, TouchableOpacity, ToastAndroid, StyleSheet, ScrollView, Animated, RefreshControl, Dimensions, StatusBar } from 'react-native'
+import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated, RefreshControl, Dimensions, StatusBar } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import ActionSheet from "react-native-actions-sheet";
-import { useNavigation, colors, styles, Wp, Loading, Hp, CardProduct, ShimmerCardProduct, Utils } from '../../export'
+import { useNavigation, colors, styles, Wp, Loading, Hp, CardProduct, ShimmerCardProduct, Utils, FastImage } from '../../export'
 import { useDispatch, useSelector } from 'react-redux'
 const { height: hg } = Dimensions.get('screen')
 
@@ -11,7 +11,7 @@ export default function ProductSearchScreen() {
     const actionSheetRef = createRef();
     const data = useSelector(state => state.search.searchProduct)
     const keyword = useSelector(state => state.search.keywordSearch)
-    const categoryName = useSelector(state => state.search.keywordSearch)
+    const categoryName = useSelector(state => state.search.categoryName)
 
     const reduxFilters = useSelector(state => state.search.filters)
     const reduxSorts = useSelector(state => state.search.sorts)
@@ -53,11 +53,10 @@ export default function ProductSearchScreen() {
                 redirect: 'follow'
             };
             setPage(1)
-
-
-            fetch(`https://jaja.id/backend/product/${categoryName ? 'category/' + categoryName : 'search/result'}?page=1&limit=100&keyword=${categoryName ? '' : keyword}&filter_category=${categoryName}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
+            fetch(`https://jaja.id/backend/product/${categoryName ? 'category/' + categoryName : 'search/result'}?page=1&limit=40&keyword=${categoryName ? '' : keyword}&filter_category=${categoryName}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
+                    console.log("🚀 ~ file: productSearchScreen.js ~ line 61 ~ handleFetch ~ result", result)
                     if (result.status.code === 200 || result.status.code === 204) {
                         dispatch({ type: 'SET_SEARCH', payload: result.data.items })
                     }
@@ -96,7 +95,7 @@ export default function ProductSearchScreen() {
             setSort('')
             setPage(1)
 
-            fetch(`https://jaja.id/backend/product/${categoryName ? 'category/' + categoryName : 'search/result'}?page=1&limit=50&keyword=${categoryName ? '' : keyword}&filter_category=${categoryName}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
+            fetch(`https://jaja.id/backend/product/${categoryName ? 'category/' + categoryName : 'search/result'}?page=1&limit=40&keyword=${categoryName ? '' : keyword}&filter_category=${categoryName}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     console.log("🚀 ~ file: productSearchScreen.js ~ line 12112 ~ handleFetch ~ result", result)
@@ -143,9 +142,12 @@ export default function ProductSearchScreen() {
     }
 
     const handleSelected = (name, indexParent, indexChild) => {
+        console.log("🚀 ~ file: productSearchScreen.js ~ line 148 ~ handleSelected ~ name, indexParent, indexChild", name, indexParent, indexChild)
+
         if (name === 'filter') {
             let val = reduxFilters[indexParent].name
             let valChild = reduxFilters[indexParent].items[indexChild].value
+            console.log("🚀 ~ file: productSearchScreen.js ~ line 153 ~ handleSelected ~ valChild", valChild)
             if (val === "Lokasi") {
                 if (location === valChild) {
                     setLocation("")
@@ -172,6 +174,7 @@ export default function ProductSearchScreen() {
             // dispatch({ type: 'SET_KEYWORD', payload: text })
         } else if (name === "sort") {
             let valChild = reduxSorts[indexChild].value
+            console.log("🚀 ~ file: productSearchScreen.js ~ line 180 ~ handleSelected ~ valChild", valChild)
             if (valChild === sort) {
                 setSort("")
             } else {
@@ -190,28 +193,34 @@ export default function ProductSearchScreen() {
         }
     }
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
-        return layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 1.1)
+        return layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 3)
     }
 
     const fetchLoadmore = () => {
+        console.log("🚀 ~ file: productSearchScreen.js ~ line 199 ~ fetchLoadmore ~ data?.length", data?.length)
         try {
-            var requestOptions = {
-                method: 'GET',
-                redirect: 'follow'
-            };
+            if (data?.length <= 80) {
+                var requestOptions = {
+                    method: 'GET',
+                    redirect: 'follow'
+                };
 
-            fetch(`https://jaja.id/backend/product/search/result?page=${page + 1}&limit=50&keyword=${keyword}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
-                .then(response => response.json())
-                .then(result => {
-                    if (result.status.code === 200) {
-                        if (result.data.items && result.data.items.length) {
-                            dispatch({ type: 'SET_SEARCH', payload: data.concat(result.data.items) })
-                        } else {
-                            dispatch({ type: 'SET_MAX_SEARCH', payload: true })
+                fetch(`https://jaja.id/backend/product/search/result?page=${page + 1}&limit=40&keyword=${keyword}&filter_price=&filter_location=${location}&filter_condition=${condition}&filter_preorder=${stock}&filter_brand=&sort=${sort}`, requestOptions)
+                    .then(response => response.json())
+                    .then(result => {
+                        console.log("🚀 ~ file: productSearchScreen.js ~ line 208 ~ fetchLoadmore ~ result", result)
+                        if (result.status.code === 200) {
+                            if (result.data.items && result.data.items.length) {
+                                dispatch({ type: 'SET_SEARCH', payload: data.concat(result.data.items) })
+                            } else {
+                                dispatch({ type: 'SET_MAX_SEARCH', payload: true })
+                            }
                         }
-                    }
-                })
-                .catch(error => Utils.alertPopUp(String(error)) & setLoadmore(false));
+                    })
+                    .catch(error => Utils.alertPopUp(String(error)) & setLoadmore(false));
+            } else {
+                dispatch({ type: 'SET_MAX_SEARCH', payload: true })
+            }
         } catch (error) {
             Utils.handleError(error, 'Error with status code : 21090')
 
@@ -231,48 +240,27 @@ export default function ProductSearchScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar translucent={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
+            {searchLoading || loading ? <Loading /> : null}
 
             <View style={[styles.appBar2]}>
                 <TouchableOpacity style={styles.row_start_center} onPress={() => navigation.goBack()}>
-                    <Image style={styles.appBarButton} source={require('../../assets/icons/arrow.png')} />
+                    <FastImage tintColor={colors.White} style={styles.appBarButton} source={require('../../assets/icons/arrow.png')} />
+
                 </TouchableOpacity>
                 <View style={[styles.searchBar, { backgroundColor: colors.BlueJaja, paddingHorizontal: '0%', height: Hp('5%') }]}>
                     <TouchableOpacity style={[styles.row, { width: '85%', marginRight: '1%', backgroundColor: colors.White, height: '100%', alignItems: 'center', borderRadius: 10, paddingHorizontal: '3%' }]} onPress={() => navigation.navigate('Search')}>
-                        <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
+                        <FastImage style={{ width: 19, height: 19, marginRight: '3%' }} source={require('../../assets/icons/loupe.png')} />
                         {keyword ?
                             <Text numberOfLines={1} style={[styles.font_14, { width: '93%' }]}>{keyword}</Text>
                             : null}
                     </TouchableOpacity>
                     <TouchableOpacity onPress={handleFilter} style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: '1%', backgroundColor: colors.BlueJaja, height: '100%', width: '15%', borderTopRightRadius: 10, borderBottomRightRadius: 10 }}>
-                        <Image source={require('../../assets/icons/filter.png')} style={[styles.icon_25, { tintColor: colors.White }]} />
+                        <FastImage tintColor={colors.White} style={styles.icon_25} source={require('../../assets/icons/filter.png')} />
+
                     </TouchableOpacity>
                 </View>
             </View>
             <View style={[styles.column, { flex: 1, backgroundColor: colors.White }, styles.p_3]}>
-                {/* <View style={{ flex: 0, flexDirection: 'row', height: Hp('5%'), width: '100%', justifyContent: 'space-between', marginBottom: '3%' }}> */}
-                {/* <ScrollView horizontal={true} style={{ backgroundColor: 'pink', flex: 0, flexDirection: 'row' }} contentContainerStyle={{ flex: 0, flexDirection: 'row' }}> */}
-                {/* <TouchableOpacity onPress={() => actionSheetRef.current?.setModalVisible()} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: filter ? colors.BlueJaja : colors.BlackGrey, backgroundColor: filter ? colors.BlueJaja : colors.White, borderRadius: 15, paddingHorizontal: '4.5%', paddingVertical: '1%' }}>
-                        <Image source={require('../../assets/icons/filter.png')} style={{ width: 15, height: 15, marginRight: '3%', tintColor: filter ? colors.White : colors.BlackGrayScale }} />
-                        <Text adjustsFontSizeToFit style={[styles.font_12, { color: filter ? colors.White : colors.BlackGrayScale }]}>Filter</Text>
-                    </TouchableOpacity> */}
-                {/* <TouchableOpacity onPress={() => setTerbaru(!terbaru)} style={{ flex: 0, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: terbaru ? colors.BlueJaja : colors.BlackGrey, backgroundColor: terbaru ? colors.BlueJaja : colors.White, borderRadius: 15, paddingHorizontal: '4.5%', paddingVertical: '1%', }}>
-                        <Text adjustsFontSizeToFit style={[styles.font_12, { color: terbaru ? colors.White : colors.BlackGrayScale }]}>Terbaru</Text>
-                    </TouchableOpacity> */}
-                {/* <TouchableOpacity onPress={() => setJabodetabek(!jabodetabek)} style={{ flex: 0, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: jabodetabek ? colors.BlueJaja : colors.BlackGrey, backgroundColor: jabodetabek ? colors.BlueJaja : colors.White, borderRadius: 15, paddingHorizontal: '4.5%', paddingVertical: '1%', }}>
-                        <Text adjustsFontSizeToFit style={[styles.font_12, { color: jabodetabek ? colors.White : colors.BlackGrayScale }]}>Jabodetabek</Text>
-                    </TouchableOpacity> */}
-                {/* <TouchableOpacity onPress={() => image === 0 ? setImage(1) : image === 1 ? setImage(2) : setImage(0) & handleFetch()} style={{ flex: 0, width: 80, flexDirection: 'row', justifyContent: image > 0 ? "space-between" : 'center', alignItems: 'center', borderWidth: 1, borderColor: image > 0 ? colors.BlueJaja : colors.BlackGrey, backgroundColor: image > 0 ? colors.BlueJaja : colors.White, borderRadius: 15, paddingHorizontal: '4%', paddingVertical: '1%', }}>
-                        <Text adjustsFontSizeToFit style={[styles.font_12, { color: image > 0 ? colors.White : colors.BlackGrayScale }]}>Harga</Text>
-                        {image > 0 ?
-                            <Image source={require('../../assets/icons/arrow.png')} style={[styles.icon_18, { tintColor: colors.White, transform: [{ rotate: image == 1 ? "90deg" : "270deg" }] }]} />
-                            : null}
-                        </TouchableOpacity> */}
-                {/* <TouchableOpacity onPress={() => setCondition(!condition) & handleFetch()} style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: condition ? colors.BlueJaja : colors.BlackGrey, backgroundColor: condition ? colors.BlueJaja : colors.White, borderRadius: 15, paddingHorizontal: '4%', paddingVertical: '1%', }}>
-                        <Text adjustsFontSizeToFit style={[styles.font_12, { color: condition ? colors.White : colors.BlackGrayScale }]}>Kondisi</Text>
-                    </TouchableOpacity> */}
-                {/* </ScrollView> */}
-                {/* </View> */}
-                {searchLoading ? <Loading /> : null}
                 {data && data.length ?
                     <View style={[styles.column, { flex: 1, justifyContent: "center", alignItems: 'flex-start' }]}>
                         <ScrollView
@@ -327,7 +315,7 @@ export default function ProductSearchScreen() {
                         </TouchableOpacity>
                     </View>
                 </View>
-                {selectedFilter && selectedFilter.length ?
+                {/* {selectedFilter && selectedFilter.length ?
                     <View style={[styles.row, { flexWrap: 'wrap', marginBottom: '4%' }]}>
                         {selectedFilter.map((item, i) => {
                             return (
@@ -337,18 +325,21 @@ export default function ProductSearchScreen() {
                             )
                         })}
                     </View>
-                    : null}
+                    : null} */}
 
                 <ScrollView style={styles.mb_5}>
                     {reduxFilters && reduxFilters.length ?
                         reduxFilters.map((item, index) => {
                             return (
                                 <View key={String(index) + "XP"} style={[styles.mb_4]}>
-                                    <Text adjustsFontSizeToFit style={[styles.font_16, { fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale }]}>{item.name}</Text>
+                                    <Text adjustsFontSizeToFit style={[styles.font_16, { fontFamily: 'SignikaNegative-SemiBold', color: colors.BlackGrayScale }]}>{item.name}</Text>
                                     <View style={{ flex: 0, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                                         {item.items.map((child, idx) => {
                                             return (
-                                                <TouchableOpacity key={String(idx) + 'LJ'} onPress={() => handleSelected('filter', index, idx)} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: child.value === location || child.value === condition || child.value === stock ? colors.BlueJaja : colors.BlackGrey, backgroundColor: child.value === location || child.value === condition || child.value === stock ? colors.BlueJaja : colors.White, borderRadius: 11, paddingHorizontal: '3%', paddingVertical: '2%', marginRight: '3%', marginTop: '3%' }}>
+                                                <TouchableOpacity key={String(idx) + 'LJ'} onPress={() => {
+                                                    console.log(child)
+                                                    handleSelected('filter', index, idx)
+                                                }} style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', borderWidth: 1, borderColor: child.value === location || child.value === condition || child.value === stock ? colors.BlueJaja : colors.BlackGrey, backgroundColor: child.value === location || child.value === condition || child.value === stock ? colors.BlueJaja : colors.White, borderRadius: 11, paddingHorizontal: '3%', paddingVertical: '2%', marginRight: '3%', marginTop: '3%' }}>
                                                     <Text adjustsFontSizeToFit style={[styles.font_14, { color: child.value === location || child.value === condition || child.value === stock ? colors.White : colors.BlackGrayScale }]}>{child.name}</Text>
                                                 </TouchableOpacity>
                                             )
@@ -362,7 +353,7 @@ export default function ProductSearchScreen() {
                     {reduxSorts && reduxSorts.length ?
 
                         <View style={[styles.mb_4]}>
-                            <Text adjustsFontSizeToFit style={[styles.font_16, { fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale }]}>Urutkan</Text>
+                            <Text adjustsFontSizeToFit style={[styles.font_16, { fontFamily: 'SignikaNegative-SemiBold', color: colors.BlackGrayScale }]}>Urutkan</Text>
                             <View style={{ flex: 0, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                                 {reduxSorts.map((child, idx) => {
                                     return (

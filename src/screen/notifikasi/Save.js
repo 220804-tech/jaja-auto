@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     },
     textTitle: {
         fontSize: 13,
-        fontFamily: 'Poppins-SemiBold',
+        fontFamily: 'SignikaNegative-SemiBold',
         paddingHorizontal: '3%',
         color: colors.BlueJaja,
         marginBottom: '2%'
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
         color: 'grey',
         fontSize: 12,
         textAlign: 'left',
-        fontFamily: 'Poppins-Medium',
+        fontFamily: 'SignikaNegative-Medium',
         paddingHorizontal: '3%',
 
     }

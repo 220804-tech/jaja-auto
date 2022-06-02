@@ -31,11 +31,10 @@ export default function LoginScreen(props) {
     useEffect(() => {
         GoogleSignin.configure({
             // webClientId: "284366139562-tnj3641sdb4ia9om7bcp25vh3qn5vvo8.apps.googleusercontent.com",
-
             webClientId: "284366139562-tnj3641sdb4ia9om7bcp25vh3qn5vvo8.apps.googleusercontent.com",
-
             offlineAccess: true
         });
+
         return () => {
             setLoading(false)
             if (props.route && props.route.params && props.route.params.navigate) {
@@ -111,24 +110,28 @@ export default function LoginScreen(props) {
                 .then(response => response.json())
                 .then(result => {
                     if (result.status.code === 200) {
-                        AsyncStorage.setItem('token', JSON.stringify(result.data))
                         handleUser(result.data)
                         EncryptedStorage.setItem("token", JSON.stringify(result.data))
-                    } else if (result.status.code === 400 || result.status.code === 404) {
-                        if (result.status.message === "account has not been activated") {
+                        AsyncStorage.setItem('token', JSON.stringify(result.data))
+                    } else if (result?.status?.code === 400 || result?.status?.code === 404) {
+                        if (String(result.status.message).includes("belum di verifikasi")) {
                             Utils.alertPopUp("Akun anda belum diverifikasi")
                             navigation.navigate('VerifikasiEmail', { email: email })
-                        } else if (result.status.message === "data not found") {
+                        } else if (String(result.status.message).includes("data not found")) {
                             setAlertText('Email atau password anda salah!')
-                        } else if (result.status.message === "incorrect email or password") {
+                        } else if (result.status.message.includes("incorrect email or password")) {
                             setAlertText('Email atau password anda salah!')
                         } else {
                             setAlertText(String(result.status.message) + ' ' + String(result.status.code))
                         }
                         setLoading(false)
+                    } else {
+                        setLoading(false)
+                        setAlertText(result.status.message)
                     }
                 })
                 .catch(error => {
+                    setLoading(false)
                     Utils.handleError(String(error), 'Error with status code : 12111')
                 })
         }

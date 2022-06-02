@@ -159,8 +159,8 @@ class RegisterScreen extends Component {
                     if (res.status.code === 200) {
                         EncryptedStorage.setItem('user', JSON.stringify(res.data.customer))
                         this.props.dispatch({ type: 'SET_USER', payload: res.data.customer })
-                        AsyncStorage.setItem('token', JSON.stringify(res.data.token))
-                        EncryptedStorage.setItem('token', JSON.stringify(res.data.token))
+                        // AsyncStorage.setItem('token', JSON.stringify(res.data.token))
+                        // EncryptedStorage.setItem('token', JSON.stringify(res.data.token))
                         EncryptedStorage.setItem('emailVerification', JSON.stringify(credentials.email))
                         EncryptedStorage.setItem('usrverif', JSON.stringify({ eml: credentials.email, pw: credentials.password }))
                         this.props.navigation.navigate('VerifikasiEmail', { email: credentials.email })
@@ -190,147 +190,153 @@ class RegisterScreen extends Component {
     };
     render() {
         return (
-            <SafeAreaView style={styles.container}>
-                <Appbar back={true} title="Kembali" Bg={colors.BlueJaja} />
+            <SafeAreaView style={style.containerFix}>
+                <Appbar back={true} title="Daftar" Bg={colors.BlueJaja} />
                 <StatusBar translucent={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
                 {this.state.loading ? <Loading /> : null}
-                <ScrollView style={styles.scrollView} contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>
-                    {/* <View style={styles.viewImage}>
+                {/* {this.state.loading ? <Loading /> : null} */}
+                <View style={style.containerIn}>
+                    <ScrollView style={styles.scrollView} contentContainerStyle={{ justifyContent: 'center', alignItems: 'center', }}>
+                        {/* <View style={styles.viewImage}>
                         <Image
                             source={require('../../assets/images/JajaId.png')}
                             style={styles.logoJaja}
                         />
                     </View> */}
-                    <View style={[style.column, style.pt_5, { width: Wp('92%'), backgroundColor: colors.White }]}>
-                        <View style={[style.row_between_center]}>
-                            <View style={[styles.viewInput, style.mr_2, { width: Wp('45%') }]}>
-                                <TextInput
-                                    name="firstName"
-                                    style={[styles.inputBox, style.font_13]}
-                                    type="text"
-                                    onChange={this.handleFirstName}
-                                    outlineColor={colors.WhiteSilver}
-                                    placeholderTextColor={colors.WhiteSilver}
-                                    selectionColor={colors.BlueJaja}
-                                    label="Nama Depan"
-                                    keyboardType="default"
-                                    mode="outlined"
-                                    theme={{ colors: { primary: colors.BlueJaja } }}
-                                />
+                        <View style={[style.column, style.pt_5, { width: Wp('92%'), backgroundColor: Platform.OS === 'ios' ? colors.WhiteBack : null }]}>
+                            <View style={[style.row_between_center]}>
+                                <View style={[styles.viewInput, style.mr_2, { width: Wp('45%') }]}>
+                                    <TextInput
+                                        name="firstName"
+                                        style={[styles.inputBox, style.font_13]}
+                                        type="text"
+                                        onChange={this.handleFirstName}
+                                        outlineColor={colors.WhiteSilver}
+                                        placeholderTextColor={colors.WhiteSilver}
+                                        selectionColor={colors.BlueJaja}
+                                        label="Nama Depan"
+                                        keyboardType="default"
+                                        mode="outlined"
+                                        theme={{ colors: { primary: colors.BlueJaja } }}
+                                    />
+                                </View>
+                                <View style={[styles.viewInput, { width: Wp('45%') }]}>
+                                    <TextInput
+                                        name="lastname"
+                                        style={styles.inputBox}
+                                        type="text"
+                                        onChange={this.handleLastName}
+                                        outlineColor={colors.WhiteSilver}
+                                        placeholderTextColor={colors.WhiteSilver}
+                                        selectionColor={colors.BlueJaja}
+                                        label="Nama Belakang"
+                                        keyboardType="default"
+                                        mode="outlined"
+                                        theme={{ colors: { primary: colors.BlueJaja } }}
+                                    />
+                                </View>
                             </View>
-                            <View style={[styles.viewInput, { width: Wp('45%') }]}>
-                                <TextInput
-                                    name="lastname"
-                                    style={styles.inputBox}
-                                    type="text"
-                                    onChange={this.handleLastName}
-                                    outlineColor={colors.WhiteSilver}
-                                    placeholderTextColor={colors.WhiteSilver}
-                                    selectionColor={colors.BlueJaja}
-                                    label="Nama Belakang"
-                                    keyboardType="default"
-                                    mode="outlined"
-                                    theme={{ colors: { primary: colors.BlueJaja } }}
-                                />
-                            </View>
+                            <Text style={[style.font_13, { color: colors.RedNotif, alignSelf: 'flex-start', width: Wp('92%') }]}>{this.state.alertTextFirstName}</Text>
                         </View>
-                        <Text style={[style.font_13, { color: colors.RedNotif, alignSelf: 'flex-start', width: Wp('92%') }]}>{this.state.alertTextFirstName}</Text>
-                    </View>
 
-                    <View style={styles.viewInput}>
-                        <TextInput
-                            selectionColor={colors.BlueJaja}
-                            label="Email"
-                            type="text"
-                            style={styles.inputBox}
-                            outlineColor={colors.WhiteSilver}
-                            placeholderTextColor={colors.WhiteSilver}
-                            onChange={this.handleEmail}
-                            keyboardType="email-address"
-                            mode="outlined"
-                            theme={{ colors: { primary: colors.BlueJaja } }}
-                        />
-                        <Text style={[style.font_13, { color: colors.RedNotif }]}>{this.state.alertTextEmail}</Text>
-                    </View>
-                    <View style={styles.viewInput}>
-                        <TextInput
-                            selectionColor={colors.BlueJaja}
-                            label="Nomor Telephone"
-                            style={styles.inputBox}
-                            outlineColor={colors.WhiteSilver}
-                            placeholderTextColor={colors.WhiteSilver}
-                            onChange={this.handleTelephone}
-                            value={this.state.telephone}
-                            maxLength={14}
-                            keyboardType="numeric"
-                            mode="outlined"
-                            theme={{ colors: { primary: colors.BlueJaja } }}
-                        />
-                        <Text style={[style.font_13, { color: colors.RedNotif }]}>{this.state.alertTextTelephone}</Text>
-                    </View>
-                    <View style={styles.viewInput}>
-                        <TextInput
-                            selectionColor={colors.BlueJaja}
-                            label="Kode Undangan (Optional)"
-                            style={styles.inputBox}
-                            outlineColor={colors.WhiteSilver}
-                            placeholderTextColor={colors.WhiteSilver}
-                            onChange={text => this.setState({ referral: text.nativeEvent.text.toLocaleUpperCase() })}
-                            keyboardType="default"
-                            mode="outlined"
-                            theme={{ colors: { primary: colors.BlueJaja } }}
-                        />
-                        <Text style={[style.font_13, { color: colors.RedNotif }]}>{this.state.alertTextReferral}</Text>
-                    </View>
-                    <View style={styles.viewInput}>
-                        <TextInput
-                            style={styles.inputBox}
-                            name="password"
-                            type="password"
-                            outlineColor={colors.WhiteSilver}
-                            placeholderTextColor={colors.WhiteSilver}
-                            onChange={this.handlePassword}
-                            mode="outlined"
-                            selectionColor={colors.BlueJaja}
-                            label="Password"
-                            secureTextEntry={true}
-                            theme={{ colors: { primary: colors.BlueJaja } }}
-                        />
-                        <Text style={[style.font_13, { color: colors.RedNotif }]}>{this.state.alertTextPssword1}</Text>
-                    </View>
-                    <View style={styles.viewInput}>
-                        <TextInput
-                            style={styles.inputBox}
-                            name="confirmPassword"
-                            type="password"
-                            outlineColor={colors.WhiteSilver}
-                            placeholderTextColor={colors.WhiteSilver}
-                            onChange={this.confirmPassword}
-                            mode="outlined"
-                            selectionColor={colors.BlueJaja}
-                            label="Konfirmasi Password"
-                            secureTextEntry
-                            on
-                            theme={{ colors: { primary: colors.BlueJaja } }}
-                        />
-                        <Text style={[style.font_13, { color: colors.RedNotif }]}>{this.state.alertTextPssword}</Text>
-                    </View>
-                    <View style={styles.viewInput}>
-                        <Button
-                            labelStyle={[style.font_13, style.T_semi_bold, { color: 'white' }]}
-                            onPress={this.onRegistrasi}
-                            mode="contained"
-                            contentStyle={styles.contentButton}
-                            color={colors.BlueJaja}
-                            style={styles.button}>
-                            Daftar
-                        </Button>
-                    </View>
-                    <TouchableOpacity style={[style.row_center, style.mt_4, style.py_2, { width: Wp('60%') }]}>
-                        <Text style={[style.font_13]}>Sudah punya akun? </Text>
-                        <Text style={[style.font_13, { color: colors.BlueLink }]} onPress={(e) => this.props.navigation.navigate('Login')}> Login</Text>
-                    </TouchableOpacity>
-                </ScrollView>
+                        <View style={styles.viewInput}>
+                            <TextInput
+                                selectionColor={colors.BlueJaja}
+                                label="Email"
+                                type="text"
+                                style={styles.inputBox}
+                                outlineColor={colors.WhiteSilver}
+                                placeholderTextColor={colors.WhiteSilver}
+                                onChange={this.handleEmail}
+                                keyboardType="email-address"
+                                mode="outlined"
+                                theme={{ colors: { primary: colors.BlueJaja } }}
+                            />
+                            <Text style={[style.font_13, { color: colors.RedNotif }]}>{this.state.alertTextEmail}</Text>
+                        </View>
+                        <View style={styles.viewInput}>
+                            <TextInput
+                                selectionColor={colors.BlueJaja}
+                                label="Nomor Telephone"
+                                style={styles.inputBox}
+                                outlineColor={colors.WhiteSilver}
+                                placeholderTextColor={colors.WhiteSilver}
+                                onChange={this.handleTelephone}
+                                value={this.state.telephone}
+                                maxLength={14}
+                                keyboardType="numeric"
+                                mode="outlined"
+                                theme={{ colors: { primary: colors.BlueJaja } }}
+                            />
+                            <Text style={[style.font_13, { color: colors.RedNotif }]}>{this.state.alertTextTelephone}</Text>
+                        </View>
+
+                        <View style={styles.viewInput}>
+                            <TextInput
+                                style={styles.inputBox}
+                                name="password"
+                                type="password"
+                                outlineColor={colors.WhiteSilver}
+                                placeholderTextColor={colors.WhiteSilver}
+                                onChange={this.handlePassword}
+                                mode="outlined"
+                                selectionColor={colors.BlueJaja}
+                                label="Password"
+                                secureTextEntry={true}
+                                theme={{ colors: { primary: colors.BlueJaja } }}
+                            />
+                            <Text style={[style.font_13, { color: colors.RedNotif }]}>{this.state.alertTextPssword1}</Text>
+                        </View>
+                        <View style={styles.viewInput}>
+                            <TextInput
+                                style={styles.inputBox}
+                                name="confirmPassword"
+                                type="password"
+                                outlineColor={colors.WhiteSilver}
+                                placeholderTextColor={colors.WhiteSilver}
+                                onChange={this.confirmPassword}
+                                mode="outlined"
+                                selectionColor={colors.BlueJaja}
+                                label="Konfirmasi Password"
+                                secureTextEntry
+                                on
+                                theme={{ colors: { primary: colors.BlueJaja } }}
+                            />
+                            <Text style={[style.font_13, { color: colors.RedNotif }]}>{this.state.alertTextPssword}</Text>
+                        </View>
+                        <View style={styles.viewInput}>
+                            <TextInput
+                                selectionColor={colors.BlueJaja}
+                                label="Kode Undangan (Optional)"
+                                style={styles.inputBox}
+                                outlineColor={colors.WhiteSilver}
+                                placeholderTextColor={colors.WhiteSilver}
+                                onChange={text => this.setState({ referral: text.nativeEvent.text.toLocaleUpperCase() })}
+                                keyboardType="default"
+                                mode="outlined"
+                                theme={{ colors: { primary: colors.BlueJaja } }}
+                            />
+                            <Text style={[style.font_13, { color: colors.RedNotif }]}>{this.state.alertTextReferral}</Text>
+                        </View>
+                        <View style={[styles.viewInput,]}>
+                            <Button
+                                labelStyle={[style.font_13, style.T_semi_bold, { color: 'white' }]}
+                                onPress={this.onRegistrasi}
+                                mode="contained"
+                                contentStyle={styles.contentButton}
+                                color={colors.BlueJaja}
+                                style={styles.button}>
+                                Daftar
+                            </Button>
+                        </View>
+                        <TouchableOpacity style={[style.row_center, style.mt_4, style.py_2, { width: Wp('60%'), alignSelf: 'center' }]}>
+                            <Text style={[style.font_13]}>Sudah punya akun? </Text>
+                            <Text style={[style.font_13, { color: colors.BlueLink }]} onPress={(e) => this.props.navigation.navigate('Login')}> Login</Text>
+                        </TouchableOpacity>
+
+                    </ScrollView>
+
+                </View>
             </SafeAreaView >
         );
     }
@@ -369,6 +375,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         width: Wp('92%'),
         alignSelf: 'center',
+
     },
     spinnerTextStyle: {
         color: '#FFF',
@@ -379,8 +386,8 @@ const styles = StyleSheet.create({
         padding: 0,
     },
     iconMarket: { alignSelf: "center", width: Wp('80%'), height: Hp('40%') },
-    textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 18, fontFamily: 'Poppins-SemiBold', color: colors.black, fontFamily: 'Poppins-Regular', marginVertical: Hp('2%') },
-    textCenter: { fontSize: 18, color: colors.black, fontFamily: 'Poppins-Regular' },
+    textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 18, fontFamily: 'SignikaNegative-SemiBold', color: colors.black, fontFamily: 'SignikaNegative-Regular', marginVertical: Hp('2%') },
+    textCenter: { fontSize: 18, color: colors.black, fontFamily: 'SignikaNegative-Regular' },
 
     button: {
         marginTop: Hp('1%'),

@@ -4,6 +4,7 @@ import { Button, Paragraph } from 'react-native-paper';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import { colors, Loading, Wp, Hp, styles, Appbar, Utils } from '../../export';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import { Platform } from 'react-native';
 
 export default class VerifikasiEmail extends Component {
     constructor(props) {
@@ -12,7 +13,7 @@ export default class VerifikasiEmail extends Component {
             step1: false,
             step2: true,
             code: '',
-            timeOut: 90,
+            timeOut: 120,
             button: false,
             password: '',
             confirmPassword: '',
@@ -22,7 +23,6 @@ export default class VerifikasiEmail extends Component {
             accPassword1: false,
             email: '',
             loading: false,
-
             emailRegist: '',
             passwordRegist: ''
         };
@@ -65,9 +65,10 @@ export default class VerifikasiEmail extends Component {
         this.setState({ loading: true })
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
-        console.log("🚀 ~ file: VerifikasiEmailScreen.js ~ line 55 ~ VerifikasiEmail ~ this.state.email", this.state.email)
+        console.log("🚀 ~ file: VerifikasiEmailScreen.js ~ line 555 ~ VerifikasiEmail ~ this.state.email", this.state.email)
 
         var raw = JSON.stringify({ "email": this.state.email });
+        console.log("🚀 ~ file: VerifikasiEmailScreen.js ~ line 72 ~ VerifikasiEmail ~ raw", raw)
 
         var requestOptions = {
             method: 'POST',
@@ -79,13 +80,14 @@ export default class VerifikasiEmail extends Component {
         fetch("https://jaja.id/backend/mailing/register", requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: VerifikasiEmailScreen.js ~ line 83 ~ VerifikasiEmail ~ result", result)
                 if (result.status.code === 200) {
                     this.setState({ loading: false })
                     setTimeout(() => {
                         this.setState({
                             step1: false,
                             step2: true,
-                            timeOut: 90,
+                            timeOut: 120,
                             button: false,
                         });
                         setTimeout(() =>
@@ -344,7 +346,6 @@ export default class VerifikasiEmail extends Component {
 
                 if (result.status.code === 200) {
                     EncryptedStorage.setItem("token", JSON.stringify(result.data))
-
                 } else if (result.status.code === 400 || result.status.code === 404) {
                     if (result.status.message === "account has not been activated") {
                         Utils.alertPopUp('Akun anda belum diverifikasi')
@@ -381,71 +382,71 @@ export default class VerifikasiEmail extends Component {
     render() {
 
         return (
-            <SafeAreaView style={[styles.container, { backgroundColor: colors.White }]}>
+            <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'android' ? colors.White : colors.BlueJaja }]}>
                 <StatusBar translucent={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
                 {this.state.loading ?
                     <Loading /> : null
                 }
                 <Appbar back={true} title="Verifikasi Email" />
-
-                <View style={styles1.container}>
-                    {this.state.step1 ?
-                        <View style={styles1.containerVerfified}>
-                            <Image style={styles1.iconMarket} source={require('../../assets/ilustrations/verified.png')} />
-                            <Paragraph style={styles1.textJajakan}>Success<Text style={styles1.textCenter}>, email anda berhasil di verifikasi, kembali belanja</Text></Paragraph>
-                            <Button
-                                labelStyle={{ color: 'white' }}
-                                onPress={() => {
-                                    this.setState({ loading: true })
-                                    setTimeout(() => this.setState({ loading: false }), 2000);
-                                    this.props.navigation.reset({
-                                        index: 0,
-                                        routes: [{ name: 'Splash' }],
-                                    })
-
-                                }}
-                                mode="contained"
-                                contentStyle={styles1.contentButton}
-                                color={colors.YellowJaja}
-                                style={styles1.button}>
-                                Kembali
-                            </Button>
-                        </View> :
-                        <View style={styles.column}>
-                            <Text style={styles1.text2}>
-                                Buka email anda untuk melihat kode otp yang kami kirim
-                            </Text>
-                            <OTPInputView
-                                style={styles1.kodeOtp}
-                                pinCount={6}
-                                autoFocusOnLoad={true}
-                                codeInputFieldStyle={styles1.underlineStyleBase}
-                                codeInputHighlightStyle={styles1.underlineStyleHighLighted}
-                                onCodeFilled={(code) => {
-                                    this.handleOtp(code);
-                                }}
-                            />
-                            {this.state.button ?
+                <View style={styles.containerIn}>
+                    <View style={styles1.container}>
+                        {this.state.step1 ?
+                            <View style={styles1.containerVerfified}>
+                                <Image style={styles1.iconMarket} source={require('../../assets/ilustrations/verified.png')} />
+                                <Paragraph style={styles1.textJajakan}>Success<Text style={styles1.textCenter}>, email anda berhasil di verifikasi, kembali belanja</Text></Paragraph>
                                 <Button
-                                    style={styles1.button2}
-                                    color={colors.White}
-                                    labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}
+                                    labelStyle={{ color: 'white' }}
+                                    onPress={() => {
+                                        this.setState({ loading: true })
+                                        setTimeout(() => this.setState({ loading: false }), 2000);
+                                        this.props.navigation.reset({
+                                            index: 0,
+                                            routes: [{ name: 'Splash' }],
+                                        })
+
+                                    }}
                                     mode="contained"
-                                    onPress={this.handleKirim}>
-                                    Kirim kode otp ulang
+                                    contentStyle={styles1.contentButton}
+                                    color={colors.YellowJaja}
+                                    style={styles1.button}>
+                                    Kembali
                                 </Button>
-                                :
-                                <Button style={styles1.button2}
-                                    labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.BlackGrayScale }]}
+                            </View> :
+                            <View style={styles.column}>
+                                <Text style={styles1.text2}>
+                                    Buka email anda untuk melihat kode otp yang kami kirim
+                                </Text>
+                                <OTPInputView
+                                    style={styles1.kodeOtp}
+                                    pinCount={6}
+                                    autoFocusOnLoad={true}
+                                    codeInputFieldStyle={styles1.underlineStyleBase}
+                                    codeInputHighlightStyle={styles1.underlineStyleHighLighted}
+                                    onCodeFilled={(code) => {
+                                        this.handleOtp(code);
+                                    }}
+                                />
+                                {this.state.button ?
+                                    <Button
+                                        style={styles1.button2}
+                                        color={colors.White}
+                                        labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}
+                                        mode="contained"
+                                        onPress={this.handleKirim}>
+                                        Kirim kode otp ulang
+                                    </Button>
+                                    :
+                                    <Button style={styles1.button2}
+                                        labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.BlackGrayScale }]}
 
-                                    disabled mode="contained">
-                                    Kirim kode otp ulang ({this.state.timeOut})
-                                </Button>
-                            }
-                        </View>
-                    }
+                                        disabled mode="contained">
+                                        Kirim kode otp ulang ({this.state.timeOut})
+                                    </Button>
+                                }
+                            </View>
+                        }
+                    </View>
                 </View>
-
             </SafeAreaView >
         );
     }
@@ -702,7 +703,7 @@ const styles1 = StyleSheet.create({
     appBarText: {
         color: 'white',
         fontSize: 20,
-        fontFamily: 'Poppins-SemiBold',
+        fontFamily: 'SignikaNegative-SemiBold',
     },
     backIcon: {
         tintColor: 'white',
@@ -734,7 +735,7 @@ const styles1 = StyleSheet.create({
     },
     containerVerfified: { flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' },
     iconMarket: { alignSelf: "center", width: Wp('80%'), height: Hp('40%') },
-    textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 18, fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale, fontFamily: 'Poppins-Regular', marginVertical: Hp("2%") },
-    textCenter: { fontSize: 18, color: colors.BlackGrayScale, fontFamily: 'Poppins-Regular' },
+    textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 18, fontFamily: 'SignikaNegative-SemiBold', color: colors.BlackGrayScale, fontFamily: 'SignikaNegative-Regular', marginVertical: Hp("2%") },
+    textCenter: { fontSize: 18, color: colors.BlackGrayScale, fontFamily: 'SignikaNegative-Regular' },
 
 });

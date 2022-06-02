@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { colors, styles as style, Wp, useNavigation, Loading, Hp, Appbar, Utils } from "../../export";
 import { WebView } from 'react-native-webview';
 import { set } from "react-native-reanimated";
+import { borderRadius } from "styled-system";
 
 export default function Lainnya() {
     const reduxAuth = useSelector(state => state.auth.auth)
@@ -314,7 +315,7 @@ export default function Lainnya() {
     const handleReset = () => {
         if (password === '') setalertTextPassword1('Password tidak boleh kosong!');
         if (confirmPasswordState === '') {
-            setalertTextPssword('Konfirmasi password tidak boleh kosong!')
+            setalertTextPassword('Konfirmasi password tidak boleh kosong!')
         } else {
             actionSheetRef.current?.setModalVisible(false)
             setTimeout(() => setloading(true), 100);
@@ -482,40 +483,46 @@ export default function Lainnya() {
                                     :
                                     <View />
                             }
-                            <TouchableWithoutFeedback onPress={() => handleEdit("Nama Lengkap")}>
+                            {/* onPress={() => handleEdit("Nama Lengkap")} */}
+                            <TouchableWithoutFeedback >
                                 <View style={styles.form}>
-                                    <Text adjustsFontSizeToFit style={[style.font_14]}>Nama Lengkap</Text>
+                                    <Text adjustsFontSizeToFit style={[style.font_15, style.T_semi_bold, { color: colors.BlueJaja }]}>Nama Lengkap</Text>
                                     <View style={styles.formItem}>
                                         <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{name ? name : ""}</Text>
-                                        <Text adjustsFontSizeToFit style={styles.ubah}>{name ? "Ubah" : "Tambah"}</Text>
+                                        <TouchableOpacity onPress={() => handleEdit("Nama Lengkap")} style={styles.btnUbah}>
+                                            <Text adjustsFontSizeToFit style={styles.ubah}>{name ? "Ubah" : "Tambah"}</Text>
+                                        </TouchableOpacity>
                                     </View>
                                 </View>
                             </TouchableWithoutFeedback>
                             <TouchableWithoutFeedback>
                                 <View style={styles.form}>
-                                    <Text adjustsFontSizeToFit style={[style.font_14]}>Email</Text>
+                                    <Text adjustsFontSizeToFit style={[style.font_15, style.T_semi_bold, { color: colors.BlueJaja }]}>Email</Text>
                                     <View style={styles.formItem}>
                                         <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{email ? email : ""}</Text>
                                     </View>
                                 </View>
                             </TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback onPress={() => profile.birthDate ? showDatePicker('start') : null}>
+                            <TouchableWithoutFeedback >
                                 <View style={styles.form}>
-                                    <Text adjustsFontSizeToFit style={[style.font_14]}>Tanggal Lahir</Text>
+                                    <Text adjustsFontSizeToFit style={[style.font_15, style.T_semi_bold, { color: colors.BlueJaja }]}>Tanggal Lahir</Text>
                                     <View style={styles.formItem}>
                                         <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{date ? date : "Pilih Tanggal Lahir"}</Text>
                                         {!date ?
-                                            <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text>
+                                            <TouchableOpacity onPress={() => handleEdit("Nama Lengkap")} style={styles.btnUbah}>
+
+                                                <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text>
+                                            </TouchableOpacity>
                                             : null}
                                     </View>
                                 </View>
                             </TouchableWithoutFeedback>
                             <View style={[styles.form, { flexDirection: 'column' }]}>
-                                <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{gender ? gender == "pria" ? "Laki - Laki" : "Perempuan" : "Pilih Jenis Kelamin"}</Text>
+                                <Text adjustsFontSizeToFit style={[style.font_15, style.T_semi_bold, { color: colors.BlueJaja }]}>{gender ? gender == "pria" ? "Laki - Laki" : "Perempuan" : "Pilih Jenis Kelamin"}</Text>
                                 <View style={[style.row_between_center, style.mt]}>
                                     <View style={{ flex: 0, alignItems: 'center', flexDirection: 'row', marginLeft: '-2.5%' }}>
                                         <RadioButton
-                                            color={colors.BlueJaja}
+                                            color={colors.YellowJaja}
                                             value="first"
                                             status={gender === "pria" ? 'checked' : 'unchecked'}
                                             onPress={() => {
@@ -523,11 +530,11 @@ export default function Lainnya() {
                                                 setshowButton(true)
                                             }}
                                         />
-                                        <Text adjustsFontSizeToFit style={style.font14}>Laki - Laki</Text>
+                                        <Text adjustsFontSizeToFit style={[styles.formPlaceholder, { textAlignVertical: 'center' }]}>Laki - Laki</Text>
                                     </View>
                                     <View style={{ flex: 0, alignItems: 'center', flexDirection: 'row' }}>
                                         <RadioButton
-                                            color={colors.BlueJaja}
+                                            color={colors.YellowJaja}
                                             value="second"
                                             status={gender === "wanita" ? 'checked' : 'unchecked'}
                                             onPress={() => {
@@ -536,7 +543,7 @@ export default function Lainnya() {
 
                                             }}
                                         />
-                                        <Text adjustsFontSizeToFit style={style.font14}>Perempuan</Text>
+                                        <Text adjustsFontSizeToFit style={style.font_14}>Perempuan</Text>
                                     </View>
                                 </View>
                                 {/* <Text adjustsFontSizeToFit style={[style.font_14]}>Jenis Kelamin</Text>
@@ -545,30 +552,37 @@ export default function Lainnya() {
                                 {!gender ? <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text> : null}
                             </View> */}
                             </View>
-                            <TouchableWithoutFeedback onPress={() => handleEdit("Nomor Telephone")}>
+                            {/* onPress={() => handleEdit("Nomor Telephone")} */}
+                            <TouchableWithoutFeedback >
                                 <View style={styles.form}>
-                                    <Text adjustsFontSizeToFit style={[style.font_14]}>Telephone</Text>
+                                    <Text adjustsFontSizeToFit style={[style.font_15, style.T_semi_bold, { color: colors.BlueJaja }]}>Telephone</Text>
                                     <View style={styles.formItem}>
                                         <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{telephone ? telephone : 'Input Telephone'}</Text>
-                                        <Text adjustsFontSizeToFit style={styles.ubah}>{telephone ? "Ubah" : "Tambah"}</Text>
+                                        <TouchableOpacity onPress={() => handleEdit("Nomor Telephone")} style={styles.btnUbah}>
+                                            <Text adjustsFontSizeToFit style={styles.ubah}>{telephone ? "Ubah" : "Tambah"}</Text>
+                                        </TouchableOpacity>
                                     </View>
                                 </View>
                             </TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback onPress={() => handleEdit("Password")}>
+                            <TouchableWithoutFeedback>
                                 <View style={styles.form}>
-                                    <Text adjustsFontSizeToFit style={[style.font_14]}>Password</Text>
+                                    <Text adjustsFontSizeToFit style={[style.font_15, style.T_semi_bold, { color: colors.BlueJaja }]}>Password</Text>
                                     <View style={styles.formItem}>
                                         <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{view ? "********" : "-"}</Text>
-                                        <Text adjustsFontSizeToFit style={styles.ubah}>{view ? "Ubah" : "Tambah"}</Text>
+                                        <TouchableOpacity onPress={() => handleEdit("Password")} style={styles.btnUbah}>
+                                            <Text adjustsFontSizeToFit style={styles.ubah}>{view ? "Ubah" : "Tambah"}</Text>
+                                        </TouchableOpacity>
                                     </View>
                                 </View>
                             </TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback onPress={() => accountShow ? null : navigation.navigate('AddAccount')}>
+                            <TouchableWithoutFeedback >
                                 <View style={styles.form}>
-                                    <Text adjustsFontSizeToFit style={[style.font_14]}>Rekening</Text>
+                                    <Text adjustsFontSizeToFit style={[style.font_15, style.T_semi_bold, { color: colors.BlueJaja }]}>Rekening</Text>
                                     <View style={styles.formItem}>
                                         <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{accountShow ? accountBank : 'Tambah Rekening'}</Text>
-                                        {!accountShow ? <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text> : null}
+                                        <TouchableOpacity onPress={() => accountShow ? null : navigation.navigate('AddAccount')} style={styles.btnUbah}>
+                                            {!accountShow ? <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text> : null}
+                                        </TouchableOpacity>
                                     </View>
                                 </View>
                             </TouchableWithoutFeedback>
@@ -649,7 +663,7 @@ export default function Lainnya() {
                                                     setgender("pria")
                                                 }}
                                             />
-                                            <Text adjustsFontSizeToFit style={style.font14}>Laki - Laki</Text>
+                                            <Text adjustsFontSizeToFit style={style.font_14}>Laki - Laki</Text>
                                         </View>
                                         <View style={{ flex: 0, alignItems: 'center', flexDirection: 'row' }}>
                                             <RadioButton
@@ -659,7 +673,7 @@ export default function Lainnya() {
                                                     setgender("wanita")
                                                 }}
                                             />
-                                            <Text adjustsFontSizeToFit style={style.font14}>Perempuan</Text>
+                                            <Text adjustsFontSizeToFit style={style.font_14}>Perempuan</Text>
                                         </View>
                                     </View>
                                     : null
@@ -716,7 +730,7 @@ export default function Lainnya() {
                                 />
                                 {/* <Image /> */}
                             </View>
-                            <Text adjustsFontSizeToFit style={{ color: 'red', marginBottom: '5%', fontSize: 12 }}>{alertTextPassword1}</Text>
+                            <Text adjustsFontSizeToFit style={[style.font_12, { color: colors.RedNotif }]}>{alertTextPassword1}</Text>
                             <Text adjustsFontSizeToFit style={[style.font_14]}>Konfirmasi kata sandi baru</Text>
                             <View style={[styles.formItem, { paddingBottom: '0%', borderBottomColor: confirmcolor, borderBottomWidth: 1 }]}>
                                 <TextInput
@@ -740,7 +754,7 @@ export default function Lainnya() {
 
                             <Button color={colors.BlueJaja} mode="contained" onPress={handleReset}>
                                 Simpan
-                        </Button>
+                            </Button>
                         </View> :
                         <View style={styles.form}>
                             <Text adjustsFontSizeToFit style={[style.font_14]}>Kata sandi baru</Text>
@@ -785,7 +799,7 @@ export default function Lainnya() {
 
                             <Button color={colors.BlueJaja} mode="contained" onPress={handleAdd}>
                                 Simpan
-                        </Button>
+                            </Button>
                         </View>
 
                     }
@@ -811,7 +825,7 @@ export default function Lainnya() {
                     onConfirm={(text) => handleConfirmDate(text)}
                     onCancel={() => hideDatePicker()}
                 />
-            </View>
+            </View >
         </SafeAreaView >
     );
 }
@@ -836,7 +850,7 @@ const styles = StyleSheet.create({
         flex: 0, flexDirection: 'row', justifyContent: 'space-between', width: '100%', borderBottomColor: '#C0C0C0', borderBottomWidth: 0.5, paddingBottom: '2%', paddingTop: '1%'
     },
     formTitle: {
-        fontSize: 14, color: 'grey', fontFamily: 'Poppins-Regular'
+        fontSize: 14, color: 'grey', fontFamily: 'SignikaNegative-Regular'
     },
     avatar: {
         width: 130,
@@ -865,17 +879,24 @@ const styles = StyleSheet.create({
         opacity: 0.95,
     },
     ubah: {
-        color: colors.BlueJaja,
-        fontFamily: 'Poppins-SemiBold',
-        width: '25%',
-        textAlign: 'right'
+        fontSize: 12,
+        color: colors.White,
+        fontFamily: 'SignikaNegative-SemiBold',
+        width: '100%',
+        textAlign: 'center',
+        marginTop: Platform.OS === 'android' ? '-2%' : 0
     },
-
+    btnUbah: {
+        flex: 0, justifyContent: 'center', alignItems: 'center',
+        backgroundColor: colors.YellowJaja, width: '17.5%',
+        borderRadius: 5,
+        paddingVertical: '1%'
+    },
     body: { flex: 1, flexDirection: 'column', padding: '4%', },
     banner: { width: Wp('50%'), height: '100%', borderRadius: 7 },
     bannerPromo: { width: Wp('25%'), height: '100%', borderRadius: 7 },
     formPlaceholder: {
-        flex: 0, fontSize: 14, color: colors.BlackGrayScale
+        flex: 0, fontSize: 14, color: colors.BlackGrayScale, fontFamily: 'SignikaNegative-Regular', marginTop: Platform.OS === 'android' ? '-0.2%' : 0
     },
     formItemImage: {
         flex: 1, width: Wp('50%'), height: Wp('50%'), borderRadius: 7
@@ -911,7 +932,7 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 14,
-        fontFamily: 'Poppins-SemiBold',
+        fontFamily: 'SignikaNegative-SemiBold',
         marginTop: '3%',
         color: colors.BlackGrayScale,
     },

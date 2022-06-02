@@ -16,8 +16,10 @@ export default function Loading() {
 }
 
 const styles = StyleSheet.create({
+    loading: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: "#454545", elevation: 5, opacity: 0.2 },
     center: {
         zIndex: 1,
+
         elevation: 24,
     },
     background: {
@@ -32,20 +34,19 @@ const styles = StyleSheet.create({
     },
     container: {
         zIndex: 99999,
-        backgroundColor: 'white',
+        backgroundColor: 'transparent',
         bottom: 0,
         flex: 1,
         left: 0,
         position: 'absolute',
         right: 0,
         top: 0,
-        opacity: 0.9,
-        // 
+        backgroundColor: 'rgba(0, 0, 0, 0.10)',
+
     },
     loading: {
         padding: 8,
         zIndex: 1,
-        opacity: 1,
         backgroundColor: 'white',
         borderRadius: 100,
         shadowColor: "#000",

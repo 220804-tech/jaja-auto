@@ -10,7 +10,7 @@ console.log("🚀 ~ file: productStyles.js ~ line 12121 ~ SCREEN_HEIGHT", SCREEN
 // second argument is standardScreenHeight(optional),
 export const style = StyleSheet.create({
     cardProduct: {
-        borderRadius: 7,
+        borderRadius: 6,
         width: Wp("44%"),
         marginLeft: Wp('4%'),
         height: Hp("41%"),
@@ -20,16 +20,6 @@ export const style = StyleSheet.create({
         flexDirection: 'column',
         alignSelf: 'center',
         resizeMode: 'contain',
-        shadowColor: colors.BlueJaja,
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.22,
-        shadowRadius: 2.22,
-
-        elevation: 3,
-
     },
 
     cardProductSmall: {
@@ -54,7 +44,7 @@ export const style = StyleSheet.create({
     },
 
     textDiscount: {
-        position: 'absolute', fontSize: RFValue(7, 480), zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '5%', paddingHorizontal: '2%', top: 0, right: 5, borderBottomRightRadius: 5, borderBottomLeftRadius: 5,
+        position: 'absolute', fontFamily: 'SignikaNegative-SemiBold', fontSize: RFValue(7, 480), zIndex: 1, backgroundColor: colors.BlueJaja, color: colors.White, paddingVertical: '5%', paddingHorizontal: '2%', top: 0, right: 5, borderBottomRightRadius: 5, borderBottomLeftRadius: 5,
     },
     imageProduct: {
         width: '100%',
@@ -67,45 +57,45 @@ export const style = StyleSheet.create({
     },
     nameProduct: {
         fontSize: IS_6INCH ? RFValue(13) : RFValue(10),
-        fontFamily: 'Poppins-Regular',
+        fontFamily: 'SignikaNegative-Regular',
         alignSelf: 'flex-start',
         marginBottom: '2%',
-        color: colors.BlackGrayScale,
+        color: colors.BlueJaja,
         // backgroundColor: 'red',
         width: Wp("30%"),
     },
     nameProductSmall: {
         fontSize: IS_6INCH ? RFValue(11) : RFValue(10),
-        fontFamily: 'Poppins-Regular',
+        fontFamily: 'SignikaNegative-Regular',
         alignSelf: 'flex-start',
         marginBottom: '2%',
-        color: colors.BlackGrayScale,
+        color: colors.BlueJaja,
         // backgroundColor: 'red',
         width: Wp("30%"),
     },
-    priceBefore: { fontSize: IS_6INCH ? RFValue(9) : RFValue(8), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale, textDecorationLine: 'line-through', },
-    priceBeforeSmall: { fontSize: IS_6INCH ? RFValue(7) : RFValue(6), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale, textDecorationLine: 'line-through', },
+    priceBefore: { fontSize: IS_6INCH ? RFValue(10) : RFValue(9), fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrey, textDecorationLine: 'line-through', },
+    priceBeforeSmall: { fontSize: IS_6INCH ? RFValue(8) : RFValue(7), fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale, textDecorationLine: 'line-through', },
 
-    priceAfter: { fontSize: RFValue(13), fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja },
-    priceAfterSmall: { fontSize: 13, fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja },
+    priceAfter: { fontSize: RFValue(13), fontFamily: 'SignikaNegative-SemiBold', color: colors.BlueJaja },
+    priceAfterSmall: { fontSize: 13, fontFamily: 'SignikaNegative-SemiBold', color: colors.BlueJaja },
 
-    price: { fontSize: IS_6INCH ? RFValue(14) : RFValue(13), fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale },
-    priceSmall: { fontSize: IS_6INCH ? RFValue(12) : RFValue(10), fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja },
+    price: { fontSize: IS_6INCH ? RFValue(16) : RFValue(15), fontFamily: 'SignikaNegative-Bold', color: colors.BlueJaja },
+    priceSmall: { fontSize: IS_6INCH ? RFValue(12) : RFValue(10), fontFamily: 'SignikaNegative-SemiBold', color: colors.YellowJaja },
 
     discountSmall: { fontSize: RFValue(6), backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '1%', paddingHorizontal: '2%', borderRadius: 3 },
 
 
     cardBottom: { flex: 0, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', position: 'absolute', bottom: 3, width: '97%', paddingHorizontal: '3%' },
     location: { flex: 0, flexDirection: 'row', width: '75%', alignItems: 'center' },
-    locarionName: { fontSize: IS_6INCH ? RFValue(9) : RFValue(8), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale, marginRight: '2%' },
-    locarionNameSmall: { fontSize: IS_6INCH ? RFValue(8) : RFValue(7), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale, marginRight: '2%' },
+    locarionName: { fontSize: IS_6INCH ? RFValue(10) : RFValue(8), fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale, marginRight: '2%' },
+    locarionNameSmall: { fontSize: IS_6INCH ? RFValue(9) : RFValue(7), fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale, marginRight: '2%' },
 
     locationIcon: {
         width: 13,
         height: 13,
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
-        tintColor: colors.RedFlashsale,
+        // tintColor: colors.RedFlashsale,
         marginRight: '3%',
     },
     locationIconSmall: {

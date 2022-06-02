@@ -59,7 +59,7 @@ export default function FlashsaleFirstComponent() {
                         return (
                             <View onPress={() => handleShowDetail(item, false)} style={[styles.row_start_center, styles.mb_2, styles.px_2, { height: Wp('31.5%'), width: Wp('100%'), borderBottomWidth: 0.5, borderBottomColor: colors.Silver, backgroundColor: colors.White }]}>
                                 <View style={[styles.row_center, { position: 'absolute', left: 0, top: 0, zIndex: 999, width: Wp('8%'), height: Wp('6.5%'), backgroundColor: colors.RedFlashsale, padding: '2%', borderBottomRightRadius: 5 }]}>
-                                    <Text style={{ fontSize: 10, color: colors.White, fontFamily: 'Poppins-SemiBold', backgroundColor: colors.RedFlashsale }}>{item.discountFlash}%</Text>
+                                    <Text style={{ fontSize: 10, color: colors.White, fontFamily: 'SignikaNegative-SemiBold', backgroundColor: colors.RedFlashsale }}>{item.discountFlash}%</Text>
                                 </View>
                                 {/* <View style={[styles.column, { height: Wp('25%'), width: Wp('25%'), backgroundColor: colors.White, alignItems: 'center', justifyContent: 'center' }]}> */}
                                 <FastImage
@@ -111,7 +111,7 @@ export default function FlashsaleFirstComponent() {
                                                     color: "white",
                                                     marginTop: -1,
                                                     fontSize: 10,
-                                                    fontFamily: 'Poppins-SemiBold'
+                                                    fontFamily: 'SignikaNegative-SemiBold'
                                                 }}
                                                 >{item.amountSold} Terjual</Text>
                                             </View>

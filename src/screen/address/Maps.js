@@ -282,7 +282,7 @@ export default function map(props) {
                         rotateEnabled={false}
                         region={region}
                         onRegionChangeComplete={onRegionChange}
-                        >
+                    >
                         {/* <TouchableOpacity>
                             <Text>Cek Lokasi</Text>
                             </TouchableOpacity> */}
@@ -372,7 +372,7 @@ export default function map(props) {
                                         <Text numberOfLines={1} style={{
                                             color: colors.BlackGrayScale,
                                             fontSize: Hp("2%"),
-                                            fontFamily: 'Poppins-SemiBold',
+                                            fontFamily: 'SignikaNegative-SemiBold',
                                             textAlign: "left",
                                             marginRight: '2%'
                                         }}>
@@ -434,12 +434,12 @@ const styles = StyleSheet.create({
     },
     alamatTitle: {
         fontSize: 18,
-        fontFamily: 'Poppins-Regular',
+        fontFamily: 'SignikaNegative-Regular',
         color: colors.BlackGrayScale
     },
     alamatContent: {
         fontSize: 14,
-        fontFamily: 'Poppins-Regular',
+        fontFamily: 'SignikaNegative-Regular',
         color: colors.BlackGrayScale
     },
     search: { flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.White, opacity: 0.3, paddingVertical: '1.75%', paddingHorizontal: '5%', marginBottom: '-1%', borderRadius: 3 },
@@ -849,7 +849,7 @@ const styles = StyleSheet.create({
 //                                         <Text numberOfLines={1} style={{
 //                                             color: colors.BlackGrayScale,
 //                                             fontSize: Hp("2%"),
-//                                             fontFamily: 'Poppins-SemiBold',
+//                                             fontFamily: 'SignikaNegative-SemiBold',
 //                                             textAlign: "left",
 //                                             marginRight: '2%'
 //                                         }}>
@@ -911,12 +911,12 @@ const styles = StyleSheet.create({
 //     },
 //     alamatTitle: {
 //         fontSize: 18,
-//         fontFamily: 'Poppins-Regular',
+//         fontFamily: 'SignikaNegative-Regular',
 //         color: colors.BlackGrayScale
 //     },
 //     alamatContent: {
 //         fontSize: 14,
-//         fontFamily: 'Poppins-Regular',
+//         fontFamily: 'SignikaNegative-Regular',
 //         color: colors.BlackGrayScale
 //     },
 //     search: { flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.White, opacity: 0.3, paddingVertical: '1.75%', paddingHorizontal: '5%', marginBottom: '-1%', borderRadius: 3 },

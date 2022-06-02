@@ -62,7 +62,7 @@ export default function CheckoutMultiDropScreen() {
                         setreduxShipping(result.data)
                         setcount(count + 1)
                         // dispatch({ type: 'SET_SHIPPING', payload: result.data })
-                    } else if (result.status.code === 404 && result.status.message === 'alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu') {
+                    } else if (result.status.code == 404 && String(result.status.message).includes('Alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu')) {
                         // Utils.alertPopUp('Silahkan tambah alamat terlebih dahuluuuuuuuuuuuuuuuuuuu!')
                         return null
                     } else if (result?.status?.message === 'Data tidak ditemukan') {
@@ -176,8 +176,8 @@ export default function CheckoutMultiDropScreen() {
 
                 elevation: 5,
             }]}>
-                <View style={[styles.p_2, { backgroundColor: colors.WhiteGrey, width: Wp('100%') }]}>
-                    <Text style={[styles.font_14, styles.T_semi_bold]}>
+                <View style={[styles.py_2, styles.px_4, { backgroundColor: colors.BlueJaja, width: Wp('100%') }]}>
+                    <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.White }]}>
                         Pesanan {index + 1}
                     </Text>
                 </View>
@@ -190,16 +190,7 @@ export default function CheckoutMultiDropScreen() {
                         renderItem={renderProduct}
                     />
                     <>
-                        <View
-                            style={[
-                                styles.row,
-                                styles.p_3,
-                                {
-                                    borderBottomWidth: 0.5,
-                                    borderBottomColor: colors.BlueJaja,
-                                },
-                            ]}
-                        >
+                        <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlueJaja, }]}>
                             <Image
                                 style={[
                                     styles.icon_21,
@@ -690,7 +681,7 @@ export default function CheckoutMultiDropScreen() {
                     <TouchableOpacity style={[styles.row_start_center, { marginRight: '2%' }]} onPress={() => navigation.replace('TrolleyMultiDrop')}>
                         <Image style={[styles.appBarButton, { tintColor: colors.White }]} source={require('../../assets/icons/arrow.png')} />
                     </TouchableOpacity>
-                    <Text style={[styles.font_15, { fontFamily: 'Poppins-SemiBold', width: '60%', color: colors.White }]}>Checkout</Text>
+                    <Text style={[styles.font_15, { fontFamily: 'SignikaNegative-SemiBold', width: '60%', color: colors.White }]}>Checkout</Text>
                 </View> */}
                 <Appbar back={true} title="Checkout" />
 
@@ -945,7 +936,7 @@ export default function CheckoutMultiDropScreen() {
                                 style={[
                                     styles.font_17,
                                     styles.T_semi_bold,
-                                    { color: colors.BlueJaja },
+                                    { color: colors.YellowJaja },
                                 ]}
                             >
                                 {dataCheckout.totalCurrencyFormat}
@@ -1018,7 +1009,7 @@ export default function CheckoutMultiDropScreen() {
                     <View style={{ flexDirection: "column", minHeight: Hp("20%"), maxHeight: Hp("60%"), width: "100%", paddingBottom: "5%", }} >
                         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ width: "100%" }} >
                             <View style={[styles.column, { width: "100%" }]}>
-                                {/* <Text style={[styles.font_14, styles.mb_3, { color: colors.BlueJaja, fontFamily: 'Poppins-SemiBold', borderBottomWidth: 0.5, borderBottomColor: colors.BlueJaja }]}>{item.title}</Text> */}
+                                {/* <Text style={[styles.font_14, styles.mb_3, { color: colors.BlueJaja, fontFamily: 'SignikaNegative-SemiBold', borderBottomWidth: 0.5, borderBottomColor: colors.BlueJaja }]}>{item.title}</Text> */}
                                 {reduxShipping && reduxShipping.length ? (
                                     <View style={styles.column}>
                                         <View
@@ -1148,7 +1139,7 @@ export default function CheckoutMultiDropScreen() {
                                                 let Ename = item.name;
                                                 return (
                                                     <View style={[styles.column_center_start, styles.mb_2, styles.py_2, styles.px_4, { borderBottomWidth: 1, borderBottomColor: colors.Silver, width: "100%", }]}>
-                                                        <Text style={[styles.font_14, { fontFamily: "Poppins-SemiBold", color: colors.BlueJaja, }]}>{Ename}</Text>
+                                                        <Text style={[styles.font_14, { fontFamily: "SignikaNegative-SemiBold", color: colors.BlueJaja, }]}>{Ename}</Text>
                                                         <FlatList
                                                             data={item.type}
                                                             keyExtractor={(item, index) => String(index) + "AL"}

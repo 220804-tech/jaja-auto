@@ -210,7 +210,7 @@ export default function TrolleyScreen() {
                     if (result.status.code === 200) {
                         dispatch({ type: 'SET_CHECKOUT', payload: result.data })
                         // navigation.navigate('Checkout')
-                    } else if (result.status.code == 404 && result.status.message == 'alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu') {
+                    } else if (result.status.code == 404 && String(result.status.message).includes('Alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu')) {
                         Utils.alertPopUp('Silahkan tambah alamat terlebih dahulu!')
                         navigation.navigate('Address', { data: "checkout" })
                     }
@@ -363,18 +363,18 @@ export default function TrolleyScreen() {
 
                                             />
                                         }
-                                        <Image style={{
-                                            width: Hp('5%'),
-                                            height: Hp('5%'),
-                                            borderRadius: 7,
-                                            backgroundColor: colors.White,
-                                            borderWidth: 0.2,
+                                        <Image style={[{
+                                            width: Wp('11%'),
+                                            height: Wp('11%'),
+                                            borderRadius: 100,
+                                            backgroundColor: colors.WhiteBack,
+                                            // borderWidth: 0.2,
                                             borderColor: colors.Silver,
                                             alignSelf: 'center',
-                                            marginRight: '3%'
-                                        }}
-                                            resizeMethod={"scale"}
-                                            resizeMode={item.image ? "cover" : "center"}
+                                            marginRight: '3%',
+                                        }]}
+                                            // resizeMethod='auto'
+                                            resizeMode='contain'
                                             source={{ uri: item.store.image }}
                                         />
                                         <View style={[styles.column_around_center, { alignItems: 'flex-start' }]}>
@@ -440,11 +440,11 @@ export default function TrolleyScreen() {
                                                             </View>
                                                             {item.isDiscount ?
                                                                 < View style={styles.row_around_center}>
-                                                                    <Text numberOfLines={1} style={[styles.priceBefore, { flex: 0, color: colors.BlackGrayScale, marginRight: '2%' }]}>{item.priceCurrencyFormat}</Text>
-                                                                    <Text numberOfLines={1} style={[styles.font_10, styles.T_semi_bold, { color: colors.RedFlashsale }]}>{item.priceDiscountCurrencyFormat}</Text>
+                                                                    <Text numberOfLines={1} style={[styles.priceBefore, { flex: 0, color: colors.BlackGrey, marginRight: '2%' }]}>{item.priceCurrencyFormat}</Text>
+                                                                    <Text numberOfLines={1} style={[styles.font_10, styles.T_semi_bold, { color: colors.YellowJaja }]}>{item.priceDiscountCurrencyFormat}</Text>
                                                                 </View>
                                                                 :
-                                                                <Text numberOfLines={1} style={[styles.font_12, styles.mb_2, { flex: 0, color: colors.RedMaroon }]}>{item.priceCurrencyFormat}</Text>
+                                                                <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, styles.mb_2, { flex: 0, color: colors.YellowJaja }]}>{item.priceCurrencyFormat}</Text>
                                                             }
                                                             <View style={[styles.row_between_center, { flex: 0 }]}>
                                                                 <View style={[styles.row_around_center, { flex: 1 }]}>
@@ -502,7 +502,7 @@ export default function TrolleyScreen() {
                     <View style={[styles.row, { height: Hp('7%') }]}>
                         <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '2%', paddingLeft: '4%', paddingVertical: '1%' }}>
                             <Text style={[styles.font_12, styles.T_medium, { color: colors.BlueJaja, marginBottom: '-2%' }]}>Total Harga :</Text>
-                            <Text numberOfLines={1} style={[styles.font_17, styles.T_semi_bold, { color: colors.BlueJaja }]}>{reduxCart.cart.totalCartCurrencyFormat ? reduxCart.cart.totalCartCurrencyFormat : 'Rp0'}</Text>
+                            <Text numberOfLines={1} style={[styles.font_17, styles.T_semi_bold, { color: colors.YellowJaja }]}>{reduxCart.cart.totalCartCurrencyFormat ? reduxCart.cart.totalCartCurrencyFormat : 'Rp0'}</Text>
                         </View>
                         <TouchableRipple disabled={disableCheckout} style={{ backgroundColor: colors.BlueJaja, width: "50%", height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={handleCheckout}>
                             <Text numberOfLines={1} style={[styles.font_13, styles.T_semi_bold, { color: colors.White }]}>Checkout</Text>

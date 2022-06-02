@@ -4,17 +4,25 @@ import { styles, Wp, Hp, colors, useNavigation, ServiceCheckout, Appbar, Service
 import { WebView } from 'react-native-webview';
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
-import { Button, Paragraph } from 'react-native-paper';
+import { Button, Paragraph, TouchableRipple } from 'react-native-paper';
+import ViewShot from 'react-native-view-shot';
+import ImgToBase64 from 'react-native-image-base64';
+import Share from 'react-native-share';
 
 
 export default function MidtransScreen() {
     const navigation = useNavigation()
-    const ref = useRef()
+    const viewShotRef = useRef(null);
+
     const reduxAuth = useSelector(state => state.auth.auth)
     const [loading, setloading] = useState(false)
     const reduxOrderId = useSelector(state => state.checkout.orderId)
     const [view, setView] = useState("")
     const [text, setText] = useState("Sedang Menghubungkan..")
+    // const [view, setqrcode] = useState(null)
+    const [reload, setreload] = useState(false)
+
+
     const [spinValue, setspinValue] = useState(new Animated.Value(0))
     const dispatch = useDispatch()
     useEffect(() => {
@@ -63,7 +71,13 @@ export default function MidtransScreen() {
         );
 
         return () => backHandler.remove();
+    }, [reload])
+
+    useEffect(() => {
+
+
     }, [])
+
 
     const handleUnpaid = () => {
         EncryptedStorage.getItem('unpaid').then(store => {
@@ -91,14 +105,17 @@ export default function MidtransScreen() {
         };
 
         var url = "https://jaja.id/backend/payment/getPayment/" + orderId;
-        console.log('getPaymentUrl', url);
+        // console.log('getPaymentUrl', url);
         fetch(url, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: MidtransScreen.js ~ line 98 ~ getPayment ~ result", result)
+                // console.log("🚀 ~ file: MidtransScreen.js ~ line 98 ~ getPayment ~ result", result)
                 setTimeout(() => setloading(false), 3000);
-                console.log('payment_va_or_code_or_link', result.orderPaymentRecent.payment_va_or_code_or_link);
+                // console.log('payment_va_or_code_or_link', result.orderPaymentRecent.payment_va_or_code_or_link);
                 setView(result.orderPaymentRecent.payment_va_or_code_or_link);
+                // if (String(result.orderPaymentRecent.payment_va_or_code_or_link).includes('qr-code')) {
+                //     setqrcode(result.orderPaymentRecent.payment_va_or_code_or_link)
+                // }
 
             })
             .catch(error => {
@@ -137,13 +154,41 @@ export default function MidtransScreen() {
         getItem()
     }
     const onMessage = (m) => {
-        console.log("🚀 ~ file: MidtransScreen.js ~ line 136 ~ onMessage ~ data", data)
+        // console.log("🚀 ~ file: MidtransScreen.js ~ line 136 ~ onMessage ~ data", data)
         //Prints out data that was passed.
         // alert(m.nativeEvent.data);
     }
+    const handleDownload = async () => {
+        try {
+            await viewShotRef.current.capture().then(async uri => {
+                await ImgToBase64.getBase64String(uri)
+                    .then(base64String => {
+                        let urlString = 'data:image/jpeg;base64,' + base64String;
+                        const shareOptions = {
+                            url: urlString
+                        };
+                        Share.open(shareOptions)
+                            .then((res) => {
+                                console.log(res);
+                            })
+                            .catch((err) => {
+                                err && console.log(err);
+                            });
+                    })
+                    .catch(err => {
+                        console.log("🚀 ~ file: MidtransScreen.js ~ line 181 ~ awaitviewShotRef.current.capture ~ err", err)
+                    });
+            });
+
+        } catch (error) {
+            console.log("🚀 ~ file: MidtransScreen.js ~ line 184 ~ handleDownload ~ error", error)
+        }
+
+    }
+
     return (
         <SafeAreaView style={styles.container}>
-            <Appbar back={true} title="Pilih Pembayaran" />
+            <Appbar back={true} title="Pilih Pembayaran" share={view} handlePress={handleDownload} />
             {loading ?
                 <View style={{
                     justifyContent: "center",
@@ -157,7 +202,7 @@ export default function MidtransScreen() {
                         resizeMethod={"scale"}
                         source={require("../../assets/gifs/gif_payment.gif")}
                     />
-                    <Text style={{ fontFamily: 'Poppins-SemiBold' }}>{text}</Text>
+                    <Text style={{ fontFamily: 'SignikaNegative-SemiBold' }}>{text}</Text>
                 </View>
                 :
                 view === "404 Not Found" || !view ?
@@ -172,16 +217,21 @@ export default function MidtransScreen() {
                     </View>
                     :
                     <>
-                        <WebView
-                            style={{ alignSelf: 'stretch' }}
-                            javaScriptEnabled={true}
-                            allowsFullscreenVideo={true}
-                            scalesPageToFit={true}
-                            originWhitelist={['*']}
-                            // onLoad={(e) => console.log('asasasasas', e)}
-                            onMessage={(event) => onMessage(event)}
-                            source={{ uri: view }}
-                        />
+                        <ViewShot style={{ flex: 1 }} ref={viewShotRef} options={{ format: "jpg" }}>
+                            <WebView
+                                style={{ alignSelf: 'stretch' }}
+                                javaScriptEnabled={true}
+                                allowsFullscreenVideo={true}
+                                scalesPageToFit={true}
+                                originWhitelist={['*']}
+                                // onLoad={(e) => console.log('asasasasas', e)}
+                                onMessage={(event) => onMessage(event)}
+                                source={{ uri: view }}
+                            />
+                        </ViewShot>
+                        <TouchableRipple onPress={() => setreload(!reload)} style={[styles.row_center, styles.py_4, { backgroundColor: colors.BlueJaja, width: '100%', }]}>
+                            <Text style={[styles.font_15, styles.T_bold, { color: colors.White }]}>Cek Bayar</Text>
+                        </TouchableRipple>
                         {/* <View style={{ position: 'absolute', width: Wp('100%'), height: Hp('100%'), justifyContent: 'flex-end', alignItems: 'center', paddingBottom: Hp('10%') }}>
 
                             <TouchableOpacity
@@ -217,8 +267,8 @@ export default function MidtransScreen() {
                             </TouchableOpacity>
                         </View> */}
                         {/* <View style={{ width: '50%', justifyContent: 'flex-end', paddingHorizontal: '3%', paddingLeft: '5%', paddingVertical: '1%' }}>
-                                <Text style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>Subtotal :</Text>
-                                <Text numberOfLines={1} style={[styles.font_20, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>ASA</Text>
+                                <Text style={[styles.font_14, { fontFamily: 'SignikaNegative-SemiBold', color: colors.BlueJaja }]}>Subtotal :</Text>
+                                <Text numberOfLines={1} style={[styles.font_20, { fontFamily: 'SignikaNegative-SemiBold', color: colors.BlueJaja }]}>ASA</Text>
                             </View> */}
                         {/* <View style={{ position: 'relative', bottom: 0, height: Hp('7.5%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
                            
@@ -232,6 +282,6 @@ export default function MidtransScreen() {
     )
 }
 const style = StyleSheet.create({
-    textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 18, fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja, fontFamily: 'Poppins-Regular', marginVertical: Hp('2%') },
+    textJajakan: { alignSelf: 'center', textAlign: 'center', width: Wp('80%'), fontSize: 18, fontFamily: 'SignikaNegative-SemiBold', color: colors.BlueJaja, fontFamily: 'SignikaNegative-Regular', marginVertical: Hp('2%') },
     iconMarket: { alignSelf: "center", width: Wp('80%'), height: Hp('40%') },
 })

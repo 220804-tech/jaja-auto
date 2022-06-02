@@ -12,7 +12,9 @@ const initialState = {
     out: false,
     maxRecomandded: false,
     flashsaleLive: false,
-    banner: []
+    banner: [],
+    count: 0,
+    firstLoading: true
 }
 export default function storeDashboard(state = initialState, action) {
     const { type, payload } = action;
@@ -45,6 +47,10 @@ export default function storeDashboard(state = initialState, action) {
             return { ...state, loadmore: payload }
         case 'SET_OUT':
             return { ...state, out: payload }
+        case 'SET_COUNT':
+            return { ...state, out: payload }
+        case 'SET_FIRST_LOADING':
+            return { ...state, firstLoading: payload }
         default:
             return state;
     }

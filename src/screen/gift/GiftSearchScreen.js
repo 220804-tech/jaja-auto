@@ -199,7 +199,7 @@ export default function GiftSearchScreen(props) {
                         filtersGift.map((item, index) => {
                             return (
                                 <View key={String(index) + "XP"} style={[styles.mb_4]}>
-                                    <Text adjustsFontSizeToFit style={[styles.font_16, { fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale }]}>{item.name}</Text>
+                                    <Text adjustsFontSizeToFit style={[styles.font_16, { fontFamily: 'SignikaNegative-SemiBold', color: colors.BlackGrayScale }]}>{item.name}</Text>
                                     <View style={{ flex: 0, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                                         {item.items.map((child, idx) => {
                                             return (
@@ -216,7 +216,7 @@ export default function GiftSearchScreen(props) {
                     }
                     {sortsGift && sortsGift.length ?
                         <View style={[styles.mb_4]}>
-                            <Text adjustsFontSizeToFit style={[styles.font_16, { fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale }]}>Urutkan</Text>
+                            <Text adjustsFontSizeToFit style={[styles.font_16, { fontFamily: 'SignikaNegative-SemiBold', color: colors.BlackGrayScale }]}>Urutkan</Text>
                             <View style={{ flex: 0, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                                 {sortsGift.map((child, idx) => {
                                     return (

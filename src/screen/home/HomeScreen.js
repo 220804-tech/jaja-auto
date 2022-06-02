@@ -16,8 +16,8 @@ const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
 const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 import { useAndroidBackHandler } from "react-navigation-backhandler";
 import { TouchableRipple } from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import queryString from 'query-string';
+import FastImage from 'react-native-fast-image'
 
 
 LogBox.ignoreAllLogs()
@@ -31,6 +31,10 @@ export default function HomeScreen() {
     const reduxLoad = useSelector(state => state.product.productLoad)
     const [translucent, settranslucent] = useState(false)
     const reduxBanner = useSelector(state => state.dashboard.banner)
+    const reduxUpdate = useSelector(state => state.dashboard.count)
+    const firstLoading = useSelector(state => state.dashboard.firstLoading)
+
+    const [showBanner, setshowBanner] = useState(false)
 
     useAndroidBackHandler(() => {
         if (out) {
@@ -78,7 +82,7 @@ export default function HomeScreen() {
             let slug = Object.values(parsed.query)
             if (String(link.url).includes('product')) {
                 handleShowDetail('product', false, slug[0])
-            } else if (String(link.url).includes('product')) {
+            } else if (String(link.url).includes('store')) {
                 handleOpenStore(slug[0])
             } else {
                 handleShowDetail('gift', false, slug[0])
@@ -190,7 +194,10 @@ export default function HomeScreen() {
 
     useEffect(() => {
         handleContent()
-    }, [])
+        setTimeout(() => {
+            setshowBanner(true)
+        }, 20000);
+    }, [reduxUpdate])
 
     useEffect(() => {
         dynamicLinks().getInitialLink().then(link => {
@@ -207,7 +214,16 @@ export default function HomeScreen() {
         if (reduxAuth) {
             getBadges()
         }
+        handleFirstLoading()
     }, [reduxAuth])
+
+    const handleFirstLoading = () => {
+        if (firstLoading) {
+            setTimeout(() => {
+                dispatch({ type: 'SET_FIRST_LOADING', payload: false })
+            }, 1000);
+        }
+    }
 
     const handleContent = () => {
         setLoading(true)
@@ -256,7 +272,6 @@ export default function HomeScreen() {
 
         }
     }
-    console.log("🚀 ~ file: HomeScreen.js ~ line 275 ~ title ~ reduxBanner", reduxBanner)
 
     const renderNavBar = (text) => {
         return (
@@ -265,7 +280,7 @@ export default function HomeScreen() {
                 {/* <View style={style.navBar}> */}
 
                 <TouchableOpacity style={[style.searchBar, styles.row_start_center]} onPress={() => navigation.navigate("Search")}>
-                    <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%' }} />
+                    <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%', tintColor: colors.YellowJaja }} />
                     <Text style={styles.font_14}>{text}..</Text>
                 </TouchableOpacity>
                 <View style={[styles.row_between_center]}>
@@ -291,7 +306,6 @@ export default function HomeScreen() {
             </View >
         )
     }
-    console.log("🚀 ~ file: HomeScreen.js ~ line qwqwqw ~ title ~ reduxBanner", reduxBanner)
 
     const title = () => {
         return (
@@ -305,25 +319,38 @@ export default function HomeScreen() {
                 loop={true}
                 style={{ backgroundColor: colors.BlueJaja, flex: 0, justifyContent: 'center', alignItems: 'center' }}
             >
-                {reduxBanner?.length ?
-                    reduxBanner.map((item, key) => {
-                        console.log("🚀 ~ file: HomeScreen.js ~ line 274 ~ {images.map ~ key", item)
-                        return (
-                            <Image key={String(key)} style={style.swiperBanner}
-                                resizeMode={item.image ? "contain" : "cover"}
-                                source={{ uri: item.image }}
-                            />
-                        );
-                    }) :
-                    images.map((item, key) => {
-                        console.log("🚀 ~ file: HomeScreen.js ~ line 274 ~ {images.map ~ key", key)
-                        return (
-                            <Image key={String(key)} style={[style.swiperBanner, { resizeMode: 'contain' }]}
-                                resizeMode={item.image ? "contain" : "cover"}
-                                source={item.image}
-                            />
-                        );
-                    })}
+                {
+                    showBanner ?
+                        reduxBanner.map((item, key) => {
+                            console.log("🚀 ~ file: HomeScreen.js ~ line 312 ~ reduxBanner.map ~ item", item)
+                            return (
+                                // <Image key={String(key)} style={style.swiperBanner}
+                                //     resizeMode={item.image ? "contain" : "cover"}
+                                //     source={{ uri: item.image }}
+                                // />
+                                <FastImage
+                                    key={String(key)}
+                                    style={{ width: Wp('100%'), height: Wp('60%'), }}
+                                    // style={style.swiperBanner}
+                                    source={{ uri: item.image }}
+                                    resizeMode={FastImage.resizeMode.contain}
+                                />
+
+
+                            );
+                        })
+                        :
+                        images.map((item, key) => {
+                            return (
+                                <FastImage
+                                    key={String(key)}
+                                    style={{ width: Wp('100%'), height: Wp('60%'), }}
+                                    source={item.image}
+                                    resizeMode={FastImage.resizeMode.contain}
+                                />
+                            );
+                        })
+                }
             </Swiper>
         );
     };
@@ -368,24 +395,25 @@ export default function HomeScreen() {
                 </TouchableRipple> */}
                 {reduxShowFlashsale ? <Flashsale /> : null}
                 <Trending />
-                <TouchableRipple onPress={handleShowGift} rippleColor={colors.White} style={[styles.row_center, styles.px, styles.py_3, styles.my_3, {
-                    backgroundColor: colors.RedFlashsale, borderRadius: 7, alignSelf: 'center', width: '95%',
-                    shadowColor: colors.BlueJaja,
-                    shadowOffset: {
-                        width: 0,
-                        height: 2,
-                    },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 3.84,
+                <View style={[styles.column_center, styles.py_5, { backgroundColor: colors.BlueJaja }]}>
+                    <TouchableRipple onPress={handleShowGift} rippleColor={colors.White} style={[styles.row_center, styles.py_2, {
+                        backgroundColor: colors.PinkLight, alignSelf: 'center', width: '100%',
+                        shadowColor: colors.BlueJaja,
+                        shadowOffset: {
+                            width: 0,
+                            height: 2,
+                        },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 3.84,
 
-                    elevation: 5,
-                }]} >
-                    <View style={[styles.row_around_center, { width: '100%' }]}>
-                        <Text style={[styles.font_11, styles.T_semi_bold, { color: colors.White, marginBottom: '-0.5%' }]}>Berikan hadiah untuk teman spesial kamu disini!</Text>
-                        <Image source={require('../../assets/icons/heart.png')} style={[styles.icon_27, { marginTop: '-1%' }]} />
-                    </View>
-                </TouchableRipple>
-
+                        elevation: 5,
+                    }]} >
+                        <View style={[styles.row_between_center, styles.px_5, { width: '100%' }]}>
+                            <Text style={[styles.font_14, styles.T_bold, { alignSelf: 'flex-start', color: colors.White }]}>Berikan hadiah untuk teman spesial kamu disini!</Text>
+                            <Image source={require('../../assets/icons/heart.png')} style={[{ position: 'absolute', right: 7, width: Wp('15%'), height: Wp('14%') }]} />
+                        </View>
+                    </TouchableRipple>
+                </View>
                 {nearestProduct ? <NearestStore /> : null}
 
                 {/* <BasedOnSearch /> */}
@@ -400,7 +428,7 @@ export default function HomeScreen() {
 
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
         return layoutMeasurement.height + contentOffset.y >=
-            contentSize.height - (hg * 0.80) || layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 2)
+            contentSize.height - (hg * 0.80) || layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 3)
     }
 
     const loadMoreData = () => {
@@ -553,7 +581,7 @@ export default function HomeScreen() {
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
-            {loading ? <Loading /> : null}
+            {loading || firstLoading ? <Loading /> : null}
             {/* <ScrollViews
                 refreshControl={
                     <RefreshControl
@@ -702,7 +730,7 @@ const style = StyleSheet.create({
 
     titleStyle: {
         color: 'white',
-        fontFamily: 'Poppins-SemiBold',
+        fontFamily: 'SignikaNegative-SemiBold',
         fontSize: 18,
         backgroundColor: colors.BlueJaja,
         width: Wp('100%'), height: Wp('60%'),

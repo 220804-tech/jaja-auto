@@ -270,7 +270,7 @@ export default function index(props) {
                                 />
                                 :
                                 <View style={[style.row_end_center, { width: '40%' }]}>
-                                    <Text adjustsFontSizeToFit numberOfLines={1} style={[style.font_12, { fontFamily: 'Poppins-Medium', color: item.is_primary ? colors.BlueJaja : colors.Silver, marginRight: Platform.OS === 'ios' ? '3%' : '0%' }]}>Alamat utama</Text>
+                                    <Text adjustsFontSizeToFit numberOfLines={1} style={[style.font_12, { fontFamily: 'SignikaNegative-Medium', color: item.is_primary ? colors.BlueJaja : colors.Silver, marginRight: Platform.OS === 'ios' ? '3%' : '0%' }]}>Alamat utama</Text>
                                     {reduxUser && reduxUser.length > 1 ?
                                         <Switch
                                             trackColor={{ false: "#767577", true: "#99e6ff" }}
@@ -286,9 +286,9 @@ export default function index(props) {
                     <Text adjustsFontSizeToFit style={style.font_12}>{item.no_telepon ? item.no_telepon : ""}</Text>
                     <Paragraph numberOfLines={3} style={style.font_12}>{item.provinsi + ", " + item.kota_kabupaten + ", " + item.kecamatan + ", " + item.kelurahan + ", " + item.kode_pos + ", " + item.alamat_lengkap}</Paragraph>
                     <View style={[style.row_between_center, style.mt_3]}>
-                        <Text style={[style.font_12, { color: colors.BlueJaja, fontFamily: 'Poppins-Regular' }]}>{item.label}</Text>
+                        <Text style={[style.font_12, { color: colors.BlueJaja, fontFamily: 'SignikaNegative-Regular' }]}>{item.label}</Text>
                         <View style={{ flex: 0, justifyContent: 'flex-end', flexDirection: 'row' }}>
-                            <Text adjustsFontSizeToFit style={[styles.textAlamat, { fontSize: 12, textAlignVertical: "bottom", marginRight: '1%', fontFamily: 'Poppins-Regular', color: item.latitude ? colors.BlueJaja : colors.RedDanger }]}> {item.alamat_google ? "Lokasi sudah dipin" : "Lokasi belum dipin"}</Text>
+                            <Text adjustsFontSizeToFit style={[styles.textAlamat, { fontSize: 12, textAlignVertical: "bottom", marginRight: '1%', fontFamily: 'SignikaNegative-Regular', color: item.latitude ? colors.BlueJaja : colors.RedDanger }]}> {item.alamat_google ? "Lokasi sudah dipin" : "Lokasi belum dipin"}</Text>
                             <Image style={styles.map} source={require('../../assets/icons/google-maps.png')} />
                         </View>
                     </View>
@@ -333,7 +333,7 @@ export default function index(props) {
                     <TouchableOpacity style={[style.row_start_center, { marginRight: '2%' }]} onPress={() => navigation.goBack()}>
                         <Image style={style.appBarButton} source={require('../../assets/icons/arrow.png')} />
                     </TouchableOpacity>
-                    <Text numberOfLines={1} style={[style.font_15, { fontFamily: 'Poppins-SemiBold', color: colors.White, width: '60%', marginBottom: '-0.8%' }]}>Alamat</Text>
+                    <Text numberOfLines={1} style={[style.font_15, { fontFamily: 'SignikaNegative-SemiBold', color: colors.White, width: '60%', marginBottom: '-0.8%' }]}>Alamat</Text>
                 </View>
                 <View style={[style.row_end_center, { width: '50%' }]}>
                     {status === "extra" ?
@@ -380,8 +380,8 @@ const styles = StyleSheet.create({
     buttonMaps: { flex: 0, borderRadius: 20 },
     body: { width: "100%", flex: 1, justifyContent: 'flex-start', paddingVertical: '4%', paddingHorizontal: '3%', marginBottom: '2%' },
     form: { flex: 0, flexDirection: 'column', paddingVertical: '1%', marginBottom: '3%' },
-    textAlamat: { fontSize: 12, color: colors.BlackGrayScale, margin: 0, fontFamily: 'Poppins-Regular' },
-    textName: { fontSize: 13, color: colors.BlueJaja, fontFamily: 'Poppins-SemiBold' },
-    textNum: { fontSize: 13, color: colors.BlueJaja, fontFamily: 'Poppins-Regular' },
+    textAlamat: { fontSize: 12, color: colors.BlackGrayScale, margin: 0, fontFamily: 'SignikaNegative-Regular' },
+    textName: { fontSize: 13, color: colors.BlueJaja, fontFamily: 'SignikaNegative-SemiBold' },
+    textNum: { fontSize: 13, color: colors.BlueJaja, fontFamily: 'SignikaNegative-Regular' },
 
 })

@@ -151,7 +151,7 @@ export default function StoreScreen({ route }) {
                                 <View style={styles.row_between_center}>
                                     {Object.keys(reduxStore).length !== 0 ?
                                         <View style={styles.row_start_center}>
-                                            <View style={{ width: Wp('14.5%'), height: Wp('14.5%'), borderRadius: 5, marginRight: '5%', borderWidth: 0.5, borderColor: colors.Silver, backgroundColor: colors.White, alignItems: 'center', justifyContent: 'center' }}>
+                                            <View style={[styles.p_3, { width: Wp('15.5%'), height: Wp('15.5%'), borderRadius: 100, marginRight: '7%', borderWidth: 0.5, borderColor: colors.Silver, backgroundColor: colors.White, alignItems: 'center', justifyContent: 'center' }]}>
                                                 {reduxStore.image.profile ?
                                                     <Image source={{ uri: reduxStore.image.profile ? reduxStore.image.profile : null }} style={{ width: '100%', height: '100%', resizeMode: 'contain', borderRadius: 5 }} />
                                                     :
@@ -159,8 +159,8 @@ export default function StoreScreen({ route }) {
                                                 }
                                             </View>
                                             <View style={[styles.column_around_center, { height: Wp('14.5%'), alignItems: 'flex-start' }]}>
-                                                <Text adjustsFontSizeToFit numberOfLines={1} style={[styles.font_12, { color: colors.BlackGrayScale, fontFamily: 'Poppins-SemiBold', marginBottom: '3%', width: '100%' }]}>{reduxStore.name}</Text>
-                                                <Text adjustsFontSizeToFit style={[styles.font_11, { color: colors.BlackGrayScale, marginBottom: '3%' }]}>{reduxStore.location.city}</Text>
+                                                <Text adjustsFontSizeToFit numberOfLines={1} style={[styles.font_12, { color: colors.BlueJaja, fontFamily: 'SignikaNegative-Bold', marginBottom: '3%', width: '100%' }]}>{reduxStore.name}</Text>
+                                                <Text adjustsFontSizeToFit style={[styles.font_9, { color: colors.BlackGrayScale, marginBottom: '3%' }]}>{reduxStore.location.city}</Text>
                                                 {reduxStore.rating !== "0.0" ?
                                                     <View style={styles.row_center}>
                                                         <Text style={[styles.font_12, { color: colors.BlackGrayScale }]}>{reduxStore.rating} </Text>
@@ -173,13 +173,13 @@ export default function StoreScreen({ route }) {
                                         </View>
                                         : null
                                     }
-                                    <Button disabled={seller?.id ? false : true} onPress={handleChat} mode="contained" icon="chat" labelStyle={[styles.font_11, styles.T_semi_bold, { color: colors.White }]} color={colors.BlueJaja} >
+                                    <Button disabled={seller?.id ? false : true} onPress={handleChat} mode="contained" icon="chat" labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} color={colors.YellowJaja} >
                                         Chat
                                     </Button>
                                 </View>
                                 {greeting ?
-                                    <View style={[styles.py_3, { backgroundColor: colors.White, alignItems: 'center', justifyContent: 'center' }]}>
-                                        <Text style={[styles.font_12, { color: colors.BlackGrayScale }]}>{String(greeting).slice(0, 150)}</Text>
+                                    <View style={[styles.py_3, styles.mt_2, { flex: 0, backgroundColor: colors.White, alignItems: 'center', justifyContent: 'flex-start', }]}>
+                                        <Text style={[styles.font_12, { color: colors.BlackGrayScale, alignSelf: 'flex-start' }]}>{String(greeting).slice(0, 150)}</Text>
                                         {/* {greeting ?
                                 <>
                                     <View style={[styles.column, { width: '98%' }]}>
@@ -229,7 +229,7 @@ export default function StoreScreen({ route }) {
                                             return (
                                                 <View style={[styles.row_center, { width: Wp('50%'), minHeight: Wp('11%') }]}>
                                                     {/* <Image style={[styles.icon_25, { tintColor: focused ? colors.BlueJaja : colors.BlackSilver }]} source={route.title == 'Halaman Toko' ? require('../../assets/icons/store.png') : route.title == 'Produk' ? require('../../assets/icons/goods.png') : require('../../assets/icons/store.png')} /> */}
-                                                    <Text style={[styles.font_12, styles.medium, { textAlign: 'center', color: focused ? colors.BlueJaja : colors.BlackGrayScale }]}>{route.title}</Text>
+                                                    <Text style={[styles.font_12, styles.T_medium, { textAlign: 'center', color: focused ? colors.BlueJaja : colors.BlackGrayScale }]}>{route.title}</Text>
                                                 </View>
                                             )
                                         }}

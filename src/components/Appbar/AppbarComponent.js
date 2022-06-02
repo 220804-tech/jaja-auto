@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, TouchableOpacity, Image, Alert, StatusBar, Platform } from 'react-native'
+import { View, Text, TouchableOpacity, Image, Alert, StatusBar, Platform, CameraRoll } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
+import { TouchableRipple } from 'react-native-paper'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigation, styles, colors, Language, ServiceUser, ServiceCart, Wp } from '../../export'
 
@@ -49,6 +50,7 @@ export default function AppbarComponent(props) {
         })
     }
 
+
     return (
         <View style={styles.column}>
 
@@ -58,20 +60,32 @@ export default function AppbarComponent(props) {
                     {props.back ?
                         props.route ?
                             <TouchableOpacity style={[styles.row_start_center, { marginRight: '2%' }]} onPress={() => {
+
                                 navigation.navigate(props.route)
                             }}>
                                 <Image style={styles.appBarButton} source={require('../../assets/icons/arrow.png')} />
                             </TouchableOpacity>
                             :
-                            <TouchableOpacity style={[styles.row_start_center, { marginRight: '2%' }]} onPress={() => navigation.goBack()}>
+                            <TouchableOpacity style={[styles.row_start_center, { marginRight: '2%' }]} onPress={() => {
+                                if (props.reset) {
+                                    navigation.navigate(props.reset)
+                                } else {
+                                    navigation.goBack()
+                                }
+                            }}>
                                 <Image style={styles.appBarButton} source={require('../../assets/icons/arrow.png')} />
                             </TouchableOpacity>
                         : null}
                     {props.title ?
-                        <Text numberOfLines={1} style={[styles.font_15, { fontFamily: 'Poppins-SemiBold', color: colors.White, width: props.chat ? Wp('85%') : '60%', marginBottom: '-0.8%' }]}>{Language(props.title)}</Text>
+                        <Text numberOfLines={1} style={[styles.font_15, { fontFamily: 'SignikaNegative-SemiBold', color: colors.White, width: props.chat ? Wp('85%') : '60%', marginBottom: 0, marginTop: Platform.OS === 'android' ? '-0.5%' : 0 }]}>{Language(props.title)}</Text>
                         : null
                     }
                 </View>
+                {props.share ?
+                    <TouchableRipple onPress={props.handlePress} style={[styles.py, styles.px_5, { backgroundColor: colors.White, borderRadius: 3, justifyContent: 'center', alignItems: 'center', marginBottom: '-0.5%' }]} rippleColor={colors.BlueJaja} >
+                        <Text style={[styles.font_13, styles.T_bold, { color: colors.BlueJaja, textAlign: 'center', textAlignVertical: 'center', marginTop: '-1%' }]}>Share</Text>
+                    </TouchableRipple> : null
+                }
                 {props.trolley || props.notif && Object.keys(reduxUser).length ?
                     <View style={[styles.row_between_center]}>
                         {props.trolley ?

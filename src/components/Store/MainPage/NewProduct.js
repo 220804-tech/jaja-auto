@@ -102,10 +102,10 @@ export default function NewProduct() {
                                                 <Text style={[Ps.priceBeforeSmall, styles.mr_3,]}>{item.price}</Text>
                                                 <Text style={[Ps.discountSmall, styles.T_medium,]}>{item.discount}%</Text>
                                             </View>
-                                            <Text style={Ps.priceSmall}>{item.priceDiscount}</Text>
+                                            <Text style={[Ps.priceSmall, { color: colors.YellowJaja }]}>{item.priceDiscount}</Text>
                                         </>
                                         :
-                                        <Text style={[Ps.priceSmall, { color: colors.BlueJaja }]}>{item.price}</Text>
+                                        <Text style={[Ps.priceSmall, styles.T_semi_bold, { color: colors.YellowJaja }]}>{item.price}</Text>
                                     }
                                 </View>
                                 <View style={[Ps.location, { width: '94%' }]}>

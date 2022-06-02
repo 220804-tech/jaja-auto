@@ -110,32 +110,34 @@ export const styles = StyleSheet.create({
     py_5: { paddingVertical: '5%' },
 
 
-    font_6: { fontSize: RFValue(5, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_7: { fontSize: RFValue(6, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
+    font_6: { fontSize: RFValue(5, 480), fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
+    font_7: { fontSize: RFValue(6, 480), fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
 
-    font_8: { fontSize: RFValue(6.5, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_9: { fontSize: RFValue(7, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_10: { fontSize: RFValue(7.5, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_11: { fontSize: RFValue(8, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_12: { fontSize: RFValue(8.5, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_13: { fontSize: RFValue(9.5, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_14: { fontSize: 14, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_15: { fontSize: RFValue(10.5, 480), fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_16: { fontSize: 16, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_17: { fontSize: 17, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_18: { fontSize: 18, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_20: { fontSize: 20, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_22: { fontSize: 22, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_24: { fontSize: 24, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
-    font_26: { fontSize: 26, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale },
+    font_8: { fontSize: RFValue(6.5, 480), fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
+    font_9: { fontSize: RFValue(7, 480), fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
+    font_10: { fontSize: RFValue(7.5, 480), fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
+    font_11: { fontSize: RFValue(8, 480), fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
+    font_12: { fontSize: RFValue(8.5, 480), fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
+    font_13: { fontSize: RFValue(9.5, 480), fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
+    font_14: { fontSize: 14, fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
+    font_15: { fontSize: RFValue(10.5, 480), fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
+    font_16: { fontSize: 16, fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
+    font_17: { fontSize: 17, fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
+    font_18: { fontSize: 18, fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
+    font_20: { fontSize: 20, fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
+    font_22: { fontSize: 22, fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
+    font_24: { fontSize: 24, fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
+    font_26: { fontSize: 26, fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
 
-    T_semi_bold: { fontFamily: 'Poppins-SemiBold' },
-    T_bold: { fontFamily: 'Poppins-Bold' },
-    T_medium: { fontFamily: 'Poppins-Medium' },
+    T_semi_bold: { fontFamily: 'SignikaNegative-SemiBold' },
+    T_bold: { fontFamily: 'SignikaNegative-Bold' },
+    T_medium: { fontFamily: 'SignikaNegative-Medium' },
     T_italic: { fontFamily: 'Poppins-Italic' },
-    T_light: { fontFamily: 'Poppins-Light' },
+    T_light: { fontFamily: 'SignikaNegative-Light' },
     T_black: { fontFamily: 'Poppins-Black' },
     T_thin: { fontFamily: 'Poppins-Thin' },
+    T_regular: { fontFamily: 'SignikaNegative-Regular' },
+
 
 
     icon_27: { width: 27, height: 27 },
@@ -151,17 +153,20 @@ export const styles = StyleSheet.create({
     icon_12: { width: 12, height: 12 },
     icon_10: { width: 10, height: 10 },
 
+    shadow_3: { shadowColor: "#000", shadowOffset: { width: 0, height: 1, }, shadowOpacity: 0.22, shadowRadius: 2.22, elevation: 3, },
+    shadow_5: { shadowColor: "#000", shadowOffset: { width: 0, height: 2, }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5, },
+
     alertText: { fontSize: 14, color: colors.RedNotif },
-    priceBefore: { fontSize: 12, fontFamily: 'Poppins-Regular', color: colors.BlackGrayScale, textDecorationLine: 'line-through', },
-    priceAfter: { fontSize: 14, fontFamily: 'Poppins-Regular', color: colors.RedFlashsale },
+    priceBefore: { fontSize: 12, fontFamily: 'SignikaNegative', color: colors.BlackGrayScale, textDecorationLine: 'line-through', },
+    priceAfter: { fontSize: 14, fontFamily: 'SignikaNegative', color: colors.RedFlashsale },
 
     appBar: { zIndex: 1000, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', backgroundColor: '#64B0C9', height: Platform.OS === 'ios' ? Hp('5.5%') : Hp('7%'), width: Wp('100%'), color: colors.siplahDefault, paddingHorizontal: '4%', paddingBottom: '4%' },
     appBar2: { zIndex: 1000, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#64B0C9', height: Platform.OS === 'ios' ? Hp('5.5%') : Hp('7%'), width: Wp('100%'), color: colors.siplahDefault, paddingHorizontal: '4%' },
 
-    appBarText: { color: 'white', fontSize: 16, fontFamily: 'Poppins-SemiBold', marginBottom: Platform.OS === 'android' ? '2%' : 0 },
+    appBarText: { color: 'white', fontSize: 16, fontFamily: 'SignikaNegative-SemiBold', marginBottom: Platform.OS === 'android' ? '2%' : 0 },
     appBarButton: { tintColor: colors.White, height: 25, width: 25 },
 
-    actionSheetTitle: { flex: 1, fontFamily: 'Poppins-SemiBold', fontSize: 17, color: colors.BlueJaja },
+    actionSheetTitle: { flex: 1, fontFamily: 'SignikaNegative-SemiBold', fontSize: 17, color: colors.BlueJaja },
 
     countNotif: { position: 'absolute', height: 15, width: 15, backgroundColor: colors.RedNotif, right: -3, top: 0, borderRadius: 100, alignItems: 'center', justifyContent: 'center' },
     textNotif: {
@@ -170,16 +175,16 @@ export const styles = StyleSheet.create({
     cardProduct: { flex: 0, flexDirection: 'column', marginRight: 11, width: Wp('33%'), height: Wp('53%'), borderRadius: 4, backgroundColor: colors.White, alignItems: 'center' },
     flashsale: {
         fontSize: 16,
-        fontFamily: 'Poppins-SemiBold',
+        fontFamily: 'SignikaNegative-SemiBold',
         letterSpacing: 0,
         color: colors.White,
         marginBottom: '3%',
-        // fontFamily: 'Poppins-Regular'
+        // fontFamily: 'SignikaNegative'
     },
     titleDashboard: {
         fontSize: 15,
         textAlign: "left",
-        fontFamily: 'Poppins-Medium',
+        fontFamily: 'SignikaNegative-Medium',
         color: colors.BlueJaja,
         // marginBottom: '3%'
     },
@@ -194,5 +199,5 @@ export const styles = StyleSheet.create({
     searchBar: { flex: 0, flexDirection: 'row', backgroundColor: colors.White, borderRadius: 11, height: Platform.OS === 'ios' ? '66%' : '77%', width: '90%', alignItems: 'center', paddingHorizontal: '4%' },
 
     FL_TouchAble: { borderBottomColor: colors.Silver, borderBottomWidth: 1, paddingVertical: '3%' },
-    FL_TouchAbleItem: { fontSize: 14, fontFamily: 'Poppins-Medium', color: colors.BlackGrayScale },
+    FL_TouchAbleItem: { fontSize: 14, fontFamily: 'SignikaNegative-Medium', color: colors.BlackGrayScale },
 });

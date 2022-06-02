@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, TextInput, TouchableOpacity, Image, FlatList, StyleSheet, ImageBackground, ScrollView, Platform, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback, StatusBar, Dimensions } from "react-native";
+import { View, Text, SafeAreaView, TextInput, TouchableOpacity, Image, FlatList, StyleSheet, ImageBackground, ScrollView, Platform, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback, StatusBar, Dimensions, PermissionsAndroid } from "react-native";
 import React, { useState, useEffect, createRef } from "react";
 import { IconButton, TouchableRipple } from 'react-native-paper'
 import ImagePicker from "react-native-image-crop-picker";
@@ -47,9 +47,10 @@ export default function ChatScreen({ route }) {
     const { data, product, order } = route.params;
 
     const dispatch = useDispatch()
-    const listChat = [{ id: '1SX', text: 'Halo!' }, { id: '1SX', text: 'Halo, apakah barang ini ready?' }, { id: '2SX', text: 'Halo, apakah bisa dikirim hari ini?' }, { id: '3SX', text: 'Terima kasih!' }, { id: '4SX', text: 'Sama-sama!' },]
+    const listChat = [{ id: '1SX', text: 'Halo!' }, { id: '1SX', text: 'Halo, apakah barang ini ready?' }, { id: '2SX', text: 'Halo, apakah bisa mengirim hari ini?' }, { id: '3SX', text: 'Terima kasih!' }, { id: '4SX', text: 'Sama-sama!' },]
     const reduxLoad = useSelector(state => state.product.productLoad)
-    const [keyboardStatus, setKeyboardStatus] = useState(24);
+    const [keyboardStatus, setKeyboardStatus] = useState(24)
+
     useEffect(() => {
         handleFirebase()
         return () => {
@@ -178,7 +179,6 @@ export default function ChatScreen({ route }) {
 
                     });
             }
-
             if (isiChat.length > 0 || image || selectedOrder || selectedProduct) {
                 setLoading(false)
                 let chat = isiChat.length > 0 ? isiChat : imageUrl ? 'Mengirim gambar' : selectedOrder && Object.keys(selectedOrder).length ? 'Pesanan No. ' + selectedOrder.invoice : selectedProduct.name
@@ -209,7 +209,9 @@ export default function ChatScreen({ route }) {
                                 if (target) {
                                     try {
                                         Firebase.notifChat(target, { body: chat, title: reduxUser.name })
-                                        // await Firebase.buyerNotifications('chat', data.id)
+                                        Firebase.buyerNotifications('chat', data.id)
+                                        // await Firebase.sellerNotifications('chat', data.id)
+
                                     } catch (error) {
                                         console.log("🚀 ~ file: ChatScreen.js ~ line 182 ~ setTimeout ~ error", error)
                                     }
@@ -333,8 +335,11 @@ export default function ChatScreen({ route }) {
                             // <View style={[style.row_center, { width: Wp('65%'), height: Wp('65%'), backgroundColor: colors.BlueJaja, alignSelf: 'flex-end', paddingRight: '5%', borderRadius: 5 }]}>
                             //     <Image source={{ uri: item.image }} style={{ width: '96%', height: '96%', resizeMode: 'cover', alignSelf: 'center', justifyContent: 'center', alignItems: 'center', borderRadius: 2 }} />
                             // </View>
-                            <View style={[{ width: Wp('65%'), height: Wp('70%'), alignSelf: 'flex-end', alignItems: 'flex-end', justifyContent: 'flex-end', paddingHorizontal: '0.5%', marginRight: '-3%' }]}>
-                                <Image resizeMode="contain" source={{ uri: item.image }} style={{ width: '100%', height: '100%', resizeMode: 'center', alignSelf: 'center', borderWidth: 0.5, borderColor: colors.Silver, backgroundColor: colors.Silver }} />
+                            // <View style={[{ width: Wp('65%'), height: Wp('70%'), alignSelf: 'flex-end', alignItems: 'flex-end', justifyContent: 'flex-end', paddingHorizontal: '0.5%', marginRight: '-3%' }]}>
+                            //     <Image resizeMode="contain" source={{ uri: item.image }} style={{ width: '100%', height: '100%', resizeMode: 'center', alignSelf: 'center', borderWidth: 0.5, borderColor: colors.Silver, backgroundColor: colors.Silver }} />
+                            // </View>
+                            <View style={[{ width: Wp('70%'), height: Wp('70%'), alignSelf: 'flex-end', alignItems: 'flex-end', justifyContent: 'flex-end', paddingHorizontal: '0.5%', marginRight: '3%' }]}>
+                                <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%', resizeMode: 'contain', alignSelf: 'center' }} />
                             </View>
                             :
                             <>
@@ -581,38 +586,81 @@ export default function ChatScreen({ route }) {
         setIsiChat(value)
     }
 
+    const requestCameraPermission = async (open) => {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.CAMERA,
+                {
+                    title: "App Camera Permission",
+                    message: "App needs access to your camera",
+                    buttonNeutral: "Ask Me Later",
+                    buttonNegative: "Cancel",
+                    buttonPositive: "OK"
+                }
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                console.log("Camera permission given");
+                if (open === 'camera') {
+                    handleOpenCamera()
+                } else {
+                    handlePickImage()
+                }
+            } else {
+                console.log("Camera permission denied");
+            }
+        } catch (err) {
+            console.warn(err);
+        }
+    };
+
     const handleOpenCamera = () => {
-        launchCamera({
-            durationLimit: 61,
-            quality: 0.9,
-            includeBase64: true
-        }).then(res => {
+        try {
+            launchCamera({
+                durationLimit: 61,
+                quality: 0.9,
+                includeBase64: true
+            }).then(res => {
+                galeryRef.current?.setModalVisible(false)
+                if (!red?.didCancel) {
+                    setLoading(true)
+                    handleSend(res?.assets?.[0]?.base64)
+                    res?.errorCode ? setLoading(false) : null
+                }
+            }).catch(err => {
+                galeryRef.current?.setModalVisible(false)
+                console.log("🚀 ~ file: ChatScreen.js ~ line 595 ~ handleOpenCamera ~ err", err)
+                setLoading(false)
+            })
+        } catch (error) {
             galeryRef.current?.setModalVisible(false)
-            setLoading(true)
-            handleSend(res?.assets?.[0]?.base64)
-            res?.errorCode ? setLoading(false) : null
-        }).catch(err => {
-            console.log("🚀 ~ file: ChatScreen.js ~ line 595 ~ handleOpenCamera ~ err", err)
             setLoading(false)
-        })
+            console.log("🚀 ~ file: ChatScreen.js ~ line 603 ~ handleOpenCamera ~ error", error)
+
+        }
     }
 
-
     const handlePickImage = () => {
-        launchImageLibrary({
-            durationLimit: 61,
-            quality: 0.9,
-            includeBase64: true,
-        }).then(res => {
-            galeryRef.current?.setModalVisible(false)
-            setLoading(true)
-            handleSend(res?.assets?.[0]?.base64)
-            res?.errorCode ? setLoading(false) : null
-        }).catch(err => {
-            console.log("🚀 ~ file: ChatScreen.js ~ line 629 ~ handlePickImage ~ err", err)
-            setLoading(false)
-        })
+        try {
+            launchImageLibrary({
+                durationLimit: 61,
+                quality: 0.9,
+                includeBase64: true,
+            }).then(res => {
+                if (!red?.didCancel) {
+                    galeryRef.current?.setModalVisible(false)
+                    setLoading(true)
+                    handleSend(res?.assets?.[0]?.base64)
+                    res?.errorCode ? setLoading(false) : null
+                }
 
+            }).catch(err => {
+                console.log("🚀 ~ file: ChatScreen.js ~ line 629 ~ handlePickImage ~ err", err)
+                setLoading(false)
+            })
+        } catch (error) {
+            console.log("🚀 ~ file: ChatScreen.js ~ line 658 ~ handlePickImage ~ error", error)
+            setLoading(false)
+        }
     }
 
     const handlePickVideo = (indx) => {
@@ -643,8 +691,6 @@ export default function ChatScreen({ route }) {
             <ImageBackground source={require('../../assets/images/bgChat3.jpg')} style={{ width: '100%', height: '100%', paddingBottom: Math.max(insets.bottom, 50) }}>
                 {loading ? <Loading /> : null}
                 <StatusBar translucent={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
-
-
 
                 <View style={[styles.inner, { paddingBottom: keyboardStatus }]}>
                     {selectedProduct && Object.keys(selectedProduct).length ?
@@ -702,7 +748,7 @@ export default function ChatScreen({ route }) {
                                         </View>
 
                                         :
-                                        <Text style={{ color: colors.RedFlashsale, fontFamily: 'Poppins-SemiBold', fontSize: Wp("4%") }}>
+                                        <Text style={{ color: colors.RedFlashsale, fontFamily: 'SignikaNegative-SemiBold', fontSize: Wp("4%") }}>
                                             {product.price}
                                         </Text>
                                     }
@@ -739,21 +785,25 @@ export default function ChatScreen({ route }) {
                             contentContainerStyle={[style.px_4]}
                             showsHorizontalScrollIndicator={false}
                             renderItem={({ item }) => {
-                                return (
-                                    <TouchableOpacity key={item.id} onPress={() => setChat(item.text)} style={[style.py, {
-                                        flex: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.White, borderRadius: 7, marginHorizontal: 3, paddingHorizontal: 11, shadowColor: colors.BlueJaja,
-                                        shadowOffset: {
-                                            width: 0,
-                                            height: 1,
-                                        },
-                                        shadowOpacity: 0.18,
-                                        shadowRadius: 1.00,
+                                if (!Object.keys(selectedProduct).length && item.text != 'Halo, apakah barang ini ready?') {
 
-                                        elevation: 1,
-                                    }]}>
-                                        <Text style={[style.font_10, { color: colors.BlackGrayScale, textAlign: 'center', textAlignVertical: 'center' }]}>{item.text}</Text>
-                                    </TouchableOpacity>
-                                )
+                                    return (
+
+                                        <TouchableOpacity key={item.id} onPress={() => setChat(item.text)} style={[style.py, {
+                                            flex: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.White, borderRadius: 7, marginHorizontal: 3, paddingHorizontal: 11, shadowColor: colors.BlueJaja,
+                                            shadowOffset: {
+                                                width: 0,
+                                                height: 1,
+                                            },
+                                            shadowOpacity: 0.18,
+                                            shadowRadius: 1.00,
+
+                                            elevation: 1,
+                                        }]}>
+                                            <Text style={[style.font_10, { color: colors.BlackGrayScale, textAlign: 'center', textAlignVertical: 'center' }]}>{item.text}</Text>
+                                        </TouchableOpacity>
+                                    )
+                                }
                             }}
                             keyExtractor={(item, index) => String(index)}
                         />
@@ -814,11 +864,11 @@ export default function ChatScreen({ route }) {
             </ImageBackground>
             <ActionSheet containerStyle={{ flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.White, marginBottom: '10%' }} ref={galeryRef}>
                 <View style={[style.column, style.pb_5, { backgroundColor: '#ededed' }]}>
-                    <TouchableOpacity onPress={handleOpenCamera} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%', marginBottom: '0.5%' }}>
+                    <TouchableOpacity onPress={() => requestCameraPermission('camera')} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%', marginBottom: '0.5%' }}>
                         <Text style={[styles.font_16, { alignSelf: 'center' }]}>Ambil Foto</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={handlePickImage} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%', marginBottom: '0.5%' }}>
+                    <TouchableOpacity onPress={() => requestCameraPermission('gallery')} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%', marginBottom: '0.5%' }}>
                         <Text style={[styles.font_16, { alignSelf: 'center' }]}>Buka Galeri</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => galeryRef.current?.setModalVisible(false)} style={{ alignSelf: 'center', width: Wp('100%'), backgroundColor: colors.White, paddingVertical: '3%' }}>

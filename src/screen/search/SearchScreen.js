@@ -188,14 +188,20 @@ export default function SearchScreen(props) {
             dispatch({ type: 'SET_FILTERS', payload: [] })
             dispatch({ type: 'SET_SORTS', payload: [] })
             dispatch({ type: 'SET_KEYWORD', payload: '' })
-            fetch(`https://jaja.id/backend/product/search/result?page=1&limit=50&keyword=${text}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
-                .then(response => response.json())
-                .then(result => {
-                    dispatch({ type: 'SET_SEARCH', payload: result.data.items })
-                    dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
-                    dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
-                    dispatch({ type: 'SET_KEYWORD', payload: text })
-                    dispatch({ type: 'SET_SEARCH_LOADING', payload: false })
+            fetch(`https://jaja.id/backend/product/search/result?page=1&limit=40&keyword=${text}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
+                .then(response => response.text())
+                .then(res => {
+                    try {
+                        let result = JSON.parse(res)
+                        dispatch({ type: 'SET_SEARCH', payload: result.data.items })
+                        dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
+                        dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
+                        dispatch({ type: 'SET_KEYWORD', payload: text })
+                        dispatch({ type: 'SET_SEARCH_LOADING', payload: false })
+                    } catch (error) {
+                        Utils.handleError(res, "Error with status code : 120501")
+                        console.log("🚀 ~ file: SearchScreen.js ~ line 201 ~ handleFetch ~ error", error)
+                    }
                 })
                 .catch(error => {
                     dispatch({ type: 'SET_SEARCH_LOADING', payload: false })
@@ -232,24 +238,28 @@ export default function SearchScreen(props) {
                     headers: myHeaders,
                     redirect: 'follow'
                 };
-                fetch(`https://jaja.id/backend/product/search/result?page=1&limit=20&keyword=${text}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
-                    .then(response => response.json())
-                    .then(result => {
-                        dispatch({ type: 'SET_SEARCH', payload: result.data.items })
-                        dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
-                        dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
-                        dispatch({ type: 'SET_KEYWORD', payload: text })
+                fetch(`https://jaja.id/backend/product/search/result?page=1&limit=40&keyword=${text}&filter_price=&filter_location=&filter_condition=&filter_preorder=&filter_brand=&sort=`, requestOptions)
+                    .then(response => response.text())
+                    .then(res => {
+                        try {
+                            let result = JSON.parse(res)
+                            dispatch({ type: 'SET_SEARCH', payload: result.data.items })
+                            dispatch({ type: 'SET_FILTERS', payload: result.data.filters })
+                            dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
+                            dispatch({ type: 'SET_KEYWORD', payload: text })
+                        } catch (error) {
+                            Utils.handleError(res, "Error with status code : 120502")
+                        }
                     })
                     .catch(error => {
-                        Utils.handleError(error, "Error with status code : 12050")
+                        Utils.handleError(error, "Error with status code : 120503")
                     });
             } else {
                 Utils.alertPopUp("Periksa kembali koneksi internet anda!")
             }
 
         } catch (error) {
-            Utils.handleError(error, 'Error with status code : 21092')
-
+            Utils.handleError(error, 'Error with status code : 210929')
         }
 
 

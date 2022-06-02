@@ -656,7 +656,7 @@ const styles = StyleSheet.create({
     appBarText: {
         color: 'white',
         fontSize: 20,
-        fontFamily: 'Poppins-SemiBold',
+        fontFamily: 'SignikaNegative-SemiBold',
     },
     backIcon: {
         tintColor: 'white',

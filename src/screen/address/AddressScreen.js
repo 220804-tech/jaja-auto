@@ -33,6 +33,9 @@ export default function index(props) {
             if (props.route.params && props.route.params.data) {
                 setStatus(props.route.params.data);
             }
+            setTimeout(() => {
+                setLoading(false);
+            }, 5000);
         } catch (error) { }
     }, [props]);
 
@@ -58,6 +61,7 @@ export default function index(props) {
         try {
             ServiceUser.getProfile(reduxAuth)
                 .then(async (res) => {
+                    dispatch({ type: "SET_USER", payload: {} });
                     if (res) {
                         EncryptedStorage.setItem("user", JSON.stringify(res));
                         dispatch({ type: "SET_USER", payload: res });
@@ -107,16 +111,8 @@ export default function index(props) {
     };
 
     const toggleSwitch = (idx) => {
-        console.log(
-            "🚀 ~ file: AddressScreen.js ~ line 102 ~ toggleSwitch ~ idx",
-            idx
-        );
         try {
             let arr = reduxUser;
-            console.log(
-                "🚀 ~ file: AddressScreen.js ~ line 104 ~ toggleSwitch ~ arr",
-                arr
-            );
             if (!arr[idx].is_primary) {
                 arr[idx].is_primary = !arr[idx].is_primary;
                 handleChangePrimary(arr[idx].id);
@@ -276,8 +272,7 @@ export default function index(props) {
                 rippleColor={colors.BlueJaja}
                 onPress={() => {
                     if (status !== "multidrop") {
-                        // navigation.navigate("AddAddress", { data: item, edit: true });
-                        console.log("🚀 ~ file: AddressScreen.js ~ line 280 ~ renderItem ~ item", item)
+                        navigation.navigate("AddAddress", { data: item, edit: true });
                     }
                 }}
                 style={[style.column_start_center, styles.card]}
@@ -330,7 +325,7 @@ export default function index(props) {
                                         style={[
                                             style.font_12,
                                             {
-                                                fontFamily: "Poppins-Medium",
+                                                fontFamily: "SignikaNegative-Medium",
                                                 color: item.is_primary ? colors.BlueJaja : colors.Silver,
                                                 marginRight: Platform.OS === "ios" ? "3%" : "0%",
                                             },
@@ -370,7 +365,7 @@ export default function index(props) {
                         <Text
                             style={[
                                 style.font_12,
-                                { color: colors.BlueJaja, fontFamily: "Poppins-Regular" },
+                                { color: colors.BlueJaja, fontFamily: "SignikaNegative-Regular" },
                             ]}
                         >
                             {item.label}
@@ -390,7 +385,7 @@ export default function index(props) {
                                         fontSize: 12,
                                         textAlignVertical: "bottom",
                                         marginRight: "1%",
-                                        fontFamily: "Poppins-Regular",
+                                        fontFamily: "SignikaNegative-Regular",
                                         color: item.latitude ? colors.BlueJaja : colors.RedDanger,
                                     },
                                 ]}
@@ -514,16 +509,16 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: colors.BlackGrayScale,
         margin: 0,
-        fontFamily: "Poppins-Regular",
+        fontFamily: "SignikaNegative-Regular",
     },
     textName: {
         fontSize: 16,
         color: colors.BlueJaja,
-        fontFamily: "Poppins-SemiBold",
+        fontFamily: "SignikaNegative-SemiBold",
     },
     textNum: {
         fontSize: 13,
         color: colors.BlueJaja,
-        fontFamily: "Poppins-Regular",
+        fontFamily: "SignikaNegative-Regular",
     },
 });

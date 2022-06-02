@@ -266,7 +266,7 @@ export default function StoreProducts() {
                         reduxFilters.map((item, index) => {
                             return (
                                 <View key={String(index) + "XP"} style={[styles.mb_4]}>
-                                    <Text adjustsFontSizeToFit style={[styles.font_16, { fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale }]}>{item.name}</Text>
+                                    <Text adjustsFontSizeToFit style={[styles.font_16, { fontFamily: 'SignikaNegative-SemiBold', color: colors.BlackGrayScale }]}>{item.name}</Text>
                                     <View style={{ flex: 0, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                                         {item.items.map((child, idx) => {
                                             return (
@@ -283,7 +283,7 @@ export default function StoreProducts() {
                     }
                     {reduxSorts && reduxSorts.length ?
                         <View style={[styles.mb_4]}>
-                            <Text adjustsFontSizeToFit style={[styles.font_16, { fontFamily: 'Poppins-SemiBold', color: colors.BlackGrayScale }]}>Urutkan</Text>
+                            <Text adjustsFontSizeToFit style={[styles.font_16, { fontFamily: 'SignikaNegative-SemiBold', color: colors.BlackGrayScale }]}>Urutkan</Text>
                             <View style={{ flex: 0, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                                 {reduxSorts.map((child, idx) => {
                                     return (

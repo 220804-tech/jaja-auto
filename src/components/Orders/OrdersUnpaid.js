@@ -138,8 +138,8 @@ export default function OrdersUnpaid() {
                             /> */}
                                     <View style={[styles.row_between_center, styles.mt_5]}>
                                         <View style={{ width: '50%', justifyContent: 'center', paddingHorizontal: '3%' }}>
-                                            <Text style={[styles.font_14, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>Subtotal :</Text>
-                                            <Text numberOfLines={1} style={[styles.font_16, { fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>{item.totalPriceCurrencyFormat}</Text>
+                                            <Text style={[styles.font_14, { fontFamily: 'SignikaNegative-SemiBold', color: colors.BlueJaja }]}>Subtotal :</Text>
+                                            <Text numberOfLines={1} style={[styles.font_16, { fontFamily: 'SignikaNegative-SemiBold', color: colors.BlueJaja }]}>{item.totalPriceCurrencyFormat}</Text>
                                         </View>
                                         <Button onPress={() => {
                                             // dispatch({ type: 'SET_ORDERID', payload: item.orderId })

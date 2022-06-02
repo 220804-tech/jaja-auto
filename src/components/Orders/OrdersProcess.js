@@ -12,7 +12,7 @@ export default function OrdersProcess() {
     const reduxAuth = useSelector(state => state.auth.auth)
 
     const [refreshing, setRefreshing] = useState(false);
-    const [status, setstatus] = useState("Sedang disiapkan")
+    const [status, setstatus] = useState("Menunggu konfirmasi")
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);

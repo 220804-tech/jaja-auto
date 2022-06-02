@@ -7,33 +7,18 @@ import Routes from '../routes/Routes'
 import database from '@react-native-firebase/database';
 
 
-export const buyerNotifications = async (params, uidBuyyer) => {
-    console.log("🚀 ~ file: Firebase.js ~ line 11 ~ buyerNotifications ~ params", params)
+export const buyerNotifications = async (params, target) => {
     try {
-        // database()
-        //     .ref("/people/" + uidBuyyer)
-        //     .once('value')
-        //     .then(snapshot => {
-        //         var item = snapshot.val();
-        //         if (item.notif) {
-        //             database().ref(`/people/${uidBuyyer}/notif`).update(params === "home" ? { home: item.notif.home + 1 } : params === "chat" ? { chat: item.notif.chat + 1 } : { orders: item.notif.orders + 1 })
-        //         } else {
-        //             database().ref(`/people/${uidBuyyer}/notif`).update({ orders: 0, home: 0, chat: 0 }).then(() => {
-        //                 database().ref(`/people/${uidBuyyer}/notif`).update(params === "home" ? { home: item.notif.home + 1 } : params === "chat" ? { chat: item.notif.chat + 1 } : { orders: item.notif.orders + 1 })
-        //             })
-        //         }
-        //     })
         database()
-            .ref("/people/" + uidBuyyer)
+            .ref("/people/" + target)
             .once('value')
             .then(snapshot => {
                 var item = snapshot.val();
                 if (item && Object.keys(item).length && item.notif) {
-                    database().ref(`/people/${uidBuyyer}/notif`).set(params === "home" ? { home: item.notif.home + 1 } : params === "chat" ? { chat: item.notif.chat + 1 } : { orders: item.notif.orders + 1 })
-
+                    database().ref(`/people/${target}/notif/`).update({ [params]: item?.notif?.[params] + 1 })
                 } else {
-                    database().ref(`/people/${uidBuyyer}/notif`).set({ orders: 0, home: 0, chat: 0 }).then(() => {
-                        database().ref(`/people/${uidBuyyer}/notif`).set(params === "home" ? { home: item.notif.home + 1 } : params === "chat" ? { chat: item.notif.chat + 1 } : { orders: item.notif.orders + 1 })
+                    database().ref(`/people/${target}/notif/`).update({ orders: 0, home: 0, chat: 0 }).then(() => {
+                        database().ref(`/people/${target}/notif/`).update(params === "home" ? { home: item.notif.home + 1 } : params === "chat" ? { chat: item.notif.chat + 1 } : { orders: item.notif.orders + 1 })
                     })
                 }
             })
@@ -82,6 +67,7 @@ export const notifChat = async (target, data) => {
         }
 
     });
+    console.log("🚀 ~ file: Firebase.js ~ line 84 ~ notifChat ~ target", target)
 
     var requestOptions = {
         method: 'POST',

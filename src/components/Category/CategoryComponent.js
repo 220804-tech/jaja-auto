@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { View, Text, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native'
+import { View, Text, FlatList, Image, TouchableOpacity, ScrollView, Platform } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { useSelector, useDispatch } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
-import { styles, colors, Hp, Wp, FastImage, useNavigation, ServiceCategory, useFocusEffect, CheckSignal, Utils, RFValue } from '../../export'
+import { styles, colors, Hp, Wp, FastImage, useNavigation, ServiceCategory, useFocusEffect, CheckSignal, Utils, RFValue, HeaderTitleHome } from '../../export'
 
 export default function CategoryComponent() {
     const navigation = useNavigation();
@@ -56,7 +56,7 @@ export default function CategoryComponent() {
 
     const handleCategory = () => {
         // dispatch({ type: 'SET_CATEGORY_STATUS', payload: value })
-        navigation.navigate('Category');        
+        navigation.navigate('Category');
     }
     const handleSelected = (res) => {
         handleFetch(res)
@@ -129,95 +129,89 @@ export default function CategoryComponent() {
     }
 
     return (
-        <View style={[styles.column, styles.p_3]}>
-            <View style={styles.row_between_center}>
-                <Text style={[styles.titleDashboard, styles.mb_3]}>
-                    Kategori Pilihan
-                </Text>
-                <TouchableOpacity onPress={handleCategory}>
-                    <Text style={[{ fontSize: 13, fontFamily: 'Poppins-SemiBold', color: colors.BlueJaja }]}>
-                        Lihat Semua <Image source={require('../../assets/icons/play.png')} style={[styles.icon_10, { tintColor: colors.BlueJaja }]} />
-                    </Text>
-                </TouchableOpacity>
-            </View>
-            {reduxDashboard && reduxDashboard.length || storageDashboard && storageDashboard.length ?
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    <View style={{ width: 2 * Wp('100%'), height: Wp("44%") }} >
-                        <FlatList
-                            showsHorizontalScrollIndicator={false}
-                            data={reduxDashboard && reduxDashboard.length ? reduxDashboard : storageDashboard && storageDashboard.length ? storageDashboard : []}
-                            // horizontal
-                            // numColumns={3}
-                            contentContainerStyle={{ flex: 0, width: '100%', justifyContent: 'flex-start', flexDirection: 'row', flexWrap: 'wrap' }}
-                            scrollEnabled={false}
-                            keyExtractor={(item, index) => String(index)}
-                            renderItem={({ item, index }) => {
-                                return (
-                                    <>
-                                        {item.name !== 'Lainnya' && item.name !== 'Gift' ?
-                                            <TouchableOpacity
-                                                style={{
-                                                    borderRadius: 10,
-                                                    width: Wp("18%"),
-                                                    height: Wp("18%"),
-                                                    marginLeft: 1,
-                                                    marginRight: 11,
-                                                    marginTop: 5,
-                                                    marginBottom: 10,
-                                                    justifyContent: "center",
-                                                    alignItems: "center",
-                                                    backgroundColor: colors.White,
-                                                    shadowColor: colors.BlackGrayScale,
-                                                    shadowOffset: {
-                                                        width: 0,
-                                                        height: 0.8,
-                                                    },
-                                                    shadowOpacity: 0.11,
-                                                    shadowRadius: 0.75,
+        <View style={[styles.column]}>
+            <HeaderTitleHome title='Kategori Pilihan' handlePress={handleCategory} />
+            <View style={[styles.column, styles.p_3]}>
+                {reduxDashboard && reduxDashboard.length || storageDashboard && storageDashboard.length ?
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                        <View style={{ width: 2 * Wp('100%'), height: Wp("44%") }} >
+                            <FlatList
+                                showsHorizontalScrollIndicator={false}
+                                data={reduxDashboard && reduxDashboard.length ? reduxDashboard : storageDashboard && storageDashboard.length ? storageDashboard : []}
+                                // horizontal
+                                // numColumns={3}
+                                contentContainerStyle={{ flex: 0, width: '100%', justifyContent: 'flex-start', flexDirection: 'row', flexWrap: 'wrap' }}
+                                scrollEnabled={false}
+                                keyExtractor={(item, index) => String(index)}
+                                renderItem={({ item, index }) => {
+                                    return (
+                                        <>
+                                            {item.name !== 'Lainnya' && item.name !== 'Gift' ?
+                                                <TouchableOpacity
+                                                    style={{
+                                                        borderRadius: 10,
+                                                        width: Wp("18%"),
+                                                        height: Wp("18%"),
+                                                        marginLeft: 1,
+                                                        marginRight: 11,
+                                                        marginTop: 5,
+                                                        marginBottom: 10,
+                                                        justifyContent: "center",
+                                                        alignItems: "center",
+                                                        backgroundColor: colors.White,
+                                                        shadowColor: colors.BlackGrayScale,
+                                                        shadowOffset: {
+                                                            width: 0,
+                                                            height: 2,
+                                                        },
+                                                        shadowOpacity: 0.25,
+                                                        shadowRadius: 3.84,
 
-                                                    elevation: 0.5,
-                                                }}
-                                                onPress={() => handleSelected(item)}
-                                                key={index}
-                                            >
-                                                <FastImage
-                                                    style={{ width: Wp("9%"), height: Wp("9%"), }}
-                                                    source={{
-                                                        uri: item.icon,
-                                                        headers: { Authorization: 'someAuthToken' },
-                                                        priority: FastImage.priority.normal,
+                                                        elevation: 5,
+
                                                     }}
-                                                    resizeMode={FastImage.resizeMode.contain}
-                                                />
+                                                    onPress={() => handleSelected(item)}
+                                                    key={index}
+                                                >
+                                                    <FastImage
+                                                        style={{ width: Wp("9%"), height: Wp("9%"), }}
+                                                        source={{
+                                                            uri: item.icon,
+                                                            headers: { Authorization: 'someAuthToken' },
+                                                            priority: FastImage.priority.normal,
+                                                        }}
+                                                        resizeMode={FastImage.resizeMode.contain}
+                                                    />
 
-                                                <Text numberOfLines={2} style={[styles.font_8, styles.mt_5, { color: colors.BlueJaja, alignSelf: 'center', textAlign: 'center' }]}>{item.name}</Text>
-                                            </TouchableOpacity>
-                                            : null
-                                        }
-                                    </>
-                                )
-                            }}
-                        />
-                    </View>
-                </ScrollView>
-
-                :
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                    {shimmerData.map(item => {
-                        return (
-                            <ShimmerPlaceHolder
-                                key={item}
-                                LinearGradient={LinearGradient}
-                                width={Hp('9%')}
-                                height={Hp("9%")}
-                                style={{ borderRadius: 8, marginLeft: 1, marginRight: 11, marginTop: 5, marginBottom: 10 }}
-                                shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                                    <Text numberOfLines={2} style={[styles.font_8, styles.mt_5, { color: colors.BlueJaja, alignSelf: 'center', textAlign: 'center' }]}>{item.name}</Text>
+                                                </TouchableOpacity>
+                                                : null
+                                            }
+                                        </>
+                                    )
+                                }}
                             />
-                        )
-                    })}
+                        </View>
+                    </ScrollView>
 
-                </ScrollView>
-            }
+                    :
+                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                        {shimmerData.map(item => {
+                            return (
+                                <ShimmerPlaceHolder
+                                    key={item}
+                                    LinearGradient={LinearGradient}
+                                    width={Hp('9%')}
+                                    height={Hp("9%")}
+                                    style={{ borderRadius: 8, marginLeft: 1, marginRight: 11, marginTop: 5, marginBottom: 10 }}
+                                    shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                />
+                            )
+                        })}
+
+                    </ScrollView>
+                }
+            </View>
         </View>
     )
 }

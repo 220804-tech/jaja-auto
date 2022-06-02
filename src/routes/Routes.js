@@ -55,11 +55,11 @@ export default function Routes() {
 
                 initialRouteName="Splash" screenOptions={{
                     headerShown: false,
-                    gestureEnabled: true,
-                    transitionSpec: {
-                        open: config,
-                        close: config
-                    }
+                    // gestureEnab  led: true,
+                    // transitionSpec: {
+                    //     open: config,
+                    //     close: config
+                    // }
                 }}>
                 <Stack.Screen name="Splash" component={Splash} />
                 <Stack.Screen name="Beranda" component={BottomRoutes} />

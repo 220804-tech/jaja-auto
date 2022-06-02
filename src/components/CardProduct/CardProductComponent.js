@@ -41,11 +41,16 @@ export default function CardProductComponent(props) {
                         setTimeout(() => dispatch({ type: 'SET_FILTER_LOCATION', payload: true }), 7000);
                     }
                 }).catch(err => {
+                    dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                     error = false
                 })
             } else {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
                 error = false
             }
+            setTimeout(() => {
+                dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
+            }, 11000);
         } catch (error) {
             dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
             alert(String(error.message))
@@ -68,13 +73,14 @@ export default function CardProductComponent(props) {
         return (
             <TouchableOpacity
                 onPress={() => handleShowDetail(item, false)}
-                style={[Ps.cardProduct]}
+                style={[Ps.cardProduct, styles.shadow_5, { shadowColor: colors.BlueJaja }]}
                 key={index}>
                 {item.isDiscount ? <Text adjustsFontSizeToFit style={Ps.textDiscount}>{item.discount}%</Text> : null}
-                <View style={[styles.column, { height: Wp('44%'), width: Wp('44%'), borderTopLeftRadius: 3, borderTopRightRadius: 3 }]}>
+                <View style={[styles.column, { height: Wp('44%'), width: Wp('44%'), borderTopLeftRadius: 6, borderTopRightRadius: 6 }]}>
                     {
                         item?.image && item.image !== null && String(item.image).includes('http') ?
                             <FastImage
+
                                 style={Ps.imageProduct}
                                 source={{
                                     uri: item.image,
@@ -108,17 +114,17 @@ export default function CardProductComponent(props) {
                         <>
                             <Text adjustsFontSizeToFit style={Ps.priceBefore}>{item.price}</Text>
                             <View style={styles.row_start_center}>
-                                <Text adjustsFontSizeToFit style={[Ps.price, { color: colors.BlueJaja }]}>{item.priceDiscount}</Text>
+                                <Text adjustsFontSizeToFit style={[Ps.price, { color: colors.YellowJaja }]}>{item.priceDiscount}</Text>
                                 {item.isFlashsale ? <Image style={[styles.icon_16, { tintColor: colors.RedFlashsale, marginTop: '-1.5%', marginLeft: '2%' }]} source={require('../../assets/icons/flash.png')} /> : null}
                             </View>
                         </>
                         :
-                        <Text adjustsFontSizeToFit style={[Ps.price, { color: colors.BlueJaja }]}>{item.price}</Text>
+                        <Text adjustsFontSizeToFit style={[Ps.price, { color: colors.YellowJaja }]}>{item.price}</Text>
                     }
                 </View>
                 <View style={[Ps.cardBottom, styles.py]}>
                     {item.amountSold && item.amountSold > 0 ?
-                        <View style={[Ps.location]}>
+                        <View style={[Ps.location, styles.mb]}>
                             <Text adjustsFontSizeToFit numberOfLines={1} style={[Ps.locarionNameSmall]}>Terjual {item.amountSold}</Text>
                         </View> : null
                     }

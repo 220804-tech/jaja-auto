@@ -19,7 +19,7 @@ export async function getCheckout(auth, coin) {
                 let result = JSON.parse(res)
                 if (result.status.code === 200) {
                     return result.data;
-                } else if (result.status.code == 404 && result.status.message == 'alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu') {
+                } else if (result.status.code == 404 && String(result.status.message).includes('Alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu')) {
                     Utils.alertPopUp('Silahkan tambah alamat terlebih dahulu!')
                     return 'Alamat'
                 } else {
@@ -53,7 +53,7 @@ export async function getShipping(auth, gift) {
 
             if (result.status.code === 200) {
                 return result.data;
-            } else if (result.status.code == 404 && result.status.message == 'alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu') {
+            } else if (result.status.code == 404 && String(result.status.message).includes('Alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu')) {
                 // Utils.alertPopUp('Silahkan tambah alamat terlebih dahuluuuuuuuuuuuuuuuuuuu!')
                 return null
             } else {

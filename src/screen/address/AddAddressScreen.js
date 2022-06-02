@@ -67,7 +67,6 @@ export default function AddAddressScreen(props) {
         } else {
             return false;
         }
-
     });
 
     const handleSearchLatLong = (item) => {
@@ -660,9 +659,9 @@ export default function AddAddressScreen(props) {
                                     </TouchableOpacity>
                                     <View style={{ flex: 1 }}>
                                         {alamatGoogle === "" ?
-                                            <Text onPress={() => setStatus("map")} style={{ fontSize: 14, color: colors.RedDanger, fontFamily: 'Poppins-Regular' }}>Lokasi belum dipin</Text>
+                                            <Text onPress={() => setStatus("map")} style={{ fontSize: 14, color: colors.RedDanger, fontFamily: 'SignikaNegative-Regular' }}>Lokasi belum dipin</Text>
                                             :
-                                            <Text onPress={() => setStatus("map")} style={{ fontSize: 14, color: colors.BlackGrayScale, fontFamily: 'Poppins-Regular', borderBottomWidth: 0.5 }}>{alamatGoogle}</Text>
+                                            <Text onPress={() => setStatus("map")} style={{ fontSize: 14, color: colors.BlackGrayScale, fontFamily: 'SignikaNegative-Regular', borderBottomWidth: 0.5 }}>{alamatGoogle}</Text>
                                         }
                                     </View>
                                 </View>
@@ -838,7 +837,7 @@ const styles = StyleSheet.create({
         flex: 0, flexDirection: 'row', justifyContent: 'space-between', width: '100%', borderBottomColor: '#C0C0C0', borderBottomWidth: 0.5, paddingBottom: '2%', paddingTop: '1%'
     },
     formTitle: {
-        fontSize: 14, color: 'grey', fontFamily: 'Poppins-Regular'
+        fontSize: 14, color: 'grey', fontFamily: 'SignikaNegative-Regular'
     },
     avatar: {
         width: 130,
@@ -872,7 +871,7 @@ const styles = StyleSheet.create({
     ubah: {
         flex: 0,
         color: colors.BlueJaja,
-        fontFamily: 'Poppins-SemiBold',
+        fontFamily: 'SignikaNegative-SemiBold',
         elevation: 1
     },
     actionSheetBody: {
