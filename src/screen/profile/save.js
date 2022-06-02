@@ -9,6 +9,8 @@ import EncryptedStorage from "react-native-encrypted-storage";
 import { useSelector, useDispatch } from 'react-redux'
 import { colors, styles as style, Wp, useNavigation, Loading, Hp, Appbar, Utils } from "../../export";
 import { WebView } from 'react-native-webview';
+import { set } from "react-native-reanimated";
+import { borderRadius } from "styled-system";
 
 export default function Lainnya() {
     const reduxAuth = useSelector(state => state.auth.auth)
@@ -159,8 +161,8 @@ export default function Lainnya() {
             setOpen("Nama Lengkap")
             setTimeout(() => actionSheetRef.current?.setModalVisible(true), 50);
         } else if (e === "Nomor Telephone") {
-            setTimeout(() => actionSheetRef.current?.setModalVisible(true), 50);
             setOpen("Nomor Telephone")
+            setTimeout(() => actionSheetRef.current?.setModalVisible(true), 50);
         } else if (e === "Jenis Kelamin") {
             setOpen("Jenis Kelamin")
             setTimeout(() => actionSheetRef.current?.setModalVisible(true), 50);
@@ -484,54 +486,41 @@ export default function Lainnya() {
                             {/* onPress={() => handleEdit("Nama Lengkap")} */}
                             <TouchableWithoutFeedback >
                                 <View style={styles.form}>
-                                    <Text adjustsFontSizeToFit style={[style.font_13, style.T_semi_bold, { color: colors.BlueJaja }]}>Nama Lengkap</Text>
+                                    <Text adjustsFontSizeToFit style={[style.font_15, style.T_semi_bold, { color: colors.BlueJaja }]}>Nama Lengkap</Text>
                                     <View style={styles.formItem}>
-                                        {/* <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{name ? name : ""}</Text> */}
-                                        {/* <TouchableOpacity onPress={() => handleEdit("Nama Lengkap")} style={styles.btnUbah}>
+                                        <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{name ? name : ""}</Text>
+                                        <TouchableOpacity onPress={() => handleEdit("Nama Lengkap")} style={styles.btnUbah}>
                                             <Text adjustsFontSizeToFit style={styles.ubah}>{name ? "Ubah" : "Tambah"}</Text>
-                                        </TouchableOpacity> */}
-                                        <TextInput
-                                            value={name}
-                                            onChangeText={(text) => setname(text)}
-                                            style={[styles.textInput, style.font_13]}
-                                        />
+                                        </TouchableOpacity>
                                     </View>
                                 </View>
                             </TouchableWithoutFeedback>
                             <TouchableWithoutFeedback>
                                 <View style={styles.form}>
-                                    <Text adjustsFontSizeToFit style={[style.font_13, style.T_semi_bold, { color: colors.BlueJaja }]}>Email</Text>
+                                    <Text adjustsFontSizeToFit style={[style.font_15, style.T_semi_bold, { color: colors.BlueJaja }]}>Email</Text>
                                     <View style={styles.formItem}>
-                                        <TextInput
-                                            value={email}
-                                            editable={false}
-                                            style={[styles.textInput, style.font_13]}
-                                        />
+                                        <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{email ? email : ""}</Text>
                                     </View>
                                 </View>
                             </TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback >
                                 <View style={styles.form}>
-                                    <Text adjustsFontSizeToFit style={[style.font_13, style.T_semi_bold, { color: colors.BlueJaja }]}>Tanggal Lahir</Text>
+                                    <Text adjustsFontSizeToFit style={[style.font_15, style.T_semi_bold, { color: colors.BlueJaja }]}>Tanggal Lahir</Text>
                                     <View style={styles.formItem}>
-                                        <TextInput
-                                            value={date ? date : "Pilih Tanggal Lahir"}
-                                            editable={false}
-                                            style={[styles.textInput, style.font_13, { color: date ? colors.BlackGrayScale : colors.Silver }]}
-                                        />
-                                        {!date || String(date).includes('1970') ?
-                                            <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.btnUbah}>
+                                        <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{date ? date : "Pilih Tanggal Lahir"}</Text>
+                                        {!date ?
+                                            <TouchableOpacity onPress={() => handleEdit("Nama Lengkap")} style={styles.btnUbah}>
 
-                                                <Text adjustsFontSizeToFit style={styles.ubah}>{!date ? 'Tambah' : 'Edit'}</Text>
+                                                <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text>
                                             </TouchableOpacity>
                                             : null}
                                     </View>
                                 </View>
                             </TouchableWithoutFeedback>
-                            <View style={[styles.form, style.mt, { flexDirection: 'column' }]}>
-                                <Text adjustsFontSizeToFit style={[style.font_13, style.T_semi_bold, { color: colors.BlueJaja }]}>{gender ? gender == "pria" ? "Laki - Laki" : "Perempuan" : "Pilih Jenis Kelamin"}</Text>
-                                <View style={[style.row_between_center, style.mt_2]}>
-                                    <View style={[style.row_center]}>
+                            <View style={[styles.form, { flexDirection: 'column' }]}>
+                                <Text adjustsFontSizeToFit style={[style.font_15, style.T_semi_bold, { color: colors.BlueJaja }]}>{gender ? gender == "pria" ? "Laki - Laki" : "Perempuan" : "Pilih Jenis Kelamin"}</Text>
+                                <View style={[style.row_between_center, style.mt]}>
+                                    <View style={{ flex: 0, alignItems: 'center', flexDirection: 'row', marginLeft: '-2.5%' }}>
                                         <RadioButton
                                             color={colors.YellowJaja}
                                             value="first"
@@ -543,9 +532,8 @@ export default function Lainnya() {
                                         />
                                         <Text adjustsFontSizeToFit style={[styles.formPlaceholder, { textAlignVertical: 'center' }]}>Laki - Laki</Text>
                                     </View>
-                                    <View style={[style.row_center]}>
+                                    <View style={{ flex: 0, alignItems: 'center', flexDirection: 'row' }}>
                                         <RadioButton
-
                                             color={colors.YellowJaja}
                                             value="second"
                                             status={gender === "wanita" ? 'checked' : 'unchecked'}
@@ -567,29 +555,21 @@ export default function Lainnya() {
                             {/* onPress={() => handleEdit("Nomor Telephone")} */}
                             <TouchableWithoutFeedback >
                                 <View style={styles.form}>
-                                    <Text adjustsFontSizeToFit style={[style.font_13, style.T_semi_bold, { color: colors.BlueJaja }]}>Telephone</Text>
+                                    <Text adjustsFontSizeToFit style={[style.font_15, style.T_semi_bold, { color: colors.BlueJaja }]}>Telephone</Text>
                                     <View style={styles.formItem}>
-                                        <TextInput
-                                            placeholderTextColor={colors.Silver}
-                                            placeholder="Nomor telephone"
-                                            value={telephone && telephone !== 'undefined' ? telephone : ''}
-                                            onChangeText={(text) => settelephone(text)}
-                                            style={[styles.textInput, style.font_13]}
-                                        />
+                                        <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{telephone ? telephone : 'Input Telephone'}</Text>
+                                        <TouchableOpacity onPress={() => handleEdit("Nomor Telephone")} style={styles.btnUbah}>
+                                            <Text adjustsFontSizeToFit style={styles.ubah}>{telephone ? "Ubah" : "Tambah"}</Text>
+                                        </TouchableOpacity>
                                     </View>
                                 </View>
                             </TouchableWithoutFeedback>
                             <TouchableWithoutFeedback>
                                 <View style={styles.form}>
-                                    <Text adjustsFontSizeToFit style={[style.font_13, style.T_semi_bold, { color: colors.BlueJaja }]}>Password</Text>
+                                    <Text adjustsFontSizeToFit style={[style.font_15, style.T_semi_bold, { color: colors.BlueJaja }]}>Password</Text>
                                     <View style={styles.formItem}>
-                                        <TextInput
-                                            value={view ? '********' : '-'}
-                                            editable={false}
-                                            onChangeText={(text) => setname(text)}
-                                            style={[styles.textInput, style.font_13]}
-                                        />
-                                        <TouchableOpacity onPress={() => passwordRef.current?.setModalVisible(true)} style={styles.btnUbah}>
+                                        <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{view ? "********" : "-"}</Text>
+                                        <TouchableOpacity onPress={() => handleEdit("Password")} style={styles.btnUbah}>
                                             <Text adjustsFontSizeToFit style={styles.ubah}>{view ? "Ubah" : "Tambah"}</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -597,22 +577,17 @@ export default function Lainnya() {
                             </TouchableWithoutFeedback>
                             <TouchableWithoutFeedback >
                                 <View style={styles.form}>
-                                    <Text adjustsFontSizeToFit style={[style.font_13, style.T_semi_bold, { color: colors.BlueJaja }]}>Rekening</Text>
+                                    <Text adjustsFontSizeToFit style={[style.font_15, style.T_semi_bold, { color: colors.BlueJaja }]}>Rekening</Text>
                                     <View style={styles.formItem}>
-                                        <TextInput
-                                            value={accountShow ? accountBank : 'Tambah Rekening'}
-                                            editable={false}
-                                            onChangeText={(text) => setname(text)}
-                                            style={[styles.textInput, style.font_13, { color: accountShow ? colors.BlackText : colors.Silver }]}
-                                        />
+                                        <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{accountShow ? accountBank : 'Tambah Rekening'}</Text>
                                         <TouchableOpacity onPress={() => accountShow ? null : navigation.navigate('AddAccount')} style={styles.btnUbah}>
-
                                             {!accountShow ? <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text> : null}
                                         </TouchableOpacity>
                                     </View>
                                 </View>
                             </TouchableWithoutFeedback>
-                            <Button onPress={handleSimpan} color={colors.BlueJaja} mode="contained" labelStyle={[style.font_13, style.T_semi_bold, { color: colors.White }]} style={style.mb_5}>Simpan</Button>
+
+                            {showButton ? <Button onPress={handleSimpan} color={colors.BlueJaja} mode="contained" labelStyle={[style.font_13, style.T_semi_bold, { color: colors.White }]} style={style.mb_5}>Simpan</Button> : null}
                             {/* 
                         <TouchableWithoutFeedback onPress={() => Linking.openURL("market://details?id=com.seller.jaja")}>
                             <Text adjustsFontSizeToFit style={[style.font_14, style.my_5, { alignSelf: 'center', color: colors.BlueJaja }]}>Mulai Berjualan?</Text>
@@ -625,9 +600,11 @@ export default function Lainnya() {
                     ref={actionSheetRef}>
                     <View style={[style.row_between_center, style.my_2]}>
                         <Text adjustsFontSizeToFit style={style.actionSheetTitle}>Atur Profile</Text>
-                        <TouchableOpacity style={[style.row_center, style.py, style.px_3, { backgroundColor: colors.YellowJaja, borderRadius: 3 }]} onPress={() => actionSheetRef.current?.setModalVisible(false)}  >
-                            <Text adjustsFontSizeToFit style={[style.font_11, style.T_semi_bold, { color: colors.White }]}>Simpan</Text>
-
+                        <TouchableOpacity onPress={() => actionSheetRef.current?.setModalVisible(false)}  >
+                            <Image
+                                style={[style.icon_16, { tintColor: colors.BlackGrey }]}
+                                source={require('../../assets/icons/close.png')}
+                            />
                         </TouchableOpacity>
                     </View>
                     <View style={[style.column, style.pb_5, style.mb_5]}>
@@ -662,8 +639,6 @@ export default function Lainnya() {
                                         <TextInput
                                             style={styles.inputbox}
                                             placeholder="Input nomor telephone"
-                                            placeholderTextColor={colors.Silver}
-
                                             value={telephone}
                                             onFocus={() => settextInputColor(colors.BlueJaja)}
                                             onBlur={() => settextInputColor('#C0C0C0')}
@@ -709,7 +684,7 @@ export default function Lainnya() {
                 <ActionSheet onClose={() => handleUpdate(date, photo)} footerHeight={80} containerStyle={{ paddingHorizontal: '4%', paddingTop: '1%' }}
                     ref={passwordRef}>
                     <View style={[style.row_between_center, style.my_2]}>
-                        <Text adjustsFontSizeToFit style={[style.font_16, style.T_bold, { color: colors.BlueJaja }]}>Atur Pofile</Text>
+                        <Text adjustsFontSizeToFit style={style.actionSheetTitle}>Atur Pofile</Text>
                         <TouchableOpacity onPress={() => passwordRef.current?.setModalVisible(false)}  >
                             <Image
                                 style={[style.icon_16, { tintColor: colors.BlackGrey }]}
@@ -718,12 +693,12 @@ export default function Lainnya() {
                         </TouchableOpacity>
                     </View>
                     {/* <View style={styles.actionSheetBody}> */}
-                    {!view ?
-                        <View style={[styles.form]}>
+                    {view ?
+                        <View style={styles.form}>
                             <Text adjustsFontSizeToFit style={[style.font_14]}>Kata sandi lama</Text>
-                            <View style={[styles.formItem, style.mb_3]}>
+                            <View style={[styles.formItem, { paddingBottom: '0%', borderBottomColor: oldcolor, borderBottomWidth: 1, marginBottom: '5%' }]}>
                                 <TextInput
-                                    style={styles.textInput}
+                                    style={styles.inputbox}
                                     placeholder="Input kata sandi lama"
                                     onChangeText={(text) => setoldpassword(text)}
                                     onFocus={() => setoldcolor(colors.BlueJaja)}
@@ -738,9 +713,9 @@ export default function Lainnya() {
                                 />
                             </View>
                             <Text adjustsFontSizeToFit style={[style.font_14]}>Kata sandi baru</Text>
-                            <View style={[styles.formItem]}>
+                            <View style={[styles.formItem, { paddingBottom: '0%', borderBottomColor: passwordcolor, borderBottomWidth: 1 }]}>
                                 <TextInput
-                                    style={styles.textInput}
+                                    style={styles.inputbox}
                                     placeholder="Input kata sandi baru"
                                     secureTextEntry
                                     onFocus={() => setpasswordcolor(colors.BlueJaja)}
@@ -755,11 +730,11 @@ export default function Lainnya() {
                                 />
                                 {/* <Image /> */}
                             </View>
-                            <Text adjustsFontSizeToFit style={[style.font_10, style.T_light, { color: 'red', marginBottom: alertTextPassword1 ? '2%' : '0%' }]}>{alertTextPassword1}</Text>
+                            <Text adjustsFontSizeToFit style={[style.font_12, { color: colors.RedNotif }]}>{alertTextPassword1}</Text>
                             <Text adjustsFontSizeToFit style={[style.font_14]}>Konfirmasi kata sandi baru</Text>
-                            <View style={[styles.formItem, style.mb_2,]}>
+                            <View style={[styles.formItem, { paddingBottom: '0%', borderBottomColor: confirmcolor, borderBottomWidth: 1 }]}>
                                 <TextInput
-                                    style={styles.textInput}
+                                    style={styles.inputbox}
                                     placeholder="Konfirmasi kata sandi baru"
                                     secureTextEntry
                                     onFocus={() => setconfrimcolor(colors.BlueJaja)}
@@ -783,9 +758,9 @@ export default function Lainnya() {
                         </View> :
                         <View style={styles.form}>
                             <Text adjustsFontSizeToFit style={[style.font_14]}>Kata sandi baru</Text>
-                            <View style={[styles.formItem]}>
+                            <View style={[styles.formItem, { paddingBottom: '0%', borderBottomColor: passwordcolor, borderBottomWidth: 1 }]}>
                                 <TextInput
-                                    style={styles.textInput}
+                                    style={styles.inputbox}
                                     placeholder="Input kata sandi baru"
                                     secureTextEntry
                                     onFocus={() => setpasswordcolor(colors.BlueJaja)}
@@ -800,11 +775,11 @@ export default function Lainnya() {
                                 />
                                 {/* <Image /> */}
                             </View>
-                            <Text adjustsFontSizeToFit style={[style.font_11, style.T_light, { color: colors.RedNotif, marginBottom: alertTextPassword1 ? '2%' : '0%' }]}>{alertTextPassword1}</Text>
+                            <Text adjustsFontSizeToFit style={{ color: 'red', marginBottom: '5%', fontSize: 12 }}>{alertTextPassword1}</Text>
                             <Text adjustsFontSizeToFit style={[style.font_14]}>Konfirmasi kata sandi baru</Text>
-                            <View style={[styles.formItem]}>
+                            <View style={[styles.formItem, { paddingBottom: '0%', borderBottomColor: confirmcolor, borderBottomWidth: 1 }]}>
                                 <TextInput
-                                    style={styles.textInput}
+                                    style={styles.inputbox}
                                     placeholder="Konfirmasi kata sandi baru"
                                     secureTextEntry
                                     onFocus={() => setconfrimcolor(colors.BlueJaja)}
@@ -820,9 +795,9 @@ export default function Lainnya() {
                                 />
                                 {/* <Image /> */}
                             </View>
-                            <Text adjustsFontSizeToFit style={[style.font_11, style.T_light, { color: colors.RedNotif, marginBottom: '3%' }]}>{alertTextPassword}</Text>
+                            <Text adjustsFontSizeToFit style={{ color: 'red', marginBottom: '5%', fontSize: 12 }}>{alertTextPassword}</Text>
 
-                            <Button color={colors.BlueJaja} labelStyle={[style.font_13, style.T_bold, { color: colors.White }]} mode="contained" onPress={handleAdd}>
+                            <Button color={colors.BlueJaja} mode="contained" onPress={handleAdd}>
                                 Simpan
                             </Button>
                         </View>
@@ -856,7 +831,6 @@ export default function Lainnya() {
 }
 
 const styles = StyleSheet.create({
-    textInput: { width: '80%', padding: '1%' },
     inputbox: {
         width: '100%',
         backgroundColor: 'transparent',
@@ -868,12 +842,12 @@ const styles = StyleSheet.create({
     form: {
         flex: 0,
         flexDirection: 'column',
-        paddingVertical: '0.5%',
-        marginBottom: '1.5%'
+        paddingVertical: '1%',
+        marginBottom: '2%'
     },
     // '#C7C7CD'
     formItem: {
-        flex: 0, flexDirection: 'row', justifyContent: 'space-between', width: '100%', borderBottomColor: '#C0C0C0', borderBottomWidth: 0.5, paddingVertical: '1%'
+        flex: 0, flexDirection: 'row', justifyContent: 'space-between', width: '100%', borderBottomColor: '#C0C0C0', borderBottomWidth: 0.5, paddingBottom: '2%', paddingTop: '1%'
     },
     formTitle: {
         fontSize: 14, color: 'grey', fontFamily: 'SignikaNegative-Regular'
@@ -905,7 +879,7 @@ const styles = StyleSheet.create({
         opacity: 0.95,
     },
     ubah: {
-        fontSize: 13,
+        fontSize: 12,
         color: colors.White,
         fontFamily: 'SignikaNegative-SemiBold',
         width: '100%',
@@ -913,10 +887,10 @@ const styles = StyleSheet.create({
         marginTop: Platform.OS === 'android' ? '-2%' : 0
     },
     btnUbah: {
-        justifyContent: 'center', alignItems: 'center',
+        flex: 0, justifyContent: 'center', alignItems: 'center',
         backgroundColor: colors.YellowJaja, width: '17.5%',
         borderRadius: 5,
-        paddingVertical: '0%'
+        paddingVertical: '1%'
     },
     body: { flex: 1, flexDirection: 'column', padding: '4%', },
     banner: { width: Wp('50%'), height: '100%', borderRadius: 7 },

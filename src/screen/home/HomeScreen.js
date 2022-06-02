@@ -69,10 +69,10 @@ export default function HomeScreen() {
             image: require('../../assets/banner/home/banner1.png'),
             router: "KategoriSport",
         },
-        {
-            image: require('../../assets/banner/home/banner1540x520-01.jpg'),
-            router: "KategoriBuku",
-        }
+        // {
+        //     image: require('../../assets/banner/home/banner1540x520-01.jpg'),
+        //     router: "KategoriBuku",
+        // }
     ]
 
     const handleDynamicLink = link => {
@@ -314,7 +314,7 @@ export default function HomeScreen() {
                 horizontal={true}
                 dotColor={colors.White}
                 activeDotColor={colors.YellowJaja}
-                paginationStyle={{ bottom: 0 }}
+                paginationStyle={{ bottom: 10 }}
                 autoplay={true}
                 loop={true}
                 style={{ backgroundColor: colors.BlueJaja, flex: 0, justifyContent: 'center', alignItems: 'center' }}
@@ -330,8 +330,7 @@ export default function HomeScreen() {
                                 // />
                                 <FastImage
                                     key={String(key)}
-                                    style={{ width: Wp('100%'), height: Wp('60%'), }}
-                                    // style={style.swiperBanner}
+                                    style={style.swiperBanner}
                                     source={{ uri: item.image }}
                                     resizeMode={FastImage.resizeMode.contain}
                                 />
@@ -344,7 +343,7 @@ export default function HomeScreen() {
                             return (
                                 <FastImage
                                     key={String(key)}
-                                    style={{ width: Wp('100%'), height: Wp('60%'), }}
+                                    style={style.swiperBanner}
                                     source={item.image}
                                     resizeMode={FastImage.resizeMode.contain}
                                 />
@@ -733,12 +732,9 @@ const style = StyleSheet.create({
         fontFamily: 'SignikaNegative-SemiBold',
         fontSize: 18,
         backgroundColor: colors.BlueJaja,
-        width: Wp('100%'), height: Wp('60%'),
-        flex: 0,
-        justifyContent: 'center',
-        alignItems: 'center'
+        // width: Wp('100%'), height: Wp('75%'),
     },
     touchIcon: { width: '14%', justifyContent: 'center', alignItems: 'center' },
-    swiperBanner: { width: Wp('100%'), height: Wp('60%'), resizeMode: 'contain', backgroundColor: 'transparent', marginTop: '4%' },
+    swiperBanner: { width: '100%', height: '100%', resizeMode: 'contain', backgroundColor: 'transparent' },
     searchBar: { flex: 0, backgroundColor: colors.White, borderRadius: 11, height: NAV_BAR_HEIGHT / (Platform.OS === 'android' ? 1.8 : 1.2), width: "77.5%", paddingHorizontal: '4.5%', marginRight: '3%' }
 })
