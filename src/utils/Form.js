@@ -110,22 +110,18 @@ export function handleError(error, name) {
     if (String(error).includes("request failed")) {
         alertPopUp("Tidak dapat terhubung, periksa kembali koneksi internet anda!")
     } else {
-        if (Platform.OS === 'android') {
-            Alert.alert(
-                String(name),
-                `${'Error: ' + String(error)} `,
-                [
-                    {
-                        text: "TUTUP",
-                        onPress: () => console.log("Cancel Pressed"),
-                        style: "cancel"
-                    }
-                ],
-                { cancelable: false }
-            );
-        } else {
-
-        }
+        Alert.alert(
+            String(name),
+            `${'Error: ' + String(error)} `,
+            [
+                {
+                    text: "TUTUP",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                }
+            ],
+            { cancelable: false }
+        );
     }
 
 }

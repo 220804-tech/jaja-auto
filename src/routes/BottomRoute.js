@@ -191,19 +191,20 @@ export default function BottomRoute() {
             //     )
             // }}
             />
-            {/* <Tab.Screen name="Feed" component={Feed}
+            <Tab.Screen name="Feed" component={Feed}
                 options={{
                     tabBarLabel: ({ size, focused }) => (
-                        <Text style={{ fontSize: size, color: focused ? colors.Silver : colors.BlackGrayScale }}>{Language("Feed")}</Text>
+                        <Text style={{ fontSize: 12, color: focused ? colors.BlueJaja : colors.Silver, marginBottom: '3%' }}>{Language("Feed")}</Text>
                     ),
-                    tabBarIcon: ({ size, focused }) => (
-                        <View>
-                            <FAIcon name="stack-exchange" size={size} color={focused ? colors.Silver : "#a1a1a1"} style={{ alignSelf: 'center' }} />
-                            <View style={style.countNotif}><Text style={style.textNotif}>99+</Text></View>
-                        </View>
-                    )
+                    tabBarIcon: ({ size, focused }) => {
+                        return (
+                            <View style={[style.column, style.mx]}>
+                                <Image style={{ width: size, height: size, tintColor: focused ? colors.BlueJaja : colors.Silver, marginBottom: '-2%' }} source={require(`../assets/icons/invoice.png`)} />
+                            </View>
+                        )
+                    }
                 }}
-            /> */}
+            />
             <Tab.Screen name="Chat" component={ListChat}
                 options={{
                     tabBarLabel: ({ size, focused }) => (
