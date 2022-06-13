@@ -1,6 +1,9 @@
 import { ToastAndroid, Alert } from 'react-native'
-import { Utils, axios, } from '../export';
+import { Utils, axios, styles, useNavigation, } from '../export';
 import EncryptedStorage from 'react-native-encrypted-storage'
+
+
+
 export async function productDetail(auth, slug) {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);
@@ -36,8 +39,6 @@ export async function productDetail(auth, slug) {
 }
 
 export async function getProduct(auth, slug) {
-    console.log("🚀 ~ file: Product.js ~ line 39 ~ getProduct ~ slug", slug)
-    console.log("🚀 ~ file: Product.js ~ line 42 ~ getProduct ~ auth", auth)
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);
     myHeaders.append("Cookie", "ci_session=pkkgeivel5ftbi5a9eod0r8k5276f8v9");
@@ -70,6 +71,45 @@ export async function getProduct(auth, slug) {
         });
 
 }
+
+export async function newGetProduct(auth, dispatch) {
+    try {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", auth);
+        myHeaders.append("Cookie", "ci_session=pkkgeivel5ftbi5a9eod0r8k5276f8v9");
+        var requestOptions = {
+            method: 'GET',
+            headers: auth ? myHeaders : "",
+            redirect: 'follow'
+        };
+        return await fetch(`https://jaja.id/backend/product/${slug}`, requestOptions)
+            .then(response => response.text())
+            .then(result => {
+                try {
+                    let data = JSON.parse(result)
+                    if (data?.status?.code === 200 || data?.status?.code === 204) {
+                        return data.data;
+                    } else if (String(data?.status?.message).includes('data not found')) {
+                        return 404
+                    } else {
+                        Utils.handleErrorResponse(data, "Error with status code : 121515")
+                        return null
+                    }
+                } catch (error) {
+                    Utils.handleError(JSON.stringify(result), "Error with status code : 121525")
+                    return null
+                }
+            })
+            .catch(error => {
+                Utils.handleError(String(error), "Error with status code : 121535")
+                return null
+            });
+    } catch (error) {
+        Utils.handleError(String(error), "Error with status code : 121545")
+        return null
+    }
+}
+
 
 export async function addCart(auth, crendentials) {
     var config = {

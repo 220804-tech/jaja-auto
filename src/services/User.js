@@ -1,5 +1,6 @@
 import { ToastAndroid, Alert } from 'react-native'
 import { Utils } from '../export';
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 
 export async function getBadges(auth) {
     if (auth) {
@@ -216,4 +217,60 @@ export async function getListAccount(auth) {
 
         });
 }
+
+export async function handleWishlist(auth, idProduct) {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", auth);
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Cookie", "ci_session=t3uc2fb7opug4n91n18e70tcpjvdb12u");
+    var raw = JSON.stringify({ "id_produk": idProduct });
+    var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+    };
+    fetch("https://jaja.id/backend/user/addWishlist", requestOptions)
+        .then(response => response.json())
+        .then(result => {
+            if (result?.status?.code === 200) {
+                return true
+            } else {
+                return false
+            }
+        })
+        .catch(error => {
+            Utils.handleError(error, "Error with status code : 42025")
+            return false
+        });
+
+}
+
+export async function handleCreateLink(slugProduct) {
+    try {
+        const link_URL = await dynamicLinks().buildShortLink({
+            link: `https://jajaid.page.link/product?slug=${slugProduct}`,
+            domainUriPrefix: 'https://jajaid.page.link',
+            ios: {
+                bundleId: 'com.jaja.customer',
+                appStoreId: '1547981332',
+                fallbackUrl: 'https://apps.apple.com/id/app/jaja-id-marketplace-hobbies/id1547981332?l=id',
+            },
+            android: {
+                packageName: 'com.jajaidbuyer',
+                fallbackUrl: 'https://play.google.com/store/apps/details?id=com.jajaidbuyer',
+            },
+            navigation: {
+                forcedRedirectEnabled: true,
+            }
+        });
+        return link_URL
+    } catch (error) {
+        Utils.alertPopUp('Sepertinya ada masalah, coba lagi sesaat!')
+        console.log("🚀 ~ file: ProductScreen.js ~ line 138 ~ dynamicLink ~ error", error)
+        return null
+    }
+}
+
+
 

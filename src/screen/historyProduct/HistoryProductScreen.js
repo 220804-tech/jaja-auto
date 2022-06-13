@@ -21,7 +21,6 @@ export default function HistoryProductScreen() {
 
 
     useEffect(() => {
-        console.log('+=======================================================F')
         getItem(null)
     }, [])
 

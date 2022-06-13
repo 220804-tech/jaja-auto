@@ -60,7 +60,6 @@ export default class ForgotPasswordScreen extends Component {
             fetch("https://jaja.id/backend/user/forgot_password", requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    console.log("🚀 ~ file: index.js ~ line 62 ~ index ~ result", result.status)
                     if (result.status.code === 200) {
                         this.setState({ loading: false })
                         setTimeout(() => {
@@ -71,7 +70,6 @@ export default class ForgotPasswordScreen extends Component {
                                 button: false,
                             });
                             this.timerID = setInterval(() => this.setTime(), 1000);
-                            console.log(this.state.email, 'ini email lupa password');
                         }, 50);
 
                     } else if (result.status.code === 404) {

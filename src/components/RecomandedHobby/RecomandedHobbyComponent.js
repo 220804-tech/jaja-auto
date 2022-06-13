@@ -15,7 +15,6 @@ export default function RecomandedHobbyComponent(props) {
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
     const reduxdashRecommanded = useSelector(state => state.dashboard.recommanded)
     const reduxmaxRecommanded = useSelector(state => state.dashboard.maxRecomandded)
-    console.log("🚀 ~ file: RecomandedHobbyComponent.js ~ line 17 ~ RecomandedHobbyComponent ~ reduxdashRecommanded", reduxdashRecommanded.length)
 
     useEffect(() => {
         if (reduxLoadmore) {
@@ -27,6 +26,7 @@ export default function RecomandedHobbyComponent(props) {
     useEffect(() => {
         // getStorage()
     }, [])
+
     const getStorage = () => {
         EncryptedStorage.getItem('dashrecommanded').then(res => {
             if (res) {

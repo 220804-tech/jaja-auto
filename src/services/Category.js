@@ -12,26 +12,37 @@ export async function getAllCategory() {
     };
 
     return await fetch("https://jaja.id/backend/master/category", requestOptions)
-        .then(response => response.json())
-        .then(result => {
-            if (result.status.code === 200 || result.status.code === 204) {
-                return result.data;
-            } else {
-                Alert.alert(
-                    "Jaja.id",
-                    String(result.status.message) + " => " + String(result.status.code),
-                    [
-                        {
-                            text: "TUTUP",
-                            onPress: () => console.log("Cancel Pressed"),
-                            style: "cancel"
-                        },
-                    ]
-                );
+        .then(response => response.text())
+        .then(resp => {
+            try {
+                let result = JSON.parse(resp)
+                if (result.status.code === 200 || result.status.code === 204) {
+                    return result.data;
+                } else {
+                    Alert.alert(
+                        "Jaja.id",
+                        String(result.status.message) + " => " + String(result.status.code),
+                        [
+                            {
+                                text: "TUTUP",
+                                onPress: () => console.log("Cancel Pressed"),
+                                style: "cancel"
+                            },
+                        ]
+                    );
+                    return null
+                }
+            } catch (error) {
+                console.log("🚀 ~ file: Category.js ~ line 36 ~ getAllCategory ~ error", error)
+                Utils.handleError(JSON.stringify(resp), "Error with status code : 41021")
                 return null
             }
         })
-        .catch(error => Utils.handleError(error, "Error get categorys"));
+        .catch(error => {
+            Utils.handleError(error, "Error with status code : 41022")
+            return null
+
+        });
 }
 
 

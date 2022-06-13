@@ -14,6 +14,8 @@ import profile from './storeProfile'
 import complain from './complainStore'
 import gift from './storeGift'
 import product from './storeProduct'
+import baseUrl from './storeBaseUrl'
+
 
 
 export default combineReducers({
@@ -31,5 +33,6 @@ export default combineReducers({
     profile,
     complain,
     gift,
-    product
+    product,
+    baseUrl
 })
