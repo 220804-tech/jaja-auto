@@ -72,7 +72,7 @@ export async function getProduct(auth, slug) {
 
 }
 
-export async function newGetProduct(auth, dispatch) {
+export async function newGetProduct(auth, slug) {
     try {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", auth);
