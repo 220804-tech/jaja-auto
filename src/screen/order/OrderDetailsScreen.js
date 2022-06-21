@@ -263,10 +263,6 @@ export default function OrderDetailsScreen() {
 
 
     const gotoPaymentDetailSub = (item) => {
-        // this.setState({modalVisible:false});
-        // const { navigation} = this.props;
-        // const {id_order,paymentChooseTemp,config} =this.state;
-        // console.log(config.midtransMethod);
         setModalShow(false);
         var dataPayment = {
             payment_type: item.payment_type,
@@ -276,9 +272,7 @@ export default function OrderDetailsScreen() {
             payment_sub_label: item.payment_sub_label,
             payment_fee: item.fee,
             payment_form: item.payment_form
-            //payment_form:'screenOther'
         }
-        console.log('dataPayment', JSON.stringify(dataPayment));
 
         var param = {
             id_order: orderPaymentRecent.order_id,
@@ -613,17 +607,17 @@ export default function OrderDetailsScreen() {
 
     const handleShowPayment = (item) => {
         setselectedPayment(item)
-        // if (item.payment_type_label !== 'Bank Transfer') {
-        //setModalShow(true)
-        // setsubPayment('')
-        gotoPaymentDetail(item);
-        console.log('pilih');
-        // }
-        //  else {
-        //     //alert('sd');
-        //     setsubPayment(item.subPayment)
-        //     actionSheetPayment.current?.setModalVisible(true)
-        // }
+        if (item.payment_type_label !== 'Bank Transfer') {
+            setModalShow(true)
+            setsubPayment('')
+            // gotoPaymentDetail(item);
+            // console.log('pilih');
+        }
+        else {
+            //alert('sd');
+            setsubPayment(item.subPayment)
+            actionSheetPayment.current?.setModalVisible(true)
+        }
     }
 
     const getListPayment = (total) => {

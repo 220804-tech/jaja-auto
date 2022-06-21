@@ -66,7 +66,7 @@ export default function OrdersUnpaid() {
 
                     renderItem={({ item }) => {
                         return (
-                            <TouchableOpacity style={Os.card} onPress={() => handleOrderDetails(item)}>
+                            <TouchableOpacity style={Os.card} >
                                 <View style={[styles.row_between_center, styles.px_2, styles.mb_3, { width: '100%' }]}>
                                     <View style={[styles.row_start_center, { width: '45%' }]}>
                                         <Image style={{ width: Wp('8%'), height: Wp('8%'), borderRadius: 100, marginRight: '5%', resizeMode: 'contain' }} source={{ uri: item.store.image ? item.store.image : null }} />
@@ -91,7 +91,7 @@ export default function OrdersUnpaid() {
                                         <View style={[styles.row_between_center, { width: '100%' }]}>
                                             <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}>{item.totalPriceCurrencyFormat}</Text>
 
-                                            <Button color={item.isRating ? colors.YellowJaja : colors.BlueJaja} mode="contained" contentStyle={{ width: Wp('27%') }} style={{ width: Wp('27%'), alignSelf: 'flex-end' }} labelStyle={[styles.font_9, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
+                                            <Button onPress={() => handleOrderDetails(item)} color={item.isRating ? colors.YellowJaja : colors.BlueJaja} mode="contained" contentStyle={{ width: Wp('27%') }} style={{ width: Wp('27%'), alignSelf: 'flex-end' }} labelStyle={[styles.font_9, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
                                                 {item.isRating ?
                                                     "Beri Nilai"
                                                     : 'Rician'

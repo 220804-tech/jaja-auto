@@ -170,7 +170,6 @@ export default function AddReview(props) {
         fetch("https://jaja.id/backend/order/rate", requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: AddReview.js ~ line 172 ~ handleReview ~ result", result)
                 res = 'succes'
                 setLoading(false)
                 if (result.status.code === 200) {

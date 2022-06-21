@@ -265,17 +265,22 @@ export default function ProductScreen(props) {
 
     const handleAddCart = (name) => {
         try {
+            console.log("🚀 ~ file: ProductScreen.js ~ line 271 ~ handleAddCart ~ !reduxProduct.store", !reduxProduct.store)
             setdisableCart(true)
             if (reduxAuth) {
-                if (reduxProduct.variant && reduxProduct.variant.length) {
-                    if (Object.keys(variasiSelected).length) {
-                        handleApiCart(name)
+                if (!reduxProduct.store?.closed_store) {
+                    if (reduxProduct.variant && reduxProduct.variant.length) {
+                        if (Object.keys(variasiSelected).length) {
+                            handleApiCart(name)
+                        } else {
+                            setalert('Pilih salah satu variasi!')
+                            Utils.alertPopUp('Anda belum memilih variasi produk ini!')
+                        }
                     } else {
-                        setalert('Pilih salah satu variasi!')
-                        Utils.alertPopUp('Anda belum memilih variasi produk ini!')
+                        handleApiCart(name)
                     }
                 } else {
-                    handleApiCart(name)
+                    Utils.alertPopUp('Saat ini toko sedang offline!')
                 }
             } else {
                 handleLogin()

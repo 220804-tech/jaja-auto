@@ -161,14 +161,15 @@ export default function StoreScreen({ route }) {
                                             <View style={[styles.column_around_center, { height: Wp('14.5%'), alignItems: 'flex-start' }]}>
                                                 <Text adjustsFontSizeToFit numberOfLines={1} style={[styles.font_12, { color: colors.BlueJaja, fontFamily: 'SignikaNegative-Bold', marginBottom: '3%', width: '100%' }]}>{reduxStore.name}</Text>
                                                 <Text adjustsFontSizeToFit style={[styles.font_9, { color: colors.BlackGrayScale, marginBottom: '3%' }]}>{reduxStore.location.city}</Text>
+
                                                 {reduxStore.rating !== "0.0" ?
                                                     <View style={styles.row_center}>
                                                         <Text style={[styles.font_12, { color: colors.BlackGrayScale }]}>{reduxStore.rating} </Text>
                                                         <Image source={require('../../assets/icons/star.png')} style={[styles.icon_14, { tintColor: colors.YellowJaja }]} />
                                                     </View>
                                                     :
-                                                    <View style={styles.row_center}>
-                                                    </View>}
+                                                    null}
+
                                             </View>
                                         </View>
                                         : null
@@ -179,6 +180,13 @@ export default function StoreScreen({ route }) {
                                 </View>
                                 {greeting ?
                                     <View style={[styles.py_3, styles.mt_2, { flex: 0, backgroundColor: colors.White, alignItems: 'center', justifyContent: 'flex-start', }]}>
+                                        {!reduxStore?.closed_store == true ?
+                                            <View style={[styles.row_start_center, styles.mb_2, { alignSelf: 'flex-start' }]}>
+                                                <Image source={require('../../assets/icons/circle.png')} style={[styles.icon_12, styles.mr, { tintColor: colors.Silver }]} />
+
+                                                <Text adjustsFontSizeToFit style={[styles.font_9, { color: colors.BlackGrayScale, textAlignVertical: 'center' }]}>Toko sedang offline</Text>
+                                            </View>
+                                            : null}
                                         <Text style={[styles.font_12, { color: colors.BlackGrayScale, alignSelf: 'flex-start' }]}>{String(greeting).slice(0, 150)}</Text>
                                         {/* {greeting ?
                                 <>
@@ -242,7 +250,7 @@ export default function StoreScreen({ route }) {
                     </ScrollView>
                 </View>
             </SafeAreaView >
-        </Provider>
+        </Provider >
     )
 }
 

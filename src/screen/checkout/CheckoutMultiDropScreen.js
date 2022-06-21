@@ -229,57 +229,20 @@ export default function CheckoutMultiDropScreen() {
                                             console.log("🚀 ~ file: CheckoutMultiDropScreen.js ~ line 168 ~ renderItem ~ error", error)
 
                                         }
-                                    }}
-                                >
+                                    }}>
                                     <View style={styles.row_between_center}>
-                                        <View
-                                            style={[
-                                                styles.column_between_center,
-                                                { alignItems: "flex-start" },
-                                            ]}
-                                        >
-                                            <Text
-                                                numberOfLines={1}
-                                                style={[styles.font_14]}
-                                            >
-                                                {item.shippingSelected.name}
-                                            </Text>
-                                            <Text
-                                                numberOfLines={1}
-                                                style={[styles.font_12]}
-                                            >
-                                                {item.shippingSelected.type}
-                                            </Text>
-                                            <Text
-                                                numberOfLines={1}
-                                                style={[styles.font_12]}
-                                            >
-                                                Estimasi {item.shippingSelected.etdText}
-                                            </Text>
-                                            {item.shippingSelected?.sendTime ===
-                                                "pilih tanggal" ? (
-                                                <Text
-                                                    numberOfLines={1}
-                                                    style={[styles.font_12]}
-                                                >
-                                                    Akan dikirim
-                                                </Text>
+                                        <View style={[styles.column_between_center, { alignItems: "flex-start" },]} >
+                                            <Text numberOfLines={1} style={[styles.font_14]}>    {item.shippingSelected.name}</Text>
+                                            <Text numberOfLines={1} style={[styles.font_12]}>    {item.shippingSelected.type}</Text>
+                                            <Text numberOfLines={1} style={[styles.font_12]}>    Estimasi {item.shippingSelected.etdText}</Text>
+                                            {item.shippingSelected?.sendTime === "pilih tanggal" ? (
+                                                <Text numberOfLines={1} style={[styles.font_12]} >Akan dikirim</Text>
                                             ) : null}
                                         </View>
                                         <View style={[styles.column_between_center, { alignItems: "flex-end" },]} >
-                                            <Text numberOfLines={1} style={[styles.font_12, styles.mb_2, { color: colors.BlueJaja },]} >Ubah</Text>
+                                            <Text numberOfLines={1} style={[styles.font_12, styles.mb_2, { color: colors.BlueJaja }]}>Ubah</Text>
                                             {item.shippingSelected.priceNormal ? (
-                                                <Text
-                                                    numberOfLines={1}
-                                                    style={[
-                                                        styles.priceBefore,
-                                                        styles.T_italic,
-                                                    ]}
-                                                >
-                                                    {
-                                                        item.shippingSelected.priceCurrencyFormatNormal
-                                                    }
-                                                </Text>
+                                                <Text numberOfLines={1} style={[styles.priceBefore, styles.T_italic,]}>{item.shippingSelected.priceCurrencyFormatNormal}</Text>
                                             ) : (
                                                 <Text></Text>
                                             )}
