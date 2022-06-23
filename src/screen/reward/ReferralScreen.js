@@ -84,7 +84,7 @@ export default function ReferralScreen() {
                             <View style={[styles.row_center, { backgroundColor: colors.BlueJaja, width: Wp('8%'), height: Wp('8%'), borderRadius: 100 }]}>
                                 <Text numberOfLines={1} style={[styles.font_18, { color: colors.White, fontFamily: 'SignikaNegative-SemiBold' }]}>4</Text>
                             </View>
-                            <Text numberOfLines={6} style={[styles.font_16, styles.ml_4, { width: '80%' }]}>Tidak sampai disitu, kamu juga akan mendapatkan 2.000 Koin, ketika teman kamu berhasil mengundang teman lainnya.<Text style={[styles.font_12, { fontStyle: 'italic' }]}> ( Hanya berlaku 1 hirarki ke undangan selanjutnya )</Text></Text>
+                            <Text numberOfLines={6} style={[styles.font_16, styles.ml_4, { width: '80%' }]}>Tidak sampai disitu, kamu juga akan mendapatkan 2.000 Koin, ketika teman kamu berhasil mengundang teman lainnya.<Text style={[styles.font_12, { fontStyle: 'italic' }]}> ( Hanya berlaku 1 hierarki ke undangan selanjutnya )</Text></Text>
                         </View>
                         <Text numberOfLines={3} style={[styles.font_14, styles.my_5, { fontStyle: 'italic' }]}>*Undang teman kamu sekarang, untuk mendapatkan koin jaja sebanyak- banyaknya</Text>
                     </View>

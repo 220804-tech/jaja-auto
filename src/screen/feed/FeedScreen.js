@@ -311,21 +311,21 @@ export default function FeedScreen(props) {
                                         dotColor={colors.BlueJaja}
                                         activeDotColor={colors.YellowJaja}
                                         paginationStyle={{ bottom: 10 }}>
-                                        {item.product.images.map(image => {
+                                        {item.product.images.map((image, index) => {
                                             return (
-                                                <View style={styles.row_center}>
+                                                <View key={index + 'YG'} style={styles.row_center}>
                                                     <FastImage
                                                         source={{ uri: image }}
                                                         style={{ width: Wp('95%'), height: Wp('95%') }}
                                                         resizeMode={FastImage.resizeMode.contain}
                                                     />
-                                                    <View style={[styles.row_center, { position: 'absolute', height: Wp('5%'), width: Wp('25%'), top: 0, right: 0, borderTopRightRadiusL: 3 }]}>
+                                                    <View style={[styles.row_center, { position: 'absolute', height: Wp('5%'), width: Wp('25%'), top: 0, left: 0, borderTopRightRadiusL: 3 }]}>
                                                         <ShimmerPlaceholder
                                                             LinearGradient={LinearGradient}
                                                             width={Wp('25%')}
                                                             height={Wp("5%")}
                                                             style={{ borderRadius: 0, alignSelf: 'flex-start', borderTopRightRadiusL: 3 }}
-                                                            shimmerColors={[colors.BlueJaja, colors.YellowJaja, colors.BlueJaja]}
+                                                            shimmerColors={[colors.BlueJaja, colors.White, colors.BlueJaja]}
                                                         />
                                                         <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White, position: 'absolute', top: 0, bottom: 0 }]}>New Product</Text>
                                                     </View>
@@ -417,7 +417,7 @@ export default function FeedScreen(props) {
                                         setloadmore(true)
                                         setpage(page + 1)
                                     } else {
-                                        console.log('wait')
+                                        // console.log('wait')
                                     }
                                 }
                             }
@@ -429,7 +429,6 @@ export default function FeedScreen(props) {
                 keyExtractor={(item, index) => String(index + 'SJ')}
                 renderItem={renderItem}
             />
-
         </SafeAreaView>
     )
 }

@@ -24,7 +24,6 @@ export default function index(props) {
     const reduxUseCoin = useSelector((state) => state.checkout.useCoin);
 
     const address = props.route.params?.address
-    console.log("🚀 ~ file: AddressScreen.js ~ line 27 ~ index ~ address", address)
 
     useEffect(() => {
         try {

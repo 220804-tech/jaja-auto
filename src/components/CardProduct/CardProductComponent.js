@@ -30,6 +30,7 @@ export default function CardProductComponent(props) {
                 }
                 dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
                 ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
+                    console.log("🚀 ~ file: CardProductComponent.js ~ line 33 ~ ServiceProduct.getProduct ~ res", res)
                     error = false
                     if (res === 404) {
                         Utils.alertPopUp('Sepertinya data tidak ditemukan!')

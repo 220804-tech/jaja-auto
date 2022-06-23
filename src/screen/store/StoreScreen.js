@@ -14,6 +14,7 @@ import database from "@react-native-firebase/database";
 export default function StoreScreen({ route }) {
     const navigation = useNavigation();
     const reduxStore = useSelector(state => state.store.store)
+    console.log("🚀 ~ file: StoreScreen.js ~ line 17 ~ StoreScreen ~ reduxStore", reduxStore)
     const reduxUser = useSelector(state => state.user)
     const reduxAuth = useSelector(state => state.auth.auth)
     const greeting = useSelector(state => state.store.store.greeting)
@@ -180,7 +181,7 @@ export default function StoreScreen({ route }) {
                                 </View>
                                 {greeting ?
                                     <View style={[styles.py_3, styles.mt_2, { flex: 0, backgroundColor: colors.White, alignItems: 'center', justifyContent: 'flex-start', }]}>
-                                        {!reduxStore?.closed_store == true ?
+                                        {reduxStore?.closed_store == true ?
                                             <View style={[styles.row_start_center, styles.mb_2, { alignSelf: 'flex-start' }]}>
                                                 <Image source={require('../../assets/icons/circle.png')} style={[styles.icon_12, styles.mr, { tintColor: colors.Silver }]} />
 

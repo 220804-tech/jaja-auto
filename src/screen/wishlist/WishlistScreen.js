@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView, View, Text, Alert, ScrollView, TouchableOpacity, Settings } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { useNavigation, CardProduct, styles, colors, AppbarSecond, Wp, Hp, Loading } from '../../export'
+import { useNavigation, CardProduct, styles, colors, AppbarSecond, Wp, Hp, Loading, Utils } from '../../export'
 
 
 export default function WishlistScreen() {
@@ -113,37 +113,22 @@ export default function WishlistScreen() {
         };
 
         fetch(`https://jaja.id/backend/user/wishlist/keyword=&filter_category=${idx == 3 && category ? category : ''}&filter_preorder=${idx == 2 ? iChild == 1 ? 'T' : 'Y' : ''}&filter_condition=${idx == 1 ? iChild == 1 ? 'baru' : 'pernah dipakai' : ''}&filter_location=&limit=10&page=1`, requestOptions)
-            .then(response => response.json())
+            .then(response => response.text())
             .then(result => {
-                if (result.status.code === 200 || result.status.code === 204) {
-                    dispatch({ type: 'SET_WISHLIST', payload: result.data.wishlist })
-                } else {
-                    Alert.alert(
-                        "Sepertinya ada masalah!",
-                        `${result.status.message + " => " + result.status.code}`,
-                        [
-                            { text: "TUTUP", onPress: () => navigation.goBack() }
-                        ],
-                        { cancelable: false }
-                    );
+                try {
+                    let data = JSON.parse(result)
+                    if (data.status.code === 200 || data.status.code === 204) {
+                        dispatch({ type: 'SET_WISHLIST', payload: data.data.wishlist })
+                    } else {
+                        Utils.alertPopUp(data?.status?.message)
+                    }
+                } catch (error) {
+                    Utils.handleError(String(result), 'Error with status code : 190021')
+                    console.log("🚀 ~ file: WishlistScreen.js ~ line 125 ~ handleFilter ~ error", error)
 
                 }
             }).catch(error => {
-                if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
-                    ToastAndroid("Tidak dapat terhubung, periksa kembali koneksi anda!")
-                } else {
-                    Alert.alert(
-                        "Error With Status Code 19002",
-                        String(error),
-                        [
-                            {
-                                text: "TUTUP",
-                                onPress: () => console.log("Cancel Pressed"),
-                                style: "cancel"
-                            },
-                        ]
-                    );
-                }
+                Utils.handleError(error, 'Error with status code 190022')
             })
     }
 

@@ -4,7 +4,7 @@ import { IconButton, TouchableRipple } from 'react-native-paper'
 import ImagePicker from "react-native-image-crop-picker";
 import firebaseDatabase from '@react-native-firebase/database';
 import ActionSheet from 'react-native-actions-sheet';
-import { colors, Hp, Wp, Appbar, ServiceFirebase as Firebase, styles as style, Loading, Utils, useNavigation, ServiceProduct } from "../../export";
+import { colors, Hp, Wp, Appbar, ServiceFirebase as Firebase, styles as style, Loading, Utils, useNavigation, ServiceProduct, Fa, FastImage } from "../../export";
 import { useDispatch, useSelector } from 'react-redux'
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { utils } from "@react-native-firebase/app";
@@ -53,11 +53,13 @@ export default function ChatScreen({ route }) {
 
     useEffect(() => {
         handleFirebase()
+        console.log('test masuk sini')
         return () => {
-            setnameChat(data.name);
-
+            // if (data.name) {
+            //     setnameChat(data.name);
+            // }
         }
-    }, [data?.name]);
+    }, []);
 
     useEffect(() => {
         const showSubscription = Keyboard.addListener("keyboardWillShow", () => {
@@ -107,26 +109,32 @@ export default function ChatScreen({ route }) {
 
     useEffect(() => {
         handleFirebase2()
+        console.log('test kesini test')
         return () => {
-            setLoading(true)
+            // if (selectedOrder.invoice) {
+            //     setLoading(true)
+            // }
         }
-    }, [selectedOrder])
+    }, [])
 
     const handleFirebase2 = () => {
         try {
-            if (product && Object.keys(product).length && selectedProduct !== null) {
+            if (product && Object.keys(product).length && selectedProduct != null) {
                 setSelectedProduct(product)
             }
             if (order && Object.keys(order).length && selectedOrder !== null) {
                 setselectedOrder(order)
             }
-            firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid + '/amount').on('value', snapshot => {
-                if (snapshot.val()) {
-                    settargetRead(false)
-                } else {
-                    settargetRead(true)
-                }
-            })
+            firebaseDatabase()
+                .ref("/friend/" + data.id + reduxUser.uid + '/amount')
+                .once('value')
+                .then(snapshot => {
+                    if (snapshot.val()) {
+                        settargetRead(false)
+                    } else {
+                        settargetRead(true)
+                    }
+                })
 
             firebaseDatabase()
                 .ref("/people/" + data.id + "/token")
@@ -170,18 +178,16 @@ export default function ChatScreen({ route }) {
                         } catch (error) {
                             imageUrl = false
                         }
-                        console.log('masuk sini nggk')
                     })
                     .catch(error => {
                         imageUrl = false
                         Utils.handleError(error, 'Error with status code : 12044')
                         setLoading(false)
-
                     });
             }
             if (isiChat.length > 0 || image || selectedOrder || selectedProduct) {
                 setLoading(false)
-                let chat = isiChat.length > 0 ? isiChat : imageUrl ? 'Mengirim gambar' : selectedOrder && Object.keys(selectedOrder).length ? 'Pesanan No. ' + selectedOrder.invoice : selectedProduct.name
+                let chat = isiChat.length > 0 ? isiChat : imageUrl ? 'Mengirim gambar' : selectedOrder.invoice ? 'Pesanan No. ' + selectedOrder.invoice : selectedProduct.name
                 var message = {
                     message: isiChat,
                     read: false,
@@ -197,34 +203,36 @@ export default function ChatScreen({ route }) {
                         if (selectedOrder) {
                             message.order = selectedOrder
                         }
-                        if (selectedProduct && Object.keys(selectedProduct).length) {
+                        if (selectedProduct?.name) {
+                            console.log("🚀 ~ file: ChatScreen.js ~ line 201 ~ handleSend ~ selectedProduct?.name", selectedProduct?.name)
                             handleSendProduct(isiChat)
                         } else {
-                            setTimeout(() => {
-                                setselectedOrder(null)
-                                var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
-                                firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
-                                firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: chat, time: new Date().toString() } });
-                                firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: { text: chat, time: new Date().toString() }, amount: amountNow ? amountNow + 1 : 1 });
-                                if (target) {
-                                    try {
-                                        Firebase.notifChat(target, { body: chat, title: reduxUser.name })
-                                        Firebase.buyerNotifications('chat', data.id)
-                                        // await Firebase.sellerNotifications('chat', data.id)
+                            try {
+                                setTimeout(() => {
+                                    setselectedOrder(null)
+                                    var msgId = firebaseDatabase().ref('/messages').child(data.chat).push().key;
+                                    firebaseDatabase().ref('messages/' + data.chat + '/' + msgId).set(message); //pengirimnya
+                                    firebaseDatabase().ref('friend/' + reduxUser.uid + "/" + data.id).update({ chat: data.chat, name: data.name, message: { text: chat, time: new Date().toString() } });
+                                    firebaseDatabase().ref('friend/' + data.id + "/" + reduxUser.uid).update({ chat: data.chat, name: reduxUser.name, message: { text: chat, time: new Date().toString() }, amount: amountNow ? amountNow + 1 : 1 });
+                                    if (target) {
+                                        try {
+                                            Firebase.notifChat(target, { body: chat, title: reduxUser.name })
+                                            Firebase.buyerNotifications('chat', data.id)
+                                            // await Firebase.sellerNotifications('chat', data.id)
 
-                                    } catch (error) {
-                                        console.log("🚀 ~ file: ChatScreen.js ~ line 182 ~ setTimeout ~ error", error)
+                                        } catch (error) {
+                                            console.log("🚀 ~ file: ChatScreen.js ~ line 182 ~ setTimeout ~ error", error)
+                                        }
                                     }
-                                }
-                            }, selectedProduct && Object.keys(selectedProduct).length ? 100 : 0);
+                                }, selectedProduct && selectedProduct.name ? 100 : 0);
+                            } catch (error) {
+                                console.log("🚀 ~ file: ChatScreen.js ~ line 229 ~ handleSend ~ error", error)
+                            }
                         }
 
                     } catch (error) {
-
-                        // alert(error)
+                        console.log("🚀 ~ file: ChatScreen.js ~ line 234 ~ handleSend ~ error", error)
                         setLoading(false)
-
-
                     }
                 } else {
                     setLoading(false)
@@ -239,7 +247,7 @@ export default function ChatScreen({ route }) {
 
     const handleSendProduct = (msg) => {
         try {
-            if (selectedProduct && Object.keys(selectedProduct).length) {
+            if (selectedProduct?.name) {
                 var message = {
                     message: msg ? msg : '',
                     read: false,
@@ -253,6 +261,7 @@ export default function ChatScreen({ route }) {
                     productSlug: selectedProduct.slug,
 
                 }
+                console.log("🚀 ~ file: ChatScreen.js ~ line 244 ~ handleSendProduct ~ selectedProduct?.name", selectedProduct?.name)
                 setSelectedProduct(null)
                 if (data) {
                     try {
@@ -321,7 +330,7 @@ export default function ChatScreen({ route }) {
         let dateNow = String(item.date).slice(0, 3);
         let dateRight = String(item.date).slice(4, 15)
         return (
-            <View style={{ width: Wp("100%"), paddingTop: "2%" }}>
+            <View style={{ width: Wp("100%"), padding: "3%" }}>
                 {item.date && index && String(messageList[index].date) !== "undefined" > 0 && !item.productTitle ?
                     String(messageList[index].date).slice(6, 10) !== String(messageList[index - 1].date).slice(6, 10) ?
                         <View style={{ alignSelf: 'center', marginVertical: '3%' }}>
@@ -329,189 +338,322 @@ export default function ChatScreen({ route }) {
                         </View> : null
                     : null
                 }
-                {
-                    item.from === reduxUser.uid ?
-                        item.image ?
-                            // <View style={[style.row_center, { width: Wp('65%'), height: Wp('65%'), backgroundColor: colors.BlueJaja, alignSelf: 'flex-end', paddingRight: '5%', borderRadius: 5 }]}>
-                            //     <Image source={{ uri: item.image }} style={{ width: '96%', height: '96%', resizeMode: 'cover', alignSelf: 'center', justifyContent: 'center', alignItems: 'center', borderRadius: 2 }} />
-                            // </View>
-                            // <View style={[{ width: Wp('65%'), height: Wp('70%'), alignSelf: 'flex-end', alignItems: 'flex-end', justifyContent: 'flex-end', paddingHorizontal: '0.5%', marginRight: '-3%' }]}>
-                            //     <Image resizeMode="contain" source={{ uri: item.image }} style={{ width: '100%', height: '100%', resizeMode: 'center', alignSelf: 'center', borderWidth: 0.5, borderColor: colors.Silver, backgroundColor: colors.Silver }} />
-                            // </View>
-                            <View style={[{ width: Wp('70%'), height: Wp('70%'), alignSelf: 'flex-end', alignItems: 'flex-end', justifyContent: 'flex-end', paddingHorizontal: '0.5%', marginRight: '3%' }]}>
-                                <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%', resizeMode: 'contain', alignSelf: 'center' }} />
+                {item.productTitle ?
+                    <TouchableRipple style={{
+                        flex: 1,
+                        width: '100%',
+                        padding: '3%',
+                        borderRadius: 3,
+                        borderTopRightRadius: 0,
+                        flexDirection: "row",
+                        alignSelf: 'center',
+                        backgroundColor: colors.White,
+                        elevation: 0,
+                        marginBottom: '2%'
+                    }}
+                        rippleColor={colors.BlueJaja}
+                        onPress={() => handleShowDetail(item, false)}>
+                        <>
+                            <View style={{ flex: 0 }}>
+                                <Image style={{
+                                    alignSelf: "center",
+                                    width: Wp("15%"),
+                                    height: Wp("15%"),
+                                    marginRight: 10,
+                                    borderRadius: 2
+                                }}
+                                    resizeMethod={"scale"}
+                                    resizeMode={"cover"}
+                                    source={{ uri: item.productImage ? item.productImage : null }}
+                                />
                             </View>
-                            :
-                            <>
-                                {item.order && Object.keys(item.order).length ?
-                                    <View style={{
-                                        width: "100%",
-                                        justifyContent: "flex-end",
-                                        alignSelf: "center",
-                                        flexDirection: "row",
-                                        paddingHorizontal: Wp("5%"),
-                                    }}>
-                                        <View
-                                            style={{
-                                                maxWidth: "80%",
-                                                borderWidth: 0.2,
-                                                borderRadius: 15,
-                                                borderColor: colors.BlueJaja,
-                                                borderTopRightRadius: 0,
-                                                marginVertical: 5,
-                                                marginHorizontal: 10,
-                                                backgroundColor: colors.BlueJaja,
-                                                padding: 10,
-                                            }}>
 
-                                            <Text onPress={() => handleOrderDetails(item.order)} style={[style.font_13, { textAlign: "right", color: colors.White }]}>
-                                                No. {item.order.invoice}
-                                            </Text>
-                                            <Text onPress={() => handleOrderDetails(item.order)} style={[style.font_11, style.mb_5, { textAlign: "right", color: colors.White }]}>
-                                                {item.order.status}
-                                            </Text>
-                                            <View style={[style.column_end_center, { width: Wp('25%'), height: Wp('25%'), alignSelf: 'flex-end', backgroundColor: colors.BlueLight }]}>
-                                                <Image source={{ uri: item.order.imageOrder }} style={{ width: '100%', height: '100%', resizeMode: 'contain' }} />
+                            <View style={{ flex: 1 }}>
+                                <Text numberOfLines={1} style={[style.font_12, { width: '90%' }]}>{item.productTitle}</Text>
+                                {item.priceDiscount && parseInt(item.priceDiscount) > 0 ?
+                                    <View style={{ flex: 0, flexDirection: 'column' }}>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Text adjustsFontSizeToFit style={[style.font_7, style.mr_2, { textDecorationLine: 'line-through' }]}>{item.priceFirst}</Text>
+                                            <View style={{ backgroundColor: colors.RedFlashsale, justifyContent: 'center', alignItems: 'center', borderRadius: 3, paddingHorizontal: '1.5%' }}>
+                                                <Text adjustsFontSizeToFit style={[style.font_8, style.T_semi_bold, { color: 'white' }]}>{item.priceDiscount + "%"}</Text>
                                             </View>
                                         </View>
+                                        <Text adjustsFontSizeToFit style={[style.font_12, style.mr_3, style.mt]}>{item.priceLast}</Text>
                                     </View>
-                                    : null}
-                                {item.productTitle ?
-                                    <TouchableRipple style={{
-                                        flex: 1,
-                                        width: '100%',
-                                        padding: '3%',
-                                        borderRadius: 3,
-                                        borderTopRightRadius: 0,
-                                        flexDirection: "row",
-                                        alignSelf: 'center',
-                                        backgroundColor: colors.White,
-                                        elevation: 0,
-                                        marginBottom: '2%'
-                                    }}
-                                        rippleColor={colors.BlueJaja}
-                                        onPress={() => handleShowDetail(item, false)}>
-                                        <>
-                                            <View style={{ flex: 0 }}>
-                                                <Image style={{
-                                                    alignSelf: "center",
-                                                    width: Wp("15%"),
-                                                    height: Wp("15%"),
-                                                    marginRight: 10,
-                                                    borderRadius: 2
-                                                }}
-                                                    resizeMethod={"scale"}
-                                                    resizeMode={"cover"}
-                                                    source={{ uri: item.productImage ? item.productImage : null }}
-                                                />
-                                            </View>
 
-                                            <View style={{ flex: 1 }}>
-                                                <Text numberOfLines={1} style={[style.font_12, { width: '90%' }]}>{item.productTitle}</Text>
-                                                {item.priceDiscount && parseInt(item.priceDiscount) > 0 ?
-                                                    <View style={{ flex: 0, flexDirection: 'column' }}>
-                                                        <View style={{ flexDirection: 'row' }}>
-                                                            <Text adjustsFontSizeToFit style={[style.font_7, style.mr_2, { textDecorationLine: 'line-through' }]}>{item.priceFirst}</Text>
-                                                            <View style={{ backgroundColor: colors.RedFlashsale, justifyContent: 'center', alignItems: 'center', borderRadius: 3, paddingHorizontal: '1.5%' }}>
-                                                                <Text adjustsFontSizeToFit style={[style.font_8, style.T_semi_bold, { color: 'white' }]}>{item.priceDiscount + "%"}</Text>
-                                                            </View>
-                                                        </View>
-                                                        <Text adjustsFontSizeToFit style={[style.font_12, style.mr_3, style.mt]}>{item.priceLast}</Text>
-                                                    </View>
-
-                                                    :
-                                                    <Text style={style.font_12}>
-                                                        {item.priceLast}
-                                                    </Text>
-                                                }
-                                            </View>
-                                        </>
-                                    </TouchableRipple>
-                                    : null
+                                    :
+                                    <Text style={style.font_12}>
+                                        {item.priceLast}
+                                    </Text>
                                 }
-                                {item.message ?
-                                    <View style={{
-                                        width: "100%",
-                                        justifyContent: "flex-end",
-                                        alignSelf: "center",
-                                        flexDirection: "row",
-                                        paddingHorizontal: Wp("5%"),
-                                    }}>
+                            </View>
+                        </>
+                    </TouchableRipple>
+                    : null
+                }
+                {
+                    item.from === reduxUser.uid ?
+                        <View style={{ flex: 0, flexDirection: "row", width: '100%' }}>
+                            <View style={{
+                                width: "100%",
+                                flex: 0,
+                                flexDirection: 'row',
+                                justifyContent: "flex-end",
+                                alignSelf: "flex-end",
+                            }}>
+
+                                {item.image ?
+                                    <View style={[{ width: Wp('50%'), height: Wp('50%'), alignItems: 'flex-start', justifyContent: 'flex-start', marginRight: '3%', backgroundColor: colors.WhiteGrey, borderRadius: 3, opacity: 0.9 }]}>
+                                        {/* <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%', resizeMode: 'contain', alignSelf: 'center' }} /> */}
+                                        <FastImage
+                                            style={[{ height: '100%', width: '100%', alignSelf: 'flex-start', justifyContent: 'flex-start' }]}
+                                            source={{ uri: item.image }}
+                                            resizeMode={FastImage.resizeMode.contain}
+                                        />
+                                    </View>
+                                    : item.order && Object.keys(item.order).length ?
+                                        <View style={{
+                                            width: "100%",
+                                            justifyContent: "flex-end",
+                                            alignSelf: "center",
+                                            flexDirection: "row",
+                                            paddingHorizontal: Wp("5%"),
+                                        }}>
+                                            <View
+                                                style={{
+                                                    maxWidth: "80%",
+                                                    borderWidth: 0.2,
+                                                    borderRadius: 15,
+                                                    borderColor: colors.BlueJaja,
+                                                    borderTopRightRadius: 0,
+                                                    marginVertical: 5,
+                                                    marginHorizontal: 10,
+                                                    backgroundColor: colors.BlueJaja,
+                                                    padding: 10,
+                                                }}>
+
+                                                <Text onPress={() => handleOrderDetails(item.order)} style={[style.font_13, { textAlign: "right", color: colors.White }]}>
+                                                    No. {item.order.invoice}
+                                                </Text>
+                                                <Text onPress={() => handleOrderDetails(item.order)} style={[style.font_11, style.mb_5, { textAlign: "right", color: colors.White }]}>
+                                                    {item.order.status}
+                                                </Text>
+                                                <View style={[style.column_end_center, { width: Wp('25%'), height: Wp('25%'), alignSelf: 'flex-end', backgroundColor: colors.BlueLight }]}>
+                                                    <Image source={{ uri: item.order.imageOrder }} style={{ width: '100%', height: '100%', resizeMode: 'contain' }} />
+                                                </View>
+                                            </View>
+                                        </View>
+                                        :
                                         <View
                                             style={{
                                                 maxWidth: "80%",
                                                 borderWidth: 0.2,
                                                 borderRadius: 15,
-                                                borderColor: colors.BlueJaja,
+                                                borderColor: colors.BlackSilver,
                                                 borderTopRightRadius: 0,
                                                 marginVertical: 5,
                                                 marginHorizontal: 10,
-                                                backgroundColor: colors.BlueJaja,
+                                                backgroundColor: colors.BlackSilver,
                                                 padding: 10,
-                                            }}>
-
+                                            }}
+                                        >
                                             {item.message ?
                                                 <>
                                                     <Text style={[style.font_12, { color: colors.White }]}>
                                                         {item.message}
                                                     </Text>
-                                                    {item.date ?
-                                                        <View style={style.row_end_center}>
-                                                            <Text style={[style.font_11, style.mt_2, { color: colors.White, alignSelf: 'flex-end' }]}>{item.date.slice(16, 21)}  </Text>
-                                                            <Image source={require('../../assets/icons/check.png')} style={[style.icon_12, {
-                                                                marginBottom: '-0.2%',
-                                                                tintColor: item.read ? colors.YellowJaja : colors.WhiteSilver
-                                                            }]} />
-                                                        </View>
-                                                        : null
-                                                    }
                                                 </>
-
                                                 : null}
-
+                                            {item.date ?
+                                                <Text
+                                                    style={{
+                                                        fontSize: Hp("1.2%"),
+                                                        color: "#FFF"
+                                                    }}
+                                                >
+                                                    {item.date.slice(16, 20)}
+                                                </Text>
+                                                : null
+                                            }
 
                                         </View>
-                                        <View style={{
+                                }
+                                <View style={{
+                                    borderRadius: 50,
+                                    width: Wp("10%"),
+                                    height: Wp("10%"),
+                                    backgroundColor: colors.BlueJaja,
+                                }}>
+                                    <Image
+                                        style={{
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            width: '100%',
+                                            height: '100%',
                                             borderRadius: 50,
-                                            width: Hp("6%"),
-                                            height: Hp("6%"),
-                                            backgroundColor: colors.BlackGrayScale,
                                             overflow: "hidden"
-                                        }}>
-                                            <Image
-                                                style={{
-                                                    justifyContent: "center",
-                                                    alignItems: "center",
-                                                    width: Hp("6%"),
-                                                    height: Hp("6%"),
-                                                    borderRadius: 50,
-                                                    // backgroundColor: colors.BlackGrayScale,
-                                                    overflow: "hidden"
-                                                }}
-                                                resizeMethod={"scale"}
-                                                // resizeMode={item["image"] == '' ? "center" : "cover"}
-                                                source={{ uri: reduxUser.image }}
-                                            />
-                                        </View>
-                                    </View>
-                                    : null}
+                                        }}
+                                        resizeMethod={"scale"}
+                                        resizeMode={item["image"] == '' ? "center" : "cover"}
+                                        source={{ uri: reduxUser.image }}
+                                    />
+                                </View>
+                            </View>
+                        </View>
+                        // <>
+                        //     {item.order && Object.keys(item.order).length ?
+                        //         <View style={{
+                        //             width: "100%",
+                        //             justifyContent: "flex-end",
+                        //             alignSelf: "center",
+                        //             flexDirection: "row",
+                        //             paddingHorizontal: Wp("5%"),
+                        //         }}>
+                        //             <View
+                        //                 style={{
+                        //                     maxWidth: "80%",
+                        //                     borderWidth: 0.2,
+                        //                     borderRadius: 15,
+                        //                     borderColor: colors.BlueJaja,
+                        //                     borderTopRightRadius: 0,
+                        //                     marginVertical: 5,
+                        //                     marginHorizontal: 10,
+                        //                     backgroundColor: colors.BlueJaja,
+                        //                     padding: 10,
+                        //                 }}>
 
-                            </>
+                        //                 <Text onPress={() => handleOrderDetails(item.order)} style={[style.font_13, { textAlign: "right", color: colors.White }]}>
+                        //                     No. {item.order.invoice}
+                        //                 </Text>
+                        //                 <Text onPress={() => handleOrderDetails(item.order)} style={[style.font_11, style.mb_5, { textAlign: "right", color: colors.White }]}>
+                        //                     {item.order.status}
+                        //                 </Text>
+                        //                 <View style={[style.column_end_center, { width: Wp('25%'), height: Wp('25%'), alignSelf: 'flex-end', backgroundColor: colors.BlueLight }]}>
+                        //                     <Image source={{ uri: item.order.imageOrder }} style={{ width: '100%', height: '100%', resizeMode: 'contain' }} />
+                        //                 </View>
+                        //             </View>
+                        //         </View>
+                        //         : item.productTitle ?
+                        //             <TouchableRipple style={{
+                        //                 flex: 1,
+                        //                 width: '100%',
+                        //                 padding: '3%',
+                        //                 borderRadius: 3,
+                        //                 borderTopRightRadius: 0,
+                        //                 flexDirection: "row",
+                        //                 alignSelf: 'center',
+                        //                 backgroundColor: colors.White,
+                        //                 elevation: 0,
+                        //                 marginBottom: '2%'
+                        //             }}
+                        //                 rippleColor={colors.BlueJaja}
+                        //                 onPress={() => handleShowDetail(item, false)}>
+                        //                 <>
+                        //                     <View style={{ flex: 0 }}>
+                        //                         <Image style={{
+                        //                             alignSelf: "center",
+                        //                             width: Wp("15%"),
+                        //                             height: Wp("15%"),
+                        //                             marginRight: 10,
+                        //                             borderRadius: 2
+                        //                         }}
+                        //                             resizeMethod={"scale"}
+                        //                             resizeMode={"cover"}
+                        //                             source={{ uri: item.productImage ? item.productImage : null }}
+                        //                         />
+                        //                     </View>
+
+                        //                     <View style={{ flex: 1 }}>
+                        //                         <Text numberOfLines={1} style={[style.font_12, { width: '90%' }]}>{item.productTitle}</Text>
+                        //                         {item.priceDiscount && parseInt(item.priceDiscount) > 0 ?
+                        //                             <View style={{ flex: 0, flexDirection: 'column' }}>
+                        //                                 <View style={{ flexDirection: 'row' }}>
+                        //                                     <Text adjustsFontSizeToFit style={[style.font_7, style.mr_2, { textDecorationLine: 'line-through' }]}>{item.priceFirst}</Text>
+                        //                                     <View style={{ backgroundColor: colors.RedFlashsale, justifyContent: 'center', alignItems: 'center', borderRadius: 3, paddingHorizontal: '1.5%' }}>
+                        //                                         <Text adjustsFontSizeToFit style={[style.font_8, style.T_semi_bold, { color: 'white' }]}>{item.priceDiscount + "%"}</Text>
+                        //                                     </View>
+                        //                                 </View>
+                        //                                 <Text adjustsFontSizeToFit style={[style.font_12, style.mr_3, style.mt]}>{item.priceLast}</Text>
+                        //                             </View>
+
+                        //                             :
+                        //                             <Text style={style.font_12}>
+                        //                                 {item.priceLast}
+                        //                             </Text>
+                        //                         }
+                        //                     </View>
+                        //                 </>
+                        //             </TouchableRipple>
+                        //             : item.image ?
+                        //                 <View style={[style.row_center, { alignSelf: 'flex-end', width: Wp('45%'), height: Wp('45%'), backgroundColor: colors.BlueJaja, borderRadius: 4 }]}>
+                        //                     {/* <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%', resizeMode: 'contain', alignSelf: 'center' }} /> */}
+                        //                     <FastImage
+                        //                         style={[{ height: '95%', width: '95%', alignSelf: 'center' }]}
+                        //                         source={{ uri: item.image }}
+                        //                         resizeMode={FastImage.resizeMode.cover}
+                        //                     />
+                        //                 </View>
+                        //                 : <View style={{
+                        //                     width: "100%",
+                        //                     justifyContent: "flex-end",
+                        //                     alignSelf: "center",
+                        //                     flexDirection: "row",
+                        //                     paddingHorizontal: Wp("5%"),
+                        //                 }}>
+                        //                     <View
+                        //                         style={{
+                        //                             maxWidth: "80%",
+                        //                             borderWidth: 0.2,
+                        //                             borderRadius: 15,
+                        //                             borderColor: colors.BlueJaja,
+                        //                             borderTopRightRadius: 0,
+                        //                             marginVertical: 5,
+                        //                             marginHorizontal: 10,
+                        //                             backgroundColor: colors.BlueJaja,
+                        //                             padding: 10,
+                        //                         }}>
+
+                        //                         {item.message ?
+                        //                             <>
+                        //                                 <Text style={[style.font_12, { color: colors.White }]}>
+                        //                                     {item.message}
+                        //                                 </Text>
+                        //                                 {item.date ?
+                        //                                     <View style={style.row_end_center}>
+                        //                                         <Text style={[style.font_11, style.mt_2, { color: colors.White, alignSelf: 'flex-end' }]}>{item.date.slice(16, 21)}  </Text>
+                        //                                         <Image source={require('../../assets/icons/check.png')} style={[style.icon_12, {
+                        //                                             marginBottom: '-0.2%',
+                        //                                             tintColor: item.read ? colors.YellowJaja : colors.WhiteSilver
+                        //                                         }]} />
+                        //                                     </View>
+                        //                                     : null
+                        //                                 }
+                        //                             </>
+                        //                             : null}
+                        //                     </View>
+
+                        //                 </View>
+                        //     }
+
+                        //     {/* {item.message ? */}
+
+                        //     {/* : null} */}
+
+                        // </>
 
                         :
-
                         <View style={{ flex: 1, flexDirection: "row" }}>
                             <View style={{
                                 width: "100%",
+                                flex: 0,
+                                flexDirection: 'row',
                                 justifyContent: "flex-start",
-                                alignSelf: "center",
-                                flexDirection: "row",
+                                alignSelf: "flex-start",
                             }}>
                                 <View style={{
-
                                     borderRadius: 50,
-                                    width: Hp("6%"),
-                                    height: Hp("6%"),
+                                    width: Wp("10%"),
+                                    height: Wp("10%"),
                                     backgroundColor: colors.BlueJaja,
                                 }}>
                                     <Image
@@ -529,51 +671,49 @@ export default function ChatScreen({ route }) {
                                     />
                                 </View>
                                 {item.image ?
+                                    <View style={[{ width: Wp('45%'), height: Wp('50%'), alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center', marginLeft: '3%', backgroundColor: colors.WhiteGrey, borderRadius: 3 }]}>
+                                        {/* <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%', resizeMode: 'contain', alignSelf: 'center' }} /> */}
+                                        <FastImage
+                                            style={[{ height: '95%', width: '95%', alignSelf: 'center', borderRadius: 3 }]}
+                                            source={{ uri: item.image }}
+                                            resizeMode={FastImage.resizeMode.contain}
+                                        />
+                                    </View>
+                                    :
                                     <View
                                         style={{
-                                            width: Wp('100%'),
-                                            justifyContent: "flex-start",
-                                            flexDirection: "row",
+                                            maxWidth: "80%",
+                                            borderWidth: 0.2,
+                                            borderRadius: 15,
+                                            borderColor: colors.BlackSilver,
+                                            borderTopRightRadius: 0,
+                                            marginVertical: 5,
+                                            marginHorizontal: 10,
+                                            backgroundColor: colors.BlackSilver,
+                                            padding: 10,
                                         }}
                                     >
-                                        <View style={[{ width: Wp('70%'), height: Wp('70%'), alignSelf: 'flex-end', alignItems: 'flex-end', justifyContent: 'flex-end' }]}>
-                                            <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%', resizeMode: 'contain', alignSelf: 'flex-end', padding: "0.2%", borderWidth: 0.5, borderColor: colors.Silver, }} />
-                                        </View>
-                                    </View>
-                                    : null}
-                                <View
-                                    style={{
-                                        maxWidth: "80%",
-                                        borderWidth: 0.2,
-                                        borderRadius: 15,
-                                        borderColor: colors.BlackSilver,
-                                        borderTopRightRadius: 0,
-                                        marginVertical: 5,
-                                        marginHorizontal: 10,
-                                        backgroundColor: colors.BlackSilver,
-                                        padding: 10,
-                                    }}
-                                >
-                                    {item.message ?
-                                        <>
-                                            <Text style={[style.font_12, { color: colors.White }]}>
-                                                {item.message}
+                                        {item.message ?
+                                            <>
+                                                <Text style={[style.font_12, { color: colors.White }]}>
+                                                    {item.message}
+                                                </Text>
+                                            </>
+                                            : null}
+                                        {item.date ?
+                                            <Text
+                                                style={{
+                                                    fontSize: Hp("1.2%"),
+                                                    color: "#FFF"
+                                                }}
+                                            >
+                                                {item.date.slice(16, 20)}
                                             </Text>
-                                        </>
-                                        : null}
-                                    {item.date ?
-                                        <Text
-                                            style={{
-                                                fontSize: Hp("1.2%"),
-                                                color: "#FFF"
-                                            }}
-                                        >
-                                            {item.date.slice(16, 20)}
-                                        </Text>
-                                        : null
-                                    }
+                                            : null
+                                        }
 
-                                </View>
+                                    </View>}
+
                             </View>
                         </View>
                 }
@@ -621,7 +761,7 @@ export default function ChatScreen({ route }) {
                 includeBase64: true
             }).then(res => {
                 galeryRef.current?.setModalVisible(false)
-                if (!red?.didCancel) {
+                if (!res?.didCancel) {
                     setLoading(true)
                     handleSend(res?.assets?.[0]?.base64)
                     res?.errorCode ? setLoading(false) : null
@@ -646,7 +786,7 @@ export default function ChatScreen({ route }) {
                 quality: 0.9,
                 includeBase64: true,
             }).then(res => {
-                if (!red?.didCancel) {
+                if (!res?.didCancel) {
                     galeryRef.current?.setModalVisible(false)
                     setLoading(true)
                     handleSend(res?.assets?.[0]?.base64)
@@ -693,7 +833,7 @@ export default function ChatScreen({ route }) {
                 <StatusBar translucent={false} backgroundColor={colors.BlueJaja} barStyle="light-content" />
 
                 <View style={[styles.inner, { paddingBottom: keyboardStatus }]}>
-                    {selectedProduct && Object.keys(selectedProduct).length ?
+                    {selectedProduct?.name ?
                         <TouchableRipple style={{
                             width: '100%',
                             padding: '3%',
@@ -761,7 +901,7 @@ export default function ChatScreen({ route }) {
                         scrollEnabled={true}
                         inverted={-1}
                         ref={flatlist}
-                        style={[style.pt_2, style.px_3, { height: '92%', }]}
+                        style={[style.pt_2, { height: '92%', }]}
                         data={messageList}
                         renderItem={renderRow}
                         keyExtractor={(item, index) => String(index)}
@@ -785,10 +925,8 @@ export default function ChatScreen({ route }) {
                             contentContainerStyle={[style.px_4]}
                             showsHorizontalScrollIndicator={false}
                             renderItem={({ item }) => {
-                                if (!Object.keys(selectedProduct).length && item.text != 'Halo, apakah barang ini ready?') {
-
+                                if (item.text != 'Halo, apakah barang ini ready?' || selectedProduct?.name) {
                                     return (
-
                                         <TouchableOpacity key={item.id} onPress={() => setChat(item.text)} style={[style.py, {
                                             flex: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.White, borderRadius: 7, marginHorizontal: 3, paddingHorizontal: 11, shadowColor: colors.BlueJaja,
                                             shadowOffset: {
@@ -807,6 +945,7 @@ export default function ChatScreen({ route }) {
                             }}
                             keyExtractor={(item, index) => String(index)}
                         />
+
                     </View>
 
                     <View style={[style.row_around_center, style.px_2, style.mb_2, { height: '7%', backgroundColor: 'transparent', }]}>

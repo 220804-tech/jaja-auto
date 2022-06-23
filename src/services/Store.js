@@ -13,12 +13,18 @@ export async function getStore(slug, auth) {
     };
 
     return await fetch(`https://jaja.id/backend/store/${slug}`, requestOptions)
-        .then(response => response.json())
+        .then(response => response.text())
         .then(result => {
-            if (result.status.code === 200 || result.status.code === 204) {
-                return result.data;
-            } else {
-                return null
+            try {
+                let data = JSON.parse(result)
+                if (data.status.code === 200 || data.status.code === 204) {
+                    return data.data;
+                } else {
+                    return null
+                }
+            } catch (error) {
+                Utils.handleError(String(result), "Error with status code 120191")
+                console.log("🚀 ~ file: Store.js ~ line 26 ~ getStore ~ error", error)
             }
         })
         .catch(error => {

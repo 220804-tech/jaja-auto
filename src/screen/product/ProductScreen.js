@@ -265,7 +265,6 @@ export default function ProductScreen(props) {
 
     const handleAddCart = (name) => {
         try {
-            console.log("🚀 ~ file: ProductScreen.js ~ line 271 ~ handleAddCart ~ !reduxProduct.store", !reduxProduct.store)
             setdisableCart(true)
             if (reduxAuth) {
                 if (!reduxProduct.store?.closed_store) {

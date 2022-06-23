@@ -331,16 +331,18 @@ export default function RewardScreen() {
                     let res = JSON.parse(result)
                     if (res?.status?.code === 200) {
                         setdata(res.data)
-                        setLoading(false)
                         setTimeout(() => setShowModal(true), 500);
                     } else {
                         Utils.handleErrorResponse(res, 'Error with status code : 10211')
                     }
+                    setLoading(false)
                 } catch (error) {
+                    setLoading(false)
                     Utils.alertPopUp(String(result))
                 }
             })
             .catch(error => {
+                setLoading(false)
                 Utils.handleError(error, 'Error with status code : 10213')
             });
     }
@@ -667,6 +669,8 @@ export default function RewardScreen() {
                 {pendingCoin.length ?
                     <ScrollView>
                         {pendingCoin.map((item, indx) => {
+                            console.log("🚀 ~ file: RewardScreen.js ~ line 632 ~ {doneCoin.map ~ item", item)
+
                             return (
                                 <View key={String(indx) + 'HG'} style={[styles.row_center, { borderBottomWidth: 0.5 }]}>
                                     <View style={[styles.row_center, styles.p_2, { borderRightWidth: 0.5, width: '40%' }]}>
