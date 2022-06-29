@@ -110,24 +110,24 @@ export const styles = StyleSheet.create({
     py_5: { paddingVertical: '5%' },
 
 
-    font_6: { fontSize: RFValue(5, 480), fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
-    font_7: { fontSize: RFValue(6, 480), fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
+    font_6: { fontSize: RFValue(5, 480), fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale },
+    font_7: { fontSize: RFValue(6, 480), fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale },
 
-    font_8: { fontSize: RFValue(6.5, 480), fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
-    font_9: { fontSize: RFValue(7, 480), fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
-    font_10: { fontSize: RFValue(7.5, 480), fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
-    font_11: { fontSize: RFValue(8, 480), fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
-    font_12: { fontSize: RFValue(8.5, 480), fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
-    font_13: { fontSize: RFValue(9.5, 480), fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
-    font_14: { fontSize: 14, fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
-    font_15: { fontSize: RFValue(10.5, 480), fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
-    font_16: { fontSize: 16, fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
-    font_17: { fontSize: 17, fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
-    font_18: { fontSize: 18, fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
-    font_20: { fontSize: 20, fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
-    font_22: { fontSize: 22, fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
-    font_24: { fontSize: 24, fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
-    font_26: { fontSize: 26, fontFamily: 'SignikaNegative', color: colors.BlackGrayScale },
+    font_8: { fontSize: RFValue(6.5, 480), fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale },
+    font_9: { fontSize: RFValue(7, 480), fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale },
+    font_10: { fontSize: RFValue(7.5, 480), fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale },
+    font_11: { fontSize: RFValue(8, 480), fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale },
+    font_12: { fontSize: RFValue(8.5, 480), fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale },
+    font_13: { fontSize: RFValue(9.5, 480), fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale },
+    font_14: { fontSize: 14, fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale },
+    font_15: { fontSize: RFValue(10.5, 480), fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale },
+    font_16: { fontSize: 16, fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale },
+    font_17: { fontSize: 17, fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale },
+    font_18: { fontSize: 18, fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale },
+    font_20: { fontSize: 20, fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale },
+    font_22: { fontSize: 22, fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale },
+    font_24: { fontSize: 24, fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale },
+    font_26: { fontSize: 26, fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale },
 
     T_semi_bold: { fontFamily: 'SignikaNegative-SemiBold' },
     T_bold: { fontFamily: 'SignikaNegative-Bold' },
@@ -157,8 +157,8 @@ export const styles = StyleSheet.create({
     shadow_5: { shadowColor: "#000", shadowOffset: { width: 0, height: 2, }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5, },
 
     alertText: { fontSize: 14, color: colors.RedNotif },
-    priceBefore: { fontSize: 12, fontFamily: 'SignikaNegative', color: colors.BlackGrayScale, textDecorationLine: 'line-through', },
-    priceAfter: { fontSize: 14, fontFamily: 'SignikaNegative', color: colors.RedFlashsale },
+    priceBefore: { fontSize: 12, fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale, textDecorationLine: 'line-through', },
+    priceAfter: { fontSize: 14, fontFamily: 'SignikaNegative-Regular', color: colors.RedFlashsale },
 
     appBar: { zIndex: 1000, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', backgroundColor: '#64B0C9', height: Platform.OS === 'ios' ? Hp('5.5%') : Hp('7%'), width: Wp('100%'), color: colors.siplahDefault, paddingHorizontal: '4%', paddingBottom: '4%' },
     appBar2: { zIndex: 1000, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#64B0C9', height: Platform.OS === 'ios' ? Hp('5.5%') : Hp('7%'), width: Wp('100%'), color: colors.siplahDefault, paddingHorizontal: '4%' },
@@ -179,7 +179,7 @@ export const styles = StyleSheet.create({
         letterSpacing: 0,
         color: colors.White,
         marginBottom: '3%',
-        // fontFamily: 'SignikaNegative'
+        // fontFamily: 'SignikaNegative-Regular'
     },
     titleDashboard: {
         fontSize: 15,

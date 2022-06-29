@@ -263,6 +263,7 @@ export default function OrderDetailsScreen() {
 
 
     const gotoPaymentDetailSub = (item) => {
+        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 266 ~ gotoPaymentDetailSub ~ item", item)
         setModalShow(false);
         var dataPayment = {
             payment_type: item.payment_type,
@@ -278,6 +279,7 @@ export default function OrderDetailsScreen() {
             id_order: orderPaymentRecent.order_id,
             dataPayment: dataPayment
         }
+        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 282 ~ gotoPaymentDetailSub ~ param", param)
 
 
         if (dataPayment.payment_form == "screenOther") {
@@ -356,6 +358,7 @@ export default function OrderDetailsScreen() {
         myHeaders.append("Cookie", "ci_session=6mmg253sca0no2e0gqas59up68f6ljlo");
 
         var raw = JSON.stringify(paramPay);
+        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 361 ~ tokenMidtransUpdate ~ raw", raw)
 
         var requestOptions = {
             method: 'POST',
@@ -364,6 +367,7 @@ export default function OrderDetailsScreen() {
             redirect: 'follow'
         };
 
+        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 371 ~ tokenMidtransUpdate ~ url", url)
         fetch(url, requestOptions)
             .then(response => response.json())
             .then(result => {

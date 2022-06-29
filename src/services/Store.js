@@ -92,3 +92,52 @@ export async function getProductStore(data, dispatch, newProduct) {
         return null
     }
 }
+
+export async function getEtalase(toko) {
+    try {
+        let errorResponse = true
+        var myHeaders = new Headers();
+        myHeaders.append("Cookie", "ci_session=akeeif474rkhuhqgj7ah24ksdljm0248");
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        setTimeout(() => {
+            if (errorResponse) {
+                Utils.alertPopUp('Tidak dapat memuat data, periksa kembali koneksi internet anda!')
+            }
+        }, 22000);
+
+        return await fetch(`https://elibx.jaja.id/jaja/etalase/get-etalase-product?id=${toko}`, requestOptions)
+            .then(response => response.text())
+            .then(json => {
+                try {
+                    errorResponse = false
+                    let result = JSON.parse(json)
+                    if (result?.status?.code == 200) {
+                        return result.data
+                    } else if (!result?.data?.length) {
+                        return []
+                    } else {
+                        Utils.alertPopUp(result?.status?.message)
+                        return []
+                    }
+                } catch (error) {
+                    return []
+                }
+            })
+            .catch(error => {
+                Utils.handleError(String(error), 'Error with status code : 81002')
+                return []
+            });
+
+
+    } catch (error) {
+        Utils.alertPopUp(String(error), 'Error with status code : 51002')
+        return []
+    }
+
+}

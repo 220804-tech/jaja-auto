@@ -5,6 +5,8 @@ import { SceneMap, TabBar, TabView } from 'react-native-tab-view'
 import { useDispatch, useSelector } from 'react-redux'
 import Products from '../../components/Store/StoreProducts/StoreProducts'
 import MainPage from '../../components/Store/MainPage/MainPage'
+import EtalasePage from '../../components/Store/Etalase/Etalase'
+
 // import Posts from '../../components/Store/Posts'
 import { colors, Loading, ServiceCart, ServiceStore, styles, useNavigation, Wp, AppbarSecond, Hp, } from '../../export'
 const initialLayout = { width: Dimensions.get('window').width };
@@ -14,7 +16,7 @@ import database from "@react-native-firebase/database";
 export default function StoreScreen({ route }) {
     const navigation = useNavigation();
     const reduxStore = useSelector(state => state.store.store)
-    console.log("🚀 ~ file: StoreScreen.js ~ line 17 ~ StoreScreen ~ reduxStore", reduxStore)
+    // console.log("🚀 ~ file: StoreScreen.js ~ line 17 ~ StoreScreen ~ reduxStore", )
     const reduxUser = useSelector(state => state.user)
     const reduxAuth = useSelector(state => state.auth.auth)
     const greeting = useSelector(state => state.store.store.greeting)
@@ -26,13 +28,28 @@ export default function StoreScreen({ route }) {
     const [seller, setSeller] = useState("")
     const [count, setcount] = useState(0)
     const [index, setIndex] = useState(0)
+    const [listetalase, setlistEtalase] = useState([])
+    const [listetalaseApi, setlistEtalaseApi] = useState([])
+
+    const [textetalase, settextEtalase] = useState('')
+    console.log("🚀 ~ file: StoreScreen.js ~ line 34 ~ StoreScreen ~ textetalase", textetalase)
+
     const [deskripsiLenght, setdeskripsiLenght] = useState(100)
     const loadStore = useSelector(state => state.store.loadStore)
     const reduxnotifCount = useSelector(state => state.notification.notifCount)
 
+
+
     useEffect(() => {
         handleProduct()
     }, [])
+
+
+    useEffect(() => {
+        if (!!reduxStore.id) {
+            handleEtalase()
+        }
+    }, [reduxStore?.id])
 
     const handleProduct = () => {
         dispatch({ type: 'SET_NEW_PRODUCT', payload: [] })
@@ -59,6 +76,19 @@ export default function StoreScreen({ route }) {
         })
     }
 
+    const handleEtalase = () => {
+        ServiceStore.getEtalase(reduxStore.id).then(res => {
+            console.log("🚀 ~ file: StoreScreen.js ~ line 73 ~ ServiceStore.getEtalase ~ res", res)
+            if (res?.length) {
+                setlistEtalase(res)
+                setlistEtalaseApi(res)
+                setcount(count + 1)
+            }
+        })
+    }
+
+
+
     useEffect(() => {
         if (reduxStore?.uid) {
             let dataSeller = {
@@ -77,18 +107,19 @@ export default function StoreScreen({ route }) {
     const [routes] = useState([
         { key: 'first', title: 'Halaman Toko' },
         { key: 'second', title: 'Produk' },
-        // { key: 'third', title: 'Kategori' },
+        // { key: 'third', title: 'Etalase' },
+
+        { key: 'third', title: 'Etalse' },
 
     ]);
 
     const renderScene = SceneMap({
         first: MainPage,
         second: Products,
-        // third: Posts,
+        third: () => <EtalasePage data={listetalase} />,
     });
 
     const handleSubmit = (text) => {
-        console.log("🚀 ~ file: StoreScreen.js ~ line 82 ~ handleSearch ~ text", text)
         dispatch({ "type": 'SET_STORE_KEYWORD', payload: text })
         if (text && text !== " " && text !== "  " && text !== "   " && text !== "    " && text !== "     ") {
             setIndex(1)
@@ -124,8 +155,17 @@ export default function StoreScreen({ route }) {
         }
     }
 
-    const handleSearch = () => {
-        console.log('text');
+    const handleSearch = (text) => {
+        let newArr = JSON.parse(JSON.stringify(listetalaseApi))
+        settextEtalase(text)
+        if (index == 2) {
+            if (String(text).length) {
+                const afterFilter = newArr.filter((vcr) => vcr.name.toLowerCase().indexOf(text.toLowerCase()) > -1);
+                setlistEtalase(afterFilter)
+            } else {
+                setlistEtalase(listetalaseApi)
+            }
+        }
     }
 
 
@@ -143,53 +183,53 @@ export default function StoreScreen({ route }) {
                 {loading || loadStore ? <Loading /> : null}
                 <View style={[styles.container]}>
                     {/* <ImageBackground source={image && image.mainBanner ? { uri: image.mainBanner } : null} style={{ width: '100%', height: '100%' }}> */}
-                    <AppbarSecond storeSlug={reduxStore.slug} storename={reduxStore.name} handleSearch={handleSearch} handleSubmit={handleSubmit} title={reduxStore && Object.keys(reduxStore).length && reduxStore.name ? `Cari di ${reduxStore.name}..` : 'Cari di toko..'} />
+                    <AppbarSecond storeSlug={reduxStore.slug} storename={reduxStore.name} handleSearch={handleSearch} handleSubmit={handleSubmit} title={reduxStore && Object.keys(reduxStore).length && reduxStore.name ? `Cari ${index == '2' ? 'etalase ' : ''}di ${reduxStore.name}..` : 'Cari di toko..'} />
                     <ScrollView nestedScrollEnabled={true} >
 
                         {/* stickyHeaderIndices={[0]} */}
-                        {index === 0 ?
-                            <View style={[styles.column, styles.px_4, styles.pt_4, styles.pb, { width: Wp('100%'), backgroundColor: colors.White }]}>
+                        {/* {index === 0 ? */}
+                        <View style={[styles.column, styles.px_4, styles.pt_4, styles.pb, { width: Wp('100%'), backgroundColor: colors.White }]}>
+                            {Object.keys(reduxStore).length !== 0 ?
                                 <View style={styles.row_between_center}>
-                                    {Object.keys(reduxStore).length !== 0 ?
-                                        <View style={styles.row_start_center}>
-                                            <View style={[styles.p_3, { width: Wp('15.5%'), height: Wp('15.5%'), borderRadius: 100, marginRight: '7%', borderWidth: 0.5, borderColor: colors.Silver, backgroundColor: colors.White, alignItems: 'center', justifyContent: 'center' }]}>
-                                                {reduxStore.image.profile ?
-                                                    <Image source={{ uri: reduxStore.image.profile ? reduxStore.image.profile : null }} style={{ width: '100%', height: '100%', resizeMode: 'contain', borderRadius: 5 }} />
-                                                    :
-                                                    <Text style={[styles.font_26, styles.T_semi_bold, { color: colors.BlueJaja, alignSelf: 'center', marginBottom: Platform.OS === 'android' ? '-1%' : 0 }]}>{String(reduxStore.name).slice(0, 1)}</Text>
-                                                }
-                                            </View>
-                                            <View style={[styles.column_around_center, { height: Wp('14.5%'), alignItems: 'flex-start' }]}>
-                                                <Text adjustsFontSizeToFit numberOfLines={1} style={[styles.font_12, { color: colors.BlueJaja, fontFamily: 'SignikaNegative-Bold', marginBottom: '3%', width: '100%' }]}>{reduxStore.name}</Text>
-                                                <Text adjustsFontSizeToFit style={[styles.font_9, { color: colors.BlackGrayScale, marginBottom: '3%' }]}>{reduxStore.location.city}</Text>
-
-                                                {reduxStore.rating !== "0.0" ?
-                                                    <View style={styles.row_center}>
-                                                        <Text style={[styles.font_12, { color: colors.BlackGrayScale }]}>{reduxStore.rating} </Text>
-                                                        <Image source={require('../../assets/icons/star.png')} style={[styles.icon_14, { tintColor: colors.YellowJaja }]} />
-                                                    </View>
-                                                    :
-                                                    null}
-
-                                            </View>
+                                    <View style={styles.row_start_center}>
+                                        <View style={[styles.p_3, { width: Wp('15.5%'), height: Wp('15.5%'), borderRadius: 100, marginRight: '7%', borderWidth: 0.5, borderColor: colors.Silver, backgroundColor: colors.White, alignItems: 'center', justifyContent: 'center' }]}>
+                                            {reduxStore.image.profile ?
+                                                <Image source={{ uri: reduxStore.image.profile ? reduxStore.image.profile : null }} style={{ width: '100%', height: '100%', resizeMode: 'contain', borderRadius: 5 }} />
+                                                :
+                                                <Text style={[styles.font_26, styles.T_semi_bold, { color: colors.BlueJaja, alignSelf: 'center', marginBottom: Platform.OS === 'android' ? '-1%' : 0 }]}>{String(reduxStore.name).slice(0, 1)}</Text>
+                                            }
                                         </View>
-                                        : null
-                                    }
-                                    <Button disabled={seller?.id ? false : true} onPress={handleChat} mode="contained" icon="chat" labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} color={colors.YellowJaja} >
+                                        <View style={[styles.column_around_center, { height: Wp('14.5%'), alignItems: 'flex-start' }]}>
+                                            <Text adjustsFontSizeToFit numberOfLines={1} style={[styles.font_12, { color: colors.BlueJaja, fontFamily: 'SignikaNegative-Bold', marginBottom: '3%', width: '100%' }]}>{reduxStore.name}</Text>
+                                            <Text adjustsFontSizeToFit style={[styles.font_9, { color: colors.BlackGrayScale, marginBottom: '3%' }]}>{reduxStore.location.city}</Text>
+
+                                            {reduxStore.rating !== "0.0" ?
+                                                <View style={styles.row_center}>
+                                                    <Text style={[styles.font_12, { color: colors.BlackGrayScale }]}>{reduxStore.rating} </Text>
+                                                    <Image source={require('../../assets/icons/star.png')} style={[styles.icon_14, { tintColor: colors.YellowJaja }]} />
+                                                </View>
+                                                :
+                                                null}
+
+                                        </View>
+                                    </View>
+                                    <Button disabled={seller?.id ? false : true} onPress={handleChat} mode="contained" icon="chat" labelStyle={[styles.font_10, styles.T_medium, { color: colors.White }]} color={colors.YellowJaja} >
                                         Chat
                                     </Button>
                                 </View>
-                                {greeting ?
-                                    <View style={[styles.py_3, styles.mt_2, { flex: 0, backgroundColor: colors.White, alignItems: 'center', justifyContent: 'flex-start', }]}>
-                                        {reduxStore?.closed_store == true ?
-                                            <View style={[styles.row_start_center, styles.mb_2, { alignSelf: 'flex-start' }]}>
-                                                <Image source={require('../../assets/icons/circle.png')} style={[styles.icon_12, styles.mr, { tintColor: colors.Silver }]} />
+                                : null
+                            }
+                            {greeting ?
+                                <View style={[styles.py_3, styles.mt_2, { flex: 0, backgroundColor: colors.White, alignItems: 'center', justifyContent: 'flex-start', }]}>
+                                    {reduxStore?.closed_store == true ?
+                                        <View style={[styles.row_start_center, styles.mb_2, { alignSelf: 'flex-start' }]}>
+                                            <Image source={require('../../assets/icons/circle.png')} style={[styles.icon_12, styles.mr, { tintColor: colors.Silver }]} />
 
-                                                <Text adjustsFontSizeToFit style={[styles.font_9, { color: colors.BlackGrayScale, textAlignVertical: 'center' }]}>Toko sedang offline</Text>
-                                            </View>
-                                            : null}
-                                        <Text style={[styles.font_12, { color: colors.BlackGrayScale, alignSelf: 'flex-start' }]}>{String(greeting).slice(0, 150)}</Text>
-                                        {/* {greeting ?
+                                            <Text adjustsFontSizeToFit style={[styles.font_9, { color: colors.BlackGrayScale, textAlignVertical: 'center' }]}>Toko sedang offline</Text>
+                                        </View>
+                                        : null}
+                                    <Text style={[styles.font_12, { color: colors.BlackGrayScale, alignSelf: 'flex-start' }]}>{String(greeting).slice(0, 150)}</Text>
+                                    {/* {greeting ?
                                 <>
                                     <View style={[styles.column, { width: '98%' }]}>
                                         <Text style={[styles.font_12, { color: colors.BlackGrayScale }]}>{String(greeting).slice(0, deskripsiLenght)}</Text>
@@ -205,11 +245,11 @@ export default function StoreScreen({ route }) {
                                     </View>
                                 </>
                                 : null} */}
-                                    </View>
-                                    : null}
-                            </View>
-                            : null
-                        }
+                                </View>
+                                : null}
+                        </View>
+                        {/* : null
+                        } */}
                         {/* </ImageBackground> */}
 
                         <View style={[{ width: Wp('100%'), height: Hp('100%'), backgroundColor: colors.WhiteGrey }]}>
@@ -233,12 +273,12 @@ export default function StoreScreen({ route }) {
                                         scrollEnabled={true}
                                         contentContainerStyle={{ padding: 0, height: '100%' }}
                                         style={{ backgroundColor: colors.White, width: Wp('100%'), elevation: 3 }}
-                                        tabStyle={{ width: Wp('50%'), height: '100%', padding: 0 }} // here
+                                        tabStyle={{ width: Wp('33%'), height: '100%', padding: 0 }} // here
                                         renderLabel={({ route, focused, color }) => {
                                             return (
-                                                <View style={[styles.row_center, { width: Wp('50%'), minHeight: Wp('11%') }]}>
+                                                <View style={[styles.row_center, { width: Wp('33%'), minHeight: Wp('11%') }]}>
                                                     {/* <Image style={[styles.icon_25, { tintColor: focused ? colors.BlueJaja : colors.BlackSilver }]} source={route.title == 'Halaman Toko' ? require('../../assets/icons/store.png') : route.title == 'Produk' ? require('../../assets/icons/goods.png') : require('../../assets/icons/store.png')} /> */}
-                                                    <Text style={[styles.font_12, styles.T_medium, { textAlign: 'center', color: focused ? colors.BlueJaja : colors.BlackGrayScale }]}>{route.title}</Text>
+                                                    <Text style={[styles.font_10, styles.T_medium, { textAlign: 'center', color: focused ? colors.BlueJaja : colors.BlackGrayScale }]}>{route.title}</Text>
                                                 </View>
                                             )
                                         }}

@@ -87,7 +87,6 @@ export default function AddReview(props) {
         }).then(image => {
             let newData = JSON.parse(JSON.stringify(data))
             if (newData[idx].images.length < 4) {
-                console.log("🚀 ~ file: AddReview.js ~ line 78 ~ handleOpenCamera ~ image", image)
                 newData[idx].images.push(image.data)
                 newData[idx].imagesShow.push(image.path)
                 setData(newData)
@@ -218,7 +217,6 @@ export default function AddReview(props) {
                                 <StarRating
                                     // disabled={false}
                                     maxStars={5}
-                                    rating={4}
                                     starSize={30}
                                     fullStarColor={colors.YellowJaja}
                                     emptyStarColor={colors.YellowJaja}
