@@ -19,6 +19,7 @@ export default function OrderDetailsScreen() {
     const [refreshing, setRefreshing] = useState(null)
     const [selectedSubPayment, setselectedSubPayment] = useState('')
     const [selectedPayment, setselectedPayment] = useState('')
+    console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 22 ~ OrderDetailsScreen ~ selectedPayment", selectedPayment)
     const [orderPaymentRecent, setOrderPaymentRecent] = useState({
         "id_token": "",
         "order_id": "",
@@ -88,7 +89,6 @@ export default function OrderDetailsScreen() {
     }, [details, count])
 
     useEffect(() => {
-        setLoading(true)
         setdownloadInvoice('')
         const backAction = () => {
             getOrder()
@@ -135,13 +135,14 @@ export default function OrderDetailsScreen() {
     }, [downloadInvoice])
 
     useEffect(() => {
-        if (subPayment?.length) {
+        if (selectedPayment != '') {
             handleShowPayment()
         }
-    }, [subPayment?.length])
+    }, [selectedPayment])
 
     useFocusEffect(
         useCallback(() => {
+            setLoading(true)
             getItem()
         }, []),
     );
@@ -282,7 +283,7 @@ export default function OrderDetailsScreen() {
             .then(response => response.json())
             .then(result => {
                 console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 285 ~ tokenMidtransUpdate ~ result", result)
-                actionSheetPayment.current?.setModalVisible()
+                // actionSheetPayment.current?.setModalVisible()
 
                 var paramPayMD = {
                     "total_pembayaran": totalPembayaran,
@@ -380,14 +381,8 @@ export default function OrderDetailsScreen() {
                 payment_type: dataPayment.payment_type,
                 transaction_details: transaction_details,
                 customer_details: customer_details,
-
             }
-
         }
-
-
-
-
 
         if (dataPayment.payment_type == "bank_transfer") {
             paramPay.bank_transfer = bank_transfer;
@@ -397,12 +392,8 @@ export default function OrderDetailsScreen() {
                 "bill_info2": "Masterdiskon"
             }
         }
-        // console.log('parampay', JSON.stringify(paramPay));
-        // console.log('midtrans', JSON.stringify(midtrans));
-
 
         var url = midtrans.url + "v2/charge";
-
         var myHeaders = new Headers();
         myHeaders.append("Accept", "application/json");
         myHeaders.append("Content-Type", "application/json");
@@ -421,11 +412,6 @@ export default function OrderDetailsScreen() {
         fetch(url, requestOptions)
             .then(response => response.json())
             .then(result => {
-                actionSheetPayment.current?.setModalVisible()
-                // console.log('charge', JSON.stringify(result));
-
-                // console.log('dataToken', JSON.stringify(result));
-                // console.log('dataPayment', JSON.stringify(dataPayment));
 
                 var va_or_code_or_link = "";
                 var token = "";
@@ -454,7 +440,6 @@ export default function OrderDetailsScreen() {
                     "order_id": orderPaymentRecent.order_id,
                     "va_or_code_or_link": va_or_code_or_link,
                 }
-                console.log('paramPayMD', JSON.stringify(paramPayMD));
 
                 snapTokenUpdate(paramPayMD);
 
@@ -521,6 +506,7 @@ export default function OrderDetailsScreen() {
         if (selectedPayment.payment_type_label != 'Bank Transfer') {
             // setModalShow(true)
             gotoPaymentDetail(selectedPayment);
+            actionSheetPayment.current?.setModalVisible(false)
             // console.log('pilih');
         }
         else {
@@ -1155,7 +1141,6 @@ export default function OrderDetailsScreen() {
                                                 <View style={[styles.column, styles.mb_3]}>
                                                     {listPayment.map((item, indx) => {
                                                         if (item.payment_type != 'card') {
-                                                            console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 1158 ~ {listPayment.map ~ item", item)
                                                             return (
                                                                 <TouchableRipple
                                                                     key={indx + 'HY'}
