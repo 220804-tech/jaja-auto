@@ -32,7 +32,6 @@ export default function StoreScreen({ route }) {
     const [listetalaseApi, setlistEtalaseApi] = useState([])
 
     const [textetalase, settextEtalase] = useState('')
-    console.log("🚀 ~ file: StoreScreen.js ~ line 34 ~ StoreScreen ~ textetalase", textetalase)
 
     const [deskripsiLenght, setdeskripsiLenght] = useState(100)
     const loadStore = useSelector(state => state.store.loadStore)
@@ -228,7 +227,7 @@ export default function StoreScreen({ route }) {
                                             <Text adjustsFontSizeToFit style={[styles.font_9, { color: colors.BlackGrayScale, textAlignVertical: 'center' }]}>Toko sedang offline</Text>
                                         </View>
                                         : null}
-                                    <Text style={[styles.font_12, { color: colors.BlackGrayScale, alignSelf: 'flex-start' }]}>{String(greeting).slice(0, 150)}</Text>
+                                    <Text style={[styles.font_12, { color: colors.BlackGrayScale, alignSelf: 'flex-start', textAlign: 'justify', width: '100%' }]}>{String(greeting).slice(0, 150)}</Text>
                                     {/* {greeting ?
                                 <>
                                     <View style={[styles.column, { width: '98%' }]}>
@@ -269,14 +268,16 @@ export default function StoreScreen({ route }) {
                                     <TabBar
                                         {...props}
                                         indicatorStyle={{ backgroundColor: colors.BlueJaja }}
-                                        // bounces={true}
+                                        bounces={true}
+                                        pressColor={colors.White}
                                         scrollEnabled={true}
                                         contentContainerStyle={{ padding: 0, height: '100%' }}
-                                        style={{ backgroundColor: colors.White, width: Wp('100%'), elevation: 3 }}
-                                        tabStyle={{ width: Wp('33%'), height: '100%', padding: 0 }} // here
+
+                                        style={{ backgroundColor: colors.White, width: Wp('100%'), elevation: 3, }}
+                                        tabStyle={{ width: Wp('33%'), height: '100%', padding: 0, }} // here
                                         renderLabel={({ route, focused, color }) => {
                                             return (
-                                                <View style={[styles.row_center, { width: Wp('33%'), minHeight: Wp('11%') }]}>
+                                                <View style={[styles.row_center, { width: Wp('33%'), minHeight: Wp('11%'), borderTopWidth: 0.5, borderTopColor: colors.Silver, borderRadius: 0 }]}>
                                                     {/* <Image style={[styles.icon_25, { tintColor: focused ? colors.BlueJaja : colors.BlackSilver }]} source={route.title == 'Halaman Toko' ? require('../../assets/icons/store.png') : route.title == 'Produk' ? require('../../assets/icons/goods.png') : require('../../assets/icons/store.png')} /> */}
                                                     <Text style={[styles.font_10, styles.T_medium, { textAlign: 'center', color: focused ? colors.BlueJaja : colors.BlackGrayScale }]}>{route.title}</Text>
                                                 </View>

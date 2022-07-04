@@ -22,6 +22,8 @@ import DownloadInvoice from '../screen/order/DownloadInvoice'
 import VerifikasiEmail from '../screen/verifikasiEmail/VerifikasiEmailScreen'
 import Category from '../screen/category/CategoryScreen'
 import Store from '../screen/store/StoreScreen'
+import EtalaseProducts from '../components/Store/Etalase/EtalaseProduct'
+
 import Feed from '../screen/feed/FeedScreen'
 import Review from '../screen/review/ReviewScreen'
 import ZoomReview from '../screen/review/ZoomScreen'
@@ -50,5 +52,5 @@ export {
     Home, Product, ListChat, Chat, Orders, Profile, Login, Register, Splash, Search, Trolley, ProductSearch, Checkout, VerifikasiEmail, Account,
     Address, Category, AddAddress, Store, Midtrans, ForgotPassword, Feed, Review, ZoomReview, OrderDetails, AddReview, OrderDelivery, AddAccount,
     CustomerService, Notification, Vouchers, Flashsale, Wishlist, HistoryProduct, Reward, Referral, RequestComplain, DetailComplain, OrderCancel,
-    CoinPage, DownloadInvoice, Gift, GiftSearch, GiftDetails, TrolleyMultiDrop, CheckoutMultiDrop
+    CoinPage, DownloadInvoice, Gift, GiftSearch, GiftDetails, TrolleyMultiDrop, CheckoutMultiDrop, EtalaseProducts
 };

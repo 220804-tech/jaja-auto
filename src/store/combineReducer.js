@@ -15,6 +15,7 @@ import complain from './complainStore'
 import gift from './storeGift'
 import product from './storeProduct'
 import baseUrl from './storeBaseUrl'
+import etalase from './storeEtalase'
 
 
 
@@ -34,5 +35,6 @@ export default combineReducers({
     complain,
     gift,
     product,
-    baseUrl
+    baseUrl,
+    etalase
 })

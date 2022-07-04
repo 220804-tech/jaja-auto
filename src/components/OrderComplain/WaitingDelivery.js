@@ -44,6 +44,7 @@ export default function WaitingDelivery() {
             ToastAndroid.show('Masukkan nomor resi dengan benar!', ToastAndroid.LONG, ToastAndroid.CENTER)
         }
     }
+
     return (
         <View style={styles.container}>
             <ScrollView contentContainerStyle={styles.pt_2} >

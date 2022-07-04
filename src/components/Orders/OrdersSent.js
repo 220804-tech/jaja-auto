@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { View, Text, FlatList, Image, RefreshControl, ToastAndroid } from 'react-native'
-import { colors, styles, Wp, ServiceOrder, useNavigation, Os, DefaultNotFound } from '../../export';
+import { colors, styles, Wp, ServiceOrder, useNavigation, Os, DefaultNotFound, FastImage } from '../../export';
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { Button } from 'react-native-paper'
@@ -95,7 +95,11 @@ export default function OrdersSent() {
                                 <View style={Os.card} >
                                     <View style={[styles.row_between_center, styles.px_2, styles.mb_3, { width: '100%' }]}>
                                         <View style={[styles.row_start_center, { width: '45%' }]}>
-                                            <Image style={{ width: Wp('8%'), height: Wp('8%'), borderRadius: 100, marginRight: '5%', resizeMode: 'contain' }} source={{ uri: item.store.image ? item.store.image : null }} />
+                                            <FastImage
+                                                style={Os.imageStore}
+                                                source={{ uri: item?.store?.image ? item.store.image : null }}
+                                                resizeMode={FastImage.resizeMode.contain}
+                                            />
                                             <Text numberOfLines={1} style={[styles.font_12, {}]}>{item.store.name}</Text>
                                         </View>
                                         <View style={[styles.row_end_center, { width: '40%', }]}>
@@ -104,10 +108,10 @@ export default function OrdersSent() {
                                     </View>
 
                                     <View style={[styles.row, styles.mb, styles.px_2, { width: '100%' }]}>
-                                        <Image style={Os.image}
-                                            // resizeMethod={"scalsssse"}
-                                            resizeMode="contain"
+                                        <FastImage
+                                            style={Os.imageProduct}
                                             source={{ uri: item.products[0].image ? item.products[0].image : null }}
+                                            resizeMode={FastImage.resizeMode.contain}
                                         />
                                         <View style={[styles.column_between_center, styles.px_2, { alignItems: 'flex-start', height: Wp('17%'), width: '83%' }]}>
                                             <View style={[styles.column, { width: '100%' }]}>
@@ -124,8 +128,8 @@ export default function OrdersSent() {
                                     </View>
                                     <TouchableOpacity style={[styles.row_between_center, styles.mt_5, styles.px_2]} onPress={() => handleTracking(item)}>
                                         <View style={[styles.row, { width: Wp('50%') }]}>
-                                            <Image style={{ width: 19, height: 19, tintColor: colors.YellowJaja, marginRight: '2%' }} source={require('../../assets/icons/google-maps.png')} />
-                                            <Text numberOfLines={1} style={[styles.font_14, { color: colors.YellowJaja }]}>Paket telah dikirim</Text>
+                                            <Image style={{ width: 14, height: 14, tintColor: colors.YellowJaja, marginRight: '2%' }} source={require('../../assets/icons/google-maps.png')} />
+                                            <Text numberOfLines={1} style={[styles.font_12, { color: colors.YellowJaja }]}>Paket telah dikirim</Text>
                                         </View>
                                     </TouchableOpacity>
                                     <View style={[styles.row_between_center, styles.mt_5, styles.px_2]}>

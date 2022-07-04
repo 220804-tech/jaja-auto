@@ -111,7 +111,7 @@ export default function LoginScreen(props) {
                         handleUser(result.data)
                         EncryptedStorage.setItem("token", JSON.stringify(result.data))
                     } else if (result.status.code === 400 || result.status.code === 404) {
-                        if (result.status.message === "account has not been activated") {
+                        if (String(result.status.message).includes("belum di verifikasi")) {
                             Utils.alertPopUp("Akun anda belum diverifikasi")
                             navigation.navigate('VerifikasiEmail', { email: email })
                         } else if (result.status.message === "data not found") {

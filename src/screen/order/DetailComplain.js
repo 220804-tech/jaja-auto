@@ -17,6 +17,7 @@ export default function DetailComplain() {
     const orderUid = useSelector(state => state.complain.complainUid)
     const reaUpdate = useSelector(state => state.dashboard.notifikasi)
     const complainTarget = useSelector(state => state.complain.complainTarget)
+    const navigation = useNavigation();
 
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
@@ -233,7 +234,7 @@ export default function DetailComplain() {
                 setTimeout(() => {
                     let signal = Utils.CheckSignal();
                     if (!signal.connect) {
-                        ToastAndroid.show("Tidak dapat terhubung, periksa kembali koneksi internet anda!", ToastAndroid.LONG, ToastAndroid.TOP)
+                        Utils.show("Tidak dapat terhubung, periksa kembali koneksi internet anda!", Utils.LONG, ToastAndroid.TOP)
                     }
                     setLoading(false)
                 }, 5000);
@@ -245,36 +246,45 @@ export default function DetailComplain() {
     }
 
     const handleAccept = () => {
-        setModalConfirm(true)
-        Firebase.notifChat(complainTarget, { body: 'Pembeli telah mengirim kembali barang yang di komplain', title: 'Komplain' })
-        Firebase.buyerNotifications('orders', orderUid)
-        // setLoading(true)
-        // var myHeaders = new Headers();
-        // myHeaders.append("Authorization", reduxAuth);
-        // myHeaders.append("Cookie", "ci_session=7vgloal55kn733tsqch0v7lh1tfrcilq");
+        try {
+            setModalConfirm(true)
+            setLoading(true)
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", reduxAuth);
+            myHeaders.append("Cookie", "ci_session=7vgloal55kn733tsqch0v7lh1tfrcilq");
 
-        // var formdata = new FormData();
-        // formdata.append("invoice", orderInvoice);
+            var formdata = new FormData();
+            formdata.append("invoice", orderInvoice);
 
-        // var requestOptions = {
-        //     method: 'POST',
-        //     headers: myHeaders,
-        //     body: formdata,
-        //     redirect: 'follow'
-        // };
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: formdata,
+                redirect: 'follow'
+            };
 
-        // fetch("https://jaja.id/backend/order/pesananDiterima", requestOptions)
-        //     .then(response => response.json())
-        //     .then(result => {
-        //         if (result.status.code === 200) {
-        //             navigation.navigate('Pesanan')
-        //         } else {
-        //             Utils.handleErrorResponse(result, "Error with status code : 12036")
-        //         }
-        //     })
-        //     .catch(error => Utils.handleError(error, "Error with staus code : 12037"));
+            fetch("https://jaja.id/backend/order/pesananDiterima", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    setLoading(false)
+                    if (result?.status?.code == 200) {
+                        navigation.navigate('Pesanan')
+                        Firebase.notifChat(complainTarget, { body: 'Pembeli Telah Menerima Pesanan', title: 'Pesanan' })
+                        Firebase.buyerNotifications('orders', orderUid)
+                    } else {
+                        Utils.handleErrorResponse(result, "Error with status code : 120366")
+                    }
+
+                })
+                .catch(error => {
+                    setLoading(false)
+                    Utils.handleError(error, "Error with staus code : 120377")
+                });
+
+        } catch (error) {
+            setLoading(false)
+        }
     }
-
 
 
     return (

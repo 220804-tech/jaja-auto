@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { View, Text, FlatList, Image, RefreshControl, ToastAndroid, ScrollView, TouchableNativeFeedback } from 'react-native'
-import { colors, styles, Wp, ServiceOrder, useNavigation, Os, DefaultNotFound } from '../../export';
+import { colors, styles, Wp, ServiceOrder, useNavigation, Os, DefaultNotFound, FastImage } from '../../export';
 import { Button } from 'react-native-paper'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { useSelector, useDispatch } from 'react-redux'
@@ -76,15 +76,19 @@ export default function OrdersUnpaid() {
                                             <View key={String(indx) + "X"} style={styles.my_2}>
                                                 <View style={[styles.row_between_center, styles.px_2, styles.pb_2, styles.mb_3, { width: '100%', borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}>
                                                     <View style={[styles.row_start_center, { width: '45%' }]}>
-                                                        <Image style={{ width: Wp('8%'), height: Wp('8%'), borderRadius: 100, marginRight: '5%', resizeMode: 'contain' }} source={{ uri: child.store.image ? child.store.image : null }} />
+                                                        <FastImage
+                                                            style={Os.imageStore}
+                                                            source={{ uri: item?.store?.image ? item.store.image : null }}
+                                                            resizeMode={FastImage.resizeMode.contain}
+                                                        />
                                                         <Text numberOfLines={1} style={[styles.font_12, {}]}>{child.store.name}</Text>
                                                     </View>
                                                 </View>
                                                 <View style={[styles.row, styles.mb, styles.px_2, { width: '100%' }]}>
-                                                    <Image style={[Os.image]}
-                                                        // resizeMethod={"scale"}
-                                                        // resizeMode="contain"
+                                                    <FastImage
+                                                        style={Os.imageProduct}
                                                         source={{ uri: child.products[0].image ? child.products[0].image : null }}
+                                                        resizeMode={FastImage.resizeMode.contain}
                                                     />
                                                     <View style={[styles.column_between_center, styles.px_2, { alignItems: 'flex-start', height: Wp('17%'), width: '83%' }]}>
                                                         <View style={[styles.column, { width: '100%' }]}>

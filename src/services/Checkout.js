@@ -50,7 +50,6 @@ export async function getShipping(auth, gift) {
     return await fetch(`https://jaja.id/backend/checkout/shipping?is_gift=${gift === 1 ? 1 : 0}`, requestOptions)
         .then(response => response.json())
         .then(result => {
-
             if (result.status.code === 200) {
                 return result.data;
             } else if (result.status.code == 404 && String(result.status.message).includes('Alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu')) {

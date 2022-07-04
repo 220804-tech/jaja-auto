@@ -10,7 +10,7 @@ console.log("🚀 ~ file: productStyles.js ~ line 12121 ~ SCREEN_HEIGHT", SCREEN
 // second argument is standardScreenHeight(optional),
 export const style = StyleSheet.create({
     cardProduct: {
-        borderRadius: 6,
+        borderRadius: 5,
         width: Wp("44%"),
         marginLeft: Wp('4%'),
         height: Hp("41%"),
@@ -49,8 +49,8 @@ export const style = StyleSheet.create({
     imageProduct: {
         width: '100%',
         height: '100%',
-        borderTopLeftRadius: 3,
-        borderTopRightRadius: 3,
+        borderTopLeftRadius: 5,
+        borderTopRightRadius: 5,
     },
     bottomCard: {
         flex: 0, flexDirection: 'column', padding: '3%'

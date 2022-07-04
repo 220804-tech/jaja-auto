@@ -10,6 +10,7 @@ export default function CardProductComponent(props) {
     const dispatch = useDispatch()
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxLoad = useSelector(state => state.product.productLoad)
+    const reduxStore = useSelector(state => state.store.store)
 
 
 
@@ -74,17 +75,17 @@ export default function CardProductComponent(props) {
         return (
             <TouchableOpacity
                 onPress={() => handleShowDetail(item, false)}
-                style={[Ps.cardProduct, styles.shadow_5, { shadowColor: colors.BlueJaja }]}
+                style={[Ps.cardProduct, styles.shadow_3, { shadowColor: colors.BlueJaja }]}
                 key={index}>
                 {item.isDiscount ? <Text adjustsFontSizeToFit style={Ps.textDiscount}>{item.discount}%</Text> : null}
                 <View style={[styles.column, { height: Wp('44%'), width: Wp('44%'), borderTopLeftRadius: 6, borderTopRightRadius: 6 }]}>
                     {
-                        item?.image && item.image !== null && String(item.image).includes('http') ?
+                        item?.image && item.image !== null && String(item.image).includes('http') || String(item.images) ?
                             <FastImage
 
                                 style={Ps.imageProduct}
                                 source={{
-                                    uri: item.image,
+                                    uri: item.image ? item.image : item.images,
                                 }}
                                 resizeMode={FastImage.resizeMode.contain}
                             />
@@ -131,8 +132,9 @@ export default function CardProductComponent(props) {
                     }
                     <View style={[Ps.location]}>
                         <Image style={Ps.locationIcon} source={require('../../assets/icons/google-maps.png')} />
-                        <Text adjustsFontSizeToFit numberOfLines={1} style={[Ps.locarionNameSmall]}>{item.location}</Text>
+                        <Text adjustsFontSizeToFit numberOfLines={1} style={[Ps.locarionNameSmall]}>{item.location ? item.location : reduxStore?.location?.city}</Text>
                     </View>
+
 
                     {/* {item.freeOngkir == 'Y' ?
                                 <View style={{ width: Wp('6%'), height: Wp('6%'), justifyContent: 'center' }}>

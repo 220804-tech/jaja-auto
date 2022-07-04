@@ -424,6 +424,16 @@ export default function FeedScreen(props) {
                         }
                         : null
                 )}
+                onMomentumScrollEnd={({ nativeEvent }) => {
+                    if (isCloseToBottom(nativeEvent)) {
+                        if (!loadmore) {
+                            setloadmore(true)
+                            setpage(page + 1)
+                        } else {
+                            // console.log('wait')
+                        }
+                    }
+                }}
                 style={styles.p_2}
                 data={data?.concat(shimmerdata)}
                 keyExtractor={(item, index) => String(index + 'SJ')}

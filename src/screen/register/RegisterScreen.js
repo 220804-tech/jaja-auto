@@ -127,6 +127,8 @@ class RegisterScreen extends Component {
             "phoneNumber": this.state.telephone,
             "referralCode": this.state.referral.toLocaleLowerCase()
         };
+
+        // const obj = { "name": "csdsvvdszva", "email": "Vd@@gmail.com", "password": "disgdus", "ulangipassword": "", "phone": "543534534" }
         if (this.state.firstName === '') {
             this.setState({ alertTextFirstName: 'Nama depan tidak boleh kosong!' });
         } else if (this.state.lastName === '')
@@ -142,6 +144,7 @@ class RegisterScreen extends Component {
             myHeaders.append("Cookie", "ci_session=pcgo0ue0u1ctc99j2h0ocdhpdvbfqikh");
 
             var raw = JSON.stringify(credentials);
+            console.log("🚀 ~ file: RegisterScreen.js ~ line 148 ~ RegisterScreen ~ raw", raw)
 
             var requestOptions = {
                 method: 'POST',
@@ -153,17 +156,18 @@ class RegisterScreen extends Component {
             fetch("https://jaja.id/backend/user/register", requestOptions)
                 .then(response => response.json())
                 .then(res => {
-                    console.log("🚀 ~ file: RegisterScreen.js ~ line 169 ~ index ~ res", res)
+                    console.log("🚀 ~ file: RegisterScreen.js ~ line 160 ~ RegisterScreen ~ res", res)
                     json = res;
                     setTimeout(() => this.setState({ loading: false }), 2000);
                     if (res.status.code === 200) {
+                        // this.handleSendEmail()
                         EncryptedStorage.setItem('user', JSON.stringify(res.data.customer))
                         this.props.dispatch({ type: 'SET_USER', payload: res.data.customer })
                         // AsyncStorage.setItem('token', JSON.stringify(res.data.token))
                         // EncryptedStorage.setItem('token', JSON.stringify(res.data.token))
                         EncryptedStorage.setItem('emailVerification', JSON.stringify(credentials.email))
                         EncryptedStorage.setItem('usrverif', JSON.stringify({ eml: credentials.email, pw: credentials.password }))
-                        this.props.navigation.navigate('VerifikasiEmail', { email: credentials.email })
+                        // this.props.navigation.navigate('VerifikasiEmail', { email: credentials.email })
                     } else if (res.status.code == 409) {
                         this.setState({ alertTextEmail: 'Email sudah pernah digunakan!' })
                     } else if (res.status.code === 400 && res.status.message == 'Referal code invalid') {
@@ -173,8 +177,9 @@ class RegisterScreen extends Component {
                     }
                 })
                 .catch(error => {
+                    console.log("🚀 ~ file: RegisterScreen.js ~ line 181 ~ RegisterScreen ~ error", error)
                     json = error
-                    ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)
+                    Utils.alertPopUp(String(error))
                     setTimeout(() => this.setState({ loading: false }), 1000);
                 });
             setTimeout(() => {
@@ -188,6 +193,40 @@ class RegisterScreen extends Component {
         }
 
     };
+
+
+
+    handleSendEmail = () => {
+        try {
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            var raw = JSON.stringify({ "email": this.state.email });
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+
+            fetch("https://jaja.id/backend/user/forgot_password", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    console.log("🚀 ~ file: RegisterScreen.js ~ line 210 ~ RegisterScreen ~ result", result)
+                    if (result.status.code != 200) {
+                        Utils.alertPopUp(result.status.message + " - " + result.status.code)
+                    }
+                })
+                .catch(error => {
+                    Utils.alertPopUp(error.message)
+                });
+        } catch (error) {
+            console.log("🚀 ~ file: RegisterScreen.js ~ line 220 ~ RegisterScreen ~ error", error)
+
+        }
+    }
+
     render() {
         return (
             <SafeAreaView style={style.containerFix}>

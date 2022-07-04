@@ -121,24 +121,18 @@ export default class ForgotPasswordScreen extends Component {
 
     handleOtp = (code) => {
         this.setState({ loading: true, code: code })
-
-        console.log("🚀 ~ file: index.js ~ line 142 ~ index ~ code", code)
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
-
         var raw = JSON.stringify({ "email": this.state.email, "code": code });
-
         var requestOptions = {
             method: 'POST',
             headers: myHeaders,
             body: raw,
             redirect: 'follow'
         };
-
         fetch("https://jaja.id/core/seller/auth/verification/forgot_password", requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: index.js ~ line 158 ~ index ~ result", result)
                 if (result.status.code === 200) {
                     setTimeout(() => {
                         this.setState({ loading: false })
@@ -253,13 +247,11 @@ export default class ForgotPasswordScreen extends Component {
                     );
                 }, 200);
             });
-
     };
 
     render() {
         // step 1 kirim email
         let view = <View></View>;
-
         if (this.state.step1 === true) {
             view = (
                 <>

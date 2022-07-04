@@ -40,6 +40,17 @@ export default function TrolleyScreen() {
             setLoading(false)
         }
     }, [reduxCart.cart])
+    useEffect(() => {
+        handleLoading()
+    }, [])
+
+    const handleLoading = () => {
+        setLoading(true)
+        setTimeout(() => {
+            setLoading(false)
+        }, 1000);
+
+    }
 
     const handleCheckbox = (name, indexParent, indexChild) => {
         try {
@@ -416,23 +427,24 @@ export default function TrolleyScreen() {
 
                                                             />
                                                         }
-                                                        <TouchableWithoutFeedback onPress={() => handleSelected(item)}>
+                                                        <View style={{
+                                                            width: Wp('24%'), height: Wp('24%'), marginHorizontal: '3%', borderRadius: 3,
+                                                            backgroundColor: colors.WhiteGrey,
+                                                        }} onPress={() => handleSelected(item)}>
                                                             <Image style={{
-                                                                width: Wp('24%'),
-                                                                height: Wp('24%'),
-                                                                marginHorizontal: '3%',
-                                                                borderRadius: 5,
-                                                                backgroundColor: colors.White,
-                                                                borderWidth: 0.2,
+                                                                width: '100%',
+                                                                height: '100%',
+
+                                                                borderRadius: 3,
                                                                 borderColor: colors.Silver,
                                                                 alignSelf: 'center',
                                                                 resizeMode: 'contain'
                                                             }}
-                                                                resizeMethod={"scale"}
+                                                                resizeMethod='auto'
                                                                 // resizeMode={item.image ? "cover" : "center"}
                                                                 source={{ uri: item.image }}
                                                             />
-                                                        </TouchableWithoutFeedback>
+                                                        </View>
                                                         <View style={[styles.column_between_center, { alignItems: 'flex-start', height: Wp('23%'), width: '60%' }]}>
                                                             <View style={styles.column_center_start}>
                                                                 <Text onPress={() => handleSelected(item)} numberOfLines={1} style={[styles.font_12, styles.T_medium, { flex: 0, color: colors.BlueJaja }]}>{item.name}</Text>

@@ -1,5 +1,5 @@
-import React, { useState, createRef, useCallback } from 'react'
-import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, TextInput, FlatList, Alert, Dimensions, Modal, Platform } from 'react-native'
+import React, { useState, createRef, useCallback, useEffect } from 'react'
+import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, TextInput, FlatList, Alert, Dimensions, Modal, Platform, PermissionsAndroid, Linking } from 'react-native'
 import MapView from 'react-native-maps';
 import { Appbar, Button, TouchableRipple } from 'react-native-paper';
 import ActionSheet from 'react-native-actions-sheet';
@@ -18,6 +18,8 @@ export default function map(props) {
     const [address_components, setaddress_components] = useState('')
     const [dataSearch, setdataSearch] = useState([])
     const [modal, setModal] = useState(false)
+    const [denied, setdenied] = useState(false)
+
     const [region, setRegion] = useState({
         latitude: -6.2617525,
         longitude: 106.8407469,
@@ -26,7 +28,7 @@ export default function map(props) {
     })
     const [loading, setloading] = useState(false)
 
-    console.log("🚀 ~ file: Maps.js ~ line 27 ~ map ~ region", region)
+    // console.log("🚀 ~ file: Maps.js ~ line 27 ~ map ~ region", region)
     const [count, setcount] = useState(0)
 
     const ASPECT_RATIO = width / height;
@@ -44,7 +46,6 @@ export default function map(props) {
                 setRegion(props.region)
             } else {
                 setloading(true)
-                // handleCurrentLocation()
                 getOneTimeLocation()
                 setTimeout(() => {
                     setloading(false)
@@ -56,16 +57,61 @@ export default function map(props) {
         }, []),
     );
 
+    // useEffect(() => {
+    //     handleCurrentLocation()
+    //     return () => {
+
+    //     }
+    // }, [])
 
 
-    const getOneTimeLocation = () => {
+
+
+    const getOneTimeLocation = async () => {
+
+        try {
+            console.log("🚀 ~ file: Maps.js ~ line 74 ~ getOneTimeLocation ~ denied", denied)
+            if (!denied) {
+                console.log('MASUK SII')
+                const granted = await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+                    {
+                        title: 'Location Access Required',
+                        message: 'This App needs to Access your location',
+                    },
+                );
+                console.log("🚀 ~ file: Maps.js ~ line 83 ~ getOneTimeLocation ~ granted", granted)
+                if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                    setdenied(true)
+                    // Linking.openSettings();
+                    console.log("🚀 ~ file: Maps.js ~ line 88 ~ getOneTimeLocation ~ Platform.Version", Platform.Version)
+                    if (Platform.Version < 29) {
+                        alwaysPermission = PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION;
+                    } else {
+                        alwaysPermission = PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION;
+                    }
+                    handleGetCurrentLocation()
+                } else {
+                    setdenied(false)
+                    Utils.alertPopUp('Permission Denied');
+                }
+            } else {
+                handleGetCurrentLocation()
+            }
+
+        } catch (error) {
+
+        }
+
+
+    };
+
+    const handleGetCurrentLocation = () => {
         Geolocation.getCurrentPosition(
             (position) => {
                 console.log("🚀 ~ file: Maps.js ~ line 49 ~ getOneTimeLocation ~ position", position)
                 const currentLongitude = JSON.stringify(position.coords.longitude);
-                console.log("🚀 ~ file: Maps.js ~ line 53 ~ getOneTimeLocation ~ currentLongitude", currentLongitude)
                 const currentLatitude = JSON.stringify(position.coords.latitude);
-                console.log("🚀 ~ file: Maps.js ~ line 55 ~ getOneTimeLocation ~ currentLatitude", position.coords.latitude)
                 onRegionChange({
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude,
@@ -73,13 +119,14 @@ export default function map(props) {
                 setcount(count + 1)
             },
             (error) => {
+                console.log("🚀 ~ file: Maps.js ~ line 76 ~ getOneTimeLocation ~ error", error)
                 setLocationStatus(error.message);
             },
             {
                 enableHighAccuracy: false,
             },
         );
-    };
+    }
 
     const subscribeLocationLocation = () => {
         watchID = Geolocation.watchPosition(
@@ -106,6 +153,8 @@ export default function map(props) {
 
     const handleCurrentLocation = async () => {
         if (Platform.OS === 'ios') {
+            Linking.openSettings();
+
             getOneTimeLocation();
             subscribeLocationLocation()
         } else {
@@ -118,6 +167,13 @@ export default function map(props) {
                     },
                 );
                 if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                    Linking.openSettings();
+                    if (Platform.Version < 29) {
+                        alwaysPermission = PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION;
+                    } else {
+                        alwaysPermission = PERMISSIONS.ANDROID.ACCESS_BACKGROUND_LOCATION;
+                    }
+
                     getOneTimeLocation();
                     subscribeLocationLocation();
                 } else {
@@ -145,6 +201,7 @@ export default function map(props) {
         fetch("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + region.latitude + "," + region.longitude + "&sensor=false&key=AIzaSyB4C8a6rkM6BKu1W0owWvStPzGHoc4ZBXI")
             .then((response) => response.json())
             .then((responseJson) => {
+                console.log("🚀 ~ file: Maps.js ~ line 148 ~ .then ~ responseJson", responseJson)
                 setalamatGoogle(responseJson.results[0].address_components[1].long_name + ' , ' + responseJson.results[0].address_components[0].short_name)
                 setalamatGoogleDetail(responseJson.results[0].formatted_address)
                 setdataGoogle(responseJson.results[0])
@@ -297,7 +354,7 @@ export default function map(props) {
                             <Image style={styles.marker} source={require('../../assets/icons/google-maps.png')} />
                         </TouchableOpacity>
                     </View>
-                    <View style={styles.markerCurrent}>
+                    {/* <View style={styles.markerCurrent}>
                         <TouchableOpacity style={{
                             backgroundColor: colors.White, borderRadius: 100, height: 48, width: 48, justifyContent: 'center', alignItems: 'center',
                             shadowColor: "#000",
@@ -312,7 +369,7 @@ export default function map(props) {
                         }} onPress={getOneTimeLocation}>
                             <Image style={[styles.iconCurrent]} source={require('../../assets/icons/precision.png')} />
                         </TouchableOpacity>
-                    </View>
+                    </View> */}
                 </View>
                 {alamatGoogle !== "" ?
                     <View style={styles.bodyPicker}>

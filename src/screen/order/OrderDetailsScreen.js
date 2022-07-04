@@ -36,87 +36,7 @@ export default function OrderDetailsScreen() {
     });
     const [midtrans, setMidtrans] = useState();
     const [loadingOrderPaymentRecent, setLoadingOrderPaymentRecent] = useState(true);
-    const [listPayment, setListPayment] = useState([
-        {
-            "id_payment_method_category": "1",
-            "payment_type_label": "Card",
-            "payment_type": "card",
-            "option": false,
-            "subPayment": [
-                {
-                    "payment_sub": "credit_card",
-                    "payment_sub_label": "Credit Card",
-                    "icon": "card/b2bbf094c458f87f3f2da2a586e7900f_02a27aedf91f8278ededd199d03fb89b_compressed.png",
-                    "fee": 2601,
-                    "payment_type": "credit_card",
-                    "qris": false,
-                    "payment_form": "screenOther"
-                }
-            ]
-        },
-        {
-            "id_payment_method_category": "2",
-            "payment_type_label": "Bank Transfer",
-            "payment_type": "bank_transfer",
-            "option": true,
-            "subPayment": [
-                {
-                    "payment_sub": "other_va",
-                    "payment_sub_label": "BCA",
-                    "icon": "transfer/fc68a00838f69124fddaf64e30f5e958_ca45aac69ce87ce691c3e6582894b6f0_compressed.png",
-                    "fee": 5000,
-                    "payment_type": "bank_transfer",
-                    "qris": false,
-                    "payment_form": "screenOther"
-                },
-                {
-                    "payment_sub": "bni",
-                    "payment_sub_label": "BNI",
-                    "icon": "transfer/f6f57e9126c57179cf729cc9586e47c0_e26ce4cce944fe379072ae509fe72ec1_compressed.png",
-                    "fee": 5000,
-                    "payment_type": "bank_transfer",
-                    "qris": false,
-                    "payment_form": "screenOther"
-                },
-                {
-                    "payment_sub": "echannel",
-                    "payment_sub_label": "Mandiri",
-                    "icon": "transfer/11f8970a182ad8cf6aaf0a0cd22dd9ad_3948cb3bf5c4887c7cca7ca7ee421708_compressed.png",
-                    "fee": 5000,
-                    "payment_type": "echannel",
-                    "qris": false,
-                    "payment_form": "screenOther"
-                },
-                {
-                    "payment_sub": "permata_va",
-                    "payment_sub_label": "Bank Lain",
-                    "icon": "transfer/fd0b98e32adc5a52229b7be2e5872c92_bc5e15f9d4b3eedc3d459c45e2df7709_compressed.png",
-                    "fee": 5000,
-                    "payment_type": "permata_va",
-                    "qris": false,
-                    "payment_form": "screenOther"
-                }
-            ]
-        },
-        {
-            "id_payment_method_category": "3",
-            "payment_type_label": "eWallet",
-            "payment_type": "gopay",
-            "option": false,
-            "subPayment": [
-                {
-                    "payment_sub": "gopay",
-                    "payment_sub_label": "QRIS",
-                    "icon": "ewallet/5db129dbf7357fd4b59fe9fbbf883f74_e82f1494c766508e8bb827c564ccf373_compressed.png",
-                    "fee": 5000,
-                    "payment_type": "gopay",
-                    "qris": true,
-                    "payment_form": "screenOther"
-                }
-            ]
-        }
-    ]);
-
+    const [listPayment, setListPayment] = useState([]);
 
     const reduxStore = useSelector(state => state.store.store)
     const reduxListPayment = useSelector(state => state.checkout.listPayment)
@@ -214,6 +134,12 @@ export default function OrderDetailsScreen() {
         }
     }, [downloadInvoice])
 
+    useEffect(() => {
+        if (subPayment?.length) {
+            handleShowPayment()
+        }
+    }, [subPayment?.length])
+
     useFocusEffect(
         useCallback(() => {
             getItem()
@@ -274,6 +200,7 @@ export default function OrderDetailsScreen() {
             payment_fee: item.fee,
             payment_form: item.payment_form
         }
+        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 203 ~ gotoPaymentDetailSub ~ dataPayment", dataPayment)
 
         var param = {
             id_order: orderPaymentRecent.order_id,
@@ -292,13 +219,6 @@ export default function OrderDetailsScreen() {
         } else {
             tokenMidtransUpdateCore(param);
         }
-
-
-
-
-
-
-
     }
 
 
@@ -334,8 +254,6 @@ export default function OrderDetailsScreen() {
             };
         }
 
-
-
         var paramPay = {
             transaction_details: transaction_details,
             customer_details: customer_details,
@@ -343,14 +261,7 @@ export default function OrderDetailsScreen() {
             credit_card
         }
 
-
         var url = midtrans.url_snap + "snap/v1/transactions";
-        // console.log('url', url);
-        // console.log('paramPay', JSON.stringify(paramPay));
-        // console.log('midtrans', JSON.stringify(midtrans));
-
-
-
 
         var myHeaders = new Headers();
         myHeaders.append("Authorization", "Basic " + authBasicHeader);
@@ -367,13 +278,11 @@ export default function OrderDetailsScreen() {
             redirect: 'follow'
         };
 
-        console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 371 ~ tokenMidtransUpdate ~ url", url)
         fetch(url, requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 285 ~ tokenMidtransUpdate ~ result", result)
                 actionSheetPayment.current?.setModalVisible()
-
-                // console.log('dataToken', JSON.stringify(result));
 
                 var paramPayMD = {
                     "total_pembayaran": totalPembayaran,
@@ -384,6 +293,7 @@ export default function OrderDetailsScreen() {
                     "order_id": orderPaymentRecent.order_id,
                     "va_or_code_or_link": result.redirect_url
                 }
+                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 297 ~ tokenMidtransUpdate ~ paramPayMD", paramPayMD)
                 // console.log('paramPayMD', JSON.stringify(paramPayMD));
 
                 if (dataPayment.payment_type == "gopay") {
@@ -573,6 +483,7 @@ export default function OrderDetailsScreen() {
         fetch(url, requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 486 ~ snapTokenUpdate ~ result", result)
                 // console.log('snapTokenUpdate', JSON.stringify(result));
 
 
@@ -600,26 +511,20 @@ export default function OrderDetailsScreen() {
                     Linking.openURL(link);
                 }
 
-
-
-
             })
             .catch(error => { Utils.alertPopUp(`Kegagalan Respon Server : 20206 => ${String(error)}`); });
 
     }
 
 
-    const handleShowPayment = (item) => {
-        setselectedPayment(item)
-        if (item.payment_type_label !== 'Bank Transfer') {
-            setModalShow(true)
-            setsubPayment('')
-            // gotoPaymentDetail(item);
+    const handleShowPayment = () => {
+        if (selectedPayment.payment_type_label != 'Bank Transfer') {
+            // setModalShow(true)
+            gotoPaymentDetail(selectedPayment);
             // console.log('pilih');
         }
         else {
             //alert('sd');
-            setsubPayment(item.subPayment)
             actionSheetPayment.current?.setModalVisible(true)
         }
     }
@@ -637,6 +542,7 @@ export default function OrderDetailsScreen() {
         fetch("https://jaja.id/backend/payment/methodPayment/" + total, requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 545 ~ getListPayment ~ result", result)
                 setListPayment(result);
             })
             .catch(error => {
@@ -1246,22 +1152,35 @@ export default function OrderDetailsScreen() {
                                             <ActivityIndicator size="large" />
                                             :
                                             orderPaymentRecent.payment_type == "" ?
+                                                <View style={[styles.column, styles.mb_3]}>
+                                                    {listPayment.map((item, indx) => {
+                                                        if (item.payment_type != 'card') {
+                                                            console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 1158 ~ {listPayment.map ~ item", item)
+                                                            return (
+                                                                <TouchableRipple
+                                                                    key={indx + 'HY'}
+                                                                    //onPressIn={() => handleShowPayment(item)} 
+                                                                    style={[styles.px_3, styles.py_3, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}
+                                                                    onPress={() => {
+                                                                        setselectedPayment(item)
+                                                                        if (item.payment_type_label != 'Bank Transfer') {
+                                                                            // setModalShow(true)
+                                                                            setsubPayment('')
+                                                                        } else {
+                                                                            setsubPayment(item.subPayment)
+                                                                        }
+                                                                    }}
+                                                                    rippleColor={colors.BlueJaja} >
+                                                                    <View style={styles.row_between_center}>
+                                                                        <Text style={styles.font_12}>{item.payment_type_label === 'Card' ? 'Kartu Kredit' : item.payment_type_label == 'eWallet' ? item.payment_type_label + ' - ' + item.subPayment[0].payment_sub_label : item.payment_type_label}</Text>
+                                                                        <Image fadeDuration={300} source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackGrey }]} />
+                                                                    </View>
+                                                                </TouchableRipple>
+                                                            )
+                                                        }
 
-                                                listPayment.map((item, indx) => {
-                                                    return (
-                                                        <TouchableRipple
-                                                            key={indx + 'HY'}
-                                                            //onPressIn={() => handleShowPayment(item)} 
-                                                            style={[styles.px_3, styles.py_3, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}
-                                                            onPress={() => handleShowPayment(item)}
-                                                            rippleColor={colors.BlueJaja} >
-                                                            <View style={styles.row_between_center}>
-                                                                <Text style={styles.font_12}>{item.payment_type_label === 'Card' ? 'Kartu Kredit' : item.payment_type_label == 'eWallet' ? item.payment_type_label + ' - ' + item.subPayment[0].payment_sub_label : item.payment_type_label}</Text>
-                                                                <Image fadeDuration={300} source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackGrey }]} />
-                                                            </View>
-                                                        </TouchableRipple>
-                                                    )
-                                                })
+                                                    })}
+                                                </View>
                                                 :
                                                 <View style={[styles.row_center, styles.my_2, { width: '95%', alignSelf: 'center' }]}>
                                                     <TouchableRipple
@@ -1387,27 +1306,31 @@ export default function OrderDetailsScreen() {
                             data={subPayment}
                             keyExtractor={(item) => item.id}
                             renderItem={({ item, index }) => {
-                                return (
-                                    <TouchableRipple
-                                        //onPressIn={() => gotoPaymentDetailSub(item)} 
-                                        style={[styles.py_4, styles.px_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}
-                                        onPress={() => {
-                                            actionSheetPayment.current?.setModalVisible()
-                                            gotoPaymentDetailSub(item)
-                                        }}
-                                        rippleColor={colors.BlueJaja} >
-                                        <View style={styles.row_between_center}>
-                                            <Text style={styles.font_13}>{item.payment_sub_label}</Text>
-                                            <Image fadeDuration={300} source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackGrey }]} />
+                                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 1348 ~ item", item)
+                                if (item.payment_sub_label != 'BNI') {
+                                    return (
+                                        <TouchableRipple
+                                            //onPressIn={() => gotoPaymentDetailSub(item)} 
+                                            style={[styles.py_4, styles.px_2, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver }]}
+                                            onPress={() => {
+                                                actionSheetPayment.current?.setModalVisible()
+                                                gotoPaymentDetailSub(item)
+                                            }}
+                                            rippleColor={colors.BlueJaja} >
+                                            <View style={styles.row_between_center}>
+                                                <Text style={styles.font_13}>{item.payment_sub_label == 'BCA' ? 'BNI' : item.payment_sub_label}</Text>
+                                                <Image fadeDuration={300} source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackGrey }]} />
 
-                                            {/* {item.payment_sub_label === selectedSubPayment.payment_sub_label ?
+                                                {/* {item.payment_sub_label === selectedSubPayment.payment_sub_label ?
                                                 <Image source={require('../../assets/icons/check.png')} style={[styles.icon_14, { tintColor: colors.BlueJaja }]} />
                                                 :
                                                 <Image source={require('../../assets/icons/right-arrow.png')} style={[styles.icon_14, { tintColor: colors.BlackTitle }]} />
                                             } */}
-                                        </View>
-                                    </TouchableRipple>
-                                )
+                                            </View>
+                                        </TouchableRipple>
+                                    )
+                                }
+
                             }}
                         />
                     </ScrollView>
@@ -1423,10 +1346,7 @@ export default function OrderDetailsScreen() {
                 <View style={{ flex: 1, width: Wp('100%'), height: Hp('100%'), backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center' }}>
                     <View style={[styles.column_start, styles.pt_s, { width: Wp('95%'), height: Wp('50%'), backgroundColor: colors.White, elevation: 11, zIndex: 999 }]}>
                         {selectedPayment.payment_type_label === 'Card' ?
-                            <View style={[styles.column_center_start, styles.px_4, styles.pt_5, { height: '60%' }]}>
-                                <Text style={[styles.font_14, styles.T_semi_bold, styles.mb_5, { color: colors.BlueJaja, height: '30%' }]}>Kartu Kredit</Text>
-                                <Text style={[styles.font_14, { height: '65%' }]}>Metode pembayaran ini berlaku untuk semua jenis kartu kredit</Text>
-                            </View>
+                            null
                             :
                             <View style={[styles.column_center_start, styles.px_4, styles.pt_5, { height: '60%' }]}>
                                 <Text style={[styles.font_14, styles.T_semi_bold, styles.mb_5, { color: colors.BlueJaja, height: '30%' }]}>eWallet - Qris</Text>

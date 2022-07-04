@@ -13,7 +13,7 @@ export default class VerifikasiEmail extends Component {
             step1: false,
             step2: true,
             code: '',
-            timeOut: 120,
+            timeOut: 0,
             button: false,
             password: '',
             confirmPassword: '',
@@ -65,11 +65,7 @@ export default class VerifikasiEmail extends Component {
         this.setState({ loading: true })
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
-        console.log("🚀 ~ file: VerifikasiEmailScreen.js ~ line 555 ~ VerifikasiEmail ~ this.state.email", this.state.email)
-
         var raw = JSON.stringify({ "email": this.state.email });
-        console.log("🚀 ~ file: VerifikasiEmailScreen.js ~ line 72 ~ VerifikasiEmail ~ raw", raw)
-
         var requestOptions = {
             method: 'POST',
             headers: myHeaders,
@@ -87,7 +83,7 @@ export default class VerifikasiEmail extends Component {
                         this.setState({
                             step1: false,
                             step2: true,
-                            timeOut: 120,
+                            timeOut: 0,
                             button: false,
                         });
                         setTimeout(() =>
@@ -403,7 +399,6 @@ export default class VerifikasiEmail extends Component {
                                             index: 0,
                                             routes: [{ name: 'Splash' }],
                                         })
-
                                     }}
                                     mode="contained"
                                     contentStyle={styles1.contentButton}
