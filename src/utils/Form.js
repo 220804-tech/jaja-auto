@@ -106,6 +106,7 @@ export function handleErrorResponse(error, errorCode) {
     }
 }
 
+
 export function handleError(error, name) {
     if (String(error).includes("request failed")) {
         alertPopUp("Tidak dapat terhubung, periksa kembali koneksi internet anda!")

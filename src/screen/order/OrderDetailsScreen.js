@@ -19,7 +19,6 @@ export default function OrderDetailsScreen() {
     const [refreshing, setRefreshing] = useState(null)
     const [selectedSubPayment, setselectedSubPayment] = useState('')
     const [selectedPayment, setselectedPayment] = useState('')
-    console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 22 ~ OrderDetailsScreen ~ selectedPayment", selectedPayment)
     const [orderPaymentRecent, setOrderPaymentRecent] = useState({
         "id_token": "",
         "order_id": "",
@@ -559,6 +558,7 @@ export default function OrderDetailsScreen() {
                     if (status === 'notPaid') {
                         getPayment(result.data.orderId);
                     }
+                    setcount(count + 1)
                     // dispatch({ type: 'SET_INVOICE', payload: result.data.items[0].invoice })
                 } else {
                     Utils.handleErrorResponse(result, "Error with status code : 22003");
@@ -1190,7 +1190,7 @@ export default function OrderDetailsScreen() {
                                                     </TouchableRipple>
                                                     {/* <TouchableRipple onPress={() => console.log("refresh")} style={[styles.row_center, styles.py_2, { width: 99 / 3 + '%', backgroundColor: colors.GreenSuccess }]}>
 <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-    Cek Bayar
+    4
 </Text>
 </TouchableRipple> */}
                                                     <TouchableRipple onPress={handlePayment} style={[styles.row_center, styles.py_2, { width: 99 / 2 + '%', backgroundColor: colors.BlueJaja }]}>

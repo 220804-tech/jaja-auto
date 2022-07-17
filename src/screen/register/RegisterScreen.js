@@ -156,7 +156,7 @@ class RegisterScreen extends Component {
             fetch("https://jaja.id/backend/user/register", requestOptions)
                 .then(response => response.json())
                 .then(res => {
-                    console.log("🚀 ~ file: RegisterScreen.js ~ line 160 ~ RegisterScreen ~ res", res)
+                    console.log("🚀 ~ file: RegisterScreen.js ~ line 159 ~ RegisterScreen ~ res", res)
                     json = res;
                     setTimeout(() => this.setState({ loading: false }), 2000);
                     if (res.status.code === 200) {
@@ -167,7 +167,7 @@ class RegisterScreen extends Component {
                         // EncryptedStorage.setItem('token', JSON.stringify(res.data.token))
                         EncryptedStorage.setItem('emailVerification', JSON.stringify(credentials.email))
                         EncryptedStorage.setItem('usrverif', JSON.stringify({ eml: credentials.email, pw: credentials.password }))
-                        // this.props.navigation.navigate('VerifikasiEmail', { email: credentials.email })
+                        this.props.navigation.navigate('VerifikasiEmail', { email: credentials.email })
                     } else if (res.status.code == 409) {
                         this.setState({ alertTextEmail: 'Email sudah pernah digunakan!' })
                     } else if (res.status.code === 400 && res.status.message == 'Referal code invalid') {
@@ -184,7 +184,7 @@ class RegisterScreen extends Component {
                 });
             setTimeout(() => {
                 if (!json) {
-                    ToastAndroid.show(String(json), ToastAndroid.LONG, ToastAndroid.CENTER)
+                    Utils.alertPopUp(json)
                 }
                 this.setState({ loading: false })
             }, 10000);

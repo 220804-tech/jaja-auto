@@ -107,27 +107,36 @@ export default function LoginScreen(props) {
             };
 
             fetch("https://jaja.id/backend/user/login", requestOptions)
-                .then(response => response.json())
-                .then(result => {
-                    if (result.status.code === 200) {
-                        handleUser(result.data)
-                        EncryptedStorage.setItem("token", JSON.stringify(result.data))
-                        AsyncStorage.setItem('token', JSON.stringify(result.data))
-                    } else if (result?.status?.code === 400 || result?.status?.code === 404) {
-                        if (String(result.status.message).includes("belum di verifikasi")) {
-                            Utils.alertPopUp("Akun anda belum diverifikasi")
-                            navigation.navigate('VerifikasiEmail', { email: email })
-                        } else if (String(result.status.message).includes("data not found")) {
-                            setAlertText('Email atau password anda salah!')
-                        } else if (result.status.message.includes("incorrect email or password")) {
-                            setAlertText('Email atau password anda salah!')
+                .then(response => response.text())
+                .then(res => {
+                    try {
+                        let result = JSON.parse(res)
+                        if (result?.status?.code === 200) {
+                            handleUser(result.data)
+                            EncryptedStorage.setItem("token", JSON.stringify(result.data))
+                            AsyncStorage.setItem('token', JSON.stringify(result.data))
+                        } else if (result?.status?.code === 400 || result?.status?.code === 404) {
+                            if (String(result.status.message).includes("belum di verifikasi")) {
+                                Utils.alertPopUp("Akun anda belum diverifikasi")
+                                navigation.navigate('VerifikasiEmail', { email: email })
+                            }
+                            // else if (String(result.status.message).includes("data not found")) {
+                            //     setAlertText('Email atau password anda salah!')
+                            // } else if (result.status.message.includes("incorrect email or password")) {
+                            //     setAlertText('Email atau password anda salah!')
+                            // }
+                            else {
+                                setAlertText(String(result?.status?.message))
+                            }
                         } else {
-                            setAlertText(String(result.status.message) + ' ' + String(result.status.code))
+                            setAlertText(String(result?.status?.message))
                         }
                         setLoading(false)
-                    } else {
+                    } catch (error) {
+                        Utils.handleError(JSON.stringify(res), "Error with status code : 319003")
+                        console.log("🚀 ~ file: LoginScreen.js ~ line 136 ~ handleSubmit ~ error", error)
                         setLoading(false)
-                        setAlertText(result.status.message)
+
                     }
                 })
                 .catch(error => {

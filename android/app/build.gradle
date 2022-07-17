@@ -135,8 +135,8 @@ android {
         applicationId "com.jajaidbuyer"
         minSdkVersion rootProject.ext.minSdkVersion         
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 79
-        versionName "0.7.9"
+        versionCode 81
+        versionName "0.8.1"
         multiDexEnabled true   //add this
 
 

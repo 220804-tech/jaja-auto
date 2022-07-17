@@ -229,9 +229,14 @@ export default function MidtransScreen() {
                                 source={{ uri: view }}
                             />
                         </ViewShot>
-                        <TouchableRipple onPress={() => setreload(!reload)} style={[styles.row_center, styles.py_4, { backgroundColor: colors.BlueJaja, width: '100%', }]}>
-                            <Text style={[styles.font_15, styles.T_bold, { color: colors.White }]}>Cek Bayar</Text>
-                        </TouchableRipple>
+                        <View style={[styles.row_around_center, { position: 'absolute', bottom: 75, height: Wp('9.5%'), width: Wp('100%') }]}>
+                            <TouchableRipple onPress={() => navigation.goBack()} style={[styles.row_center, styles.py_2, { borderRadius: 5, backgroundColor: colors.YellowJaja, width: '42%', height: '100%' }]}>
+                                <Text style={[styles.font_13, styles.T_medium, { color: colors.White }]}>Lihat Pesanan</Text>
+                            </TouchableRipple>
+                            <TouchableRipple onPress={() => setreload(!reload)} style={[styles.row_center, styles.py_2, { borderRadius: 5, backgroundColor: colors.BlueJaja, width: '42%', height: '100%' }]}>
+                                <Text style={[styles.font_13, styles.T_medium, { color: colors.White }]}>Refresh</Text>
+                            </TouchableRipple>
+                        </View>
                         {/* <View style={{ position: 'absolute', width: Wp('100%'), height: Hp('100%'), justifyContent: 'flex-end', alignItems: 'center', paddingBottom: Hp('10%') }}>
 
                             <TouchableOpacity

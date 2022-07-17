@@ -13,7 +13,7 @@ export default class VerifikasiEmail extends Component {
             step1: false,
             step2: true,
             code: '',
-            timeOut: 0,
+            timeOut: 60,
             button: false,
             password: '',
             confirmPassword: '',
@@ -83,7 +83,7 @@ export default class VerifikasiEmail extends Component {
                         this.setState({
                             step1: false,
                             step2: true,
-                            timeOut: 0,
+                            timeOut: 120,
                             button: false,
                         });
                         setTimeout(() =>
@@ -397,7 +397,7 @@ export default class VerifikasiEmail extends Component {
                                         setTimeout(() => this.setState({ loading: false }), 2000);
                                         this.props.navigation.reset({
                                             index: 0,
-                                            routes: [{ name: 'Splash' }],
+                                            routes: [{ name: 'Login' }],
                                         })
                                     }}
                                     mode="contained"

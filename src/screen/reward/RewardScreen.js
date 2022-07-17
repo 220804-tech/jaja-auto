@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { SafeAreaView, View, Text, StyleSheet, Image, Platform, Modal, TextInput, ScrollView, Dimensions, RefreshControl, Alert } from 'react-native'
+import { SafeAreaView, View, Text, StyleSheet, Image, Platform, Modal, TextInput, ScrollView, Dimensions, RefreshControl, Alert, FlatList } from 'react-native'
 import { Button, TouchableRipple, Switch, IconButton, Drawer } from 'react-native-paper'
 import { colors, styles, Wp, Hp, Appbar, useNavigation, Utils, Loading, ServiceUser, useFocusEffect } from '../../export'
 import { useSelector } from 'react-redux';
@@ -404,6 +404,7 @@ export default function RewardScreen() {
                 <ScrollView
                     showsHorizontalScrollIndicator={false}
                     nestedScrollEnabled={true}
+                    scrollEnabled={true}
                     refreshControl={
                         <RefreshControl
                             refreshing={refreshing}
@@ -619,8 +620,9 @@ export default function RewardScreen() {
         </SafeAreaView >
     )
 
+
     function tabDone() {
-        return <View style={[styles.column, { backgroundColor: colors.White, flex: 1 }]}>
+        return <View style={[styles.column, { backgroundColor: colors.White, flex: 0 }]}>
             <View style={[styles.column, { borderWidth: 1, borderColor: colors.BlueJaja, width: '100%', height: '100%' }]}>
                 <View style={[styles.row_center, styles.px_2, { borderBottomWidth: 1, borderColor: colors.BlueJaja }]}>
                     <Text style={[styles.font_12, styles.py, { width: '15%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>No.</Text>
@@ -628,27 +630,31 @@ export default function RewardScreen() {
                     <Text style={[styles.font_12, styles.py, { width: '45%', textAlign: 'center' }]}>Note</Text>
                 </View>
                 {doneCoin.length ?
-                    <ScrollView>
-
-                        {doneCoin.map((item, idx) => {
-                            return (
-                                <View key={String(idx) + 'GH'} style={[styles.row_center, styles.px_2, { borderBottomWidth: 0.5 }]}>
-                                    <View style={[styles.row_center, styles.p, { borderRightWidth: 0.5, width: '15%' }]}>
-                                        <Text style={[styles.font_12, { textAlign: 'center' }]}>{idx + 1}.</Text>
+                    <ScrollView scrollEnabled={true} nestedScrollEnabled={true}>
+                        <FlatList
+                            scrollEnabled={true}
+                            data={doneCoin}
+                            renderItem={({ item, index }) => {
+                                return (
+                                    <View key={String(index) + 'GH'} style={[styles.row_center, styles.px_2, { borderBottomWidth: 0.5 }]}>
+                                        <View style={[styles.row_center, styles.p, { borderRightWidth: 0.5, width: '15%' }]}>
+                                            <Text style={[styles.font_12, { textAlign: 'center' }]}>{index + 1}.</Text>
+                                        </View>
+                                        <View style={[styles.row_center, styles.p, { borderRightWidth: 0.5, width: '40%', }]}>
+                                            {item.tipe_koin === 'minus' ?
+                                                <Text style={[styles.font_12, { color: colors.RedNotif, textAlign: 'center' }]}>- {item.koin}</Text>
+                                                :
+                                                <Text style={[styles.font_12, { color: colors.GreenSuccess, textAlign: 'center' }]}>+ {item.koin}</Text>}
+                                        </View>
+                                        <View style={[styles.row_center, styles.p, { width: '45%', }]}>
+                                            <Text style={[styles.font_10, { textAlign: 'center' }]}>{String(item.note).toLocaleLowerCase()}</Text>
+                                        </View>
                                     </View>
-                                    <View style={[styles.row_center, styles.p, { borderRightWidth: 0.5, width: '40%', }]}>
-                                        {item.tipe_koin === 'plus' ?
-                                            <Text style={[styles.font_12, { color: colors.GreenSuccess, textAlign: 'center' }]}>+ {item.koin}</Text>
-                                            :
-                                            <Text style={[styles.font_12, { color: colors.RedNotif, textAlign: 'center' }]}>- {item.koin}</Text>}
-                                    </View>
-                                    <View style={[styles.row_center, styles.p, { width: '45%', }]}>
-                                        <Text style={[styles.font_10, { textAlign: 'center' }]}>{item.note}</Text>
-                                    </View>
-                                </View>
-                            );
-                        })}
+                                )
+                            }}
+                        />
                     </ScrollView>
+
                     :
                     <View style={[styles.row_center, styles.p_5, styles.m_5]}>
                         <Text style={[styles.font_13, { textAlign: 'center', color: colors.Blackk }]}>Tidak ada data</Text>
@@ -661,33 +667,35 @@ export default function RewardScreen() {
         return <View style={[styles.column, { backgroundColor: colors.White, flex: 1 }]}>
             <View style={[styles.column, { borderWidth: 1, borderColor: colors.BlueJaja, width: '100%', height: '100%' }]}>
                 <View style={[styles.row_center, { borderBottomWidth: 1, borderColor: colors.BlueJaja }]}>
-                    <Text style={[styles.font_12, styles.py, { width: '40%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>Account</Text>
-                    <Text style={[styles.font_12, styles.py, { width: '35%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>Jumlah</Text>
+                    {/* <Text style={[styles.font_12, styles.py, { width: '40%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>Account</Text> */}
+                    <Text style={[styles.font_12, styles.py, { width: '50%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>Jumlah</Text>
                     {/* <Text style={[styles.font_12, styles.py, { width: '30%', borderRightWidth: 1, borderColor: colors.BlueJaja, textAlign: 'center' }]}>Jumlah</Text> */}
-                    <Text style={[styles.font_12, styles.py, { width: '25%', textAlign: 'center' }]}>Status</Text>
+                    <Text style={[styles.font_12, styles.py, { width: '50%', textAlign: 'center' }]}>Status</Text>
                 </View>
                 {pendingCoin.length ?
-                    <ScrollView>
-                        {pendingCoin.map((item, indx) => {
-                            console.log("🚀 ~ file: RewardScreen.js ~ line 632 ~ {doneCoin.map ~ item", item)
-
-                            return (
-                                <View key={String(indx) + 'HG'} style={[styles.row_center, { borderBottomWidth: 0.5 }]}>
-                                    <View style={[styles.row_center, styles.p_2, { borderRightWidth: 0.5, width: '40%' }]}>
-                                        <Text style={[styles.font_10, { textAlign: 'center' }]}>{String(item.account).slice(0, 4)}XXXX</Text>
-                                    </View>
-                                    <View style={[styles.row_center, styles.p_2, { borderRightWidth: 0.5, width: '35%', }]}>
-                                        <Text style={[styles.font_12, { textAlign: 'center' }]}>{item.amount}</Text>
-                                    </View>
-                                    {/* <View style={[styles.row_center, styles.p_2, { borderRightWidth: 0.5, width: '30%', }]}>
+                    <ScrollView scrollEnabled={true} nestedScrollEnabled={true}>
+                        <FlatList
+                            scrollEnabled={true}
+                            data={pendingCoin}
+                            renderItem={({ item, index }) => {
+                                return (
+                                    <View key={String(index) + 'HG'} style={[styles.row_center, { borderBottomWidth: 0.5 }]}>
+                                        {/* <View style={[styles.row_center, styles.p_2, { borderRightWidth: 0.5, width: '40%' }]}>
+                                            <Text style={[styles.font_10, { textAlign: 'center' }]}>{String(item.account).slice(0, 4)}XXXX</Text>
+                                        </View> */}
+                                        <View style={[styles.row_center, styles.p_2, { borderRightWidth: 0.5, width: '50%', }]}>
+                                            <Text style={[styles.font_12, { textAlign: 'center' }]}>{item.amount}</Text>
+                                        </View>
+                                        {/* <View style={[styles.row_center, styles.p_2, { borderRightWidth: 0.5, width: '30%', }]}>
                                         <Text style={[styles.font_12, { textAlign: 'center' }]}>{item.noted}Lorem id pariatur anim fugiat</Text>
                                     </View> */}
-                                    <View style={[styles.row_center, styles.p_2, { width: '25%', }]}>
-                                        <Text style={[styles.font_10, { textAlign: 'center', color: item.status === 'queued' ? colors.RedNotif : colors.GreenSuccess }]}>{item.status === 'queued' ? 'Pending' : 'Success'}</Text>
+                                        <View style={[styles.row_center, styles.p_2, { width: '50%', }]}>
+                                            <Text style={[styles.font_10, { textAlign: 'center', color: item.status === 'queued' ? colors.RedNotif : colors.GreenSuccess }]}>{item.status === 'queued' ? 'Pending' : 'Success'}</Text>
+                                        </View>
                                     </View>
-                                </View>
-                            );
-                        })}
+                                )
+                            }}
+                        />
                     </ScrollView>
                     :
                     <View style={[styles.row_center, styles.p_5, styles.m_5]}>
@@ -703,7 +711,7 @@ const style = StyleSheet.create({
         backgroundColor: colors.White,
         borderRadius: 3,
         // shadowColor: "#000",
-        // shadowOffset: { width: 0, height: 2 },
+        // shadowOffset: {width: 0, height: 2 },
         // shadowOpacity: 0.23,
         // shadowRadius: 2.62,
         elevation: 3,
