@@ -468,11 +468,12 @@ export default function GiftDetailScreen(props) {
                             {Object.keys(variasiSelected).length ?
                                 <View style={[styles.row_start_center,]}>
                                     <View style={[styles.row, { width: '87%', height: '100%' }]}>
-                                        {variasiSelected.isDiscount ?
+                                        {giftDetails.isDiscount ?
                                             <View style={styles.row}>
-                                                <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 5 }]}>
-                                                    <Text style={[styles.font_16, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{giftDetails.discount}%</Text>
-                                                </View>
+                                                {giftDetails.discount != '0' ?
+                                                    <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 5 }]}>
+                                                        <Text style={[styles.font_16, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{giftDetails.discount}%</Text>
+                                                    </View> : null}
                                                 <View style={styles.column}>
                                                     <Text style={Ps.priceBefore}>{variasiSelected.price}</Text>
                                                     <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{variasiSelected.priceDiscount}</Text>
@@ -493,9 +494,10 @@ export default function GiftDetailScreen(props) {
                                     <View style={[styles.row_start_center, { width: '87%', }]}>
                                         {giftDetails.isDiscount ?
                                             <View style={[styles.row_start_center]}>
-                                                <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1.5%', borderRadius: 5 }]}>
-                                                    <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{giftDetails.discount}%</Text>
-                                                </View>
+                                                {giftDetails.discount != '0' ?
+                                                    <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1.5%', borderRadius: 5 }]}>
+                                                        <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{giftDetails.discount}%</Text>
+                                                    </View> : null}
                                                 <View style={[styles.column]}>
                                                     <Text style={Ps.priceBefore}>{giftDetails.price}</Text>
                                                     <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{giftDetails.priceDiscount}</Text>
@@ -875,7 +877,9 @@ export default function GiftDetailScreen(props) {
                                                         <>
                                                             <View style={styles.row}>
                                                                 <Text style={[Ps.priceBefore, styles.mr_3,]}>{item.price}</Text>
-                                                                <Text style={[styles.font_10, styles.T_medium, { zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '1%', paddingHorizontal: '3%', borderRadius: 3 }]}>{item.discount}%</Text>
+                                                                {item.discount != '0' ?
+                                                                    <Text style={[styles.font_10, styles.T_medium, { zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '1%', paddingHorizontal: '3%', borderRadius: 3 }]}>{item.discount}%</Text>
+                                                                    : null}
                                                             </View>
                                                             <Text style={Ps.priceAfter}>{item.priceDiscount}</Text>
                                                         </>
@@ -1079,9 +1083,11 @@ export default function GiftDetailScreen(props) {
                                         <View style={[styles.row, { width: '87%', height: '100%' }]}>
                                             {variasiSelected.isDiscount ?
                                                 <View style={styles.row}>
-                                                    <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 5 }]}>
-                                                        <Text style={[styles.font_16, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{giftDetails.discount}%</Text>
-                                                        \                                     </View>
+                                                    {variasiSelected.discount != '0' ?
+                                                        <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 5 }]}>
+                                                            <Text style={[styles.font_16, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{giftDetails.discount}%</Text>
+                                                        </View>
+                                                        : null}
                                                     <View style={styles.column}>
                                                         <Text style={Ps.priceBefore}>{variasiSelected.price}</Text>
                                                         <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{variasiSelected.priceDiscount}</Text>
@@ -1095,20 +1101,19 @@ export default function GiftDetailScreen(props) {
                                     :
                                     <View style={[styles.row_start_center,]}>
                                         <View style={[styles.row_start_center, { width: '87%', }]}>
-                                            {giftDetails.isDiscount ?
-                                                <View style={[styles.row_start_center]}>
-                                                    <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1.5%', borderRadius: 5 }]}>
-                                                        <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{giftDetails.discount}%</Text>
-                                                    </View>
-                                                    <View style={[styles.column]}>
-                                                        <Text style={Ps.priceBefore}>{giftDetails.price}</Text>
-                                                        <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{giftDetails.priceDiscount}</Text>
-                                                    </View>
+                                            variasiSelected                                                <View style={[styles.row_start_center]}>
+                                                <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1.5%', borderRadius: 5 }]}>
+                                                    <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{giftDetails.discount}%</Text>
                                                 </View>
-                                                :
-                                                <View style={[styles.row_between_center, { width: '100%' }]}>
-                                                    <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{giftDetails.price}</Text>
+                                                <View style={[styles.column]}>
+                                                    <Text style={Ps.priceBefore}>{giftDetails.price}</Text>
+                                                    <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{giftDetails.priceDiscount}</Text>
                                                 </View>
+                                            </View>
+                                            :
+                                            <View style={[styles.row_between_center, { width: '100%' }]}>
+                                                <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{giftDetails.price}</Text>
+                                            </View>
                                             }
                                         </View>
                                     </View>

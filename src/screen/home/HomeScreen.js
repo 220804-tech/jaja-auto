@@ -18,6 +18,7 @@ import { useAndroidBackHandler } from "react-navigation-backhandler";
 import { TouchableRipple } from 'react-native-paper';
 import queryString from 'query-string';
 import FastImage from 'react-native-fast-image'
+import CountDown from 'react-native-countdown-component';
 
 
 LogBox.ignoreAllLogs()
@@ -377,6 +378,36 @@ export default function HomeScreen() {
                         />
                     }> */}
                 <Category />
+                <View style={[styles.row_around_center, styles.pb_2, { paddingTop: '4.5%', backgroundColor: colors.BlueJaja }]}>
+                    <View style={[styles.row_center, styles.px_4, { backgroundColor: colors.RedFlashsale, alignSelf: 'center', width: '100%', height: Hp('27%') }]} >
+                        {/* onPress={() => navigation.navigate('Event')} */}
+                        <View style={[styles.column_between_center, styles.py_3, { alignSelf: 'center', width: '55%', height: '100%', }]} >
+                            <View style={styles.column}>
+                                <Text style={[styles.font_22, styles.T_bold, styles.mb_5, { alignSelf: 'flex-start', color: colors.White, textAlign: 'left' }]}>Big Rewards</Text>
+                                <Text style={[styles.font_12, styles.T_medium, { alignSelf: 'flex-start', color: colors.White, textAlign: 'left' }]}>Dapatkan speaker JBL, Nitendo Switch, hingga Sepeda Canyon hanya dengan belanja minimum 300K <Text onPress={() => navigation.navigate('Event')} style={[styles.font_12, styles.T_bold, { color: 'lightblue' }]}>baca syarat ketentuan.</Text></Text>
+                            </View>
+                            <CountDown
+                                style={{ padding: 0, margin: 0, alignSelf: 'flex-start', marginLeft: '3%' }}
+                                until={604800}
+                                size={11}
+                                onFinish={() => alert('Finished')}
+                                digitStyle={{ backgroundColor: '#FFF' }}
+                                digitTxtStyle={{ color: colors.BlueJaja }}
+                                timeToShow={['D', 'H', 'M', 'S']}
+                                timeLabels={{ d: 'Hari', h: 'Jam', m: 'Menit', s: 'Detik' }}
+                                timeLabelStyle={{ color: colors.White }}
+                            />
+                        </View>
+                        <View style={[styles.column_center, { width: '45%', height: '100%' }]}>
+                            <Text style={[styles.font_22, styles.T_bold, { alignSelf: 'center', color: colors.White, textAlign: 'left' }]}>Banner Hadiah</Text>
+
+                            <View style={[styles.column_center, { backgroundColor: colors.RedFlashsale, alignSelf: 'center', borderWidth: 1, borderColor: colors.White, borderRadius: 5, height: '70%' }]} >
+                                <Text style={[styles.font_22, styles.T_bold, { alignSelf: 'center', color: colors.White, textAlign: 'left' }]}>Banner Hadiah</Text>
+                            </View>
+
+                        </View>
+                    </View>
+                </View>
                 {/* <TouchableRipple onPress={handleShowGift} rippleColor={colors.BlueJaja} style={[styles.row_center, styles.px, styles.py_2, styles.my_2, {
                     backgroundColor: colors.White, borderRadius: 7, alignSelf: 'center', width: '95%', shadowColor: "#000",
                     shadowOffset: {
@@ -413,6 +444,7 @@ export default function HomeScreen() {
                         </View>
                     </TouchableRipple>
                 </View>
+
                 {nearestProduct ? <NearestStore /> : null}
 
                 {/* <BasedOnSearch /> */}

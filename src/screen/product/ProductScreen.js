@@ -1123,7 +1123,7 @@ export default function ProductScreen(props) {
                                                 </View>
                                                 <View style={[Ps.bottomCard, { alignSelf: 'flex-start', width: '100%', height: Wp('18%'), justifyContent: 'flex-start', alignItems: 'flex-start' }]}>
                                                     <Text numberOfLines={1} style={[Ps.nameProductSmall]}>{item.name}</Text>
-                                                    {item.isDiscount ?
+                                                    {item.isDiscount && item.discount != '0' ?
                                                         <>
                                                             <View style={styles.row_center}>
                                                                 <Text style={[Ps.priceBeforeSmall, styles.mr_3,]}>{item.price}</Text>

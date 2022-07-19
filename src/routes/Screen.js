@@ -47,10 +47,12 @@ import GiftSearch from "../screen/gift/GiftSearchScreen";
 import GiftDetails from "../screen/gift/GiftDetailScreen";
 import TrolleyMultiDrop from "../screen/trolley/TrolleyMultiDrop";
 import CheckoutMultiDrop from "../screen/checkout/CheckoutMultiDropScreen";
+import Event from "../screen/event/EventScreen";
+
 
 export {
     Home, Product, ListChat, Chat, Orders, Profile, Login, Register, Splash, Search, Trolley, ProductSearch, Checkout, VerifikasiEmail, Account,
     Address, Category, AddAddress, Store, Midtrans, ForgotPassword, Feed, Review, ZoomReview, OrderDetails, AddReview, OrderDelivery, AddAccount,
     CustomerService, Notification, Vouchers, Flashsale, Wishlist, HistoryProduct, Reward, Referral, RequestComplain, DetailComplain, OrderCancel,
-    CoinPage, DownloadInvoice, Gift, GiftSearch, GiftDetails, TrolleyMultiDrop, CheckoutMultiDrop, EtalaseProducts
+    CoinPage, DownloadInvoice, Gift, GiftSearch, GiftDetails, TrolleyMultiDrop, CheckoutMultiDrop, EtalaseProducts, Event
 };

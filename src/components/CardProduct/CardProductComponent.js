@@ -77,7 +77,7 @@ export default function CardProductComponent(props) {
                 onPress={() => handleShowDetail(item, false)}
                 style={[Ps.cardProduct, styles.shadow_3, { shadowColor: colors.BlueJaja }]}
                 key={index}>
-                {item.isDiscount ? <Text adjustsFontSizeToFit style={Ps.textDiscount}>{item.discount}%</Text> : null}
+                {item.isDiscount && item.discount != '0' ? <Text adjustsFontSizeToFit style={Ps.textDiscount}>{item.discount}%</Text> : null}
                 <View style={[styles.column, { height: Wp('44%'), width: Wp('44%'), borderTopLeftRadius: 6, borderTopRightRadius: 6 }]}>
                     {
                         item?.image && item.image !== null && String(item.image).includes('http') || String(item.images) ?

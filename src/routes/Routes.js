@@ -5,7 +5,7 @@ import {
     Splash, Product, Search, Chat, Login, Profile, Register, Trolley, ProductSearch, Checkout, Address, VerifikasiEmail, Category,
     AddAddress, Midtrans, Store, ForgotPassword, Review, ZoomReview, OrderDetails, AddReview, OrderDelivery, Account, CustomerService,
     Notification, Vouchers, Flashsale, Wishlist, HistoryProduct, Reward, Referral, DetailComplain, OrderCancel, RequestComplain,
-    AddAccount, CoinPage, DownloadInvoice, Gift, GiftSearch, GiftDetails, CheckoutMultiDrop, TrolleyMultiDrop, EtalaseProducts
+    AddAccount, CoinPage, DownloadInvoice, Gift, GiftSearch, GiftDetails, CheckoutMultiDrop, TrolleyMultiDrop, EtalaseProducts, Event
 } from "./Screen";
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 
@@ -72,6 +72,8 @@ export default function Routes() {
                 <Stack.Screen name="Midtrans" component={Midtrans} />
                 <Stack.Screen name="Store" component={Store} />
                 <Stack.Screen name="EtalaseProducts" component={EtalaseProducts} />
+                <Stack.Screen name="Event" component={Event} />
+
 
                 <Stack.Screen name="Review" component={Review} />
                 <Stack.Screen name="ZoomReview" component={ZoomReview} />
