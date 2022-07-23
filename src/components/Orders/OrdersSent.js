@@ -91,6 +91,7 @@ export default function OrdersSent() {
                     keyExtractor={(item, index) => String(index) + 'HJ'}
                     renderItem={({ item }) => {
                         if (!item.complain) {
+                            console.log("🚀 ~ file: OrdersSent.js ~ line 94 ~ OrdersSent ~ item", String(item.trackingId).includes('VOUCHER'))
                             return (
                                 <View style={Os.card} >
                                     <View style={[styles.row_between_center, styles.px_2, styles.mb_3, { width: '100%' }]}>
@@ -137,9 +138,12 @@ export default function OrdersSent() {
 
                                         </View>
                                         <>
-                                            <Button onPress={() => handleTracking(item)} color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('25%') }} style={{ width: Wp('25%'), alignSelf: 'flex-end' }} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
-                                                Lacak
-                                            </Button>
+                                            {!String(item.trackingId).includes('DIGITALVOUCHER') ?
+
+                                                <Button onPress={() => handleTracking(item)} color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('25%') }} style={{ width: Wp('25%'), alignSelf: 'flex-end' }} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
+                                                    Lacak
+                                                </Button>
+                                                : null}
                                             <Button onPress={() => handleOrderDetails(item)} color={colors.BlueJaja} mode="contained" contentStyle={{ width: Wp('25%') }} style={{ width: Wp('25%'), alignSelf: 'flex-end', marginRight: '2%' }} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
                                                 Rincian
                                             </Button>

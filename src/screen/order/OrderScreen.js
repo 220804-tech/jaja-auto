@@ -203,7 +203,7 @@ export default function OrderScreen() {
                     )}
                 />
                 :
-                <LoginOrderScreen />
+                <LoginOrderScreen orderPage={true} />
                 // <DefaultNotFound textHead="Ups.." textBody="sepertinya kamu belum login.." ilustration={require('../../assets/ilustrations/empty.png')} />
             }
         </SafeAreaView>

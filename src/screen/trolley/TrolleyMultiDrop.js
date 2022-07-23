@@ -89,10 +89,7 @@ export default function TrolleyMultiDrop() {
         })
         .catch((error) => {
           setloading(false)
-          Utils.handleError(
-            JSON.stringify(error),
-            "Error with status code : 41002"
-          );
+          Utils.handleError(error, "Error with status code : 41002");
         });
     } catch (error) {
       setloading(false)
@@ -104,22 +101,25 @@ export default function TrolleyMultiDrop() {
     return (
       <View style={[styles.column, styles.mb_2, styles.px_2, styles.py_3, { width: '100%' }]}>
         <View style={[styles.row_center, styles.mb_3]}>
-          <Image
-            style={{
-              width: Wp("24%"),
-              height: Wp("24%"),
-              marginHorizontal: "3%",
-              borderRadius: 5,
-              backgroundColor: colors.White,
-              borderWidth: 0.2,
-              borderColor: colors.Silver,
-              alignSelf: "center",
-              resizeMode: "contain",
-            }}
-            resizeMethod={"scale"}
-            // resizeMode={item.image ? "cover" : "center"}
-            source={{ uri: item.image }}
-          />
+          <View style={[styles.row_center, styles.mr_3, {
+            width: Wp("22%"),
+            height: Wp("22%"),
+            borderRadius: 5,
+            backgroundColor: colors.White,
+            borderWidth: 0.2,
+            borderColor: colors.Silver,
+          }]}>
+
+            <Image
+              style={{
+                width: '100%',
+                height: '100%',
+                resizeMode: "contain",
+              }}
+              resizeMode={item.image ? "contain" : "center"}
+              source={{ uri: item.image }}
+            />
+          </View>
           <View style={[styles.column_between_center, { width: '70%', height: Wp("24%"), alignItems: 'flex-start' }]}>
             <Text numberOfLines={2} style={[styles.font_12, { flex: 0, width: '90%' }]}>{item.name}</Text>
             <Text numberOfLines={1} style={[styles.font_12, styles.T_medium, { flex: 0, color: colors.BlueJaja, width: '70%' }]}>+{item.qty}</Text>

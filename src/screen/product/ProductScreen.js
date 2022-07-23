@@ -264,6 +264,7 @@ export default function ProductScreen(props) {
     }
 
     const handleAddCart = (name) => {
+        console.log("🚀 ~ file: ProductScreen.js ~ line 267 ~ handleAddCart ~ name", name)
         try {
             setdisableCart(true)
             if (reduxAuth) {
@@ -293,13 +294,15 @@ export default function ProductScreen(props) {
     }
 
     const handleApiCart = async (name) => {
+        console.log("🚀 ~ file: ProductScreen.js ~ line 297 ~ handleApiCart ~ name", name)
         try {
             var credentials = { "productId": idProduct, "flashSaleId": flashsale ? flashsaleData.id_flashsale : "", "lelangId": "", "variantId": variasiPressed, "qty": qty };
             let result = await ServiceProduct.addCart(reduxAuth, credentials)
+            console.log("🚀 ~ file: ProductScreen.js ~ line 301 ~ handleApiCart ~ result", result)
             if (result && result.status.code === 200) {
+                Utils.alertPopUp('Produk berhasil ditambahkann!')
                 if (name === "buyNow") {
                     if (reduxProduct.isNonPhysical) {
-                        Utils.alertPopUp('Produk berhasil ditambahkann!')
                         navigation.navigate('Checkout', { isNonPhysical: true })
                         try {
                             var myHeaders = new Headers();
@@ -466,6 +469,7 @@ export default function ProductScreen(props) {
         try {
             getBadges()
             ServiceCart.getCart(reduxAuth).then(res => {
+                console.log("🚀 ~ file: ProductScreen.js ~ line 471 ~ ServiceCart.getCart ~ res", res)
                 if (res) {
                     dispatch({ type: 'SET_CART', payload: res })
                 }
@@ -1348,13 +1352,14 @@ export default function ProductScreen(props) {
                 <TouchableOpacity disabled={Object.keys(seller).length ? false : true} onPress={handleChat} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
                     <Image source={require('../../assets/icons/chats.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: colors.RedFlashsale }} />
                 </TouchableOpacity>
-                <TouchableOpacity disabled={disableCart} onPress={() => handleAddCart("trolley")} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
-                    <Image source={require('../../assets/icons/cart.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: flashsale ? colors.RedFlashsale : colors.BlueJaja }} />
-                </TouchableOpacity>
-                <Button disabled={disableCart} onPress={() => handleAddCart("buyNow")} style={{ width: '50%', height: '100%', backgroundColor: disableCart ? colors.BlackGrey : flashsale ? colors.RedFlashsale : colors.BlueJaja }} contentStyle={{ width: '100%', height: '100%' }} color={disableCart ? colors.BlackGrayScale : flashsale ? colors.RedFlashsale : colors.BlueJaja} labelStyle={[styles.font_14, styles.T_semi_bold, { color: colors.White }]} mode="contained">
+                {reduxProduct?.category?.name != 'Digital Voucher' ?
+                    <TouchableOpacity disabled={disableCart} onPress={() => handleAddCart("trolley")} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
+                        <Image source={require('../../assets/icons/cart.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: flashsale ? colors.RedFlashsale : colors.BlueJaja }} />
+                    </TouchableOpacity>
+                    : null}
+                <Button disabled={disableCart} onPress={() => handleAddCart("buyNow")} style={{ borderRadius: 0, width: reduxProduct?.category?.name != 'Digital Voucher' ? '50%' : '75%', height: '100%', backgroundColor: disableCart ? colors.BlackGrey : flashsale ? colors.RedFlashsale : colors.BlueJaja }} contentStyle={{ width: '100%', height: '100%' }} color={disableCart ? colors.BlackGrayScale : flashsale ? colors.RedFlashsale : colors.BlueJaja} labelStyle={[styles.font_14, styles.T_semi_bold, { color: colors.White }]} mode="contained">
                     {reduxProduct?.statusProduk ?
                         reduxProduct.stock == '0' ? 'Stok Habis' : reduxProduct.statusProduk != 'live' ? 'Diarsipkan' : 'Beli Sekarang' :
-
                         'Beli Sekarang'
                     }
                 </Button>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, createRef, useRef, useCallback, } from "react";
 import { Platform, View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, Alert, StatusBar, FlatList, ToastAndroid, TextInput, RefreshControl, Modal, } from "react-native";
-import { Appbar, colors, styles, Wp, Hp, useNavigation, ServiceCheckout, Loading, Utils, ServiceCart, ServiceUser, ServiceOrder, ServiceProduct, useFocusEffect } from "../../export";
+import { Appbar, colors, styles, Wp, Hp, useNavigation, ServiceCheckout, Loading, Utils, ServiceCart, ServiceUser, ServiceOrder, ServiceProduct, useFocusEffect, ServiceVoucher } from "../../export";
 import { Button, TouchableRipple, Checkbox } from "react-native-paper";
 import ActionSheet from "react-native-actions-sheet";
 import CheckBox from "@react-native-community/checkbox";
@@ -12,6 +12,7 @@ export default function checkoutScreen(props) {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const reduxCheckout = useSelector((state) => state.checkout.checkout);
+    console.log("🚀 ~ file: CheckoutScreen.js ~ line 15 ~ checkoutScreen ~ reduxCheckout", reduxCheckout)
     const reduxAuth = useSelector((state) => state.auth.auth);
     const reduxCoin = useSelector((state) => state.user.user.coinFormat);
     const reduxUseCoin = useSelector((state) => state.checkout.useCoin);
@@ -184,12 +185,12 @@ export default function checkoutScreen(props) {
         // dispatch({ type: 'SET_ACTION_SHEET', payload: true })
     };
     const getVouchers = (token) => {
-        // ServiceVoucher.getVouchers(token).then(res => {
-        //     if (res) {
-        //         setVouchers(res.items)
-        //         setvoucherFilters(res.filters)
-        //     }
-        // })
+        ServiceVoucher.getVouchers(token).then(res => {
+            if (res) {
+                setVouchers(res.items)
+                setvoucherFilters(res.filters)
+            }
+        })
     };
 
     const handleVoucher = (val, index) => {
@@ -660,9 +661,7 @@ export default function checkoutScreen(props) {
         }
 
         setTimeout(() => {
-            if (reduxCheckout.total <= 0) {
-                Utils.alertPopUp("Persanan berhasil dibuat!");
-            }
+
             let error = true;
             var myHeaders = new Headers();
             myHeaders.append("Authorization", reduxAuth);
@@ -687,6 +686,7 @@ export default function checkoutScreen(props) {
                     try {
                         let data = JSON.parse(result);
                         if (data && Object.keys(data).length && data.status.code == 200) {
+                            Utils.alertPopUp("Persanan berhasil dibuat!");
                             dispatch({ type: "SET_INVOICE", payload: data.data });
                             dispatch({ type: "SET_ORDER_STATUS", payload: null });
                             navigation.replace("OrderDetails");
@@ -738,7 +738,7 @@ export default function checkoutScreen(props) {
                         }
                         setTimeout(() => {
                             setLoad(false);
-                        }, 2000);
+                        }, 5000);
                     } catch (err) {
                         error = false;
                         Utils.handleError(result, "Error with status code : 12049");
@@ -746,7 +746,7 @@ export default function checkoutScreen(props) {
                     }
                     setTimeout(() => {
                         setLoad(false);
-                    }, 2000);
+                    }, 8000);
                 })
                 .catch((err) => {
                     console.log(
@@ -826,7 +826,7 @@ export default function checkoutScreen(props) {
         }, 5000);
     }, []);
 
-    const handleGetCheckout = () => {
+    const handleGetCheckout = (coin) => {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Cookie", "ci_session=r59c24ad1race70f8lc0h1v5lniiuhei");
@@ -866,23 +866,25 @@ export default function checkoutScreen(props) {
     const handleUseCoin = (coin) => {
         setUseCoin(coin);
         dispatch({ type: "SET_USECOIN", payload: coin });
-        if (isNonPhysical) {
-            handleGetCheckout()
-        } else {
-            ServiceCheckout.getCheckout(reduxAuth, coin ? 1 : 0)
-                .then((res) => {
-                    if (res) {
-                        dispatch({ type: "SET_CHECKOUT", payload: res });
+        // if (isNonPhysical) {
+        //     handleGetCheckout()
+        // } else {
+        ServiceCheckout.getCheckout(reduxAuth, coin ? 1 : 0)
+            .then((res) => {
+                if (res) {
+                    dispatch({ type: "SET_CHECKOUT", payload: res });
+                    if (!isNonPhysical) {
                         actionSheetVoucher.current?.setModalVisible(false);
-                        return res;
-                    } else {
-                        return false;
                     }
-                })
-                .catch((res) => {
+                    return res;
+                } else {
                     return false;
-                });
-        };
+                }
+            })
+            .catch((res) => {
+                return false;
+            });
+        // };
     }
 
 
@@ -1134,7 +1136,7 @@ export default function checkoutScreen(props) {
                                                         { width: "100%", height: Wp("24%") },
                                                     ]}
                                                 >
-                                                    <Image
+                                                    {/* <Image
                                                         style={{
                                                             width: "20%",
                                                             height: "100%",
@@ -1147,7 +1149,25 @@ export default function checkoutScreen(props) {
                                                         resizeMethod={"scale"}
                                                         resizeMode="cover"
                                                         source={{ uri: child.image }}
-                                                    />
+                                                    /> */}
+                                                    <View style={[styles.row_center, {
+                                                        width: "20%", height: "100%",
+                                                        borderRadius: 5,
+                                                        backgroundColor: colors.White,
+                                                        borderWidth: 0.2,
+                                                        borderColor: colors.Silver,
+                                                    }]}>
+
+                                                        <Image
+                                                            style={{
+                                                                width: '100%',
+                                                                height: '100%',
+                                                                resizeMode: "contain",
+                                                            }}
+                                                            resizeMode={child.image ? "contain" : "center"}
+                                                            source={{ uri: child.image }}
+                                                        />
+                                                    </View>
                                                     <View style={[styles.column_between_center, { width: '80%', alignItems: "flex-start", height: "100%", paddingLeft: '2%', }]} >
 
                                                         <View style={[styles.column, { width: "100%" }]}>
@@ -1662,7 +1682,7 @@ export default function checkoutScreen(props) {
                                             numberOfLines={1}
                                             style={[styles.font_12, styles.mt_2]}
                                         >
-                                            Berakhir dalam {reduxCheckout.voucherJajaSelected.endDate}
+                                            Berakhir {reduxCheckout.voucherJajaSelected.endDate}
                                         </Text>
                                         <View
                                             style={[
@@ -2555,7 +2575,7 @@ export default function checkoutScreen(props) {
                                 onChangeText={(text) =>
                                     setvoucherCode(text.toLocaleUpperCase())
                                 }
-                                maxLength={12}
+                                maxLength={20}
                                 value={voucherCode}
                                 style={[
                                     styles.font_13,
@@ -3058,7 +3078,7 @@ export default function checkoutScreen(props) {
                             {
                                 alignItems: 'flex-start',
                                 width: Wp("85%"),
-                                height: Wp("45%"),
+                                height: Wp("40%"),
                                 borderRadius: 7,
                                 backgroundColor: colors.White,
                                 elevation: 11,
@@ -3068,7 +3088,7 @@ export default function checkoutScreen(props) {
                     >
 
                         <Text style={[styles.font_13, styles.T_semi_bold, { color: colors.BlueJaja }]} >{reduxCheckout.total > 0 ? "Pilih Pembayaran" : "Buat Pesanan"}</Text>
-                        <Text style={[styles.font_13, styles.T_medium, { marginTop: '-3%' }]} >{reduxCheckout.total > 0
+                        <Text style={[styles.font_16, styles.T_medium, { marginTop: '-3%' }]} >{reduxCheckout.total > 0
                             ? "Pesanan kamu akan dilanjutkan ke menu pembayaran!."
                             : "Pesanan kamu akan dibuat!"
                         }</Text>

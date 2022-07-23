@@ -345,11 +345,28 @@ export default function CheckoutMultiDropScreen() {
         return (
             <View style={[styles.column, styles.p_2, { width: '100%' }]}>
                 <View style={[styles.row_start_center, styles.py_2, { flex: 1, width: "100%", height: Wp("24%") }]}>
-                    <Image style={{ width: "20%", height: "100%", borderRadius: 4, backgroundColor: colors.White, borderWidth: 0.2, borderColor: colors.Silver, alignSelf: "center", }}
+                    {/* <Image style={{ width: "20%", height: "100%", borderRadius: 4, backgroundColor: colors.White, borderWidth: 0.2, borderColor: colors.Silver, alignSelf: "center", }}
                         resizeMethod={"scale"}
                         resizeMode="cover"
-                        source={{ uri: item.image }}
-                    />
+                    /> */}
+                    <View style={[styles.row_center, styles.mr_3, {
+                        width: "20%", height: "100%",
+                        borderRadius: 5,
+                        backgroundColor: colors.White,
+                        borderWidth: 0.2,
+                        borderColor: colors.Silver,
+                    }]}>
+
+                        <Image
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                resizeMode: "contain",
+                            }}
+                            resizeMode={item.image ? "contain" : "center"}
+                            source={{ uri: item.image }}
+                        />
+                    </View>
                     <View style={[styles.column_between_center, { width: '80%', alignItems: "flex-start", height: "100%", paddingLeft: '2%', }]} >
                         <View style={[styles.column, { width: '100%' }]}>
                             <Text numberOfLines={1} style={[styles.font_14, styles.T_medium]}>{item.name}</Text>

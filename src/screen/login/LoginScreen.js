@@ -12,6 +12,7 @@ import database from '@react-native-firebase/database';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function LoginScreen(props) {
+    console.log("🚀 ~ file: LoginScreen.js ~ line 15 ~ LoginScreen ~ props", props)
     let navigation = useNavigation()
     const dispatch = useDispatch()
 
@@ -397,7 +398,10 @@ export default function LoginScreen(props) {
                 barStyle='default'
                 showHideTransition="fade"
             />
-            <Appbar back={true} title="Kembali" />
+            {!props?.orderPage ?
+                <Appbar back={true} title="Kembali" />
+                : null
+            }
             {loading ? <Loading /> : null}
 
             <View style={[styles.column_around_center, { flex: 1, backgroundColor: colors.White }]}>

@@ -378,9 +378,8 @@ export default function HomeScreen() {
                         />
                     }> */}
                 <Category />
-                <View style={[styles.row_around_center, styles.pb_2, { paddingTop: '4.5%', backgroundColor: colors.BlueJaja }]}>
+                {/* <View style={[styles.row_around_center, styles.pb_2, { paddingTop: '4.5%', backgroundColor: colors.BlueJaja }]}>
                     <View style={[styles.row_center, styles.px_4, { backgroundColor: colors.RedFlashsale, alignSelf: 'center', width: '100%', height: Hp('27%') }]} >
-                        {/* onPress={() => navigation.navigate('Event')} */}
                         <View style={[styles.column_between_center, styles.py_3, { alignSelf: 'center', width: '55%', height: '100%', }]} >
                             <View style={styles.column}>
                                 <Text style={[styles.font_22, styles.T_bold, styles.mb_5, { alignSelf: 'flex-start', color: colors.White, textAlign: 'left' }]}>Big Rewards</Text>
@@ -407,7 +406,7 @@ export default function HomeScreen() {
 
                         </View>
                     </View>
-                </View>
+                </View> */}
                 {/* <TouchableRipple onPress={handleShowGift} rippleColor={colors.BlueJaja} style={[styles.row_center, styles.px, styles.py_2, styles.my_2, {
                     backgroundColor: colors.White, borderRadius: 7, alignSelf: 'center', width: '95%', shadowColor: "#000",
                     shadowOffset: {

@@ -108,7 +108,7 @@ export function handleErrorResponse(error, errorCode) {
 
 
 export function handleError(error, name) {
-    if (String(error).includes("request failed")) {
+    if (String(error).toLocaleLowerCase().includes("network request failed") || String(error).includes("time out")) {
         alertPopUp("Tidak dapat terhubung, periksa kembali koneksi internet anda!")
     } else {
         Alert.alert(

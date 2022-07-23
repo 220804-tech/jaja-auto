@@ -1224,21 +1224,22 @@ export default function OrderDetailsScreen() {
 
                     {details && Object.keys(details).length ?
                         reduxOrderStatus === "Pengiriman" ?
-                            <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'column', justifyContent: 'center', alignSelf: 'center', marginBottom: '2%' }}>
+                            <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginBottom: '2%' }}>
                                 {/* <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%', marginBottom: '2%' }} contentStyle={{ width: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_semi_bold, { color: colors.White }]} mode="contained" > */}
-                                <TouchableRipple onPress={handleDone} style={[styles.row_center, styles.py_2, { width: '99%', backgroundColor: colors.BlueJaja, alignSelf: 'center' }]}>
-                                    <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
+                                <TouchableRipple onPress={() => details.complain ? navigation.navigate('ResponseComplain', { invoice: details.items[0].invoice }) : setmodalComplain(true)} style={[styles.row_center, styles.py_2, { borderRadius: 3, width: '49%', backgroundColor: colors.YellowJaja, alignSelf: 'center' }]}>
+                                    <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>
+                                        {details.complain ?
+                                            "Sedang Dikomplai"
+                                            : "Komplain"}
+                                    </Text>
+                                </TouchableRipple>
+                                <TouchableRipple onPress={handleDone} style={[styles.row_center, styles.py_2, { borderRadius: 3, width: '49%', backgroundColor: colors.BlueJaja, alignSelf: 'center' }]}>
+                                    <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>
                                         Terima Pesanan
                                     </Text>
                                 </TouchableRipple>
                                 {/* </Button> */}
-                                <TouchableRipple onPress={() => details.complain ? navigation.navigate('ResponseComplain', { invoice: details.items[0].invoice }) : setmodalComplain(true)} style={[styles.row_center, styles.py_2, { width: '99%', backgroundColor: colors.YellowJaja, alignSelf: 'center' }]}>
-                                    {/* {details.complain ?  */}
-                                    <Text style={[styles.font_12, styles.T_medium, { color: colors.White }]}>
-                                        Sedang Dikomplain
-                                    </Text>
-                                    {/* : "Komplain"} */}
-                                </TouchableRipple>
+
                             </View>
                             : reduxOrderStatus === "Pesanan Selesai" && details.items[0].isRating ?
                                 <View style={{ position: 'absolute', bottom: 0, zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'row', justifyContent: 'center', alignSelf: 'center', marginBottom: '3%' }}>
