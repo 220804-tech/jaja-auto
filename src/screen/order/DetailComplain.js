@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { SafeAreaView, View, Text, ToastAndroid, ScrollView, Modal, RefreshControl } from 'react-native'
+import { SafeAreaView, View, Text, ScrollView, Modal, RefreshControl } from 'react-native'
 import StepIndicator from 'react-native-step-indicator';
 import { useSelector, useDispatch } from 'react-redux';
 import { Appbar, colors, styles, Utils, Loading, Wp, Hp, ServiceFirebase as Firebase, ServiceCheckout } from '../../export';
@@ -9,15 +9,16 @@ import WaitingDelivery from '../../components/OrderComplain/WaitingDelivery';
 import ProsesComplain from '../../components/OrderComplain/ProsesComplain';
 import RequestComplain from '../../components/OrderComplain/RequestComplain';
 import { Button } from 'react-native-paper'
+import { useNavigation } from '@react-navigation/native';
 
 export default function DetailComplain() {
+    const navigation = useNavigation()
     const reduxAuth = useSelector(state => state.auth.auth)
     const orderInvoice = useSelector(state => state.order.invoice)
     const updateComplain = useSelector(state => state.complain.complainUpdate)
     const orderUid = useSelector(state => state.complain.complainUid)
     const reaUpdate = useSelector(state => state.dashboard.notifikasi)
     const complainTarget = useSelector(state => state.complain.complainTarget)
-    const navigation = useNavigation();
 
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
@@ -70,6 +71,9 @@ export default function DetailComplain() {
             if (updateComplain) {
                 getItem()
                 setLoading(true)
+            } else {
+                setLoading(false)
+
             }
             if (currentPosition) {
                 setTitleHeader('Detail Komplain')
@@ -234,11 +238,11 @@ export default function DetailComplain() {
                 setTimeout(() => {
                     let signal = Utils.CheckSignal();
                     if (!signal.connect) {
-                        Utils.show("Tidak dapat terhubung, periksa kembali koneksi internet anda!", Utils.LONG, ToastAndroid.TOP)
+                        Utils.alertPopUp('Tidak dapat terhubung, periksa kembali koneksi internet anda!')
                     }
                     setLoading(false)
                 }, 5000);
-                ToastAndroid.show("Sedang Memuat..", ToastAndroid.CENTER, ToastAndroid.TOP)
+                Utils.alertPopUp("Sedang Memuat..")
             } else {
                 setLoading(false)
             }
@@ -246,52 +250,51 @@ export default function DetailComplain() {
     }
 
     const handleAccept = () => {
-        try {
-            setModalConfirm(true)
-            setLoading(true)
-            var myHeaders = new Headers();
-            myHeaders.append("Authorization", reduxAuth);
-            myHeaders.append("Cookie", "ci_session=7vgloal55kn733tsqch0v7lh1tfrcilq");
+        setModalConfirm(false)
+        // Firebase.notifChat(complainTarget, { body: 'Pembeli telah mengirim kembali barang yang di komplain', title: 'Komplain' })
+        // Firebase.buyerNotifications('orders', orderUid)
+        setLoading(true)
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", reduxAuth);
+        myHeaders.append("Cookie", "ci_session=7vgloal55kn733tsqch0v7lh1tfrcilq");
 
-            var formdata = new FormData();
-            formdata.append("invoice", orderInvoice);
+        var formdata = new FormData();
+        formdata.append("invoice", orderInvoice);
 
-            var requestOptions = {
-                method: 'POST',
-                headers: myHeaders,
-                body: formdata,
-                redirect: 'follow'
-            };
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect: 'follow'
+        };
 
-            fetch("https://jaja.id/backend/order/pesananDiterima", requestOptions)
-                .then(response => response.json())
-                .then(result => {
-                    setLoading(false)
-                    if (result?.status?.code == 200) {
-                        navigation.navigate('Pesanan')
-                        Firebase.notifChat(complainTarget, { body: 'Pembeli Telah Menerima Pesanan', title: 'Pesanan' })
-                        Firebase.buyerNotifications('orders', orderUid)
-                    } else {
-                        Utils.handleErrorResponse(result, "Error with status code : 120366")
-                    }
-
-                })
-                .catch(error => {
-                    setLoading(false)
-                    Utils.handleError(error, "Error with staus code : 120377")
-                });
-
-        } catch (error) {
-            setLoading(false)
-        }
+        fetch("https://jaja.id/backend/order/pesananDiterima", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                console.log("🚀 ~ file: DetailComplain.js ~ line 269 ~ handleAccept ~ result", result)
+                if (result.status.code == 200) {
+                    console.log('masuk sini nggk kntol')
+                    navigation.navigate('Pesanan')
+                    Firebase.notifChat(complainTarget, { body: 'Pembeli Telah Menerima Pesanan', title: 'Pesanan' })
+                    Firebase.buyerNotifications('orders', orderUid)
+                } else {
+                    Utils.handleErrorResponse(result, "Error with status code : 12036")
+                }
+                setLoading(false)
+            })
+            .catch(error => {
+                setLoading(false)
+                Utils.handleError(error, "Error with staus code : 12037")
+            });
     }
 
 
+
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.containerFix]}>
             <Appbar title={titleHeader} back={true} />
             {loading ? <Loading /> : null}
-            <View style={[styles.column]}>
+            <View style={[styles.containerIn,]}>
                 <ScrollView contentContainerStyle={{ height: Hp('100%') }}
                     refreshControl={
                         <RefreshControl
@@ -348,8 +351,8 @@ export default function DetailComplain() {
                 <View style={{ width: Wp('100%'), height: Hp('100%'), justifyContent: 'center', alignItems: 'center' }}>
                     <View style={[styles.column, { width: Wp('90%'), height: Wp('45%'), backgroundColor: colors.White, elevation: 11, zIndex: 999, borderRadius: 7 }]}>
                         <View style={[styles.column_center_start, styles.p_4, { flex: 1 }]}>
-                            <Text style={[styles.font_14, styles.T_semi_bold, styles.mb_5, { color: colors.BlueJaja }]}>Terima Pesanan</Text>
-                            <Text style={[styles.font_14]}>Dengan menerima pesanan proses komplain selesai.</Text>
+                            <Text style={[styles.font_13, styles.T_semi_bold, styles.mb_5, { color: colors.BlueJaja }]}>Terima Pesanan</Text>
+                            <Text style={[styles.font_13]}>Dengan menerima pesanan proses komplain selesai.</Text>
                         </View>
                         <View style={[styles.row_end, styles.p_2, { alignItems: 'flex-end', width: '100%', }]}>
                             <Button mode="text" onPress={() => setModalConfirm(false)} labelStyle={[styles.font_12, styles.T_semi_bold]} style={{ height: '100%', width: '30%' }} color={colors.YellowJaja}>

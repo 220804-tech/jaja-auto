@@ -1,24 +1,19 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { View, Text, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native'
-import { styles, Ps, useNavigation, FastImage, colors, Wp, useFocusEffect, ServiceProduct, Utils } from '../../../export'
+import { styles, Ps, useNavigation, FastImage, colors, Wp, useFocusEffect, ServiceProduct, Utils, } from '../../../../export'
 import { useSelector, useDispatch } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
-import TextTicker from 'react-native-text-ticker'
 
-export default function NewProduct(props) {
-    console.log("🚀 ~ file: Flashsale.js ~ line 10 ~ NewProduct ~ props", props.data)
+export default function NewProduct() {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const reduxdashNearestStore = useSelector(state => state.dashboard.nearestStore)
     const products = useSelector(state => state.store.newProduct)
+    console.log("🚀 ~ file: NewProduct.js ~ line 13 ~ NewProduct ~ products", products)
+    const loadingProduct = useSelector(state => state.store.loadNewProduct)
 
-    useEffect(() => {
-    }, [])
-
-
-
-
+    const reduxAuth = useSelector(state => state.user.auth)
     const reduxLoad = useSelector(state => state.product.productLoad)
 
     const handleShowDetail = async (item, status) => {
@@ -63,26 +58,16 @@ export default function NewProduct(props) {
 
     return (
         <View style={[styles.column, styles.px_3, styles.py_4, { backgroundColor: colors.White }]}>
-            <View style={[styles.row_between_center, styles.mb_3]}>
-                <Text style={styles.titleDashboard}>
-                    Produk terbaru
-                </Text>
-                {/* <TouchableOpacity onPress={() => handleCategory('Art Shop')}>
-                    <Text style={[{ fontSize: 13, fontFamily: 'SignikaNegative-SemiBold', color: colors.BlueJaja }]}>
-                        Lihat Semua <Image source={require('../../assets/icons/play.png')} style={[styles.icon_10, { tintColor: colors.BlueJaja }]} />
-                    </Text>
-                </TouchableOpacity> */}
-            </View>
-            {props.data && props.data.length ?
+            {!loadingProduct ?
                 <FlatList
                     showsHorizontalScrollIndicator={false}
-                    data={props.data.slice(0, 20)}
+                    data={products.slice(0, 20)}
                     horizontal={true}
                     keyExtractor={(item, index) => String(index)}
                     renderItem={({ item, index }) => {
                         return (
                             <TouchableOpacity
-                                style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('57%'), alignItems: 'center', elevation: 2 }]}
+                                style={[Ps.cardProductSmall, styles.shadow_3, { shadowColor: colors.BlueJaja }]}
                                 onPress={() => handleShowDetail(item, false)} >
                                 <View style={[styles.column, { height: Wp('33%'), width: '100%' }]}>
                                     <FastImage
@@ -100,17 +85,17 @@ export default function NewProduct(props) {
                                     {item.isDiscount ?
                                         <>
                                             <View style={styles.row}>
-                                                <Text style={[Ps.priceBefore, styles.mr_3,]}>{item.price}</Text>
-                                                <Text style={[styles.font_10, styles.T_medium, { zIndex: 1, backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '1%', paddingHorizontal: '3%', borderRadius: 3 }]}>{item.discount}%</Text>
+                                                <Text style={[Ps.priceBeforeSmall, styles.mr_3,]}>{item.price}</Text>
+                                                <Text style={[Ps.discountSmall, styles.T_medium,]}>{item.discount}%</Text>
                                             </View>
-                                            <Text style={Ps.priceAfter}>{item.priceDiscount}</Text>
+                                            <Text style={[Ps.priceSmall, { color: colors.YellowJaja }]}>{item.priceDiscount}</Text>
                                         </>
                                         :
-                                        <Text style={[Ps.price, { color: colors.BlueJaja }]}>{item.price}</Text>
+                                        <Text style={[Ps.priceSmall, { color: colors.YellowJaja }]}>{item.price}</Text>
                                     }
                                 </View>
                                 <View style={[Ps.location, { width: '94%' }]}>
-                                    <Image style={Ps.locationIcon} source={require('../../../assets/icons/google-maps.png')} />
+                                    <Image style={Ps.locationIcon} source={require('../../../../assets/icons/google-maps.png')} />
                                     <Text numberOfLines={1} style={[Ps.locarionName, { fontSize: 10, width: '85%' }]}>{item.location}</Text>
                                 </View>
                             </TouchableOpacity>
@@ -126,7 +111,7 @@ export default function NewProduct(props) {
                                 style={[Ps.cardProduct, { marginRight: 11, width: Wp('33%'), height: Wp('57%'), alignItems: 'center' }]}>
                                 <FastImage
                                     style={[Ps.imageProduct, { height: Wp('33%'), width: '100%', backgroundColor: colors.Silver, borderTopRightRadius: 3, borderTopLeftRadius: 3 }]}
-                                    source={require('../../../assets/images/JajaId.png')}
+                                    source={require('../../../../assets/images/JajaId.png')}
                                     tintColor={colors.White}
                                     resizeMode={FastImage.resizeMode.center}
                                 />

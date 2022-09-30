@@ -92,10 +92,8 @@ export default function index(props) {
     }
 
     const toggleSwitch = (idx) => {
-        console.log("🚀 ~ file: AddressScreen.js ~ line 102 ~ toggleSwitch ~ idx", idx)
         try {
             let arr = reduxUser;
-            console.log("🚀 ~ file: AddressScreen.js ~ line 104 ~ toggleSwitch ~ arr", arr)
             if (!arr[idx].is_primary) {
                 arr[idx].is_primary = !arr[idx].is_primary;
                 handleChangePrimary(arr[idx].id)
@@ -146,7 +144,6 @@ export default function index(props) {
                                     }
                                 })
                                 ServiceCheckout.getShipping(reduxAuth, 0).then(res => {
-                                    console.log("🚀 ~ file: TrolleyScreen.js ~ line 161 ~ ServiceCheckout.getShipping ~ res", res)
                                     if (res) {
                                         dispatch({ type: 'SET_SHIPPING', payload: res })
                                     }

@@ -77,7 +77,7 @@ function NotifikasiScreen(props) {
                 body: raw,
                 redirect: 'follow'
             };
-            fetch(`https://jaja.id/core/seller/dashboard/notifikasi?id_toko=145`, requestOptions)
+            fetch(`https://jsonx.jaja.id/core/seller/dashboard/notifikasi?id_toko=145`, requestOptions)
                 .then(response => response.json())
                 .then(result => console.log("hapus notif"))
                 .catch(error => console.log('error', error));

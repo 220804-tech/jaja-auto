@@ -130,7 +130,7 @@ export default class ForgotPasswordScreen extends Component {
             body: raw,
             redirect: 'follow'
         };
-        fetch("https://jaja.id/core/seller/auth/verification/forgot_password", requestOptions)
+        fetch("https://jsonx.jaja.id/core/seller/auth/verification/forgot_password", requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.status.code === 200) {
@@ -343,7 +343,7 @@ export default class ForgotPasswordScreen extends Component {
                             },
                         }}
                     />
-                    <Text style={styles.text3, { color: 'red' }}>{this.state.alertTextPssword1}</Text>
+                    <Text style={[styles.text3, { color: 'red' }]}>{this.state.alertTextPssword1}</Text>
                     <TextInput
                         style={styles.inputBox}
                         name="confirmPassword"

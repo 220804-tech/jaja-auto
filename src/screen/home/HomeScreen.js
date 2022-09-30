@@ -1,5 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, StyleSheet, RefreshControl, Platform, ScrollView, Dimensions, LogBox, Animated, StatusBar } from 'react-native'
+import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, StyleSheet, RefreshControl, Platform, ScrollView, Dimensions, LogBox, Animated, StatusBar, Alert } from 'react-native'
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
+
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { BasedOnSearch, Trending, Category, Flashsale, Loading, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect, NearestStore, ServiceCore, Utils, ServiceProduct, ServiceStore } from '../../export'
@@ -15,13 +18,10 @@ const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
 const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 import { useAndroidBackHandler } from "react-navigation-backhandler";
-import { TouchableRipple } from 'react-native-paper';
+import { Modal, TouchableRipple, TextInput, Provider, Portal } from 'react-native-paper';
 import queryString from 'query-string';
 import FastImage from 'react-native-fast-image'
 import CountDown from 'react-native-countdown-component';
-
-
-LogBox.ignoreAllLogs()
 
 export default function HomeScreen() {
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
@@ -60,6 +60,9 @@ export default function HomeScreen() {
     const [nearestProduct, setnearestProduct] = useState(false)
     const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [phoneNumber, setphoneNumber] = useState('');
+    const containerStyle = { backgroundColor: 'white', width: Wp('95%'), height: Wp('55%'), alignSelf: 'center', borderRadius: 4, };
+    const [modalPhoneNumber, setmodalPhoneNumber] = useState(false);
 
     const images = [
         {
@@ -185,7 +188,6 @@ export default function HomeScreen() {
                     dispatch({ type: 'SET_CART_STATUS', payload: '' })
                     setOut(false)
 
-
                 } catch (error) {
 
                 }
@@ -210,6 +212,16 @@ export default function HomeScreen() {
         }
     }, [])
 
+
+    useEffect(() => {
+        if (reduxProfile?.id && !reduxProfile?.phoneNumber) {
+            setmodalPhoneNumber(true)
+        } else {
+            setmodalPhoneNumber(false)
+        }
+        return () => {
+        }
+    }, [reduxProfile?.id])
 
     useEffect(() => {
         if (reduxAuth) {
@@ -451,7 +463,6 @@ export default function HomeScreen() {
                 <RecomandedHobby />
                 {/* </ScrollView> */}
 
-
             </View >
         );
     };
@@ -609,72 +620,180 @@ export default function HomeScreen() {
         }
     }
 
+    const handlePhoneNumber = () => {
+        if (phoneNumber.length > 9) {
+            let res = Utils.regex('number', phoneNumber)
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", reduxAuth);
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("Cookie", "ci_session=6r791k9ainrf0grr1nns27gosmdt75i5");
+            var raw = JSON.stringify({
+                "name": reduxProfile.name,
+                "phoneNumber": phoneNumber ? res : reduxProfile.phoneNumber,
+                "email": reduxProfile.email,
+                "gender": reduxProfile?.gender ? reduxProfile?.gender : 'pria',
+                "birthDate": reduxProfile.birthDate,
+                "photo": reduxProfile?.imageFile
+            })
+            var requestOptions = {
+                method: 'PUT',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+            setmodalPhoneNumber(false)
+            fetch("https://jaja.id/backend/user/profile", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status.code === 200) {
+                        getUser()
+                        Utils.alertPopUp('Nomor telephone berhasil ditambahkan!')
+                    } else {
+                        setmodalPhoneNumber(false)
+                        Utils.handleErrorResponse(result, "Error with status code: 23028")
+                    }
+                })
+                .catch(error => {
+                    setmodalPhoneNumber(false)
+                    Utils.handleError(error, "Error with status code : 23029")
+                });
+        }
+    }
+
+    const getUser = async () => {
+        try {
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", reduxAuth);
+            myHeaders.append("Cookie", "ci_session=6jh2d2a8uvcvitvneaa2t81phf3lrs3c");
+
+            var requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
+            fetch("https://jaja.id/backend/user/profile", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (result?.status?.code === 200) {
+                        dispatch({ type: 'SET_USER', payload: result?.data })
+                        EncryptedStorage.setItem('user', JSON.stringify(result?.data))
+                    } else {
+                        Utils.handleErrorResponse(result, 'Error with status code : 42044')
+                    }
+                })
+                .catch(error => {
+                    Utils.handleError(error, "Error with status code : 42045")
+                });
+        } catch (error) {
+            console.log("🚀 ~ file: HomeScreen.js ~ line 701 ~ getUser ~ error", error)
+        }
+    }
+
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
-            {loading || firstLoading ? <Loading /> : null}
-            {/* <ScrollViews
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                    />
-                }
-                scrollEventThrottle={16}
-                onScroll={Animated.event(
-                    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                    {
-                        listener: event => {
-                            if (isCloseToBottom(event.nativeEvent)) {
+        <Provider>
+
+            <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
+                {loading || firstLoading ? <Loading /> : null}
+                <StatusBar translucent={translucent} backgroundColor={colors.BlueJaja} barStyle="light-content" />
+                <ReactNativeParallaxHeader
+                    headerMinHeight={Platform.OS === 'ios' ? Hp('5.5%') : Hp('7%')}
+                    headerMaxHeight={Wp('60%')}
+                    extraScrollHeight={20}
+                    // statusBarColor='transparent'
+                    backgroundColor='#fcfcfc'
+                    navbarColor={colors.BlueJaja}
+                    titleStyle={style.titleStyle}
+                    title={title()}
+
+                    renderNavBar={() => renderNavBar('Cari hobimu sekarang')}
+                    renderContent={renderContent}
+                    containerStyle={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.WhiteBack : null }]}
+                    contentContainerStyle={style.contentContainer}
+                    innerContainerStyle={style.container}
+                    headerFixedBackgroundColor='transparent'
+                    alwaysShowTitle={false}
+
+                    scrollViewProps={{
+                        refreshControl: <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />,
+                        onScroll: Animated.event(
+                            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                            Platform.OS === "android" ?
+                                {
+                                    useNativeDriver: false,
+                                    listener: event => {
+                                        if (isCloseToBottom(event.nativeEvent)) {
+                                            loadMoreData()
+                                        }
+                                    }
+                                }
+                                : null
+                        ),
+                        onMomentumScrollEnd: ({ nativeEvent }) => {
+                            if (isCloseToBottom(nativeEvent)) {
                                 loadMoreData()
                             }
                         }
-                    }
-                )}
-            > */}
-            <StatusBar translucent={translucent} backgroundColor={colors.BlueJaja} barStyle="light-content" />
-            <ReactNativeParallaxHeader
-                headerMinHeight={Platform.OS === 'ios' ? Hp('5.5%') : Hp('7%')}
-                headerMaxHeight={Wp('60%')}
-                extraScrollHeight={20}
-                // statusBarColor='transparent'
-                backgroundColor='#fcfcfc'
-                navbarColor={colors.BlueJaja}
-                titleStyle={style.titleStyle}
-                title={title()}
 
-                renderNavBar={() => renderNavBar('Cari hobimu sekarang')}
-                renderContent={renderContent}
-                containerStyle={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.WhiteBack : null }]}
-                contentContainerStyle={style.contentContainer}
-                innerContainerStyle={style.container}
-                headerFixedBackgroundColor='transparent'
-                alwaysShowTitle={false}
+                    }}
+                >
+                </ReactNativeParallaxHeader>
+                {/* <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={modalPhoneNumber}>
+                    <View
+                        style={{
+                            flex: 1,
+                            width: Wp("100%"),
+                            height: Hp("100%"),
+                            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                            justifyContent: "center",
+                            alignItems: "center",
+                        }}
+                    >
+                        <View
+                            style={[
+                                styles.column_between_center,
+                                styles.p_5,
+                                {
+                                    alignItems: 'flex-start',
+                                    width: Wp("85%"),
+                                    height: Wp("50%"),
+                                    borderRadius: 7,
+                                    backgroundColor: colors.White,
+                                    elevation: 11,
+                                    zIndex: 999,
+                                },
+                            ]}
+                        >
 
-                scrollViewProps={{
-                    refreshControl: <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />,
-                    onScroll: Animated.event(
-                        [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                        Platform.OS === "android" ?
-                            {
-                                useNativeDriver: false,
-                                listener: event => {
-                                    if (isCloseToBottom(event.nativeEvent)) {
-                                        loadMoreData()
-                                    }
-                                }
-                            }
-                            : null
-                    ),
-                    onMomentumScrollEnd: ({ nativeEvent }) => {
-                        if (isCloseToBottom(nativeEvent)) {
-                            loadMoreData()
-                        }
-                    }
+                            <Text style={[styles.font_13, styles.T_semi_bold, { color: colors.BlueJaja }]} >Masukkan nomor telephone</Text>
+                            <TextInput style={[styles.p, { borderWidth: 1, borderBottomColor: colors.White, width: '90%', }]} value={phoneNumber} onChangeText={text => setphoneNumber(text)} placeholder="Masukkan nomor telepohne" />
+                            <View style={[styles.row_end, { width: '100%' }]}>
+                             
+                                <TouchableRipple onPress={handlePhoneNumber} style={[styles.px_4, styles.py_2, styles.ml_2, { borderRadius: 3, backgroundColor: colors.BlueJaja }]}>
+                                    <Text style={[styles.font_11, styles.T_semi_bold, { color: colors.White }]}>Simpan</Text>
+                                </TouchableRipple>
+                            </View>
 
-                }}
-            >
-            </ReactNativeParallaxHeader>
-            {/* <ParallaxScrollView
+                        </View>
+                    </View>
+                </Modal> */}
+                <Portal>
+                    <Modal dismissable={true} visible={modalPhoneNumber} onDismiss={() => setmodalPhoneNumber(false)} contentContainerStyle={containerStyle} >
+                        <View style={[styles.column_between_center, styles.p_5, { alignItems: 'flex-start', width: '100%', height: '100%' }]}>
+                            <Text style={[styles.font_15, styles.T_semi_bold, { color: colors.BlueJaja }]} >Masukkan nomor telephone</Text>
+                            <TextInput maxLength={13} keyboardType='number-pad' outlineColor={colors.BlueJaja} selectionColor={colors.YellowJaja} underlineColor={colors.BlueJaja} underlineColorAndroid={colors.BlueJaja} theme={{ colors: { primary: colors.BlueJaja, }, roundness: 5 }} mode='flat' style={[styles.font_13, { padding: 0, width: '98%', alignSelf: 'center', borderWidth: 0, backgroundColor: colors.WhiteGrey }]} value={phoneNumber} onChangeText={text => setphoneNumber(Utils.regex('number', text))} placeholder="Masukkan nomor telephone" />
+                            <View style={[styles.row_end, { width: '100%' }]}>
+                                <TouchableRipple onPress={handlePhoneNumber} style={[styles.px_5, styles.py_3, styles.ml_2, { borderRadius: 5, backgroundColor: colors.YellowJaja, width: 105 }]}>
+                                    <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White, alignSelf: 'center' }]}>Simpan</Text>
+                                </TouchableRipple>
+                            </View>
+                        </View>
+                    </Modal>
+                </Portal>
+
+                {/* <ParallaxScrollView
 
                 windowHeight={SCREEN_HEIGHT * 0.4}
                 backgroundSource={title()}
@@ -721,8 +840,9 @@ export default function HomeScreen() {
                 </ScrollView>
             </ParallaxScrollView> */}
 
-            {/* </ScrollView> */}
-        </SafeAreaView >
+                {/* </ScrollView> */}
+            </SafeAreaView >
+        </Provider>
 
     )
 }

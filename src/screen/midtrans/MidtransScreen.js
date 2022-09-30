@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View, Text, SafeAreaView, Image, StyleSheet, Alert, Animated, BackHandler } from 'react-native'
+import { View, Text, SafeAreaView, Image, StyleSheet, Alert, Animated, BackHandler, ScrollView } from 'react-native'
 import { styles, Wp, Hp, colors, useNavigation, ServiceCheckout, Appbar, ServiceOrder } from '../../export'
 import { WebView } from 'react-native-webview';
 import { useSelector, useDispatch } from 'react-redux'
@@ -30,6 +30,7 @@ export default function MidtransScreen() {
         setloading(true)
         if (reduxAuth) {
             getItem()
+
         } else {
             navigation.navigate('Login')
         }
@@ -44,21 +45,21 @@ export default function MidtransScreen() {
             //         {
             //             text: "OK", onPress: () => {
 
-            //                 ServiceOrder.getUnpaid(reduxAuth).then(resUnpaid => {
-            //                     if (resUnpaid) {
-            //                         dispatch({ type: 'SET_UNPAID', payload: resUnpaid.items })
-            //                         dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
-            //                     } else {
-            //                         handleUnpaid()
-            //                     }
-            //                 })
-            //                 ServiceOrder.getWaitConfirm(reduxAuth).then(reswaitConfirm => {
-            //                     if (reswaitConfirm) {
-            //                         dispatch({ type: 'SET_WAITCONFIRM', payload: reswaitConfirm.items })
-            //                     } else {
-            //                         handleWaitConfirm()
-            //                     }
-            //                 })
+            ServiceOrder.getUnpaid(reduxAuth).then(resUnpaid => {
+                if (resUnpaid) {
+                    dispatch({ type: 'SET_UNPAID', payload: resUnpaid.items })
+                    dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
+                } else {
+                    handleUnpaid()
+                }
+            })
+            ServiceOrder.getWaitConfirm(reduxAuth).then(reswaitConfirm => {
+                if (reswaitConfirm) {
+                    dispatch({ type: 'SET_WAITCONFIRM', payload: reswaitConfirm.items })
+                } else {
+                    handleWaitConfirm()
+                }
+            })
             //                 navigation.goBack()
             //             }
             //         }
@@ -95,6 +96,7 @@ export default function MidtransScreen() {
     }
 
     const getPayment = (orderId) => {
+        console.log("🚀 ~ file: MidtransScreen.js ~ line 98 ~ getPayment ~ orderId", orderId)
         var myHeaders = new Headers();
         myHeaders.append("Cookie", "ci_session=nvha2jep6gogidt9rmcle1par0j8ul4f");
 
@@ -109,6 +111,7 @@ export default function MidtransScreen() {
         fetch(url, requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: MidtransScreen.js ~ line 112 ~ getPayment ~ result", result)
                 // console.log("🚀 ~ file: MidtransScreen.js ~ line 98 ~ getPayment ~ result", result)
                 setTimeout(() => setloading(false), 3000);
                 // console.log('payment_va_or_code_or_link', result.orderPaymentRecent.payment_va_or_code_or_link);
@@ -187,7 +190,7 @@ export default function MidtransScreen() {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: colors.White }]}>
             <Appbar back={true} title="Pilih Pembayaran" share={view} handlePress={handleDownload} />
             {loading ?
                 <View style={{
@@ -216,28 +219,29 @@ export default function MidtransScreen() {
                         <Button onPress={() => navigation.goBack()} mode="contained" labelStyle={{ color: colors.White }} color={colors.BlueJaja}>Kembali</Button>
                     </View>
                     :
-                    <>
-                        <ViewShot style={{ flex: 1 }} ref={viewShotRef} options={{ format: "jpg" }}>
-                            <WebView
-                                style={{ alignSelf: 'stretch' }}
-                                javaScriptEnabled={true}
-                                allowsFullscreenVideo={true}
-                                scalesPageToFit={true}
-                                originWhitelist={['*']}
-                                // onLoad={(e) => console.log('asasasasas', e)}
-                                onMessage={(event) => onMessage(event)}
-                                source={{ uri: view }}
-                            />
-                        </ViewShot>
-                        <View style={[styles.row_around_center, { position: 'absolute', bottom: 75, height: Wp('9.5%'), width: Wp('100%') }]}>
-                            <TouchableRipple onPress={() => navigation.goBack()} style={[styles.row_center, styles.py_2, { borderRadius: 5, backgroundColor: colors.YellowJaja, width: '42%', height: '100%' }]}>
-                                <Text style={[styles.font_13, styles.T_medium, { color: colors.White }]}>Lihat Pesanan</Text>
-                            </TouchableRipple>
-                            <TouchableRipple onPress={() => setreload(!reload)} style={[styles.row_center, styles.py_2, { borderRadius: 5, backgroundColor: colors.BlueJaja, width: '42%', height: '100%' }]}>
-                                <Text style={[styles.font_13, styles.T_medium, { color: colors.White }]}>Refresh</Text>
-                            </TouchableRipple>
-                        </View>
-                        {/* <View style={{ position: 'absolute', width: Wp('100%'), height: Hp('100%'), justifyContent: 'flex-end', alignItems: 'center', paddingBottom: Hp('10%') }}>
+                    <View style={[styles.column, { flex: 1, backgroundColor: colors.White }]}>
+                        <ScrollView contentContainerStyle={{ flex: 1, }}>
+                            <ViewShot style={{ height: '93%' }} ref={viewShotRef} options={{ format: "jpg" }}>
+                                <WebView
+                                    style={{ alignSelf: 'stretch' }}
+                                    javaScriptEnabled={true}
+                                    allowsFullscreenVideo={true}
+                                    scalesPageToFit={true}
+                                    originWhitelist={['*']}
+                                    // onLoad={(e) => console.log('asasasasas', e)}
+                                    onMessage={(event) => onMessage(event)}
+                                    source={{ uri: view }}
+                                />
+                            </ViewShot>
+                            <View style={[styles.row_around_center, { flex: 0, height: Hp('5.5%'), width: Wp('100%') }]}>
+                                <TouchableRipple onPress={() => navigation.goBack()} style={[styles.row_center, styles.py_2, { borderRadius: 5, backgroundColor: colors.YellowJaja, width: '42%', height: '85%' }]}>
+                                    <Text style={[styles.font_13, styles.T_medium, { color: colors.White }]}>Lihat Pesanan</Text>
+                                </TouchableRipple>
+                                <TouchableRipple onPress={() => setreload(!reload)} style={[styles.row_center, styles.py_2, { borderRadius: 5, backgroundColor: colors.BlueJaja, width: '42%', height: '85%' }]}>
+                                    <Text style={[styles.font_13, styles.T_medium, { color: colors.White }]}>Refresh</Text>
+                                </TouchableRipple>
+                            </View>
+                            {/* <View style={{ position: 'absolute', width: Wp('100%'), height: Hp('100%'), justifyContent: 'flex-end', alignItems: 'center', paddingBottom: Hp('10%') }}>
 
                             <TouchableOpacity
                                 style={{
@@ -271,17 +275,18 @@ export default function MidtransScreen() {
                                     source={require('../../assets/icons/refresh.png')} />
                             </TouchableOpacity>
                         </View> */}
-                        {/* <View style={{ width: '50%', justifyContent: 'flex-end', paddingHorizontal: '3%', paddingLeft: '5%', paddingVertical: '1%' }}>
+                            {/* <View style={{ width: '50%', justifyContent: 'flex-end', paddingHorizontal: '3%', paddingLeft: '5%', paddingVertical: '1%' }}>
                                 <Text style={[styles.font_14, { fontFamily: 'SignikaNegative-SemiBold', color: colors.BlueJaja }]}>Subtotal :</Text>
                                 <Text numberOfLines={1} style={[styles.font_20, { fontFamily: 'SignikaNegative-SemiBold', color: colors.BlueJaja }]}>ASA</Text>
                             </View> */}
-                        {/* <View style={{ position: 'relative', bottom: 0, height: Hp('7.5%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
+                            {/* <View style={{ position: 'relative', bottom: 0, height: Hp('7.5%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row' }}>
                            
                             <Button onPress={handleCheck} style={{ width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }} color={colors.BlueJaja} labelStyle={{ color: colors.White }} mode="contained">
                                 Cek Pembayaran
                             </Button>
                         </View> */}
-                    </>
+                        </ScrollView>
+                    </View>
             }
         </SafeAreaView >
     )

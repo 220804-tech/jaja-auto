@@ -484,29 +484,29 @@ export default function ProductScreen(props) {
     const handleStore = () => {
         try {
             if (!loadStore) {
-                navigation.push('Store', { slug: reduxProduct.store.slug })
-                dispatch({ "type": 'SET_STORE_LOAD', payload: true })
-
-                dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: true })
+                console.log('masuk sini');
+                if (Platform.OS === "ios") {
+                    sethidden(false);
+                }
+                let slg = reduxProduct.store.slug;
                 dispatch({ "type": 'SET_STORE', payload: {} })
+                dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
+                dispatch({ type: 'SET_STORE_PRODUCT', payload: [] })
+                dispatch({ type: 'SET_NEW_PRODUCT', payload: [] })
+                dispatch({ "type": 'SET_STORE_LOAD', payload: true })
+                navigation.push('Store', { slug: slg })
+                ServiceStore.getStoreNew(slg, dispatch, reduxAuth)
 
-                let slg = reduxProduct.store.slug
-                ServiceStore.getStore(slg, reduxAuth).then(res => {
-                    if (res) {
-                        dispatch({ "type": 'SET_STORE', payload: res })
-                    }
-                    dispatch({ "type": 'SET_STORE_LOAD', payload: false })
-                }).catch(err => [
-                    dispatch({ "type": 'SET_STORE_LOAD', payload: false })
-                ])
             }
         } catch (error) {
-            dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: false })
-            dispatch({ "type": 'SET_STORE_LOAD', payload: false })
-            Utils.handleError(error, 'Error with status code : 31001')
+            console.log("🚀 ~ file: ProductScreen.js ~ line 464 ~ handleStore ~ error", error)
+            dispatch({ type: "SET_NEW_PRODUCT_LOAD", payload: false });
+            dispatch({ type: "SET_STORE_LOAD", payload: false });
+            Utils.handleError(error, "Error with status code : 31001");
         }
-        dispatch({ type: 'SET_KEYWORD', payload: '' })
-    }
+        dispatch({ type: "SET_KEYWORD", payload: "" });
+    };
+
 
     const handleTrolley = () => {
         if (reduxAuth) {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { View, Text, FlatList, Image, RefreshControl, ToastAndroid } from 'react-native'
-import { colors, styles, Wp, ServiceOrder, useNavigation, Os, DefaultNotFound, FastImage } from '../../export';
+import { colors, styles, Wp, ServiceOrder, useNavigation, Os, DefaultNotFound, FastImage, Utils, useFocusEffect } from '../../export';
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { Button } from 'react-native-paper'
@@ -13,6 +13,8 @@ export default function OrdersSent() {
     const reduxAuth = useSelector(state => state.auth.auth)
     const [refreshing, setRefreshing] = useState(false);
     const [complain, setComplain] = useState(false);
+    const [count, setCount] = useState(false);
+
 
     useEffect(() => {
         return () => {
@@ -29,21 +31,27 @@ export default function OrdersSent() {
         }, 3000);
     }, []);
 
+    useFocusEffect(
+        useCallback(() => {
+            setCount(count + 1)
+            setComplain(false)
+            getItem()
+        }, []),
+    );
+
 
     const getItem = () => {
         setRefreshing(true)
         ServiceOrder.getSent(reduxAuth).then(resSent => {
-            console.log("🚀 ~ file: OrdersSent.js ~ line 27 ~ ServiceOrder.getSent ~ resSent", resSent.items)
             setRefreshing(false)
             if (resSent && Object.keys(resSent).length) {
                 dispatch({ type: 'SET_SENT', payload: resSent.items })
                 dispatch({ type: 'SET_ORDER_FILTER', payload: resSent.filters })
-                setTimeout(() => ToastAndroid.show("Data berhasil diperbahrui", ToastAndroid.SHORT, ToastAndroid.CENTER), 500);
+                setTimeout(() => Utils.alertPopUp("Data berhasil diperbahrui"), 500);
                 resSent.items.filter(res => {
                     if (res.complain) {
                         setComplain(true)
                     }
-                    console.log("🚀 ~ file: OrdersSent.js ~ line 38 ~ ServiceOrder.getSent ~ res", res.complain)
                 })
             } else {
                 setRefreshing(false)
@@ -52,7 +60,7 @@ export default function OrdersSent() {
 
         }).catch(err => {
             setRefreshing(false)
-            ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+            Utils.alertPopUp(String(err));
             handleSent()
         })
     }
@@ -64,14 +72,18 @@ export default function OrdersSent() {
             }
         })
     }
-    const handleOrderDetails = (item) => {
-        dispatch({ type: 'SET_INVOICE', payload: item.invoice })
-        dispatch({ type: 'SET_RECEIPT', payload: item.trackingId })
-        dispatch({ type: 'SET_ORDER_STATUS', payload: 'Pengiriman' })
-        dispatch({ type: 'SET_ORDER_UID', payload: item.store.uid })
-        navigation.navigate('OrderDetails', { data: item.invoice, status: "Pengiriman" })
-    }
+    // const handleOrderDetails = (item) => {
+    //     dispatch({ type: 'SET_INVOICE', payload: item.invoice })
+    //     dispatch({ type: 'SET_RECEIPT', payload: item.trackingId })
+    //     dispatch({ type: 'SET_ORDER_STATUS', payload: 'Pengiriman' })
+    //     dispatch({ type: 'SET_ORDER_UID', payload: item.store.uid })
+    //     navigation.navigate('OrderDetails', { data: item.invoice, status: "Pengiriman" })
 
+    const handleOrderDetails = (item) => {
+        dispatch({ type: 'SET_INVOICE', payload: item.orderId })
+        dispatch({ type: 'SET_ORDER_STATUS', payload: 'Dalam Pengiriman' })
+        navigation.navigate('OrderDetails', { data: item.orderId, status: 'Menunggu Pembayaran' })
+    }
     const handleTracking = (item) => {
         dispatch({ type: 'SET_INVOICE', payload: item.invoice })
         dispatch({ type: 'SET_RECEIPT', payload: item.trackingId })
@@ -91,7 +103,6 @@ export default function OrdersSent() {
                     keyExtractor={(item, index) => String(index) + 'HJ'}
                     renderItem={({ item }) => {
                         if (!item.complain) {
-                            console.log("🚀 ~ file: OrdersSent.js ~ line 94 ~ OrdersSent ~ item", String(item.trackingId).includes('VOUCHER'))
                             return (
                                 <View style={Os.card} >
                                     <View style={[styles.row_between_center, styles.px_2, styles.mb_3, { width: '100%' }]}>
@@ -107,7 +118,6 @@ export default function OrdersSent() {
                                             <Text style={[styles.font_12, { color: colors.BlueJaja }]}>No. {item.invoice}</Text>
                                         </View>
                                     </View>
-
                                     <View style={[styles.row, styles.mb, styles.px_2, { width: '100%' }]}>
                                         <FastImage
                                             style={Os.imageProduct}
@@ -135,7 +145,6 @@ export default function OrdersSent() {
                                     </TouchableOpacity>
                                     <View style={[styles.row_between_center, styles.mt_5, styles.px_2]}>
                                         <View style={[styles.row, { width: Wp('40%') }]}>
-
                                         </View>
                                         <>
                                             {!String(item.trackingId).includes('DIGITALVOUCHER') ?

@@ -41,6 +41,7 @@ export default function StoreScreen({ route }) {
 
     useEffect(() => {
         handleProduct()
+
     }, [])
 
 
@@ -55,7 +56,7 @@ export default function StoreScreen({ route }) {
         dispatch({ type: 'SET_STORE_PRODUCT', payload: [] })
         dispatch({ "type": 'STORE_PRODUCT_LOADING', payload: true })
         let obj = {
-            slug: route.params.slug,
+            slug: route?.params?.slug,
             page: 1,
             limit: 100,
             keyword: '',
@@ -69,15 +70,18 @@ export default function StoreScreen({ route }) {
             dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: false })
         })
         obj.sort = ''
-        obj.limit = 100
-        ServiceStore.getProductStore(obj, dispatch, false).then(res => {
-            dispatch({ "type": 'STORE_PRODUCT_LOADING', payload: false })
+        ServiceStore.getStoreProduct(obj, dispatch, false).then(res => {
+            if (res) {
+                dispatch({ "type": 'STORE_PRODUCT_LOADING', payload: false })
+                dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
+            }
         })
+
+
     }
 
     const handleEtalase = () => {
         ServiceStore.getEtalase(reduxStore.id).then(res => {
-            console.log("🚀 ~ file: StoreScreen.js ~ line 73 ~ ServiceStore.getEtalase ~ res", res)
             if (res?.length) {
                 setlistEtalase(res)
                 setlistEtalaseApi(res)
@@ -108,7 +112,7 @@ export default function StoreScreen({ route }) {
         { key: 'second', title: 'Produk' },
         // { key: 'third', title: 'Etalase' },
 
-        { key: 'third', title: 'Etalse' },
+        { key: 'third', title: 'Etalase' },
 
     ]);
 
@@ -170,7 +174,6 @@ export default function StoreScreen({ route }) {
 
     return (
         <Provider>
-
             <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : colors.White }]}>
                 <StatusBar
                     translucent={false}
@@ -180,60 +183,55 @@ export default function StoreScreen({ route }) {
                     showHideTransition="fade"
                 />
                 {loading || loadStore ? <Loading /> : null}
-                <View style={[styles.container]}>
-                    {/* <ImageBackground source={image && image.mainBanner ? { uri: image.mainBanner } : null} style={{ width: '100%', height: '100%' }}> */}
+                <View style={[{ flex: 1 }]}>
                     <AppbarSecond storeSlug={reduxStore.slug} storename={reduxStore.name} handleSearch={handleSearch} handleSubmit={handleSubmit} title={reduxStore && Object.keys(reduxStore).length && reduxStore.name ? `Cari ${index == '2' ? 'etalase ' : ''}di ${reduxStore.name}..` : 'Cari di toko..'} />
-                    <ScrollView nestedScrollEnabled={true} >
-
-                        {/* stickyHeaderIndices={[0]} */}
-                        {/* {index === 0 ? */}
-                        <View style={[styles.column, styles.px_4, styles.pt_4, styles.pb, { width: Wp('100%'), backgroundColor: colors.White }]}>
-                            {Object.keys(reduxStore).length !== 0 ?
-                                <View style={styles.row_between_center}>
-                                    <View style={styles.row_start_center}>
-                                        <View style={[styles.p_3, { width: Wp('15.5%'), height: Wp('15.5%'), borderRadius: 100, marginRight: '7%', borderWidth: 0.5, borderColor: colors.Silver, backgroundColor: colors.White, alignItems: 'center', justifyContent: 'center' }]}>
-                                            {reduxStore.image.profile ?
-                                                <Image source={{ uri: reduxStore.image.profile ? reduxStore.image.profile : null }} style={{ width: '100%', height: '100%', resizeMode: 'contain', borderRadius: 5 }} />
-                                                :
-                                                <Text style={[styles.font_26, styles.T_semi_bold, { color: colors.BlueJaja, alignSelf: 'center', marginBottom: Platform.OS === 'android' ? '-1%' : 0 }]}>{String(reduxStore.name).slice(0, 1)}</Text>
-                                            }
-                                        </View>
-                                        <View style={[styles.column_around_center, { height: Wp('14.5%'), alignItems: 'flex-start' }]}>
-                                            <Text adjustsFontSizeToFit numberOfLines={1} style={[styles.font_12, { color: colors.BlueJaja, fontFamily: 'SignikaNegative-Bold', marginBottom: '3%', width: '100%' }]}>{reduxStore.name}</Text>
-                                            <Text adjustsFontSizeToFit style={[styles.font_9, { color: colors.BlackGrayScale, marginBottom: '3%' }]}>{reduxStore.location.city}</Text>
-
-                                            {reduxStore.rating !== "0.0" ?
-                                                <View style={styles.row_center}>
-                                                    <Text style={[styles.font_12, { color: colors.BlackGrayScale }]}>{reduxStore.rating} </Text>
-                                                    <Image source={require('../../assets/icons/star.png')} style={[styles.icon_14, { tintColor: colors.YellowJaja }]} />
-                                                </View>
-                                                :
-                                                null}
-
-                                        </View>
+                    {/* <ScrollView nestedScrollEnabled={true} > */}
+                    <View style={[styles.column, styles.px_4, styles.pt_4, styles.pb, { width: Wp('100%'), backgroundColor: colors.White }]}>
+                        {Object.keys(reduxStore).length !== 0 ?
+                            <View style={styles.row_between_center}>
+                                <View style={styles.row_start_center}>
+                                    <View style={[{ width: Wp('15.5%'), height: Wp('15.5%'), borderRadius: 100, marginRight: '7%', borderWidth: 0.5, borderColor: colors.Silver, backgroundColor: colors.White, alignItems: 'center', justifyContent: 'center' }]}>
+                                        {reduxStore.image.profile ?
+                                            <Image source={{ uri: reduxStore.image.profile ? reduxStore.image.profile : null }} style={{ width: '100%', height: '100%', resizeMode: 'contain', borderRadius: 100 }} />
+                                            :
+                                            <Text style={[styles.font_26, styles.T_semi_bold, { color: colors.BlueJaja, alignSelf: 'center', marginBottom: Platform.OS === 'android' ? '-1%' : 0 }]}>{String(reduxStore.name).slice(0, 1)}</Text>
+                                        }
                                     </View>
-                                    <Button disabled={seller?.id ? false : true} onPress={handleChat} mode="contained" icon="chat" labelStyle={[styles.font_10, styles.T_medium, { color: colors.White }]} color={colors.YellowJaja} >
-                                        Chat
-                                    </Button>
-                                </View>
-                                : null
-                            }
-                            {greeting ?
-                                <View style={[styles.py_3, styles.mt_2, { flex: 0, backgroundColor: colors.White, alignItems: 'center', justifyContent: 'flex-start', }]}>
-                                    {reduxStore?.closed_store == true ?
-                                        <View style={[styles.row_start_center, styles.mb_2, { alignSelf: 'flex-start' }]}>
-                                            <Image source={require('../../assets/icons/circle.png')} style={[styles.icon_12, styles.mr, { tintColor: colors.Silver }]} />
+                                    <View style={[styles.column_around_center, { height: Wp('14.5%'), alignItems: 'flex-start' }]}>
+                                        <Text adjustsFontSizeToFit numberOfLines={1} style={[styles.font_12, { color: colors.BlueJaja, fontFamily: 'SignikaNegative-Bold', marginBottom: '3%', width: '100%' }]}>{reduxStore.name}</Text>
+                                        <Text adjustsFontSizeToFit style={[styles.font_9, { color: colors.BlackGrayScale, marginBottom: '3%' }]}>{reduxStore.location.city}</Text>
 
-                                            <Text adjustsFontSizeToFit style={[styles.font_9, { color: colors.BlackGrayScale, textAlignVertical: 'center' }]}>Toko sedang offline</Text>
-                                        </View>
-                                        : null}
-                                    <Text style={[styles.font_12, { color: colors.BlackGrayScale, alignSelf: 'flex-start', textAlign: 'justify', width: '100%' }]}>{String(greeting).slice(0, 150)}</Text>
-                                    {/* {greeting ?
+                                        {reduxStore.rating !== "0.0" ?
+                                            <View style={styles.row_center}>
+                                                <Text style={[styles.font_12, { color: colors.BlackGrayScale }]}>{reduxStore.rating} </Text>
+                                                <Image source={require('../../assets/icons/star.png')} style={[styles.icon_14, { tintColor: colors.YellowJaja }]} />
+                                            </View>
+                                            :
+                                            null}
+
+                                    </View>
+                                </View>
+                                <Button disabled={seller?.id ? false : true} onPress={handleChat} mode="contained" icon="chat" labelStyle={[styles.font_10, styles.T_medium, { color: colors.White }]} color={colors.YellowJaja} >
+                                    Chat
+                                </Button>
+                            </View>
+                            : null
+                        }
+                        {greeting ?
+                            <View style={[styles.py_3, styles.mt_2, { flex: 0, backgroundColor: colors.White, alignItems: 'center', justifyContent: 'flex-start', }]}>
+                                {reduxStore?.closed_store == true ?
+                                    <View style={[styles.row_start_center, styles.mb_2, { alignSelf: 'flex-start' }]}>
+                                        <Image source={require('../../assets/icons/circle.png')} style={[styles.icon_12, styles.mr, { tintColor: colors.Silver }]} />
+                                        <Text adjustsFontSizeToFit style={[styles.font_9, { color: colors.BlackGrayScale, textAlignVertical: 'center' }]}>Toko sedang offline</Text>
+                                    </View>
+                                    : null}
+                                <Text style={[styles.font_12, { color: colors.BlackGrayScale, alignSelf: 'flex-start', textAlign: 'justify', width: '100%' }]}>{String(greeting).slice(0, 150)}</Text>
+                                {/* {greeting ?
                                 <>
                                     <View style={[styles.column, { width: '98%' }]}>
                                         <Text style={[styles.font_12, { color: colors.BlackGrayScale }]}>{String(greeting).slice(0, deskripsiLenght)}</Text>
                                         {deskripsiLenght == 100 && String(greeting).length >= 100 ?
-                                            <TouchableOpacity onPress={() => setdeskripsiLenght(String(greeting).length + 100)}>
+                Se                            <TouchableOpacity onPress={() => setdeskripsiLenght(String(greeting).length + 100)}>
                                                 <Text style={[styles.font_13, { color: colors.BlueJaja }]}>Baca selengkapnya..</Text>
                                             </TouchableOpacity>
                                             : deskripsiLenght < 100 ? null :
@@ -244,52 +242,45 @@ export default function StoreScreen({ route }) {
                                     </View>
                                 </>
                                 : null} */}
-                                </View>
-                                : null}
-                        </View>
-                        {/* : null
-                        } */}
-                        {/* </ImageBackground> */}
-
-                        <View style={[{ width: Wp('100%'), height: Hp('100%'), backgroundColor: colors.WhiteGrey }]}>
-                            <TabView
-                                tabBarPosition="top"
-                                indicatorStyle={{ backgroundColor: 'white' }}
-                                navigationState={{ index, routes }}
-                                renderScene={renderScene}
-                                onIndexChange={setIndex}
-                                initialLayout={initialLayout}
-                                style={{ width: '100%', height: Hp('100%') }}
+                            </View>
+                            : null}
+                    </View>
 
 
-                                renderTabBar={props => (
-                                    //     <ImageBackground
-                                    //         source={require('../../assets/images/JajaId.png')} >
-                                    <TabBar
-                                        {...props}
-                                        indicatorStyle={{ backgroundColor: colors.BlueJaja }}
-                                        bounces={true}
-                                        pressColor={colors.White}
-                                        scrollEnabled={true}
-                                        contentContainerStyle={{ padding: 0, height: '100%' }}
+                    <View style={[{ flex: 1, width: Wp('100%'), backgroundColor: colors.WhiteGrey }]}>
+                        <TabView
+                            tabBarPosition="top"
+                            indicatorStyle={{ backgroundColor: 'white' }}
+                            navigationState={{ index, routes }}
+                            renderScene={renderScene}
+                            onIndexChange={setIndex}
+                            initialLayout={initialLayout}
+                            style={{ width: '100%', height: Hp('100%') }}
 
-                                        style={{ backgroundColor: colors.White, width: Wp('100%'), elevation: 3, }}
-                                        tabStyle={{ width: Wp('33%'), height: '100%', padding: 0, }} // here
-                                        renderLabel={({ route, focused, color }) => {
-                                            return (
-                                                <View style={[styles.row_center, { width: Wp('33%'), minHeight: Wp('11%'), borderTopWidth: 0.5, borderTopColor: colors.Silver, borderRadius: 0 }]}>
-                                                    {/* <Image style={[styles.icon_25, { tintColor: focused ? colors.BlueJaja : colors.BlackSilver }]} source={route.title == 'Halaman Toko' ? require('../../assets/icons/store.png') : route.title == 'Produk' ? require('../../assets/icons/goods.png') : require('../../assets/icons/store.png')} /> */}
-                                                    <Text style={[styles.font_10, styles.T_medium, { textAlign: 'center', color: focused ? colors.BlueJaja : colors.BlackGrayScale }]}>{route.title}</Text>
-                                                </View>
-                                            )
-                                        }}
-                                    />
-                                    // </ImageBackground> */}
-                                )}
-                            />
 
-                        </View>
-                    </ScrollView>
+                            renderTabBar={props => (
+                                <TabBar
+                                    {...props}
+                                    indicatorStyle={{ backgroundColor: colors.BlueJaja }}
+                                    bounces={true}
+                                    pressColor={colors.White}
+                                    scrollEnabled={true}
+                                    contentContainerStyle={{ padding: 0, height: '100%' }}
+
+                                    style={{ backgroundColor: colors.White, width: Wp('100%'), elevation: 3, }}
+                                    tabStyle={{ width: Wp('33%'), height: '100%', padding: 0, }} // here
+                                    renderLabel={({ route, focused, color }) => {
+                                        return (
+                                            <View style={[styles.row_center, { width: Wp('33%'), minHeight: Wp('11%'), borderTopWidth: 0.5, borderTopColor: colors.Silver, borderRadius: 0 }]}>
+                                                <Text style={[styles.font_10, styles.T_medium, { textAlign: 'center', color: focused ? colors.BlueJaja : colors.BlackGrayScale }]}>{route.title}</Text>
+                                            </View>
+                                        )
+                                    }}
+                                />
+                            )}
+                        />
+                    </View>
+                    {/* </ScrollView> */}
                 </View>
             </SafeAreaView >
         </Provider >

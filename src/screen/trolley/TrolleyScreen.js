@@ -253,7 +253,9 @@ export default function TrolleyScreen() {
                 // })
                 handleGetCheckout()
 
+                console.log("🚀 ~ file: TrolleyScreen.js ~ line 257 ~ ServiceCheckout.getShipping ~ cartStatus", cartStatus)
                 ServiceCheckout.getShipping(reduxAuth, cartStatus).then(res => {
+                    console.log("🚀 ~ file: TrolleyScreen.js ~ line 258 ~ ServiceCheckout.getShipping ~ res", res)
                     if (res) {
                         dispatch({ type: 'SET_SHIPPING', payload: res })
                     }

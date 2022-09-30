@@ -75,7 +75,8 @@ export default function FeedScreen(props) {
 
     const handleFirstData = async () => {
         let result = await getData();
-        setdata(result)
+        const uniqueObject = result.filter((x, i, a) => a.indexOf(x) == i)
+        setdata(uniqueObject)
         setcount(count + 1)
         setloadmore(false)
     }
@@ -140,7 +141,9 @@ export default function FeedScreen(props) {
     const updateData = async () => {
         try {
             let result = await getData();
-            setdata(data.concat(result))
+            let arrayConcat = data.concat(result)
+            const uniqueObject = arrayConcat.filter((x, i, a) => a.indexOf(x) == i)
+            setdata(uniqueObject)
             setcount(count + 1)
             setloadmore(false)
         } catch (error) {

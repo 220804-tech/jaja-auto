@@ -22,9 +22,10 @@ export default function RewardScreen() {
     const [pendingCoin, setpendingCoin] = useState([])
     const [primary, setPrimary] = useState(null)
     const [listBK, setlistBK] = useState([])
+    console.log("🚀 ~ file: RewardScreen.js ~ line 25 ~ RewardScreen ~ listBK", listBK)
     const [refreshing, setRefreshing] = useState(false);
     const [countt, setCountt] = useState(0)
-
+    let datas = [{ "account": "**** 1587", "accountName": "FEBRIANSYAH ADI PUTR", "bankCode": "mandiri", "bankName": "PT. BANK MANDIRI (PERSERO) TBK.", "branchOffice": "Kaliabang", "city": "Kabupaten Bekasi", "createdAt": "2022-08-31 12:32:33", "id": "441", "isPrimary": true, "verified": true }]
     const [data, setdata] = useState('')
     const [count, setCount] = useState(0)
 
@@ -213,7 +214,6 @@ export default function RewardScreen() {
                     let total = parseInt(result) - 5000
                     if (total > 0) {
                         let currency = Utils.handleCurrency(total)
-                        console.log("🚀 ~ file: RewardScreen.js ~ line 212 ~ handleChange ~ total", total)
                         if (currency) {
                             setNominalCount(String(currency ? currency : 0))
                         } else {
@@ -440,23 +440,14 @@ export default function RewardScreen() {
                                                         <Text style={[styles.font_12, { color: res.isPrimary ? colors.BlueJaja : colors.BlackGrayScale }]}>{res.account}</Text>
                                                     </View>
                                                     <View style={[styles.row_between_center, styles.mb, { width: Wp('94%') }]}>
-                                                        {!res.isPrimary ?
-
-                                                            // <TouchableRipple rippleColor={colors.White} style={[styles.px_3, styles.py, styles.mr_3, { alignSelf: 'flex-end', backgroundColor: colors.BlueJaja, borderRadius: 7 }]} onPress={() => {
-                                                            //     if (res.verified) {
-                                                            //         Utils.alertPopUp('Akun telah diverifikasi!')
-                                                            //     } else {
-                                                            //         Utils.alertPopUp('Cek email anda untuk verifikasi akun!')
-                                                            //     }
-                                                            // }}>
+                                                        {/* {!res.isPrimary ?
                                                             <Text numberOfLines={1} style={[styles.font_10, styles.T_semi_bold, { color: colors.BlueJaja }]}>Akun Utama</Text>
-                                                            // </TouchableRipple>
                                                             :
                                                             <TouchableRipple rippleColor={colors.White} style={[styles.px_3, styles.py, styles.mr_3, { alignSelf: 'flex-end', backgroundColor: colors.BlueJaja, borderRadius: 4 }]} onPress={() => handleChangePrimary(res.id)}>
                                                                 <Text numberOfLines={1} style={[styles.font_8, styles.T_semi_bold, { color: colors.White }]}>Jadikan Utama</Text>
                                                             </TouchableRipple>
-                                                        }
-                                                        <View style={[styles.row_end_center, { width: '50%' }]}>
+                                                        } */}
+                                                        <View style={[styles.row_end, { width: '100%' }]}>
                                                             {!res.verified ?
                                                                 <TouchableRipple rippleColor={colors.White} style={[styles.px_4, styles.py, styles.mr_3, { alignSelf: 'flex-end', backgroundColor: colors.RedNotif, borderRadius: 4 }]} onPress={() => {
                                                                     Alert.alert(
@@ -582,13 +573,13 @@ export default function RewardScreen() {
                         </View>
                         <View style={[styles.px_3, styles.py, styles.mb_2, { flexDirection: 'row', width: Wp('90%'), justifyContent: 'space-between', borderRadius: 3 }]}>
                             <Text style={[styles.font_11, styles.T_semi_bold]}>Rekening tujuan</Text>
-                            <Text style={[styles.font_11, styles.T_semi_bold, { width: '60%' }]}>PT. BANK DANAMON INDONESIA TBK/****312129 fafa</Text>
+                            <Text style={[styles.font_11, styles.T_semi_bold, { width: '60%' }]}>{listBK[0]?.bankName}]</Text>
                         </View>
                         <View style={[styles.px_3, styles.py, styles.mb_2, { flexDirection: 'row', width: Wp('90%'), justifyContent: 'space-between', borderRadius: 3, }]}>
                             <Text style={[styles.font_11, styles.T_semi_bold]}>Nominal</Text>
                             <View style={[styles.column, { width: '60%' }]}>
                                 <TextInput keyboardType='numeric' onChangeText={(text) => handleChange('nominal', text)} value={String(nominal)} style={[styles.py_3, styles.font_11, { width: '100%', borderWidth: 0.5, borderColor: colors.BlackGrayScale, borderRadius: 4 }]} placeholder='Masukkan nominal pencairan' />
-                                <Text style={[styles.font_7, styles.T_light, styles.mb]}>Minimum total pencairan 50.000 (termasuk biaya admin)</Text>
+                                <Text style={[styles.font_7, styles.T_light, styles.mb]}>Minimum total pencairan 55.000 (termasuk biaya admin)</Text>
                                 <View style={[styles.row_between_center, { width: '100%' }]}>
                                     <Text style={[styles.font_11]}>Biaya admin</Text>
                                     <Text style={[styles.font_11]}>- {data.feePayoutCurrencyFormat}</Text>

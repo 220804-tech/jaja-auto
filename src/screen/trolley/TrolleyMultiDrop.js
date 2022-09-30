@@ -68,8 +68,6 @@ export default function TrolleyMultiDrop() {
             if (result.status.code == 200) {
               setdata(result.data)
               setitems(result.data.items);
-
-
               if (!result?.data?.isHasAddress) {
                 navigation.navigate('Address', { data: "checkout" })
               }

@@ -10,9 +10,7 @@ export default function OrderDeliveryScreen() {
     const dispatch = useDispatch()
     const reduxTracking = useSelector(state => state.order.tracking)
     const reduxReceipt = useSelector(state => state.order.receipt)
-    console.log("🚀 ~ file: OrderDeliveryScreen.js ~ line 13 ~ OrderDeliveryScreen ~ reduxReceipt", reduxReceipt)
     const reduxInvoice = useSelector(state => state.order.invoice)
-    console.log("🚀 ~ file: OrderDeliveryScreen.js ~ line 15 ~ OrderDeliveryScreen ~ reduxInvoice", reduxInvoice)
     const reduxAuth = useSelector(state => state.auth.auth)
 
 
@@ -40,6 +38,7 @@ export default function OrderDeliveryScreen() {
         fetch(`https://jaja.id/backend/order/${reduxInvoice}`, requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("🚀 ~ file: OrderDeliveryScreen.js ~ line 43 ~ getItem ~ result", result)
                 if (result.status.code === 200 || result.status.code === 204) {
                     dispatch({ type: 'SET_TRACKING', payload: result.data.tracking })
                 } else {
@@ -48,6 +47,26 @@ export default function OrderDeliveryScreen() {
                 setLoading(false)
             })
             .catch(error => Utils.handleError(error, "Error with status code : 12016"));
+    }
+
+    const getWaybill = () => {
+        // ini fungsi dipakai untuk menggantikan bila api tracking tidak jalan
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        fetch("https://elibx.jaja.id/jaja/user/order-tracking?courier=rajacepat&waybill=RJC74034234876", requestOptions)
+            .then(response => response.text())
+            .then(result => {
+                console.log("🚀 ~ file: OrderDeliveryScreen.js ~ line 62 ~ getWaybill ~ result", result)
+                if (result.status.code == 200) {
+                    dispatch({ type: 'SET_TRACKING', payload: result.data })
+                }
+            })
+            .catch(error => {
+                console.log("🚀 ~ file: OrderDeliveryScreen.js ~ line 69 ~ getWaybill ~ error", error)
+            });
     }
 
     useFocusEffect(

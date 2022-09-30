@@ -16,7 +16,7 @@ export default function OrderDetailsScreen() {
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
     const [details, setDetails] = useState(null)
-    const [refreshing, setRefreshing] = useState(null)
+    const [refreshing, setRefreshing] = useState(false)
     const [selectedSubPayment, setselectedSubPayment] = useState('')
     const [selectedPayment, setselectedPayment] = useState('')
     const [orderPaymentRecent, setOrderPaymentRecent] = useState({
@@ -64,28 +64,29 @@ export default function OrderDetailsScreen() {
         })
     });
 
-    useEffect(() => {
-        return () => {
-            if (details && Object.keys(details).length) {
-                setLoading(false)
-                let status = details.status;
-                dispatch({ type: 'SET_ORDER_STATUS', payload: status === 'notPaid' ? "Menunggu Pembayaran" : status === 'waitConfirm' ? 'Menunggu Konfirmasi' : status === 'prepared' ? 'Sedang Disiapkan' : status === 'canceled' ? 'Pesanan Dibatalkan' : status === 'done' ? 'Pesanan Selesai' : status === 'sent' ? 'Pengiriman' : null })
-                if (status === 'notPaid') {
-                    dispatch({ type: 'SET_INVOICE', payload: details.orderId })
-                    ServiceCheckout.getListPayment().then(res => {
-                        if (res) {
-                            dispatch({ type: 'SET_LIST_PAYMENT', payload: details })
-                        }
-                    })
-                    getPayment(details.orderId);
-                } else {
-                    dispatch({ type: 'SET_INVOICE', payload: details.items[0].invoice })
-                }
 
-            }
-        };
+    // useEffect(() => {
+    //     return () => {
+    //         if (details && Object.keys(details).length) {
+    //             setLoading(false)
+    //             let status = details.status;
+    //             dispatch({ type: 'SET_ORDER_STATUS', payload: status === 'notPaid' ? "Menunggu Pembayaran" : status === 'waitConfirm' ? 'Menunggu Konfirmasi' : status === 'prepared' ? 'Sedang Disiapkan' : status === 'canceled' ? 'Pesanan Dibatalkan' : status === 'done' ? 'Pesanan Selesai' : status === 'sent' ? 'Pengiriman' : null })
+    //             if (status === 'notPaid') {
+    //                 dispatch({ type: 'SET_INVOICE', payload: details.orderId })
+    //                 // ServiceCheckout.getListPayment().then(res => {
+    //                 //     if (res) {
+    //                 //         dispatch({ type: 'SET_LIST_PAYMENT', payload: details })
+    //                 //     }
+    //                 // })
+    //                 getPayment(details.orderId);
+    //             } else {
+    //                 dispatch({ type: 'SET_INVOICE', payload: details.items[0].invoice })
+    //             }
 
-    }, [details, count])
+    //         }
+    //     };
+
+    // }, [details, count])
 
     useEffect(() => {
         setdownloadInvoice('')
@@ -141,10 +142,15 @@ export default function OrderDetailsScreen() {
 
     useFocusEffect(
         useCallback(() => {
-            setLoading(true)
+            setselectedPayment('')
             getItem()
-        }, []),
+        }, [count, reduxOrderInvoice]),
     );
+    // useEffect(() => {
+    //     if (String(reduxOrderInvoice).includes('INV')) {
+    //         getItem()
+    //     }
+    // }, [reduxOrderInvoice])
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
@@ -425,7 +431,7 @@ export default function OrderDetailsScreen() {
                         va_or_code_or_link = result.bill_key;
                     }
                 } else if (dataPayment.payment_type == "gopay") {
-                    va_or_code_or_link = result.actions[0].url;
+                    va_or_code_or_link = result?.actions?.[0].url;
                     token = result.transaction_id;
 
                 }
@@ -467,7 +473,7 @@ export default function OrderDetailsScreen() {
         fetch(url, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 486 ~ snapTokenUpdate ~ result", result)
+                // console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 486 ~ snapTokenUpdate ~ result", result)
                 // console.log('snapTokenUpdate', JSON.stringify(result));
 
 
@@ -527,7 +533,7 @@ export default function OrderDetailsScreen() {
         fetch("https://jaja.id/backend/payment/methodPayment/" + total, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 545 ~ getListPayment ~ result", result)
+                // console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 545 ~ getListPayment ~ result", result)
                 setListPayment(result);
             })
             .catch(error => {
@@ -536,6 +542,7 @@ export default function OrderDetailsScreen() {
 
     }
     const getItem = () => {
+        // setLoading(true)
         var myHeaders = new Headers();
         myHeaders.append("Authorization", reduxAuth);
         myHeaders.append("Cookie", "ci_session=croc9bj799b291gjd0oqd06b3vr2ehm8");
@@ -549,17 +556,27 @@ export default function OrderDetailsScreen() {
         fetch(`https://jaja.id/backend/order/${reduxOrderInvoice}`, requestOptions)
             .then(response => response.json())
             .then(result => {
+                // console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 568 ~ getItem ~ result", result.data)
                 if (result.status.code === 200 || result.status.code === 204) {
                     setDetails(result.data)
                     let status = result.data.status;
-                    if (!reduxOrderStatus) {
-                        dispatch({ type: 'SET_ORDER_STATUS', payload: status === 'notPaid' ? "Menunggu Pembayaran" : status === 'waitConfirm' ? 'Menunggu Konfirmasi' : status === 'prepared' ? 'Sedang Disiapkan' : status === 'canceled' ? 'Pesanan Dibatalkan' : status === 'done' ? 'Pesanan Selesai' : null })
+                    console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 563 ~ getItem ~ status", status)
+                    if (reduxOrderStatus) {
+                        dispatch({ type: 'SET_ORDER_STATUS', payload: status === 'notPaid' ? "Menunggu Pembayaran" : status === 'waitConfirm' ? 'Menunggu Konfirmasi' : status === 'prepared' ? 'Sedang Disiapkan' : status === 'canceled' ? 'Pesanan Dibatalkan' : status === 'done' ? 'Pesanan Selesai' : status === 'sent' ? 'Dalam Pengiriman' : null })
                     }
-                    if (status === 'notPaid') {
+                    if (reduxOrderStatus == 'Menunggu Pembayaran' && status != 'notPaid') {
+                        updateUnpaid()
+                        // console.log('kesini')
+                        return setcount(count + 1)
+                    }
+                    if (status == 'notPaid') {
+                        dispatch({ type: 'SET_INVOICE', payload: result.data.orderId })
                         getPayment(result.data.orderId);
+                        // setcount(count + 1)
+                    } else {
+                        dispatch({ type: 'SET_INVOICE', payload: result.data.items[0].invoice })
                     }
-                    setcount(count + 1)
-                    // dispatch({ type: 'SET_INVOICE', payload: result.data.items[0].invoice })
+
                 } else {
                     Utils.handleErrorResponse(result, "Error with status code : 22003");
                 }
@@ -575,25 +592,32 @@ export default function OrderDetailsScreen() {
         setTimeout(() => {
             if (refreshing) {
                 Utils.CheckSignal(item => {
-                    if (item.connect) {
-                        setTimeout(() => {
-                            Utils.CheckSignal(res => {
-                                if (!res.connect) {
-                                    Utils.alertPopUp('Tidak dapat terhubung, periksa kembali koneksi anda!')
-                                }
-                                setRefreshing(false)
-                            })
-                        }, 2500);
-                    } else {
+                    if (!item.connect) {
                         setRefreshing(false)
-                        Utils.alertPopUp('Tidak dapat terhubung, periksa kembali koneksi anda!')
+                        Utils.alertPopUp('Tidak dapat terhubung, periksa kembali koneksi internet anda!')
                     }
                 })
 
             }
-        }, 5000);
+        }, 10000);
     }
 
+    const updateUnpaid = () => {
+        ServiceOrder.getUnpaid(reduxAuth).then(resUnpaid => {
+            if (resUnpaid && Object.keys(resUnpaid).length) {
+                dispatch({ type: 'SET_UNPAID', payload: resUnpaid.items })
+                dispatch({ type: 'SET_ORDER_FILTER', payload: resUnpaid.filters })
+                setTimeout(() => Utils.alertPopUp("Data berhasil diperbahrui"), 500);
+            } else {
+                console.log("🚀 ~ file: OrdersUnpaid.js ~ line 38 ~ ServiceOrder.getUnpaid ~ resUnpaid", resUnpaid)
+                handleUnpaid()
+            }
+        }).catch(err => {
+            console.log("🚀 ~ file: OrdersUnpaid.js ~ line 54 ~ ServiceOrder.getUnpaid ~ err", err)
+            Utils.alertPopUp(String(err))
+            handleUnpaid()
+        })
+    }
     const submitChange = () => {
         var paramPayMD = {
             "order_id": orderPaymentRecent.order_id,
@@ -779,38 +803,13 @@ export default function OrderDetailsScreen() {
                 dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
             }
         }
-        ServiceStore.getStore(item.slug, reduxAuth).then(res => {
-            if (res) {
-                dispatch({ "type": 'SET_STORE', payload: res })
-                navigation.navigate('Store')
-            }
-        })
-        let obj = {
-            slug: item.slug,
-            page: 1,
-            limit: 30,
-            keyword: '',
-            price: '',
-            condition: '',
-            preorder: '',
-            brand: '',
-            sort: 'produk.id_produk-desc',
-        }
-
-        ServiceStore.getStoreProduct(obj).then(res => {
-            if (res) {
-                dispatch({ "type": 'SET_NEW_PRODUCT', payload: res.items })
-            }
-        })
-        obj.sort = ''
-        ServiceStore.getStoreProduct(obj).then(res => {
-            if (res) {
-                dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
-            }
-        })
-
-
+        dispatch({ type: 'SET_STORE_PRODUCT', payload: [] })
+        dispatch({ type: 'SET_NEW_PRODUCT', payload: [] })
+        dispatch({ "type": 'SET_STORE_LOAD', payload: true })
+        navigation.navigate('Store', { slug: item.slug })
+        ServiceStore.getStoreNew(item.slug, dispatch, reduxAuth)
     }
+
     const handleChat = (item) => {
         let dataSeller = item.store
         dataSeller.chat = reduxUser.user.uid + dataSeller.uid
@@ -821,7 +820,6 @@ export default function OrderDetailsScreen() {
             navigation.navigate('Login', { navigate: "OrderDetails" })
         }
     }
-    var contentPaymentRecent = <View />
     const priceSplitter = (number) => (number && number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'));
 
 
@@ -1052,30 +1050,30 @@ export default function OrderDetailsScreen() {
                                             : null
                                     }
                                     {/* <View style={[styles.row, styles.p_3, { borderBottomWidth: 0.5, borderBottomColor: colors.BlackGrey }]}>
-                                    <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/vehicle-yellow.png')} />
-                                    <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pengiriman</Text>
-                                </View>
+                                        <Image style={[styles.icon_19, { tintColor: colors.BlueJaja, marginRight: '2%' }]} source={require('../../assets/icons/vehicle-yellow.png')} />
+                                        <Text style={[styles.font_14, styles.T_semi_bold, { color: colors.BlueJaja }]}>Metode Pengiriman</Text>
+                                    </View>
 
-                                <View style={[styles.column, styles.p_3, { width: '100%' }]}>
-                                    <View style={styles.row_between_center}>
-                                        <View style={[styles.column_between_center, { alignItems: 'flex-start' }]}>
-                                            <Text numberOfLines={1} style={[styles.font_14]}>{item.shippingSelected.nam e}</Text>
-                                            <Text numberOfLines={1} style={[styles.font_12]}>Regular</Text>
-                                            <Text numberOfLines={1} style={[styles.font_12, styles.T_italic,]}>Estimasi {item.shippingSelected.etdText}</Text>
-                                        </View>
-                                        <View style={[styles.column_between_center, { alignItems: 'flex-end' }]}>
-                                            <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}>{item.shippingSelected.priceCurrencyFormat}</Text>
-                                            <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}></Text>
-                                            {reduxOrderStatus === "Pengiriman" ?
-                                                <TouchableOpacity onPress={handleTracking} style={{ backgroundColor: colors.YellowJaja, borderRadius: 5, paddingHorizontal: '10%', paddingVertical: '3%' }}>
-                                                    <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}> Lacak </Text>
-                                                </TouchableOpacity>
-                                                :
+                                    <View style={[styles.column, styles.p_3, { width: '100%' }]}>
+                                        <View style={styles.row_between_center}>
+                                            <View style={[styles.column_between_center, { alignItems: 'flex-start' }]}>
+                                                <Text numberOfLines={1} style={[styles.font_14]}>{item.shippingSelected.nam e}</Text>
+                                                <Text numberOfLines={1} style={[styles.font_12]}>Regular</Text>
+                                                <Text numberOfLines={1} style={[styles.font_12, styles.T_italic,]}>Estimasi {item.shippingSelected.etdText}</Text>
+                                            </View>
+                                            <View style={[styles.column_between_center, { alignItems: 'flex-end' }]}>
+                                                <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}>{item.shippingSelected.priceCurrencyFormat}</Text>
                                                 <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}></Text>
-                                            }
+                                                {reduxOrderStatus === "Pengiriman" ?
+                                                    <TouchableOpacity onPress={handleTracking} style={{ backgroundColor: colors.YellowJaja, borderRadius: 5, paddingHorizontal: '10%', paddingVertical: '3%' }}>
+                                                        <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}> Lacak </Text>
+                                                    </TouchableOpacity>
+                                                    :
+                                                    <Text numberOfLines={1} style={[styles.font_14, { color: colors.BlueJaja }]}></Text>
+                                                }
+                                            </View>
                                         </View>
-                                    </View> 
-                            </View>*/}
+                                    </View> */}
                                 </View>
                             )
                         })
@@ -1220,20 +1218,31 @@ export default function OrderDetailsScreen() {
                     }} style={{ alignSelf: 'center', width: '100%' }} contentStyle={{ width: '100%' }} color={colors.YellowJaja} labelStyle={[styles.font_13, styles.T_semi_bold, { color: colors.White }]} mode="contained" >
                         Komplain
                     </Button> */}
-                    {/* navigation.navigate(details.complain?'ResponseComplain': 'RequestComplain', {invoice: details.items[0].invoice }) */}
+                    {/* navigation.navigate(details.complain?'DetailComplain': 'RequestComplain', {invoice: details.items[0].invoice }) */}
 
                     {details && Object.keys(details).length ?
-                        reduxOrderStatus === "Pengiriman" ?
-                            <View style={{ zIndex: 100, height: Hp('5.5%'), width: '95%', backgroundColor: 'transparent', flex: 0, flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginBottom: '2%' }}>
+                        reduxOrderStatus === "Dalam Pengiriman" ?
+                            <View style={{ zIndex: 100, height: Hp('5.5%'), width: '97%', backgroundColor: 'transparent', flex: 0, flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginBottom: '2%' }}>
                                 {/* <Button onPress={handleDone} style={{ alignSelf: 'center', width: '100%', height: '95%', marginBottom: '2%' }} contentStyle={{ width: '100%' }} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_semi_bold, { color: colors.White }]} mode="contained" > */}
-                                <TouchableRipple onPress={() => details.complain ? navigation.navigate('ResponseComplain', { invoice: details.items[0].invoice }) : setmodalComplain(true)} style={[styles.row_center, styles.py_2, { borderRadius: 3, width: '49%', backgroundColor: colors.YellowJaja, alignSelf: 'center' }]}>
+                                <TouchableRipple onPress={() => details.complain ? navigation.navigate('DetailComplain', { invoice: details.items[0].invoice }) : setmodalComplain(true)} style={[styles.row_center, styles.py_3, { marginHorizontal: '0.5%', borderRadius: 3, flex: 1, backgroundColor: colors.YellowJaja, alignSelf: 'center' }]}>
                                     <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>
                                         {details.complain ?
                                             "Sedang Dikomplai"
                                             : "Komplain"}
+                                        {console.log('masuk sini kan')}
                                     </Text>
                                 </TouchableRipple>
-                                <TouchableRipple onPress={handleDone} style={[styles.row_center, styles.py_2, { borderRadius: 3, width: '49%', backgroundColor: colors.BlueJaja, alignSelf: 'center' }]}>
+
+                                {details?.trackingId === 'DIGITALVOUCHER' ?
+                                    <TouchableRipple onPress={handleTracking} style={[styles.row_center, styles.py_3, { marginHorizontal: '0.5%', borderRadius: 3, flex: 1, backgroundColor: colors.BlueJaja, alignSelf: 'center' }]}>
+                                        <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>
+                                            Lacak
+                                        </Text>
+                                    </TouchableRipple>
+                                    : null
+                                }
+
+                                <TouchableRipple onPress={handleDone} style={[styles.row_center, styles.py_3, { marginHorizontal: '0.5%', borderRadius: 3, flex: 1, backgroundColor: colors.GreenSuccess, alignSelf: 'center' }]}>
                                     <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>
                                         Terima Pesanan
                                     </Text>
@@ -1271,9 +1280,10 @@ export default function OrderDetailsScreen() {
             </View >
             {
                 downloadInvoice ?
-                    <View style={{ height: 1, backgroundColor: colors.White }} >
+                    <View style={{ height: 1, backgroundColor: colors.White }
+                    } >
                         <WebView source={{ uri: downloadInvoice }} />
-                    </View> : null
+                    </View > : null
             }
             <ActionSheet closeOnPressBack={false} ref={actionSheetPayment} onClose={() => {
                 if (!selectedSubPayment && selectedSubPayment == '') {
@@ -1427,7 +1437,7 @@ export default function OrderDetailsScreen() {
                         </View>
                     </View>
                 </View>
-            </Modal >
-        </SafeAreaView >
+            </Modal>
+        </SafeAreaView>
     )
 }

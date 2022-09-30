@@ -1,5 +1,5 @@
 import React, { useEffect, useState, createRef, useRef, useCallback, } from "react";
-import { Platform, View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, Alert, StatusBar, FlatList, ToastAndroid, TextInput, RefreshControl, Modal, } from "react-native";
+import { Platform, View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, Alert, StatusBar, FlatList, ToastAndroid, TextInput, RefreshControl, Modal, TouchableHighlight, } from "react-native";
 import { Appbar, colors, styles, Wp, Hp, useNavigation, ServiceCheckout, Loading, Utils, ServiceCart, ServiceUser, ServiceOrder, ServiceProduct, useFocusEffect, ServiceVoucher } from "../../export";
 import { Button, TouchableRipple, Checkbox } from "react-native-paper";
 import ActionSheet from "react-native-actions-sheet";
@@ -12,10 +12,9 @@ export default function checkoutScreen(props) {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const reduxCheckout = useSelector((state) => state.checkout.checkout);
-    console.log("🚀 ~ file: CheckoutScreen.js ~ line 15 ~ checkoutScreen ~ reduxCheckout", reduxCheckout)
     const reduxAuth = useSelector((state) => state.auth.auth);
     const reduxCoin = useSelector((state) => state.user.user.coinFormat);
-    const reduxUseCoin = useSelector((state) => state.checkout.useCoin);
+    const reduxUseCoin = useSelector((state) => state.checkout.coinUsed);
 
     const reduxShipping = useSelector((state) => state.checkout.shipping);
     // console.log("🚀 ~ file: CheckoutScreen.js ~ line 24 ~ checkoutScreen ~ reduxShipping", reduxShipping[0].items[0].type[0].etd)
@@ -89,7 +88,16 @@ export default function checkoutScreen(props) {
 
     useFocusEffect(
         useCallback(() => {
-            handleGetCheckout()
+            setUseCoin(false)
+            handleGetCheckout(false)
+            if (!isNonPhysical) {
+                ServiceCheckout.getShipping(reduxAuth, cartStatus).then(res => {
+                    if (res) {
+                        dispatch({ type: 'SET_SHIPPING', payload: res })
+                    }
+                })
+            }
+
         }, []),
     );
     useEffect(() => {
@@ -166,9 +174,9 @@ export default function checkoutScreen(props) {
             dispatch({ type: "SET_USECOIN", payload: false });
         }
         if (cartStatus === 1 || isNonPhysical) {
-            handleGetCheckout();
+            handleGetCheckout(useCoin);
         } else {
-            ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0)
+            ServiceCheckout.getCheckout(reduxAuth, useCoin ? 1 : 0)
                 .then((res) => {
                     if (res) {
                         dispatch({ type: "SET_CHECKOUT", payload: res });
@@ -220,7 +228,9 @@ export default function checkoutScreen(props) {
                                 let result = JSON.parse(res);
                                 if (result.status.code === 200) {
                                     Utils.alertPopUp("Voucher berhasil digunakan!");
-                                    getCheckout(reduxUseCoin);
+                                    handleGetCheckout(useCoin);
+
+                                    // getCheckout(reduxUseCoin);
                                 } else {
                                     Utils.handleErrorResponse(
                                         result,
@@ -284,7 +294,8 @@ export default function checkoutScreen(props) {
                                     } else {
                                         Utils.alertPopUp("Voucher berhasil digunakan");
                                     }
-                                    getCheckout(reduxUseCoin);
+                                    handleGetCheckout(useCoin);
+                                    // getCheckout(reduxUseCoin);
                                 } else {
                                     Utils.handleErrorResponse(
                                         result,
@@ -292,7 +303,9 @@ export default function checkoutScreen(props) {
                                     );
                                 }
                                 if (index === "khusus") {
-                                    getCheckout(reduxUseCoin);
+                                    // getCheckout(reduxUseCoin);
+                                    handleGetCheckout(useCoin);
+
                                 }
                             } catch (error) {
                                 setLoad(false);
@@ -347,7 +360,7 @@ export default function checkoutScreen(props) {
                     try {
                         let result = JSON.parse(res);
                         if (result.status.code === 200) {
-                            ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then(
+                            ServiceCheckout.getCheckout(reduxAuth, 0).then(
                                 (res) => {
                                     if (res) {
                                         setvoucherOpen("store");
@@ -397,10 +410,7 @@ export default function checkoutScreen(props) {
                         let result = JSON.parse(res);
                         if (result.status.code === 200) {
                             if (index != "khusus") {
-                                ServiceCheckout.getCheckout(
-                                    reduxAuth,
-                                    reduxUseCoin ? 1 : 0
-                                ).then((res) => {
+                                ServiceCheckout.getCheckout(reduxAuth, 0).then((res) => {
                                     if (res) {
                                         setvoucherOpen("jaja");
                                         setVouchers(res.voucherJaja);
@@ -484,9 +494,9 @@ export default function checkoutScreen(props) {
                             1000
                         );
                         if (cartStatus === 1) {
-                            handleGetCheckout();
+                            handleGetCheckout(useCoin);
                         } else {
-                            ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then(
+                            ServiceCheckout.getCheckout(reduxAuth, useCoin ? 1 : 0).then(
                                 (res) => {
                                     if (res) {
                                         dispatch({ type: "SET_CHECKOUT", payload: res });
@@ -635,22 +645,6 @@ export default function checkoutScreen(props) {
     };
 
     const handleCheckout = () => {
-        // Alert.alert(
-        //     `${reduxCheckout.total > 0 ? "Pilih Pembayaran" : "Buat Pesanan"}`,
-        //     `${reduxCheckout.total > 0
-        //         ? "Pesanan kamu akan dilanjutkan ke menu pembayaran!."
-        //         : "Pesanan kamu akan dibuat!"
-        //     }`,
-
-        //     [
-        //         {
-        //             text: "Periksa Lagi",
-        //             onPress: () => console.log("Cancel Pressed"),
-        //             style: "cancel",
-        //         },
-        //         {
-        //             text: "Bayar",
-        //             onPress: () => {
         setmodalNext(false)
         setLoad(true);
         let newArr = notes;
@@ -661,7 +655,6 @@ export default function checkoutScreen(props) {
         }
 
         setTimeout(() => {
-
             let error = true;
             var myHeaders = new Headers();
             myHeaders.append("Authorization", reduxAuth);
@@ -669,7 +662,7 @@ export default function checkoutScreen(props) {
 
             var raw = JSON.stringify({
                 cart: newArr,
-                koin: reduxUseCoin,
+                koin: useCoin,
             });
             var requestOptions = {
                 method: "POST",
@@ -688,10 +681,12 @@ export default function checkoutScreen(props) {
                         if (data && Object.keys(data).length && data.status.code == 200) {
                             Utils.alertPopUp("Persanan berhasil dibuat!");
                             dispatch({ type: "SET_INVOICE", payload: data.data });
-                            dispatch({ type: "SET_ORDER_STATUS", payload: null });
+                            dispatch({ type: "SET_ORDER_STATUS", payload: 'Menunggu Pembayaran' });
+                            // pindah kehalaman detail pesanan
                             navigation.replace("OrderDetails");
+                            // gettrolley buat update list di trolley karena produknya sudah di checkout
                             ServiceCart.getTrolley(reduxAuth, cartStatus === 1 ? 1 : 0, dispatch);
-
+                            // getbadges buat update jumlah notif (gambar lonceng) karena produknya sudah di checkout
                             ServiceUser.getBadges(reduxAuth).then((res) => {
                                 if (res) {
                                     dispatch({ type: "SET_BADGES", payload: res });
@@ -699,6 +694,7 @@ export default function checkoutScreen(props) {
                                     dispatch({ type: "SET_BADGES", payload: {} });
                                 }
                             });
+                            // getunpaid buat update list pesanan belum dibayar (biar otomatis keupdate dihalaman pesanan)
                             ServiceOrder.getUnpaid(reduxAuth).then((resUnpaid) => {
                                 if (resUnpaid && Object.keys(resUnpaid).length) {
                                     dispatch({
@@ -711,6 +707,7 @@ export default function checkoutScreen(props) {
                                     });
                                 }
                             });
+                            // getwaitconfirm buat update list pesanan diproses - menunggu konfirmasi dibayar (biar otomatis keupdate dihalaman pesanan)
                             ServiceOrder.getWaitConfirm(reduxAuth).then(
                                 (reswaitConfirm) => {
                                     if (
@@ -730,10 +727,7 @@ export default function checkoutScreen(props) {
                             );
                         } else {
                             setLoad(false);
-                            Utils.handleErrorResponse(
-                                data,
-                                "Error with status code : 12048"
-                            );
+                            Utils.handleErrorResponse(data, "Error with status code : 12048");
                             return null;
                         }
                         setTimeout(() => {
@@ -749,165 +743,125 @@ export default function checkoutScreen(props) {
                     }, 8000);
                 })
                 .catch((err) => {
-                    console.log(
-                        "🚀 ~ file: Product.js ~ line 32 ~ productDetail ~ error",
-                        err
-                    );
                     setLoad(false);
                     Utils.handleError(err, "Error with status code : 120477");
                 });
             setTimeout(() => {
-                let text =
-                    "Tidak dapat terhubung, periksa kembali koneksi internet anda!";
                 if (error) {
                     Utils.CheckSignal().then((res) => {
+                        setLoad(false);
                         if (res.connect) {
-                            Utils.alertPopUp("Sedang memuat..");
+                            Utils.alertPopUp("Gagal memuat..");
                         } else {
-                            setLoad(false);
-                            Utils.alertPopUp(text);
+                            Utils.alertPopUp("Tidak dapat terhubung, periksa kembali koneksi internet anda!");
                         }
-                        setTimeout(() => {
-                            setLoad(false);
-                            if (error) {
-                                Utils.alertPopUp(text);
-                            }
-                        }, 5000);
                     });
                 }
-            }, 5000);
+            }, 10000);
         }, 250);
-        //             },
-        //         },
-        //     ]
-        // );
+
     };
 
-    const handleShowPayment = (item) => {
-        console.log(
-            "🚀 ~ file: CheckoutScreen.js ~ line 571 ~ handleShowPayment ~ item",
-            item
-        );
-        setselectedPayment(item);
-        if (item.payment_type_label !== "Bank Transfer") {
-            setModalShow(true);
-            // setsubPayment('')
-        } else {
-            setsubPayment(item.subPayment);
-            actionSheetPayment.current?.setModalVisible(true);
-        }
-    };
-
+    // fungsi refresh ini dijalankan ketika user narik dari atas layar kebawah
     const onRefresh = useCallback(() => {
         setRefreshControl(true);
-        if (cartStatus === 1 || isNonPhysical) {
-            handleGetCheckout();
-        } else {
-            ServiceCheckout.getCheckout(reduxAuth, reduxUseCoin ? 1 : 0).then((res) => {
-                if (res) {
-                    dispatch({ type: "SET_CHECKOUT", payload: res });
-                    Utils.alertPopUp('Updated')
-                    setTimeout(() => {
-                        setRefreshControl(false);
-                    }, 2000);
+        handleGetCheckout(false);
+        setUseCoin(false)
+        if (!isNonPhysical) {
+            ServiceCheckout.getShipping(reduxAuth, cartStatus === 1 ? 1 : 0).then(
+                (res) => {
+                    if (res) {
+                        dispatch({ type: "SET_SHIPPING", payload: res });
+                    }
                 }
-            }
             );
         }
-        ServiceCheckout.getShipping(reduxAuth, cartStatus === 1 ? 1 : 0).then(
-            (res) => {
-                if (res) {
-                    dispatch({ type: "SET_SHIPPING", payload: res });
-                }
-            }
-        );
         setTimeout(() => {
             setRefreshControl(false);
         }, 5000);
     }, []);
 
-    const handleGetCheckout = (coin) => {
-        var myHeaders = new Headers();
-        myHeaders.append("Authorization", reduxAuth);
-        myHeaders.append("Cookie", "ci_session=r59c24ad1race70f8lc0h1v5lniiuhei");
-        var requestOptions = {
-            method: "GET",
-            headers: myHeaders,
-            redirect: "follow",
-        };
-        fetch(`https://jaja.id/backend/checkout?isCoin=${reduxUseCoin ? 1 : 0}&fromCart=1&is_gift=${cartStatus === 1 ? 1 : 0}&is_non_physical=${isNonPhysical ? isNonPhysical ? 1 : 0 : 0}`, requestOptions)
-            .then((response) => response.text())
-            .then((res) => {
-                try {
-                    let result = JSON.parse(res);
-                    if (result.status.code === 200) {
-                        dispatch({ type: "SET_CHECKOUT", payload: result.data });
-                        // navigation.navigate("Checkout");
-                    } else if (result.status.code == 404 && String(result.status.message).includes('Alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu')) {
-                        Utils.alertPopUp("Silahkan tambah alamat terlebih dahulu!");
-                        navigation.navigate("Address", { data: "checkout" });
-                    } else if (result?.status?.code === 404 && result?.status?.message === "Data tidak ditemukan") {
-                        // Utils.alertPopUp("Silahkan tambah alamat terlebih dahulu!");
-                        navigation.replace('Trolley')
+
+    // ini buat get checkout, ketika halaman ini dibuka, di refresh, ganti pengiriman, atau pakai coin
+    // fungsi ini akan dijalankan lagi setelahnya
+    const handleGetCheckout = async (coin) => {
+        // diatas ada parameter coin dimana value itu berisi true/false (menggunakan koin atau tidak)
+
+        try {
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", reduxAuth);
+            myHeaders.append("Cookie", "ci_session=r59c24ad1race70f8lc0h1v5lniiuhei");
+            var requestOptions = {
+                method: "GET",
+                headers: myHeaders,
+                redirect: "follow",
+            };
+
+            // dibawah ini ada parameter cartStatus itu dikirim dari redux isinya 1 atau 0, kalau 1 berarti sedang checkout produk dengan kategori gift
+            // dibawah ini ada parameter isisNonPhysical itu dikirim dari redux (dari halaman detail produk bukan dari trolley ), kalau value true berarti sedang checkout produk dengan kategori digital voucher
+            await fetch(`https://jaja.id/backend/checkout?isCoin=${coin ? 1 : 0}&fromCart=1&is_gift=${cartStatus === 1 ? 1 : 0}&is_non_physical=${isNonPhysical ? isNonPhysical ? 1 : 0 : 0}`, requestOptions)
+                .then((response) => response.text())
+                .then((res) => {
+                    try {
+                        let result = JSON.parse(res);
+                        if (result.status.code == 200) {
+                            dispatch({ type: "SET_CHECKOUT", payload: result.data });
+                            setUseCoin(coin);
+                        } else if (result.status.code == 404 && String(result.status.message).includes('Alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu')) {
+                            Utils.alertPopUp("Silahkan tambah alamat terlebih dahulu!");
+                            console.log('masuk sini')
+                        } else if (result?.status?.code === 404 && result?.status?.message === "Data tidak ditemukan") {
+                            navigation.replace('Trolley')
+                        }
+                        else {
+                            Utils.handleErrorResponse(result, "Error with status code : 12156");
+                            return null;
+                        }
+                    } catch (error) {
+                        Utils.alertPopUp(JSON.stringify(res) + " : 12157\n\n" + res);
                     }
-                    else {
-                        Utils.handleErrorResponse(result, "Error with status code : 12156");
-                        return null;
-                    }
-                } catch (error) {
-                    Utils.alertPopUp(JSON.stringify(res) + " : 12157\n\n" + res);
-                }
-            })
-            .catch((error) =>
-                Utils.handleError(error, "Error with status code : 12158")
-            );
+                })
+                .catch((error) =>
+                    Utils.handleError(error, "Error with status code : 12158")
+                );
+        } catch (error) {
+            console.log("🚀 ~ file: CheckoutScreen.js ~ line 867 ~ handleGetCheckout ~ error", error)
+        }
     };
 
-    const handleUseCoin = (coin) => {
-        setUseCoin(coin);
-        dispatch({ type: "SET_USECOIN", payload: coin });
-        // if (isNonPhysical) {
-        //     handleGetCheckout()
-        // } else {
-        ServiceCheckout.getCheckout(reduxAuth, coin ? 1 : 0)
-            .then((res) => {
-                if (res) {
-                    dispatch({ type: "SET_CHECKOUT", payload: res });
-                    if (!isNonPhysical) {
-                        actionSheetVoucher.current?.setModalVisible(false);
-                    }
-                    return res;
-                } else {
-                    return false;
-                }
-            })
-            .catch((res) => {
-                return false;
-            });
-        // };
+    const handleUseCoin = async (coin) => {
+        setLoad(true)
+        try {
+            if (reduxCheckout.subTotal < 10001) {
+                Utils.alertPopUp('Minimum belanja harus lebih dari 10.000 untuk dapat menggunakan koin!')
+                setUseCoin(false)
+            } else {
+                await handleGetCheckout(coin)
+            }
+            setLoad(false)
+        } catch (error) {
+
+        }
     }
 
-
+    // fungsi ini buat jaja gift ngedit data gift sebelum checkout
     const handleGiftCard = async () => {
         setModalShow2(false);
         setLoad(true);
-
         var credentials = JSON.stringify({
             cartId: giftSelected,
             dateSendTime: dateSendTime,
             greetingCardGift: textGift,
         });
-
         let res = await ServiceProduct.handleUpdateGift(reduxAuth, credentials);
-
         if (res) {
             setTimeout(() => {
                 setLoad(false);
             }, 2000);
-            handleGetCheckout();
+            handleGetCheckout(useCoin);
         } else {
             setTimeout(() => {
-                handleGetCheckout();
+                handleGetCheckout(useCoin);
                 if (!res) {
                     setLoad(false);
                 }
@@ -915,6 +869,10 @@ export default function checkoutScreen(props) {
         }
     };
 
+    // ini fungsi claim voucher pake redeem code (contoh : JAJAFESIVAL22)
+    // ini url nya getDataVoucherTamiya karna waktu itu digunakan pas event tamiya, tapi
+    // bisa digunakan event lainnya (yang penting saat pembuatan voucher di nimda pilih
+    // voucher khusus, nanti bisa di claim di fungsi ini)
     const handleCheckVoucher = () => {
         if (voucherCode) {
             if (voucherCode.length > 5) {
@@ -990,8 +948,7 @@ export default function checkoutScreen(props) {
                     }}
                     refreshControl={
                         <RefreshControl refreshing={refreshControl} onRefresh={onRefresh} />
-                    }
-                >
+                    }>
                     {!isNonPhysical ?
                         <View style={[styles.column, { backgroundColor: colors.White, marginBottom: "2%" },]}>
                             <View style={[styles.row_between_center, styles.p_3, {
@@ -1024,7 +981,6 @@ export default function checkoutScreen(props) {
                                     </TouchableOpacity>
                                     : null}
                             </View>
-
                             {reduxCheckout.address &&
                                 Object.keys(reduxCheckout.address).length ? (
                                 <View style={[styles.column, styles.p_3]}>
@@ -1054,7 +1010,6 @@ export default function checkoutScreen(props) {
                                     <Text numberOfLines={1} style={[styles.font_12, styles.mt]}>
                                         {reduxCheckout.address.phoneNumber}
                                     </Text>
-
                                     <Text numberOfLines={3} style={[styles.font_12]}>
                                         {reduxCheckout.address.address}
                                     </Text>
@@ -1762,131 +1717,101 @@ export default function checkoutScreen(props) {
                         </View>
 
                         <View style={[styles.row_between_center, styles.p_3]}>
-                            <View style={styles.column_center_start}>
-                                <Text style={[styles.font_13, { marginBottom: "2%" }]}>
-                                    Total Belanja ({reduxCheckout?.totalAllProduct} produk)
-                                </Text>
-                                {reduxCheckout.voucherJajaType === "diskon" ? (
-                                    <Text style={[styles.font_13, { marginBottom: "2%" }]}>
-                                        Diskon Belanja
+                            <View style={[styles.column_center_start, { width: '100%' }]}>
+                                <View style={[styles.row_between_center, styles.mb]}>
+                                    <Text style={[styles.font_13, { flex: 1 }]}>
+                                        Total Belanja ({reduxCheckout?.totalAllProduct} produk)
                                     </Text>
-                                ) : null}
-                                <Text style={[styles.font_13, { marginBottom: "2%" }]}>
-                                    Biaya Pengiriman
-                                </Text>
-                                {reduxCheckout.voucherJajaType === "ongkir" ? (
-                                    <Text style={[styles.font_13, { marginBottom: "2%" }]}>
-                                        Diskon Pengiriman
+                                    <Text style={[styles.font_13]}>
+                                        {reduxCheckout.subTotalCurrencyFormat}
                                     </Text>
-                                ) : null}
-                                <Text style={[styles.font_13, { marginBottom: "2%" }]}>
-                                    Biaya penanganan
-                                </Text>
-                                {/* {!isNonPhysical ? */}
-                                <>
-                                    {reduxCheckout.coinUsed ? (
-                                        <Text style={[styles.font_13, { marginBottom: "2%" }]}>
-                                            Koin Digunakan
+                                </View>
+                                {reduxCheckout.voucherJajaType == "diskon" ? (
+                                    <View style={[styles.row_between_center, styles.mb]}>
+                                        <Text style={[styles.font_13, { flex: 1 }]}>
+                                            Diskon Belanja
                                         </Text>
-                                    ) : null}
-                                    <View
-                                        style={[
-                                            styles.row_start_center,
-                                            {
-                                                width: Wp("50%"),
-                                                marginLeft: Platform.OS === "android" ? "-6.5%" : 0,
-                                                marginTop: Platform.OS === "android" ? 0 : "3%",
-                                                paddingLeft: "-2%",
-                                                opacity: reduxCoin == 0 ? 0.4 : 1,
-                                            },
-                                        ]}
-                                    >
-                                        {Platform.OS === "android" ? (
-                                            <Checkbox
-                                                disabled={reduxCoin == 0 ? true : false}
-                                                theme={{ mode: "adaptive" }}
-                                                color={colors.BlueJaja}
-                                                status={useCoin ? "checked" : "unchecked"}
-                                                onPress={() => handleUseCoin(!useCoin)}
-                                            />
-                                        ) : (
-                                            <CheckBox
-                                                disabled={reduxCoin == 0 ? true : false}
-                                                value={useCoin ? true : false}
-                                                onValueChange={() => handleUseCoin(!useCoin)}
-                                                style={[styles.mr_4]}
-                                            />
-                                        )}
                                         <Text
-                                            numberOfLines={1}
                                             style={[
                                                 styles.font_13,
-                                                { textAlignVertical: "center", marginBottom: "-1%" },
+                                                { color: colors.RedFlashsale },
                                             ]}
                                         >
-                                            Koin dimiliki
+                                            {reduxCheckout.voucherDiscountJajaCurrencyFormat}
                                         </Text>
                                     </View>
-                                </>
-                                {/* : null} */}
-                            </View>
-                            <View style={styles.column_center_end}>
-                                <Text style={[styles.font_13, { marginBottom: "2%" }]}>
-                                    {reduxCheckout.subTotalCurrencyFormat}
-                                </Text>
-                                {reduxCheckout.voucherJajaType === "diskon" ? (
-                                    <Text
-                                        style={[
-                                            styles.font_13,
-                                            { marginBottom: "2%", color: colors.RedFlashsale },
-                                        ]}
-                                    >
-                                        {reduxCheckout.voucherDiscountJajaCurrencyFormat}
-                                    </Text>
                                 ) : null}
-                                <Text style={[styles.font_13, { marginBottom: "2%" }]}>
-                                    {reduxCheckout.shippingCostCurrencyFormat}
-                                </Text>
+                                <View style={[styles.row_between_center, styles.mb]}>
+                                    <Text style={[styles.font_13, { flex: 1 }]}>
+                                        Biaya Pengiriman
+                                    </Text>
+                                    <Text style={[styles.font_13]}>
+                                        {reduxCheckout.shippingCostCurrencyFormat}
+                                    </Text>
+                                </View>
                                 {reduxCheckout.voucherJajaType === "ongkir" ? (
-                                    <Text
-                                        style={[
-                                            styles.font_13,
-                                            { marginBottom: "2%", color: colors.RedFlashsale },
-                                        ]}
-                                    >
-                                        {reduxCheckout.voucherDiscountJajaCurrencyFormat}
-                                    </Text>
+                                    <View style={[styles.row_between_center, styles.mb]}>
+                                        <Text style={[styles.font_13, { flex: 1 }]}>
+                                            Diskon Pengiriman
+                                        </Text>
+                                        <Text style={[styles.font_13, { color: colors.RedFlashsale }]}>
+                                            {reduxCheckout.voucherDiscountJajaCurrencyFormat}
+                                        </Text>
+                                    </View>
                                 ) : null}
-                                <Text style={[styles.font_13, { marginBottom: "2%" }]}>
-                                    Rp0
-                                </Text>
+                                <View style={[styles.row_between_center, styles.mb]}>
+                                    <Text style={[styles.font_13, { flex: 1 }]}>
+                                        Biaya penanganan
+                                    </Text>
+                                    <Text style={[styles.font_13]}>
+                                        Rp0
+                                    </Text>
+                                </View>
                                 {reduxCheckout.coinUsed ? (
-                                    <Text
-                                        style={[
-                                            styles.font_13,
-                                            { color: colors.RedFlashsale, marginBottom: "2%" },
-                                        ]}
-                                    >
-                                        [-{reduxCheckout.coinUsedFormat}]
-                                    </Text>
+                                    <View style={[styles.row_between_center, styles.mb]}>
+                                        <Text style={[styles.font_13, { flex: 1 }]}>
+                                            Koin Digunakan
+                                        </Text>
+                                        <Text
+                                            style={[
+                                                styles.font_13,
+                                                { color: colors.RedFlashsale, marginBottom: "2%" },
+                                            ]}
+                                        >
+                                            [-{reduxCheckout.coinUsedFormat}]
+                                        </Text>
+                                    </View>
                                 ) : null}
-                                {/* {!isNonPhysical ? */}
-                                <Text
-                                    numberOfLines={1}
-                                    style={[
-                                        styles.font_13,
-                                        styles.py_2,
-                                        {
-                                            textAlignVertical: "center",
-                                            marginBottom: "-2%",
-                                            opacity: reduxCoin == 0 ? 0.4 : 1,
-                                            backgroundColor: colors.White,
-                                        },
-                                    ]}
-                                >
-                                    ({reduxCoin})
-                                </Text>
-                                {/* : null} */}
+                                <TouchableRipple rippleColor={colors.WhiteGrey} style={{ width: '100%' }} onPress={() => handleUseCoin(!useCoin)}>
+                                    <View style={[styles.row_between_center, styles.my]}>
+                                        <View style={[styles.row_start_center, { flex: 1 }]}>
+                                            {Platform.OS === "android" ? (
+                                                <Checkbox
+                                                    disabled={reduxCheckout.subTotal < 10001 ? true : false}
+                                                    theme={{ mode: "adaptive" }}
+                                                    color={colors.BlueJaja}
+                                                    status={useCoin ? "checked" : "unchecked"}
+                                                    onPress={() => handleUseCoin(!useCoin)}
+                                                />
+                                            ) : (
+                                                <CheckBox
+                                                    disabled={reduxCheckout.subTotal < 10001 ? true : false}
+                                                    value={useCoin ? true : false}
+                                                    onValueChange={() => handleUseCoin(!useCoin)}
+                                                    style={[styles.mr_2]}
+                                                />
+                                            )}
+                                            <Text numberOfLines={1} style={[styles.font_13, { textAlignVertical: "center" }]} >
+                                                Koin dimiliki
+                                            </Text>
+                                        </View>
+                                        <View style={[styles.row_end_center]}>
+                                            <Text numberOfLines={1} style={[styles.font_13, { textAlignVertical: "center", }]}     >
+                                                ({reduxCoin})
+                                            </Text>
+                                        </View>
+                                    </View>
+                                </TouchableRipple>
                             </View>
                         </View>
                     </View>
@@ -1911,19 +1836,7 @@ export default function checkoutScreen(props) {
                     })}
                 </View> */}
                 </ScrollView>
-                <View
-                    style={{
-                        position: "absolute",
-                        bottom: 0,
-                        zIndex: 100,
-                        elevation: 3,
-                        height: Hp("7%"),
-                        width: Wp("100%"),
-                        backgroundColor: colors.White,
-                        flex: 0,
-                        flexDirection: "row",
-                    }}
-                >
+                <View style={{ position: "absolute", bottom: 0, zIndex: 100, elevation: 3, height: Hp("7%"), width: Wp("100%"), backgroundColor: colors.White, flex: 0, flexDirection: "row", }}>
                     <View
                         style={{
                             width: "50%",
@@ -1978,7 +1891,7 @@ export default function checkoutScreen(props) {
                         </Text>
                     </TouchableRipple>
                 </View>
-            </View>
+            </View >
             <ActionSheet
                 ref={actionSheetVoucher}
                 onOpen={() => setloadAs(false)}
@@ -2091,24 +2004,24 @@ export default function checkoutScreen(props) {
                             contentContainerStyle={{ paddingBottom: 80 }}
                         >
                             {(reduxCheckout.voucherJaja &&
-                                reduxCheckout.voucherJaja.length) ||
+                                reduxCheckout?.voucherJaja?.length) ||
                                 (vouchers && vouchers.length) ? (
                                 <View>
                                     <FlatList
                                         data={
                                             voucherOpen === "store"
-                                                ? vouchers
-                                                : reduxCheckout.voucherJaja.filter(
+                                                ? vouchers.length ? vouchers : []
+                                                : reduxCheckout?.voucherJaja?.length ? reduxCheckout.voucherJaja.filter(
                                                     (item) => item.isValid === true
-                                                )
+                                                ) : []
                                         }
                                         keyExtractor={(item) => item.id + "ES"}
                                         extraData={
                                             voucherOpen === "store"
-                                                ? vouchers
-                                                : reduxCheckout.voucherJaja.filter(
+                                                ? vouchers.length ? vouchers : []
+                                                : reduxCheckout?.voucherJaja?.length ? reduxCheckout.voucherJaja.filter(
                                                     (item) => item.isValid === true
-                                                )
+                                                ) : []
                                         }
                                         renderItem={({ item, index }) => {
                                             return (
@@ -2320,18 +2233,18 @@ export default function checkoutScreen(props) {
                                     <FlatList
                                         data={
                                             voucherOpen === "store"
-                                                ? vouchers
-                                                : reduxCheckout.voucherJaja.filter(
+                                                ? vouchers.length ? vouchers : []
+                                                : reduxCheckout?.voucherJaja?.length ? reduxCheckout.voucherJaja.filter(
                                                     (item) => item.isValid === false
-                                                )
+                                                ) : []
                                         }
                                         keyExtractor={(item) => item.id + "JH"}
                                         extraData={
                                             voucherOpen === "store"
-                                                ? vouchers
-                                                : reduxCheckout.voucherJaja.filter(
+                                                ? vouchers.length ? vouchers : []
+                                                : reduxCheckout?.voucherJaja?.length ? reduxCheckout.voucherJaja.filter(
                                                     (item) => item.isValid === false
-                                                )
+                                                ) : []
                                         }
                                         renderItem={({ item, index }) => {
                                             console.log(
@@ -2658,8 +2571,7 @@ export default function checkoutScreen(props) {
                             paddingVertical: "2%",
                             paddingHorizontal: "3%",
                         }}
-                        onPressIn={() => actionSheetDelivery.current?.setModalVisible()}
-                    >
+                        onPressIn={() => actionSheetDelivery.current?.setModalVisible()}>
                         <Image
                             style={[styles.icon_12, { tintColor: colors.BlueJaja }]}
                             source={require("../../assets/icons/close.png")}
@@ -2673,12 +2585,10 @@ export default function checkoutScreen(props) {
                         maxHeight: Hp("60%"),
                         width: "100%",
                         paddingBottom: "5%",
-                    }}
-                >
+                    }}>
                     <ScrollView
                         showsVerticalScrollIndicator={false}
-                        contentContainerStyle={{ width: "100%" }}
-                    >
+                        contentContainerStyle={{ width: "100%" }}>
                         <View style={[styles.column, { width: "100%" }]}>
                             {/* <Text style={[styles.font_14, styles.mb_3, { color: colors.BlueJaja, fontFamily: 'SignikaNegative-SemiBold', borderBottomWidth: 0.5, borderBottomColor: colors.BlueJaja }]}>{item.title}</Text> */}
                             {reduxShipping && reduxShipping.length ? (

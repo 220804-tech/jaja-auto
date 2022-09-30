@@ -1,6 +1,8 @@
 import { ToastAndroid, Alert } from 'react-native'
 import { Utils } from '../export';
-export async function getStore(slug, auth) {
+import database from "@react-native-firebase/database";
+
+export async function getStore(slug, auth, navigation, seller) {
     var myHeaders = new Headers();
     if (auth) {
         myHeaders.append("Authorization", auth);
@@ -13,18 +15,57 @@ export async function getStore(slug, auth) {
     };
 
     return await fetch(`https://jaja.id/backend/store/${slug}`, requestOptions)
-        .then(response => response.text())
+        .then(response => response.json())
+        .then(async result => {
+            if (result.status.code === 200 || result.status.code === 204) {
+                return result.data;
+            } else {
+                Utils.alertPopUp(result?.status?.message)
+                database().ref(`/messages/${seller.chat}`).remove(() => {
+                    console.log('cok ocmplete')
+                });
+                database().ref(`/friend/${seller.target}` + '/' + `${seller.id}`).remove(() => {
+                    console.log('cok ocmplete 2222')
+                });
+                database().ref(`/friend/${seller.id}`).remove(() => {
+                    console.log('cok ocmplete 3333')
+                });
+                database().ref(`/people/${seller.id}`).remove(() => {
+                    console.log('cok ocmplete 4444')
+                });
+                navigation.navigate('OrderDetails')
+                return null
+            }
+        })
+        .catch(error => {
+            Utils.handleError(error, 'Error with status code : 12019')
+            return null
+        });
+}
+export async function getStoreNew(slug, dispatch, auth) {
+    var myHeaders = new Headers();
+    if (auth) {
+        myHeaders.append("Authorization", auth);
+    }
+    myHeaders.append("Cookie", "ci_session=99epvnp1f3qv3bc9ed9hnkf32j11devb");
+    var requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow'
+    };
+
+    return await fetch(`https://jaja.id/backend/store/${slug}`, requestOptions)
+        .then(response => response.json())
         .then(result => {
-            try {
-                let data = JSON.parse(result)
-                if (data.status.code === 200 || data.status.code === 204) {
-                    return data.data;
-                } else {
-                    return null
-                }
-            } catch (error) {
-                Utils.handleError(String(result), "Error with status code 120191")
-                console.log("🚀 ~ file: Store.js ~ line 26 ~ getStore ~ error", error)
+            if (result.status.code === 200 || result.status.code === 204) {
+                console.log("🚀 ~ file: Store.js ~ line 60 ~ getStoreNew ~ result", result)
+                dispatch({ "type": 'SET_STORE', payload: result.data })
+                dispatch({ "type": 'SET_STORE_LOAD', payload: false })
+                dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: false })
+                return true
+            } else {
+                Utils.alertPopUp(result?.status?.message)
+                return null
             }
         })
         .catch(error => {
@@ -43,7 +84,7 @@ export async function getStoreProduct(data) {
         redirect: 'follow'
     };
 
-    return await fetch(`https://jaja.id/backend/product/store/${data.slug ? data.slug : ""}?page=${data.page}&limit=${data.limit}&keyword=${data.keyword ? data.keyword : ""}&filter_price=&filter_location=&filter_condition=${data.condition ? data.condition : ""}&filter_preorder=${data.preorder ? data.preorder : ""}&filter_brand=${data.brand ? data.brand : ""}&filter_category=${data.category ? data.category : ""}&sort=${data.sort ? data.sort : ""} `, requestOptions)
+    return await fetch(`https://jaja.id/backend/product/store/${data.slug}?page=${data.page}&limit=${data.limit}&keyword=${data.keyword}&filter_price=&filter_category=&filter_condition=${data.condition}&filter_preorder=${data.preorder}&filter_brand=${data.brand}&is_gift=0&sort=${data.sort}`, requestOptions)
         .then(response => response.json())
         .then(result => {
             if (result.status.code === 200 || result.status.code === 204) {
@@ -66,15 +107,18 @@ export async function getProductStore(data, dispatch, newProduct) {
             redirect: 'follow'
         };
 
-        return await fetch(`https://jaja.id/backend/product/store/${data.slug ? data.slug : ""}?page=${data.page}&limit=${data.limit}&keyword=${data.keyword ? data.keyword : ""}&filter_price=&filter_location=&filter_condition=${data.condition ? data.condition : ""}&filter_preorder=${data.preorder ? data.preorder : ""}&filter_brand=${data.brand ? data.brand : ""}&filter_category=${data.category ? data.category : ""}&sort=${data.sort ? data.sort : ""} `, requestOptions)
+        return await fetch(`https://jaja.id/backend/product/store/${data.slug}?page=${data.page}&limit=${data.limit}&keyword=${data.keyword}&filter_price=&filter_category=&filter_condition=${data.condition}&filter_preorder=${data.preorder}&filter_brand=${data.brand}&is_gift=0&sort=${data.sort}`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log("🚀 ~ file: Store.js ~ line 66 ~ getProductStore ~ result", result.data.items.length)
                 if (result?.status?.code === 200 || result?.status?.code === 204) {
                     if (newProduct) {
+                        console.log("🚀 ~ file: Store.js ~ line 81 ~ getProductStore ~ result", result.data.items)
                         dispatch({ type: 'SET_NEW_PRODUCT', payload: result.data.items })
+                        dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: false })
                     } else {
+                        console.log("🚀 ~ file: Store.js ~ line 87 ~ getProductStore ~ result", result.data.items)
                         dispatch({ type: 'SET_STORE_PRODUCT', payload: result.data.items })
+                        dispatch({ "type": 'STORE_PRODUCT_LOADING', payload: false })
                     }
                     dispatch({ type: 'SET_STORE_FILTER', payload: result.data.filters })
                     dispatch({ type: 'SET_STORE_SORT', payload: result.data.sorts })
@@ -141,6 +185,7 @@ export async function getEtalase(toko) {
     }
 
 }
+
 export async function getEtalaseProducts(object) {
     try {
         let errorResponse = true
@@ -159,7 +204,6 @@ export async function getEtalaseProducts(object) {
         return await fetch(`https://elibx.jaja.id/jaja/etalase/get-product-by-etalase?page=${object.page}&limit=20&etalaseId=${object.etalase}&sellerId=${object.toko}&keyword=${object.keyword}`, requestOptions)
             .then(response => response.text())
             .then(json => {
-                console.log("🚀 ~ file: Store.js ~ line 165 ~ getEtalaseProducts ~ json", json)
                 try {
                     errorResponse = false
                     let result = JSON.parse(json)

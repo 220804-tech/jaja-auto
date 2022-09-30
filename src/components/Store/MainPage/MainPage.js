@@ -5,7 +5,7 @@ import { styles, Wp, Hp, colors, useNavigation, CardProduct, NearestStore, Flash
 import Swiper from 'react-native-swiper'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import ActionSheet from "react-native-actions-sheet";
-import NewProduct from './NewProduct'
+import NewProduct from './components/NewProduct'
 
 export default function MainPage() {
     const navigation = useNavigation();

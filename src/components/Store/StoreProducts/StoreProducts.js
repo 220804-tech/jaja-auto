@@ -2,7 +2,7 @@ import React, { useEffect, useState, createRef, useCallback } from 'react'
 import { SafeAreaView, View, Text, Image, TouchableOpacity, ToastAndroid, StyleSheet, ScrollView, Animated, RefreshControl, Dimensions } from 'react-native'
 import EncryptedStorage from 'react-native-encrypted-storage'
 import ActionSheet from "react-native-actions-sheet";
-import { useNavigation, colors, styles, Wp, Loading, Hp, CardProduct, ShimmerCardProduct, Utils, ServiceStore } from '../../../export'
+import { useNavigation, colors, styles, Wp, Loading, Hp, CardProduct, ShimmerCardProduct, Utils, ServiceStore, useFocusEffect } from '../../../export'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button, Menu, Divider, Provider } from 'react-native-paper';
 const { height: hg } = Dimensions.get('screen')
@@ -20,18 +20,14 @@ export default function StoreProducts() {
     const textSearch = useSelector(state => state.store.storeKeyword)
     const reduxStore = useSelector(state => state.store.store)
 
-
     const dispatch = useDispatch()
     const [scrollY, setscrollY] = useState(new Animated.Value(0))
-
     const [auth, setAuth] = useState("")
-
     const [count, setcount] = useState(0)
     const [selectedFilter, setselectedFilter] = useState([]);
     const [loading, setLoading] = useState(false);
     const [loadmore, setLoadmore] = useState(true);
     const [page, setPage] = useState(1);
-
     const [condition, setCondition] = useState('');
     const [stock, setStock] = useState('');
     const [sort, setSort] = useState('');
@@ -41,6 +37,12 @@ export default function StoreProducts() {
     const [refreshing, setRefreshing] = useState(false);
     const [focus, setFocus] = useState(0);
     const [filter, setFilter] = useState(false);
+
+    useFocusEffect(
+        useCallback(() => {
+            getProductResetFilter()
+        }, []),
+    );
 
     useEffect(() => {
         setLoading(true)
@@ -58,6 +60,28 @@ export default function StoreProducts() {
         }
     }, [focus])
 
+    const getProductResetFilter = () => {
+        let obj = {
+            slug: '',
+            page: 1,
+            limit: 100,
+            keyword: textSearch,
+            condition: '',
+            preorder: '',
+            brand: '',
+            sort: ''
+        }
+
+        ServiceStore.getStoreProduct(obj).then(res => {
+            setTimeout(() => setLoading(false), 1000);
+            if (res && res.items && res.items.length) {
+                dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
+            } else {
+                dispatch({ type: 'SET_MAX_STORE', payload: true })
+            }
+            setFilter(false)
+        })
+    }
     const handleLoadMore = () => {
         if (loadmore === true) {
             setLoadmore(true)
@@ -73,8 +97,6 @@ export default function StoreProducts() {
     }
 
     const fetchLoadmore = () => {
-        console.log("🚀 ~ file: StoreProducts.js ~ line 90 ~ fetchLoadmore ~ focus", focus)
-
         let error = true;
         try {
             let obj = {
@@ -83,13 +105,11 @@ export default function StoreProducts() {
                 page: filter ? page : page + 1,
                 limit: filter ? 100 * parseInt(page) : 20,
                 keyword: textSearch,
-                price: '',
                 condition: '',
                 preorder: '',
                 brand: '',
                 sort: focus == 1 ? '' : focus == 2 ? 'getAmountSold-desc' : focus == 3 ? 'produk_variasi.harga_variasi-desc' : 'produk_variasi.harga_variasi-asc'
             }
-
 
             ServiceStore.getStoreProduct(obj).then(res => {
                 error = false
@@ -126,7 +146,6 @@ export default function StoreProducts() {
             }
         }, 5000);
     }
-
 
     const handleFilter = (name) => {
         actionSheetRef.current?.setModalVisible(false)
@@ -169,13 +188,13 @@ export default function StoreProducts() {
         })
         setTimeout(() => setLoading(false), 15000);
     }
+
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         setTimeout(() => {
             setRefreshing(false)
         }, 2000);
     }, []);
-
 
     const handleSelected = (name, indexParent, indexChild) => {
         if (name === 'filter') {
@@ -206,6 +225,26 @@ export default function StoreProducts() {
         }
     }
 
+    const getResetFilter = () => {
+        let obj = {
+            slug: reduxStore.slug,
+            page: 1,
+            limit: 100,
+            keyword: '',
+            price: '',
+            condition: '',
+            preorder: '',
+            brand: '',
+            sort: ''
+        }
+        ServiceStore.getStoreProduct(obj).then(res => {
+            if (res) {
+                dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
+            }
+        })
+
+    }
+
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.White }]}>
             {loading ? <Loading /> : null}
@@ -215,7 +254,7 @@ export default function StoreProducts() {
 
                 <View style={[styles.row_around_center, { width: '100%', elevation: 1 }]}>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                        <Button style={{ width: Wp('33.33%'), borderRadius: 0, borderRightWidth: 0 }} uppercase={false} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_medium, { color: focus == 1 || focus == 0 ? colors.BlueJaja : colors.BlackGrayScale }]} contentStyle={{ borderRadius: 0 }} onPress={() => setFocus(1) & setFilter(true)} mode="outlined">
+                        <Button style={{ width: Wp('33.33%'), borderRadius: 0, borderRightWidth: 0 }} uppercase={false} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_medium, { color: focus == 1 || focus == 0 ? colors.BlueJaja : colors.BlackGrayScale }]} contentStyle={{ borderRadius: 0 }} onPress={() => setFocus(1) & getResetFilter()} mode="outlined">
                             Semua
                         </Button>
                         {/* <Button style={{ width: Wp('33.33%'), borderRadius: 0 }} uppercase={false} color={colors.BlueJaja} labelStyle={[styles.font_11, styles.T_medium, { color: focus == 2 ? colors.BlueJaja : colors.BlackGrayScale }]} contentStyle={{ borderRadius: 0 }} onPress={() => setFocus(2) & setFilter(true)} mode="outlined">

@@ -487,7 +487,7 @@ export default function Lainnya() {
                                     <Text adjustsFontSizeToFit style={[style.font_13, style.T_semi_bold, { color: colors.BlueJaja }]}>Nama Lengkap</Text>
                                     <View style={styles.formItem}>
                                         {/* <Text adjustsFontSizeToFit style={styles.formPlaceholder}>{name ? name : ""}</Text> */}
-                                        {/* <TouchableOpacity onPress={() => handleEdit("Nama Lengkap")} style={styles.btnUbah}>
+                                        {/* <TouchableOpacity onPress={() => handleEdit("Nama Lengkap")} style={[styles.btnUbah,style.shadow_3]}>
                                             <Text adjustsFontSizeToFit style={styles.ubah}>{name ? "Ubah" : "Tambah"}</Text>
                                         </TouchableOpacity> */}
                                         <TextInput
@@ -520,7 +520,7 @@ export default function Lainnya() {
                                             style={[styles.textInput, style.font_13, { color: date ? colors.BlackGrayScale : colors.Silver }]}
                                         />
                                         {!date || String(date).includes('1970') ?
-                                            <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.btnUbah}>
+                                            <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={[styles.btnUbah, style.shadow_3]}>
 
                                                 <Text adjustsFontSizeToFit style={styles.ubah}>{!date ? 'Tambah' : 'Edit'}</Text>
                                             </TouchableOpacity>
@@ -589,7 +589,7 @@ export default function Lainnya() {
                                             onChangeText={(text) => setname(text)}
                                             style={[styles.textInput, style.font_13]}
                                         />
-                                        <TouchableOpacity onPress={() => passwordRef.current?.setModalVisible(true)} style={styles.btnUbah}>
+                                        <TouchableOpacity onPress={() => passwordRef.current?.setModalVisible(true)} style={[styles.btnUbah, style.shadow_3]}>
                                             <Text adjustsFontSizeToFit style={styles.ubah}>{view ? "Ubah" : "Tambah"}</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -598,16 +598,15 @@ export default function Lainnya() {
                             <TouchableWithoutFeedback >
                                 <View style={styles.form}>
                                     <Text adjustsFontSizeToFit style={[style.font_13, style.T_semi_bold, { color: colors.BlueJaja }]}>Rekening</Text>
-                                    <View style={styles.formItem}>
+                                    <View style={[styles.formItem]}>
                                         <TextInput
                                             value={accountShow ? accountBank : 'Tambah Rekening'}
                                             editable={false}
-                                            onChangeText={(text) => setname(text)}
-                                            style={[styles.textInput, style.font_13, { color: accountShow ? colors.BlackText : colors.Silver }]}
+                                            placeholder="ASDA"
+                                            style={[styles.textInput, style.font_13, { color: accountShow ? colors.BlackGrayScale : colors.Silver, }]}
                                         />
-                                        <TouchableOpacity onPress={() => accountShow ? null : navigation.navigate('AddAccount')} style={styles.btnUbah}>
-
-                                            {!accountShow ? <Text adjustsFontSizeToFit style={styles.ubah}>Tambah</Text> : null}
+                                        <TouchableOpacity onPress={() => navigation.navigate('AddAccount')} style={[styles.btnUbah, style.shadow_3]}>
+                                            <Text adjustsFontSizeToFit style={styles.ubah}>{accountShow ? 'Edit' : 'Tambah'}</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -905,7 +904,7 @@ const styles = StyleSheet.create({
         opacity: 0.95,
     },
     ubah: {
-        fontSize: 13,
+        fontSize: 12,
         color: colors.White,
         fontFamily: 'SignikaNegative-SemiBold',
         width: '100%',
@@ -914,7 +913,7 @@ const styles = StyleSheet.create({
     },
     btnUbah: {
         justifyContent: 'center', alignItems: 'center',
-        backgroundColor: colors.YellowJaja, width: '17.5%',
+        backgroundColor: colors.YellowJaja, width: '17%',
         borderRadius: 5,
         paddingVertical: '0%'
     },

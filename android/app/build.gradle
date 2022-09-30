@@ -135,8 +135,8 @@ android {
         applicationId "com.jajaidbuyer"
         minSdkVersion rootProject.ext.minSdkVersion         
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 82
-        versionName "0.8.2"
+        versionCode 91
+        versionName "0.9.1"
         multiDexEnabled true   //add this
 
 
@@ -146,7 +146,8 @@ android {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
             universalApk false  // If true, alsosss generate a universal APK
-            include "armeabi-v7a", "arm64-v8a", "x86_64", "x86"
+            include "armeabi-v7a", "arm64-v8a"
+            //  "x86_64", "x86"
             // include "arm64-v8a"
         }
     }

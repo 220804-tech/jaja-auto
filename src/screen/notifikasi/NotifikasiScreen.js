@@ -56,10 +56,10 @@ function NotifikasiScreen(props) {
 
     useFocusEffect(
         useCallback(() => {
-            handleNotifikasi()
             if (reduxAuth) {
+                handleNotifikasi()
             }
-            readData()
+            // readData()
         }, []),
     );
 
@@ -71,7 +71,7 @@ function NotifikasiScreen(props) {
                 body: raw,
                 redirect: 'follow'
             };
-            fetch(`https://jaja.id/core/seller/dashboard/notifikasi?id_toko=145`, requestOptions)
+            fetch(`https://jsonx.jaja.id/core/seller/dashboard/notifikasi?id_toko=145`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     console.log("🚀 ~ file: NotifikasiScreen.js ~ line 75 ~ readData ~ result", result)

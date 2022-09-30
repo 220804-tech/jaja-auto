@@ -5,7 +5,7 @@ import { Button, RadioButton, TouchableRipple } from 'react-native-paper';
 import Collapsible from 'react-native-collapsible';
 import { useDispatch, useSelector } from 'react-redux';
 
-export default function OrderComplain(props) {
+export default function OrderComplain() {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const reduxOrderStatus = useSelector(state => state.order.orderStatus)
@@ -19,9 +19,7 @@ export default function OrderComplain(props) {
     const [alertText, setalertText] = useState('');
     const [loading, setLoading] = useState(false);
     const [modalNext, setmodalNext] = useState(false);
-
     const [images, setImages] = useState([]);
-
     const [video, setVideo] = useState('');
 
     const data = [
@@ -29,8 +27,7 @@ export default function OrderComplain(props) {
         { id: '2CV', title: "Ganti Alamat Pengiriman", content: [] },
         { id: '3CV', title: "Ganti Produk atau Variasi Produk", content: [] },
         { id: '4CV', title: "Respon Penjual Lambat", content: [] },
-        { id: '5CV', title: "Lainnya", content: [] },
-
+        { id: '5CV', title: "Lainnya", content: [] }, s
     ]
 
     const handleSendCancel = () => {
@@ -87,17 +84,11 @@ export default function OrderComplain(props) {
                 })
                 .catch(error => {
                     setLoading(false)
-                    Utils.handleError(error, "Error with status code : 12020")
+                    Utils.handleError(error, "Error with status code : 120191")
                 });
-            //     }
-            // }
-            //         },
-
-            //     ],
-            //     { cancelable: false }
-            // );
         }
     }
+
     const handleFetchUnpaid = () => {
         ServiceOrder.getUnpaid(reduxAuth).then(resUnpaid => {
             if (resUnpaid) {
@@ -121,6 +112,7 @@ export default function OrderComplain(props) {
         })
         handleFetchFailed()
     }
+
     const handleFetchFailed = () => {
         ServiceOrder.getFailed(reduxAuth).then(resFailed => {
             if (resFailed) {
@@ -150,8 +142,13 @@ export default function OrderComplain(props) {
                             keyExtractor={item => item.id}
                             renderItem={({ item }) => {
                                 return (
-
-                                    <TouchableOpacity onPress={() => setactiveSections(item.id) & setChecked(null) & setcategoryCompalain(item.title) & settitleComplain("") & setalertText("")} style={[styles.column_center_start, styles.mb_5, styles.p_3, {
+                                    <TouchableOpacity onPress={() => {
+                                        setactiveSections(item.id)
+                                        setChecked(null)
+                                        setcategoryCompalain(item.title)
+                                        settitleComplain("")
+                                        setalertText("")
+                                    }} style={[styles.column_center_start, styles.mb_5, styles.p_3, {
                                         backgroundColor: colors.White, width: '100%', shadowColor: '#000',
                                         shadowOffset: { width: 0, height: 2 },
                                         shadowOpacity: 0.5,

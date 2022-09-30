@@ -53,7 +53,7 @@ export default function RequestComplain() {
                             redirect: 'follow'
                         };
 
-                        fetch(`https://jaja.id/core/seller/order/solusiKomplain?invoice=${orderInvoice}&solusi=${checked}&catatan_solusi=checked`, requestOptions)
+                        fetch(`https://jsonx.jaja.id/core/seller/order/solusiKomplain?invoice=${orderInvoice}&solusi=${checked}&catatan_solusi=checked`, requestOptions)
                             .then(response => response.json())
                             .then(result => {
                                 if (result.status.code === 200) {
@@ -84,7 +84,7 @@ export default function RequestComplain() {
                 redirect: 'follow'
             };
 
-            await fetch(`https://jaja.id/core/seller/order/confirmKomplain?invoice=${orderInvoice}&status=${val}&catatan_solusi=${alasanTolak}`, requestOptions)
+            await fetch(`https://jsonx.jaja.id/core/seller/order/confirmKomplain?invoice=${orderInvoice}&status=${val}&catatan_solusi=${alasanTolak}`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     if (result.status.code === 200) {
@@ -101,7 +101,7 @@ export default function RequestComplain() {
                 .catch(error => Utils.handleError(error, "Error with status code : 120031"));
 
             if (modalConfirm === 'confirmed') {
-                fetch(`https://jaja.id/core/seller/order/solusiKomplain?invoice=${orderInvoice}&solusi=${checked}&catatan_solusi=checked`, requestOptions)
+                fetch(`https://jsonx.jaja.id/core/seller/order/solusiKomplain?invoice=${orderInvoice}&solusi=${checked}&catatan_solusi=checked`, requestOptions)
                     .then(response => response.json())
                     .then(result => {
                         if (result.status.code === 200) {

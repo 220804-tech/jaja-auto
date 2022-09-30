@@ -8,13 +8,14 @@ import Completed from '../../components/Orders/OrdersCompleted'
 import Failed from '../../components/Orders/OrdersFailed'
 import Return from '../../components/Orders/OrdersComplain'
 
-import { colors, styles, Appbar, DefaultNotFound, ServiceOrder, ServiceFirebase, useFocusEffect } from '../../export';
+import { colors, styles, Appbar, DefaultNotFound, ServiceOrder, ServiceFirebase, useFocusEffect, AppleType } from '../../export';
 const initialLayout = { width: Dimensions.get('window').width };
 import { useDispatch, useSelector } from 'react-redux'
-import LoginOrderScreen from '../login/LoginScreen';
 import database from "@react-native-firebase/database";
+import { Login } from '../../routes/Screen';
 
-export default function OrderScreen() {
+
+export default function OrderScreen(props) {
     const dispatch = useDispatch()
 
     const reduxAuth = useSelector(state => state.auth.auth)
@@ -28,7 +29,7 @@ export default function OrderScreen() {
     const reduxFailed = useSelector(state => state.order.failed)
     const reduxWaitConfirm = useSelector(state => state.order.waitConfirm)
 
-    const [index, setIndex] = useState(0)
+    const [index, setIndex] = useState(props.route?.params?.index ? props.route.params.index : 0)
     const [count, setCount] = useState(0)
     const [complain, setComplain] = useState(0)
     const [sent, setSent] = useState(0)
@@ -57,32 +58,12 @@ export default function OrderScreen() {
 
     useFocusEffect(
         useCallback(() => {
-            return () => {
-                try {
-                    setCount(count + 1)
-                    let sentCount = 0;
-                    let complainCount = 0;
-                    if (reduxSent?.length) {
-                        reduxSent.map(item => {
-                            if (item.complain) {
-                                complainCount += 1
-                            } else {
-                                sentCount += 1
-
-                            }
-                        })
-                    }
-                    setComplain(complainCount)
-                    setSent(sentCount)
-                    if (reduxRefresh) {
-                        dispatch({ type: 'SET_ORDER_REFRESH', payload: false })
-                    }
-
-                } catch (error) {
-                    console.log("🚀 ~ file: OrderScreen.js ~ line 82 ~ useEffect ~ error", error)
-                }
-            }
-        }, [reduxOrder, reduxRefresh, reduxUnpaid, reduxWaitConfirm])
+            // if (props?.route?.params?.index) {
+            //     console.log("🚀 ~ file: OrderScreen.js ~ line 62 ~ useCallback ~ props?.route?.params?.index", props?.route.params.index)
+            //     setIndex(props.route.params.index)
+            // }
+            handleFetch2()
+        }, [reduxOrder])
     );
 
     useFocusEffect(
@@ -95,11 +76,10 @@ export default function OrderScreen() {
         return () => {
             if (Platform.OS == 'ios') {
                 StatusBar.setBarStyle('light-content', true);	//<<--- add this
-                StatusBar.setBackgroundColor(colors.BlueJaja, true)
+                // StatusBar.setBackgroundColor(colors.BlueJaja, true)
             }
         }
     }, [reduxUser])
-
 
     const handleFetch = () => {
         try {
@@ -159,6 +139,32 @@ export default function OrderScreen() {
             }
         }
     }
+
+    const handleFetch2 = () => {
+        try {
+            setCount(count + 1)
+            let sentCount = 0;
+            let complainCount = 0;
+            if (reduxSent?.length) {
+                reduxSent.map(item => {
+                    if (item.complain) {
+                        complainCount += 1
+                    } else {
+                        sentCount += 1
+
+                    }
+                })
+            }
+            setComplain(complainCount)
+            setSent(sentCount)
+            if (reduxRefresh) {
+                dispatch({ type: 'SET_ORDER_REFRESH', payload: false })
+            }
+
+        } catch (error) {
+            console.log("🚀 ~ file: OrderScreen.js ~ line 163 ~ handleFetch2 ~ error", error)
+        }
+    }
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : colors.White }]}>
             <Appbar title="Pesanan" trolley={true} notif={true} />
@@ -185,14 +191,14 @@ export default function OrderScreen() {
                             bounces={true}
                             scrollEnabled={true}
                             style={{ backgroundColor: colors.White }}
-                            tabStyle={{ minHeight: 50, flex: 0, width: 120, borderBottomColor: colors.BlueJaja, borderRightColor: 'grey', justifyContent: 'center', alignSelf: 'center' }} // here
+                            tabStyle={{ minHeight: 50, maxHeight: 75, flex: 0, width: AppleType === 'ipad' ? 180 : 120, borderBottomColor: colors.BlueJaja, borderRightColor: 'grey', justifyContent: 'center', alignSelf: 'center' }} // here
                             renderLabel={({ route, focused, color }) => {
                                 return (
-                                    <View style={[styles.row_center, { width: 100, height: '100%' }]}>
+                                    <View style={[styles.row_center, { width: AppleType === 'ipad' ? 160 : 100, height: '100%' }]}>
                                         <View style={[styles.row_center, { width: '100%', textAlign: 'center' }]}>
-                                            <Text style={{ color: colors.BlackGrayScale, fontSize: 12, textAlign: 'center', alignSelf: 'center' }}>{route.title} </Text>
+                                            <Text style={[styles.font_12, { color: colors.BlackGrayScale, textAlign: 'center', alignSelf: 'center' }]}>{route.title} </Text>
                                             {route.count ?
-                                                <Text style={{ color: colors.BlackGrayScale, fontSize: 10, textAlign: 'center', alignSelf: 'center' }}>({route.count > 9 ? "9+" : route.count})</Text>
+                                                <Text style={[styles.font_10, { color: colors.BlackGrayScale, textAlign: 'center', alignSelf: 'center' }]}>({route.count > 9 ? "9+" : route.count})</Text>
                                                 : null}
 
                                         </View>
@@ -203,11 +209,9 @@ export default function OrderScreen() {
                     )}
                 />
                 :
-                <LoginOrderScreen orderPage={true} />
+                <Login appbar={true} />
                 // <DefaultNotFound textHead="Ups.." textBody="sepertinya kamu belum login.." ilustration={require('../../assets/ilustrations/empty.png')} />
             }
         </SafeAreaView>
     )
 }
-
-

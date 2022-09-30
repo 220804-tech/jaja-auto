@@ -5,8 +5,7 @@ import colors from '../colors';
 const { height: SCREEN_HEIGHT, width } = Dimensions.get('window');
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 const IS_6INCH = SCREEN_HEIGHT > 765 ? true : false
-console.log("🚀 ~ file: productStyles.js ~ line 800000 ~ IS_6INCH", IS_6INCH)
-console.log("🚀 ~ file: productStyles.js ~ line 12121 ~ SCREEN_HEIGHT", SCREEN_HEIGHT)
+
 // second argument is standardScreenHeight(optional),
 export const style = StyleSheet.create({
     cardProduct: {

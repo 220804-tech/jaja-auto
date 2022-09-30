@@ -1,5 +1,5 @@
 import React, { useState, createRef } from 'react'
-import { SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, StatusBar, Image, ScrollView, Alert } from 'react-native'
+import { SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, StatusBar, Image, ScrollView, Alert, Platform } from 'react-native'
 import { styles, Appbar, colors, Wp, Loading, useNavigation, Utils, ServiceFirebase } from '../../export'
 import { Button, Checkbox, RadioButton } from 'react-native-paper';
 import Collapsible from 'react-native-collapsible';
@@ -222,7 +222,7 @@ export default function Complain({ route }) {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
             <StatusBar
                 translucent={false}
                 animated={true}

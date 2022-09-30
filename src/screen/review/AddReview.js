@@ -232,7 +232,7 @@ export default function AddReview(props) {
                                 })}
                             </View>
                             <View style={{ borderWidth: 0.5, borderColor: colors.Silver, borderRadius: 5 }}>
-                                <TextInput style={{ color: colors.BlackGrayScale }} onChangeText={(text) => data[index].comment += text} placeholder="Barang sesuai pesanan." multiline={true} numberOfLines={3} textAlignVertical="top" maxLength={200}>
+                                <TextInput style={{ color: colors.BlackGrayScale }} onChangeText={(text) => String(data[index].comment)?.length <= 300 ? data[index].comment += text : null} placeholder="Barang sesuai pesanan." multiline={true} numberOfLines={3} textAlignVertical="top" maxLength={200}>
                                     {item.comment}
                                 </TextInput>
                             </View>

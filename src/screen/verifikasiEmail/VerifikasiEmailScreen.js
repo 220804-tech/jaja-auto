@@ -89,7 +89,6 @@ export default class VerifikasiEmail extends Component {
                         setTimeout(() =>
                             Utils.alertPopUp('Periksa email anda untuk melihat kode verifikasi!')
                             , 100);
-
                         this.timerID = setInterval(() => this.setTime(), 1000);
                     }, 50);
                 } else {
@@ -519,7 +518,7 @@ export default class VerifikasiEmail extends Component {
                 redirect: 'follow'
             };
 
-            fetch("https://jaja.id/core/seller/auth/change_password/forgot", requestOptions)
+            fetch("https://jsonx.jaja.id/core/seller/auth/change_password/forgot", requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     console.log("🚀 ~ file: index.js ~ line 497 ~ index ~ result", result)

@@ -8,7 +8,7 @@ export async function getNotifications() {
         redirect: 'follow'
     };
 
-    fetch("https://jaja.id/core/seller/dashboard/notifikasi?id_toko=145", requestOptions)
+    fetch("https://jsonx.jaja.id/core/seller/dashboard/notifikasi?id_toko=145", requestOptions)
         .then(response => response.json())
         .then(result => {
             if (result.status.code === 200) {

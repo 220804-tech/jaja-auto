@@ -268,74 +268,20 @@ export default function SearchScreen(props) {
 
     const handleSelectedToko = async (item) => {
         try {
-            if (!loadStore) {
-                navigation.push('Store', { slug: item.slug })
-                dispatch({ "type": 'SET_STORE_LOAD', payload: true })
-                dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: true })
-                dispatch({ "type": 'SET_STORE', payload: {} })
-
-
-                let slg = item.slug
-                ServiceStore.getStore(slg, reduxAuth).then(res => {
-                    if (res) {
-                        dispatch({ "type": 'SET_STORE', payload: res })
-                    }
-                    dispatch({ "type": 'SET_STORE_LOAD', payload: false })
-                }).catch(err => [
-                    dispatch({ "type": 'SET_STORE_LOAD', payload: false })
-
-                ])
+            if (reduxStore && Object.keys(reduxStore).length) {
+                if (reduxStore.name != item.name) {
+                    dispatch({ "type": 'SET_STORE', payload: {} })
+                    dispatch({ type: 'SET_STORE_PRODUCT', payload: [] })
+                    dispatch({ type: 'SET_NEW_PRODUCT', payload: [] })
+                }
             }
+
+            dispatch({ "type": 'SET_STORE_LOAD', payload: true })
+            navigation.navigate('Store', { slug: item.slug })
+            ServiceStore.getStoreNew(item.slug, dispatch, reduxAuth)
         } catch (error) {
-            dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: false })
-            dispatch({ "type": 'SET_STORE_LOAD', payload: false })
-
-            Utils.handleError(error, 'Error with status code : 31001')
+            console.log("🚀 ~ file: SearchScreen.js ~ line 283 ~ handleSelectedToko ~ error", error)
         }
-        // try {
-        //     if (reduxStore && Object.keys(reduxStore).length) {
-        //         if (reduxStore.name != item.name) {
-        //             dispatch({ "type": 'SET_STORE', payload: {} })
-        //             dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
-        //         }
-        //     }
-        //     ServiceStore.getStore(item.slug, reduxAuth).then(res => {
-        //         if (res) {
-        //             dispatch({ "type": 'SET_STORE', payload: res })
-        //             navigation.navigate('Store')
-        //         }
-        //     })
-        //     dispatch({ type: 'SET_CATEGORY_NAME', payload: null })
-
-        //     let obj = {
-        //         slug: item.slug,
-        //         page: 1,
-        //         limit: 100,
-        //         keyword: '',
-        //         price: '',
-        //         condition: '',
-        //         preorder: '',
-        //         brand: '',
-        //         sort: 'produk.id_produk-desc',
-        //     }
-
-        //     ServiceStore.getStoreProduct(obj).then(res => {
-        //         console.log("🚀 ~ file: SearchScreen.js ~ line 234 ~ ServiceStore.getStoreProduct ~ res", res)
-        //         if (res) {
-        //             dispatch({ "type": 'SET_NEW_PRODUCT', payload: res.items })
-        //         }
-        //     })
-        //     obj.sort = ''
-        //     ServiceStore.getStoreProduct(obj).then(res => {
-        //         if (res) {
-        //             dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
-        //             dispatch({ "type": 'SET_STORE_FILTER', payload: res.filters })
-        //             dispatch({ "type": 'SET_STORE_SORT', payload: res.sorts })
-        //         }
-        //     })
-        // } catch (error) {
-        //     Utils.handleError(error, 'Error with status code : 21092')
-        // }
     }
 
     const handleSelectedCategory = (res) => {

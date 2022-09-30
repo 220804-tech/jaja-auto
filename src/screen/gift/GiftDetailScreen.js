@@ -923,12 +923,10 @@ export default function GiftDetailScreen(props) {
             let result = String(date.getDate()) + ' ' + String(month) + ' ' + String(date.getFullYear())
             let dateNumber = String(date.getDate()) + '-' + monthUpdate + '-' + String(date.getFullYear())
 
-            console.log("🚀 ~ file: GiftDetailScreen.js ~ line 923 ~ handleConfirmDate ~ result", result)
-            console.log("🚀 ~ file: GiftDetailScreen.js ~ line 924 ~ handleConfirmDate ~ result", dateNumber)
-
             setdateSelected(result)
             setdateSelect(dateNumber)
             setDatePickerVisibility(false)
+
         } catch (error) {
 
         }

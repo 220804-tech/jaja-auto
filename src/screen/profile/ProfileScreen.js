@@ -241,7 +241,7 @@ export default function ProfileScreen(props) {
             <View style={[styles.column, styles.px_2]}>
               <View style={[styles.row_start, styles.p_2, styles.mb_4]}>
                 <View style={{ height: Wp('19%'), width: Wp('19%'), backgroundColor: colors.White, borderRadius: 100, marginRight: '2%' }}>
-                  <Image source={reduxAuth ? { uri: reduxProfile.image } : require('../../assets/images/JajaId.png')} style={{ resizeMode: 'contain', width: '100%', height: '100%', borderRadius: 100 }} />
+                  <Image source={reduxAuth ? { uri: reduxProfile.image } : require('../../assets/images/JajaId.png')} style={{ width: '100%', height: '100%', borderRadius: 100 }} />
                 </View>
                 {reduxAuth ?
                   <View style={[styles.column_around_center, { height: Wp('17%'), width: Wp('60%'), alignItems: 'flex-start' }]}>
@@ -296,7 +296,7 @@ export default function ProfileScreen(props) {
             <TouchableOpacity style={[styles.row_start_center, styles.mb, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver, }]} onPress={() => {
               let url = "whatsapp://send?text=" +
                 'Halo, Jaja.id \n' +
-                "&phone=62" + '87888337555'
+                "&phone=62" + '82113840369'
               Linking.openURL(url)
                 .then(data => {
                   console.log("WhatsApp Opened successfully " + data);  //<---Success

@@ -40,21 +40,23 @@ export default function ListChat() {
                 var returnArray = [];
                 snapshot.forEach(function (snap) {
                     var item = snap.val();
-                    item.id = snap.key;
-                    if (item.id !== reduxUser.uid && item.id !== "null") {
-                        returnArray.push(item);
-                        let sortedObj = []
-                        try {
-                            sortedObj = returnArray.sort(function (a, b) {
-                                return new Date(b.message.time) - new Date(a.message.time);
-                            });
-                        } catch (error) {
-                            console.log("🚀 ~ file: ListChatScreen.js ~ line 52 ~ error", error)
+                    if (snap?.key) {
+                        item.id = snap.key;
+                        if (item.id !== reduxUser.uid && item.id !== "null") {
+                            returnArray.push(item);
+                            let sortedObj = []
+                            try {
+                                sortedObj = returnArray.sort(function (a, b) {
+                                    return new Date(b.message.time) - new Date(a.message.time);
+                                });
+                            } catch (error) {
+                                console.log("🚀 ~ file: ListChatScreen.js ~ line 52 ~ error", error)
+                            }
+                            let countChat = 0
+                            sortedObj.map(item => countChat += item.amount)
+                            dispatch({ type: 'SET_NOTIF_COUNT', payload: { home: reduxnotifCount.home, chat: countChat, orders: reduxnotifCount.orders } })
+                            setUsers(sortedObj);
                         }
-                        let countChat = 0
-                        sortedObj.map(item => countChat += item.amount)
-                        dispatch({ type: 'SET_NOTIF_COUNT', payload: { home: reduxnotifCount.home, chat: countChat, orders: reduxnotifCount.orders } })
-                        setUsers(sortedObj);
                     }
                 });
             });
