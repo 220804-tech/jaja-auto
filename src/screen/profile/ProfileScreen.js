@@ -241,7 +241,7 @@ export default function ProfileScreen(props) {
             <View style={[styles.column, styles.px_2]}>
               <View style={[styles.row_start, styles.p_2, styles.mb_4]}>
                 <View style={{ height: Wp('19%'), width: Wp('19%'), backgroundColor: colors.White, borderRadius: 100, marginRight: '2%' }}>
-                  <Image source={reduxAuth ? { uri: reduxProfile.image } : require('../../assets/images/JajaId.png')} style={{ width: '100%', height: '100%', borderRadius: 100 }} />
+                  <Image source={reduxAuth ? { uri: reduxProfile.image } : require('../../assets/images/JajaId.png')} style={{ width: '100%', height: '100%', resizeMode: 'contain', borderRadius: 100 }} />
                 </View>
                 {reduxAuth ?
                   <View style={[styles.column_around_center, { height: Wp('17%'), width: Wp('60%'), alignItems: 'flex-start' }]}>

@@ -16,6 +16,7 @@ export default function OrderDetailsScreen() {
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
     const [details, setDetails] = useState(null)
+    // console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 19 ~ OrderDetailsScreen ~ details",)
     const [refreshing, setRefreshing] = useState(false)
     const [selectedSubPayment, setselectedSubPayment] = useState('')
     const [selectedPayment, setselectedPayment] = useState('')
@@ -142,6 +143,7 @@ export default function OrderDetailsScreen() {
 
     useFocusEffect(
         useCallback(() => {
+            setLoading(true)
             setselectedPayment('')
             getItem()
         }, [count, reduxOrderInvoice]),
@@ -560,7 +562,6 @@ export default function OrderDetailsScreen() {
                 if (result.status.code === 200 || result.status.code === 204) {
                     setDetails(result.data)
                     let status = result.data.status;
-                    console.log("🚀 ~ file: OrderDetailsScreen.js ~ line 563 ~ getItem ~ status", status)
                     if (reduxOrderStatus) {
                         dispatch({ type: 'SET_ORDER_STATUS', payload: status === 'notPaid' ? "Menunggu Pembayaran" : status === 'waitConfirm' ? 'Menunggu Konfirmasi' : status === 'prepared' ? 'Sedang Disiapkan' : status === 'canceled' ? 'Pesanan Dibatalkan' : status === 'done' ? 'Pesanan Selesai' : status === 'sent' ? 'Dalam Pengiriman' : null })
                     }
@@ -686,6 +687,12 @@ export default function OrderDetailsScreen() {
     }
 
     const handleTracking = () => {
+        let newObj = {
+            resi: details?.trackingId,
+            codeKurir: details?.items?.[0]?.shippingSelected?.code
+        }
+        dispatch({ type: 'SET_INVOICE', payload: details.invoice })
+        dispatch({ type: 'SET_RECEIPT', payload: newObj })
         navigation.navigate('OrderDelivery')
     }
 
@@ -1233,7 +1240,7 @@ export default function OrderDetailsScreen() {
                                     </Text>
                                 </TouchableRipple>
 
-                                {details?.trackingId === 'DIGITALVOUCHER' ?
+                                {details?.trackingId !== 'DIGITALVOUCHER' ?
                                     <TouchableRipple onPress={handleTracking} style={[styles.row_center, styles.py_3, { marginHorizontal: '0.5%', borderRadius: 3, flex: 1, backgroundColor: colors.BlueJaja, alignSelf: 'center' }]}>
                                         <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White }]}>
                                             Lacak

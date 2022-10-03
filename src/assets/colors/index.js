@@ -34,9 +34,11 @@ export default {
     Yellow: "#ffff00",
     YellowWarning: '#FFB236',
     YellowNotif: '#f0e68c',
+    YellowChat: '#ffd080',
 
     // BlueJaja: "#64B0C9",
     BlueJaja: "#67AEC6",
+    blueChat: "#c2efff",
 
     BlueLight: '#e1f4fa',
     Blue: '#0000ff',

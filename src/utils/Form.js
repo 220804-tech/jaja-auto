@@ -28,10 +28,12 @@ export function alertPopUp(text) {
 export function regex(name, value) {
     try {
         if (name === "number") {
-            return (value.replace(/[^0-9]/gi, ''))
+            return parseInt(String(value).replace(/[^0-9]/gi, ''))
+        } else {
+            return 0
         }
     } catch (error) {
-
+        return 0
     }
 }
 

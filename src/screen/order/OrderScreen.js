@@ -32,16 +32,13 @@ export default function OrderScreen(props) {
     const [index, setIndex] = useState(props.route?.params?.index ? props.route.params.index : 0)
     const [count, setCount] = useState(0)
     const [complain, setComplain] = useState(0)
-    const [sent, setSent] = useState(0)
     const reduxUser = useSelector(state => state.user.user)
     const reduxnotifCount = useSelector(state => state.notification.notifCount)
 
-    const [navigate, setNavigate] = useState("Pesanan")
-
-    const [routes] = useState([
+    const [routes, setRoutes] = useState([
         { key: 'first', title: 'Belum dibayar', count: reduxUnpaid?.length ? reduxUnpaid?.length : 0 },
         { key: 'second', title: 'Diproses', count: reduxProcess?.length ? reduxProcess?.length : 0 + reduxWaitConfirm?.length ? reduxWaitConfirm?.length : 0 },
-        { key: 'third', title: 'Dikirim', count: sent },
+        { key: 'third', title: 'Dikirim', count: 0 },
         { key: 'fourth', title: 'Selesai', count: reduxCompleted?.length ? reduxCompleted?.length : 0 },
         { key: 'fifth', title: 'Dibatalkan', count: reduxFailed?.length ? reduxFailed?.length : 0 },
         { key: 'sixth', title: 'Pengembalian', count: complain },
@@ -58,10 +55,6 @@ export default function OrderScreen(props) {
 
     useFocusEffect(
         useCallback(() => {
-            // if (props?.route?.params?.index) {
-            //     console.log("🚀 ~ file: OrderScreen.js ~ line 62 ~ useCallback ~ props?.route?.params?.index", props?.route.params.index)
-            //     setIndex(props.route.params.index)
-            // }
             handleFetch2()
         }, [reduxOrder])
     );
@@ -69,17 +62,21 @@ export default function OrderScreen(props) {
     useFocusEffect(
         useCallback(() => {
             handleFetch()
+            if (reduxnotifCount.orders) {
+                // ini fungsi update jumlah notif order
+                database().ref(`/people/${reduxUser.uid}/notif`).update({ orders: 0 })
+            }
         }, [reduxRefresh]),
     );
 
     useEffect(() => {
         return () => {
             if (Platform.OS == 'ios') {
-                StatusBar.setBarStyle('light-content', true);	//<<--- add this
-                // StatusBar.setBackgroundColor(colors.BlueJaja, true)
+                StatusBar.setBarStyle('light-content', true)
             }
         }
     }, [reduxUser])
+
 
     const handleFetch = () => {
         try {
@@ -132,10 +129,7 @@ export default function OrderScreen(props) {
                     // ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
                 })
                 // console.log("🚀 ~ file: OrderScreen.js ~ line 127 ~ useEffect ~ reduxUser.orders", reduxUser)
-                if (reduxnotifCount.orders) {
-                    let homeCount = reduxnotifCount.home - reduxnotifCount.orders
-                    database().ref(`/people/${reduxUser.uid}/notif`).update({ home: homeCount && homeCount > 0 ? homeCount : 0, orders: 0 })
-                }
+
             }
         }
     }
@@ -155,8 +149,13 @@ export default function OrderScreen(props) {
                     }
                 })
             }
+            let newRoutes = routes
+            newRoutes[2].count = sentCount
+            newRoutes[5].count = complainCount
+
+
+            setRoutes(newRoutes)
             setComplain(complainCount)
-            setSent(sentCount)
             if (reduxRefresh) {
                 dispatch({ type: 'SET_ORDER_REFRESH', payload: false })
             }
@@ -176,11 +175,6 @@ export default function OrderScreen(props) {
                     renderScene={renderScene}
                     onIndexChange={(s) => {
                         setIndex(s)
-
-                        // if (reduxnotifCount.orders) {
-                        //     SE
-                        //     database().ref(`/people/${reduxUser.uid}/`).set({ notif: { home: reduxnotifCount.home, chat: reduxnotifCount.chat, orders: 0 } })
-                        // }
                     }}
                     initialLayout={initialLayout}
                     renderTabBar={props => (
@@ -191,8 +185,9 @@ export default function OrderScreen(props) {
                             bounces={true}
                             scrollEnabled={true}
                             style={{ backgroundColor: colors.White }}
-                            tabStyle={{ minHeight: 50, maxHeight: 75, flex: 0, width: AppleType === 'ipad' ? 180 : 120, borderBottomColor: colors.BlueJaja, borderRightColor: 'grey', justifyContent: 'center', alignSelf: 'center' }} // here
+                            tabStyle={{ minHeight: 50, maxHeight: Platform.OS === 'ios' ? 55 : 50, flex: 0, width: AppleType === 'ipad' ? 180 : 120, borderBottomColor: colors.BlueJaja, borderRightColor: 'grey', justifyContent: 'center', alignSelf: 'center' }} // here
                             renderLabel={({ route, focused, color }) => {
+                                // console.log("🚀 ~ file: OrderScreen.js ~ line 189 ~ OrderScreen ~ route", route.count)
                                 return (
                                     <View style={[styles.row_center, { width: AppleType === 'ipad' ? 160 : 100, height: '100%' }]}>
                                         <View style={[styles.row_center, { width: '100%', textAlign: 'center' }]}>
@@ -209,7 +204,7 @@ export default function OrderScreen(props) {
                     )}
                 />
                 :
-                <Login appbar={true} />
+                <Login appbar={true} orderPage={true} />
                 // <DefaultNotFound textHead="Ups.." textBody="sepertinya kamu belum login.." ilustration={require('../../assets/ilustrations/empty.png')} />
             }
         </SafeAreaView>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { View, Text, FlatList, Image, RefreshControl, ToastAndroid } from 'react-native'
-import { colors, styles, Wp, ServiceOrder, useNavigation, Os, DefaultNotFound, FastImage } from '../../export';
+import { colors, styles, Wp, ServiceOrder, useNavigation, Os, DefaultNotFound, FastImage, Utils } from '../../export';
 import { useSelector, useDispatch } from 'react-redux'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
@@ -23,28 +23,45 @@ export default function OrdersSent() {
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         getItem()
-        setTimeout(() => {
-            setRefreshing(false)
-        }, 3000);
     }, [complain]);
 
 
     const getItem = () => {
-        ServiceOrder.getSent(reduxAuth).then(resSent => {
-            console.log("🚀 ~ file: OrdersComplain.js ~ line 33 ~ ServiceOrder.getSent ~ resSent", resSent.items)
-            if (resSent && Object.keys(resSent).length) {
-                console.log("masuk sini kannnn")
-                dispatch({ type: 'SET_SENT', payload: resSent.items })
-                dispatch({ type: 'SET_ORDER_FILTER', payload: resSent.filters })
-                setTimeout(() => ToastAndroid.show("Data berhasil diperbahrui", ToastAndroid.SHORT, ToastAndroid.CENTER), 500);
-            } else {
-                handleSent()
-            }
-        }).catch(err => {
-            ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
-            handleSent()
-        })
+        try {
+            ServiceOrder.getSent(reduxAuth).then(resSent => {
+                console.log("🚀 ~ file: OrdersComplain.js ~ line 32 ~ ServiceOrder.getSent ~ resSent", resSent)
+                if (resSent) {
+                    Utils.alertPopUp('Data berhasil diupdate!')
+                    dispatch({ type: 'SET_SENT', payload: resSent.items })
+                    dispatch({ type: 'SET_ORDER_FILTER', payload: resSent.filters })
+                }
+                setRefreshing(false)
+            })
+        } catch (error) {
+            console.log("🚀 ~ file: OrdersSent.js ~ line 55 ~ getItem ~ error", error)
+            setRefreshing(false)
+
+        }
     }
+
+
+
+    // const getItem = () => {
+    //     ServiceOrder.getSent(reduxAuth).then(resSent => {
+    //         console.log("🚀 ~ file: OrdersComplain.js ~ line 33 ~ ServiceOrder.getSent ~ resSent", resSent.items)
+    //         if (resSent && Object.keys(resSent).length) {
+    //             console.log("masuk sini kannnn")
+    //             dispatch({ type: 'SET_SENT', payload: resSent.items })
+    //             dispatch({ type: 'SET_ORDER_FILTER', payload: resSent.filters })
+    //             setTimeout(() => ToastAndroid.show("Data berhasil diperbahrui", ToastAndroid.SHORT, ToastAndroid.CENTER), 500);
+    //         } else {
+    //             handleSent()
+    //         }
+    //     }).catch(err => {
+    //         ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+    //         handleSent()
+    //     })
+    // }
 
     const handleSent = () => {
         EncryptedStorage.getItem('sent').then(store => {

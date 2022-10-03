@@ -8,16 +8,16 @@ import Language from '../utils/Language';
 import FAIcon from 'react-native-vector-icons/FontAwesome5';
 import database from '@react-native-firebase/database';
 import { useDispatch, useSelector } from 'react-redux';
-import { Hp, ServiceOrder } from '../export';
+import { Hp, ServiceOrder, Utils } from '../export';
 import EncryptedStorage from 'react-native-encrypted-storage';
 // import { Language } from '../utils/language/Language' 
 
 const Tab = createBottomTabNavigator();
 export default function BottomRoute() {
-    const [notif, setNotif] = useState("")
-    const uid = useSelector(state => state.user.user.uid)
+    const uid = useSelector(state => state.user?.user?.uid)
     const location = useSelector(state => state.user.user.location)
     const reduxnotifCount = useSelector(state => state.notification.notifCount)
+    // console.log("🚀 ~ file: BottomRoute.js ~ line 21 ~ BottomRoute ~ reduxnotifCount", reduxnotifCount)
     const reduxAuth = useSelector(state => state.auth.auth)
     const reduxUserNotif = useSelector(state => state.user.badges)
     const dispatch = useDispatch()
@@ -36,23 +36,31 @@ export default function BottomRoute() {
                         let result = snapshot.val()
                         if (result && result.notif) {
                             database().ref("/friend/" + uid).on("value", function (snapshot) {
-                                var returnArray = [];
+                                let arrayFriend = [];
                                 snapshot.forEach(function (snap) {
                                     var item = snap.val();
                                     item.id = snap.key;
-                                    if (item.id !== uid && item.id !== "null") {
-                                        returnArray.push(item);
-                                        let countChat = 0
-                                        returnArray.map(item => countChat += item.amount)
-                                        result.notif.chat = countChat
+                                    if (item.id != uid && item.id != "null") {
+                                        arrayFriend.push(item)
                                     }
                                 });
-                                dispatch({ type: 'SET_NOTIF_COUNT', payload: result.notif })
-                                // database().ref(`/people/${uid}/notif`).update({ chat: result.notif.chat })
+                                let countChat = 0
+                                arrayFriend.map(item => {
+                                    if (item.amount) {
+                                        let number = Utils.regex('number', item.amount)
+                                        countChat += number
+                                    }
 
-                                setNotif(result.notif)
+                                })
+                                result.notif.chat = countChat
+                                console.log("🚀 ~ file: BottomRoute.js ~ line 73 ~ result.notif", result.notif)
+
+                                // dispatch ini setstate global jumlah notif
+                                dispatch({ type: 'SET_NOTIF_COUNT', payload: result.notif })
+
+                                // dibawah ini set ulang jumlah notif di chat berdasar jumlah dari table friend dan jumlah notif per friend listchat
+                                database().ref(`/people/${uid}/notif`).update({ chat: countChat })
                             });
-                            database().ref(`/people/${uid}/`).update({ notif: { home: result.notif.home, chat: result.notif.chat, orders: result.notif.orders } })
                         }
                         if (result && result.notif && result.notif.orders != reduxnotifCount.orders) {
                             getOrders()
@@ -172,9 +180,9 @@ export default function BottomRoute() {
                         return (
                             <View style={[style.column, style.mx]}>
                                 <FAIcon name="rocket" size={size} color={focused ? colors.BlueJaja : colors.Silver} style={{ marginBottom: '-2%' }} />
-                                {parseInt(reduxUserNotif.totalNotifUnread) ?
+                                {/* {parseInt(reduxUserNotif.totalNotifUnread) ?
                                     <View style={style.countNotif}><Text style={[style.textNotif, { marginBottom: '-1%' }]}>{parseInt(reduxUserNotif.totalNotifUnread) > 99 ? "99+" : parseInt(reduxUserNotif.totalNotifUnread)}</Text></View> : null
-                                }
+                                } */}
                             </View>
                         )
                     }

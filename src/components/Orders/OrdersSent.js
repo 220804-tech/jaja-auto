@@ -35,35 +35,28 @@ export default function OrdersSent() {
         useCallback(() => {
             setCount(count + 1)
             setComplain(false)
-            getItem()
+            // getItem()
         }, []),
     );
 
 
     const getItem = () => {
-        setRefreshing(true)
-        ServiceOrder.getSent(reduxAuth).then(resSent => {
-            setRefreshing(false)
-            if (resSent && Object.keys(resSent).length) {
-                dispatch({ type: 'SET_SENT', payload: resSent.items })
-                dispatch({ type: 'SET_ORDER_FILTER', payload: resSent.filters })
-                setTimeout(() => Utils.alertPopUp("Data berhasil diperbahrui"), 500);
-                resSent.items.filter(res => {
-                    if (res.complain) {
-                        setComplain(true)
-                    }
-                })
-            } else {
+        try {
+            ServiceOrder.getSent(reduxAuth).then(resSent => {
+                if (resSent) {
+                    Utils.alertPopUp('Data berhasil diupdate!')
+                    dispatch({ type: 'SET_SENT', payload: resSent.items })
+                    dispatch({ type: 'SET_ORDER_FILTER', payload: resSent.filters })
+                }
                 setRefreshing(false)
-                handleSent()
-            }
-
-        }).catch(err => {
+            })
+        } catch (error) {
+            console.log("🚀 ~ file: OrdersSent.js ~ line 55 ~ getItem ~ error", error)
             setRefreshing(false)
-            Utils.alertPopUp(String(err));
-            handleSent()
-        })
+
+        }
     }
+
 
     const handleSent = () => {
         EncryptedStorage.getItem('sent').then(store => {
@@ -137,25 +130,32 @@ export default function OrdersSent() {
                                             </View>
                                         </View>
                                     </View>
-                                    <TouchableOpacity style={[styles.row_between_center, styles.mt_5, styles.px_2]} onPress={() => handleTracking(item)}>
-                                        <View style={[styles.row, { width: Wp('50%') }]}>
-                                            <Image style={{ width: 14, height: 14, tintColor: colors.YellowJaja, marginRight: '2%' }} source={require('../../assets/icons/google-maps.png')} />
-                                            <Text numberOfLines={1} style={[styles.font_12, { color: colors.YellowJaja }]}>Paket telah dikirim</Text>
-                                        </View>
-                                    </TouchableOpacity>
+                                    <View style={[styles.row_between_center, styles.mt_5, styles.px_2]}>
+
+
+                                        <TouchableOpacity style={[styles.row_between_center, styles.mt_5, styles.px_2]} onPress={() => handleTracking(item)}>
+                                            <View style={[styles.row, { width: Wp('50%') }]}>
+                                                <Image style={{ width: 14, height: 14, tintColor: colors.YellowJaja, marginRight: '2%' }} source={require('../../assets/icons/google-maps.png')} />
+                                                <Text numberOfLines={1} style={[styles.font_12, { color: colors.YellowJaja }]}>Paket telah dikirim</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                        <Button onPress={() => handleOrderDetails(item)} color={colors.BlueJaja} mode="contained" contentStyle={{ width: Wp('25%') }} style={{ width: Wp('25%'), alignSelf: 'flex-end', marginRight: '2%' }} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
+                                            Rincian
+                                        </Button>
+                                    </View>
                                     <View style={[styles.row_between_center, styles.mt_5, styles.px_2]}>
                                         <View style={[styles.row, { width: Wp('40%') }]}>
+
                                         </View>
                                         <>
-                                            {!String(item.trackingId).includes('DIGITALVOUCHER') ?
+                                            {/* {!String(item.trackingId).includes('DIGITALVOUCHER') ?
 
                                                 <Button onPress={() => handleTracking(item)} color={colors.YellowJaja} mode="contained" contentStyle={{ width: Wp('25%') }} style={{ width: Wp('25%'), alignSelf: 'flex-end' }} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
                                                     Lacak
                                                 </Button>
                                                 : null}
-                                            <Button onPress={() => handleOrderDetails(item)} color={colors.BlueJaja} mode="contained" contentStyle={{ width: Wp('25%') }} style={{ width: Wp('25%'), alignSelf: 'flex-end', marginRight: '2%' }} labelStyle={[styles.font_12, styles.T_semi_bold, { color: colors.White }]} uppercase={false} >
-                                                Rincian
-                                            </Button>
+                                                 */}
+
                                         </>
                                     </View>
                                     {/* </TouchableOpacity> */}

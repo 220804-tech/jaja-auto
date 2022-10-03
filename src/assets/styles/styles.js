@@ -160,7 +160,7 @@ export const styles = StyleSheet.create({
     priceBefore: { fontSize: 12, fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale, textDecorationLine: 'line-through', },
     priceAfter: { fontSize: 14, fontFamily: 'SignikaNegative-Regular', color: colors.RedFlashsale },
 
-    appBar: { zIndex: 1000, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', backgroundColor: '#64B0C9', height: Platform.OS === 'ios' ? Hp('5.5%') : Hp('7%'), width: Wp('100%'), color: colors.siplahDefault, paddingHorizontal: '4%', paddingBottom: '4%' },
+    appBar: { zIndex: 1000, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', backgroundColor: '#64B0C9', height: Platform.OS === 'ios' ? Hp('5.5%') : Hp('7%'), width: Wp('100%'), color: colors.siplahDefault, paddingHorizontal: '4%', paddingBottom: '3.5%' },
     appBar2: { zIndex: 1000, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#64B0C9', height: Platform.OS === 'ios' ? Hp('5.5%') : Hp('7%'), width: Wp('100%'), color: colors.siplahDefault, paddingHorizontal: '4%' },
 
     appBarText: { color: 'white', fontSize: 16, fontFamily: 'SignikaNegative-SemiBold', marginBottom: Platform.OS === 'android' ? '2%' : 0 },

@@ -13,13 +13,6 @@ export default function CardProductComponent(props) {
     const reduxStore = useSelector(state => state.store.store)
 
 
-
-    // useFocusEffect(
-    //     useCallback(() => {
-
-    //     }, []),
-    // );
-
     const handleShowDetail = (item, status) => {
         let error = true;
         try {
