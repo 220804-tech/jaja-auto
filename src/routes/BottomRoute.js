@@ -53,7 +53,6 @@ export default function BottomRoute() {
 
                                 })
                                 result.notif.chat = countChat
-                                console.log("🚀 ~ file: BottomRoute.js ~ line 73 ~ result.notif", result.notif)
 
                                 // dispatch ini setstate global jumlah notif
                                 dispatch({ type: 'SET_NOTIF_COUNT', payload: result.notif })

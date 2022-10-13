@@ -123,9 +123,11 @@ export default function ChatScreen({ route }) {
             if (product && Object.keys(product).length && selectedProduct != null) {
                 setSelectedProduct(product)
             }
+
             if (order && Object.keys(order).length && selectedOrder !== null) {
                 setselectedOrder(order)
             }
+
             firebaseDatabase()
                 .ref("/friend/" + data.id + reduxUser.uid + '/amount')
                 .once('value')
@@ -142,6 +144,7 @@ export default function ChatScreen({ route }) {
                 .once('value')
                 .then(snapshot => setTarget(String(snapshot.val())))
             setTimeout(() => setLoading(false), 1000);
+
         } catch (error) {
             console.log("🚀 ~ file: ChatScreen.js ~ line 119 ~ handleFirebase2 ~ error", error)
         }

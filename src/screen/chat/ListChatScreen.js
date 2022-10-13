@@ -12,12 +12,8 @@ export default function ListChat() {
     const reduxUser = useSelector(state => state.user.user)
     const reduxAuth = useSelector(state => state.auth.auth)
 
-    const [phone, setPhone] = useState("");
     const [users, setUsers] = useState([]);
-    const [dataProfile, setDataProfile] = useState({});
     const [refreshing, setRefreshing] = useState(false);
-    const reduxnotifCount = useSelector(state => state.notification.notifCount)
-    const dispatch = useDispatch()
 
     useEffect(() => {
         loadList()
@@ -26,17 +22,11 @@ export default function ListChat() {
         }
     }, [reduxUser]);
 
-    useFocusEffect(
-        useCallback(() => {
-        }, []),
-    );
-
-
-    const convertTimes = (timestamp) => {
-        const d = new Date(timestamp);
-        var date = d.getHours() + ":" + d.getMinutes() + " " + d.getDate()
-        return date
-    }
+    // const convertTimes = (timestamp) => {
+    //     const d = new Date(timestamp);
+    //     var date = d.getHours() + ":" + d.getMinutes() + " " + d.getDate()
+    //     return date
+    // }
 
     const loadList = () => {
         if (reduxUser && Object.keys(reduxUser).length) {
@@ -64,27 +54,16 @@ export default function ListChat() {
             });
         }
     }
+
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         loadList()
-        // readChat()
         setTimeout(() => {
             setRefreshing(false)
         }, 2000);
 
     }, []);
 
-
-    const readChat = () => {
-        //     database().ref(`/people/${reduxUser.uid}/notif/`).update({ chat: 0 }).then("value", function (snap) {
-        //         var item = snap.val();
-        //         error = false
-
-        //         if (item != null && item.photo != null) {
-        //             setesellerImage(item.photo)
-        //         }
-        //     })
-    }
     const handleChatDetail = (item) => {
         console.log("🚀 ~ file: ListChatScreen.js ~ line 84 ~ handleChatDetail ~ item", item)
         try {
