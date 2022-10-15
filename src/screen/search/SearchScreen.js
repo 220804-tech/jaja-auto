@@ -50,8 +50,9 @@ export default function SearchScreen(props) {
 
     }
 
-    const handleSearch = (text) => {
+    const handleSearch = (value) => {
         try {
+            let text = Utils.handleLanguange(value)
             if (text) {
                 var myHeaders = new Headers();
                 myHeaders.append("Cookie", "ci_session=bk461otlv7le6rfqes5eim0h9cf99n3u");

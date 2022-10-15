@@ -109,10 +109,10 @@ export default function RequestComplain() {
                             Firebase.notifChat(item.token, { body: 'Komplain kamu telah direspon penjual.', title: 'Komplain Pesanan' })
                             dispatch({ type: 'SET_COMPLAIN_UPDATE', payload: true })
                         } else {
-                            Utils.handleErrorResponse(result, 'Error with status code : 12003')
+                            Utils.handleErrorResponse(result, 'Error with status code : 1200300')
                         }
                     })
-                    .catch(error => Utils.handleError(error, "Error with status code : 12001"));
+                    .catch(error => Utils.handleError(error, "Error with status code : 1200100"));
             }
             // firebaseDatabase().ref(`/people/${orderUid}notif`).update({ order: realNotif.orders + 1 });
         }
