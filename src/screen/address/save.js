@@ -32,7 +32,7 @@ export default function index(props) {
                 setStatus(props.route.params.data)
             }
         } catch (error) {
-
+            console.log(error.message)
         }
     }, [props])
 
@@ -44,7 +44,7 @@ export default function index(props) {
                     navigation.navigate(Login)
                 }
             } catch (error) {
-                console.log("🚀 ~ file: AddressScreen.js ~ line 59 ~ useEffect ~ error", error)
+                console.log("🚀 ~ file: AddressScreen.js ~ line 59 ~ useEffect ~ error", error.message)
             }
             getData()
         }, [count]),
@@ -69,7 +69,8 @@ export default function index(props) {
                         dispatch({ type: 'SET_USER', payload: JSON.parse(resp) })
                     }
                 }
-            }).catch(async err => {
+            }).catch(async error => {
+                console.log(error.message)
                 let resp = await EncryptedStorage.getItem('user')
                 if (resp) {
                     dispatch({ type: 'SET_USER', payload: JSON.parse(resp) })
@@ -77,6 +78,7 @@ export default function index(props) {
             })
 
         } catch (error) {
+            console.log(error.message)
 
         }
     }
@@ -106,6 +108,8 @@ export default function index(props) {
             setcount(count + 1)
         } catch (error) {
             Utils.alertPopUp(String(error) + '\n' + 'Error with status code : 129872')
+            console.log(error.message)
+
         }
         // setAddress(arr)
 
@@ -168,6 +172,8 @@ export default function index(props) {
                 }
             })
             .catch(error => {
+                console.log(error.message)
+
                 setLoading(false)
                 Alert.alert(
                     "Jaja.id",

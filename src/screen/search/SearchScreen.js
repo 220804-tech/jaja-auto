@@ -45,7 +45,7 @@ export default function SearchScreen(props) {
                 }
             })
         } catch (error) {
-            console.log("🚀 ~ file: SearchScreen.js ~ line 33 ~ getItem ~ error", error)
+            console.log("🚀 ~ file: SearchScreen.js ~ line 33 ~ getItem ~ error", error.message)
         }
 
     }
@@ -82,7 +82,7 @@ export default function SearchScreen(props) {
                             }
                             setCount(count + 1)
                         }
-                    }).catch(error => console.log('error', error));
+                    }).catch(error => console.log('error', error.message));
             } else {
                 console.log("test")
                 setproductSearch([])
@@ -90,7 +90,7 @@ export default function SearchScreen(props) {
                 setCount(0)
             }
         } catch (error) {
-            Utils.handleError(error, 'Error with status code : 21091')
+            Utils.handleError(error.message, 'Error with status code : 21091')
         }
     }
 
@@ -152,7 +152,7 @@ export default function SearchScreen(props) {
                 }
             })
         } catch (error) {
-            Utils.handleError(error, 'Error with status code : 21093')
+            Utils.handleError(error.message, 'Error with status code : 21093')
 
         }
     }
@@ -201,12 +201,12 @@ export default function SearchScreen(props) {
                         dispatch({ type: 'SET_SEARCH_LOADING', payload: false })
                     } catch (error) {
                         Utils.handleError(res, "Error with status code : 120501")
-                        console.log("🚀 ~ file: SearchScreen.js ~ line 201 ~ handleFetch ~ error", error)
+                        console.log("🚀 ~ file: SearchScreen.js ~ line 201 ~ handleFetch ~ error", error.message)
                     }
                 })
                 .catch(error => {
                     dispatch({ type: 'SET_SEARCH_LOADING', payload: false })
-                    Utils.handleError(error, "Error with status code : 12050")
+                    Utils.handleError(error.message, "Error with status code : 12050")
                 });
             dispatch({ type: 'SET_SLUG', payload: String(text).toLocaleLowerCase() })
             setTimeout(() => {
@@ -223,7 +223,7 @@ export default function SearchScreen(props) {
             }, 7000);
 
         } catch (error) {
-            Utils.handleError(error, 'Error with status code : 21092')
+            Utils.handleError(error.message, 'Error with status code : 21092')
 
         }
     }
@@ -253,14 +253,14 @@ export default function SearchScreen(props) {
                         }
                     })
                     .catch(error => {
-                        Utils.handleError(error, "Error with status code : 120503")
+                        Utils.handleError(error.message, "Error with status code : 120503")
                     });
             } else {
                 Utils.alertPopUp("Periksa kembali koneksi internet anda!")
             }
 
         } catch (error) {
-            Utils.handleError(error, 'Error with status code : 210929')
+            Utils.handleError(error.message, 'Error with status code : 210929')
         }
 
 
@@ -281,7 +281,7 @@ export default function SearchScreen(props) {
             navigation.navigate('Store', { slug: item.slug })
             ServiceStore.getStoreNew(item.slug, dispatch, reduxAuth)
         } catch (error) {
-            console.log("🚀 ~ file: SearchScreen.js ~ line 283 ~ handleSelectedToko ~ error", error)
+            console.log("🚀 ~ file: SearchScreen.js ~ line 283 ~ handleSelectedToko ~ error", error.message)
         }
     }
 

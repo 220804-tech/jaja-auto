@@ -7,7 +7,7 @@ import CheckBox from "@react-native-community/checkbox";
 import { useDispatch, useSelector } from "react-redux";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
-export default function checkoutScreen(props) {
+export default function CheckoutScreen(props) {
     let isNonPhysical = props?.route?.params?.isNonPhysical
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -203,8 +203,13 @@ export default function checkoutScreen(props) {
 
     const handleVoucher = (val, index) => {
         try {
+            console.log('valhandlevoucher', JSON.stringify(val))
+            //alert(JSON.stringify(val));
+            //alert(voucherOpen);
+
             if (voucherOpen == "store") {
                 if (val.isClaimed) {
+
                     actionSheetVoucher.current?.setModalVisible();
                     setTimeout(() => setloadAs(true), 100);
                     var myHeaders = new Headers();
@@ -220,10 +225,14 @@ export default function checkoutScreen(props) {
                         body: raw,
                         redirect: "follow",
                     };
-                    fetch("https://jaja.id/backend/checkout/selectedVoucherStore", requestOptions)
+                    var url = "https://jaja.id/backend/checkout/selectedVoucherStore";
+                    console.log('urlhandlevoucher', url);
+                    fetch(url, requestOptions)
                         .then((response) => response.text())
                         .then((res) => {
                             console.log("🚀 ~ file: CheckoutScreen.js ~ line 214 ~ .then ~ res", res)
+                            //console.log('handlevoucher', JSON.stringify(res));
+
                             try {
                                 let result = JSON.parse(res);
                                 if (result.status.code === 200) {
@@ -240,7 +249,7 @@ export default function checkoutScreen(props) {
                             } catch (error) {
                                 Utils.handleErrorResponse(
                                     JSON.stringify(
-                                        res + "\n\n" + error,
+                                        res + "\n\n" + error.message,
                                         "Error with status code : 12061"
                                     )
                                 );
@@ -250,7 +259,7 @@ export default function checkoutScreen(props) {
                         .catch((error) => {
                             setloadAs(false);
                             setTimeout(
-                                () => Utils.handleError(error, "Error with status code : 12062"),
+                                () => Utils.handleError(error.message, "Error with status code : 12062"),
                                 100
                             );
                         });
@@ -282,6 +291,7 @@ export default function checkoutScreen(props) {
                             console.log("🚀 ~ file: CheckoutScreen.js ~ line 269 ~ .then ~ res", res)
                             try {
                                 let result = JSON.parse(res);
+
                                 setTimeout(() => setLoad(false), 500);
                                 if (result.status.code === 200) {
                                     if (index === "khusus") {
@@ -799,11 +809,21 @@ export default function checkoutScreen(props) {
 
             // dibawah ini ada parameter cartStatus itu dikirim dari redux isinya 1 atau 0, kalau 1 berarti sedang checkout produk dengan kategori gift
             // dibawah ini ada parameter isisNonPhysical itu dikirim dari redux (dari halaman detail produk bukan dari trolley ), kalau value true berarti sedang checkout produk dengan kategori digital voucher
-            await fetch(`https://jaja.id/backend/checkout?isCoin=${coin ? 1 : 0}&fromCart=1&is_gift=${cartStatus === 1 ? 1 : 0}&is_non_physical=${isNonPhysical ? isNonPhysical ? 1 : 0 : 0}`, requestOptions)
+
+            //var urlhandleGetCheckout = `https://jaja.id/backend/checkout?isCoin=${coin ? 1 : 0}&fromCart=0&is_non_physical=${isNonPhysical ? isNonPhysical ? 1 : 0 : 0}`;
+            var urlhandleGetCheckout = `https://jaja.id/backend/checkout?isCoin=${coin ? 1 : 0}&fromCart=0&is_gift=${cartStatus === 1 ? 1 : 0}&is_non_physical=${isNonPhysical ? isNonPhysical ? 1 : 0 : 0}`;
+            //var urlhandleGetCheckout = 'https://jaja.id/backend/checkout?isCoin=0&fromCart=0&is_non_physical=0';
+
+            console.log('urlhandleGetCheckout', urlhandleGetCheckout);
+            console.log('urlhandleGetCheckoutcoint', coin);
+            console.log('urlhandleGetCheckoutAuthorization', reduxAuth);
+
+            await fetch(urlhandleGetCheckout, requestOptions)
                 .then((response) => response.text())
                 .then((res) => {
                     try {
                         let result = JSON.parse(res);
+                        console.log('reshandleGetCheckout', JSON.stringify(result));
                         if (result.status.code == 200) {
                             dispatch({ type: "SET_CHECKOUT", payload: result.data });
                             setUseCoin(coin);
@@ -819,13 +839,15 @@ export default function checkoutScreen(props) {
                         }
                     } catch (error) {
                         Utils.alertPopUp(JSON.stringify(res) + " : 12157\n\n" + res);
+                        console.log(error.message)
+
                     }
                 })
                 .catch((error) =>
-                    Utils.handleError(error, "Error with status code : 12158")
+                    Utils.handleError(error.message, "Error with status code : 12158")
                 );
         } catch (error) {
-            console.log("🚀 ~ file: CheckoutScreen.js ~ line 867 ~ handleGetCheckout ~ error", error)
+            console.log("🚀 ~ file: CheckoutScreen.js ~ line 867 ~ handleGetCheckout ~ error", error.message)
         }
     };
 
@@ -911,6 +933,8 @@ export default function checkoutScreen(props) {
                     })
                     .catch((error) => {
                         Utils.handleError(error);
+                        console.log(error.message)
+
                     });
             } else {
                 Utils.alertPopUp("Kode voucher tidak ditemukan!");
@@ -1366,6 +1390,14 @@ export default function checkoutScreen(props) {
                                                     setvoucherOpen("store");
                                                     setVouchers(item.voucherStore);
                                                     setindexStore(idxStore);
+
+
+
+                                                    setTimeout(() => {
+                                                        setVouchers(item.voucherStore);
+                                                        setvoucherOpen("store");
+                                                    }, 200);
+
                                                 }}
                                                 icon="arrow-right"
                                                 color={colors.RedFlashsale}

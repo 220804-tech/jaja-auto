@@ -32,7 +32,7 @@ export default function ReviewScreen(props) {
                     dispatch({ type: 'SET_REVIEW_PRODUCT', payload: result.data.items })
                 }
             })
-            .catch(error => Utils.handleError(error, 'Error with status codde : 12041'));
+            .catch(error => Utils.handleError(error.message, 'Error with status codde : 12041'));
     }
 
     return (

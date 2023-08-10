@@ -1,88 +1,90 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react'
-import { SafeAreaView, View, Text, FlatList, Image, TouchableOpacity, StyleSheet, StatusBar, Animated, Platform, Dimensions, LogBox, ToastAndroid, RefreshControl, Alert, RFValue, Modal } from 'react-native'
-import ReactNativeParallaxHeader from 'react-native-parallax-header';
-import Swiper from 'react-native-swiper'
-import { Button, Colors } from 'react-native-paper'
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-import { FilterLocation, styles, colors, useNavigation, Hp, Wp, Ps, Loading, ServiceCart, ServiceUser, useFocusEffect, ServiceStore, ServiceProduct, FastImage, RecomandedHobby, Countdown, Utils, HeaderTitleHome } from '../../export'
+import React, { useEffect, useState, useCallback, useRef } from "react";
+import { SafeAreaView, View, Text, TextInput, FlatList, Image, TouchableOpacity, StyleSheet, StatusBar, Animated, Platform, Dimensions, LogBox, ToastAndroid, RefreshControl, Alert, Modal } from "react-native";
+import ReactNativeParallaxHeader from "react-native-parallax-header";
+import Swiper from "react-native-swiper";
+import { Button, TouchableRipple } from "react-native-paper";
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+import { FilterLocation, styles, colors, useNavigation, Hp, Wp, Ps, Loading, ServiceCart, ServiceUser, useFocusEffect, ServiceStore, ServiceProduct, FastImage, RecomandedHobby, Countdown, Utils, RFValue, HeaderTitleHome, AppleType, } from "../../export";
 const IS_IPHONE_X = SCREEN_HEIGHT === 812 || SCREEN_HEIGHT === 896;
-const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 44 : 20) : 0;
-const HEADER_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
+const STATUS_BAR_HEIGHT = Platform.OS === "ios" ? (IS_IPHONE_X ? 44 : 20) : 0;
+const HEADER_HEIGHT = Platform.OS === "ios" ? (IS_IPHONE_X ? 88 : 64) : 64;
 const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
-const { height: hg } = Dimensions.get('screen')
-import Share from 'react-native-share';
-import dynamicLinks from '@react-native-firebase/dynamic-links';
+const { height: hg } = Dimensions.get("screen");
+import Share from "react-native-share";
+import dynamicLinks from "@react-native-firebase/dynamic-links";
 import { useDispatch, useSelector } from "react-redux";
-import StarRating from 'react-native-star-rating';
-import ImgToBase64 from 'react-native-image-base64';
+import StarRating from "react-native-star-rating";
+import ImgToBase64 from "react-native-image-base64";
 import ViewShot from "react-native-view-shot";
-import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
-import LinearGradient from 'react-native-linear-gradient';
-import { useAndroidBackHandler } from 'react-navigation-backhandler';
-LogBox.ignoreAllLogs()
+import ShimmerPlaceholder from "react-native-shimmer-placeholder";
+import LinearGradient from "react-native-linear-gradient";
+import { useAndroidBackHandler } from "react-navigation-backhandler";
+import Icon from "react-native-vector-icons/Ionicons";
+
+LogBox.ignoreAllLogs();
 
 export default function ProductScreen(props) {
-    const navigation = useNavigation()
+    const navigation = useNavigation();
     const viewShotRef = useRef(null);
-    const reduxSearch = useSelector(state => state.search)
-    const reduxProduct = useSelector(state => state.product.productDetail)
-    const reduxLoad = useSelector(state => state.product.productLoad)
-    const reduxTemporary = useSelector(state => state.product.productTemporary)
-    const filterLocation = useSelector(state => state.product.filterLocation)
-    const loadStore = useSelector(state => state.store.loadStore)
+    const reduxSearch = useSelector((state) => state.search);
+    const reduxProduct = useSelector((state) => state.product.productDetail);
+    const reduxLoad = useSelector((state) => state.product.productLoad);
+    const reduxTemporary = useSelector((state) => state.product.productTemporary);
+    const filterLocation = useSelector((state) => state.product.filterLocation);
+    const loadStore = useSelector((state) => state.store.loadStore);
 
+    const reduxUser = useSelector((state) => state.user);
+    const reduxAuth = useSelector((state) => state.auth.auth);
+    const reduxStore = useSelector((state) => state.store.store);
+    const reduxLoadmore = useSelector((state) => state.dashboard.loadmore);
+    const showFlashsale = useSelector((state) => state.product.flashsale);
 
+    const slug = useSelector((state) => state.search.slug);
 
-    const reduxUser = useSelector(state => state.user)
-    const reduxAuth = useSelector(state => state.auth.auth)
-    const reduxStore = useSelector(state => state.store.store)
-    const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
-    const showFlashsale = useSelector(state => state.product.flashsale)
+    const dispatch = useDispatch();
 
-    const slug = useSelector(state => state.search.slug)
+    const [scrollY, setscrollY] = useState(new Animated.Value(0));
+    const [modal, setmodal] = useState(false);
 
-    const dispatch = useDispatch()
+    const [refreshing, setRefreshing] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [like, setLike] = useState(false);
+    const [alert, setalert] = useState("");
+    const [idProduct, setidProduct] = useState("");
+    const [translucent, settranslucent] = useState(true);
+    const [bgBar, setbgBar] = useState("transparent");
 
-    const [scrollY, setscrollY] = useState(new Animated.Value(0))
-    const [modal, setmodal] = useState(false)
+    const [deskripsiLenght, setdeskripsiLenght] = useState(200);
 
-    const [refreshing, setRefreshing] = useState(false)
-    const [loading, setLoading] = useState(true)
-    const [like, setLike] = useState(false)
-    const [alert, setalert] = useState("")
-    const [idProduct, setidProduct] = useState("")
-    const [translucent, settranslucent] = useState(true)
-    const [bgBar, setbgBar] = useState('transparent')
+    const [variasiSelected, setvariasiSelected] = useState({});
+    const [variasiPressed, setvariasiPressed] = useState("");
 
+    const [productId, setproductId] = useState("");
+    const [flashsale, setFlashsale] = useState(false);
+    const [flashsaleData, setFlashsaleData] = useState({});
+    const [variantId, setvariantId] = useState("");
+    const [lelangId, setlelangId] = useState("");
+    const [qty, setqty] = useState(1);
+    const [seller, setSeller] = useState("");
+    const [disableCart, setdisableCart] = useState(false);
+    const [link, setlink] = useState("");
+    const [hidden, sethidden] = useState(false);
+    const [reportModal, setreportModal] = useState(false);
+    const [reason, setreason] = useState("");
 
-    const [deskripsiLenght, setdeskripsiLenght] = useState(200)
-
-    const [variasiSelected, setvariasiSelected] = useState({})
-    const [variasiPressed, setvariasiPressed] = useState("")
-
-    const [productId, setproductId] = useState("")
-    const [flashsale, setFlashsale] = useState(false)
-    const [flashsaleData, setFlashsaleData] = useState({})
-    const [variantId, setvariantId] = useState("")
-    const [lelangId, setlelangId] = useState("")
-    const [qty, setqty] = useState(1)
-    const [seller, setSeller] = useState("")
-    const [disableCart, setdisableCart] = useState(false)
-    const [link, setlink] = useState('')
     useAndroidBackHandler(() => {
-        settranslucent(false)
-        setbgBar(colors.BlueJaja)
+        settranslucent(false);
+        setbgBar(colors.BlueJaja);
+        sethidden(false);
         return false;
     });
 
     const onRefresh = useCallback(() => {
         if (!reduxLoad && !reduxProduct?.id) {
-            getItem(reduxProduct.slug)
-            Utils.alertPopUp('Refreshing..')
+            getItem(reduxProduct.slug);
+            Utils.alertPopUp("Refreshing..");
         }
-
     }, []);
-
 
     useFocusEffect(
         useCallback(() => {
@@ -91,27 +93,64 @@ export default function ProductScreen(props) {
             }, 1000);
         }, []),
     );
-
     useEffect(() => {
         if (reduxProduct?.slug) {
-            dynamicLink()
+            dynamicLink();
+            StatusBar.setBarStyle("light-content")
+            StatusBar.setBackgroundColor(colors.White)
         }
-    }, [reduxProduct?.slug])
+    }, [reduxProduct?.slug]);
 
     useEffect(() => {
         return () => {
-            setmodal(false)
-            if (props?.route?.params && reduxProduct?.slug) {
+            setmodal(false);
+            if (props.route.params && reduxProduct.slug) {
                 if (showFlashsale) {
-                    setFlashsale(true)
+                    setFlashsale(true);
                 } else {
-                    setFlashsale(false)
+                    setFlashsale(false);
                 }
             }
-        }
-    }, [])
+        };
+    }, []);
 
-
+    // const dynamicLink = async () => {
+    //   console.log("masuk sini tol");
+    //   console.log(
+    //     "🚀 ~ file: ProductScreen.js ~ line 229 ~ constlink_URL=awaitdynamicLinks ~ reduxProduct.slug",
+    //     reduxProduct.slug
+    //   );
+    //   try {
+    //     const link_URL = await dynamicLinks().buildShortLink({
+    //       link: `https://jajaid.page.link/product?slug=${reduxProduct.slug}`,
+    //       domainUriPrefix: "https://jajaid.page.link",
+    //       ios: {
+    //         bundleId: "com.jaja.customer",
+    //         appStoreId: "1547981332",
+    //         fallbackUrl:
+    //           "https://apps.apple.com/id/app/jaja-id-marketplace-hobbies/id1547981332?l=id",
+    //       },
+    //       android: {
+    //         packageName: "com.jajaidbuyer",
+    //         fallbackUrl:
+    //           "https://play.google.com/store/apps/details?id=com.jajaidbuyer",
+    //       },
+    //       navigation: {
+    //         forcedRedirectEnabled: true,
+    //       },
+    //     });
+    //     console.log(
+    //       "🚀 ~ file: ProductScreen.js ~ line 127 ~ constlink_URL=awaitdynamicLinks ~ link_URL",
+    //       link_URL
+    //     );
+    //     setlink(link_URL);
+    //   } catch (error) {
+    //     console.log(
+    //       "🚀 ~ file: ProductScreen.js ~ line 138 ~ dynamicLink ~ error",
+    //       error
+    //     );
+    //   }
+    // };
     const dynamicLink = async () => {
         try {
             const link_URL = await dynamicLinks().buildShortLink({
@@ -130,6 +169,7 @@ export default function ProductScreen(props) {
                     forcedRedirectEnabled: true,
                 }
             });
+            console.log("🚀 ~ file: ProductScreen.js ~ line 127 ~ constlink_URL=awaitdynamicLinks ~ link_URL", link_URL)
             setlink(link_URL)
         } catch (error) {
             console.log("🚀 ~ file: ProductScreen.js ~ line 138 ~ dynamicLink ~ error", error)
@@ -139,170 +179,161 @@ export default function ProductScreen(props) {
     const handleProduct = () => {
         try {
             if (!!reduxProduct?.id) {
-                handleVariasi(reduxProduct.variant)
-                setRefreshing(false)
-                handleFlashsale(reduxProduct.flashsaleData, reduxProduct.statusProduk)
-                setLike(reduxProduct.isWishlist)
-                setidProduct(reduxProduct.id)
-                if (!reduxProduct.stock && reduxProduct.stock === '0') {
-                    setdisableCart(true)
+                handleVariasi(reduxProduct.variant);
+                setRefreshing(false);
+                handleFlashsale(reduxProduct.flashsaleData, reduxProduct.statusProduk);
+                setLike(reduxProduct.isWishlist);
+                setidProduct(reduxProduct.id);
+                if (!reduxProduct.stock && reduxProduct.stock === "0") {
+                    setdisableCart(true);
                 }
-                let dataSeller = reduxProduct.store
-                dataSeller.chat = reduxUser.user.uid + dataSeller.uid
-                dataSeller.id = dataSeller.uid
-                setSeller(dataSeller)
-                setLike(reduxProduct.isWishlist)
+                let dataSeller = reduxProduct.store;
+                dataSeller.chat = reduxUser.user.uid + dataSeller.uid;
+                dataSeller.id = dataSeller.uid;
+                setSeller(dataSeller);
+                setLike(reduxProduct.isWishlist);
             }
-
         } catch (error) {
-            console.log("🚀 ~ file: ProductScreen.js ~ line 159 ~ useCallback ~ error", error)
+            console.log("🚀 ~ file: ProductScreen.js ~ line 159 ~ useCallback ~ error", error);
         }
-    }
-    useEffect(() => {
-        handleProduct()
-    }, [reduxProduct?.id])
+    };
 
     useEffect(() => {
-        try {
-            if (filterLocation) {
-                if (reduxAuth && reduxProduct?.sellerTerdekat?.length && reduxUser?.user?.id && reduxProduct?.category?.slug) {
-                    FilterLocation(reduxProduct.sellerTerdekat, reduxUser.user.location, reduxProduct.category.slug, reduxAuth, dispatch)
-                }
+        handleProduct();
+    }, [reduxProduct?.id]);
 
+    useEffect(() => {
+        if (filterLocation) {
+            if (
+                reduxAuth &&
+                reduxProduct?.sellerTerdekat?.length &&
+                reduxUser?.user?.id &&
+                reduxProduct?.category?.slug
+            ) {
+                FilterLocation(
+                    reduxProduct.sellerTerdekat,
+                    reduxUser.user.location,
+                    reduxProduct.category.slug,
+                    reduxAuth,
+                    dispatch
+                );
             }
-        } catch (error) {
-            console.log("🚀 ~ file: ProductScreen.js ~ line 177 ~ useEffect ~ error", error)
         }
     }, [filterLocation]);
 
-
     const getItem = (slg) => {
-        try {
-            let response;
-            ServiceProduct.productDetail(reduxAuth, slg).then(res => {
-                response = "clear"
+        let response;
+        ServiceProduct.productDetail(reduxAuth, slg)
+            .then((res) => {
+                response = "clear";
                 if (res?.status?.code === 400) {
-                    Utils.alertPopUp('Sepertinya data tidak ditemukan!')
-                    navigation.goBack()
-                } else if (res) {
-                    dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res })
-                    handleVariasi(res.variant)
-                    setRefreshing(false)
-                    handleFlashsale(res.flashsaleData, res.statusProduk)
-                    setLike(res.isWishlist)
-                    setidProduct(res.id)
-                    if (!res.stock && res.stock == '0') {
-                        setdisableCart(true)
+                    Utils.alertPopUp("Sepertinya data tidak ditemukan!");
+                    if (Platform.OS === "ios") {
+                        sethidden(false);
                     }
-
-
+                    navigation.goBack();
+                } else if (res) {
+                    dispatch({ type: "SET_DETAIL_PRODUCT", payload: res });
+                    handleVariasi(res.variant);
+                    setRefreshing(false);
+                    handleFlashsale(res.flashsaleData, res.statusProduk);
+                    setLike(res.isWishlist);
+                    setidProduct(res.id);
+                    if (!res.stock && res.stock == "0") {
+                        setdisableCart(true);
+                    }
                 } else {
-                    setRefreshing(false)
+                    setRefreshing(false);
                 }
-
-            }).catch(err => {
-                Utils.alertPopUp(String(err), "Error with status code: 121222")
-                setRefreshing(false)
-                response = "clear"
-
             })
-        } catch (error) {
-            console.log("🚀 ~ file: ProductScreen.js ~ line 209 ~ getItem ~ error", error)
-        }
+            .catch((err) => {
+                Utils.alertPopUp(String(err), "Error with status code: 121222");
+                setRefreshing(false);
+                response = "clear";
+            });
         // setTimeout(() => {
         //     if (response !== 'clear') {
         //         return Utils.alertPopUp("Sedang memuat..")
         //     }
         // }, 10000);
-
-    }
+    };
 
     const handleVariasi = (variant) => {
         try {
             if (variant.length) {
-                setvariasiPressed(variant[0].id)
-                setvariasiSelected(variant[0])
+                setvariasiPressed(variant[0].id);
+                setvariasiSelected(variant[0]);
             }
         } catch (error) {
-            console.log("🚀 ~ file: ProductScreen.js ~ line 222 ~ handleVariasi ~ error", error)
             // alert('890' + String(error))
         }
-    }
+    };
 
     const handleFlashsale = (flashsale, status) => {
         try {
             if (flashsale && Object.keys(flashsale).length) {
-                setFlashsale(true)
-                setFlashsaleData(flashsale)
+                setFlashsale(true);
+                setFlashsaleData(flashsale);
                 if (flashsale.stokFlash <= 0) {
-                    setdisableCart(true)
+                    setdisableCart(true);
                 } else {
-                    setdisableCart(false)
+                    setdisableCart(false);
                 }
-            } else if (status != 'live') {
-                setFlashsale(false)
-                setdisableCart(true)
+            } else if (status != "live") {
+                setFlashsale(false);
+                setdisableCart(true);
             }
         } catch (error) {
-            console.log("🚀 ~ file: ProductScreen.js ~ line 241 ~ handleFlashsale ~ error", error)
-            // alert('880' + 680)
+            alert("880" + 680);
         }
-    }
+    };
 
     const getBadges = () => {
-        try {
-            ServiceUser.getBadges(reduxAuth).then(res => {
-                if (res) {
-                    dispatch({ type: "SET_BADGES", payload: res })
-                } else {
-                    dispatch({ type: "SET_BADGES", payload: {} })
-                }
-            })
-        } catch (error) {
-            console.log("🚀 ~ file: ProductScreen.js ~ line 255 ~ getBadges ~ error", error)
-        }
-    }
+        ServiceUser.getBadges(reduxAuth).then((res) => {
+            if (res) {
+                dispatch({ type: "SET_BADGES", payload: res });
+            } else {
+                dispatch({ type: "SET_BADGES", payload: {} });
+            }
+        });
+    };
 
     const handleAddCart = (name) => {
-        console.log("🚀 ~ file: ProductScreen.js ~ line 267 ~ handleAddCart ~ name", name)
-        try {
-            setdisableCart(true)
-            if (reduxAuth) {
-                if (!reduxProduct.store?.closed_store) {
-                    if (reduxProduct.variant && reduxProduct.variant.length) {
-                        if (Object.keys(variasiSelected).length) {
-                            handleApiCart(name)
-                        } else {
-                            setalert('Pilih salah satu variasi!')
-                            Utils.alertPopUp('Anda belum memilih variasi produk ini!')
-                        }
-                    } else {
-                        handleApiCart(name)
-                    }
+        setdisableCart(true);
+        if (reduxAuth) {
+            if (reduxProduct.variant && reduxProduct.variant.length) {
+                if (Object.keys(variasiSelected).length) {
+                    handleApiCart(name);
                 } else {
-                    Utils.alertPopUp('Saat ini toko sedang offline!')
+                    setalert("Pilih salah satu variasi!");
+                    Utils.alertPopUp("Anda belum memilih variasi produk ini!");
                 }
             } else {
-                handleLogin()
+                handleApiCart(name);
             }
-            setTimeout(() => {
-                setdisableCart(false)
-            }, 2000);
-        } catch (error) {
-            console.log("🚀 ~ file: ProductScreen.js ~ line 276 ~ handleAddCart ~ error", error)
+        } else {
+            handleLogin();
         }
-    }
+        setTimeout(() => {
+            setdisableCart(false);
+        }, 2000);
+    };
 
     const handleApiCart = async (name) => {
-        console.log("🚀 ~ file: ProductScreen.js ~ line 297 ~ handleApiCart ~ name", name)
         try {
-            var credentials = { "productId": idProduct, "flashSaleId": flashsale ? flashsaleData.id_flashsale : "", "lelangId": "", "variantId": variasiPressed, "qty": qty };
-            let result = await ServiceProduct.addCart(reduxAuth, credentials)
-            console.log("🚀 ~ file: ProductScreen.js ~ line 301 ~ handleApiCart ~ result", result)
+            var credentials = {
+                productId: idProduct,
+                flashSaleId: flashsale ? flashsaleData.id_flashsale : "",
+                lelangId: "",
+                variantId: variasiPressed,
+                qty: qty,
+            };
+            let result = await ServiceProduct.addCart(reduxAuth, credentials);
             if (result && result.status.code === 200) {
-                Utils.alertPopUp('Produk berhasil ditambahkann!')
+                Utils.alertPopUp("Produk berhasil ditambahkan!");
                 if (name === "buyNow") {
                     if (reduxProduct.isNonPhysical) {
+                        Utils.alertPopUp('Produk berhasil ditambahkann!')
                         navigation.navigate('Checkout', { isNonPhysical: true })
                         try {
                             var myHeaders = new Headers();
@@ -321,7 +352,7 @@ export default function ProductScreen(props) {
                                         if (result.status.code === 200) {
                                             dispatch({ type: 'SET_CHECKOUT', payload: result.data })
 
-                                        } else if (result.status.code == 404 && String(result.status.message).includes('Alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu')) {
+                                        } else if (result.status.code === 404 && String(result.status.message).includes('Alamat belum ditambahkan')) {
                                             Utils.alertPopUp('Silahkan tambah alamat terlebih dahulu!')
                                             navigation.navigate('Address', { data: "checkout" })
                                         } else {
@@ -341,28 +372,22 @@ export default function ProductScreen(props) {
                             console.log("🚀 ~ file: ProductScreen.js ~ line 321 ~ handleApiCart ~ error", error)
 
                         }
-                        // ServiceCart.getCart(reduxAuth).then(res => {
-                        //     res.items.map(item => {
-                        //         item.products.map(product => {
-                        //             if (product.slug === reduxProduct.slug) {
-                        //                 handleCheckoutOnline(product.cartId, item.store.id)
-                        //             }
-                        //         })
-                        //     })
-                        // })
                     } else {
                         handleTrolley()
                     }
                 } else {
-                    handleGetCart()
+                    handleGetCart();
                 }
-            } else if (result.status.code === 400 && result.status.message === 'quantity cannot more than stock') {
-                Utils.alertPopUp("Stok produk tidak tersedia")
+            } else if (
+                result.status.code === 400 &&
+                result.status.message === "quantity cannot more than stock"
+            ) {
+                Utils.alertPopUp("Stok produk tidak tersedia");
             } else {
-                Utils.handleErrorResponse(result, 'Error with status code : 12023')
+                Utils.handleErrorResponse(result, "Error with status code : 12023");
             }
         } catch (error) {
-
+            console.log("🚀 ~ file: ProductScreen.js ~ line 388 ~ handleApiCart ~ error", error)
         }
         // var myHeaders = new Headers();
         // myHeaders.append("Authorization", reduxAuth);
@@ -399,157 +424,66 @@ export default function ProductScreen(props) {
         //     .catch(error => {
         //         Utils.handleError(String(error), 'Error with status code : 12024')
         //     });
-    }
-
-    const handleCheckoutOnline = (cartId, storeId) => {
-        var myHeaders = new Headers();
-        myHeaders.append("Authorization", reduxAuth);
-        myHeaders.append("Content-Type", "application/json");
-        myHeaders.append("Cookie", "ci_session=sdvfphg27d6fhhbhh4ruftor53ppbcko");
-        var raw = JSON.stringify({ 'cartId': cartId, 'storeId': "" })
-
-        var requestOptions = {
-            method: 'PUT',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
-        };
-
-        fetch(`https://jaja.id/backend/cart/selected?is_gift=0`, requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                console.log("🚀 ~ file: ProductScreen.js ~ line 361 ~ handleCheckoutOnline ~ result", result)
-                if (result.status.code === 200) {
-                    var myHeaders = new Headers();
-                    myHeaders.append("Authorization", reduxAuth);
-                    myHeaders.append("Cookie", "ci_session=r59c24ad1race70f8lc0h1v5lniiuhei");
-                    var requestOptions = {
-                        method: 'GET',
-                        headers: myHeaders,
-                        redirect: 'follow'
-                    };
-
-                    fetch(`https://jaja.id/backend/checkout?isCoin=0&fromCart=1&is_gift=0`, requestOptions)
-                        .then(response => response.text())
-                        .then(res => {
-                            try {
-                                let result = JSON.parse(res)
-                                if (result.status.code === 200) {
-                                    dispatch({ type: 'SET_CHECKOUT', payload: result.data })
-                                    navigation.navigate('Checkout', {
-                                        data: {
-                                            online: true,
-                                            cartId: cartId
-                                        }
-                                    })
-                                } else if (result.status.code == 404 && String(result.status.message).includes('Alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu')) {
-                                    Utils.alertPopUp('Silahkan tambah alamat terlebih dahulu!')
-                                    navigation.navigate('Address', { data: "checkout" })
-                                } else {
-                                    Utils.handleErrorResponse(result, 'Error with status code : 12156')
-                                    return null
-                                }
-                            } catch (error) {
-                                Utils.alertPopUp(JSON.stringify(res) + ' : 12157\n\n' + res)
-                            }
-                        })
-                        .catch(error => Utils.handleError(error, 'Error with status code : 12158'));
-                } else {
-                    Utils.alertPopUp(String(result.status.message))
-                }
-
-            })
-            .catch(error => {
-                Utils.handleError(error, 'Error with status code : 12027')
-            })
-
-    }
+    };
 
     const handleGetCart = () => {
         try {
-            getBadges()
-            ServiceCart.getCart(reduxAuth).then(res => {
-                console.log("🚀 ~ file: ProductScreen.js ~ line 471 ~ ServiceCart.getCart ~ res", res)
+            getBadges();
+            ServiceCart.getCart(reduxAuth).then((res) => {
                 if (res) {
-                    dispatch({ type: 'SET_CART', payload: res })
+                    dispatch({ type: "SET_CART", payload: res });
                 }
-            })
-
-        } catch (error) {
-
-        }
-
-    }
-
-    const handleStore = () => {
-        try {
-            if (!loadStore) {
-                console.log('masuk sini');
-                if (Platform.OS === "ios") {
-                    sethidden(false);
-                }
-                let slg = reduxProduct.store.slug;
-                dispatch({ "type": 'SET_STORE', payload: {} })
-                dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
-                dispatch({ type: 'SET_STORE_PRODUCT', payload: [] })
-                dispatch({ type: 'SET_NEW_PRODUCT', payload: [] })
-                dispatch({ "type": 'SET_STORE_LOAD', payload: true })
-                navigation.push('Store', { slug: slg })
-                ServiceStore.getStoreNew(slg, dispatch, reduxAuth)
-
-            }
-        } catch (error) {
-            console.log("🚀 ~ file: ProductScreen.js ~ line 464 ~ handleStore ~ error", error)
-            dispatch({ type: "SET_NEW_PRODUCT_LOAD", payload: false });
-            dispatch({ type: "SET_STORE_LOAD", payload: false });
-            Utils.handleError(error, "Error with status code : 31001");
-        }
-        dispatch({ type: "SET_KEYWORD", payload: "" });
+            });
+        } catch (error) { }
     };
-
 
     const handleTrolley = () => {
         if (reduxAuth) {
-            if (Platform.OS === 'ios') {
-                sethidden(false)
+            if (Platform.OS === "ios") {
+                sethidden(false);
             }
-            handleGetCart()
-            navigation.push("Trolley")
+            handleGetCart();
+            navigation.navigate("Trolley");
         } else {
-            handleLogin()
-
+            handleLogin();
         }
-    }
+    };
 
     const handleWishlist = () => {
         if (reduxAuth) {
-            setLike(!like)
+            setLike(!like);
             var myHeaders = new Headers();
             myHeaders.append("Authorization", reduxAuth);
             myHeaders.append("Content-Type", "application/json");
             myHeaders.append("Cookie", "ci_session=t3uc2fb7opug4n91n18e70tcpjvdb12u");
-            var raw = JSON.stringify({ "id_produk": reduxProduct.id });
+            var raw = JSON.stringify({ id_produk: reduxProduct.id });
             var requestOptions = {
-                method: 'POST',
+                method: "POST",
                 headers: myHeaders,
                 body: raw,
-                redirect: 'follow'
+                redirect: "follow",
             };
             fetch("https://jaja.id/backend/user/addWishlist", requestOptions)
-                .then(response => response.json())
-                .then(result => {
+                .then((response) => response.json())
+                .then((result) => {
                     if (result.status.code === 200) {
-                        setLike(!like)
+                        setLike(!like);
                     }
                 })
-                .catch(error => Utils.handleError(error, "Error with status code : 12025"));
+                .catch((error) =>
+                    Utils.handleError(error, "Error with status code : 12025")
+                );
         } else {
-            handleLogin()
+            handleLogin();
         }
-    }
+    };
 
-    const handleLogin = () => navigation.navigate('Login', { navigate: "Product" })
-
+    const handleLogin = () => {
+        if (Platform.OS === "ios") {
+            sethidden(false);
+        }
+        navigation.navigate("Login", { navigate: "Product" });
+    };
     const renderNavBar = () => (
         <View style={style.navContainer}>
             {Platform.OS === 'ios' ? null : <View style={styles.statusBar} />}
@@ -605,91 +539,140 @@ export default function ProductScreen(props) {
         );
     };
 
+
     const handleShowDetail = async (item, status) => {
         let error = true;
         try {
             if (!reduxLoad) {
-                dispatch({ type: 'SET_PRODUCT_LOAD', payload: true })
-                ServiceProduct.getProduct(reduxAuth, item.slug).then(res => {
-                    error = false
+                dispatch({ type: "SET_PRODUCT_LOAD", payload: true });
+                ServiceProduct.getProduct(reduxAuth, item.slug).then((res) => {
+                    error = false;
                     if (res === 404) {
-                        Utils.alertPopUp('Sepertinya data tidak ditemukan!')
-                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
-                        navigation.goBack()
+                        Utils.alertPopUp("Sepertinya data tidak ditemukan!");
+                        dispatch({ type: "SET_PRODUCT_LOAD", payload: false });
+                        navigation.goBack();
                     } else if (res?.data) {
-                        dispatch({ type: 'SET_DETAIL_PRODUCT', payload: res.data })
-                        dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
-                        setTimeout(() => dispatch({ type: 'SET_FILTER_LOCATION', payload: true }), 7000);
+                        dispatch({ type: "SET_DETAIL_PRODUCT", payload: res.data });
+                        dispatch({ type: "SET_PRODUCT_LOAD", payload: false });
+                        setTimeout(
+                            () => dispatch({ type: "SET_FILTER_LOCATION", payload: true }),
+                            7000
+                        );
                     }
-                })
+                });
             } else {
-                error = false
+                error = false;
             }
         } catch (error) {
-            dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
-            alert(String(error.message))
-            error = false
+            dispatch({ type: "SET_PRODUCT_LOAD", payload: false });
+            alert(String(error.message));
+            error = false;
         }
         setTimeout(() => {
             if (error) {
-                dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
-                Utils.handleSignal()
-                setTimeout(() => Utils.alertPopUp('Sedang memuat ulang..'), 2000);
-                error = false
-                handleShowDetail(item, true)
+                dispatch({ type: "SET_PRODUCT_LOAD", payload: false });
+                Utils.handleSignal();
+                setTimeout(() => Utils.alertPopUp("Sedang memuat ulang.."), 2000);
+                error = false;
+                handleShowDetail(item, true);
             }
         }, 20000);
-    }
+    };
 
-    const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
-        return layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 3)
-
-    }
+    const isCloseToBottom = ({
+        layoutMeasurement,
+        contentOffset,
+        contentSize,
+    }) => {
+        return (
+            layoutMeasurement.height + contentOffset.y >=
+            contentSize.height - hg * 0.8 ||
+            layoutMeasurement.height + contentOffset.y >= contentSize.height - hg * 4
+        );
+    };
 
     const loadMoreData = () => {
         if (reduxLoadmore === false) {
-            dispatch({ 'type': 'SET_LOADMORE', payload: true })
+            dispatch({ type: "SET_LOADMORE", payload: true });
         }
-    }
+    };
 
     const handleShare = () => {
-        setmodal(true)
-        setTimeout(async () => {
-
+        setmodal(true);
+        setTimeout(() => {
             try {
                 // await setmodal(false)
 
-                let img64 = ''
-                await viewShotRef.current.capture().then(async uri => {
-                    await ImgToBase64.getBase64String(uri)
-                        .then(base64String => {
-                            let urlString = 'data:image/jpeg;base64,' + base64String;
-                            img64 = urlString
-                        })
-                        .catch(err => console.log("cok"));
-                    setmodal(false)
-                });
-                console.log("🚀 ~ file: ProductScreen.js ~ line 561 ~ setTimeout ~ link", link)
-                const shareOptions = {
-                    title: 'Jaja',
-                    message: `Dapatkan ${reduxProduct.name} di Jaja.id \nDownload sekarang ${link}`,
-                    url: img64,
-                };
-                Share.open(shareOptions)
-                    .then((res) => {
-                        console.log(res);
-                    })
-                    .catch((err) => {
-                        err && console.log(err);
+                let img64 = "";
+                try {
+                    viewShotRef.current.capture().then((uri) => {
+                        ImgToBase64.getBase64String(uri)
+                            .then((base64String) => {
+                                let urlString = "data:image/jpeg;base64," + base64String;
+                                setmodal(false)
+                                const shareOptions = {
+                                    title: "Jaja.id",
+                                    message: `Dapatkan ${reduxProduct.name} di Jaja.id \nDownload sekarang ${link}`,
+                                    url: urlString,
+                                };
+                                setTimeout(() => {
+                                    Share.open(shareOptions)
+                                        .then((res) => {
+                                            console.warn("🚀 ~ file: ProductScreen.js ~ line 808 ~ .then ~ res", res)
+                                        })
+                                        .catch((err) => {
+                                            console.warn("🚀 ~ file: ProductScreen.js ~ line 811 ~ setTimeout ~ err", err)
+                                        });
+                                }, 250);
+                                // img64 = urlString;
+                            })
+                            .catch((err) => {
+                                console.warn("🚀 ~ file: ProductScreen.js ~ line 817 ~ viewShotRef.current.capture ~ err", err)
+
+                            });
+                        setmodal(false);
                     });
-                setmodal(false)
+                } catch (error) {
+                    console.log("🚀 ~ file: ProductScreen.js ~ line 805 ~ setTimeout ~ error", error)
+                }
 
+
+                // console.warn("🚀 ~ file: ProductScreen.js ~ line 811 ~ setTimeout ~ link", link)
+
+                // Share.open(shareOptions)
+                // .then((res) => {
+                //   console.warn("🚀 ~ file: ProductScreen.js ~ line 816 ~ .then ~ res", res)
+                // })
+                // .catch((err) => {
+                //   console.warn("🚀 ~ file: ProductScreen.js ~ line 819 ~ setTimeout ~ err", err)
+                // });
+                // onShare()
+                // setmodal(false);
             } catch (error) {
-                setmodal(false)
+                console.warn("🚀 ~ file: ProductScreen.js ~ line 823 ~ setTimeout ~ error", error)
+                setmodal(false);
             }
-        }, 1500);
-
-    }
+        }, 850);
+    };
+    const onShare = async () => {
+        try {
+            const result = await Share.share({
+                message:
+                    'React Native | A framework for building native apps using React',
+            });
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                } else {
+                    // shared
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+            }
+        } catch (error) {
+            alert(error.message);
+        }
+    };
 
     const renderContent = () => {
         return (
@@ -719,23 +702,23 @@ export default function ProductScreen(props) {
                             : null
                         }
 
-                        <View style={[styles.shadow_5, styles.p_3, styles.mb, { shadowColor: colors.BlueJaja, flex: 0, flexDirection: 'column', backgroundColor: colors.White, borderBottomRightRadius: 20, borderBottomLeftRadius: 20 }]}>
+                        <View style={[styles.shadow_5, styles.p_3, styles.pt_4, styles.mb, { shadowColor: colors.BlueJaja, flex: 0, flexDirection: 'column', backgroundColor: colors.White, borderBottomRightRadius: 20, borderBottomLeftRadius: 20 }]}>
                             <Text style={[styles.font_18, styles.T_bold, styles.mb_2, { color: colors.BlueJaja }]}>{reduxProduct.name}</Text>
                             {Object.keys(variasiSelected).length ?
                                 <View style={[styles.row_start_center,]}>
                                     <View style={[styles.row, { width: '87%', height: '100%' }]}>
                                         {variasiSelected.isDiscount ?
                                             <View style={styles.row}>
-                                                <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 5 }]}>
+                                                <View style={[styles.row_center, styles.mr_3, { width: Wp('10.5%'), height: Wp('10.5%'), backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 5 }]}>
                                                     <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, { marginBottom: Platform.OS === 'ios' ? '-1%' : 0, color: colors.White }]}>{reduxProduct.discount}%</Text>
                                                 </View>
                                                 <View style={styles.column}>
                                                     <Text style={Ps.priceBefore}>{variasiSelected.price}</Text>
-                                                    <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.YellowJaja }]}>{variasiSelected.priceDiscount}</Text>
+                                                    <Text style={[Ps.priceDetailAfter, { color: flashsale ? colors.RedFlashsale : colors.YellowJaja }]}>{variasiSelected.priceDiscount}</Text>
                                                 </View>
                                             </View>
                                             :
-                                            <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.YellowJaja }]}>{variasiSelected.price}</Text>
+                                            <Text style={[Ps.priceDetailAfter, { color: flashsale ? colors.RedFlashsale : colors.YellowJaja }]}>{variasiSelected.price}</Text>
                                         }
                                     </View>
                                     <View style={[styles.row_center, { width: '13%', height: '100%' }]}>
@@ -748,12 +731,12 @@ export default function ProductScreen(props) {
                                 flashsale ?
                                     <View style={[styles.row_start_center,]}>
                                         <View style={[styles.row_center, { width: '87%', height: '100%' }]}>
-                                            <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1.5%', borderRadius: 5 }]}>
-                                                <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{flashsaleData.discountFlash}%</Text>
+                                            <View style={[styles.row_center, styles.mr_3, { width: Wp('10.5%'), height: Wp('10.5%'), backgroundColor: colors.RedFlashsale, padding: '1.5%', borderRadius: 5 }]}>
+                                                <Text style={[styles.font_12, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{flashsaleData.discountFlash}%</Text>
                                             </View>
-                                            <View style={[styles.column, { height: Wp('11.5%'), }]}>
-                                                <Text style={Ps.priceBefore}>{reduxProduct.price}</Text>
-                                                <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.YellowJaja }]}>{reduxProduct.price}</Text>
+                                            <View style={[styles.column, { height: Wp('10.5%'), }]}>
+                                                <Text style={[Ps.priceDetailBefore]}>{reduxProduct.price}</Text>
+                                                <Text style={[Ps.priceDetailAfter, { color: flashsale ? colors.RedFlashsale : colors.BlueJaja }]}>{reduxProduct.price}</Text>
                                             </View>
                                         </View>
                                         <View style={[styles.row_center, { width: '13%', height: '100%' }]}>
@@ -767,26 +750,26 @@ export default function ProductScreen(props) {
                                         <View style={[styles.row_start_center, { width: '87%', }]}>
                                             {reduxProduct.isDiscount ?
                                                 <View style={[styles.row_start_center]}>
-                                                    {reduxProduct.discount == 0 ?
+                                                    {!reduxProduct.discount ?
                                                         null :
-                                                        <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 5 }]}>
-                                                            <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, { marginBottom: Platform.OS === 'ios' ? '-1%' : 0, color: colors.White }]}>{reduxProduct.discount}%</Text>
+                                                        <View style={[styles.row_center, styles.mr_3, { width: AppleType === 'ipad' ? Wp('7%') : Wp('10.5%'), height: AppleType === 'ipad' ? Wp('7%') : Wp('10.5%'), backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 5 }]}>
+                                                            <Text numberOfLines={1} style={[styles.font_12, styles.T_bold, { marginBottom: Platform.OS === 'ios' ? '-1%' : 0, color: colors.White }]}>{reduxProduct.discount}%</Text>
                                                         </View>
                                                     }
                                                     <View style={[styles.column]}>
-                                                        <Text style={Ps.priceBefore}>{reduxProduct.price}</Text>
-                                                        <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.YellowJaja }]}>{reduxProduct.priceDiscount}</Text>
+                                                        <Text style={[Ps.priceDetailBefore]}>{reduxProduct.price}</Text>
+                                                        <Text style={[Ps.priceDetailAfter, { color: flashsale ? colors.RedFlashsale : colors.YellowJaja }]}>{reduxProduct.priceDiscount}</Text>
                                                     </View>
                                                 </View>
                                                 :
                                                 <View style={[styles.row_between_center, { width: '100%' }]}>
-                                                    <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.YellowJaja }]}>{reduxProduct.price}</Text>
+                                                    <Text style={[Ps.priceDetailAfter, { color: flashsale ? colors.RedFlashsale : colors.YellowJaja }]}>{reduxProduct.price}</Text>
                                                 </View>
                                             }
                                         </View>
                                         <View style={[styles.row_center, { width: '13%', height: '100%' }]}>
                                             <TouchableOpacity onPress={handleShare}>
-                                                <Image source={require('../../assets/icons/share.png')} style={{ width: Wp('6%'), height: Wp('6%'), marginRight: '3%', tintColor: colors.Silver }} />
+                                                <Image source={require('../../assets/icons/share.png')} style={[styles.icon_23, { marginRight: '3%', tintColor: colors.Silver }]} />
                                             </TouchableOpacity>
                                         </View>
                                     </View>
@@ -795,7 +778,7 @@ export default function ProductScreen(props) {
                                 <Text style={[styles.font_14, { width: '87%' }]}>{reduxProduct.amountSold ? reduxProduct.amountSold + " Terjual" : ""}</Text>
                                 <View style={[styles.row_center, { width: '13%', height: '100%' }]}>
                                     <TouchableOpacity onPress={handleWishlist}>
-                                        <Image source={require('../../assets/icons/love.png')} style={{ width: Wp('6%'), height: Wp('6%'), marginRight: '3%', tintColor: like ? flashsale ? colors.RedFlashsale : colors.RedMaroon : colors.Silver }} />
+                                        <Image source={require('../../assets/icons/love.png')} style={[styles.icon_23, { marginRight: '3%', tintColor: like ? flashsale ? colors.RedFlashsale : colors.RedMaroon : colors.Silver }]} />
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -834,32 +817,57 @@ export default function ProductScreen(props) {
                             : null
                         }
 
-                        {reduxProduct.store ?
-                            <View style={[styles.row_between_center, styles.p_3, styles.my, styles.shadow_5, { shadowColor: colors.BlueJaja, backgroundColor: colors.White }]}>
-                                <View style={[styles.row, { width: '67%' }]}>
-                                    <TouchableOpacity onPress={handleStore} style={{
-                                        height: Wp('15%'), width: Wp('15%'), borderRadius: 100, marginRight: '3%', backgroundColor: colors.White,
-                                        shadowColor: "#000",
-                                        shadowOffset: {
-                                            width: 0,
-                                            height: 1,
-                                        },
-                                        shadowOpacity: 0.22,
-                                        shadowRadius: 2.22,
-                                        elevation: 3,
-                                    }}>
-                                        <Image style={{ height: '100%', width: '100%', resizeMode: 'contain', borderRadius: 100 }} source={Object.keys(reduxProduct).length && reduxProduct.store.image ? { uri: reduxProduct.store.image } : require('../../assets/images/JajaId.png')} />
+                        <View style={[styles.row_between_center, styles.p_3, styles.my, styles.shadow_5, { shadowColor: colors.BlueJaja, backgroundColor: colors.White }]}>
+                            <View style={[styles.row, { width: '67%' }]}>
+                                {reduxProduct?.store?.name ?
+                                    <TouchableOpacity onPress={handleStore} style={[styles.mr_3, styles.shadow_3, { height: Wp('15%'), width: Wp('15%'), borderRadius: 100, backgroundColor: colors.White, shadowColor: colors.BlueJaja, justifyContent: 'center', alignItems: 'center' }]}>
+                                        {reduxStore?.store?.image ?
+                                            <Image style={{ height: '100%', width: '100%', resizeMode: 'contain', borderRadius: 100 }} source={Object.keys(reduxProduct).length && reduxProduct.store.image ? { uri: reduxProduct.store.image } : require('../../assets/images/JajaId.png')} />
+                                            :
+                                            <Text style={[styles.font_26, styles.T_semi_bold, { color: colors.BlueJaja, alignSelf: 'center', marginBottom: Platform.OS === 'android' ? '-1%' : 0 }]}>{String(reduxStore.name).slice(0, 1)}</Text>
+                                        }
                                     </TouchableOpacity>
+                                    :
+                                    <View style={[styles.mr_3, styles.shadow_3, { height: Wp('15%'), width: Wp('15%'), borderRadius: 100, backgroundColor: colors.White, shadowColor: colors.BlueJaja }]}>
+                                        <ShimmerPlaceholder
+                                            LinearGradient={LinearGradient}
+                                            width={Wp('15%')}
+                                            height={Wp('15%')}
+                                            style={{ borderRadius: 100 }}
+                                            shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                        />
+                                    </View>
+                                }
+                                {reduxProduct?.store?.name ?
                                     <View style={[styles.column_between_center, { width: '77%', alignItems: 'flex-start' }]}>
                                         <Text numberOfLines={1} onPress={handleStore} style={[styles.font_14, styles.T_medium, { width: '100%' }]}>{reduxProduct.store.name}</Text>
-                                        {reduxProduct.store.location ?
+                                        {reduxProduct?.store?.location ?
                                             <View style={[Ps.location, { position: 'relative', width: '100%', marginLeft: '-1%', padding: 0 }]}>
                                                 <Image style={[styles.icon_14, { marginRight: '2%' }]} source={require('../../assets/icons/google-maps.png')} />
                                                 <Text style={[Ps.locarionName, { marginBottom: '-1%' }]}>{reduxProduct.store.location}</Text>
                                             </View>
                                             : null}
                                     </View>
-                                </View>
+                                    :
+                                    <View style={[styles.column_around_center, { alignItems: 'flex-start' }]}>
+                                        <ShimmerPlaceholder
+                                            LinearGradient={LinearGradient}
+                                            width={Wp('29%')}
+                                            height={Wp('4%')}
+                                            style={{ borderRadius: 3 }}
+                                            shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                        />
+                                        <ShimmerPlaceholder
+                                            LinearGradient={LinearGradient}
+                                            width={Wp('19%')}
+                                            height={Wp('4%')}
+                                            style={{ borderRadius: 3 }}
+                                            shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                        />
+                                    </View>
+                                }
+                            </View>
+                            {reduxProduct?.store?.name ?
                                 <TouchableOpacity style={[styles.row_center, styles.py_2, styles.px_3, {
                                     borderRadius: 7, backgroundColor: flashsale ? colors.RedFlashsale : colors.YellowJaja, shadowColor: "#000",
                                     shadowOffset: {
@@ -872,8 +880,16 @@ export default function ProductScreen(props) {
                                 }]} onPress={handleStore}>
                                     <Text style={[styles.font_10, styles.T_semi_bold, { color: flashsale ? colors.RedFlashsale : colors.White }]}>Kunjungi Toko</Text>
                                 </TouchableOpacity>
-                            </View>
-                            : null}
+                                :
+                                <ShimmerPlaceholder
+                                    LinearGradient={LinearGradient}
+                                    width={Wp('21%')}
+                                    height={Wp('7%')}
+                                    style={{ borderRadius: 3 }}
+                                    shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                />
+                            }
+                        </View>
 
                         <View style={[styles.column, styles.p_4, styles.my, styles.shadow_5, { shadowColor: colors.BlueJaja, backgroundColor: colors.White, borderTopRightRadius: 20, borderTopLeftRadius: 20, paddingBottom: '5%' }]}>
                             <Text style={[styles.font_16, styles.T_semi_bold, styles.mr_3, styles.mb_2, { textDecorationLine: 'underline', color: colors.BlueJaja }]}>Informasi Produk</Text>
@@ -907,7 +923,7 @@ export default function ProductScreen(props) {
                                     <>
                                         {/* <Text style={[styles.font_14, styles.T_light]}>{reduxProduct.description.slice(0, deskripsiLenght)}</Text> */}
                                         <View style={[styles.column, { width: '100%' }]}>
-                                            <Text numberOfLines={deskripsiLenght == 200 ? 10 : 60} style={[styles.font_14]}>{reduxProduct.description}</Text>
+                                            <Text numberOfLines={deskripsiLenght == 200 ? 10 : 75} style={[styles.font_13]}>{reduxProduct.description}</Text>
                                             {deskripsiLenght == 200 && reduxProduct.description.length >= 200 ?
                                                 <TouchableOpacity onPress={() => setdeskripsiLenght(reduxProduct.description.length + 50)}>
                                                     <Text style={[styles.font_14, { color: colors.BlueJaja }]}>Baca selengkapnya..</Text>
@@ -934,7 +950,7 @@ export default function ProductScreen(props) {
                                                 <View style={styles.row_start_center}>
                                                     <View style={[styles.row_center, { borderWidth: 0.2, borderRadius: 100, borderColor: colors.BlackGrey, marginRight: '2%', width: 24, height: 24 }]}>
                                                         {item.customerImage ?
-                                                            <Image style={[styles.icon_24, styles.mr_2, { borderRadius: 100 }]} source={{ uri: item.customerImage }} />
+                                                            <Image style={[styles.icon_24, styles.mr_2, { borderRadius: 100, backgroundColor: colors.Silver }]} source={{ uri: item.customerImage }} />
                                                             :
                                                             <Text style={[styles.font_12, styles.T_semi_bold, { marginBottom: '-2%' }]}>{String(item.customerName).slice(0, 1)}</Text>
                                                         }
@@ -958,24 +974,25 @@ export default function ProductScreen(props) {
                                                 }
                                                 <View style={[styles.row, { flexWrap: 'wrap' }]}>
                                                     {item.image.map((itm, idx) => {
+                                                        console.log("🚀 ~ file: ProductScreen.js ~ line 1155 ~ {item.image.map ~ itm", itm)
                                                         return (
-                                                            <TouchableOpacity key={String(idx + 'JO')} onPress={() => navigation.navigate('ZoomReview', { data: index })} style={{ width: Wp('17%'), height: Wp('17%'), justifyContent: 'center', alignItems: 'center', backgroundColor: colors.BlackGrayScale, marginRight: '1%' }}>
-                                                                <Image key={String(idx) + "i"} source={{ uri: itm }} style={{ width: '100%', height: '100%' }} />
+                                                            <TouchableOpacity key={String(idx + 'JO')} onPress={() => navigation.navigate('ZoomReview', { data: index })} style={{ width: Wp('17%'), height: Wp('17%'), justifyContent: 'center', alignItems: 'center', backgroundColor: colors.Silver, marginRight: '1%' }}>
+                                                                <Image key={String(idx) + "i"} source={{ uri: itm }} style={{ width: '100%', height: '100%', resizeMode: 'contain' }} />
                                                             </TouchableOpacity>
                                                         )
                                                     })}
                                                     {/* {item.video ?
-                                                        <TouchableOpacity onPress={() => navigation.navigate('ZoomReview', { data: index })} style={[styles.mt_5, { width: Wp('92%'), height: Wp('50%') }]}>
-                                                            <VideoPlayer
-                                                                video={{ uri: item.video }}
-                                                                videoWidth={Wp('100%')}
-                                                                videoHeight={Wp('50%')}
-                                                                disableFullscreen={false}
-                                                                fullScreenOnLongPress={true}
-                                                            />
-                                                        </TouchableOpacity>
-                                                        : null
-                                                    } */}
+                                                    <TouchableOpacity onPress={() => navigation.navigate('ZoomReview', { data: index })} style={[styles.mt_5, { width: Wp('92%'), height: Wp('50%') }]}>
+                                                        <VideoPlayer
+                                                            video={{ uri: item.video }}
+                                                            videoWidth={Wp('100%')}
+                                                            videoHeight={Wp('50%')}
+                                                            disableFullscreen={false}
+                                                            fullScreenOnLongPress={true}
+                                                        />
+                                                    </TouchableOpacity>
+                                                    : null
+                                                } */}
                                                 </View>
                                             </View>
                                             // <View key={String(index)} style={[styles.column, styles.mb_5, styles.mt_2]}>
@@ -1020,13 +1037,13 @@ export default function ProductScreen(props) {
                                         )
                                     })}
                                     {/* <TouchableOpacity onPress={() => navigation.navigate('Review', { data: reduxProduct.slug })} style={{ width: Wp('90%'), justifyContent: 'center', alignItems: 'center', padding: '3%', backgroundColor: colors.White, elevation: 0.5 }}>
-                                        <Text style={[styles.font_14, { color: colors.BlueJaja, }]}>Tampilkan semua</Text>
-                                    </TouchableOpacity> */}
+                                    <Text style={[styles.font_14, { color: colors.BlueJaja, }]}>Tampilkan semua</Text>
+                                </TouchableOpacity> */}
                                 </View>
                             </View>
                             : null}
                         {reduxProduct.otherProduct && reduxProduct.otherProduct.length ?
-                            <View style={[styles.column, styles.py_4, styles.my, styles.shadow_5, { shadowColor: colors.BlueJaja, backgroundColor: colors.White, paddingBottom: '5%' }]}>
+                            <View style={[styles.column, styles.pb_4, styles.my, styles.shadow_5, { shadowColor: colors.BlueJaja, backgroundColor: colors.White, paddingBottom: '5%' }]}>
                                 {/* <Text style={[styles.font_14, styles.T_medium]}>Produk Lainnya Di {reduxProduct.store.name}</Text> */}
                                 <HeaderTitleHome title={`Produk Lainnya Di ${reduxProduct.store.name}`} />
 
@@ -1112,9 +1129,9 @@ export default function ProductScreen(props) {
                                             //     </View>
                                             // </TouchableOpacity>
                                             <TouchableOpacity
-                                                style={[Ps.cardProduct, { marginLeft: 1, marginRight: 7, width: Wp('33%'), height: Wp('57%'), alignItems: 'center', elevation: 2 }]}
+                                                style={[Ps.cardProductSmall, styles.shadow_5, { shadowColor: colors.BlueJaja }]}
                                                 onPress={() => handleShowDetail(item, false)} >
-                                                <View style={[styles.column, { height: Wp('33%'), width: '100%' }]}>
+                                                <View style={[styles.column, { height: AppleType === 'ipad' ? Wp('22%') : Wp('33%'), width: '100%' }]}>
                                                     <FastImage
                                                         style={[Ps.imageProduct, { height: '100%', width: '100%' }]}
                                                         source={{
@@ -1125,20 +1142,20 @@ export default function ProductScreen(props) {
                                                         resizeMode={FastImage.resizeMode.contain}
                                                     />
                                                 </View>
-                                                <View style={[Ps.bottomCard, { alignSelf: 'flex-start', width: '100%', height: Wp('18%'), justifyContent: 'flex-start', alignItems: 'flex-start' }]}>
+                                                <View style={[Ps.bottomCard]}>
                                                     <Text numberOfLines={1} style={[Ps.nameProductSmall]}>{item.name}</Text>
-                                                    {item.isDiscount && item.discount != '0' ?
+                                                    {item.isDiscount ?
                                                         <>
                                                             <View style={styles.row_center}>
                                                                 <Text style={[Ps.priceBeforeSmall, styles.mr_3,]}>{item.price}</Text>
-                                                                <View style={{ zIndex: 1, backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 3, justifyContent: 'center', alignItems: 'center', marginBottom: '1%' }}>
-                                                                    <Text style={[styles.font_6, { textAlignVertical: 'center', textAlign: 'center', marginBottom: Platform.OS === 'android' ? '-1%' : 0, color: colors.White, }]}>{item.discount}%</Text>
+                                                                <View style={{ zIndex: 1, backgroundColor: colors.RedFlashsale, paddingVertical: '1%', paddingHorizontal: '2%', borderRadius: 3, justifyContent: 'center', alignItems: 'center' }}>
+                                                                    <Text style={[Ps.discountSmall, { fontSize: RFValue(5, 480), textAlignVertical: 'center', textAlign: 'center', marginBottom: '-1%', color: colors.White, }]}>{item.discount}%</Text>
                                                                 </View>
                                                             </View>
-                                                            <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.priceDiscount}</Text>
+                                                            <Text style={Ps.priceSmall}>{item.priceDiscount}</Text>
                                                         </>
                                                         :
-                                                        <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.BlueJaja }]}>{item.price}</Text>
+                                                        <Text style={[Ps.priceSmall]}>{item.price}</Text>
                                                     }
                                                 </View>
                                                 <View style={[Ps.location, { width: '94%' }]}>
@@ -1146,17 +1163,21 @@ export default function ProductScreen(props) {
                                                     <Text numberOfLines={1} style={[Ps.locarionNameSmall, { width: '85%' }]}>{item.location}</Text>
                                                 </View>
                                             </TouchableOpacity>
+
                                         )
                                     }}
                                 />
                             </View>
-                            : null}
-                        <View style={[styles.column, styles.pt_3, styles.my, styles.shadow_5, { shadowColor: colors.BlueJaja, backgroundColor: colors.White }]}>
+                            : null
+                        }
+                        <View style={[styles.column, styles.my, styles.shadow_5, { shadowColor: colors.BlueJaja, backgroundColor: colors.White }]}>
                             <RecomandedHobby refresh={true} color={colors.BlackGrayScale} />
                         </View>
-                    </View>
+                    </View >
+
+
                     :
-                    <View style={[styles.column]}>
+                    <View style={[styles.column,]}>
                         <View style={[styles.column_around_center, styles.px_3, styles.py_4, styles.mb_2, { alignItems: 'flex-start', width: Wp('100%'), height: Wp('33%'), backgroundColor: colors.White }]}>
                             <ShimmerPlaceholder
                                 LinearGradient={LinearGradient}
@@ -1238,12 +1259,12 @@ export default function ProductScreen(props) {
                                         shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
                                     />
                                     {/* <ShimmerPlaceholder
-                                        LinearGradient={LinearGradient}
-                                        width={Wp('19%')}
-                                        height={Wp("3%")}
-                                        style={{ borderRadius: 1, marginBottom: '25%' }}
-                                        shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
-                                    /> */}
+                                    LinearGradient={LinearGradient}
+                                    width={Wp('19%')}
+                                    height={Wp("3%")}
+                                    style={{ borderRadius: 1, marginBottom: '25%' }}
+                                    shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                /> */}
                                 </View>
                                 <View style={[styles.column, styles.mt_2, styles.mb_5, styles.ml_5]}>
                                     <ShimmerPlaceholder
@@ -1275,13 +1296,14 @@ export default function ProductScreen(props) {
                                         shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
                                     />
                                     {/* <ShimmerPlaceholder
-                                        LinearGradient={LinearGradient}
-                                        width={Wp('19%')}
-                                        height={Wp("3%")}
-                                        style={{ borderRadius: 1, marginBottom: '25%' }}
-                                        shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
-                                    /> */}
+                                    LinearGradient={LinearGradient}
+                                    width={Wp('19%')}
+                                    height={Wp("3%")}
+                                    style={{ borderRadius: 1, marginBottom: '25%' }}
+                                    shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                                /> */}
                                 </View>
+
                             </View>
                         </View>
                     </View>
@@ -1293,61 +1315,127 @@ export default function ProductScreen(props) {
         );
     };
 
+
     const handleChat = () => {
         if (reduxAuth) {
-            navigation.navigate("IsiChat", { data: seller, product: reduxProduct })
+            navigation.navigate("IsiChat", { data: seller, product: reduxProduct });
         } else {
-            handleLogin()
+            handleLogin();
         }
+    };
+
+    const handleReport = () => {
+        if (reason && reason !== " " && String(reason).length > 12) {
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", reduxAuth);
+            myHeaders.append("Content-Type", "application/json");
+
+            var raw = JSON.stringify({
+                id_product: reduxProduct.idProduct,
+                alasan: reason,
+            });
+
+            var requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow",
+            };
+
+            fetch("https://jaja.id/backend/product/report_product", requestOptions)
+                .then((response) => response.json())
+                .then((result) => {
+                    setreportModal(!reportModal);
+                    setTimeout(() => {
+                        if (result.status.code === 200) {
+                            Utils.alertPopUp(
+                                "Terimakasih telah memberitahu kami, laporan anda akan diproses paling lambat 1x24 jam"
+                            );
+                            setreason("");
+                        } else {
+                            Utils.handleErrorResponse(
+                                result,
+                                "Error with status code : 31001"
+                            );
+                        }
+                    }, 250);
+                })
+                .catch((error) => {
+                    Utils.handleError(error, "Error with status code : 31002");
+                });
+        } else {
+            Utils.alertPopUp('Alasan terlalu pendek!')
+        }
+    };
+
+    const handleStore = (item) => {
+        dispatch({ "type": 'SET_STORE_LOAD', payload: true })
+        dispatch({ "type": 'SET_STORE', payload: {} })
+        dispatch({ "type": 'SET_STORE_PRODUCT', payload: [] })
+        dispatch({ type: 'SET_NEW_PRODUCT', payload: [] })
+        navigation.navigate('Store', { slug: reduxProduct.store.slug })
+        ServiceStore.getStoreNew(reduxProduct.store.slug, dispatch, reduxAuth)
     }
 
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: Platform.OS === 'ios' ? colors.BlueJaja : null }]}>
+        <SafeAreaView
+            style={[
+                styles.containerFix
+                // { backgroundColor: Platform.OS === "ios" ? colors.BlueJaja : null },
+            ]}
+        >
             {loading ? <Loading /> : null}
-            <StatusBar translucent={Platform.OS === 'ios' ? true : translucent} backgroundColor={Platform.OS === 'ios' ? colors.BlueJaja : bgBar} barStyle="light-content" />
+            <StatusBar
+                backgroundColor={Platform.OS === "ios" ? "white" : bgBar}
+                barStyle="light-content"
+                translucent={true}
+                showHideTransition="fade"
+            />
 
             <ReactNativeParallaxHeader
-                headerMinHeight={Platform.OS === 'ios' ? Hp('4%') : Hp('9%')}
-                headerMaxHeight={Platform.OS === 'ios' ? Hp('45%') : Wp('100%')}
+                headerMinHeight={Platform.OS === "ios" ? Hp("8%") : Hp("9%")}
+                headerMaxHeight={AppleType === 'ipad' ? Wp("75%") : Wp("100%")}
                 extraScrollHeight={20}
-                statusBarColor='transparent'
-                backgroundColor='#FFFF'
+                statusBarColor="transparent"
+                backgroundColor="#FFFF"
                 navbarColor={colors.BlueJaja}
                 titleStyle={style.titleStyle}
                 title={title()}
                 backgroundImageScale={1.2}
-
                 renderNavBar={renderNavBar}
                 renderContent={renderContent}
-                containerStyle={[styles.container, { backgroundColor: colors.WhiteGrey }]}
-                innerContainerStyle={{ backgroundColor: colors.WhiteGrey }}
+                containerStyle={[
+                    styles.container,
+                    // { backgroundColor: colors.WhiteGrey },
+                ]}
+                // innerContainerStyle={{ backgroundColor: colors.WhiteGrey }}
                 headerFixedBackgroundColor={colors.BlueJaja}
                 alwaysShowTitle={false}
                 scrollViewProps={{
                     nestedScrollEnabled: true,
-                    refreshControl: <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />,
+                    refreshControl: (
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    ),
                     onScroll: Animated.event(
                         [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                        Platform.OS === "android" ?
-                            {
+                        Platform.OS === "android"
+                            ? {
                                 useNativeDriver: false,
-                                listener: event => {
+                                listener: (event) => {
                                     if (isCloseToBottom(event.nativeEvent)) {
-                                        console.log('fetchhhhh')
-                                        // loadMoreData()
+                                        loadMoreData();
                                     }
-                                }
+                                },
                             }
                             : null
                     ),
                     onMomentumScrollEnd: ({ nativeEvent }) => {
                         if (isCloseToBottom(nativeEvent)) {
-                            loadMoreData()
+                            loadMoreData();
                         }
-                    }
+                    },
                 }}
             />
-
             <View style={{ position: 'absolute', bottom: 0, height: Hp('7%'), width: '100%', backgroundColor: colors.White, flex: 0, flexDirection: 'row', elevation: 3 }}>
                 <TouchableOpacity disabled={Object.keys(seller).length ? false : true} onPress={handleChat} style={{ width: '25%', height: '100%', padding: '3%', backgroundColor: colors.White, justifyContent: 'center', alignItems: 'center' }}>
                     <Image source={require('../../assets/icons/chats.png')} style={{ width: 23, height: 23, marginRight: '3%', tintColor: colors.RedFlashsale }} />
@@ -1364,79 +1452,466 @@ export default function ProductScreen(props) {
                     }
                 </Button>
             </View>
-            {Object.keys(reduxProduct).length ?
-                <Modal statusBarTranslucent={true} animationType="fade" transparent={true} visible={modal} onRequestClose={() => setmodal(!modal)}>
-                    <View style={{ height: Hp('50%'), width: Wp('100%'), backgroundColor: colors.White, opacity: 0.95, zIndex: 9999, elevation: 11 }}>
+            {/* <View
+        style={{
+          position: "absolute",
+          bottom: 0,
+          height: Hp("7%"),
+          width: "100%",
+          backgroundColor: colors.White,
+          flex: 0,
+          flexDirection: "row",
+          elevation: 3,
+        }}
+      >
+        <TouchableOpacity
+          disabled={Object.keys(seller).length ? false : true}
+          onPress={handleChat}
+          style={{
+            width: "25%",
+            height: "100%",
+            padding: "3%",
+            backgroundColor: colors.White,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Image
+            source={require("../../assets/icons/chats.png")}
+            style={[styles.icon_23, {
+
+              marginRight: "3%",
+              tintColor: colors.RedFlashsale,
+            }]}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          disabled={disableCart}
+          onPress={() => handleAddCart("trolley")}
+          style={{
+            width: "25%",
+            height: "100%",
+            padding: "3%",
+            backgroundColor: colors.White,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Image
+            source={require("../../assets/icons/cart.png")}
+            style={[styles.icon_23, {
+              tintColor: flashsale ? colors.RedFlashsale : colors.BlueJaja,
+            }]}
+          />
+        </TouchableOpacity>
+        <Button
+          disabled={disableCart}
+          onPress={() => handleAddCart("buyNow")}
+          style={{
+            width: "50%",
+            height: "100%",
+            backgroundColor: disableCart
+              ? colors.BlackGrey
+              : flashsale
+                ? colors.RedFlashsale
+                : colors.BlueJaja,
+          }}
+          contentStyle={{ width: "100%", height: "100%" }}
+          color={
+            disableCart
+              ? colors.BlackGrayScale
+              : flashsale
+                ? colors.RedFlashsale
+                : colors.BlueJaja
+          }
+          labelStyle={[
+            styles.font_13,
+            styles.T_bold,
+            { color: colors.White },
+          ]}
+          mode="contained"
+        >
+          {reduxProduct?.statusProduk
+            ? reduxProduct.stock == "0"
+              ? "Stok Habis"
+              : reduxProduct.statusProduk != "live"
+                ? "Diarsipkan"
+                : "Beli Sekarang"
+            : "Beli Sekarang"}
+        </Button>
+      </View> */}
+            {Object.keys(reduxProduct).length ? (
+                <Modal
+                    statusBarTranslucent={true}
+                    animationType="fade"
+                    transparent={true}
+                    visible={modal}
+                    onRequestClose={() => setmodal(!modal)}
+                >
+                    <View
+                        style={{
+                            height: Hp("50%"),
+                            width: Wp("100%"),
+                            backgroundColor: colors.White,
+                            opacity: 0.95,
+                            zIndex: 9999,
+                            elevation: 11,
+                        }}
+                    >
                         <ViewShot ref={viewShotRef} options={{ format: "jpg" }}>
-                            <View style={{ width: Wp('100%'), height: Wp('100%'), backgroundColor: colors.White }}>
-                                <Image style={style.swiperProduct}
+                            <View
+                                style={{
+                                    width: Wp("100%"),
+                                    height: Wp("100%"),
+                                    backgroundColor: colors.White,
+                                }}
+                            >
+                                <Image
+                                    style={style.swiperProduct}
                                     source={{ uri: reduxProduct.image[0] }}
                                 />
                             </View>
-                            <View style={{ flex: 0, flexDirection: 'column', backgroundColor: colors.White, padding: '3%', marginBottom: '1%' }}>
-                                <Text style={[styles.font_18, styles.mb_2]}>{reduxProduct.name}</Text>
-                                {Object.keys(variasiSelected).length ?
-                                    <View style={[styles.row_start_center,]}>
-                                        <View style={[styles.row, { width: '87%', height: '100%' }]}>
-                                            {variasiSelected.isDiscount ?
+                            <View
+                                style={{
+                                    flex: 0,
+                                    flexDirection: "column",
+                                    backgroundColor: colors.White,
+                                    padding: "3%",
+                                    marginBottom: "1%",
+                                }}
+                            >
+                                <Text style={[styles.font_18, styles.mb_2]}>
+                                    {reduxProduct.name}
+                                </Text>
+                                {Object.keys(variasiSelected).length ? (
+                                    <View style={[styles.row_start_center]}>
+                                        <View
+                                            style={[styles.row, { width: "87%", height: "100%" }]}
+                                        >
+                                            {variasiSelected.isDiscount ? (
                                                 <View style={styles.row}>
-                                                    <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 5 }]}>
-                                                        <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, { marginBottom: Platform.OS === 'ios' ? '-1%' : 0, color: colors.White }]}>{reduxProduct.discount}%</Text>
+                                                    <View
+                                                        style={[
+                                                            styles.row_center,
+                                                            styles.mr_3,
+                                                            {
+                                                                width: Wp("10.5%"),
+                                                                height: Wp("10.5%"),
+                                                                backgroundColor: colors.RedFlashsale,
+                                                                padding: "1%",
+                                                                borderRadius: 5,
+                                                            },
+                                                        ]}
+                                                    >
+                                                        <Text
+                                                            numberOfLines={1}
+                                                            style={[
+                                                                styles.font_12,
+                                                                styles.T_semi_bold,
+                                                                {
+                                                                    marginBottom:
+                                                                        Platform.OS === "ios" ? "-1%" : 0,
+                                                                    color: colors.White,
+                                                                },
+                                                            ]}
+                                                        >
+                                                            {reduxProduct.discount}%
+                                                        </Text>
                                                     </View>
                                                     <View style={styles.column}>
-                                                        <Text style={Ps.priceBefore}>{variasiSelected.price}</Text>
-                                                        <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.YellowJaja }]}>{variasiSelected.priceDiscount}</Text>
+                                                        <Text style={Ps.priceBefore}>
+                                                            {variasiSelected.price}
+                                                        </Text>
+                                                        <Text
+                                                            style={[
+                                                                Ps.priceAfter,
+                                                                {
+                                                                    fontSize: 20,
+                                                                    color: flashsale
+                                                                        ? colors.RedFlashsale
+                                                                        : colors.BlueJaja,
+                                                                },
+                                                            ]}
+                                                        >
+                                                            {variasiSelected.priceDiscount}
+                                                        </Text>
                                                     </View>
                                                 </View>
-                                                :
-                                                <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.YellowJaja }]}>{variasiSelected.price}</Text>
-                                            }
+                                            ) : (
+                                                <Text
+                                                    style={[
+                                                        Ps.priceAfter,
+                                                        {
+                                                            fontSize: 20,
+                                                            color: flashsale
+                                                                ? colors.RedFlashsale
+                                                                : colors.BlueJaja,
+                                                        },
+                                                    ]}
+                                                >
+                                                    {variasiSelected.price}
+                                                </Text>
+                                            )}
                                         </View>
                                     </View>
-                                    :
-                                    flashsale ?
-                                        <View style={[styles.row_start_center,]}>
-                                            <View style={[styles.row_center, { width: '87%', height: '100%' }]}>
-                                                <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1.5%', borderRadius: 5 }]}>
-                                                    <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.White }]}>{flashsaleData.discountFlash}%</Text>
-                                                </View>
-                                                <View style={[styles.column, { height: Wp('11.5%'), }]}>
-                                                    <Text style={Ps.priceBefore}>{reduxProduct.price}</Text>
-                                                    <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.YellowJaja }]}>{reduxProduct.price}</Text>
-                                                </View>
+                                ) : flashsale ? (
+                                    <View style={[styles.row_start_center]}>
+                                        <View
+                                            style={[
+                                                styles.row_center,
+                                                { width: "87%", height: "100%" },
+                                            ]}
+                                        >
+                                            <View
+                                                style={[
+                                                    styles.row_center,
+                                                    styles.mr_3,
+                                                    {
+                                                        width: Wp("10.5%"), height: Wp("10.5%"),
+                                                        backgroundColor: colors.RedFlashsale,
+                                                        padding: "1.5%",
+                                                        borderRadius: 5,
+                                                    },
+                                                ]}
+                                            >
+                                                <Text
+                                                    style={[
+                                                        styles.font_12,
+                                                        styles.T_semi_bold,
+                                                        { marginBottom: "-1%", color: colors.White },
+                                                    ]}
+                                                >
+                                                    {flashsaleData.discountFlash}%
+                                                </Text>
+                                            </View>
+                                            <View style={[styles.column, { height: Wp("10.5%") }]}>
+                                                <Text style={Ps.priceBefore}>{reduxProduct.price}</Text>
+                                                <Text
+                                                    style={[
+                                                        Ps.priceAfter,
+                                                        {
+                                                            fontSize: 20,
+                                                            color: flashsale
+                                                                ? colors.RedFlashsale
+                                                                : colors.BlueJaja,
+                                                        },
+                                                    ]}
+                                                >
+                                                    {reduxProduct.price}
+                                                </Text>
                                             </View>
                                         </View>
-                                        :
-                                        <View style={[styles.row_start_center,]}>
-                                            <View style={[styles.row_start_center, { width: '87%', }]}>
-                                                {reduxProduct.isDiscount ?
-                                                    <View style={[styles.row_start_center]}>
-                                                        <View style={[styles.row_center, styles.mr_3, { width: Wp('11.5%'), height: Wp('11.5%'), backgroundColor: colors.RedFlashsale, padding: '1%', borderRadius: 5 }]}>
-                                                            <Text numberOfLines={1} style={[styles.font_12, styles.T_semi_bold, { marginBottom: Platform.OS === 'ios' ? '-1%' : 0, color: colors.White }]}>{reduxProduct.discount}%</Text>
-                                                        </View>
-                                                        <View style={[styles.column]}>
-                                                            <Text style={Ps.priceBefore}>{reduxProduct.price}</Text>
-                                                            <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.YellowJaja }]}>{reduxProduct.priceDiscount}</Text>
-                                                        </View>
+                                    </View>
+                                ) : (
+                                    <View style={[styles.row_start_center]}>
+                                        <View style={[styles.row_start_center, { width: "87%" }]}>
+                                            {reduxProduct.isDiscount ? (
+                                                <View style={[styles.row_start_center]}>
+                                                    <View
+                                                        style={[
+                                                            styles.row_center,
+                                                            styles.mr_3,
+                                                            {
+                                                                width: Wp("10.5%"),
+                                                                height: Wp("10.5%"),
+                                                                backgroundColor: colors.RedFlashsale,
+                                                                padding: "1%",
+                                                                borderRadius: 5,
+                                                            },
+                                                        ]}
+                                                    >
+                                                        <Text
+                                                            numberOfLines={1}
+                                                            style={[
+                                                                styles.font_12,
+                                                                styles.T_semi_bold,
+                                                                {
+                                                                    marginBottom:
+                                                                        Platform.OS === "ios" ? "-1%" : 0,
+                                                                    color: colors.White,
+                                                                },
+                                                            ]}
+                                                        >
+                                                            {reduxProduct.discount}%
+                                                        </Text>
                                                     </View>
-                                                    :
-                                                    <View style={[styles.row_between_center, { width: '100%' }]}>
-                                                        <Text style={[Ps.priceAfter, { fontSize: 20, color: flashsale ? colors.RedFlashsale : colors.YellowJaja }]}>{reduxProduct.price}</Text>
+                                                    <View style={[styles.column]}>
+                                                        <Text style={Ps.priceBefore}>
+                                                            {reduxProduct.price}
+                                                        </Text>
+                                                        <Text
+                                                            style={[
+                                                                Ps.priceAfter,
+                                                                {
+                                                                    fontSize: 20,
+                                                                    color: flashsale
+                                                                        ? colors.RedFlashsale
+                                                                        : colors.BlueJaja,
+                                                                },
+                                                            ]}
+                                                        >
+                                                            {reduxProduct.priceDiscount}
+                                                        </Text>
                                                     </View>
-                                                }
-                                            </View>
-
+                                                </View>
+                                            ) : (
+                                                <View
+                                                    style={[styles.row_between_center, { width: "100%" }]}
+                                                >
+                                                    <Text
+                                                        style={[
+                                                            Ps.priceAfter,
+                                                            {
+                                                                fontSize: 20,
+                                                                color: flashsale
+                                                                    ? colors.RedFlashsale
+                                                                    : colors.BlueJaja,
+                                                            },
+                                                        ]}
+                                                    >
+                                                        {reduxProduct.price}
+                                                    </Text>
+                                                </View>
+                                            )}
                                         </View>
-                                }
-
+                                    </View>
+                                )}
                             </View>
-
                         </ViewShot>
                     </View>
-                </Modal > : null
-            }
-        </SafeAreaView >
-    )
+                </Modal>
+            ) : null}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={reportModal}
+                onRequestClose={() => {
+                    setreportModal(!reportModal);
+                }}
+            >
+                <View
+                    style={{
+                        flex: 1,
+                        width: Wp("100%"),
+                        height: Hp("100%"),
+                        backgroundColor: "transparent",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "rgba(0,0,0,0.4)",
+                    }}
+                >
+                    <View
+                        style={[
+                            styles.column_between_center,
+                            styles.px_5,
+                            styles.shadow_5,
+                            {
+                                alignItems: "flex-start",
+                                paddingVertical: "5%",
+                                width: Wp("80%"),
+                                height: Wp("60%"),
+                                backgroundColor: colors.White,
+                                borderRadius: 7,
+                                zIndex: 999,
+                                shadowColor: colors.BlackGrayScale,
+                            },
+                        ]}
+                    >
+                        <Text
+                            style={[
+                                styles.font_13,
+                                styles.T_medium,
+                                { color: colors.BlueJaja },
+                            ]}
+                        >
+                            Laporkan Produk
+                        </Text>
+                        <View style={[styles.row_center, styles.px_2, styles.py, {
+                            borderWidth: 0.5, borderColor: colors.Silver, borderRadius: 5,
+                            height: Wp("25%"),
+                        }]}>
+                            <TextInput
+                                numberOfLines={4}
+                                maxLength={500}
+                                value={reason}
+                                multiline={true}
+                                placeholder="Masukkan alasan laporan"
+                                // textAlignVertical="center"
+                                textAlign="left"
+                                textAlignVertical="top"
+                                activeOutlineColor={colors.BlueJaja}
+                                style={[
+                                    styles.font_12,
+                                    {
+                                        height: '100%',
+                                        width: "100%",
+                                    },
+                                ]}
+                                onChangeText={(text) => setreason(text)}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                styles.row_end_center,
+                                { alignItems: "center", width: "100%" },
+                            ]}
+                        >
+                            <TouchableRipple
+                                onPress={() => setreportModal(false)}
+                                style={[
+                                    styles.row_center,
+                                    styles.px_5,
+                                    styles.py_3,
+                                    styles.shadow_3,
+                                    {
+                                        shadowColor: "#000",
+                                        borderRadius: 5,
+                                        backgroundColor: colors.Silver,
+                                    },
+                                ]}
+                            >
+                                <Text
+                                    style={[
+                                        styles.font_13,
+                                        styles.T_semi_bold,
+                                        { color: colors.White },
+                                    ]}
+                                >
+                                    Batal
+                                </Text>
+                            </TouchableRipple>
+                            <TouchableRipple
+                                onPress={handleReport}
+                                style={[
+                                    styles.row_center,
+                                    styles.px_5,
+                                    styles.py_3,
+                                    styles.ml_3,
+                                    styles.shadow_3,
+                                    {
+                                        shadowColor: colors.BlueJaja,
+
+                                        borderRadius: 5,
+                                        backgroundColor: colors.BlueJaja,
+                                    },
+                                ]}
+                            >
+                                <Text
+                                    style={[
+                                        styles.font_13,
+                                        styles.T_semi_bold,
+                                        { color: colors.White },
+                                    ]}
+                                >
+                                    Laporkan
+                                </Text>
+                            </TouchableRipple>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+        </SafeAreaView>
+    );
 }
 
 const style = StyleSheet.create({
@@ -1448,7 +1923,7 @@ const style = StyleSheet.create({
     // },
     statusBar: {
         height: STATUS_BAR_HEIGHT,
-        backgroundColor: 'transparent',
+        backgroundColor: "transparent",
     },
     // navBar: {
     //     height: '100%',
@@ -1461,13 +1936,13 @@ const style = StyleSheet.create({
     // },
 
     navContainer: {
-        height: Platform.OS === 'ios' ? Hp('5.6%') : Hp('10%'),
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-        paddingHorizontal: '4%',
-        paddingBottom: Platform.OS === "ios" ? '3.5%' : '2.5%',
-        // paddingTop: '3.5%',
-        backgroundColor: 'transparent',
+        height: Platform.OS === "ios" ? Hp("8%") : Hp("10%"),
+        justifyContent: "center",
+        alignItems: "center",
+        paddingHorizontal: "4%",
+        // paddingBottom: Platform.OS === "ios" ? '3.5%' : '2.5%',
+        // paddingVertical: '1%',
+        backgroundColor: "transparent",
     },
     // statusBar: {
     //     height: STATUS_BAR_HEIGHT,
@@ -1475,22 +1950,42 @@ const style = StyleSheet.create({
     // },
     navBar: {
         height: NAV_BAR_HEIGHT,
-        width: '100%',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flexDirection: 'row',
-        backgroundColor: 'transparent',
+        width: "100%",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexDirection: "row",
+        backgroundColor: "transparent",
         // paddingHorizontal: '1%'
     },
     titleStyle: {
-        color: 'white',
-        fontFamily: 'SignikaNegative-SemiBold',
+        color: "white",
+        fontFamily: "SignikaNegative-SemiBold",
         fontSize: 18,
-        backgroundColor: colors.BlueJaja
+        backgroundColor: colors.BlueJaja,
     },
 
-    swiperProduct: { width: '100%', height: '100%', resizeMode: 'contain', backgroundColor: colors.White },
-    loadingProduct: { width: '75%', height: '100%', resizeMode: 'contain', backgroundColor: colors.White, alignSelf: 'center', tintColor: colors.Silver },
+    swiperProduct: {
+        width: Wp('100%'),
+        height: Wp('100%'),
+        resizeMode: "contain",
+        backgroundColor: colors.White,
+    },
+    loadingProduct: {
+        width: "75%",
+        height: "100%",
+        resizeMode: "contain",
+        backgroundColor: colors.White,
+        alignSelf: "center",
+        tintColor: colors.Silver,
+    },
 
-    searchBar: { flexDirection: 'row', backgroundColor: colors.White, borderRadius: 12, height: NAV_BAR_HEIGHT / 1.7, width: '70%', alignItems: 'center', paddingHorizontal: '4%' }
+    searchBar: {
+        flexDirection: "row",
+        backgroundColor: colors.White,
+        borderRadius: 12,
+        height: NAV_BAR_HEIGHT / 1.7,
+        width: "70%",
+        alignItems: "center",
+        paddingHorizontal: "4%",
+    },
 });

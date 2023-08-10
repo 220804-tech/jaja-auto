@@ -71,7 +71,7 @@ export default function EtalaseProducts() {
                 }
             })
         } catch (error) {
-            console.log("🚀 ~ file: EtalaseProduct.js ~ line 214 ~ fetchLoadmore ~ error", error)
+            console.log("🚀 ~ file: EtalaseProduct.js ~ line 214 ~ fetchLoadmore ~ error", error.message)
         }
     }
     const onRefresh = useCallback(() => {

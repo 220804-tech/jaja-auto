@@ -60,6 +60,8 @@ export default function HistoryProductScreen() {
                 setLoading(false)
             })
             .catch(error => {
+                console.log(error.message)
+
                 setLoading(false)
                 if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
                     ToastAndroid("Tidak dapat terhubung, periksa kembali koneksi anda!")
@@ -107,6 +109,8 @@ export default function HistoryProductScreen() {
                 }
             })
             .catch(error => {
+                console.log(error.message)
+
                 if (String(error).slice(11, String(error).length).replace(" ", " ") === "Network request failed") {
                     ToastAndroid("Tidak dapat terhubung, periksa kembali koneksi anda!")
                 } else {

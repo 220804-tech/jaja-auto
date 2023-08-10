@@ -89,7 +89,7 @@ export default function AddAddressScreen(props) {
                     console.log("file: Maps.js ~ line 106 ~ .then ~ responseJson.results[0].geometry.location.lat", responseJson.results[0].geometry.location.lat)
                     console.log("file: AddAddressScreen.js ~ line 96 ~ .then ~ responseJson.results[0].geometry.", responseJson.results[0].geometry)
                 })
-                .catch((error) => console.log("error 117", error));
+                .catch((error) => console.log("error 117", error.message));
         }
 
     }
@@ -103,10 +103,10 @@ export default function AddAddressScreen(props) {
                         console.log("file: Maps.js ~ line 120 ~ .then ~ responseJson", responseJson.predictions[0])
                         handleSearchLatLong(responseJson.predictions[0])
                     })
-                    .catch((error) => console.log("error", error));
+                    .catch((error) => console.log("error", error.message));
             }
         } catch (error) {
-            console.log("file: AddAddressScreen.js ~ line 103 ~ handleSearchKecamatan ~ error", error)
+            console.log("file: AddAddressScreen.js ~ line 103 ~ handleSearchKecamatan ~ error", error.message)
         }
     }
 
@@ -164,7 +164,7 @@ export default function AddAddressScreen(props) {
                 handleSave()
             }
         } catch (error) {
-
+            console.log(error.message)
         }
     }, [props.handleSave, props.edit])
 
@@ -297,7 +297,7 @@ export default function AddAddressScreen(props) {
                     }
                 })
                 .catch(error => {
-                    console.log("🚀 ~ file: AddAddressScreen.js ~ line 237 ~ handleSave ~ error", error)
+                    console.log("🚀 ~ file: AddAddressScreen.js ~ line 237 ~ handleSave ~ error", error.message)
                     ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)
                     setLoading(false)
                 })
@@ -316,8 +316,9 @@ export default function AddAddressScreen(props) {
             } else {
                 getKecamatan()
             }
-        }).catch(err => {
+        }).catch(error => {
             getKecamatan()
+            console.log(error.message)
         })
     };
 

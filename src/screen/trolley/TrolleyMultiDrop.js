@@ -87,10 +87,12 @@ export default function TrolleyMultiDrop() {
         })
         .catch((error) => {
           setloading(false)
-          Utils.handleError(error, "Error with status code : 41002");
+          Utils.handleError(error.message, "Error with status code : 41002");
         });
     } catch (error) {
       setloading(false)
+      console.log(error.message)
+
 
     }
   };
@@ -199,7 +201,7 @@ export default function TrolleyMultiDrop() {
         }
       })
       .catch((error) =>
-        Utils.handleError(error, "Error with status code : 121589")
+        Utils.handleError(error.message, "Error with status code : 121589")
       );
   }
 

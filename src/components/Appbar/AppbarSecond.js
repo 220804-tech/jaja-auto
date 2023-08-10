@@ -51,11 +51,11 @@ export default function AppbarSecond(props) {
                 .then((res) => {
                     console.log("🚀 ~ file: AppbarSecond.js ~ line 53 ~ .then ~ res", res)
                 })
-                .catch((err) => {
-                    console.log("🚀 ~ file: AppbarSecond.js ~ line 56 ~ handleShareStore ~ err", err)
+                .catch((error) => {
+                    console.log("🚀 ~ file: AppbarSecond.js ~ line 56 ~ handleShareStore ~ err", error.message)
                 });
         } catch (error) {
-            console.log("🚀 ~ file: AppbarSecond.js ~ line 59 ~ handleShareStore ~ error", error)
+            console.log("🚀 ~ file: AppbarSecond.js ~ line 59 ~ handleShareStore ~ error", error.message)
         }
     }
 

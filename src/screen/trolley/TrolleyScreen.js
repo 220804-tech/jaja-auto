@@ -108,13 +108,14 @@ export default function TrolleyScreen() {
                     })
                     .catch(error => {
                         setDisableCheckout(false)
-                        Utils.handleError(error, 'Error with status code : 12027')
+                        Utils.handleError(error.message, 'Error with status code : 12027')
                     })
             }
             setTimeout(() => {
                 setupdate(true)
             }, 3000);
         } catch (error) {
+            console.log(error.message)
 
         }
     }
@@ -179,7 +180,7 @@ export default function TrolleyScreen() {
             .catch(error => {
                 handleFailed(name, indexParent, indexChild)
                 setDisableCheckout(false)
-                Utils.handleError(error, 'Error with status code : 16002')
+                Utils.handleError(error.message, 'Error with status code : 16002')
             })
     }
 
@@ -233,7 +234,7 @@ export default function TrolleyScreen() {
                     Utils.alertPopUp(JSON.stringify(res) + ' : 12157\n\n' + res)
                 }
             })
-            .catch(error => Utils.handleError(error, 'Error with status code : 12158'));
+            .catch(error => Utils.handleError(error.message, 'Error with status code : 12158'));
     }
 
     const handleCheckout = () => {
@@ -272,7 +273,7 @@ export default function TrolleyScreen() {
                 setDisableCheckout(true)
             }
         } catch (error) {
-            console.log("🚀 ~ file: TrolleyScreen.js ~ line 251 ~ handleCheckout ~ error", error)
+            console.log("🚀 ~ file: TrolleyScreen.js ~ line 251 ~ handleCheckout ~ error", error.message)
         }
 
     }

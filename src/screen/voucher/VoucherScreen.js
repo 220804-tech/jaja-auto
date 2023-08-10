@@ -128,7 +128,7 @@ export default function VoucherScreen() {
                     dispatch({ type: 'SET_KEYWORD', payload: text })
                 })
                 .catch(error => {
-                    Utils.handleError(error, 'Error with status code : 12101')
+                    Utils.handleError(error.message, 'Error with status code : 12101')
                 });
             navigation.navigate('ProductSearch')
 

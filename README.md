@@ -25,7 +25,7 @@
 
 ## Store
 # 12019 => Error api get store detail
-# 12020 => Error api get store product
+#  => Error api get store product
 
 ## Splashscreen
 # 12021 => Error api get dashboard

@@ -81,6 +81,7 @@ export default function DetailComplain() {
                 setTitleHeader('Permintaan Komplain')
             }
         } catch (error) {
+            console.log(error.message)
 
         }
 
@@ -224,13 +225,14 @@ export default function DetailComplain() {
 
                     setTimeout(() => setLoading(false), (1000));
                 } catch (error) {
+                    console.log(error.message)
 
                 }
 
             })
             .catch(error => {
                 res = false
-                Utils.handleError(error, "Error with status code : 12054")
+                Utils.handleError(error.message, "Error with status code : 12054")
             });
 
         setTimeout(() => {
@@ -284,7 +286,7 @@ export default function DetailComplain() {
             })
             .catch(error => {
                 setLoading(false)
-                Utils.handleError(error, "Error with staus code : 12037")
+                Utils.handleError(error.message, "Error with staus code : 12037")
             });
     }
 

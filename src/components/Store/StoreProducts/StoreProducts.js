@@ -127,6 +127,8 @@ export default function StoreProducts() {
             })
         } catch (error) {
             error = false
+            console.log(error.message)
+
         }
         setTimeout(() => {
             if (error == true) {
@@ -274,7 +276,7 @@ export default function StoreProducts() {
                 </View>
                 {
                     data?.length ?
-                        <ScrollView nestedScrollEnabled={true} style={[styles.column, styles.px_3]}>
+                        <ScrollView nestedScrollEnabled={true} style={[styles.px_3]} contentContainerStyle={{ justifyContent: 'space-between' }}>
 
                             <CardProduct data={data} />
 

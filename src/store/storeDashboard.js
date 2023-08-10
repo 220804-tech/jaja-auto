@@ -14,8 +14,13 @@ const initialState = {
     flashsaleLive: false,
     banner: [],
     count: 0,
-    firstLoading: true
+    recommandedauto: [],
+    brandfilter: [],
+    modelfilter: [],
+
 }
+
+
 export default function storeDashboard(state = initialState, action) {
     const { type, payload } = action;
     switch (type) {
@@ -41,6 +46,12 @@ export default function storeDashboard(state = initialState, action) {
             return { ...state, basedOnSearch: payload }
         case 'SET_DASHRECOMMANDED':
             return { ...state, recommanded: payload }
+        case 'SET_DASHRECOMMANDEDAUTO':
+            return { ...state, recommandedauto: payload }
+        case 'SET_BRANDFILTER':
+            return { ...state, brandfilter: payload }
+        case 'SET_MODELFILTER':
+            return { ...state, modelfilter: payload }
         case 'SET_MAX_RECOMMANDED':
             return { ...state, maxRecomandded: payload }
         case 'SET_LOADMORE':
@@ -48,9 +59,7 @@ export default function storeDashboard(state = initialState, action) {
         case 'SET_OUT':
             return { ...state, out: payload }
         case 'SET_COUNT':
-            return { ...state, out: payload }
-        case 'SET_FIRST_LOADING':
-            return { ...state, firstLoading: payload }
+            return { ...state, count: payload }
         default:
             return state;
     }

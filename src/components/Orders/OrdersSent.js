@@ -51,7 +51,7 @@ export default function OrdersSent() {
                 setRefreshing(false)
             })
         } catch (error) {
-            console.log("🚀 ~ file: OrdersSent.js ~ line 55 ~ getItem ~ error", error)
+            console.log("🚀 ~ file: OrdersSent.js ~ line 55 ~ getItem ~ error", error.message)
             setRefreshing(false)
 
         }

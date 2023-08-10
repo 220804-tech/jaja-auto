@@ -67,10 +67,10 @@ export default function ProductSearchScreen() {
                     // dispatch({ type: 'SET_SORTS', payload: result.data.sorts })
                 })
                 .catch(error => {
-                    Utils.handleError(error, 'Error with status code : 16001')
+                    Utils.handleError(error.message, 'Error with status code : 16001')
                 });
         } catch (error) {
-            Utils.handleError(error, 'Error with status code : 21087')
+            Utils.handleError(error.message, 'Error with status code : 21087')
         }
     }
 
@@ -110,10 +110,12 @@ export default function ProductSearchScreen() {
                 })
                 .catch(error => {
                     Utils.handleError('Error with status code : 130001')
+                    console.log(error.message)
+
                 });
 
         } catch (error) {
-            Utils.handleError(error, 'Error with status code : 21088')
+            Utils.handleError(error.message, 'Error with status code : 21088')
         }
     }
 
@@ -222,7 +224,7 @@ export default function ProductSearchScreen() {
                 dispatch({ type: 'SET_MAX_SEARCH', payload: true })
             }
         } catch (error) {
-            Utils.handleError(error, 'Error with status code : 21090')
+            Utils.handleError(error.message, 'Error with status code : 21090')
 
         }
     }

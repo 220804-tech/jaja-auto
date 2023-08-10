@@ -35,6 +35,7 @@ export default function FlashsaleSecondComponent() {
             dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
             alert(String(error.message))
             error = false
+            console.log(error.message)
         }
         setTimeout(() => {
             if (error) {

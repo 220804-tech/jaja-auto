@@ -51,6 +51,7 @@ export default function ChatScreen({ route }) {
     const listChat = [{ id: '1SX', text: 'Halo!' }, { id: '1SX', text: 'Halo, apakah barang ini ready?' }, { id: '2SX', text: 'Halo, apakah bisa mengirim hari ini?' }, { id: '3SX', text: 'Terima kasih!' }, { id: '4SX', text: 'Sama-sama!' },]
     const reduxLoad = useSelector(state => state.product.productLoad)
     const [keyboardStatus, setKeyboardStatus] = useState(24)
+    
 
     useEffect(() => {
         handleFirebase()
@@ -61,6 +62,7 @@ export default function ChatScreen({ route }) {
             // }
         }
     }, []);
+
 
     useEffect(() => {
         const showSubscription = Keyboard.addListener("keyboardWillShow", () => {
@@ -330,6 +332,7 @@ export default function ChatScreen({ route }) {
             }
         }, 20000);
     }
+
     const renderRow = ({ item, index }) => {
         let dateNow = String(item.date).slice(0, 3);
         let dateRight = String(item.date).slice(4, 15)

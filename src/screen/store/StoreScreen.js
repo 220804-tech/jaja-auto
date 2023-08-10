@@ -15,13 +15,14 @@ import database from "@react-native-firebase/database";
 
 export default function StoreScreen({ route }) {
     const navigation = useNavigation();
-    const reduxStore = useSelector(state => state.store.store)
-    // console.log("🚀 ~ file: StoreScreen.js ~ line 17 ~ StoreScreen ~ reduxStore", )
+    const reduxStore = useSelector(state => state.store?.store)
     const reduxUser = useSelector(state => state.user)
-    const reduxAuth = useSelector(state => state.auth.auth)
-    const greeting = useSelector(state => state.store.store.greeting)
+    const reduxAuth = useSelector(state => state.auth?.auth)
+    const greeting = useSelector(state => state.store?.store?.greeting)
+    const products = useSelector(state => state.store?.newProduct)
 
-    const reduxStoreProduct = useSelector(state => state.store.storeProduct)
+    const reduxStoreProduct = useSelector(state => state.store?.storeProduct)
+
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
     const [status, setStatus] = useState("first")
@@ -37,13 +38,10 @@ export default function StoreScreen({ route }) {
     const loadStore = useSelector(state => state.store.loadStore)
     const reduxnotifCount = useSelector(state => state.notification.notifCount)
 
-
-
     useEffect(() => {
         handleProduct()
-
+        console.log('masuk sini');
     }, [])
-
 
     useEffect(() => {
         if (!!reduxStore.id) {
@@ -52,13 +50,12 @@ export default function StoreScreen({ route }) {
     }, [reduxStore?.id])
 
     const handleProduct = () => {
-        dispatch({ type: 'SET_NEW_PRODUCT', payload: [] })
-        dispatch({ type: 'SET_STORE_PRODUCT', payload: [] })
-        dispatch({ "type": 'STORE_PRODUCT_LOADING', payload: true })
+
+        console.log('masuk fungsi');
         let obj = {
             slug: route?.params?.slug,
             page: 1,
-            limit: 100,
+            limit: 11,
             keyword: '',
             price: '',
             condition: '',
@@ -66,18 +63,11 @@ export default function StoreScreen({ route }) {
             brand: '',
             sort: 'produk.id_produk-desc'
         }
-        ServiceStore.getProductStore(obj, dispatch, true).then(res => {
-            dispatch({ "type": 'SET_NEW_PRODUCT_LOAD', payload: false })
-        })
+        ServiceStore.getProductStore(obj, dispatch, true)
+
         obj.sort = ''
-        ServiceStore.getStoreProduct(obj, dispatch, false).then(res => {
-            if (res) {
-                dispatch({ "type": 'STORE_PRODUCT_LOADING', payload: false })
-                dispatch({ "type": 'SET_STORE_PRODUCT', payload: res.items })
-            }
-        })
-
-
+        obj.limit = 100
+        ServiceStore.getProductStore(obj, dispatch, false)
     }
 
     const handleEtalase = () => {
@@ -110,8 +100,6 @@ export default function StoreScreen({ route }) {
     const [routes] = useState([
         { key: 'first', title: 'Halaman Toko' },
         { key: 'second', title: 'Produk' },
-        // { key: 'third', title: 'Etalase' },
-
         { key: 'third', title: 'Etalase' },
 
     ]);
@@ -141,8 +129,10 @@ export default function StoreScreen({ route }) {
             ServiceStore.getProductStore(obj, dispatch, false)
         }
     }
+
     const handleChat = () => {
         if (reduxAuth) {
+            // console.log('masyk sini cok')
             navigation.navigate("IsiChat", { data: seller, product: null })
             setTimeout(() => {
                 try {
@@ -150,8 +140,9 @@ export default function StoreScreen({ route }) {
                     newItem.amount = 0
                     database().ref('friend/' + reduxUser.uid + "/" + seller.id).set(newItem);
                 } catch (error) {
-                }
+                    console.log("🚀 ~ file: StoreScreen.js ~ line 144 ~ setTimeout ~ error", error)
 
+                }
             }, 500);
         } else {
             navigation.navigate('Login', { navigate: "Store" })
@@ -182,7 +173,7 @@ export default function StoreScreen({ route }) {
                     barStyle='light-content'
                     showHideTransition="fade"
                 />
-                {loading || loadStore ? <Loading /> : null}
+                {loadStore ? <Loading /> : null}
                 <View style={[{ flex: 1 }]}>
                     <AppbarSecond storeSlug={reduxStore.slug} storename={reduxStore.name} handleSearch={handleSearch} handleSubmit={handleSubmit} title={reduxStore && Object.keys(reduxStore).length && reduxStore.name ? `Cari ${index == '2' ? 'etalase ' : ''}di ${reduxStore.name}..` : 'Cari di toko..'} />
                     {/* <ScrollView nestedScrollEnabled={true} > */}
@@ -231,7 +222,7 @@ export default function StoreScreen({ route }) {
                                     <View style={[styles.column, { width: '98%' }]}>
                                         <Text style={[styles.font_12, { color: colors.BlackGrayScale }]}>{String(greeting).slice(0, deskripsiLenght)}</Text>
                                         {deskripsiLenght == 100 && String(greeting).length >= 100 ?
-                Se                            <TouchableOpacity onPress={() => setdeskripsiLenght(String(greeting).length + 100)}>
+                                            <TouchableOpacity onPress={() => setdeskripsiLenght(String(greeting).length + 100)}>
                                                 <Text style={[styles.font_13, { color: colors.BlueJaja }]}>Baca selengkapnya..</Text>
                                             </TouchableOpacity>
                                             : deskripsiLenght < 100 ? null :
@@ -286,4 +277,3 @@ export default function StoreScreen({ route }) {
         </Provider >
     )
 }
-

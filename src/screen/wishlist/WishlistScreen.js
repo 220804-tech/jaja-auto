@@ -124,11 +124,11 @@ export default function WishlistScreen() {
                     }
                 } catch (error) {
                     Utils.handleError(String(result), 'Error with status code : 190021')
-                    console.log("🚀 ~ file: WishlistScreen.js ~ line 125 ~ handleFilter ~ error", error)
+                    console.log("🚀 ~ file: WishlistScreen.js ~ line 125 ~ handleFilter ~ error", error.message)
 
                 }
             }).catch(error => {
-                Utils.handleError(error, 'Error with status code 190022')
+                Utils.handleError(error.message, 'Error with status code 190022')
             })
     }
 

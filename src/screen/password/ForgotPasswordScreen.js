@@ -96,6 +96,8 @@ export default class ForgotPasswordScreen extends Component {
                     }
                 })
                 .catch(error => {
+                    console.log(error.message)
+
                     this.setState({ loading: false })
                     setTimeout(() => alert("Code 4 : " + String(error)), 100);
                 });
@@ -226,6 +228,8 @@ export default class ForgotPasswordScreen extends Component {
                 }
             })
             .catch(error => {
+                console.log(error.message)
+
                 setTimeout(() => {
                     Alert.alert(
                         "Jaja.id",
@@ -523,6 +527,8 @@ export default class ForgotPasswordScreen extends Component {
                     }
                 })
                 .catch(error => {
+                    console.log(error.message)
+
                     setTimeout(() => this.setState({ loading: false }), 100);
                     setTimeout(() => {
                         Alert.alert(

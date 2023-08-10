@@ -37,7 +37,7 @@ export default function FinishedComplain() {
                         Utils.handleErrorResponse(result, "Error with status code : 12034")
                     }
                 })
-                .catch(error => Utils.handleError(error, "Error with status codde : 12035"));
+                .catch(error => Utils.handleError(error.message, "Error with status codde : 12035"));
         } else {
             ToastAndroid.show('Masukkan nomor resi dengan benar!', ToastAndroid.LONG, ToastAndroid.CENTER)
         }

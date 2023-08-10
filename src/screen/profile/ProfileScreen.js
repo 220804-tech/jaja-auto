@@ -11,6 +11,9 @@ const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 import { useDispatch, useSelector } from 'react-redux'
 import { getDistance, getPreciseDistance } from 'geolib';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+
+
 export default function ProfileScreen(props) {
   const navigation = useNavigation();
   const dispatch = useDispatch()
@@ -63,30 +66,33 @@ export default function ProfileScreen(props) {
     }, 3000);
   }, []);
 
-  const getAccount = async () => {
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", reduxAuth);
-    myHeaders.append("Cookie", "ci_session=71o6pecall1g4dt83l7a6vhl4igak0ms");
 
-    var requestOptions = {
-      method: 'GET',
-      headers: myHeaders,
-      redirect: 'follow'
+  const getAccount = async () => {
+    const config = {
+      method: 'get',
+      url: `https://jaja.id/backend/order/ListRekening?id_customer=${reduxUser.id}`,
+      headers: {
+        'Authorization': reduxAuth,
+        'Cookie': 'ci_session=71o6pecall1g4dt83l7a6vhl4igak0ms'
+      }
     };
-    await fetch(`https://jaja.id/backend/order/ListRekening?id_customer=${reduxUser.id}`, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        if (result && Object.keys(result).length && result.status.code == 200) {
-          setAccount(true)
-        } else {
-          setAccount(false)
-        }
-      })
-      .catch(error => {
-        setAccount(false)
-        Utils.handleError(error, "Error with status code : 12043")
-      });
-  }
+
+    try {
+      const response = await axios(config);
+
+      // Axios automatically converts response data from JSON, no need to parse
+      const result = response.data;
+      if (result && Object.keys(result).length && result.status.code == 200) {
+        setAccount(true);
+      } else {
+        setAccount(false);
+      }
+    } catch (error) {
+      setAccount(false);
+      Utils.handleError(error.message, "Error with status code : 12043");
+    }
+  };
+
 
   // const getItem = () => {
   // navigation.navigate("VerifikasiEmail", { email: user.email })
@@ -95,45 +101,34 @@ export default function ProfileScreen(props) {
   const getItem = async () => {
     try {
       if (reduxAuth) {
-        var myHeaders = new Headers();
-        myHeaders.append("Authorization", reduxAuth);
-        myHeaders.append("Cookie", "ci_session=6jh2d2a8uvcvitvneaa2t81phf3lrs3c");
-        var requestOptions = {
-          method: 'GET',
-          headers: myHeaders,
-          redirect: 'follow'
+        const config = {
+          method: 'get',
+          url: "https://jaja.id/backend/user/profile",
+          headers: {
+            'Authorization': reduxAuth,
+            'Cookie': 'ci_session=6jh2d2a8uvcvitvneaa2t81phf3lrs3c',
+          },
         };
-        return await fetch("https://jaja.id/backend/user/profile", requestOptions)
-          .then(response => response.text())
-          .then(data => {
-            try {
-              let result = JSON.parse(data)
-              if (result.status.code === 200) {
-                EncryptedStorage.setItem('user', JSON.stringify(result.data))
-                dispatch({ type: 'SET_USER', payload: result.data })
-                dispatch({ type: 'SET_VERIFIKASI', payload: result.data.isVerified })
-                setcount(count + 1)
-                return true
-              } else {
-                Utils.handleErrorResponse(result, 'Error with status code : 12044')
-                return false
-              }
-            } catch (error) {
-              Utils.alertPopUp(String(error) + "\n\n" + data)
-              return false
-            }
 
-          })
-          .catch(error => {
-            return false
-            Utils.handleError(error, "Error with status code : 12045")
-          });
+        const response = await axios(config);
+        let result = response.data;
+
+        if (result.status.code === 200) {
+          await EncryptedStorage.setItem('user', JSON.stringify(result.data));
+          dispatch({ type: 'SET_USER', payload: result.data });
+          dispatch({ type: 'SET_VERIFIKASI', payload: result.data.isVerified });
+          setcount(count + 1);
+          return true;
+        } else {
+          Utils.handleErrorResponse(result, 'Error with status code : 12044');
+          return false;
+        }
       }
     } catch (error) {
-      Utils.handleError(error, "Error with status code : 12046")
-
+      Utils.handleError(error.message, "Error with status code : 12046");
+      return false;
     }
-  }
+  };
 
   const handleLogout = async () => {
     Alert.alert(
@@ -181,6 +176,29 @@ export default function ProfileScreen(props) {
 
   }
 
+
+  const handleDelete = async () => {
+    Alert.alert(
+      "HAPUS AKUN",
+      "Kamu yakin ingin hapus akun ?",
+      [
+        {
+          text: "Tidak",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+
+        },
+        {
+          text: "Hapus", onPress: () => {
+            setLoading(true)
+          }
+
+        }
+      ]
+    );
+
+
+  }
 
   const handleAuth = name => {
     navigation.navigate(name, { navigate: name })
@@ -288,6 +306,10 @@ export default function ProfileScreen(props) {
             <TouchableOpacity style={[styles.row_start_center, styles.mb, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver, }]} onPress={() => navigation.navigate(reduxAuth ? 'Vouchers' : 'Login')}>
               <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/coupon.png`)} />
               <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Voucher</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.row_start_center, styles.mb, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver, }]} onPress={handleDelete}>
+              <Image style={[styles.icon_21, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/close.png`)} />
+              <Text style={[styles.font_14, styles.T_medium, styles.my_4]}>Hapus Akun</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.row_start_center, styles.mb, { borderBottomWidth: 0.5, borderBottomColor: colors.Silver, }]} onPress={() => navigation.navigate(reduxAuth ? 'Reward' : 'Login')}>
               <Image style={[styles.icon_27, styles.mr_3, { tintColor: colors.BlueJaja }]} source={require(`../../assets/icons/star.png`)} />

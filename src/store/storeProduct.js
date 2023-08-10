@@ -1,5 +1,6 @@
 const initialState = {
     productDetail: {},
+    productDetailAuto: {},
     reviewProducts: [],
     categoryName: '',
     productLoad: false,
@@ -11,6 +12,8 @@ export default function storeProduct(state = initialState, action) {
     switch (type) {
         case 'SET_DETAIL_PRODUCT':
             return { ...state, productDetail: payload }
+        case 'SET_DETAIL_PRODUCT_AUTO':
+            return { ...state, productDetailAuto: payload }
         case 'SET_PRODUCT_LOAD':
             return { ...state, productLoad: payload }
         case 'SET_REVIEW_PRODUCT':

@@ -174,12 +174,14 @@ export default function checkoutScreen() {
                             }
                         } catch (error) {
                             Utils.handleErrorResponse(JSON.stringify(res + '\n\n' + error, 'Error with status code : 12061'))
+                            console.log(error.message)
+
                         }
                         setTimeout(() => setloadAs(false), 500);
                     })
                     .catch(error => {
                         setloadAs(false)
-                        setTimeout(() => Utils.handleError(error, 'Error with status code : 12062'), 100);
+                        setTimeout(() => Utils.handleError(error.message, 'Error with status code : 12062'), 100);
                     });
             } else {
                 handleClaimVoucher("store", val.id, index)
@@ -215,10 +217,12 @@ export default function checkoutScreen() {
                             }
                         } catch (error) {
                             setLoad(false)
-                            Utils.handleErrorResponse(JSON.stringify(res + '\n\n' + error, 'Error with status code : 12064'))
+                            Utils.handleErrorResponse(JSON.stringify(res + '\n\n' + error.message, 'Error with status code : 12064'))
                         }
                     })
                     .catch(error => {
+                        console.log(error.message)
+
                         setLoad(false)
                         setTimeout(() => Utils.handleError(String(error), 'Error with status code : 12065'), 100);
                     });
@@ -261,12 +265,16 @@ export default function checkoutScreen() {
                         }
                         setTimeout(() => setloadAs(false), 500);
                     } catch (error) {
+                        console.log(error.message)
+
                         setloadAs(false)
                         Utils.handleErrorResponse(JSON.stringify(res + '\n\n' + error, 'Error with status code : 12068'))
 
                     }
                 })
                 .catch(error => {
+                    console.log(error.message)
+
                     setloadAs(false)
                     Utils.handleError(error, 'Error with status code : 12069')
                 });
@@ -301,10 +309,14 @@ export default function checkoutScreen() {
                             setTimeout(() => Utils.handleErrorResponse(result, 'Error with status code : 12070'), 100);
                         }
                     } catch (error) {
+                        console.log(error.message)
+
                         Utils.handleErrorResponse(JSON.stringify(res + '\n\n' + error, 'Error with status code : 12071'))
                     }
                 })
                 .catch(error => {
+                    console.log(error.message)
+
                     setloadAs(false)
                     Utils.handleError(error, 'Error with status code : 12072')
                 });
@@ -351,11 +363,15 @@ export default function checkoutScreen() {
                         Utils.handleErrorResponse(result, 'Error with status code : 12074')
                     }
                 } catch (error) {
+                    console.log(error.message)
+
                     Utils.handleErrorResponse(JSON.stringify(res + '\n\n' + error, 'Error with status code : 12075'))
                 }
                 setTimeout(() => setLoad(false), 11000);
             })
             .catch(error => {
+            console.log(error.message)
+
                 Utils.handleError(error, "Error with status code : 12076")
                 setLoad(false)
             })
@@ -413,7 +429,8 @@ export default function checkoutScreen() {
 
             }
         } catch (error) {
-            console.log("errorrr  ", error)
+            console.log(error.message)
+            
         }
         setDatePickerVisibility(false)
 
@@ -553,7 +570,8 @@ export default function checkoutScreen() {
                                         setTimeout(() => {
                                             setLoad(false)
                                         }, 2000);
-                                    } catch (err) {
+                                    } catch (error) {
+                                        console.log(error.message)
                                         error = false
                                         Utils.handleError(result, "Error with status code : 12049")
                                         setLoad(false)
@@ -564,8 +582,8 @@ export default function checkoutScreen() {
                                     }, 2000);
 
                                 })
-                                .catch(err => {
-                                    console.log("🚀 ~ file: Product.js ~ line 32 ~ productDetail ~ error", err)
+                                .catch(error => {
+                                    console.log("🚀 ~ file: Product.js ~ line 32 ~ productDetail ~ error", error.message)
                                     setLoad(false)
                                     Utils.handleError(err, "Error with status code : 120477")
                                 })
@@ -1038,7 +1056,7 @@ export default function checkoutScreen() {
                     </ScrollView>
                 </View>
             </ActionSheet>
-            <ActionSheet ref={actionSheetDelivery} delayActionSheetDraw={false} containerStyle={{ width: Wp('100%') }} containerStyle={{ padding: '2%' }}>
+            <ActionSheet ref={actionSheetDelivery} delayActionSheetDraw={false} containerStyle={{ width: Wp('100%'), padding: '2%' }} >
                 <View style={[styles.row_between_center, styles.py_2, styles.px_4, styles.mb_3]}>
                     <Text style={[styles.font_14, styles.T_semi_bold, { marginBottom: '-1%', color: colors.BlueJaja }]}>Pilih Ekspedisi</Text>
                     <TouchableOpacity style={{ backgroundColor: 'transparent', paddingVertical: '2%', paddingHorizontal: '3%' }} onPressIn={() => actionSheetDelivery.current?.setModalVisible()}>

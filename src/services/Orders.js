@@ -167,7 +167,7 @@ export async function getCompleted(auth) {
                         return null
                     }
                 } catch (error) {
-                    Utils.alertPopUp('Error with status code : 12205\n' + JSON.stringify(res) + '\n' + String(error))
+                    Utils.alertPopUp('Error with status code : 12205\n' + res + '\n' + String(error))
                 }
             })
             .catch(error => {
@@ -207,6 +207,7 @@ export async function getFailed(auth) {
                 }
             })
             .catch(error => {
+
                 Utils.handleError(error, "Error with status code : 12014")
             });
     }

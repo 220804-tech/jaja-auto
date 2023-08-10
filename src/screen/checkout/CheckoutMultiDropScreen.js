@@ -75,14 +75,14 @@ export default function CheckoutMultiDropScreen() {
                     setloading(false)
                 })
                 .catch(error => {
-                    Utils.alertPopUp(String(error))
+                    Utils.alertPopUp(String(error.message))
                     setloading(false)
 
                 });
         } catch (error) {
             setloading(false)
 
-            console.log("🚀 ~ file: CheckoutMultiDropScreen.js ~ line 70 ~ handleGetShipping ~ error", error)
+            console.log("🚀 ~ file: CheckoutMultiDropScreen.js ~ line 70 ~ handleGetShipping ~ error", error.message)
 
         }
     }
@@ -101,6 +101,7 @@ export default function CheckoutMultiDropScreen() {
                 }
             }
         } catch (error) {
+            console.log(error.message)
 
         }
     }, [indexStore])
@@ -146,7 +147,7 @@ export default function CheckoutMultiDropScreen() {
             })
             .catch(error => {
                 setloading(false)
-                Utils.handleError(error, "Error with status code : 13011")
+                Utils.handleError(error.message, "Error with status code : 13011")
             });
         setTimeout(() => {
             setloading(false)
@@ -226,7 +227,7 @@ export default function CheckoutMultiDropScreen() {
                                                 setSendDate(item.shippingSelected.dateSendTime);
                                             }
                                         } catch (error) {
-                                            console.log("🚀 ~ file: CheckoutMultiDropScreen.js ~ line 168 ~ renderItem ~ error", error)
+                                            console.log("🚀 ~ file: CheckoutMultiDropScreen.js ~ line 168 ~ renderItem ~ error", error.message)
 
                                         }
                                     }}>
@@ -477,11 +478,11 @@ export default function CheckoutMultiDropScreen() {
                         Utils.handleErrorResponse(result, "Error with status code : 12101");
                     }
                 } catch (error) {
-                    Utils.handleErrorResponse(JSON.stringify(res + "\n\n" + error, "Error with status code : 12102"));
+                    Utils.handleErrorResponse(JSON.stringify(res + "\n\n" + error.message, "Error with status code : 12102"));
                 }
             })
             .catch((error) => {
-                Utils.handleError(error, "Error with status code : 12103");
+                Utils.handleError(error.message, "Error with status code : 12103");
                 setloading(false);
             });
         setTimeout(() => setloading(false), 15000);
@@ -612,18 +613,20 @@ export default function CheckoutMultiDropScreen() {
                         setTimeout(() => {
                             setloading(false);
                         }, 2000);
-                    } catch (err) {
+                    } catch (error) {
                         error = false;
                         Utils.handleError(result, "Error with status code : 120499");
                         setloading(false);
+                        console.log(error.message)
+
                     }
                     setTimeout(() => {
                         setloading(false);
                     }, 2000);
                 })
-                .catch((err) => {
+                .catch((error) => {
                     setloading(false);
-                    Utils.handleError(err, "Error with status code : 1204777");
+                    Utils.handleError(error.message, "Error with status code : 1204777");
                 });
             setTimeout(() => {
                 let text = "Tidak dapat terhubung, periksa kembali koneksi internet anda!";

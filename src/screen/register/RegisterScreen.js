@@ -177,7 +177,7 @@ class RegisterScreen extends Component {
                     }
                 })
                 .catch(error => {
-                    console.log("🚀 ~ file: RegisterScreen.js ~ line 181 ~ RegisterScreen ~ error", error)
+                    console.log("🚀 ~ file: RegisterScreen.js ~ line 181 ~ RegisterScreen ~ error", error.message)
                     json = error
                     Utils.alertPopUp(String(error))
                     setTimeout(() => this.setState({ loading: false }), 1000);
@@ -222,7 +222,7 @@ class RegisterScreen extends Component {
                     Utils.alertPopUp(error.message)
                 });
         } catch (error) {
-            console.log("🚀 ~ file: RegisterScreen.js ~ line 220 ~ RegisterScreen ~ error", error)
+            console.log("🚀 ~ file: RegisterScreen.js ~ line 220 ~ RegisterScreen ~ error", error.message)
 
         }
     }

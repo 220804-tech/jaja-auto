@@ -313,7 +313,7 @@ export default function OrderDetailsScreen() {
                 }
 
             })
-            .catch(error => { Utils.alertPopUp(`Kegagalan Respon Server : 20203 => ${String(error)}`); });
+            .catch(error => { Utils.alertPopUp(`Kegagalan Respon Server : 20203 => ${String(error.message)}`); });
 
 
     }
@@ -339,7 +339,7 @@ export default function OrderDetailsScreen() {
                 return result.qr_code_url;
 
             })
-            .catch(error => { Utils.alertPopUp(`Kegagalan Respon Server : 20204 => ${String(error)}`); });
+            .catch(error => { Utils.alertPopUp(`Kegagalan Respon Server : 20204 => ${String(error.message)}`); });
     }
 
 
@@ -504,7 +504,7 @@ export default function OrderDetailsScreen() {
                 }
 
             })
-            .catch(error => { Utils.alertPopUp(`Kegagalan Respon Server : 20206 => ${String(error)}`); });
+            .catch(error => { Utils.alertPopUp(`Kegagalan Respon Server : 20206 => ${String(error.message)}`); });
 
     }
 
@@ -539,7 +539,7 @@ export default function OrderDetailsScreen() {
                 setListPayment(result);
             })
             .catch(error => {
-                Utils.handleError(error, "Error with status code : 22004")
+                Utils.handleError(error.message, "Error with status code : 22004")
             });
 
     }
@@ -587,7 +587,7 @@ export default function OrderDetailsScreen() {
             .catch(error => {
                 setRefreshing(false)
                 setLoading(false)
-                Utils.handleError(error, "Error with status code : 22004")
+                Utils.handleError(error.message, "Error with status code : 22004")
             });
 
         setTimeout(() => {
@@ -613,9 +613,9 @@ export default function OrderDetailsScreen() {
                 console.log("🚀 ~ file: OrdersUnpaid.js ~ line 38 ~ ServiceOrder.getUnpaid ~ resUnpaid", resUnpaid)
                 handleUnpaid()
             }
-        }).catch(err => {
-            console.log("🚀 ~ file: OrdersUnpaid.js ~ line 54 ~ ServiceOrder.getUnpaid ~ err", err)
-            Utils.alertPopUp(String(err))
+        }).catch(error => {
+            console.log("🚀 ~ file: OrdersUnpaid.js ~ line 54 ~ ServiceOrder.getUnpaid ~ err", error.message)
+            Utils.alertPopUp(String(error))
             handleUnpaid()
         })
     }
@@ -647,7 +647,7 @@ export default function OrderDetailsScreen() {
                 }, 50);
             })
             .catch(error => {
-                Utils.handleError(error, "Error with status code : 22004")
+                Utils.handleError(error.message, "Error with status code : 22004")
             });
     }
 
@@ -677,7 +677,7 @@ export default function OrderDetailsScreen() {
 
             })
             .catch(error => {
-                Utils.handleError(error, "Error with status code : 22004")
+                Utils.handleError(error.message, "Error with status code : 22004")
             });
     }
 
@@ -751,7 +751,7 @@ export default function OrderDetailsScreen() {
                             })
                             .catch(error => {
                                 setLoading(false)
-                                Utils.handleError(error, "Error with status 22002")
+                                Utils.handleError(error.message, "Error with status 22002")
                             });
                     }
                 }
@@ -788,6 +788,8 @@ export default function OrderDetailsScreen() {
                 error = false
             }
         } catch (error) {
+            console.log(error.message)
+
             dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
             alert(String(error.message))
             error = false

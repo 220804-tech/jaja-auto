@@ -19,7 +19,7 @@ export default function CategoryScreen() {
                 }
             })
         } catch (error) {
-            console.log("🚀 ~ file: SearchScreen.js ~ line 33 ~ getItem ~ error", error)
+            console.log("🚀 ~ file: SearchScreen.js ~ line 33 ~ getItem ~ error", error.message)
         }
     }, [])
 
@@ -31,8 +31,8 @@ export default function CategoryScreen() {
                         if (result) {
                             dispatch({ type: 'SET_CATEGORY', payload: result })
                         }
-                    }).catch(err => {
-                        console.log("🚀 ~ file: CategoryComponent.js ~ line 63 ~ EncryptedStorage.getItem ~ err", err)
+                    }).catch(error => {
+                        console.log("🚀 ~ file: CategoryComponent.js ~ line 63 ~ EncryptedStorage.getItem ~ err", error.message)
                     })
                 }
             }, 10000);

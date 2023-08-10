@@ -2,18 +2,23 @@ import Appbar from '../components/Appbar/AppbarComponent'
 import AppbarSecond from '../components/Appbar/AppbarSecond'
 
 import CardProduct from '../components/CardProduct/CardProductComponent'
-
+import CardProductAuto from '../components/CardProduct/CardProductAuto'
 
 import Category from '../components/Category/CategoryComponent'
 import Flashsale from '../components/Flashsale/FlashsaleComponent'
 import HobyAverage from '../components/HobyAverage/HobyAverageComponent'
 import RecomandedHobby from '../components/RecomandedHobby/RecomandedHobbyComponent'
+import RecomandedCar from '../components/RecomandedCar/RecomandedCarComponent'
 import Trending from '../components/Trending/TrendingComponent'
 import BasedOnSearch from '../components/BasedOnSearch/BasedOnSearchComponent'
 import NearestStore from '../components/NearestStore/NearestStore'
+import RadioButton from '../components/RadioButton/RadioButton'
+
 
 import FastImage from 'react-native-fast-image'
 import ShimmerCardProduct from '../components/Shimmer/CardProduct'
+import ShimmerCardProductAuto from '../components/Shimmer/CardProductAuto'
+
 
 import Language from '../utils/Language'
 import Loading from '../components/Loading/LoadingComponent'
@@ -30,6 +35,8 @@ import * as ServiceVoucher from '../services/Voucher'
 import * as ServiceOrder from '../services/Orders'
 import * as ServiceCategory from '../services/Category'
 import * as ServiceProduct from '../services/Product'
+import * as ServiceProductAuto from '../services/ProductAuto'
+
 import * as ServiceStore from '../services/Store'
 import * as ServiceFirebase from '../services/Firebase'
 import * as ServiceNotif from '../services/Notification'
@@ -54,5 +61,5 @@ export {
     Appbar, CardProduct, Category, Flashsale, Maps, HobyAverage, RecomandedHobby, Trending, Language, Loading, CheckSignal, BasedOnSearch, styles,
     Ps, Wp, Hp, useNavigation, colors, useFocusEffect, FastImage, Utils, ServiceCart, ServiceCheckout, ServiceUser, ServiceVoucher, ServiceOrder, Os,
     ServiceCategory, ServiceProduct, ServiceStore, ServiceFirebase, Ts, ServiceNotif, ShimmerCardProduct, ServiceCore, Countdown, OrderNotFound,
-    DefaultNotFound, NearestStore, FilterLocation, AppbarSecond, FlashsaleToko, RFValue, axios, HeaderTitleHome
+    DefaultNotFound, NearestStore, FilterLocation, AppbarSecond, FlashsaleToko, RFValue, axios, HeaderTitleHome, RecomandedCar, CardProductAuto, ServiceProductAuto, RadioButton, ShimmerCardProductAuto
 }

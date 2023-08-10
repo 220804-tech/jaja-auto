@@ -84,7 +84,7 @@ export default function GiftScreen() {
         try {
 
         } catch (error) {
-
+            console.log(error.message)
         }
 
     }, [])
@@ -99,9 +99,11 @@ export default function GiftScreen() {
             dispatch({ type: "SET_PRODUCT_GIFT_SAVE", payload: res?.data?.items })
             dispatch({ type: "SET_GIFT_LOADING", payload: false })
             error = false
-        }).catch(err => {
+        }).catch(error => {
             error = false
             dispatch({ type: "SET_GIFT_LOADING", payload: false })
+            console.log(error.message)
+
         })
         setTimeout(() => {
             if (error) {

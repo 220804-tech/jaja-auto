@@ -9,6 +9,7 @@ export default function FlashsaleFirstComponent() {
     const dispatch = useDispatch()
     const navigation = useNavigation()
     const reduxLoad = useSelector(state => state.product.productLoad)
+    
     const handleShowDetail = async (item, status) => {
         let error = true;
         try {
@@ -34,6 +35,7 @@ export default function FlashsaleFirstComponent() {
             dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
             alert(String(error.message))
             error = false
+            console.log(error.message)
         }
         setTimeout(() => {
             if (error) {

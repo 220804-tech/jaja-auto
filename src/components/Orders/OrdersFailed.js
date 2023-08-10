@@ -30,8 +30,10 @@ export default function OrdersFailed() {
             } else {
                 handleFailed()
             }
-        }).catch(err => {
-            ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+        }).catch(error => {
+            ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)
+            console.log(error.message)
+
             handleFailed()
         })
     }

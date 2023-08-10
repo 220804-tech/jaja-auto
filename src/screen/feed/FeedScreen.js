@@ -4,7 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import LinearGradient from 'react-native-linear-gradient'
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder'
 import { useDispatch, useSelector } from 'react-redux'
-import { colors, styles, Utils, Wp, FastImage, useNavigation, ServiceProduct, Appbar, ServiceUser, Loading } from '../../export'
+import { colors, styles, Utils, Wp, FastImage, useNavigation, ServiceProduct, Appbar, ServiceUser, Loading, AppleType } from '../../export'
 import ViewShot from "react-native-view-shot";
 import ImgToBase64 from 'react-native-image-base64';
 import Share from 'react-native-share';
@@ -34,20 +34,24 @@ export default function FeedScreen(props) {
 
 
 
-    const [shimmerloading, setshimmerLoading] = useState(false)
-    const [shimmerdata, setshimmerData] = useState([{ loading: true }, { loading: true }])
+    const [maxscroll, setmaxscroll] = useState(false)
+    const [shimmerdata, setshimmerData] = useState([{ loading: true }])
+
+
+
 
 
 
     useEffect(() => {
+        setloading(false)
         handleFirstData()
+
     }, [])
 
     useEffect(() => {
 
         if (selectedShare?.name) {
-            console.log("🚀 ~ file: FeedScreen.js ~ line 51 ~ useEffect ~ selectedShare", selectedShare)
-            setselectedShare(selectedShare)
+            // setselectedShare(selectedShare)
             handleShare()
         }
     }, [selectedShare?.name])
@@ -75,19 +79,21 @@ export default function FeedScreen(props) {
 
     const handleFirstData = async () => {
         let result = await getData();
-        const uniqueObject = result.filter((x, i, a) => a.indexOf(x) == i)
-        setdata(uniqueObject)
+        setdata(result)
         setcount(count + 1)
         setloadmore(false)
     }
 
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
-        return layoutMeasurement.height + contentOffset.y >=
-            contentSize.height - (hg * 0.80) || layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 3)
+        if (!maxscroll) {
+            return layoutMeasurement.height + contentOffset.y >= contentSize.height - (hg * 1)
+        } else {
+            return false
+        }
     }
 
 
-    const getData = async (categoryName) => {
+    const getData = async () => {
         try {
             // setrefreshing(true)
             let errorResponse = true
@@ -105,14 +111,20 @@ export default function FeedScreen(props) {
                 }
             }, 22000);
 
-            return await fetch(`${reduxUrl}/jaja/get-feeds?page=${israndom ? 1 : page}&limit=5&categories=["toys","books","art"]&isRandom=${israndom}`, requestOptions)
+            return await fetch(`${reduxUrl}/jaja/get-feeds?page=${israndom ? 1 : page}&limit=10&categories=["toys","books","art-shop","sports", "photography","automotive","fashion","gaming","pets"]&isRandom=${israndom}`, requestOptions)
                 .then(response => response.text())
                 .then(json => {
+                    console.log("🚀 ~ file: FeedScreen.js ~ line 114 ~ getData ~ json", json)
                     setisRandom(false)
                     // setpage(page + 1)
                     errorResponse = false
                     let result = JSON.parse(json)
                     if (result?.status?.code === 200) {
+                        if (data?.length >= 100) {
+                            setmaxscroll(true)
+                        } else {
+                            setmaxscroll(false)
+                        }
                         return result.data
                     } else if (!result?.data?.length) {
                         return []
@@ -141,9 +153,7 @@ export default function FeedScreen(props) {
     const updateData = async () => {
         try {
             let result = await getData();
-            let arrayConcat = data.concat(result)
-            const uniqueObject = arrayConcat.filter((x, i, a) => a.indexOf(x) == i)
-            setdata(uniqueObject)
+            setdata(data.concat(result))
             setcount(count + 1)
             setloadmore(false)
         } catch (error) {
@@ -196,43 +206,15 @@ export default function FeedScreen(props) {
         }
     }
 
-    const dynamicLink = async () => {
-        try {
-            const link_URL = await dynamicLinks().buildShortLink({
-                link: `https://jajaid.page.link/gift?slug=${giftDetails.slug}`,
-                domainUriPrefix: 'https://jajaid.page.link',
-                ios: {
-                    bundleId: 'com.jaja.customer',
-                    appStoreId: '1547981332',
-                    fallbackUrl: 'https://apps.apple.com/id/app/jaja-id-marketplace-hobbies/id1547981332?l=id',
-                },
-                android: {
-                    packageName: 'com.jajaidbuyer',
-                    fallbackUrl: 'https://play.google.com/store/apps/details?id=com.jajaidbuyer',
-                },
-                navigation: {
-                    forcedRedirectEnabled: true,
-                }
-            });
-            console.log("🚀 ~ file: ProductScreen.js ~ line 127 ~ constlink_URL=awaitdynamicLinks ~ link_URL", link_URL)
-            setlink(link_URL)
-        } catch (error) {
-            console.log("🚀 ~ file: ProductScreen.js ~ line 138 ~ dynamicLink ~ error", error)
-
-        }
-    }
-
-
     const handleShare = async () => {
-
         setloading(true)
         try {
             let img64 = ''
             await viewShotRef.current.capture().then(async uri => {
-
                 let link = await ServiceUser.handleCreateLink(selectedShare.slug)
                 ImgToBase64.getBase64String(uri)
                     .then(base64String => {
+
                         let urlString = 'data:image/jpeg;base64,' + base64String;
                         img64 = urlString
                         const shareOptions = {
@@ -240,7 +222,7 @@ export default function FeedScreen(props) {
                             message: `Dapatkan ${selectedShare.name} di Jaja.id \nDownload sekarang ${link}`,
                             url: img64,
                         };
-                        console.log("🚀 ~ file: FeedScreen.js ~ line 312 ~ .then ~ selectedShare", selectedShare)
+                        setloading(false)
                         Share.open(shareOptions)
                             .then((res) => {
                                 setselectedShare('')
@@ -253,13 +235,15 @@ export default function FeedScreen(props) {
                     })
                     .catch(err => {
                         setselectedShare('')
+                        setloading(false)
                         console.log("🚀 ~ file: FeedScreen.js ~ line 239 ~ awaitviewShotRef.current.capture ~ err", err)
                     });
                 setloading(false)
-
             });
         } catch (error) {
+            console.log("🚀 ~ file: FeedScreen.js ~ line 259 ~ handleShare ~ error", error)
             setselectedShare('')
+            setloading(false)
 
         }
     }
@@ -268,79 +252,132 @@ export default function FeedScreen(props) {
         return (
             <>
                 {item?.loading ?
-                    <View style={[styles.column_start_center, styles.mb_2, styles.shadow_3, { elevation: 1, shadowColor: colors.Silver, width: Wp('95%'), height: Wp('120%'), borderRadius: 3, backgroundColor: colors.White }]}>
+                    <View key={index + 'RD'} style={[styles.column_start_center, styles.mb_2, styles.shadow_3, { elevation: 1, shadowColor: colors.Silver, width: AppleType === 'ipad' ? Wp('90%') : Wp('95%'), height: AppleType === 'ipad' ? Wp('110%') : Wp('120%'), borderRadius: 3, backgroundColor: colors.White }]}>
                         <ShimmerPlaceholder
                             LinearGradient={LinearGradient}
-                            width={Wp('95%')}
-                            height={Wp("95%")}
+                            width={AppleType === 'ipad' ? Wp('90%') : Wp('95%')}
+                            height={AppleType === 'ipad' ? Wp('90%') : Wp('95%')}
                             style={[styles.mb_2, { borderTopRightRadius: 3, borderTopLeftRadius: 3, }]}
                             shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
                         />
                         <View style={[styles.column, styles.p_2, { width: '100%' }]}>
                             <ShimmerPlaceholder
                                 LinearGradient={LinearGradient}
-                                width={Wp('65%')}
-                                height={Wp("5%")}
+                                width={AppleType === 'ipad' ? Wp('45%') : Wp('65%')}
+                                height={AppleType === 'ipad' ? Wp('3.5%') : Wp("5%")}
                                 style={[styles.mb_2, { borderRadius: 2, alignSelf: 'flex-start' }]}
                                 shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
                             />
                             <ShimmerPlaceholder
                                 LinearGradient={LinearGradient}
-                                width={Wp('35%')}
-                                height={Wp("5%")}
+                                width={AppleType === 'ipad' ? Wp('20%') : Wp('35%')}
+                                height={AppleType === 'ipad' ? Wp('3.5%') : Wp("5%")}
                                 style={[styles.mb_2, { borderRadius: 2, alignSelf: 'flex-start' }]}
                                 shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
                             />
                             <ShimmerPlaceholder
                                 LinearGradient={LinearGradient}
-                                width={Wp('30%')}
-                                height={Wp("5%")}
+                                width={AppleType === 'ipad' ? Wp('25%') : Wp('30%')}
+                                height={AppleType === 'ipad' ? Wp('3.5%') : Wp("5%")}
                                 style={{ borderRadius: 2, alignSelf: 'flex-end' }}
                                 shimmerColors={['#ebebeb', '#c5c5c5', '#ebebeb']}
                             />
                         </View>
                     </View>
                     :
-                    <ViewShot ref={selectedShare?.slug == item.product.slug ? viewShotRef : null} options={{ format: "jpg" }}>
-                        <View style={[styles.column_center, styles.mb_2, styles.shadow_3, { elevation: 1, shadowColor: colors.Silver, width: Wp('95%'), height: Wp('120%'), borderRadius: 3, backgroundColor: colors.White }]}>
-                            <View style={[[styles.column_center, { width: Wp('95%'), height: Wp('95%') }]]}>
-                                <View style={{ height: Wp('95%'), width: Wp('95%'), borderRadius: 3 }}>
-                                    <Swiper
-                                        style={{}}
-                                        autoplayTimeout={2}
-                                        pagingEnabled={true}
-                                        showsPagination={true}
-                                        horizontal={true}
-                                        dotColor={colors.BlueJaja}
-                                        activeDotColor={colors.YellowJaja}
-                                        paginationStyle={{ bottom: 10 }}>
-                                        {item.product.images.map((image, index) => {
-                                            return (
-                                                <View key={index + 'YG'} style={styles.row_center}>
-                                                    <FastImage
-                                                        source={{ uri: image }}
-                                                        style={{ width: Wp('95%'), height: Wp('95%') }}
-                                                        resizeMode={FastImage.resizeMode.contain}
-                                                    />
-                                                    <View style={[styles.row_center, { position: 'absolute', height: Wp('5%'), width: Wp('25%'), top: 0, left: 0, borderTopRightRadiusL: 3 }]}>
+                    <ViewShot key={index + 'FD'} ref={selectedShare?.slug == item.product.slug ? viewShotRef : null} options={{ format: "jpg" }}>
+                        <View style={[styles.column_center, styles.mb_2, styles.shadow_3, { elevation: 1, shadowColor: colors.Silver, width: AppleType === 'ipad' ? Wp('90%') : Wp('95%'), height: AppleType === 'ipad' ? Wp('110%') : Wp('120%'), borderRadius: 3, backgroundColor: colors.White }]}>
+                            <View style={{ height: AppleType === 'ipad' ? Wp('90%') : Wp('95%'), width: AppleType === 'ipad' ? Wp('90%') : Wp('95%'), borderRadius: 3 }}>
+                                <Swiper
+                                    style={{}}
+                                    autoplayTimeout={2}
+                                    pagingEnabled={true}
+                                    showsPagination={true}
+                                    horizontal={true}
+                                    dotColor={colors.BlueJaja}
+                                    activeDotColor={colors.YellowJaja}
+                                    paginationStyle={{ bottom: 10 }}>
+                                    {item.product.images.map(image => {
+                                        return (
+                                            <View style={styles.row_center}>
+                                                <FastImage
+                                                    source={{ uri: image }}
+                                                    style={{ width: AppleType === 'ipad' ? Wp('90%') : Wp('95%'), height: AppleType === 'ipad' ? Wp('90%') : Wp('95%') }}
+                                                    resizeMode={FastImage.resizeMode.contain}
+                                                />
+                                                {selectedShare?.slug !== item.product.slug ?
+                                                    <View style={[styles.row_center, { position: 'absolute', height: AppleType === 'ipad' ? Wp("4%") : Wp('5%'), width: Wp('25%'), top: 0, left: 0, borderTopRightRadiusL: 3, }]}>
                                                         <ShimmerPlaceholder
                                                             LinearGradient={LinearGradient}
                                                             width={Wp('25%')}
-                                                            height={Wp("5%")}
+                                                            height={AppleType === 'ipad' ? Wp("4%") : Wp("5%")}
                                                             style={{ borderRadius: 0, alignSelf: 'flex-start', borderTopRightRadiusL: 3 }}
                                                             shimmerColors={[colors.BlueJaja, colors.White, colors.BlueJaja]}
                                                         />
-                                                        <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White, position: 'absolute', top: 0, bottom: 0 }]}>New Product</Text>
+                                                        <View style={[styles.row_center, {
+                                                            position: "absolute",
+                                                            top: 0,
+                                                            left: 0,
+                                                            right: 0,
+                                                            bottom: 0,
+                                                            width: '100%', height: AppleType === 'ipad' ? Wp("4%") : Wp("5%"),
+                                                        }]}>
+                                                            <Text style={[styles.font_12, styles.T_semi_bold, { color: colors.White, textAlignVertical: 'center', textAlign: 'center', }]}>New Product</Text>
+                                                        </View>
                                                     </View>
-                                                </View>
+                                                    : null}
+                                            </View>
 
-                                            )
-                                        })}
-                                    </Swiper>
+                                        )
+                                    })}
+                                </Swiper>
 
+                            </View>
+                            <View style={[styles.column_between_center, styles.p_2, { width: '100%', height: AppleType === 'ipad' ? Wp('20%') : Wp('25%') }]}>
+                                <Text onPress={() => handleShowDetail(item)} numberOfLines={2} style={[styles.font_13, styles.T_medium, styles.mb_3, { alignSelf: 'flex-start', width: '85%' }]}>{item.product.name}</Text>
+                                <View style={[styles.row_between_center, { alignItems: 'center', width: '100%' }]}>
+                                    <View style={[styles.row_start_center]}>
+                                        <FastImage
+                                            source={require('../../assets/icons/google-maps.png')}
+                                            style={styles.icon_14}
+                                            tintColor={colors.YellowJaja}
+                                            resizeMode={FastImage.resizeMode.contain}
+                                        />
+                                        <Text adjustsFontSizeToFit numberOfLines={1} style={[styles.font_9, styles.ml_2]}>{item.seller.location}</Text>
+
+                                    </View>
+                                    <View style={[styles.row_around_center]}>
+                                        <TouchableOpacity style={{ alignSelf: 'flex-end' }} onPress={() => handleShowDetail(item)}>
+                                            <FastImage
+                                                source={require('../../assets/icons/gift.png')}
+                                                style={[styles.icon_21, styles.ml_5]}
+                                                tintColor={colors.BlueJaja}
+                                                resizeMode={FastImage.resizeMode.contain}
+                                            />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={[styles.row_center, styles.mr_5]}
+                                            onPress={() => handleWishlist(item, index)}>
+                                            <FastImage
+                                                source={require('../../assets/icons/love.png')}
+                                                style={styles.icon_21}
+                                                tintColor={item?.wishlist ? colors.RedFlashsale : colors.Silver}
+                                                resizeMode={FastImage.resizeMode.contain}
+                                            />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => setselectedShare(item.product)}>
+                                            <FastImage
+                                                source={require('../../assets/icons/share.png')}
+                                                style={[styles.icon_23, styles.ml_5]}
+                                                tintColor={colors.YellowJaja}
+                                                resizeMode={FastImage.resizeMode.contain}
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
-                                <View style={[styles.row_between_center, styles.p_2, { width: '100%', height: Wp('25%'), }]}>
-                                    <View style={[styles.column_between_center, { alignItems: 'flex-start', width: '80%', height: '100%' }]}>
+
+                                {/* <View style={[styles.column_between_center, { width: '100%', height: '100%' }]}>
+                                        
                                         <Text onPress={() => handleShowDetail(item)} numberOfLines={2} style={[styles.font_13, styles.T_medium, styles.mb_3,]}>{item.product.name}</Text>
                                         <View style={styles.row_start_center}>
                                             <FastImage
@@ -352,8 +389,8 @@ export default function FeedScreen(props) {
                                             <Text adjustsFontSizeToFit numberOfLines={1} style={[styles.font_9, styles.ml_2]}>{item.seller.location}</Text>
 
                                         </View>
-                                    </View>
-                                    <View style={[styles.column_end, { width: '20%', height: '100%' }]}>
+                                    </View> */}
+                                {/* <View style={[styles.column_end, { width: '20%', height: '100%' }]}>
                                         <TouchableOpacity onPress={() => handleShowDetail(item)}>
                                             <FastImage
                                                 source={require('../../assets/icons/gift.png')}
@@ -385,12 +422,11 @@ export default function FeedScreen(props) {
                                             </TouchableOpacity>
 
                                         </View>
-                                    </View>
-                                </View>
+                                    </View> */}
+                            </View>
 
-                            </View >
                         </View>
-                    </ViewShot>
+                    </ViewShot >
 
                 }
             </>
@@ -398,50 +434,55 @@ export default function FeedScreen(props) {
 
     }
     return (
-        <SafeAreaView style={[styles.container]}>
+        <SafeAreaView style={[styles.containerFix]}>
             <Appbar title="Feed" trolley={true} notif={true} />
             {loading ? <Loading /> : null}
-            <FlatList
-                contentContainerStyle={[styles.column_center, { alignSelf: 'center' }]}
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                    />
-                }
-                onScroll={Animated.event(
-                    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                    Platform.OS === "android" ?
-                        {
-                            useNativeDriver: false,
-                            listener: event => {
-                                if (isCloseToBottom(event.nativeEvent)) {
-                                    if (!loadmore) {
-                                        setloadmore(true)
-                                        setpage(page + 1)
-                                    } else {
-                                        // console.log('wait')
+            <View style={styles.containerIn}>
+                <FlatList
+                    contentContainerStyle={[styles.column_center, { alignSelf: 'center' }]}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    }
+                    onScroll={Animated.event(
+                        [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                        Platform.OS === "android" ?
+                            {
+                                useNativeDriver: false,
+                                listener: event => {
+                                    if (isCloseToBottom(event.nativeEvent)) {
+                                        if (!loadmore) {
+                                            setloadmore(true)
+                                            setpage(page + 1)
+                                        } else {
+                                            console.log('wait')
+                                        }
                                     }
                                 }
                             }
+                            : null
+                    )}
+
+                    onMomentumScrollEnd={({ nativeEvent }) => {
+                        console.log("🚀 ~ file: FeedScreen.js ~ line 486 ~ FeedScreen ~ nativeEvent", nativeEvent)
+                        if (isCloseToBottom(nativeEvent)) {
+                            if (!loadmore) {
+                                setloadmore(true)
+                                setpage(page + 1)
+                            } else {
+                                // console.log('wait')
+                            }
                         }
-                        : null
-                )}
-                onMomentumScrollEnd={({ nativeEvent }) => {
-                    if (isCloseToBottom(nativeEvent)) {
-                        if (!loadmore) {
-                            setloadmore(true)
-                            setpage(page + 1)
-                        } else {
-                            // console.log('wait')
-                        }
-                    }
-                }}
-                style={styles.p_2}
-                data={data?.concat(shimmerdata)}
-                keyExtractor={(item, index) => String(index + 'SJ')}
-                renderItem={renderItem}
-            />
+                    }}
+                    style={styles.p_2}
+                    data={maxscroll && loadmore ? data : data?.concat(shimmerdata)}
+                    keyExtractor={(item, index) => String(index + 'SJ')}
+                    renderItem={renderItem}
+                />
+            </View>
+
         </SafeAreaView>
     )
 }

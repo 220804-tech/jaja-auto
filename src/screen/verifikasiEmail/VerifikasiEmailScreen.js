@@ -111,7 +111,7 @@ export default class VerifikasiEmail extends Component {
             .catch(error => {
                 this.setState({ loading: false })
                 setTimeout(() => {
-                    Utils.handleError(error, 'Error with status code : 17001')
+                    Utils.handleError(error.message, 'Error with status code : 17001')
                 }, 100);
             });
     };
@@ -236,6 +236,8 @@ export default class VerifikasiEmail extends Component {
                 }
             })
             .catch(error => {
+            console.log(error.message)
+
                 setTimeout(() => {
                     Alert.alert(
                         "Jaja.id",

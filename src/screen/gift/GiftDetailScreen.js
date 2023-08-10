@@ -98,7 +98,7 @@ export default function GiftDetailScreen(props) {
                     })
                     .catch(err => console.log("cok"));
             } catch (error) {
-
+                console.log(error.message)
             }
 
 
@@ -171,7 +171,7 @@ export default function GiftDetailScreen(props) {
                         setLike(!like)
                     }
                 })
-                .catch(error => Utils.handleError(error, "Error with status code : 12025"));
+                .catch(error => Utils.handleError(error.message, "Error with status code : 12025"));
         } else {
             handleLogin()
         }
@@ -409,7 +409,7 @@ export default function GiftDetailScreen(props) {
             console.log("🚀 ~ file: ProductScreen.js ~ line 127 ~ constlink_URL=awaitdynamicLinks ~ link_URL", link_URL)
             setlink(link_URL)
         } catch (error) {
-            console.log("🚀 ~ file: ProductScreen.js ~ line 138 ~ dynamicLink ~ error", error)
+            console.log("🚀 ~ file: ProductScreen.js ~ line 138 ~ dynamicLink ~ error", error.message)
 
         }
     }
@@ -442,6 +442,7 @@ export default function GiftDetailScreen(props) {
                         err && console.log(err);
                     });
             } catch (error) {
+                console.log(error.message)
 
             }
         }, 1500);
@@ -652,7 +653,7 @@ export default function GiftDetailScreen(props) {
                                     :
                                     <TouchableRipple rippleColor={colors.RedFlashsale} style={[styles.row_center, styles.p_2, { borderWidth: 0.7, borderColor: colors.RedFlashsale, borderRadius: 7 }]} onPress={() => setDatePickerVisibility(true)}>
                                         <View style={[styles.row_center, { width: '100%' }]}>
-                                            <Text style={[styles.font_13, { color: colors.RedFlashsale, width: '90%', alignSelf: 'center', textAlign: 'center' }]}>Tentukan kapan barang akan dikirim</Text>
+                                            <Text style={[styles.font_13, { color: colors.RedFlashsale, width: '90%', alignSelf: 'center', textAlign: 'center' }]}>kapan barang akan dikirim</Text>
                                             <Image style={[styles.icon_16, { tintColor: colors.RedFlashsale }]} source={require('../../assets/icons/right-arrow.png')} />
                                         </View>
                                     </TouchableRipple>
@@ -928,6 +929,7 @@ export default function GiftDetailScreen(props) {
             setDatePickerVisibility(false)
 
         } catch (error) {
+            console.log(error.message)
 
         }
     }
@@ -961,6 +963,7 @@ export default function GiftDetailScreen(props) {
             }
 
         } catch (error) {
+            console.log(error.message)
 
         }
 
@@ -993,7 +996,7 @@ export default function GiftDetailScreen(props) {
             }
             dispatch({ type: 'SET_TEXT_GIFT', payload: catatan })
         } catch (error) {
-            console.log("🚀 ~ file: GiftDetailScreen.js ~ line 834 ~ handleApiCart ~ error", error)
+            console.log("🚀 ~ file: GiftDetailScreen.js ~ line 834 ~ handleApiCart ~ error", error.message)
         }
     }
     return (

@@ -51,6 +51,10 @@
 		27941A4E02DA459B8A6B7F49 /* SignikaNegative-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 12EFF475D75346FA95C5CEB4 /* SignikaNegative-Regular.ttf */; };
 		C0632389BFB5443E9A0D56E3 /* SignikaNegative-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FCB1BB6E52A74E0CB304404C /* SignikaNegative-SemiBold.ttf */; };
 		4F436ECE03594A838FCD4DF4 /* SignikaNegative-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F044CA20D56948158C7C7212 /* SignikaNegative-VariableFont_wght.ttf */; };
+		B8B7C5F3F1704A848751DD59 /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E3A9CE042774CA0894B98BD /* Poppins-Bold.ttf */; };
+		8EFE9E9DDDA44B4CA23A6522 /* Poppins-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7EFAD16225FB4C46864F1407 /* Poppins-BoldItalic.ttf */; };
+		AFC6D070D5454134910C3C84 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = FD9F7BD76458451788C83E94 /* OFL.txt */; };
+		5B6BC2845EA14B64B8827550 /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = DA7D708D60494FA287ABB645 /* README.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -114,6 +118,10 @@
 		12EFF475D75346FA95C5CEB4 /* SignikaNegative-Regular.ttf */ = {isa = PBXFileReference; name = "SignikaNegative-Regular.ttf"; path = "../src/assets/fonts/SignikaNegative-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		FCB1BB6E52A74E0CB304404C /* SignikaNegative-SemiBold.ttf */ = {isa = PBXFileReference; name = "SignikaNegative-SemiBold.ttf"; path = "../src/assets/fonts/SignikaNegative-SemiBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		F044CA20D56948158C7C7212 /* SignikaNegative-VariableFont_wght.ttf */ = {isa = PBXFileReference; name = "SignikaNegative-VariableFont_wght.ttf"; path = "../src/assets/fonts/SignikaNegative-VariableFont_wght.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		6E3A9CE042774CA0894B98BD /* Poppins-Bold.ttf */ = {isa = PBXFileReference; name = "Poppins-Bold.ttf"; path = "../src/assets/fonts/Poppins-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		7EFAD16225FB4C46864F1407 /* Poppins-BoldItalic.ttf */ = {isa = PBXFileReference; name = "Poppins-BoldItalic.ttf"; path = "../src/assets/fonts/Poppins-BoldItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		FD9F7BD76458451788C83E94 /* OFL.txt */ = {isa = PBXFileReference; name = "OFL.txt"; path = "../src/assets/fonts/OFL.txt"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		DA7D708D60494FA287ABB645 /* README.txt */ = {isa = PBXFileReference; name = "README.txt"; path = "../src/assets/fonts/README.txt"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -245,6 +253,10 @@
 				12EFF475D75346FA95C5CEB4 /* SignikaNegative-Regular.ttf */,
 				FCB1BB6E52A74E0CB304404C /* SignikaNegative-SemiBold.ttf */,
 				F044CA20D56948158C7C7212 /* SignikaNegative-VariableFont_wght.ttf */,
+				6E3A9CE042774CA0894B98BD /* Poppins-Bold.ttf */,
+				7EFAD16225FB4C46864F1407 /* Poppins-BoldItalic.ttf */,
+				FD9F7BD76458451788C83E94 /* OFL.txt */,
+				DA7D708D60494FA287ABB645 /* README.txt */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -379,6 +391,10 @@
 				27941A4E02DA459B8A6B7F49 /* SignikaNegative-Regular.ttf in Resources */,
 				C0632389BFB5443E9A0D56E3 /* SignikaNegative-SemiBold.ttf in Resources */,
 				4F436ECE03594A838FCD4DF4 /* SignikaNegative-VariableFont_wght.ttf in Resources */,
+				B8B7C5F3F1704A848751DD59 /* Poppins-Bold.ttf in Resources */,
+				8EFE9E9DDDA44B4CA23A6522 /* Poppins-BoldItalic.ttf in Resources */,
+				AFC6D070D5454134910C3C84 /* OFL.txt in Resources */,
+				5B6BC2845EA14B64B8827550 /* README.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

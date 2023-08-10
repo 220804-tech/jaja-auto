@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, StyleSheet, RefreshControl, Platform, ScrollView, Dimensions, LogBox, Animated, StatusBar, Alert } from 'react-native'
+import { SafeAreaView, View, Text, ToastAndroid, Image, TouchableOpacity, StyleSheet, RefreshControl, Platform, ScrollView, Dimensions, LogBox, Animated, StatusBar, Alert, Button, ActivityIndicator } from 'react-native'
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs();//Ignore all log notifications
 
@@ -7,8 +7,6 @@ import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Swiper from 'react-native-swiper'
 import { BasedOnSearch, Trending, Category, Flashsale, Loading, RecomandedHobby, Wp, Hp, colors, useNavigation, styles, ServiceCart, ServiceUser, useFocusEffect, NearestStore, ServiceCore, Utils, ServiceProduct, ServiceStore } from '../../export'
 const { height: SCREEN_HEIGHT, width } = Dimensions.get('window');
-import DeviceInfo from 'react-native-device-info';
-import ParallaxScrollView from 'react-native-parallax-scrollview';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 const { height: hg } = Dimensions.get('screen')
 import { useDispatch, useSelector } from 'react-redux'
@@ -21,7 +19,10 @@ import { useAndroidBackHandler } from "react-navigation-backhandler";
 import { Modal, TouchableRipple, TextInput, Provider, Portal } from 'react-native-paper';
 import queryString from 'query-string';
 import FastImage from 'react-native-fast-image'
-import CountDown from 'react-native-countdown-component';
+import Modals from 'react-native-modal';
+import { RFValue } from "react-native-responsive-fontsize";
+import { color } from 'react-native-reanimated';
+
 
 export default function HomeScreen() {
     const reduxLoadmore = useSelector(state => state.dashboard.loadmore)
@@ -32,10 +33,12 @@ export default function HomeScreen() {
     const reduxLoad = useSelector(state => state.product.productLoad)
     const [translucent, settranslucent] = useState(false)
     const reduxBanner = useSelector(state => state.dashboard.banner)
+    console.log('woiii', reduxBanner)
     const reduxUpdate = useSelector(state => state.dashboard.count)
     const firstLoading = useSelector(state => state.dashboard.firstLoading)
 
     const [showBanner, setshowBanner] = useState(false)
+    const [showLoader, setShowLoader] = useState(false);
 
     useAndroidBackHandler(() => {
         if (out) {
@@ -63,6 +66,18 @@ export default function HomeScreen() {
     const [phoneNumber, setphoneNumber] = useState('');
     const containerStyle = { backgroundColor: 'white', width: Wp('95%'), height: Wp('55%'), alignSelf: 'center', borderRadius: 4, };
     const [modalPhoneNumber, setmodalPhoneNumber] = useState(false);
+
+    const [isModalVisible, setModalVisible] = useState(false);
+    const [selectedOption, setSelectedOption] = useState(null); // New state for marking the selected option
+
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+    };
+
+    const selectOption = (option) => {
+        setSelectedOption(option);
+        toggleModal();
+    }
 
     const images = [
         {
@@ -288,82 +303,154 @@ export default function HomeScreen() {
 
     const renderNavBar = (text) => {
         return (
-            <View style={style.navContainer} >
-                <View style={style.statusBar} />
-                {/* <View style={style.navBar}> */}
+            <View style={{ marginTop: '2%' }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4.5%' }}>
+                    <View style={[styles.row_between_center]}>
+                        <TouchableOpacity style={[styles.column, styles.mx]} onPress={toggleModal}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Image source={require('../../assets/images/JajaIcon.png')} style={{ width: 85, height: 30, tintColor: colors.White, marginRight: 9 }} />
+                                <Image source={require('../../assets/gifs/Chevron.gif')} style={{ width: 20, height: 15, tintColor: colors.White }} />
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    <Modals
+                        isVisible={isModalVisible}
+                        onSwipeComplete={toggleModal}
+                        style={{ justifyContent: 'flex-start', margin: 0 }}
+                        animationIn="slideInDown"
+                        animationOut="slideOutUp"
+                        backdropToClose={false}
+                        swipeToClose={false}
+                    >
+                        <View style={{ backgroundColor: 'white', height: 160, borderBottomLeftRadius: 20, padding: 18, borderBottomRightRadius: 20, }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                                <View>
+                                    <Text style={{ fontSize: RFValue(14), fontFamily: 'Poppins-SemiBold' }}>Pilih Kategori</Text>
+                                </View>
+                                <View>
+                                    <TouchableOpacity onPress={toggleModal}>
+                                        <Text style={{ fontSize: 20, fontFamily: 'Poppins-SemiBold', color: '#818B8C' }}>X</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
 
-                <TouchableOpacity style={[style.searchBar, styles.row_start_center]} onPress={() => navigation.navigate("Search")}>
-                    <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%', tintColor: colors.YellowJaja }} />
-                    <Text style={styles.font_14}>{text}..</Text>
-                </TouchableOpacity>
-                <View style={[styles.row_between_center]}>
+                            <View style={{ marginTop: 15, flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <TouchableOpacity
+                                    style={{
+                                        width: 175,
+                                        height: 80,
+                                        borderWidth: 1,
+                                        borderColor: '#64B0C9',
+                                        borderRadius: 15,
+                                        padding: 10,
+                                    }}
+                                    onPress={() => selectOption('jajaid')}
+                                >
+                                    <Image source={require('../../assets/images/modal/jajaid.png')} style={{ width: 90, height: 35, marginBottom: 7 }} />
+                                    <Text style={{ fontSize: RFValue(7), fontFamily: 'Poppins-Medium', color: '#64B0C9' }}>Penuhi kebutuhan hobby mu di sini</Text>
+                                </TouchableOpacity>
 
-                    <TouchableOpacity style={[styles.column, styles.mx]} onPress={handleGetCart}>
-                        <Image source={require('../../assets/icons/cart.png')} style={{ width: 25, height: 25, tintColor: colors.White }} />
-                        {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
-                            <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalProductInCart >= 100 ? "99+" : reduxUser.badges.totalProductInCart}</Text></View>
-                            : null
-                        }
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.column, styles.mx_2]} onPress={() => reduxAuth ? navigation.navigate('Notification') : navigation.navigate('Login')}>
-                        <Image source={require('../../assets/icons/notif.png')} style={{ width: 24, height: 24, tintColor: colors.White }} />
-                        {Object.keys(reduxBadges).length && reduxBadges.totalNotifUnread ?
-                            <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxBadges.totalNotifUnread >= 100 ? "99+" : reduxBadges.totalNotifUnread}</Text></View>
+                                <TouchableOpacity
+                                    style={{
+                                        width: 175,
+                                        height: 80,
+                                        borderWidth: 1,
+                                        borderColor: '#64B0C9',
+                                        borderRadius: 15,
+                                        padding: 17,
+                                        paddingTop: 20,
+                                    }}
+                                    onPress={async () => {
+                                        selectOption('jajaauto');
+                                        setShowLoader(true);
+                                        navigation.navigate('Car'); // add this line to navigate
+                                        setShowLoader(false);
+                                    }}
+                                >
+                                    <Image source={require('../../assets/images/modal/JajaAutoNew.png')} style={{ width: 140, height: 23, marginBottom: 7 }} />
+                                    <Text style={{ fontSize: RFValue(7), fontFamily: 'Poppins-Medium', color: '#64B0C9' }}>Temukan Mobil impian mu di sini</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </Modals>
 
-                            // <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxBadges.totalNotifUnread >= 100 ? "99+" : reduxBadges.totalNotifUnread + ''}</Text></View>
-                            : null
-                        }
-                    </TouchableOpacity>
+                    <View style={[styles.row_between_center]}>
+
+                        <TouchableOpacity style={[styles.column, styles.mx]} onPress={handleGetCart}>
+                            <Image source={require('../../assets/icons/cart.png')} style={{ width: 25, height: 25, tintColor: colors.White }} />
+                            {Object.keys(reduxUser.badges).length && reduxUser.badges.totalProductInCart ?
+                                <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxUser.badges.totalProductInCart >= 100 ? "99+" : reduxUser.badges.totalProductInCart}</Text></View>
+                                : null
+                            }
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.column, styles.mx_2]} onPress={() => reduxAuth ? navigation.navigate('Notification') : navigation.navigate('Login')}>
+                            <Image source={require('../../assets/icons/notif.png')} style={{ width: 24, height: 24, tintColor: colors.White }} />
+                            {Object.keys(reduxBadges).length && reduxBadges.totalNotifUnread ?
+                                <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxBadges.totalNotifUnread >= 100 ? "99+" : reduxBadges.totalNotifUnread}</Text></View>
+
+                                // <View style={styles.countNotif}><Text style={styles.textNotif}>{reduxBadges.totalNotifUnread >= 100 ? "99+" : reduxBadges.totalNotifUnread + ''}</Text></View>
+                                : null
+                            }
+                        </TouchableOpacity>
+                    </View>
                 </View>
-                {/* </View> */}
-            </View >
+
+                <View style={[style.navContainer]} >
+                    <View style={style.statusBar} />
+                    <TouchableOpacity style={[style.searchBar, styles.row_start_center]} onPress={() => navigation.navigate("Search")}>
+                        <Image source={require('../../assets/icons/loupe.png')} style={{ width: 19, height: 19, marginRight: '3%', tintColor: colors.YellowJaja }} />
+                        <Text style={styles.font_14}>{text}..</Text>
+                    </TouchableOpacity>
+                </View >
+            </View>
         )
     }
+
+
 
     const title = () => {
         return (
             <Swiper
-                autoplayTimeout={3}
+                autoplayTimeout={5}
                 horizontal={true}
-                dotColor={colors.White}
-                activeDotColor={colors.YellowJaja}
-                paginationStyle={{ bottom: 10 }}
                 autoplay={true}
                 loop={true}
-                style={{ backgroundColor: colors.BlueJaja, flex: 0, justifyContent: 'center', alignItems: 'center' }}
+                showsPagination={false}
+                style={{
+                    backgroundColor: colors.BlueJaja,
+                    flex: 0,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingTop: '20%',
+                }}
             >
-                {
-                    showBanner ?
-                        reduxBanner.map((item, key) => {
-                            console.log("🚀 ~ file: HomeScreen.js ~ line 312 ~ reduxBanner.map ~ item", item)
-                            return (
-                                // <Image key={String(key)} style={style.swiperBanner}
-                                //     resizeMode={item.image ? "contain" : "cover"}
-                                //     source={{ uri: item.image }}
-                                // />
-                                <FastImage
-                                    key={String(key)}
-                                    style={style.swiperBanner}
-                                    source={{ uri: item.image }}
-                                    resizeMode={FastImage.resizeMode.contain}
-                                />
-
-
-                            );
-                        })
-                        :
-                        images.map((item, key) => {
-                            return (
-                                <FastImage
-                                    key={String(key)}
-                                    style={style.swiperBanner}
-                                    source={item.image}
-                                    resizeMode={FastImage.resizeMode.contain}
-                                />
-                            );
-                        })
-                }
+                {showBanner
+                    ? reduxBanner.map((item, key) => {
+                        console.log(
+                            '🚀 ~ file: HomeScreen.js ~ line 312 ~ reduxBanner.map ~ item',
+                            item
+                        );
+                        return (
+                            <FastImage
+                                key={String(key)}
+                                style={style.swiperBanner}
+                                source={{ uri: item.image }}
+                                resizeMode={FastImage.resizeMode.contain}
+                            />
+                        );
+                    })
+                    : images.map((item, key) => {
+                        return (
+                            <FastImage
+                                key={String(key)}
+                                style={style.swiperBanner}
+                                source={item.image}
+                                resizeMode={FastImage.resizeMode.contain}
+                            />
+                        );
+                    })}
             </Swiper>
+
         );
     };
 
@@ -374,69 +461,37 @@ export default function HomeScreen() {
             dispatch({ type: "SET_FILTER_GIFT", payload: res?.data?.filters })
             dispatch({ type: "SET_SORT_GIFT", payload: res?.data?.sorts })
         })
-
     }
 
+    const [modalVisibles, setModalVisibles] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setModalVisibles(true);
+        }, 3000);
+
+        return () => clearTimeout(timer);
+    }, []);
+
+    const handleClose = () => {
+        setModalVisibles(false);
+    };
+
+
     const renderContent = () => {
+
         return (
             <View style={[styles.column, { backgroundColor: colors.White, alignSelf: 'center', justifyContent: 'center', width: Wp('100%') }]}>
-
-                {/* <ScrollView
-                    refreshControl={
-                        <RefreshControl
-                            style={{ zIndex: 9999 }}
-                            refreshing={refreshing}
-                            onRefresh={onRefresh}
-                        />
-                    }> */}
                 <Category />
-                {/* <View style={[styles.row_around_center, styles.pb_2, { paddingTop: '4.5%', backgroundColor: colors.BlueJaja }]}>
-                    <View style={[styles.row_center, styles.px_4, { backgroundColor: colors.RedFlashsale, alignSelf: 'center', width: '100%', height: Hp('27%') }]} >
-                        <View style={[styles.column_between_center, styles.py_3, { alignSelf: 'center', width: '55%', height: '100%', }]} >
-                            <View style={styles.column}>
-                                <Text style={[styles.font_22, styles.T_bold, styles.mb_5, { alignSelf: 'flex-start', color: colors.White, textAlign: 'left' }]}>Big Rewards</Text>
-                                <Text style={[styles.font_12, styles.T_medium, { alignSelf: 'flex-start', color: colors.White, textAlign: 'left' }]}>Dapatkan speaker JBL, Nitendo Switch, hingga Sepeda Canyon hanya dengan belanja minimum 300K <Text onPress={() => navigation.navigate('Event')} style={[styles.font_12, styles.T_bold, { color: 'lightblue' }]}>baca syarat ketentuan.</Text></Text>
-                            </View>
-                            <CountDown
-                                style={{ padding: 0, margin: 0, alignSelf: 'flex-start', marginLeft: '3%' }}
-                                until={604800}
-                                size={11}
-                                onFinish={() => alert('Finished')}
-                                digitStyle={{ backgroundColor: '#FFF' }}
-                                digitTxtStyle={{ color: colors.BlueJaja }}
-                                timeToShow={['D', 'H', 'M', 'S']}
-                                timeLabels={{ d: 'Hari', h: 'Jam', m: 'Menit', s: 'Detik' }}
-                                timeLabelStyle={{ color: colors.White }}
-                            />
-                        </View>
-                        <View style={[styles.column_center, { width: '45%', height: '100%' }]}>
-                            <Text style={[styles.font_22, styles.T_bold, { alignSelf: 'center', color: colors.White, textAlign: 'left' }]}>Banner Hadiah</Text>
 
-                            <View style={[styles.column_center, { backgroundColor: colors.RedFlashsale, alignSelf: 'center', borderWidth: 1, borderColor: colors.White, borderRadius: 5, height: '70%' }]} >
-                                <Text style={[styles.font_22, styles.T_bold, { alignSelf: 'center', color: colors.White, textAlign: 'left' }]}>Banner Hadiah</Text>
-                            </View>
-
-                        </View>
-                    </View>
-                </View> */}
-                {/* <TouchableRipple onPress={handleShowGift} rippleColor={colors.BlueJaja} style={[styles.row_center, styles.px, styles.py_2, styles.my_2, {
-                    backgroundColor: colors.White, borderRadius: 7, alignSelf: 'center', width: '95%', shadowColor: "#000",
-                    shadowOffset: {
-                        width: 0,
-                        height: 1,
-                    },
-                    shadowOpacity: 0.20,
-                    shadowRadius: 1.41,
-
-                    elevation: 2,
-                }]} >
-                    <View style={[styles.row_center, { width: '100%' }]}>
-                        <Image source={require('../../assets/icons/gift/jajaGift.png')} style={[{ height: Hp('4%'), width: Hp('15%'), alignSelf: 'flex-start', marginBottom: '-1%', marginLeft: '-2.5%' }]} />
-                    </View>
-                </TouchableRipple> */}
                 {reduxShowFlashsale ? <Flashsale /> : null}
+                {/* <Trending /> */}
+
+
                 <Trending />
-                <View style={[styles.column_center, styles.py_5, { backgroundColor: colors.BlueJaja }]}>
+
+                {/* INI JAJAGIFT */}
+                {/* <View style={[styles.column_center, styles.py_5, { backgroundColor: colors.BlueJaja }]}>
                     <TouchableRipple onPress={handleShowGift} rippleColor={colors.White} style={[styles.row_center, styles.py_2, {
                         backgroundColor: colors.PinkLight, alignSelf: 'center', width: '100%',
                         shadowColor: colors.BlueJaja,
@@ -454,14 +509,36 @@ export default function HomeScreen() {
                             <Image source={require('../../assets/icons/heart.png')} style={[{ position: 'absolute', right: 7, width: Wp('15%'), height: Wp('14%') }]} />
                         </View>
                     </TouchableRipple>
-                </View>
+                </View> */}
+
 
                 {nearestProduct ? <NearestStore /> : null}
+
+
+
 
                 {/* <BasedOnSearch /> */}
                 {/* <HobbyAverage /> */}
                 <RecomandedHobby />
                 {/* </ScrollView> */}
+
+                <Modals
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisibles}
+                    onRequestClose={handleClose}
+                >
+                    <View style={style.centeredView}>
+                        <View style={style.modalView}>
+                            <TouchableOpacity onPress={() => navigation.navigate('Car')}>
+                                <Image source={require('../../assets/banner/home/modal.jpg')} style={style.modalImage} />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={style.closeButton} onPress={handleClose}>
+                                <Text style={style.closeButtonText}>X</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modals>
 
             </View >
         );
@@ -565,16 +642,7 @@ export default function HomeScreen() {
         ServiceCore.getDateTime().then(res => {
             if (res) {
                 let date = new Date()
-                // if (date.toJSON().toString().slice(0, 10) !== res.dateNow) {
-                //     Alert.alert(
-                //         "Peringatan!",
-                //         `Sepertinya tanggal tidak sesuai!`,
-                //         [
-                //             { text: "OK", onPress: () => navigation.goBack() }
-                //         ],
-                //         { cancelable: false }
-                //     );
-                // } else {
+
                 ServiceCore.getFlashsale().then(resp => {
                     if (resp && resp.flashsale && resp.flashsale.length) {
                         dispatch({ type: 'SET_SHOW_FLASHSALE', payload: true })
@@ -605,16 +673,7 @@ export default function HomeScreen() {
                     dispatch({ type: 'SET_DASHHOBYAVERAGE', payload: JSON.parse(result) })
                 }
             })
-            //  else {
-            //     Alert.alert(
-            //         "Error with status 12001",
-            //         String(error),
-            //         [
-            //             { text: "OK", onPress: () => console.log("OK Pressed") }
-            //         ],
-            //         { cancelable: false }
-            //     );
-            // }
+
         } catch (err) {
             return ToastAndroid.show("Handle Error " + String(err), ToastAndroid.LONG, ToastAndroid.TOP)
         }
@@ -737,48 +796,7 @@ export default function HomeScreen() {
                     }}
                 >
                 </ReactNativeParallaxHeader>
-                {/* <Modal
-                    animationType="fade"
-                    transparent={true}
-                    visible={modalPhoneNumber}>
-                    <View
-                        style={{
-                            flex: 1,
-                            width: Wp("100%"),
-                            height: Hp("100%"),
-                            backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}
-                    >
-                        <View
-                            style={[
-                                styles.column_between_center,
-                                styles.p_5,
-                                {
-                                    alignItems: 'flex-start',
-                                    width: Wp("85%"),
-                                    height: Wp("50%"),
-                                    borderRadius: 7,
-                                    backgroundColor: colors.White,
-                                    elevation: 11,
-                                    zIndex: 999,
-                                },
-                            ]}
-                        >
 
-                            <Text style={[styles.font_13, styles.T_semi_bold, { color: colors.BlueJaja }]} >Masukkan nomor telephone</Text>
-                            <TextInput style={[styles.p, { borderWidth: 1, borderBottomColor: colors.White, width: '90%', }]} value={phoneNumber} onChangeText={text => setphoneNumber(text)} placeholder="Masukkan nomor telepohne" />
-                            <View style={[styles.row_end, { width: '100%' }]}>
-                             
-                                <TouchableRipple onPress={handlePhoneNumber} style={[styles.px_4, styles.py_2, styles.ml_2, { borderRadius: 3, backgroundColor: colors.BlueJaja }]}>
-                                    <Text style={[styles.font_11, styles.T_semi_bold, { color: colors.White }]}>Simpan</Text>
-                                </TouchableRipple>
-                            </View>
-
-                        </View>
-                    </View>
-                </Modal> */}
                 <Portal>
                     <Modal dismissable={true} visible={modalPhoneNumber} onDismiss={() => setmodalPhoneNumber(false)} contentContainerStyle={containerStyle} >
                         <View style={[styles.column_between_center, styles.p_5, { alignItems: 'flex-start', width: '100%', height: '100%' }]}>
@@ -793,54 +811,7 @@ export default function HomeScreen() {
                     </Modal>
                 </Portal>
 
-                {/* <ParallaxScrollView
 
-                windowHeight={SCREEN_HEIGHT * 0.4}
-                backgroundSource={title()}
-                // navBarTitle='John Oliver'
-                // userName='John Oliver'
-                // userTitle='Comedian'
-                headerView={(
-                    <View style={styles.headerView}>
-                        <View style={styles.headerTextView}>
-                            <Text style={styles.headerTextViewTitle}>My App</Text>
-                            <Text style={styles.headerTextViewSubtitle}>
-                                Custom Header View
-                            </Text>
-                        </View>
-                    </View>
-                )}
-                // userImage='http://i.imgur.com/RQ1iLOs.jpg'
-                leftIcon={{ name: 'rocket', color: 'rgba(193, 193, 193, 1)', size: 30, type: 'font-awesome' }}
-                rightIcon={{ name: 'user', color: 'rgba(193, 193, 193, 1)', size: 30, type: 'font-awesome' }}
-            >
-                <ScrollView
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={refreshing}
-                            onRefresh={onRefresh}
-                        />
-                    }
-                    style={{ flex: 1, backgroundColor: 'rgba(228, 117, 125, 1)' }}>
-                    <View style={{ height: 300, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ fontSize: 32, color: 'white' }}>Custom view</Text>
-                    </View>
-                    <View style={{ height: 300, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ fontSize: 32, color: 'white' }}>keep going.</Text>
-                    </View>
-                    <View style={{ height: 300, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ fontSize: 32, color: 'white' }}>keep going..</Text>
-                    </View>
-                    <View style={{ height: 300, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ fontSize: 32, color: 'white' }}>keep going...</Text>
-                    </View>
-                    <View style={{ height: 300, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ fontSize: 32, color: 'white' }}>the end! :)</Text>
-                    </View>
-                </ScrollView>
-            </ParallaxScrollView> */}
-
-                {/* </ScrollView> */}
             </SafeAreaView >
         </Provider>
 
@@ -876,8 +847,6 @@ const style = StyleSheet.create({
     },
 
 
-
-
     titleStyle: {
         color: 'white',
         fontFamily: 'SignikaNegative-SemiBold',
@@ -885,7 +854,38 @@ const style = StyleSheet.create({
         backgroundColor: colors.BlueJaja,
         // width: Wp('100%'), height: Wp('75%'),
     },
+
+
     touchIcon: { width: '14%', justifyContent: 'center', alignItems: 'center' },
-    swiperBanner: { width: '100%', height: '100%', resizeMode: 'contain', backgroundColor: 'transparent' },
-    searchBar: { flex: 0, backgroundColor: colors.White, borderRadius: 11, height: NAV_BAR_HEIGHT / (Platform.OS === 'android' ? 1.8 : 1.2), width: "77.5%", paddingHorizontal: '4.5%', marginRight: '3%' }
+    swiperBanner: { width: '95%', height: '100%', resizeMode: 'contain', backgroundColor: 'transparent', alignSelf: 'center', borderRadius: 15 },
+    searchBar: { flex: 0, backgroundColor: colors.White, borderRadius: 11, height: NAV_BAR_HEIGHT / (Platform.OS === 'android' ? 1.8 : 1.2), width: "100%", paddingHorizontal: '4.5%' },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        // backgroundColor: 'rgba(0,0,0,0.4)'
+    },
+    modalView: {
+        margin: 20,
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+
+    },
+    modalImage: {
+        width: 290, // Adjust as needed
+        height: 330,
+        borderRadius: 15 // Adjust as needed
+    },
+    closeButton: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        padding: 10
+    },
+    closeButtonText: {
+        fontSize: 20,
+        color: 'black',
+        fontFamily: 'Poppins-Bold'
+    }
 })

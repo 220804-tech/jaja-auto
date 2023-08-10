@@ -34,8 +34,10 @@ export default function OrdersProcess() {
             } else {
                 handleWaitConfirm()
             }
-        }).catch(err => {
+        }).catch(error => {
             handleWaitConfirm()
+            console.log(error.message)
+
         })
 
         ServiceOrder.getProcess(reduxAuth).then(resProcess => {

@@ -1,9 +1,6 @@
 import { ToastAndroid, Alert } from 'react-native'
-import { Utils, axios, styles, useNavigation, } from '../export';
+import { Utils, axios, } from '../export';
 import EncryptedStorage from 'react-native-encrypted-storage'
-
-
-
 export async function productDetail(auth, slug) {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);
@@ -38,39 +35,7 @@ export async function productDetail(auth, slug) {
 
 }
 
-export async function getProduct(auth, slug) {
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", auth);
-    myHeaders.append("Cookie", "ci_session=pkkgeivel5ftbi5a9eod0r8k5276f8v9");
-    var requestOptions = {
-        method: 'GET',
-        headers: auth ? myHeaders : "",
-        redirect: 'follow'
-    };
-    return await fetch(`https://jaja.id/backend/product/${slug}`, requestOptions)
-        .then(response => response.text())
-        .then(result => {
-            try {
-                let data = JSON.parse(result)
-                if (data?.status?.code === 200 || data?.status?.code === 204) {
-                    return data;
-                } else if (data?.status?.message === 'data not found') {
-                    return 404
-                } else {
-                    Utils.handleErrorResponse(data, "Error with status code : 12151")
-                    return null
-                }
-            } catch (error) {
-                Utils.handleError(JSON.stringify(result), "Error with status code : 12152 ")
-                return null
-            }
-        })
-        .catch(error => {
-            Utils.handleError(String(error), "Error with status code : 12153")
-            return null
-        });
 
-}
 
 export async function newGetProduct(auth, slug) {
     try {
@@ -110,6 +75,42 @@ export async function newGetProduct(auth, slug) {
     }
 }
 
+
+export async function getProduct(auth, slug) {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", auth);
+    myHeaders.append("Cookie", "ci_session=pkkgeivel5ftbi5a9eod0r8k5276f8v9");
+    var requestOptions = {
+        method: 'GET',
+        headers: auth ? myHeaders : "",
+        redirect: 'follow'
+    };
+    return await fetch(`https://jaja.id/backend/product/${slug}`, requestOptions)
+        .then(response => response.text())
+        .then(result => {
+            try {
+                let data = JSON.parse(result)
+                if (data?.status?.code === 200 || data?.status?.code === 204) {
+                    return data;
+                } else if (data?.status?.message === 'data not found') {
+                    return 404
+                } else {
+                    Utils.handleErrorResponse(data, "Error with status code : 12151")
+                    return null
+                }
+            } catch (error) {
+                console.log('ini 1', error)
+                Utils.handleError(JSON.stringify(result), "Error with status code : 12152 ")
+                return null
+            }
+        })
+        .catch(error => {
+            console.log('ini 2', error)
+            Utils.handleError(String(error), "Error with status code : 12153")
+            return null
+        });
+
+}
 
 export async function addCart(auth, crendentials) {
     var config = {

@@ -14,7 +14,7 @@ export default {
     BlackTitle: '#6e6e6e',
 
     BlackGrayScale: '#454545',
-    DarkCharcoal: '#333333',
+    DarkCharcoal: '#393E46',
     Black: '#000000',
 
     Red: "#ff0000",
@@ -32,12 +32,13 @@ export default {
     YellowJaja: "#FCB536",
 
     Yellow: "#ffff00",
-    YellowWarning: '#FFB236',
+    YellowWarning: '#FFBE00',
     YellowNotif: '#f0e68c',
     YellowChat: '#ffd080',
 
     // BlueJaja: "#64B0C9",
     BlueJaja: "#67AEC6",
+    BlueAuto: "#01A0D7",
     blueChat: "#c2efff",
 
     BlueLight: '#e1f4fa',

@@ -44,6 +44,8 @@ export default function TrendingComponent() {
             dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
             alert(String(error.message))
             error = false
+            console.log(error.message)
+
         }
         setTimeout(() => {
             if (error) {
@@ -64,7 +66,7 @@ export default function TrendingComponent() {
         })
     }
     return (
-        <View style={[styles.column, styles.pt_3, { backgroundColor: colors.BlueJaja }]}>
+        <View style={[styles.column, styles.pt_3, styles.pb_3, { backgroundColor: colors.BlueJaja }]}>
             <View style={[styles.column, { backgroundColor: colors.White }]}>
                 <HeaderTitleHome title='Sedang Trending' />
                 <View style={[styles.column, styles.px_3, styles.pt_2, styles.pb_3]}>

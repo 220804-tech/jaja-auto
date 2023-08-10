@@ -18,6 +18,8 @@ target 'jajaidBuyer' do
 
   pod 'react-native-image-base64', :path => '../node_modules/react-native-image-base64'
 
+  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+
   target 'jajaidBuyerTests' do
     inherit! :complete
     # Pods for testing

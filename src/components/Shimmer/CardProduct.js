@@ -10,7 +10,7 @@ export default function CardProduct() {
     const renderItem = ({ item }) => {
         return (
             <TouchableOpacity
-                style={Ps.cardProduct}
+                style={Ps.shimmerCardProduct}
                 key={item}>
                 <FastImage
                     style={{

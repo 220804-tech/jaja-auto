@@ -48,6 +48,8 @@ export default function MainPage() {
             dispatch({ type: 'SET_PRODUCT_LOAD', payload: false })
             alert(String(error.message))
             error = false
+            console.log(error.message)
+
         }
         setTimeout(() => {
             if (error) {
@@ -109,7 +111,7 @@ export default function MainPage() {
                         Utils.alertPopUp("Voucher sudah pernah diklaim")
                     }
                 })
-                .catch(error => Utils.alertPopUp(String(error)));
+                .catch(error => Utils.alertPopUp(String(error.message)));
         }
     }
 

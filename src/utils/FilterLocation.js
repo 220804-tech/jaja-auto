@@ -67,7 +67,9 @@ export default async function FilterLocation(locations, user, category, auth, di
                     })
                     setTimeout(() => {
                         EncryptedStorage.setItem('nearestProduct', JSON.stringify(newNearestProduct));
+                        console.log("🚀 ~ file: FilterLocation.js ~ line 70 ~ setTimeout ~ newNearestProduct", newNearestProduct.length)
                         EncryptedStorage.setItem('nearestStore', JSON.stringify(newData));
+                        console.log("🚀 ~ file: FilterLocation.js ~ line 72 ~ setTimeout ~ newData", newData.length)
                     }, 1500);
                 } else {
                     EncryptedStorage.setItem('nearestStore', JSON.stringify([result.data]));

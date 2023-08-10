@@ -4,11 +4,9 @@ export async function getCheckout(auth, coin) {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);
     myHeaders.append("Cookie", "ci_session=r59c24ad1race70f8lc0h1v5lniiuhei");
-    var raw = "";
     var requestOptions = {
         method: 'GET',
         headers: myHeaders,
-        body: raw,
         redirect: 'follow'
     };
 
@@ -19,7 +17,7 @@ export async function getCheckout(auth, coin) {
                 let result = JSON.parse(res)
                 if (result.status.code === 200) {
                     return result.data;
-                } else if (result.status.code == 404 && String(result.status.message).includes('Alamat belum ditambahkan, silahkan menambahkan alamat terlebih dahulu')) {
+                } else if (result.status.code == 404 && String(result.status.message).includes('Alamat belum ditambahkan')) {
                     Utils.alertPopUp('Silahkan tambah alamat terlebih dahulu!')
                     return 'Alamat'
                 } else {
@@ -34,7 +32,6 @@ export async function getCheckout(auth, coin) {
 }
 
 export async function getShipping(auth, gift) {
-    console.log("🚀 ~ file: Checkout.js ~ line 37 ~ getShipping ~ gift", gift)
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);
     myHeaders.append("Cookie", "ci_session=sj57u2rf54ump5hhscmu30jljrigpooq");
@@ -43,16 +40,16 @@ export async function getShipping(auth, gift) {
     var requestOptions = {
         method: 'GET',
         headers: myHeaders,
-        // body: raw,
         redirect: 'follow'
     };
 
     return await fetch(`https://jaja.id/backend/checkout/shipping?is_gift=${gift === 1 ? 1 : 0}`, requestOptions)
         .then(response => response.json())
         .then(result => {
-            console.log("🚀 ~ file: Checkout.js ~ line 54 ~ getShipping ~ result toll", result)
-            if (result?.status?.code === 200) {
-                return result?.data;
+            console.log("🚀 ~ file: Checkout.js ~ line 49 ~ getShipping ~ result", result)
+
+            if (result.status.code === 200) {
+                return result.data;
             } else if (result.status.code == 404 && String(result.status.message).includes('Alamat belum ditambahkan')) {
                 // Utils.alertPopUp('Silahkan tambah alamat terlebih dahuluuuuuuuuuuuuuuuuuuu!')
                 return null
@@ -72,12 +69,19 @@ export async function getListPayment() {
     };
 
     return await fetch("https://masterdiskon.com/front/api/common/methodPayment/1000000", requestOptions)
-        .then(response => response.json())
+        .then(response => response.text())
         .then(result => {
-            if (result && result.length) {
-                return result
-            } else {
-                return null
+            try {
+
+
+                let data = JSON.parse(result)
+                if (data?.length) {
+                    return data
+                } else {
+                    return null
+                }
+            } catch (error) {
+                Utils.alertPopUp(String(result))
             }
         })
         .catch(error => Utils.alertPopUp(String(error)));

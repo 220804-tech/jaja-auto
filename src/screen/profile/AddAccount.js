@@ -72,6 +72,8 @@ export default function AddAccount() {
                 setFirstBank(pertamax.concat(keduax));
             })
             .catch(error => {
+            console.log(error.message)
+
                 Utils.alertPopUp(String(error))
                 setshimmerRK(false)
             });
@@ -161,7 +163,7 @@ export default function AddAccount() {
             })
             .catch(error => {
                 setLoading(false)
-                Utils.handleError(error, "Error with status code : 12031")
+                Utils.handleError(error.message, "Error with status code : 12031")
             });
 
     }

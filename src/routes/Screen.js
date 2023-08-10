@@ -1,5 +1,6 @@
 import Home from "../screen/home/HomeScreen";
 import Product from "../screen/product/ProductScreen";
+import ProductAuto from "../screen/product/ProductAuto";
 import ListChat from "../screen/chat/ListChatScreen";
 import Trolley from '../screen/trolley/TrolleyScreen'
 import Chat from "../screen/chat/ChatScreen";
@@ -42,17 +43,26 @@ import DetailComplain from "../screen/order/DetailComplain";
 import OrderCancel from "../screen/order/OrderCancel";
 import AddAccount from "../screen/profile/AddAccount";
 import CoinPage from "../screen/profile/KoinJaja";
+import Car from "../screen/car/CarScreen";
+import FilterScreen from "../screen/car/FilterScreen";
+import FilterResult from "../screen/car/FilterResult";
 import Gift from "../screen/gift/GiftScreen";
 import GiftSearch from "../screen/gift/GiftSearchScreen";
 import GiftDetails from "../screen/gift/GiftDetailScreen";
 import TrolleyMultiDrop from "../screen/trolley/TrolleyMultiDrop";
 import CheckoutMultiDrop from "../screen/checkout/CheckoutMultiDropScreen";
 import Event from "../screen/event/EventScreen";
+import Approve from "../screen/approve/ApproveScreen";
+import ApproveCredit from "../screen/approve/ApproveCreditScreen";
+import SuccessApprove from "../screen/approve/SuccessApproveScreen";
+
+
+
 
 
 export {
     Home, Product, ListChat, Chat, Orders, Profile, Login, Register, Splash, Search, Trolley, ProductSearch, Checkout, VerifikasiEmail, Account,
     Address, Category, AddAddress, Store, Midtrans, ForgotPassword, Feed, Review, ZoomReview, OrderDetails, AddReview, OrderDelivery, AddAccount,
     CustomerService, Notification, Vouchers, Flashsale, Wishlist, HistoryProduct, Reward, Referral, RequestComplain, DetailComplain, OrderCancel,
-    CoinPage, DownloadInvoice, Gift, GiftSearch, GiftDetails, TrolleyMultiDrop, CheckoutMultiDrop, EtalaseProducts, Event
+    CoinPage, DownloadInvoice, Gift, GiftSearch, GiftDetails, TrolleyMultiDrop, CheckoutMultiDrop, EtalaseProducts, Event, Car, ProductAuto, Approve, FilterResult, FilterScreen, SuccessApprove, ApproveCredit
 };

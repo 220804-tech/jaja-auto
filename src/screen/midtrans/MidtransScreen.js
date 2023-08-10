@@ -8,6 +8,7 @@ import { Button, Paragraph, TouchableRipple } from 'react-native-paper';
 import ViewShot from 'react-native-view-shot';
 import ImgToBase64 from 'react-native-image-base64';
 import Share from 'react-native-share';
+import { alertPopUp } from '../../utils/Form';
 
 
 export default function MidtransScreen() {
@@ -122,7 +123,7 @@ export default function MidtransScreen() {
 
             })
             .catch(error => {
-                Utils.handleError(error, "Error with status code : 22007")
+                Utils.handleError(error.message, "Error with status code : 22007")
             });
     }
 
@@ -147,6 +148,24 @@ export default function MidtransScreen() {
             // });
         }
     }
+
+    function onNavigationStateChange(navState) {
+
+        var event = navState.url.split('#')[1]
+        var data = navState.title
+
+        console.log('responwebview', navState);
+
+        var pathname = navState.url;
+        const paths = pathname.split("/").filter(entry => entry !== "");
+        const lastPath = paths[paths.length - 1];
+        const lastPathString = lastPath.split("?")[0];
+
+        console.log('lastPath terakhirr', lastPathString);
+
+        
+    }
+
 
     const spin = spinValue.interpolate({
         inputRange: [0, 1],
@@ -174,17 +193,17 @@ export default function MidtransScreen() {
                             .then((res) => {
                                 console.log(res);
                             })
-                            .catch((err) => {
-                                err && console.log(err);
+                            .catch((error) => {
+                                error && console.log(error.message);
                             });
                     })
-                    .catch(err => {
-                        console.log("🚀 ~ file: MidtransScreen.js ~ line 181 ~ awaitviewShotRef.current.capture ~ err", err)
+                    .catch(error => {
+                        console.log("🚀 ~ file: MidtransScreen.js ~ line 181 ~ awaitviewShotRef.current.capture ~ err", error.message)
                     });
             });
 
         } catch (error) {
-            console.log("🚀 ~ file: MidtransScreen.js ~ line 184 ~ handleDownload ~ error", error)
+            console.log("🚀 ~ file: MidtransScreen.js ~ line 184 ~ handleDownload ~ error", error.message)
         }
 
     }
@@ -231,13 +250,21 @@ export default function MidtransScreen() {
                                     // onLoad={(e) => console.log('asasasasas', e)}
                                     onMessage={(event) => onMessage(event)}
                                     source={{ uri: view }}
+                                    onNavigationStateChange={onNavigationStateChange.bind(this)}
+                                    ref={ref => {
+                                        this.webview = ref;
+                                    }}
+                                    onLoadProgress={({ path }) => {
+                                        console.log("current_pathonLoadProgress", path);
+                                    }}
+                                    automaticallyAdjustContentInsets={false}
                                 />
                             </ViewShot>
                             <View style={[styles.row_around_center, { flex: 0, height: Hp('5.5%'), width: Wp('100%') }]}>
-                                <TouchableRipple onPress={() => navigation.goBack()} style={[styles.row_center, styles.py_2, { borderRadius: 5, backgroundColor: colors.YellowJaja, width: '42%', height: '85%' }]}>
+                                <TouchableRipple onPress={() => navigation.goBack()} style={[styles.row_center, styles.py_2, { borderRadius: 5, backgroundColor: colors.YellowJaja, width: '43%', height: '85%' }]}>
                                     <Text style={[styles.font_13, styles.T_medium, { color: colors.White }]}>Lihat Pesanan</Text>
                                 </TouchableRipple>
-                                <TouchableRipple onPress={() => setreload(!reload)} style={[styles.row_center, styles.py_2, { borderRadius: 5, backgroundColor: colors.BlueJaja, width: '42%', height: '85%' }]}>
+                                <TouchableRipple onPress={() => setreload(!reload)} style={[styles.row_center, styles.py_2, { borderRadius: 5, backgroundColor: colors.BlueJaja, width: '43%', height: '85%' }]}>
                                     <Text style={[styles.font_13, styles.T_medium, { color: colors.White }]}>Refresh</Text>
                                 </TouchableRipple>
                             </View>

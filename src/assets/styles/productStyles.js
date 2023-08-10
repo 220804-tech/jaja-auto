@@ -12,13 +12,41 @@ export const style = StyleSheet.create({
         borderRadius: 5,
         width: Wp("44%"),
         marginLeft: Wp('4%'),
-        height: Hp("41%"),
+        height: Hp("37%"),
         marginVertical: 5,
         justifyContent: "flex-start",
         backgroundColor: colors.White,
         flexDirection: 'column',
         alignSelf: 'center',
         resizeMode: 'contain',
+    },
+
+    cardProductAuto: {
+        borderRadius: 10,
+        width: Wp("44%"),
+        marginLeft: Wp('4%'),
+        height: Hp("36%"),
+        marginVertical: 5,
+        justifyContent: "flex-start",
+        backgroundColor: colors.White,
+        flexDirection: 'column',
+        alignSelf: 'center',
+        resizeMode: 'contain',
+    },
+
+    shimmerCardProduct: {
+        borderRadius: 5,
+        width: Wp("44%"),
+        marginLeft: Wp('4%'),
+        height: Hp("35%"),
+        marginVertical: 5,
+        justifyContent: "flex-start",
+        backgroundColor: colors.White,
+        flexDirection: 'column',
+        alignSelf: 'center',
+        resizeMode: 'contain',
+        marginBottom: 25,
+        // marginTop: 10
     },
 
     cardProductSmall: {
@@ -51,8 +79,17 @@ export const style = StyleSheet.create({
         borderTopLeftRadius: 5,
         borderTopRightRadius: 5,
     },
+    imageProductAuto: {
+        width: '100%',
+        height: '100%',
+        borderTopLeftRadius: 5,
+        borderTopRightRadius: 5,
+    },
     bottomCard: {
-        flex: 0, flexDirection: 'column', padding: '3%'
+        flex: 0, flexDirection: 'column', padding: '3%',
+    },
+    bottomCardAuto: {
+        flex: 0, flexDirection: 'column', padding: '3%',
     },
     nameProduct: {
         fontSize: IS_6INCH ? RFValue(13) : RFValue(10),
@@ -60,6 +97,15 @@ export const style = StyleSheet.create({
         alignSelf: 'flex-start',
         marginBottom: '2%',
         color: colors.BlueJaja,
+        // backgroundColor: 'red',
+        width: Wp("30%"),
+    },
+    nameProductAuto: {
+        fontSize: IS_6INCH ? RFValue(14) : RFValue(13),
+        fontFamily: 'Poppins-SemiBold',
+        alignSelf: 'flex-start',
+        marginBottom: '5%',
+        color: colors.Black,
         // backgroundColor: 'red',
         width: Wp("30%"),
     },
@@ -79,15 +125,17 @@ export const style = StyleSheet.create({
     priceAfterSmall: { fontSize: 13, fontFamily: 'SignikaNegative-SemiBold', color: colors.BlueJaja },
 
     price: { fontSize: IS_6INCH ? RFValue(16) : RFValue(15), fontFamily: 'SignikaNegative-Bold', color: colors.BlueJaja },
-    priceSmall: { fontSize: IS_6INCH ? RFValue(12) : RFValue(10), fontFamily: 'SignikaNegative-SemiBold', color: colors.YellowJaja },
+    priceAuto: { fontSize: IS_6INCH ? RFValue(14) : RFValue(16), fontFamily: 'Poppins-Medium', color: colors.Black },
+
+    priceSmall: { fontSize: IS_6INCH ? RFValue(12) : RFValue(10), fontFamily: 'SignikaNegative-Medium', color: colors.YellowJaja },
 
     discountSmall: { fontSize: RFValue(6), backgroundColor: colors.RedFlashsale, color: colors.White, paddingVertical: '1%', paddingHorizontal: '2%', borderRadius: 3 },
 
 
     cardBottom: { flex: 0, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', position: 'absolute', bottom: 3, width: '97%', paddingHorizontal: '3%' },
-    location: { flex: 0, flexDirection: 'row', width: '75%', alignItems: 'center' },
+    location: { flex: 0, flexDirection: 'row', width: '75%', alignItems: 'center', marginBottom: 7, alignContent: 'center' },
     locarionName: { fontSize: IS_6INCH ? RFValue(10) : RFValue(8), fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale, marginRight: '2%' },
-    locarionNameSmall: { fontSize: IS_6INCH ? RFValue(9) : RFValue(7), fontFamily: 'SignikaNegative-Regular', color: colors.BlackGrayScale, marginRight: '2%' },
+    locarionNameSmall: { fontSize: IS_6INCH ? RFValue(12) : RFValue(7), fontFamily: 'SignikaNegative-Regular', color: colors.DarkCharcoal, marginRight: '2%' },
 
     locationIcon: {
         width: 13,

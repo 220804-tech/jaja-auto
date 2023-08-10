@@ -82,6 +82,7 @@ export default function Lainnya() {
                         setemail(result.data.email)
                         setview(result.data.havePassword)
                         EncryptedStorage.setItem('user', JSON.stringify(result.data))
+                        console.log(result)
                     } else {
                         Utils.handleErrorResponse(result, 'Error with status code : 12044')
                     }
@@ -90,10 +91,12 @@ export default function Lainnya() {
                 })
                 .catch(error => {
                     setloading(false)
-                    Utils.handleError(error, "Error with status code : 12045")
+                    Utils.handleError(error.message, "Error with status code : 12045")
                 });
         } catch (error) {
             setloading(false)
+            console.log(error.message)
+
         }
     }
 
@@ -142,7 +145,7 @@ export default function Lainnya() {
             .catch(error => {
                 setAccountBank('')
                 setAccountShow(false)
-                Utils.handleError(error, "Error with status code : 12042")
+                Utils.handleError(error.message, "Error with status code : 12042")
             });
     }
 
@@ -276,7 +279,7 @@ export default function Lainnya() {
             })
             .catch(error => {
                 Utils.handleError(error, "Error with status code : 12029")
-                console.log("🚀 ~ file: AccountScreen.js ~ line 259 ~ handleSimpan ~ error", error)
+                console.log("🚀 ~ file: AccountScreen.js ~ line 259 ~ handleSimpan ~ error", error.message)
                 setloading(false)
             });
     }
@@ -389,7 +392,7 @@ export default function Lainnya() {
                 })
                 .catch(error => {
                     setloading(false)
-                    Utils.handleError(error, "Error with status code : 12047")
+                    Utils.handleError(error.message, "Error with status code : 12047")
                 });
         }
     }
@@ -438,7 +441,7 @@ export default function Lainnya() {
                 })
                 .catch(error => {
                     setloading(false)
-                    Utils.handleError(error, "Error with status code : 12039")
+                    Utils.handleError(error, message, "Error with status code : 12039")
                 });
         }
     }

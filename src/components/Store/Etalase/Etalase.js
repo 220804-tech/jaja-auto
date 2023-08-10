@@ -43,8 +43,9 @@ export default function Etalase(props) {
                     dispatch({ type: 'SET_ETALASE_SEARCH_LOADING', payload: false })
                     dispatch({ type: 'SET_ETALASE_ID', payload: etalase.id })
 
-                }).catch(err => [
-                    dispatch({ type: 'SET_ETALASE_SEARCH_LOADING', payload: false })
+                }).catch(error => [
+                    dispatch({ type: 'SET_ETALASE_SEARCH_LOADING', payload: false }),
+                    console.log(error.message)
                 ])
             } else {
                 if (!etalase?.id) {
@@ -58,6 +59,8 @@ export default function Etalase(props) {
             }
         } catch (error) {
             dispatch({ type: 'SET_ETALASE_SEARCH_LOADING', payload: false })
+            console.log(error.message)
+            
         }
     }
 

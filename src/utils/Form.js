@@ -40,7 +40,7 @@ export function handleLanguange(e) {
         return 'pets'
     } else if (String(e).toLocaleLowerCase().includes('foto') || String(e).toLocaleLowerCase().includes('fotograpis') || String(e).toLocaleLowerCase().includes('camera') || String(e).toLocaleLowerCase().includes('kamera')) {
         return 'photographys'
-    } else if (String(e).toLocaleLowerCase().includes('olahraga') || String(e).toLocaleLowerCase().includes('badminton') || String(e).toLocaleLowerCase().includes('futsal') || String(e).toLocaleLowerCase().includes('swimming') || String(e).toLocaleLowerCase().includes('sepeda') || String(e).toLocaleLowerCase().includes('bicycle') || String(e).toLocaleLowerCase().includes('cycling')) {
+    } else if (String(e).toLocaleLowerCase().includes('olahraga')) {
         return 'sports'
     } else if (String(e).toLocaleLowerCase().includes('mainan') || String(e).toLocaleLowerCase().includes('anak')) {
         return 'toys'

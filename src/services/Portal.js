@@ -13,7 +13,6 @@ export default function Portal() {
     useEffect(() => {
         getItem()
 
-
     }, [])
 
     // const handleDynamicLink = link => {

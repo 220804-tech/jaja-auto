@@ -15,6 +15,7 @@ export default function SplashScreen() {
     let navigation = useNavigation()
     const [loading, setloading] = useState(false)
     const [sbColor, setsbColor] = useState(colors.BlueJaja)
+
     const images = [
         {
             title: "Sport & Outdoor",
@@ -26,6 +27,13 @@ export default function SplashScreen() {
         {
             title: "Toys",
             image: require("../../assets/images/splashscreen/splash_toys.jpg"),
+            loading: require("../../assets/gifs/splashscreen/splashscreen.gif"),
+            router: "KategoriBuku",
+            color: "#68b0c8"
+        },
+        {
+            title: "Musics",
+            image: require("../../assets/images/splashscreen/splash_musics.jpg"),
             loading: require("../../assets/gifs/splashscreen/splashscreen.gif"),
             router: "KategoriBuku",
             color: "#68b0c8"
@@ -51,6 +59,8 @@ export default function SplashScreen() {
 
         } catch (error) {
             // return ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.TOP)
+            console.log(error.message)
+
         }
         setTimeout(() => {
             navigation.replace('Beranda')
@@ -324,9 +334,8 @@ export default function SplashScreen() {
                     activeDotColor={colors.BlackGrayScale}
                     paginationStyle={{ bottom: 10 }}
                     autoplay={true}
-
-
                 >
+                    
                     <View style={localStyle.slide}>
                         <Image
                             style={{
@@ -335,16 +344,6 @@ export default function SplashScreen() {
                             }}
                             resizeMode="cover"
                             source={images[0].image}
-                        />
-                    </View>
-                    <View style={localStyle.slide}>
-                        <Image
-                            style={{
-                                width: Wp("100%"),
-                                height: Wp("100%"),
-                            }}
-                            resizeMode="cover"
-                            source={images[1].image}
                         />
 
                         {/* {images.map((item, key) => {
@@ -361,6 +360,26 @@ export default function SplashScreen() {
 
                             );
                         })} */}
+                    </View>
+                    <View style={localStyle.slide}>
+                        <Image
+                            style={{
+                                width: Wp("100%"),
+                                height: Wp("100%"),
+                            }}
+                            resizeMode="cover"
+                            source={images[1].image}
+                        />
+                    </View>
+                    <View style={localStyle.slide}>
+                        <Image
+                            style={{
+                                width: Wp("100%"),
+                                height: Wp("100%"),
+                            }}
+                            resizeMode="cover"
+                            source={images[2].image}
+                        />
                     </View>
                 </Swiper>
                 {/* </View> */}

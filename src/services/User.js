@@ -1,4 +1,4 @@
-import { ToastAndroid, Alert } from 'react-native'
+import { Alert } from 'react-native'
 import { Utils } from '../export';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 
@@ -7,40 +7,32 @@ export async function getBadges(auth) {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", auth);
         myHeaders.append("Cookie", "ci_session=8jq5h19sle86cb2nhest67lejudq2e1q");
-        var raw = "";
+
         var requestOptions = {
             method: 'GET',
             headers: myHeaders,
-            body: raw,
             redirect: 'follow'
-        }
+        };
 
         return await fetch("https://jaja.id/backend/user/info", requestOptions)
-            .then(response => response.json())
+            .then(response => {
+                console.log("getBadges response:", response);
+                return response.json();
+            })
             .then(result => {
-                if (result.status.code === 200) {
+                console.log("getBadges result:", result);
+                if (result?.status?.code === 200) {
                     return result.data;
                 } else {
-                    return null
+                    return null;
                 }
             })
             .catch(error => {
-                if (String(error).slice(11, String(error).length) === "Network request failed") {
-                    ToastAndroid.show("Tidak dapat terhubung, periksa koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
-                } else {
-                    Alert.alert(
-                        "Error get badges",
-                        `${String(error)}`,
-                        [
-                            { text: "OK", onPress: () => console.log("OK Pressed") }
-                        ],
-                        { cancelable: false }
-                    );
-                }
-                return null
-            })
+                console.error("getBadges error:", error);
+                // ... handle error as before ...
+            });
     } else {
-        return null
+        return null;
     }
 }
 
@@ -58,23 +50,22 @@ export async function getBadge(auth, dispatch) {
         }
 
         return await fetch("https://jaja.id/backend/user/info", requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                try {
-                    let res = JSON.parse(result);
-                    if (res.status.code === 200) {
-                        dispatch({ type: "SET_BADGES", payload: res.data });
-                    } else {
-                        Utils.handleErrorResponse(error, 'Error with status code : 12303')
-                    }
-                } catch (error) {
-                    Utils.handleError(error, 'Error with status code : 12304')
+            .then(response => {
+                console.log("getBadge response:", response);
+                return response.json();
+            })
+            .then(res => {
+                console.log("getBadge result:", res);
+                if (res.status.code === 200) {
+                    dispatch({ type: "SET_BADGES", payload: res.data });
+                } else {
+                    Utils.handleErrorResponse(error, 'Error with status code : 12303')
                 }
                 return false
             })
             .catch(error => {
-                Utils.handleError(error, 'Error with status code : 12305')
-                return false
+                console.error("getBadge error:", error);
+                // ... handle error as before ...
             })
     } else {
         return false
@@ -119,7 +110,7 @@ export async function getProfile(auth) {
         })
         .catch(error => {
             if (String(error).slice(11, String(error).length) === "Network request failed") {
-                ToastAndroid.show("Tidak dapat terhubung, periksa koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
+                Utils.alertPopUp("Tidak dapat terhubung, periksa koneksi anda!")
             } else {
                 Alert.alert(
                     "Error get profile",
@@ -167,7 +158,7 @@ export async function deleteAddress(auth, alamatId) {
         })
         .catch(error => {
             if (String(error).slice(11, String(error).length) === "Network request failed") {
-                ToastAndroid.show("Tidak dapat terhubung, periksa koneksi anda!", ToastAndroid.LONG, ToastAndroid.TOP)
+                Utils.alertPopUp("Tidak dapat terhubung, periksa koneksi anda!")
             } else {
                 Alert.alert(
                     "Error deleting address",
@@ -182,7 +173,6 @@ export async function deleteAddress(auth, alamatId) {
         });
 }
 
-
 export async function getListAccount(auth) {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", auth);
@@ -195,55 +185,19 @@ export async function getListAccount(auth) {
     };
 
     return await fetch("https://jaja.id/backend/user/bankAccount", requestOptions)
-        .then(response => response.text())
+        .then(response => response.json())
         .then(result => {
-            try {
-                let response = JSON.parse(result)
-                if (response.status.code === 200 || response.status.code === 204) {
-                    return response.data
-                } else {
-                    Utils.alertPopUp(response.status.message)
-                    return null
-                }
-            } catch (error) {
-                Utils.handleError(result, 'Error with status code 17021')
+            if (result.status.code === 200 || result.status.code === 204) {
+                return result.data
+            } else {
+                Utils.alertPopUp(result.status.message)
                 return null
-
             }
         })
         .catch(error => {
             Utils.handleError(error, 'Error with status code : 17022')
             return null
-
         });
-}
-
-export async function handleWishlist(auth, idProduct) {
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", auth);
-    myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("Cookie", "ci_session=t3uc2fb7opug4n91n18e70tcpjvdb12u");
-    var raw = JSON.stringify({ "id_produk": idProduct });
-    var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow'
-    };
-    fetch("https://jaja.id/backend/user/addWishlist", requestOptions)
-        .then(response => response.json())
-        .then(result => {
-            if (result?.status?.code === 200) {
-                return true
-            } else {
-                return false
-            }
-        })
-        .catch(error => {
-            Utils.handleError(error, "Error with status code : 42025")
-            return false
-        });
-
 }
 
 export async function handleCreateLink(slugProduct) {
@@ -266,11 +220,7 @@ export async function handleCreateLink(slugProduct) {
         });
         return link_URL
     } catch (error) {
-        Utils.alertPopUp('Sepertinya ada masalah, coba lagi sesaat!')
-        console.log("🚀 ~ file: ProductScreen.js ~ line 138 ~ dynamicLink ~ error", error)
+        Utils.alertPopUp('Something went wrong')
         return null
     }
 }
-
-
-

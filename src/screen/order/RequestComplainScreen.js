@@ -45,6 +45,7 @@ export default function Complain({ route }) {
         try {
             productsComplain = route.params.productsComplain
         } catch (error) {
+            console.log(error.message)
 
         }
         console.log("🚀 ~ file: RequestComplainScreen.js ~ line 45 ~ handleSendComplain ~ productsComplain", productsComplain)
@@ -119,12 +120,14 @@ export default function Complain({ route }) {
                                                 setLoading(false)
                                             }, 3000);
                                         } catch (error) {
+                                            console.log(error.message)
+
                                             setLoading(false)
                                             console.log("🚀 ~ file: RequestComplainScreen.js ~ line 109 ~ handleSendComplain ~ error", rsl)
                                         }
                                     })
                                     .catch(error => {
-                                        Utils.handleError(error, "Error request complain.");
+                                        Utils.handleError(error.message, "Error request complain.");
                                         setLoading(false)
                                     });
                                 setTimeout(() => {
@@ -140,7 +143,7 @@ export default function Complain({ route }) {
                 );
             }
         } catch (error) {
-            Utils.handleError(error, "Error request complain");
+            Utils.handleError(error.message, "Error request complain");
         }
     }
 
@@ -201,7 +204,7 @@ export default function Complain({ route }) {
                 setVideo(base64data)
                 setalertText("")
             } catch (error) {
-                console.log("🚀 ~ file: AddReview.js ~ line ss100 ~ handlePickVideo ~ error", error)
+                console.log("🚀 ~ file: AddReview.js ~ line ss100 ~ handlePickVideo ~ error", error.message)
             }
         });
     }

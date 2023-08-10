@@ -54,10 +54,12 @@ function NotifikasiScreen(props) {
                     return data
                 } catch (error) {
                     Utils.alertPopUp(String(error) + '\n' + 'Error with status code : 121672')
+                    console.log(error.message)
+
                 }
             })
             .catch(error => {
-                Utils.handleError(error, 'Error with status code : 15002')
+                Utils.handleError(error.message, 'Error with status code : 15002')
             });
     }
 
@@ -80,9 +82,9 @@ function NotifikasiScreen(props) {
             fetch(`https://jsonx.jaja.id/core/seller/dashboard/notifikasi?id_toko=145`, requestOptions)
                 .then(response => response.json())
                 .then(result => console.log("hapus notif"))
-                .catch(error => console.log('error', error));
+                .catch(error => console.log('error', error.message));
         } catch (error) {
-            console.log(error, "error line 95")
+            console.log(error.message, "error line 95")
         }
     }
 
@@ -113,10 +115,14 @@ function NotifikasiScreen(props) {
                     return data
                 } catch (error) {
                     alert(error + ' : 12310\n\n ', result)
+                    console.log(error.message)
+
                 }
             })
             .catch(error => {
                 // Utils.handleError(error, 'Error with status code : 12002')
+                console.log(error.message)
+
             });
     }
 

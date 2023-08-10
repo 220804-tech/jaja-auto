@@ -47,7 +47,7 @@ export default function OrderDeliveryScreen() {
                 }
                 setLoading(false)
             })
-            .catch(error => Utils.handleError(error, "Error with status code : 12016"));
+            .catch(error => Utils.handleError(error.message, "Error with status code : 12016"));
     }
 
     const getWaybill = () => {
@@ -76,10 +76,12 @@ export default function OrderDeliveryScreen() {
                     Utils.alertPopUp(error?.message + JSON.stringify(res))
                     setLoading(false)
                     setRefreshing(false)
+                    console.log(error.message)
+
                 }
             })
             .catch(error => {
-                console.log("🚀 ~ file: OrderDeliveryScreen.js ~ line 85 ~ getWaybill ~ error", error)
+                console.log("🚀 ~ file: OrderDeliveryScreen.js ~ line 85 ~ getWaybill ~ error", error.message)
                 setLoading(false)
                 setRefreshing(false)
             });
@@ -107,6 +109,8 @@ export default function OrderDeliveryScreen() {
             }, 4000);
         } catch (error) {
             ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)
+            console.log(error.message)
+
         }
     }
 
@@ -156,18 +160,24 @@ export default function OrderDeliveryScreen() {
                                                 </View>
                                             </View>
                                             :
-                                            <View style={{ felx: 1, flexDirection: 'row', width: '100%' }}>
+                                            <View style={{ flex: 1, flexDirection: 'row', width: '100%', marginLeft: '1%' }}>
                                                 <View style={[style.column, { paddingVertical: '3%', paddingHorizontal: '2%', width: '25%' }]}>
-                                                    <Text style={styles.textDate}>{item.manifest_time}</Text>
-                                                    <Text style={styles.textDate}>{item.manifest_date}</Text>
+                                                    <Text numberOfLines={2} style={[styles.textInfo, { color: index == 0 ? colors.BlueJaja : colors.BlackGrayScale }]}>Pesanan {item.manifest_description}</Text>
                                                 </View>
+
                                                 <View style={{ felx: 1, flexDirection: 'row', paddingVertical: '3%', width: '75%', height: '100%', paddingHorizontal: '2%', }}>
                                                     {index == 0 && reduxTracking?.delivery_status?.status == 'DELIVERED' ?
-                                                        <Text numberOfLines={2} style={[styles.textInfo, { color: colors.BlueJaja }]}>{item.manifest_description}{', diterima oleh'} {index == 0 ? reduxTracking.delivery_status.pod_receiver : ''}</Text>
+                                                        <Text numberOfLines={2} style={[styles.textInfo, { color: colors.BlueJaja }]}>{'Paket di terima oleh'} {index == 0 ? reduxTracking.delivery_status.pod_receiver : ''}</Text>
                                                         :
-                                                        <Text numberOfLines={2} style={[styles.textInfo, { color: index == 0 ? colors.BlueJaja : colors.BlackGrayScale }]}>{item.manifest_description + "\nKota " + item.city_name}</Text>
+                                                        <>
+                                                            <Text numberOfLines={2} style={[styles.textInfo, { color: index == 0 ? colors.BlueJaja : colors.BlackGrayScale }]}>{item.city_name}</Text>
+                                                            <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: 'row', marginRight: '3%' }}>
+                                                                <Text style={styles.textDate}>{item.manifest_time + "\n" + item.manifest_date}</Text>
+                                                            </View>
+                                                        </>
                                                     }
                                                 </View>
+
                                             </View>
                                         }
                                         <Divider />

@@ -10,8 +10,11 @@ export async function getVouchers(auth) {
         body: raw,
         redirect: 'follow'
     }
+    var url = "https://jaja.id/backend/user/voucher?page=1&limit=10&status=unUsed";
+    console.log('urlgetVouchers', url)
+    console.log('headergetVoucher', JSON.stringify(myHeaders));
 
-    return await fetch("https://jaja.id/backend/user/voucher?page=1&limit=10&status=unUsed", requestOptions)
+    return await fetch(url, requestOptions)
         .then(response => response.json())
         .then(result => {
             if (result.status.code === 200 || result.status.code === 204) {

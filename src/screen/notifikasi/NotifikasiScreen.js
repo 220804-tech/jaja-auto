@@ -42,10 +42,12 @@ function NotifikasiScreen(props) {
                     return data
                 } catch (error) {
                     Utils.alertPopUp(String(error) + '\n' + 'Error with status code : 123172')
+                    console.log(error.message)
+
                 }
             })
             .catch(error => {
-                Utils.handleError(error, 'Error with status code : 15002')
+                Utils.handleError(error.message, 'Error with status code : 15002')
             });
     }
 
@@ -76,9 +78,9 @@ function NotifikasiScreen(props) {
                 .then(result => {
                     console.log("🚀 ~ file: NotifikasiScreen.js ~ line 75 ~ readData ~ result", result)
                 })
-                .catch(error => console.log('error', error));
+                .catch(error => console.log('error', error.message));
         } catch (error) {
-            console.log(error, "error line 95")
+            console.log(error.message, "error line 95")
         }
     }
 
@@ -108,11 +110,13 @@ function NotifikasiScreen(props) {
                     }
                     return data
                 } catch (error) {
+                    console.log(error.message)
+
                     Utils.alertPopUp(String(error) + '\n' + 'Error with status code : 12212')
                 }
             })
             .catch(error => {
-                Utils.handleError(error, 'Error with status code : 120029')
+                Utils.handleError(error.message, 'Error with status code : 120029')
             });
     }
 

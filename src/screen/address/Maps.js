@@ -100,7 +100,7 @@ export default function map(props) {
             }
 
         } catch (error) {
-
+            console.log(error.message)
         }
 
 
@@ -179,8 +179,8 @@ export default function map(props) {
                 } else {
                     Utils.alertPopUp('Permission Denied');
                 }
-            } catch (err) {
-                console.warn(err);
+            } catch (error) {
+                console.warn(error.message);
             }
         }
     };
@@ -210,7 +210,7 @@ export default function map(props) {
                 setshowFooter(true)
 
             })
-            .catch((error) => console.log("error", error));
+            .catch((error) => console.log("error", error.message));
 
     }
 
@@ -261,7 +261,7 @@ export default function map(props) {
                     setTimeout(() => handleShowData(), 500);
 
                 })
-                .catch((error) => console.log("error 117", error));
+                .catch((error) => console.log("error 117", error.message));
         }
 
     }
@@ -274,7 +274,7 @@ export default function map(props) {
                     setdataSearch(responseJson.predictions)
                     cariLatlon(responseJson.predictions[0])
                 })
-                .catch((error) => console.log("error", error));
+                .catch((error) => console.log("error", error.message));
         }
     }
 

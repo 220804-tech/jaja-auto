@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
     row_evenly_center: { flex: 0, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' },
 
 
-    column: { flex: 0, flexDirection: 'column' },
+    column: { flex: 0, flexDirection: 'column', justifyContent: 'space-between' },
     column_center: { flex: 0, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' },
     column_center_start: { flex: 0, flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start' },
     column_center_end: { flex: 0, flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-end' },
@@ -102,7 +102,7 @@ export const styles = StyleSheet.create({
     px_2: { paddingHorizontal: '2%' },
     px_3: { paddingHorizontal: '3%' },
     px_4: { paddingHorizontal: '4%' },
-    px_5: { paddingHorizontal: '5%' },
+    px_5: { paddingHorizontal: '6%' },
     py: { paddingVertical: '1%' },
     py_2: { paddingVertical: '2%' },
     py_3: { paddingVertical: '3%' },

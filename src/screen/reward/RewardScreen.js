@@ -74,6 +74,8 @@ export default function RewardScreen() {
             })
         } catch (error) {
             setlistBK([])
+            console.log(error.message)
+
         }
         setTimeout(() => setLoading(false), 1000);
     }
@@ -104,7 +106,7 @@ export default function RewardScreen() {
                     Utils.handleError(String(error) + JSON.stringify(res), 'Error with status code : 12058')
                 }
             })
-            .catch(error => Utils.handleError(error, "Error with status code : 12059"));
+            .catch(error => Utils.handleError(error.message, "Error with status code : 12059"));
     }
 
     const getPending = () => {
@@ -129,7 +131,7 @@ export default function RewardScreen() {
                         Utils.handleErrorResponse(result, 'Error with status code : 120560')
                     }
                 } catch (error) {
-                    Utils.handleError(error, 'Error with status code : 12061')
+                    Utils.handleError(error.message, 'Error with status code : 12061')
                 }
             })
     }
@@ -171,14 +173,14 @@ export default function RewardScreen() {
                     } else {
                         Utils.handleErrorResponse(data, 'Error with status code : 10301')
                     }
-                } catch (err) {
-                    Utils.handleErrorResponse(String(err) + '/' + String(result), 'Error with status code : 10302')
+                } catch (error) {
+                    Utils.handleErrorResponse(String(error.message) + '/' + String(result), 'Error with status code : 10302')
                 }
             })
-            .catch(err => {
+            .catch(error => {
                 setLoading(false)
                 error = false
-                Utils.handleError(err, 'Error with status code : 10303')
+                Utils.handleError(error.message, 'Error with status code : 10303')
             });
 
         setTimeout(() => {
@@ -223,10 +225,12 @@ export default function RewardScreen() {
                         setNominalCount("0")
                     }
                 } catch (error) {
+                    console.log(error.message)
 
                 }
             }
         } catch (error) {
+            console.log(error.message)
 
         }
     }
@@ -260,9 +264,11 @@ export default function RewardScreen() {
                     }
                 } catch (error) {
                     // Alert()
+                    console.log(error.message)
+
                 }
             })
-            .catch(error => Utils.handleError(String(error), 'Error with status code : 12067'));
+            .catch(error => Utils.handleError(String(error.message), 'Error with status code : 12067'));
     }
 
     const handleDelete = val => {
@@ -304,7 +310,7 @@ export default function RewardScreen() {
 
                                 }
                             })
-                            .catch(error => Utils.handleError(error, 'Error with status code : 12069'));
+                            .catch(error => Utils.handleError(error.message, 'Error with status code : 12069'));
                     },
                     style: "cancel"
                 },
@@ -343,7 +349,7 @@ export default function RewardScreen() {
             })
             .catch(error => {
                 setLoading(false)
-                Utils.handleError(error, 'Error with status code : 10213')
+                Utils.handleError(error.message, 'Error with status code : 10213')
             });
     }
 
@@ -381,6 +387,8 @@ export default function RewardScreen() {
             })
             .catch(error => {
                 Utils.handleError(res, 'Error with status code : 120302')
+                console.log(error.message)
+
             });
     }
 

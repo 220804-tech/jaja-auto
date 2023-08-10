@@ -33,9 +33,9 @@ export default function OrdersUnpaid() {
                 console.log("🚀 ~ file: OrdersUnpaid.js ~ line 38 ~ ServiceOrder.getUnpaid ~ resUnpaid", resUnpaid)
                 handleUnpaid()
             }
-        }).catch(err => {
-            console.log("🚀 ~ file: OrdersUnpaid.js ~ line 54 ~ ServiceOrder.getUnpaid ~ err", err)
-            ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+        }).catch(error => {
+            console.log("🚀 ~ file: OrdersUnpaid.js ~ line 54 ~ ServiceOrder.getUnpaid ~ err", error.message)
+            ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)
             handleUnpaid()
         })
     }

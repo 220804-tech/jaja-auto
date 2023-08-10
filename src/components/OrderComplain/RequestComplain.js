@@ -63,7 +63,7 @@ export default function RequestComplain() {
                                     Utils.handleErrorResponse(result, 'Error with status code : 12030')
                                 }
                             })
-                            .catch(error => Utils.handleError(error, "Error with status code : 12031"));
+                            .catch(error => Utils.handleError(error.message, "Error with status code : 12031"));
                     },
                     style: "default",
                 },
@@ -98,7 +98,7 @@ export default function RequestComplain() {
                         Utils.handleErrorResponse(result, 'Error with status code : 120030')
                     }
                 })
-                .catch(error => Utils.handleError(error, "Error with status code : 120031"));
+                .catch(error => Utils.handleError(error.message, "Error with status code : 120031"));
 
             if (modalConfirm === 'confirmed') {
                 fetch(`https://jsonx.jaja.id/core/seller/order/solusiKomplain?invoice=${orderInvoice}&solusi=${checked}&catatan_solusi=checked`, requestOptions)
@@ -112,7 +112,7 @@ export default function RequestComplain() {
                             Utils.handleErrorResponse(result, 'Error with status code : 1200300')
                         }
                     })
-                    .catch(error => Utils.handleError(error, "Error with status code : 1200100"));
+                    .catch(error => Utils.handleError(error.message, "Error with status code : 1200100"));
             }
             // firebaseDatabase().ref(`/people/${orderUid}notif`).update({ order: realNotif.orders + 1 });
         }

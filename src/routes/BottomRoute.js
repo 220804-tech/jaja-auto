@@ -69,6 +69,7 @@ export default function BottomRoute() {
                 dispatch({ type: 'SET_NOTIF_COUNT', payload: { home: 0, chat: 0, orders: 0 } })
             }
         } catch (error) {
+            console.log(error.message)
 
         }
     }

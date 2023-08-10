@@ -31,9 +31,10 @@ export default function OrdersUnpaid() {
             } else {
                 handleCompleted()
             }
-        }).catch(err => {
-            ToastAndroid.show(String(err), ToastAndroid.LONG, ToastAndroid.CENTER)
+        }).catch(error => {
+            ToastAndroid.show(String(error), ToastAndroid.LONG, ToastAndroid.CENTER)
             handleCompleted()
+            console.log(error.message)
         })
     }
 

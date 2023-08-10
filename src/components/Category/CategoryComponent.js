@@ -17,8 +17,11 @@ export default function CategoryComponent() {
 
     useEffect(() => {
         getData()
-        getStorage()
     }, [reduxDashboard])
+
+    useEffect(() => {
+        getStorage()
+    }, [])
 
     // const handleCategory = () => {
     //     setTimeout(() => {
@@ -49,8 +52,8 @@ export default function CategoryComponent() {
                 dispatch({ type: 'SET_CATEGORY', payload: res })
                 EncryptedStorage.setItem("allCategory", JSON.stringify(res));
             }
-        }).catch(err => {
-            console.log("🚀 ~ file: CategoryComponent.js ~ line 59 ~ ServiceCategory.getAllCategory ~ err", err)
+        }).catch(error => {
+            console.log("🚀 ~ file: CategoryComponent.js ~ line 59 ~ ServiceCategory.getAllCategory ~ err", error.message)
         })
     }
 
@@ -94,13 +97,14 @@ export default function CategoryComponent() {
                     }
                     dispatch({ type: 'SET_SEARCH_LOADING', payload: false })
                 })
-                .catch(err => {
+                .catch(error => {
                     error = false
                     dispatch({ type: 'SET_SEARCH', payload: [] })
                     dispatch({ type: 'SET_FILTERS', payload: [] })
                     dispatch({ type: 'SET_SORTS', payload: [] })
                     dispatch({ type: 'SET_SEARCH_LOADING', payload: true })
                     Utils.handleError(String(err), 'Error with status 13001')
+                    console.log(error.message)
                 });
 
             setTimeout(() => {
@@ -115,17 +119,13 @@ export default function CategoryComponent() {
 
     const handleSaveKeyword = (keyword) => {
         EncryptedStorage.getItem('historySearching').then(res => {
-            console.log("🚀 ~ file: CategoryComponent.js ~ line 102 ~ EncryptedStorage.getItem ~ res", res)
-            if (res) {
-                let data = JSON.parse(res);
-                let newKeyword = String(keyword).toLocaleLowerCase()
-                console.log("🚀 ~ file: CategoryComponent.js ~ line 105 ~ EncryptedStorage.getItem ~ data.includes(keyword)", data.includes(newKeyword))
-                if (!data.includes(newKeyword)) {
-                    data.push(String(keyword).toLocaleLowerCase())
-                    EncryptedStorage.setItem("historySearching", JSON.stringify(data))
-                }
+            let data = res ? JSON.parse(res) : [];
+            let newKeyword = String(keyword).toLocaleLowerCase();
+            if (!data.includes(newKeyword)) {
+                data.push(newKeyword);
+                EncryptedStorage.setItem("historySearching", JSON.stringify(data));
             }
-        })
+        });
     }
 
     return (

@@ -10,7 +10,8 @@ import Swipeable from "react-native-swipeable";
 // import { StatusBar } from 'native-base';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CheckBox from "@react-native-community/checkbox";
-export default function index(props) {
+
+export default function AddressScreen(props) {
     const dispatch = useDispatch();
     const reduxUser = useSelector((state) => state.user.user.location);
     const reduxAuth = useSelector((state) => state.auth.auth);
@@ -35,7 +36,9 @@ export default function index(props) {
             setTimeout(() => {
                 setLoading(false);
             }, 5000);
-        } catch (error) { }
+        } catch (error) {
+            console.log(error.message)
+        }
     }, [props]);
 
     useFocusEffect(
@@ -45,7 +48,7 @@ export default function index(props) {
                     navigation.navigate(Login);
                 }
             } catch (error) {
-                console.log("🚀 ~ file: AddressScreen.js ~ line 59 ~ useEffect ~ error", error);
+                console.log("🚀 ~ file: AddressScreen.js ~ line 59 ~ useEffect ~ error", error.message);
             }
             getData();
         }, [count])
@@ -72,14 +75,15 @@ export default function index(props) {
                         }
                     }
                 })
-                .catch(async (err) => {
+                .catch(async (error) => {
+                    console.log(error.message)
                     let resp = await EncryptedStorage.getItem("user");
                     if (resp) {
                         dispatch({ type: "SET_USER", payload: JSON.parse(resp) });
                     }
                 });
         } catch (error) {
-            console.log("🚀 ~ file: AddressScreen.js ~ line 79 ~ getData ~ error", error)
+            console.log("🚀 ~ file: AddressScreen.js ~ line 79 ~ getData ~ error", error.message)
 
         }
     };
@@ -123,8 +127,9 @@ export default function index(props) {
             }
             setcount(count + 1);
         } catch (error) {
+            console.log(error.message)
             Utils.alertPopUp(
-                String(error) + "\n" + "Error with status code : 129872"
+                String(error.message) + "\n" + "Error with status code : 129872"
             );
         }
         // setAddress(arr)
@@ -176,8 +181,9 @@ export default function index(props) {
                 }
             })
             .catch((error) => {
+                console.log(error.message)
                 setLoading(false);
-                Alert.alert("Jaja.id", String(error), [
+                Alert.alert("Jaja.id", String(error.message), [
                     {
                         text: "TUTUP",
                         onPress: () => console.log("Cancel Pressed"),
@@ -253,7 +259,7 @@ export default function index(props) {
                 }
             })
             .catch(error => {
-                Utils.handleError(error, 'Error with status code : 12202')
+                Utils.handleError(error.message, 'Error with status code : 12202')
             });
     }
 

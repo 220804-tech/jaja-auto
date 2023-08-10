@@ -17,6 +17,7 @@ export default function storeStore(state = initialState, action) {
         case 'SET_STORE':
             return { ...state, store: payload }
         case 'SET_STORE_PRODUCT':
+            // console.log("🚀 ~ file: storeStore.js ~ line 41 ~ storeStore ~ payload", payload)
             return { ...state, storeProduct: payload }
         case 'SET_STORE_LOAD':
             return { ...state, loadStore: payload }

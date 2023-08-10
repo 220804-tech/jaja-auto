@@ -47,6 +47,7 @@ export default function AddReview(props) {
                 setData(newArr)
             }
         } catch (error) {
+            console.log(error.message)
 
         }
     }, [props])
@@ -113,7 +114,7 @@ export default function AddReview(props) {
                 setData(newData)
                 setIdx(null)
             } catch (error) {
-                console.log("🚀 ~ file: AddReview.js ~ line ss100 ~ handlePickVideo ~ error", error)
+                console.log("🚀 ~ file: AddReview.js ~ line ss100 ~ handlePickVideo ~ error", error.message)
             }
         });
     }
@@ -179,7 +180,7 @@ export default function AddReview(props) {
                 }
             })
             .catch(error => {
-                Utils.handleError(String(error), 'Error with status code : 12040')
+                Utils.handleError(String(error.message), 'Error with status code : 12040')
                 setLoading(false)
                 res = 'failed'
             });

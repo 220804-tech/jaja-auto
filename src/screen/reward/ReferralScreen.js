@@ -17,7 +17,7 @@ export default function ReferralScreen() {
                 let urlString = 'data:image/jpeg;base64,' + base64String;
                 setImage(urlString)
             })
-            .catch(err => console.log("cok"));
+            .catch(error => console.log(error.message));
     }, [])
 
     const handleShare = () => {
@@ -33,11 +33,11 @@ export default function ReferralScreen() {
                 .then((res) => {
                     console.log(res);
                 })
-                .catch((err) => {
-                    err && console.log(err);
+                .catch((error) => {
+                    error && console.log(error.message);
                 });
         } catch (error) {
-            Utils.alertPopUp(String(error) + '\n' + 'Error with status code : 132142')
+            Utils.alertPopUp(String(error.message) + '\n' + 'Error with status code : 132142')
         }
     }
 

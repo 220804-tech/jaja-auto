@@ -82,6 +82,8 @@ export default function OrderScreen(props) {
         try {
 
         } catch (error) {
+            console.log(error.message)
+
             if (reduxAuth || reduxRefresh) {
                 dispatch({ type: 'SET_ORDER_REFRESH', payload: false })
 

@@ -5,7 +5,7 @@ import {
     Splash, Product, Search, Chat, Login, Profile, Register, Trolley, ProductSearch, Checkout, Address, VerifikasiEmail, Category,
     AddAddress, Midtrans, Store, ForgotPassword, Review, ZoomReview, OrderDetails, AddReview, OrderDelivery, Account, CustomerService,
     Notification, Vouchers, Flashsale, Wishlist, HistoryProduct, Reward, Referral, DetailComplain, OrderCancel, RequestComplain,
-    AddAccount, CoinPage, DownloadInvoice, Gift, GiftSearch, GiftDetails, CheckoutMultiDrop, TrolleyMultiDrop, EtalaseProducts, Event
+    AddAccount, CoinPage, DownloadInvoice, Gift, GiftSearch, GiftDetails, CheckoutMultiDrop, TrolleyMultiDrop, EtalaseProducts, Event, Car, ProductAuto, Approve, FilterResult, FilterScreen, SuccessApprove, ApproveCredit
 } from "./Screen";
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 
@@ -49,6 +49,7 @@ export default function Routes() {
             restSpeedThreshold: 1,
         },
     };
+
     return (
         <NavigationContainer>
             <Stack.Navigator
@@ -65,6 +66,7 @@ export default function Routes() {
                 <Stack.Screen name="Beranda" component={BottomRoutes} />
                 <Stack.Screen name="Search" component={Search} />
                 <Stack.Screen name="Product" component={Product} />
+                <Stack.Screen name="ProductAuto" component={ProductAuto} />
                 <Stack.Screen name="ProductSearch" component={ProductSearch} />
                 <Stack.Screen name="Trolley" component={Trolley} />
                 <Stack.Screen name="Address" component={Address} />
@@ -82,6 +84,10 @@ export default function Routes() {
                 <Stack.Screen name="Gift" component={Gift} />
                 <Stack.Screen name="GiftSearch" component={GiftSearch} />
                 <Stack.Screen name="GiftDetails" component={GiftDetails} />
+                <Stack.Screen name="Car" component={Car} />
+                <Stack.Screen name="FilterResult" component={FilterResult} />
+                <Stack.Screen name="FilterScreen" component={FilterScreen} />
+
                 <Stack.Screen name="CheckoutMultiDrop" component={CheckoutMultiDrop} />
                 <Stack.Screen name="TrolleyMultiDrop" component={TrolleyMultiDrop} />
                 <Stack.Screen name="AddReview" component={AddReview} />
@@ -105,12 +111,17 @@ export default function Routes() {
                 <Stack.Screen name="RequestComplain" component={RequestComplain} />
 
                 <Stack.Screen name="CoinPage" component={CoinPage} />
-
                 <Stack.Screen name="IsiChat" component={Chat} />
                 <Stack.Screen name="Register" component={Register} />
                 <Stack.Screen name="Login" component={Login} />
                 {/* PROFIL */}
                 <Stack.Screen name="Profile" component={Profile} />
+                <Stack.Screen name="Approve" component={Approve} />
+                <Stack.Screen name="ApproveCredit" component={ApproveCredit} />
+
+                <Stack.Screen name="SuccessApprove" component={SuccessApprove} />
+
+
             </Stack.Navigator>
         </NavigationContainer >
     );
