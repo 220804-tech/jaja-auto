@@ -7,7 +7,7 @@ import { Button, TextInput } from 'react-native-paper'
 import { Language, Loading, CheckSignal, Wp, ServiceOrder, useFocusEffect, ServiceUser, Appbar, Hp, Utils, AppleType } from '../../export'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch } from 'react-redux'
-// import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
+import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
 import database from '@react-native-firebase/database';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 // import { appleAuthAndroid, AppleButton, appleAuth, } from '@invertase/react-native-apple-authentication';
@@ -21,6 +21,8 @@ export default function LoginScreen(props) {
     let passwordRef = createRef();
     const [secure, setSecure] = useState(true)
     const [focus, setfocus] = useState("")
+    const [user, setUser] = useState("")
+
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [alertPassword, setalertPassword] = useState("")
@@ -37,17 +39,17 @@ export default function LoginScreen(props) {
         } else {
             setNavigate('')
         }
-        // GoogleSignin.configure({
-        //     webClientId: "284366139562-tnj3641sdb4ia9om7bcp25vh3qn5vvo8.apps.googleusercontent.com",
-        //     offlineAccess: true
-        // });
+        GoogleSignin.configure({
+            webClientId: "284366139562-tnj3641sdb4ia9om7bcp25vh3qn5vvo8.apps.googleusercontent.com",
+            offlineAccess: true
+        });
     }, [props])
 
     useFocusEffect(
         useCallback(() => {
-            // if (GoogleSignin.isSignedIn()) {
-            //     signOut()
-            // }
+            if (GoogleSignin.isSignedIn()) {
+                signOut()
+            }
         }, []),
     );
 
@@ -66,9 +68,9 @@ export default function LoginScreen(props) {
 
     const signOut = async () => {
         try {
-            // await GoogleSignin.revokeAccess();
-            // await GoogleSignin.signOut();
-            // setUser("") // Remember to remove the user from your app's state as well
+            await GoogleSignin.revokeAccess();
+            await GoogleSignin.signOut();
+            setUser("") // Remember to remove the user from your app's state as well
         } catch (error) {
             console.error(error);
         }
@@ -261,8 +263,8 @@ export default function LoginScreen(props) {
         if (loginGoogle) {
             setLoginGoogle(false)
             try {
-                // await GoogleSignin.hasPlayServices()
-                // const userInfo = await GoogleSignin.signIn();
+                await GoogleSignin.hasPlayServices()
+                const userInfo = await GoogleSignin.signIn();
                 console.log("🚀 ~ file: LoginScreen.js ~ line 252 ~ onGoogleButtonPress ~ userInfo", userInfo)
                 setLoading(true)
                 handleCheckUser(userInfo)
@@ -542,7 +544,7 @@ export default function LoginScreen(props) {
                             </TouchableHighlight>
                             <TextInput
                                 ref={passwordRef}
-                                // onSubmitEditing={() => this.login()}
+                                onSubmitEditing={() => this.login()}
                                 returnKeyType="done"
                                 style={{ width: Wp('85%') }}
                                 mode="outlined"
@@ -575,13 +577,13 @@ export default function LoginScreen(props) {
                         } */}
 
 
-                        {/* <View style={{ width: Wp('87%'), justifyContent: 'center', marginBottom: '1%', marginTop: '3%' }}>
+                        <View style={{ width: Wp('87%'), justifyContent: 'center', marginBottom: '1%', marginTop: '3%' }}>
                             <GoogleSigninButton
                                 style={{ width: "100%", height: 48 }}
                                 size={GoogleSigninButton.Size.Wide}
                                 color={GoogleSigninButton.Color.Dark}
                                 onPress={onGoogleButtonPress} />
-                        </View> */}
+                        </View>
                         <View style={[styles.row_between_center, styles.mt_5, { width: Wp('85%') }]}>
                             <TouchableOpacity onPress={() => navigation.navigate('Register', { navigate: 'Login' })}><Text style={[styles.font_12]}>Belum punya akun?  <Text style={[styles.font_12, { color: colors.BlueJaja }]}>{Language("Register")}</Text></Text></TouchableOpacity>
                             <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}><Text style={[styles.font_12, { color: colors.RedNotif }]}>{Language("Lupa password")}!</Text></TouchableOpacity>
